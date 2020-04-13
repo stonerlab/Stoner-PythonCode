@@ -1,0 +1,8 @@
+
+
+XRDFile.del_nan
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.del_nan

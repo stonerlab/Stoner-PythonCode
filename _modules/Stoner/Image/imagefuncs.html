@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -47,7 +44,7 @@
             
   <h1>Source code for Stoner.Image.imagefuncs</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Functions for manipulating Kerr (or any other) images</span>
+<span class="sd">&quot;&quot;&quot;Functions for manipulating Kerr (or any other) images.</span>
 
 <span class="sd">All of these functions are accessible through the :class:`ImageArray` attributes e.g.:</span>
 
@@ -71,6 +68,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;adjust_contrast&quot;</span><span class="p">,</span>
     <span class="s2">&quot;align&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;convert&quot;</span><span class="p">,</span>
     <span class="s2">&quot;correct_drift&quot;</span><span class="p">,</span>
     <span class="s2">&quot;subtract_image&quot;</span><span class="p">,</span>
     <span class="s2">&quot;fft&quot;</span><span class="p">,</span>
@@ -91,14 +89,21 @@
     <span class="s2">&quot;do_nothing&quot;</span><span class="p">,</span>
     <span class="s2">&quot;denoise&quot;</span><span class="p">,</span>
 <span class="p">]</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span><span class="o">,</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">istuple</span><span class="p">,</span> <span class="n">isiterable</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">feature</span><span class="p">,</span> <span class="n">measure</span><span class="p">,</span> <span class="n">transform</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
 <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">Normalize</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">feature</span><span class="p">,</span> <span class="n">measure</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">filters</span>
+
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isTuple</span><span class="p">,</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">make_Data</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">ImageArray</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">sign_loss</span><span class="p">,</span> <span class="n">_dtype2</span><span class="p">,</span> <span class="n">_supported_types</span><span class="p">,</span> <span class="n">prec_loss</span><span class="p">,</span> <span class="n">dtype_range</span><span class="p">,</span> <span class="n">_dtype</span><span class="p">,</span> <span class="n">_scale</span> <span class="k">as</span> <span class="n">im_scale</span>
 
 <span class="k">try</span><span class="p">:</span>  <span class="c1"># Make OpenCV an optional import</span>
     <span class="kn">import</span> <span class="nn">cv2</span>
@@ -112,12 +117,8 @@
 
 <span class="k">try</span><span class="p">:</span>  <span class="c1"># image_registration module</span>
     <span class="kn">from</span> <span class="nn">image_registration</span> <span class="kn">import</span> <span class="n">chi2_shift</span>
-    <span class="kn">from</span> <span class="nn">image_registration</span> <span class="kn">import</span> <span class="n">fft_tools</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">chi2_shift</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">ImageArray</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
 
 <span class="k">def</span> <span class="nf">_scale</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">to_pixel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -139,7 +140,7 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">to_pixel</span><span class="p">:</span>
             <span class="n">coord</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">coord</span> <span class="o">/</span> <span class="n">scale</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">coord</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">coord</span><span class="p">):</span>
         <span class="n">coord</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">_scale</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">to_pixel</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">coord</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;coord should be an integer or a float or an iterable of integers and floats&quot;</span><span class="p">)</span>
@@ -147,7 +148,7 @@
 
 
 <div class="viewcode-block" id="adjust_contrast"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.adjust_contrast.html#Stoner.Image.imagefuncs.adjust_contrast">[docs]</a><span class="k">def</span> <span class="nf">adjust_contrast</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">lims</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span> <span class="n">percent</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;rescale the intensity of the image.</span>
+    <span class="sd">&quot;&quot;&quot;Rescale the intensity of the image.</span>
 
 <span class="sd">    Mostly a call through to skimage.exposure.rescale_intensity. The absolute limits of contrast are</span>
 <span class="sd">    added to the metadata as &#39;adjust_contrast&#39;</span>
@@ -174,7 +175,58 @@
     <span class="k">return</span> <span class="n">im</span></div>
 
 
-<div class="viewcode-block" id="align"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.align.html#Stoner.Image.imagefuncs.align">[docs]</a><span class="k">def</span> <span class="nf">align</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_align_scharr</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the translation vector to shirt im to align to ref using the Scharr method.&quot;&quot;&quot;</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mf">500.0</span><span class="p">)</span>
+    <span class="n">ref1</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">scharr</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">))</span>
+    <span class="n">im1</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">scharr</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_align_imreg_dft</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span> <span class="n">ref1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_align_chi2_shift</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the translation vector to shirt im to align to ref using the chi^2 shift method.&quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chi2_shift</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">))</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">_align_imreg_dft</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the translation vector to shirt im to align to ref using the imreg_dft method.&quot;&quot;&quot;</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;constraints&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]})</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>  <span class="c1"># This causes a warning due to the masking</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">imreg_dft</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">)</span>
+    <span class="n">tvec</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;tvec&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tvec</span><span class="p">),</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_align_cv2</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the translation vector to shirt im to align to ref using the cv2 method.&quot;&quot;&quot;</span>
+    <span class="n">im1_gray</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">,</span> <span class="n">force_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">im2_gray</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">,</span> <span class="n">force_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Define the motion model</span>
+    <span class="n">warp_mode</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">MOTION_TRANSLATION</span>
+    <span class="n">warp_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="c1"># Specify the number of iterations.</span>
+    <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="mi">5000</span>
+
+    <span class="c1"># Specify the threshold of the increment</span>
+    <span class="c1"># in the correlation coefficient between two iterations</span>
+    <span class="n">termination_eps</span> <span class="o">=</span> <span class="mf">1e-10</span>
+
+    <span class="c1"># Define termination criteria</span>
+    <span class="n">criteria</span> <span class="o">=</span> <span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">TERM_CRITERIA_EPS</span> <span class="o">|</span> <span class="n">cv2</span><span class="o">.</span><span class="n">TERM_CRITERIA_COUNT</span><span class="p">,</span> <span class="n">number_of_iterations</span><span class="p">,</span> <span class="n">termination_eps</span><span class="p">)</span>
+
+    <span class="c1"># Run the ECC algorithm. The results are stored in warp_matrix.</span>
+    <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">warp_matrix</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findTransformECC</span><span class="p">(</span>
+        <span class="n">im1_gray</span><span class="p">,</span> <span class="n">im2_gray</span><span class="p">,</span> <span class="n">warp_matrix</span><span class="p">,</span> <span class="n">warp_mode</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">inputMask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gaussFiltSize</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="n">warp_matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="align"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.align.html#Stoner.Image.imagefuncs.align">[docs]</a><span class="k">def</span> <span class="nf">align</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;scharr&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Use one of a variety of algroithms to align two images.</span>
 
 <span class="sd">    Args:</span>
@@ -185,7 +237,12 @@
 <span class="sd">        method (str or None):</span>
 <span class="sd">            If given specifies which module to try and use.</span>
 <span class="sd">            Options: &#39;scharr&#39;, &#39;chi2_shift&#39;, &#39;imreg_dft&#39;, &#39;cv2&#39;</span>
+<span class="sd">        box (integer, float, tuple of images or floats):</span>
+<span class="sd">            Used with ImageArray.crop to select a subset of the image to use for the aligning process.</span>
+<span class="sd">        oversample (int):</span>
+<span class="sd">            Rescale the image and reference image by constant factor before finding the translation vector.</span>
 <span class="sd">        **kargs (various): All other keyword arguments are passed to the specific algorithm.</span>
+
 
 <span class="sd">    Returns</span>
 <span class="sd">        (ImageArray or ndarray) aligned image</span>
@@ -202,66 +259,207 @@
 <span class="sd">              from: http://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># To be consistent with x-y co-ordinate systems</span>
-    <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">m</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="n">imreg_dft</span><span class="p">,</span> <span class="n">chi2_shift</span><span class="p">,</span> <span class="n">cv2</span><span class="p">]]):</span>
+    <span class="n">align_methods</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;scharr&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_align_scharr</span><span class="p">,</span> <span class="n">imreg_dft</span><span class="p">),</span>
+        <span class="s2">&quot;chi2_shift&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_align_chi2_shift</span><span class="p">,</span> <span class="n">chi2_shift</span><span class="p">),</span>
+        <span class="s2">&quot;imreg_dft&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_align_imreg_dft</span><span class="p">,</span> <span class="n">imreg_dft</span><span class="p">),</span>
+        <span class="s2">&quot;cv2&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_align_cv2</span><span class="p">,</span> <span class="n">cv2</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">meth</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">align_methods</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">align_methods</span><span class="p">[</span><span class="n">meth</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">mod</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">align_methods</span><span class="p">[</span><span class="n">meth</span><span class="p">]</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">new_type</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">align_methods</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;align requires one of imreg_dft, chi2_shift or cv2 modules to be available.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;scharr&quot;</span> <span class="ow">and</span> <span class="n">imreg_dft</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mf">500.0</span><span class="p">)</span>
-        <span class="n">ref1</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">scharr</span><span class="p">()</span>
-        <span class="n">im1</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">scharr</span><span class="p">()</span>
-        <span class="n">im1</span> <span class="o">=</span> <span class="n">im1</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">ref1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;imreg_dft&quot;</span><span class="p">)</span>
-        <span class="n">tvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">im1</span><span class="p">[</span><span class="s2">&quot;tvec&quot;</span><span class="p">])</span>
-        <span class="n">prefilter</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefilter&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">new_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">tvec</span><span class="p">,</span> <span class="n">prefilter</span><span class="o">=</span><span class="n">prefilter</span><span class="p">)</span>
-        <span class="n">new_im</span><span class="p">[</span><span class="s2">&quot;tvec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="o">-</span><span class="n">tvec</span><span class="p">)</span>
-        <span class="n">new_im</span> <span class="o">=</span> <span class="n">new_im</span><span class="o">.</span><span class="n">T</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">chi2_shift</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;chi2_shift&quot;</span><span class="p">:</span>
-        <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;zeromean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;zeromean&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chi2_shift</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">))</span>
-        <span class="n">new_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">fft_tools</span><span class="o">.</span><span class="n">shiftnd</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="o">-</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]))</span>
-        <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-        <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;chi2_shift&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">imreg_dft</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;imreg_dft&quot;</span><span class="p">:</span>
-        <span class="n">constraints</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;constraints&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]})</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="vm">__class__</span>
-        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>  <span class="c1"># This causes a warning due to the masking</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">imreg_dft</span><span class="o">.</span><span class="n">similarity</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">)</span>
-        <span class="n">new_im</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;timg&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span>
-        <span class="n">new_im</span> <span class="o">=</span> <span class="n">new_im</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-        <span class="n">new_im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cv2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;cv2&quot;</span><span class="p">:</span>
-        <span class="n">im1_gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
-        <span class="n">im2_gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">align_methods</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> is not available either because it is not recognised or there is a missing module&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Find size of image1</span>
-        <span class="n">sz</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="s2">&quot;box&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">box</span><span class="p">):</span>
+            <span class="n">box</span> <span class="o">=</span> <span class="p">[</span><span class="n">box</span><span class="p">]</span>
+        <span class="n">working</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">box</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ref</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">working</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">box</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">working</span> <span class="o">=</span> <span class="n">im</span>
 
-        <span class="c1"># Define the motion model</span>
-        <span class="n">warp_mode</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">MOTION_TRANSLATION</span>
-        <span class="n">warp_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="c1"># Specify the number of iterations.</span>
-        <span class="n">number_of_iterations</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
+        <span class="n">working</span> <span class="o">=</span> <span class="n">working</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
-        <span class="c1"># Specify the threshold of the increment</span>
-        <span class="c1"># in the correlation coefficient between two iterations</span>
-        <span class="n">termination_eps</span> <span class="o">=</span> <span class="mf">1e-10</span>
+    <span class="n">prefilter</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefilter&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1"># Define termination criteria</span>
-        <span class="n">criteria</span> <span class="o">=</span> <span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">TERM_CRITERIA_EPS</span> <span class="o">|</span> <span class="n">cv2</span><span class="o">.</span><span class="n">TERM_CRITERIA_COUNT</span><span class="p">,</span> <span class="n">number_of_iterations</span><span class="p">,</span> <span class="n">termination_eps</span><span class="p">)</span>
+    <span class="n">tvec</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">align_methods</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="mi">0</span><span class="p">](</span><span class="n">working</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
-        <span class="c1"># Run the ECC algorithm. The results are stored in warp_matrix.</span>
-        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">warp_matrix</span><span class="p">)</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findTransformECC</span><span class="p">(</span><span class="n">im1_gray</span><span class="p">,</span> <span class="n">im2_gray</span><span class="p">,</span> <span class="n">warp_matrix</span><span class="p">,</span> <span class="n">warp_mode</span><span class="p">,</span> <span class="n">criteria</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
+        <span class="n">tvec</span> <span class="o">/=</span> <span class="n">scale</span>
+    <span class="n">new_im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shift</span><span class="p">((</span><span class="n">tvec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tvec</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">prefilter</span><span class="o">=</span><span class="n">prefilter</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">new_type</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">new_im</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">new_im</span><span class="p">[</span><span class="s2">&quot;tvec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tvec</span><span class="p">)</span>
+    <span class="n">new_im</span><span class="p">[</span><span class="s2">&quot;translation_limits&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_im</span><span class="o">.</span><span class="n">translate_limits</span><span class="p">(</span><span class="s2">&quot;tvec&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_im</span></div>
 
-        <span class="c1"># Use warpAffine for Translation, Euclidean and Affine</span>
-        <span class="n">new_im</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">warpAffine</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">warp_matrix</span><span class="p">,</span> <span class="p">(</span><span class="n">sz</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sz</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">flags</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span> <span class="o">+</span> <span class="n">cv2</span><span class="o">.</span><span class="n">WARP_INVERSE_MAP</span><span class="p">)</span>
 
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># No cv2 available so don&#39;t do anything.</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t find an image alignment algorithm to use&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">new_im</span><span class="o">.</span><span class="n">T</span></div>
+<div class="viewcode-block" id="convert"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.convert.html#Stoner.Image.imagefuncs.convert">[docs]</a><span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">force_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">uniform</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert an image to the requested data-type.</span>
+
+<span class="sd">    Warnings are issued in case of precision loss, or when negative values</span>
+<span class="sd">    are clipped during conversion to unsigned integer types (sign loss).</span>
+
+<span class="sd">    Floating point values are expected to be normalized and will be clipped</span>
+<span class="sd">    to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or</span>
+<span class="sd">    signed integers respectively.</span>
+
+<span class="sd">    Numbers are not shifted to the negative side when converting from</span>
+<span class="sd">    unsigned to signed integer types. Negative values will be clipped when</span>
+<span class="sd">    converting to unsigned integers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : ndarray</span>
+<span class="sd">        Input image.</span>
+<span class="sd">    dtype : dtype</span>
+<span class="sd">        Target data-type.</span>
+<span class="sd">    force_copy : bool</span>
+<span class="sd">        Force a copy of the data, irrespective of its current dtype.</span>
+<span class="sd">    uniform : bool</span>
+<span class="sd">        Uniformly quantize the floating point range to the integer range.</span>
+<span class="sd">        By default (uniform=False) floating point values are scaled and</span>
+<span class="sd">        rounded to the nearest integers, which minimizes back and forth</span>
+<span class="sd">        conversion errors.</span>
+<span class="sd">    normalise : bool</span>
+<span class="sd">        When converting from int types to float normalise the resulting array</span>
+<span class="sd">        by the maximum allowed value of the int type.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    (1) DirectX data conversion rules.</span>
+<span class="sd">        http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx</span>
+<span class="sd">    (2) Data Conversions.</span>
+<span class="sd">        In &quot;OpenGL ES 2.0 Specification v2.0.25&quot;, pp 7-8. Khronos Group, 2010.</span>
+<span class="sd">    (3) Proper treatment of pixels as integers. A.W. Paeth.</span>
+<span class="sd">        In &quot;Graphics Gems I&quot;, pp 249-256. Morgan Kaufmann, 1990.</span>
+<span class="sd">    (4) Dirty Pixels. J. Blinn.</span>
+<span class="sd">        In &quot;Jim Blinn&#39;s corner: Dirty Pixels&quot;, pp 47-57. Morgan Kaufmann, 1998.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">dtypeobj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">dtypeobj_in</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtypeobj</span><span class="o">.</span><span class="n">type</span>
+    <span class="n">dtype_in</span> <span class="o">=</span> <span class="n">dtypeobj_in</span><span class="o">.</span><span class="n">type</span>
+
+    <span class="k">if</span> <span class="n">dtype_in</span> <span class="o">==</span> <span class="n">dtype</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">force_copy</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="n">image</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dtype_in</span> <span class="ow">in</span> <span class="n">_supported_types</span> <span class="ow">and</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">_supported_types</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;can not convert </span><span class="si">{</span><span class="n">dtype_in</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">kind</span> <span class="o">=</span> <span class="n">dtypeobj</span><span class="o">.</span><span class="n">kind</span>
+    <span class="n">kind_in</span> <span class="o">=</span> <span class="n">dtypeobj_in</span><span class="o">.</span><span class="n">kind</span>
+    <span class="n">itemsize</span> <span class="o">=</span> <span class="n">dtypeobj</span><span class="o">.</span><span class="n">itemsize</span>
+    <span class="n">itemsize_in</span> <span class="o">=</span> <span class="n">dtypeobj_in</span><span class="o">.</span><span class="n">itemsize</span>
+
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
+        <span class="c1"># to binary image</span>
+        <span class="k">if</span> <span class="n">kind_in</span> <span class="ow">in</span> <span class="s2">&quot;fi&quot;</span><span class="p">:</span>
+            <span class="n">sign_loss</span><span class="p">(</span><span class="n">dtype_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span> <span class="o">&gt;</span> <span class="n">dtype_in</span><span class="p">(</span><span class="n">dtype_range</span><span class="p">[</span><span class="n">dtype_in</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kind_in</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
+        <span class="c1"># from binary image, to float and to integer</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">image</span><span class="p">,</span> <span class="o">*</span><span class="n">dtype_range</span><span class="p">[</span><span class="n">dtype</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">if</span> <span class="n">kind</span> <span class="ow">in</span> <span class="s2">&quot;ui&quot;</span><span class="p">:</span>
+        <span class="n">imin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">min</span>
+        <span class="n">imax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+    <span class="k">if</span> <span class="n">kind_in</span> <span class="ow">in</span> <span class="s2">&quot;ui&quot;</span><span class="p">:</span>
+        <span class="n">imin_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">dtype_in</span><span class="p">)</span><span class="o">.</span><span class="n">min</span>
+        <span class="n">imax_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">dtype_in</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+
+    <span class="k">if</span> <span class="n">kind_in</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1.0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Images of type float must be between -1 and 1.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
+            <span class="c1"># floating point -&gt; floating point</span>
+            <span class="k">if</span> <span class="n">itemsize_in</span> <span class="o">&gt;</span> <span class="n">itemsize</span><span class="p">:</span>
+                <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="c1"># floating point -&gt; integer</span>
+        <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="c1"># use float type that can represent output integer type</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">_dtype</span><span class="p">(</span><span class="n">itemsize</span><span class="p">,</span> <span class="n">dtype_in</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">uniform</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">*=</span> <span class="n">imax</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">*=</span> <span class="n">imax</span> <span class="o">-</span> <span class="n">imin</span>
+                <span class="n">image</span> <span class="o">-=</span> <span class="mf">1.0</span>
+                <span class="n">image</span> <span class="o">/=</span> <span class="mf">2.0</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">*=</span> <span class="n">imax</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">imax</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">*=</span> <span class="p">(</span><span class="n">imax</span> <span class="o">-</span> <span class="n">imin</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
+        <span class="c1"># integer -&gt; floating point</span>
+        <span class="k">if</span> <span class="n">itemsize_in</span> <span class="o">&gt;=</span> <span class="n">itemsize</span><span class="p">:</span>
+            <span class="n">prec_loss</span><span class="p">(</span><span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="c1"># use float type that can exactly represent input integers</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">_dtype</span><span class="p">(</span><span class="n">itemsize_in</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">normalise</span><span class="p">:</span>  <span class="c1"># normalise floats by maximum value of int type</span>
+            <span class="k">if</span> <span class="n">kind_in</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">/=</span> <span class="n">imax_in</span>
+                <span class="c1"># DirectX uses this conversion also for signed ints</span>
+                <span class="c1"># if imin_in:</span>
+                <span class="c1">#    np.maximum(image, -1.0, out=image)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">*=</span> <span class="mf">2.0</span>
+                <span class="n">image</span> <span class="o">+=</span> <span class="mf">1.0</span>
+                <span class="n">image</span> <span class="o">/=</span> <span class="n">imax_in</span> <span class="o">-</span> <span class="n">imin_in</span>
+        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kind_in</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
+            <span class="c1"># unsigned integer -&gt; signed integer</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">im_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="c1"># unsigned integer -&gt; unsigned integer</span>
+        <span class="k">return</span> <span class="n">im_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;u&quot;</span><span class="p">:</span>
+        <span class="c1"># signed integer -&gt; unsigned integer</span>
+        <span class="n">sign_loss</span><span class="p">(</span><span class="n">dtype_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">im_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">casting</span><span class="o">=</span><span class="s2">&quot;unsafe&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="c1"># signed integer -&gt; signed integer</span>
+    <span class="k">if</span> <span class="n">itemsize_in</span> <span class="o">&gt;</span> <span class="n">itemsize</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">im_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">_dtype2</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">itemsize</span> <span class="o">*</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">image</span> <span class="o">-=</span> <span class="n">imin_in</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">im_scale</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize_in</span><span class="p">,</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">itemsize</span><span class="p">,</span> <span class="n">dtypeobj_in</span><span class="p">,</span> <span class="n">dtypeobj</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">+=</span> <span class="n">imin</span>
+    <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="correct_drift"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.correct_drift.html#Stoner.Image.imagefuncs.correct_drift">[docs]</a><span class="k">def</span> <span class="nf">correct_drift</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">do_shift</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -289,10 +487,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">box</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">box</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">max_box</span>
-    <span class="n">cim</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
+    <span class="n">cim</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
 
     <span class="n">refed</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">get_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">refed</span> <span class="o">=</span> <span class="n">refed</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
+    <span class="n">refed</span> <span class="o">=</span> <span class="n">refed</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
     <span class="n">refed</span> <span class="o">=</span> <span class="n">refed</span><span class="o">.</span><span class="n">filter_image</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">refed</span> <span class="o">=</span> <span class="n">refed</span> <span class="o">&gt;</span> <span class="n">refed</span><span class="o">.</span><span class="n">threshold_otsu</span><span class="p">()</span>
     <span class="n">refed</span> <span class="o">=</span> <span class="n">refed</span><span class="o">.</span><span class="n">corner_fast</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
@@ -310,7 +508,7 @@
 
 
 <div class="viewcode-block" id="subtract_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.subtract_image.html#Stoner.Image.imagefuncs.subtract_image">[docs]</a><span class="k">def</span> <span class="nf">subtract_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span> <span class="n">contrast</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;subtract a background image from the ImageArray</span>
+    <span class="sd">&quot;&quot;&quot;Subtract a background image from the ImageArray.</span>
 
 <span class="sd">    Multiply the contrast by the contrast parameter.</span>
 <span class="sd">    If clip is on then clip the intensity after for the maximum allowed data range.</span>
@@ -340,7 +538,7 @@
 
 
 <div class="viewcode-block" id="filter_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.filter_image.html#Stoner.Image.imagefuncs.filter_image">[docs]</a><span class="k">def</span> <span class="nf">filter_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Alias for skimage.filters.gaussian&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Alias for skimage.filters.gaussian.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">im</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span></div>
 
 
@@ -353,21 +551,22 @@
 
 <span class="sd">    Keyword Arguments:</span>
 <span class="sd">        method (&quot;linear&quot;,&quot;cubic&quot;,&quot;nearest&quot;): how to interpolate, default is linear</span>
-<span class="sd">        fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0). May be a callable in which</span>
-<span class="sd">            case the initial image is presented as the only argument</span>
+<span class="sd">        fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0). May be a callable</span>
+<span class="sd">        in which case the initial image is presented as the only argument</span>
 <span class="sd">        rescale (bool): If the x and y co-ordinates are very different in scale, set this to True.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A copy of the modified image. The image data is interpolated and metadata kets &quot;actual_x&quot;,&quot;actual_y&quot;,&quot;sample_x&quot;,&quot;samp[le_y&quot; are</span>
-<span class="sd">        set to give co-ordinates of new grid.</span>
+<span class="sd">        A copy of the modified image. The image data is interpolated and metadata kets &quot;actual_x&quot;,&quot;actual_y&quot;,&quot;sample_</span>
+<span class="sd">        x&quot;,&quot;samp[le_y&quot; are set to give co-ordinates of new grid.</span>
 
 <span class="sd">    Notes:</span>
-<span class="sd">        If points and or xi are missed out then we try to construct them from the metadata. For points, the metadata keys</span>
-<span class="sd">        &quot;actual-x&quot; and &quot;actual_y&quot; are looked for and for xi, the metadata keys &quot;sample_x&quot; and &quot;sample_y&quot; are used. These are set</span>
-<span class="sd">        , for example, by the :py:class:`Stoner.HDF5.SXTMImage` loader if the interformeter stage data was found in the file.</span>
+<span class="sd">        If points and or xi are missed out then we try to construct them from the metadata. For points, the metadata</span>
+<span class="sd">        keys &quot;actual-x&quot; and &quot;actual_y&quot; are looked for and for xi, the metadata keys &quot;sample_x&quot; and &quot;sample_y&quot; are</span>
+<span class="sd">        used. These are set, for example, by the :py:class:`Stoner.HDF5.SXTMImage` loader if the interformeter stage</span>
+<span class="sd">        data was found in the file.</span>
 
-<span class="sd">        The metadata used in this case is then adjusted as well to ensure that repeated application of this method doesn&#39;t change the image</span>
-<span class="sd">        after it has been corrected once.</span>
+<span class="sd">        The metadata used in this case is then adjusted as well to ensure that repeated application of this method</span>
+<span class="sd">        doesn&#39;t change the image after it has been corrected once.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">im</span><span class="p">[</span><span class="s2">&quot;actual_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">im</span><span class="p">[</span><span class="s2">&quot;actual_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
@@ -389,21 +588,23 @@
     <span class="sd">&quot;&quot;&quot;Pass through to :py:func:`matplotlib.pyplot.hist` function.&quot;&quot;&quot;</span>
     <span class="n">counts</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
     <span class="n">centres</span> <span class="o">=</span> <span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="n">new</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">centres</span><span class="p">,</span> <span class="n">counts</span><span class="p">)))</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">centres</span><span class="p">,</span> <span class="n">counts</span><span class="p">)))</span>
     <span class="n">new</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Intensity&quot;</span><span class="p">,</span> <span class="s2">&quot;Frequency&quot;</span><span class="p">]</span>
     <span class="n">new</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
     <span class="k">return</span> <span class="n">new</span></div>
 
 
 <div class="viewcode-block" id="imshow"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.imshow.html#Stoner.Image.imagefuncs.imshow">[docs]</a><span class="k">def</span> <span class="nf">imshow</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;quick plot of image</span>
+    <span class="sd">&quot;&quot;&quot;Quickly plot of image.</span>
 
 <span class="sd">    Keyword Arguments:</span>
-<span class="sd">        figure (int, str or matplotlib.figure): if int then use figure number given,</span>
-<span class="sd">            if figure is &#39;new&#39; then create a new figure, if None then use whatever default</span>
-<span class="sd">            figure is available</span>
-<span class="sd">        title (str,None,False): Title for plot - defaults to False (no title). None will take the title from the filename if present</span>
-<span class="sd">        cmap (str,matplotlib.cmap): Colour scheme for plot, defaults to gray</span>
+<span class="sd">        figure (int, str or matplotlib.figure):</span>
+<span class="sd">            if int then use figure number given, if figure is &#39;new&#39; then create a new figure, if None then use</span>
+<span class="sd">            whatever default figure is available</span>
+<span class="sd">        title (str,None,False):</span>
+<span class="sd">            Title for plot - defaults to False (no title). None will take the title from the filename if present</span>
+<span class="sd">        cmap (str,matplotlib.cmap):</span>
+<span class="sd">            Colour scheme for plot, defaults to gray</span>
 
 <span class="sd">    Any masked areas are set to NaN which stops them being plotted at all.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -448,7 +649,7 @@
 
 
 <div class="viewcode-block" id="level_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.level_image.html#Stoner.Image.imagefuncs.level_image">[docs]</a><span class="k">def</span> <span class="nf">level_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">poly_vert</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">poly_horiz</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;clip&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Subtract a polynomial background from image</span>
+    <span class="sd">&quot;&quot;&quot;Subtract a polynomial background from image.</span>
 
 <span class="sd">    Keword Arguments:</span>
 <span class="sd">        poly_vert (int): fit a polynomial in the vertical direction for the image of order</span>
@@ -474,7 +675,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">box</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">box</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">max_box</span>
-    <span class="n">cim</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
+    <span class="n">cim</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>
     <span class="p">(</span><span class="n">vertl</span><span class="p">,</span> <span class="n">horizl</span><span class="p">)</span> <span class="o">=</span> <span class="n">cim</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">p_horiz</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">p_vert</span> <span class="o">=</span> <span class="mi">0</span>
@@ -524,9 +725,9 @@
 <span class="sd">        The *sample* keyword controls the area in which the range of input values is calculated, the actual scaling is</span>
 <span class="sd">        done on the whole image.</span>
 
-<span class="sd">        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers then</span>
-<span class="sd">        this setting can be used to clip the input range before normalising. The parameters in the limit are the values at</span>
-<span class="sd">        the *low* and *high* fractions of the cumulative distribution functions.</span>
+<span class="sd">        The *limits* parameter is used to set the input scale being normalised from - if an image has a few outliers</span>
+<span class="sd">        then this setting can be used to clip the input range before normalising. The parameters in the limit are the</span>
+<span class="sd">        values at the *low* and *high* fractions of the cumulative distribution functions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">mask</span>
     <span class="bp">cls</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="vm">__class__</span>
@@ -546,7 +747,7 @@
         <span class="n">high</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="n">low</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">istuple</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isTuple</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;scale should be a 2-tuple of floats.&quot;</span><span class="p">)</span>
     <span class="n">scaled</span> <span class="o">=</span> <span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span>
     <span class="n">delta</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">scale</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -568,7 +769,7 @@
 
 
 <div class="viewcode-block" id="profile_line"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.profile_line.html#Stoner.Image.imagefuncs.profile_line">[docs]</a><span class="k">def</span> <span class="nf">profile_line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">constrain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper for sckit-image method of the same name to get a line_profile.</span>
+    <span class="sd">&quot;&quot;&quot;Wrap sckit-image method of the same name to get a line_profile.</span>
 
 <span class="sd">    Parameters:</span>
 <span class="sd">        img(ImageArray): Image data to take line section of</span>
@@ -599,9 +800,9 @@
         <span class="n">dst</span> <span class="o">=</span> <span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
     <span class="n">dst</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">_scale</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">istuple</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isTuple</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;src co-ordinates are not a 2-tuple of ints.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">istuple</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isTuple</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dst co-ordinates are not a 2-tuple of ints.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">constrain</span><span class="p">:</span>
@@ -613,7 +814,7 @@
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">profile_line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">)</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">_line_profile_coordinates</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="n">Data</span><span class="p">()</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">()</span>
     <span class="n">ret</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">T</span>
     <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
     <span class="n">ret</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ret</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
@@ -625,7 +826,7 @@
 
 
 <div class="viewcode-block" id="quantize"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.quantize.html#Stoner.Image.imagefuncs.quantize">[docs]</a><span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Quantise the image data into fixed levels given by a mapping</span>
+    <span class="sd">&quot;&quot;&quot;Quantise the image data into fixed levels given by a mapping.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        output (list,array,tuple): Output levels to return.</span>
@@ -687,15 +888,13 @@
 
 
 <div class="viewcode-block" id="rotate"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.rotate.html#Stoner.Image.imagefuncs.rotate">[docs]</a><span class="k">def</span> <span class="nf">rotate</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">resize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">preserve_range</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Rotate image by a certain angle around its center (pass through to the skimage.transform.warps.rotate function)</span>
+    <span class="sd">&quot;&quot;&quot;Rotate image by a certain angle around its center.</span>
 
 <span class="sd">    Parameters:</span>
-
 <span class="sd">        angle  (float):</span>
 <span class="sd">            Rotation angle in **radians** in clockwise direction.</span>
 
 <span class="sd">    Keyword Parameters:</span>
-
 <span class="sd">        resize (bool):</span>
 <span class="sd">            Determine whether the shape of the output image will be automatically</span>
 <span class="sd">            calculated, so the complete rotated image exactly fits. Default is</span>
@@ -726,6 +925,8 @@
 <span class="sd">        (ImageFile/ImageArray):</span>
 <span class="sd">            Rotated image</span>
 
+<span class="sd">    Notes:</span>
+<span class="sd">        (pass through to the skimage.transform.warps.rotate function)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="o">-</span><span class="n">angle</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span>
@@ -749,21 +950,29 @@
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
+<span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the minimum and maximum values in the image.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">im</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="translate"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.translate.html#Stoner.Image.imagefuncs.translate">[docs]</a><span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">translation</span><span class="p">,</span> <span class="n">add_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Translates the image.</span>
+    <span class="sd">&quot;&quot;&quot;Translate the image.</span>
 
 <span class="sd">    Areas lost by move are cropped, and areas gained are made black (0)</span>
 <span class="sd">    The area not lost or cropped is added as a metadata parameter</span>
 <span class="sd">    &#39;translation_limits&#39;</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        translate (2-tuple): translation (x,y)</span>
+<span class="sd">        translate (2-tuple):</span>
+<span class="sd">            translation (x,y)</span>
 
 <span class="sd">    Keyword Arguments:</span>
-<span class="sd">        add_metadata (bool): Record the shift in the image metadata</span>
-<span class="sd">        order (int): Interpolation order (default, 3, bi-cubic)</span>
-<span class="sd">        mode (str): How to handle points outside the original image. See :py:func:`skimage.transform.warp`. Defaults to &quot;wrap&quot;</span>
-<span class="sd">        cval (float): The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.</span>
+<span class="sd">        add_metadata (bool):</span>
+<span class="sd">            Record the shift in the image metadata order (int): Interpolation order (default, 3, bi-cubic)</span>
+<span class="sd">        mode (str):</span>
+<span class="sd">            How to handle points outside the original image. See :py:func:`skimage.transform.warp`.  Defaults to &quot;wrap&quot;</span>
+<span class="sd">        cval (float):</span>
+<span class="sd">            The value to fill with if *mode* is constant. If not speficied or None, defaults to the mean pixcel value.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        im (ImageArray): translated image</span>
@@ -780,7 +989,7 @@
 
 
 <div class="viewcode-block" id="translate_limits"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.translate_limits.html#Stoner.Image.imagefuncs.translate_limits">[docs]</a><span class="k">def</span> <span class="nf">translate_limits</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">translation</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Find the limits of an image after a translation</span>
+    <span class="sd">&quot;&quot;&quot;Find the limits of an image after a translation.</span>
 
 <span class="sd">    After using ImageArray.translate some areas will be black,</span>
 <span class="sd">    this finds the max area that still has original pixels in</span>
@@ -794,21 +1003,21 @@
 <span class="sd">            (xmin,xmax,ymin,ymax) the maximum coordinates of the image with original</span>
 <span class="sd">            information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">translation</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span>
-    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">translation</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="n">translation</span> <span class="o">=</span> <span class="n">im</span><span class="p">[</span><span class="n">translation</span><span class="p">]</span>
+
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">xmin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">translation</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">translation</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ymax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">translation</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
     <span class="k">return</span> <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="plot_histogram"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.plot_histogram.html#Stoner.Image.imagefuncs.plot_histogram">[docs]</a><span class="k">def</span> <span class="nf">plot_histogram</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;plot the histogram and cumulative distribution for the image&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Plot the histogram and cumulative distribution for the image.&quot;&quot;&quot;</span>
     <span class="n">hist</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
     <span class="n">cum</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">cumulative_distribution</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
     <span class="n">cum</span> <span class="o">=</span> <span class="n">cum</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cum</span><span class="p">)</span>
@@ -818,21 +1027,21 @@
 
 
 <div class="viewcode-block" id="threshold_minmax"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.threshold_minmax.html#Stoner.Image.imagefuncs.threshold_minmax">[docs]</a><span class="k">def</span> <span class="nf">threshold_minmax</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">threshmin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">threshmax</span><span class="o">=</span><span class="mf">0.9</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;returns a boolean array which is thresholded between threshmin and  threshmax.</span>
+    <span class="sd">&quot;&quot;&quot;Return a boolean array which is thresholded between threshmin and  threshmax.</span>
 
 <span class="sd">    (ie True if value is between threshmin and threshmax)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">convert_float</span><span class="p">()</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">im</span> <span class="o">&gt;</span> <span class="n">threshmin</span><span class="p">,</span> <span class="n">im</span> <span class="o">&lt;</span> <span class="n">threshmax</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="denoise"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.denoise.html#Stoner.Image.imagefuncs.denoise">[docs]</a><span class="k">def</span> <span class="nf">denoise</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;just a rename of the skimage restore function&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Rename the skimage restore function.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">im</span><span class="o">.</span><span class="n">denoise_tv_chambolle</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="do_nothing"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.do_nothing.html#Stoner.Image.imagefuncs.do_nothing">[docs]</a><span class="k">def</span> <span class="nf">do_nothing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Nulop function for testing.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Nulop function for testing the integration into ImageArray.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span></div>
 </pre></div>
 
@@ -865,16 +1074,13 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

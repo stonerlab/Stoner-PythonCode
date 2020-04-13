@@ -1,0 +1,89 @@
+Stoner.formats.rigs.BigBlueFile
+===============================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. autoclass:: BigBlueFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.rigs.BigBlueFile.__init__
+      ~Stoner.formats.rigs.BigBlueFile.add_column
+      ~Stoner.formats.rigs.BigBlueFile.append
+      ~Stoner.formats.rigs.BigBlueFile.clear
+      ~Stoner.formats.rigs.BigBlueFile.closest
+      ~Stoner.formats.rigs.BigBlueFile.column
+      ~Stoner.formats.rigs.BigBlueFile.columns
+      ~Stoner.formats.rigs.BigBlueFile.count
+      ~Stoner.formats.rigs.BigBlueFile.del_column
+      ~Stoner.formats.rigs.BigBlueFile.del_nan
+      ~Stoner.formats.rigs.BigBlueFile.del_rows
+      ~Stoner.formats.rigs.BigBlueFile.dir
+      ~Stoner.formats.rigs.BigBlueFile.extend
+      ~Stoner.formats.rigs.BigBlueFile.filter
+      ~Stoner.formats.rigs.BigBlueFile.find_col
+      ~Stoner.formats.rigs.BigBlueFile.get
+      ~Stoner.formats.rigs.BigBlueFile.get_filename
+      ~Stoner.formats.rigs.BigBlueFile.index
+      ~Stoner.formats.rigs.BigBlueFile.insert
+      ~Stoner.formats.rigs.BigBlueFile.insert_rows
+      ~Stoner.formats.rigs.BigBlueFile.items
+      ~Stoner.formats.rigs.BigBlueFile.keys
+      ~Stoner.formats.rigs.BigBlueFile.load
+      ~Stoner.formats.rigs.BigBlueFile.pop
+      ~Stoner.formats.rigs.BigBlueFile.popitem
+      ~Stoner.formats.rigs.BigBlueFile.remove
+      ~Stoner.formats.rigs.BigBlueFile.rename
+      ~Stoner.formats.rigs.BigBlueFile.reorder_columns
+      ~Stoner.formats.rigs.BigBlueFile.reverse
+      ~Stoner.formats.rigs.BigBlueFile.rolling_window
+      ~Stoner.formats.rigs.BigBlueFile.rows
+      ~Stoner.formats.rigs.BigBlueFile.save
+      ~Stoner.formats.rigs.BigBlueFile.search
+      ~Stoner.formats.rigs.BigBlueFile.section
+      ~Stoner.formats.rigs.BigBlueFile.select
+      ~Stoner.formats.rigs.BigBlueFile.setdefault
+      ~Stoner.formats.rigs.BigBlueFile.sort
+      ~Stoner.formats.rigs.BigBlueFile.split
+      ~Stoner.formats.rigs.BigBlueFile.swap_column
+      ~Stoner.formats.rigs.BigBlueFile.to_pandas
+      ~Stoner.formats.rigs.BigBlueFile.unique
+      ~Stoner.formats.rigs.BigBlueFile.update
+      ~Stoner.formats.rigs.BigBlueFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.rigs.BigBlueFile.T
+      ~Stoner.formats.rigs.BigBlueFile.basename
+      ~Stoner.formats.rigs.BigBlueFile.clone
+      ~Stoner.formats.rigs.BigBlueFile.column_headers
+      ~Stoner.formats.rigs.BigBlueFile.data
+      ~Stoner.formats.rigs.BigBlueFile.dict_records
+      ~Stoner.formats.rigs.BigBlueFile.dims
+      ~Stoner.formats.rigs.BigBlueFile.dtype
+      ~Stoner.formats.rigs.BigBlueFile.filename
+      ~Stoner.formats.rigs.BigBlueFile.header
+      ~Stoner.formats.rigs.BigBlueFile.mask
+      ~Stoner.formats.rigs.BigBlueFile.metadata
+      ~Stoner.formats.rigs.BigBlueFile.mime_type
+      ~Stoner.formats.rigs.BigBlueFile.patterns
+      ~Stoner.formats.rigs.BigBlueFile.priority
+      ~Stoner.formats.rigs.BigBlueFile.records
+      ~Stoner.formats.rigs.BigBlueFile.setas
+      ~Stoner.formats.rigs.BigBlueFile.shape
+      ~Stoner.formats.rigs.BigBlueFile.subclasses
+   
+   

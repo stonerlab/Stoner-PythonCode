@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.get_filename
+============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.get_filename

@@ -1,0 +1,8 @@
+
+
+GenXFile.search
+==========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.search

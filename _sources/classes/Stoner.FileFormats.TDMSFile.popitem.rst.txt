@@ -1,8 +1,0 @@
-
-
-TDMSFile.popitem
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.popitem

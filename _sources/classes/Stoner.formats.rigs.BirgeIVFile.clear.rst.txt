@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.clear
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.clear

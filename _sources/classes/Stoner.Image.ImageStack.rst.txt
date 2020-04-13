@@ -10,7 +10,6 @@ ImageStack
 
    .. autosummary::
 
-      ~ImageStack.allmeta
       ~ImageStack.basenames
       ~ImageStack.clone
       ~ImageStack.debug
@@ -25,6 +24,7 @@ ImageStack
       ~ImageStack.instance
       ~ImageStack.is_empty
       ~ImageStack.key
+      ~ImageStack.layout
       ~ImageStack.loaded
       ~ImageStack.loader
       ~ImageStack.ls
@@ -37,6 +37,7 @@ ImageStack
       ~ImageStack.objects
       ~ImageStack.pattern
       ~ImageStack.root
+      ~ImageStack.setas
       ~ImageStack.shape
       ~ImageStack.size
       ~ImageStack.trunkdepth
@@ -47,6 +48,7 @@ ImageStack
    .. autosummary::
 
       ~ImageStack.add_group
+      ~ImageStack.align
       ~ImageStack.all
       ~ImageStack.append
       ~ImageStack.apply_all
@@ -55,6 +57,7 @@ ImageStack
       ~ImageStack.average
       ~ImageStack.clear
       ~ImageStack.compress
+      ~ImageStack.convert
       ~ImageStack.correct_drifts
       ~ImageStack.count
       ~ImageStack.crop_stack
@@ -65,6 +68,7 @@ ImageStack
       ~ImageStack.filter
       ~ImageStack.filterout
       ~ImageStack.flatten
+      ~ImageStack.from_tiff
       ~ImageStack.get
       ~ImageStack.getlist
       ~ImageStack.group
@@ -92,6 +96,7 @@ ImageStack
       ~ImageStack.stddev
       ~ImageStack.stderr
       ~ImageStack.subtract
+      ~ImageStack.to_tiff
       ~ImageStack.unflatten
       ~ImageStack.unload
       ~ImageStack.update
@@ -102,7 +107,6 @@ ImageStack
 
    .. rubric:: Attributes Documentation
 
-   .. autoattribute:: allmeta
    .. autoattribute:: basenames
    .. autoattribute:: clone
    .. autoattribute:: debug
@@ -117,6 +121,7 @@ ImageStack
    .. autoattribute:: instance
    .. autoattribute:: is_empty
    .. autoattribute:: key
+   .. autoattribute:: layout
    .. autoattribute:: loaded
    .. autoattribute:: loader
    .. autoattribute:: ls
@@ -129,6 +134,7 @@ ImageStack
    .. autoattribute:: objects
    .. autoattribute:: pattern
    .. autoattribute:: root
+   .. autoattribute:: setas
    .. autoattribute:: shape
    .. autoattribute:: size
    .. autoattribute:: trunkdepth
@@ -137,6 +143,7 @@ ImageStack
    .. rubric:: Methods Documentation
 
    .. automethod:: add_group
+   .. automethod:: align
    .. automethod:: all
    .. automethod:: append
    .. automethod:: apply_all
@@ -145,6 +152,7 @@ ImageStack
    .. automethod:: average
    .. automethod:: clear
    .. automethod:: compress
+   .. automethod:: convert
    .. automethod:: correct_drifts
    .. automethod:: count
    .. automethod:: crop_stack
@@ -155,6 +163,7 @@ ImageStack
    .. automethod:: filter
    .. automethod:: filterout
    .. automethod:: flatten
+   .. automethod:: from_tiff
    .. automethod:: get
    .. automethod:: getlist
    .. automethod:: group
@@ -182,6 +191,7 @@ ImageStack
    .. automethod:: stddev
    .. automethod:: stderr
    .. automethod:: subtract
+   .. automethod:: to_tiff
    .. automethod:: unflatten
    .. automethod:: unload
    .. automethod:: update

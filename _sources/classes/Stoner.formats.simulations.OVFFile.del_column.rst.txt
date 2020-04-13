@@ -1,0 +1,8 @@
+
+
+OVFFile.del_column
+=============================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.del_column

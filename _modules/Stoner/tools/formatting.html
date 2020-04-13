@@ -1,0 +1,435 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.tools.formatting &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../tools.html">Stoner.tools</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.tools.formatting</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Functions for formatting data.&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;format_error&quot;</span><span class="p">,</span> <span class="s2">&quot;format_val&quot;</span><span class="p">,</span> <span class="s2">&quot;quantize&quot;</span><span class="p">,</span> <span class="s2">&quot;tex_escape&quot;</span><span class="p">,</span> <span class="s2">&quot;ordinal&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">html</span> <span class="kn">import</span> <span class="n">escape</span> <span class="k">as</span> <span class="n">html_escape</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="nb">round</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">bytes2str</span>
+
+<span class="n">prefs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+        <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+        <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;latex&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+        <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+        <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\mu&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+        <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+        <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;&amp;micro;&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="format_error"><a class="viewcode-back" href="../../../classes/Stoner.tools.format_error.html#Stoner.tools.format_error">[docs]</a><span class="k">def</span> <span class="nf">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Formats answer with the uncertaintly to 1sf and the value to no more sf&#39;s than the uncertainty.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (float):</span>
+<span class="sd">            The value to be formated</span>
+<span class="sd">        error (float):</span>
+<span class="sd">            The uncertainty in the value</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        fmt (str):</span>
+<span class="sd">            Specify the output format, opyions are:</span>
+<span class="sd">                -  &quot;text&quot; - plain text output</span>
+<span class="sd">                - &quot;latex&quot; - latex output</span>
+<span class="sd">                - &quot;html&quot; - html entities</span>
+<span class="sd">        escape (bool):</span>
+<span class="sd">            Specifies whether to escape the prefix and units for unprintable characters in non text formats (default</span>
+<span class="sd">            False)</span>
+<span class="sd">        mode (string):</span>
+<span class="sd">            If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
+<span class="sd">            to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a</span>
+<span class="sd">            scientifc, i.e. mantissa and exponent format is used.</span>
+<span class="sd">        units (string):</span>
+<span class="sd">            A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
+<span class="sd">            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
+<span class="sd">        prefix (string):</span>
+<span class="sd">            A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
+<span class="sd">            inside the math-mode markers, but not embedded in \mathrm.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">latex</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span> <span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
+    <span class="n">escape</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">escape_func</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span> <span class="n">tex_escape</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">html_escape</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>  <span class="c1"># special case for zero uncertainty</span>
+        <span class="k">return</span> <span class="n">format_val</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">escape</span><span class="p">:</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+
+    <span class="c1"># Sort out special fomatting for different modes</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>  <span class="c1"># Standard</span>
+        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;eng&quot;</span><span class="p">:</span>  <span class="c1"># Use SI prefixes</span>
+        <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">v_mag</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
+        <span class="n">prefixes</span> <span class="o">=</span> <span class="n">prefs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">prefs</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">v_mag</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
+                <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\,\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+            <span class="n">error</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Implies 10^-3&lt;x&lt;10^3</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sci&quot;</span><span class="p">:</span>  <span class="c1"># Scientific mode - raise to common power of 10</span>
+        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\times 10^{{{{</span><span class="si">{}</span><span class="s2">}}}}\,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&amp;times; 10&lt;sup&gt;</span><span class="si">{}</span><span class="s2">&lt;/sup&gt; &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+        <span class="n">error</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Bad mode</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised mode: </span><span class="si">{}</span><span class="s2"> in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+
+    <span class="c1"># Now do the rounding of the value based on error to 1 s.f.</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">error</span>
+    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>  <span class="c1"># work out the scale of the error</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">error</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c1"># round the error, but this could round to 0.x0</span>
+    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>  <span class="c1"># so go round the loop again</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">e2</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c1"># and get a new error magnitude</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>
+    <span class="n">u_mag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">u_mag</span><span class="p">)</span>  <span class="c1"># Force integer results to have no dp</span>
+
+    <span class="c1"># Protect {} in units string</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">{{:.</span><span class="si">{}</span><span class="s2">f}}\pm &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s2">&quot;$&quot;</span>
+    <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{:.</span><span class="si">{}</span><span class="s2">f}}&amp;plusmin;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
+        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Plain text</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{:.</span><span class="si">{}</span><span class="s2">f}}+/-&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
+        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
+    <span class="k">if</span> <span class="n">u_mag</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># the error is less than 1, so con strain decimal places</span>
+        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;{:.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span> <span class="o">+</span> <span class="s2">&quot;f}&quot;</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># We&#39;ll be converting it to an integer anyway</span>
+        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">fmt_str</span> <span class="o">=</span> <span class="n">val_fmt_str</span> <span class="o">+</span> <span class="n">err_fmt_str</span> <span class="o">+</span> <span class="n">suffix_val</span> <span class="o">+</span> <span class="n">suffix_fmt</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="format_val"><a class="viewcode-back" href="../../../classes/Stoner.tools.format_val.html#Stoner.tools.format_val">[docs]</a><span class="k">def</span> <span class="nf">format_val</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Format a number as an SI quantity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value(float):</span>
+<span class="sd">            Value to format</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        fmt (str):</span>
+<span class="sd">            Specify the output format, opyions are:</span>
+<span class="sd">                -  &quot;text&quot; - plain text output</span>
+<span class="sd">                - &quot;latex&quot; - latex output</span>
+<span class="sd">                - &quot;html&quot; - html entities</span>
+<span class="sd">        escape (bool):</span>
+<span class="sd">            Specifies whether to escape the prefix and units for unprintable characters in non text formats (default</span>
+<span class="sd">            False)</span>
+<span class="sd">        mode (string):</span>
+<span class="sd">            If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
+<span class="sd">            to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a</span>
+<span class="sd">            scientifc, i.e. mantissa and exponent format is used.</span>
+<span class="sd">        units (string):</span>
+<span class="sd">            A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
+<span class="sd">            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
+<span class="sd">        prefix (string):</span>
+<span class="sd">            A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
+<span class="sd">            inside the math-mode markers, but not embedded in \mathrm.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (str): The formatted value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">)</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">latex</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span> <span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
+    <span class="n">places</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;places&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">escape</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">escape_func</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span> <span class="n">tex_escape</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">html_escape</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">escape</span><span class="p">:</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>  <span class="c1"># Standard</span>
+        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;eng&quot;</span><span class="p">:</span>  <span class="c1"># Use SI prefixes</span>
+        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
+        <span class="n">prefixes</span> <span class="o">=</span> <span class="n">prefs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">prefs</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">v_mag</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
+                <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">suffix_val</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Implies 10^-3&lt;x&lt;10^3</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sci&quot;</span><span class="p">:</span>  <span class="c1"># Scientific mode - raise to common power of 10</span>
+        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\times 10^{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&amp;times; 10&lt;sup&gt;</span><span class="si">{}</span><span class="s2">&lt;/sup&gt; &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Bad mode</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised mode: </span><span class="si">{}</span><span class="s2"> in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+
+    <span class="c1"># Protect {} in units string</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s2">&quot;$&quot;</span>
+    <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Plain text</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
+    <span class="n">fmt_str</span> <span class="o">=</span> <span class="n">val_fmt_str</span> <span class="o">+</span> <span class="n">suffix_val</span> <span class="o">+</span> <span class="n">suffix_fmt</span>
+    <span class="k">if</span> <span class="n">places</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">places</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="quantize"><a class="viewcode-back" href="../../../classes/Stoner.tools.quantize.html#Stoner.tools.quantize">[docs]</a><span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">quantum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Round a number to the nearest multiple of a quantum.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        number (float,array):</span>
+<span class="sd">            Number(s) to be rounded to the nearest qyuantum</span>
+<span class="sd">        quantum (float):</span>
+<span class="sd">            Quantum to round to</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        number rounded to qunatum</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">number</span> <span class="o">/</span> <span class="n">quantum</span><span class="p">)</span> <span class="o">*</span> <span class="n">quantum</span></div>
+
+
+<div class="viewcode-block" id="tex_escape"><a class="viewcode-back" href="../../../classes/Stoner.tools.tex_escape.html#Stoner.tools.tex_escape">[docs]</a><span class="k">def</span> <span class="nf">tex_escape</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Escapes spacecial text charcters in a string.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        text (str):</span>
+<span class="sd">            a plain text message</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the message escaped to appear correctly in LaTeX</span>
+
+<span class="sd">    From `Stackoverflow &lt;http://stackoverflow.com/questions/16259923/</span>
+<span class="sd">    how-can-i-escape-latex-special-characters-inside-django-templates&gt;`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conv</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;&amp;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\&amp;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\%&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;$&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\$&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\#&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\_&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\{&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;}&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;~&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textasciitilde</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;^&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\^</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textbackslash</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textless&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textgreater&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">conv</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))))</span>
+    <span class="k">return</span> <span class="n">regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="n">conv</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()],</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ordinal"><a class="viewcode-back" href="../../../classes/Stoner.tools.ordinal.html#Stoner.tools.ordinal">[docs]</a><span class="k">def</span> <span class="nf">ordinal</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Format an integer into an ordinal string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (int):</span>
+<span class="sd">            Number to be written as an ordinal string</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        (str):</span>
+<span class="sd">            Ordinal String such as &#39;1st&#39;,&#39;2nd&#39; etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+
+    <span class="n">last_digit</span> <span class="o">=</span> <span class="n">value</span> <span class="o">%</span> <span class="mi">10</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="mi">100</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">]:</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;th&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;st&quot;</span><span class="p">,</span> <span class="s2">&quot;nd&quot;</span><span class="p">,</span> <span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">][</span><span class="n">last_digit</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../tools.html">Stoner.tools</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

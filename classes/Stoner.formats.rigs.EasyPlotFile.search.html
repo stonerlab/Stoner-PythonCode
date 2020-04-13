@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>EasyPlotFile.search &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="EasyPlotFile.section" href="Stoner.formats.rigs.EasyPlotFile.section.html" />
+    <link rel="prev" title="EasyPlotFile.save" href="Stoner.formats.rigs.EasyPlotFile.save.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.formats.rigs.EasyPlotFile.save.html" title="Previous document">EasyPlotFile.save</a>
+        </li>
+        <li>
+          <a href="Stoner.formats.rigs.EasyPlotFile.section.html" title="Next document">EasyPlotFile.section</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.formats.rigs.EasyPlotFile.html">Stoner.formats.rigs.EasyPlotFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="easyplotfile-search">
+<h1>EasyPlotFile.search<a class="headerlink" href="#easyplotfile-search" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.formats.rigs.EasyPlotFile.search">
+<code class="sig-prename descclassname">EasyPlotFile.</code><code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">xcol</em>, <em class="sig-param">value</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">accuracy=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.rigs.EasyPlotFile.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search the numerica data part of the file for lines that match and returns  the corresponding rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xcol</strong> (<em>index types</em>) – a Search Column Index</p></li>
+<li><p><strong>value</strong> (<em>float, tuple, list or callable</em>) – Value to look for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>columns</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><em>array of indices</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> (</em><em>default</em><em>)</em>) – columns of data to return - none represents all columns.</p></li>
+<li><p><strong>accuracy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Uncertainty to accept when testing equalities</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>ndarray</em> – numpy array of matching rows or column values depending on the arguements.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The value is interpreted as follows:</p>
+<ul class="simple">
+<li><p>a float looks for an exact match</p></li>
+<li><p>a list is a list of exact matches</p></li>
+<li><p>a tuple should contain a (min,max) value.</p></li>
+<li><p>A callable object should have accept a float and an array representing the value of
+the search col for the the current row and the entire row.</p></li>
+</ul>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.formats.rigs.EasyPlotFile.save.html"
+                        title="previous chapter">EasyPlotFile.save</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.formats.rigs.EasyPlotFile.section.html"
+                        title="next chapter">EasyPlotFile.section</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.formats.rigs.EasyPlotFile.search.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.formats.rigs.EasyPlotFile.save.html" title="Previous document">EasyPlotFile.save</a>
+        </li>
+        <li>
+          <a href="Stoner.formats.rigs.EasyPlotFile.section.html" title="Next document">EasyPlotFile.section</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.formats.rigs.EasyPlotFile.html">Stoner.formats.rigs.EasyPlotFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

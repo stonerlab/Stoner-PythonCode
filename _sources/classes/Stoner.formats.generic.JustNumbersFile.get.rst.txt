@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.get
+==========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.get

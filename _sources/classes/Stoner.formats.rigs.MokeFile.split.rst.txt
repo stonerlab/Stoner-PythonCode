@@ -1,0 +1,8 @@
+
+
+MokeFile.split
+==================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.split

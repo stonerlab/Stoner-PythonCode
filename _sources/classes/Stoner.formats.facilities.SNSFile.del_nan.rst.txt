@@ -1,0 +1,8 @@
+
+
+SNSFile.del_nan
+=========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.del_nan

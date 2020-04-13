@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.dir
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.dir

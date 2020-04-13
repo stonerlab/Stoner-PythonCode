@@ -1,0 +1,8 @@
+
+
+QDFile.unique
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.unique

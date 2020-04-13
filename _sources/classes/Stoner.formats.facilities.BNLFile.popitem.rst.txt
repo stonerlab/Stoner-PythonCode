@@ -1,0 +1,8 @@
+
+
+BNLFile.popitem
+=========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.popitem

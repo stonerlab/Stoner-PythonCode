@@ -1,0 +1,8 @@
+
+
+BigBlueFile.dir
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.dir

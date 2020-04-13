@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.image_plot" href="Stoner.Data.image_plot.html" />
@@ -60,23 +60,24 @@
 <dl class="method">
 <dt id="Stoner.Data.griddata">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">griddata</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.griddata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to convert xyz data onto a regular grid.</p>
-<p>Args:
-xcol (index): Column to be used for the X-Data
-ycol (index): column to be used for Y-Data - default value is column to the right of the x-data column
-zcol (index): column to be used for the Z-data - default value is the column to the right of the y-data column</p>
+<dd><p>Convert xyz data onto a regular grid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</p></li>
-<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits</p></li>
-<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – </p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Type of interploation to use, default is linear</p></li>
+<li><p><strong>xcol</strong> (<em>index</em>) – Xcolumn index or label</p></li>
+<li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
+<li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="simple">
-<dt>ReturnsL</dt><dd><p>X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data</p>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of
+the length of the data.</p></li>
+<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits</p></li>
+<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The ylimits</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Type of interploation to use, default is linear</p></li>
+<li><p><strong>ReturnsL</strong> – X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -141,9 +142,9 @@ zcol (index): column to be used for the Z-data - default value is the column to 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

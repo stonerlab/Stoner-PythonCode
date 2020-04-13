@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.load" href="Stoner.Data.load.html" />
-    <link rel="prev" title="Data.keys" href="Stoner.Data.keys.html" />
+    <link rel="prev" title="Data.legend" href="Stoner.Data.legend.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Data.keys.html" title="Previous document">Data.keys</a>
+          <a href="Stoner.Data.legend.html" title="Previous document">Data.legend</a>
         </li>
         <li>
           <a href="Stoner.Data.load.html" title="Next document">Data.load</a>
@@ -60,7 +60,7 @@
 <dl class="method">
 <dt id="Stoner.Data.lmfit">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">lmfit</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">p0=None</em>, <em class="sig-param">sigma=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.lmfit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper around lmfit module fitting.</p>
+<dd><p>Wrap the lmfit module fitting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -75,7 +75,7 @@
 <dd class="field-even"><ul class="simple">
 <li><p><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – A vector of initial parameter values to try. See the notes in <a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> for
 more details.</p></li>
-<li><p><strong>sigma</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The index of the column with the y-error bars</p></li>
+<li><p><strong>sigma</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – The index of the column with the y-error bars</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</p></li>
 <li><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
 the last column will be used. If result is a string or an integer then it is used as a column index.
@@ -132,6 +132,7 @@ parameters with an additional column for <span class="math notranslate nohighlig
 </div>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">random</span>
 
@@ -176,6 +177,10 @@ parameters with an additional column for <span class="math notranslate nohighlig
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;Levenberg-Marquardt Fit&quot;</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../samples/lmfit2.png">png</a>, <a class="reference external" href="../samples/lmfit2.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit2.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="../_images/lmfit2.png" src="../_images/lmfit2.png" />
+</div>
 </dd></dl>
 
 </div>
@@ -190,8 +195,8 @@ parameters with an additional column for <span class="math notranslate nohighlig
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Data.keys.html"
-                        title="previous chapter">Data.keys</a></p>
+  <p class="topless"><a href="Stoner.Data.legend.html"
+                        title="previous chapter">Data.legend</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Data.load.html"
                         title="next chapter">Data.load</a></p>
@@ -218,7 +223,7 @@ parameters with an additional column for <span class="math notranslate nohighlig
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Data.keys.html" title="Previous document">Data.keys</a>
+          <a href="Stoner.Data.legend.html" title="Previous document">Data.legend</a>
         </li>
         <li>
           <a href="Stoner.Data.load.html" title="Next document">Data.load</a>
@@ -238,9 +243,9 @@ parameters with an additional column for <span class="math notranslate nohighlig
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

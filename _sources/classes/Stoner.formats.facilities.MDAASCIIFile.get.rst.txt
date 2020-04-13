@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.get
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.get

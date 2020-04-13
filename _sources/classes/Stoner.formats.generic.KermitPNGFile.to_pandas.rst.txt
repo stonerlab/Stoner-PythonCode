@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.to_pandas
+==============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.to_pandas

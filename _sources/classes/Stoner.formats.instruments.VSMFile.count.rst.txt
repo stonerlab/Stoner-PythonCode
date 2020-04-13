@@ -1,0 +1,8 @@
+
+
+VSMFile.count
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.count

@@ -1,0 +1,8 @@
+
+
+CSVFile.dir
+==================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.dir

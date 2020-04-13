@@ -1,0 +1,8 @@
+
+
+FmokeFile.del_rows
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.del_rows

@@ -1,0 +1,8 @@
+
+
+QDFile.closest
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.closest

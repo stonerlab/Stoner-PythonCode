@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.remove
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.remove

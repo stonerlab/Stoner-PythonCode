@@ -1,0 +1,8 @@
+
+
+VSMFile.remove
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.remove

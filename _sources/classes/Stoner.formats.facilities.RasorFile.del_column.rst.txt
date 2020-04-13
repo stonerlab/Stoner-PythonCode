@@ -1,0 +1,8 @@
+
+
+RasorFile.del_column
+==============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.del_column

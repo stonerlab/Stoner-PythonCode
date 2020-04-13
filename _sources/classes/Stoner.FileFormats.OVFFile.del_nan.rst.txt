@@ -1,8 +1,0 @@
-
-
-OVFFile.del_nan
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.del_nan

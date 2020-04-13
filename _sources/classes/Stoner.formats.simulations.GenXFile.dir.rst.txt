@@ -1,0 +1,8 @@
+
+
+GenXFile.dir
+=======================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.dir

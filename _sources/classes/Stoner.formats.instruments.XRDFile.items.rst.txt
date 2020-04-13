@@ -1,0 +1,8 @@
+
+
+XRDFile.items
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.items

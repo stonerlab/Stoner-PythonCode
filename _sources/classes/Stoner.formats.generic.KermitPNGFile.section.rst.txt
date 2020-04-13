@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.section
+============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.section

@@ -1,8 +1,0 @@
-
-
-XRDFile.popitem
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.popitem

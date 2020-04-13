@@ -1,0 +1,8 @@
+
+
+SNSFile.get_filename
+==============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.get_filename

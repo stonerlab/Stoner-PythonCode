@@ -1,0 +1,8 @@
+
+
+SPCFile.sort
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.sort

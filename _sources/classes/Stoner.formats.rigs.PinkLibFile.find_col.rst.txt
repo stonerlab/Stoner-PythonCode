@@ -1,0 +1,8 @@
+
+
+PinkLibFile.find_col
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.find_col

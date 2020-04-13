@@ -1,0 +1,89 @@
+Stoner.formats.facilities.BNLFile
+=================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. autoclass:: BNLFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.facilities.BNLFile.__init__
+      ~Stoner.formats.facilities.BNLFile.add_column
+      ~Stoner.formats.facilities.BNLFile.append
+      ~Stoner.formats.facilities.BNLFile.clear
+      ~Stoner.formats.facilities.BNLFile.closest
+      ~Stoner.formats.facilities.BNLFile.column
+      ~Stoner.formats.facilities.BNLFile.columns
+      ~Stoner.formats.facilities.BNLFile.count
+      ~Stoner.formats.facilities.BNLFile.del_column
+      ~Stoner.formats.facilities.BNLFile.del_nan
+      ~Stoner.formats.facilities.BNLFile.del_rows
+      ~Stoner.formats.facilities.BNLFile.dir
+      ~Stoner.formats.facilities.BNLFile.extend
+      ~Stoner.formats.facilities.BNLFile.filter
+      ~Stoner.formats.facilities.BNLFile.find_col
+      ~Stoner.formats.facilities.BNLFile.get
+      ~Stoner.formats.facilities.BNLFile.get_filename
+      ~Stoner.formats.facilities.BNLFile.index
+      ~Stoner.formats.facilities.BNLFile.insert
+      ~Stoner.formats.facilities.BNLFile.insert_rows
+      ~Stoner.formats.facilities.BNLFile.items
+      ~Stoner.formats.facilities.BNLFile.keys
+      ~Stoner.formats.facilities.BNLFile.load
+      ~Stoner.formats.facilities.BNLFile.pop
+      ~Stoner.formats.facilities.BNLFile.popitem
+      ~Stoner.formats.facilities.BNLFile.remove
+      ~Stoner.formats.facilities.BNLFile.rename
+      ~Stoner.formats.facilities.BNLFile.reorder_columns
+      ~Stoner.formats.facilities.BNLFile.reverse
+      ~Stoner.formats.facilities.BNLFile.rolling_window
+      ~Stoner.formats.facilities.BNLFile.rows
+      ~Stoner.formats.facilities.BNLFile.save
+      ~Stoner.formats.facilities.BNLFile.search
+      ~Stoner.formats.facilities.BNLFile.section
+      ~Stoner.formats.facilities.BNLFile.select
+      ~Stoner.formats.facilities.BNLFile.setdefault
+      ~Stoner.formats.facilities.BNLFile.sort
+      ~Stoner.formats.facilities.BNLFile.split
+      ~Stoner.formats.facilities.BNLFile.swap_column
+      ~Stoner.formats.facilities.BNLFile.to_pandas
+      ~Stoner.formats.facilities.BNLFile.unique
+      ~Stoner.formats.facilities.BNLFile.update
+      ~Stoner.formats.facilities.BNLFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.facilities.BNLFile.T
+      ~Stoner.formats.facilities.BNLFile.basename
+      ~Stoner.formats.facilities.BNLFile.clone
+      ~Stoner.formats.facilities.BNLFile.column_headers
+      ~Stoner.formats.facilities.BNLFile.data
+      ~Stoner.formats.facilities.BNLFile.dict_records
+      ~Stoner.formats.facilities.BNLFile.dims
+      ~Stoner.formats.facilities.BNLFile.dtype
+      ~Stoner.formats.facilities.BNLFile.filename
+      ~Stoner.formats.facilities.BNLFile.header
+      ~Stoner.formats.facilities.BNLFile.mask
+      ~Stoner.formats.facilities.BNLFile.metadata
+      ~Stoner.formats.facilities.BNLFile.mime_type
+      ~Stoner.formats.facilities.BNLFile.patterns
+      ~Stoner.formats.facilities.BNLFile.priority
+      ~Stoner.formats.facilities.BNLFile.records
+      ~Stoner.formats.facilities.BNLFile.setas
+      ~Stoner.formats.facilities.BNLFile.shape
+      ~Stoner.formats.facilities.BNLFile.subclasses
+   
+   

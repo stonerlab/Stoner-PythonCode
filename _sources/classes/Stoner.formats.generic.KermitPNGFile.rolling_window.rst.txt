@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.rolling_window
+===================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.rolling_window

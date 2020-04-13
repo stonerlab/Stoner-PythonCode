@@ -1,0 +1,8 @@
+
+
+MokeFile.setdefault
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.setdefault

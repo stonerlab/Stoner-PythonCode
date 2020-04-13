@@ -1,14 +1,16 @@
 """Test Weak-localisation fitting."""
+# pylint: disable=invalid-name
+from copy import copy
+
+from numpy import linspace, ones_like
+from numpy.random import normal
+
 from Stoner import Data
 from Stoner.analysis.fitting.models.magnetism import (
     KittelEquation,
     kittelEquation,
 )
 from Stoner.plot.formats import TexEngFormatter
-
-from numpy import linspace, ones_like
-from numpy.random import normal
-from copy import copy
 
 B = linspace(1e3, 5e4, 51)
 params = [2.2, 1e5, 2e2]

@@ -1,0 +1,8 @@
+
+
+SNSFile.insert
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.insert

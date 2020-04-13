@@ -1,8 +1,0 @@
-
-
-SNSFile.to_pandas
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.to_pandas

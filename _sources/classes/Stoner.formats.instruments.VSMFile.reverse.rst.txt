@@ -1,0 +1,8 @@
+
+
+VSMFile.reverse
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.reverse

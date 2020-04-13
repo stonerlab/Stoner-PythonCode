@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.del_nan
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.del_nan

@@ -1,8 +1,0 @@
-
-
-XRDFile.closest
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.closest

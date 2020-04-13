@@ -1,0 +1,8 @@
+
+
+XRDFile.append
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.append

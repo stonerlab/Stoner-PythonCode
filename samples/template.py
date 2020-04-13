@@ -1,4 +1,5 @@
 """Simple ploting with a template."""
+# pylint: disable=invalid-name, no-member
 from Stoner import Data
 from Stoner.plot.formats import DefaultPlotStyle
 from cycler import cycler

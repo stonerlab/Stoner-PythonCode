@@ -1,0 +1,8 @@
+
+
+SPCFile.rows
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.rows

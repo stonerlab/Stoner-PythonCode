@@ -1,0 +1,8 @@
+
+
+DataFile.remove
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.remove

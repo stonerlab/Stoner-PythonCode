@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.index
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.index

@@ -1,0 +1,8 @@
+
+
+VSMFile.rename
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.rename

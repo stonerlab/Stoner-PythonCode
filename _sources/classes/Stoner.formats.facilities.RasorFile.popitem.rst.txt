@@ -1,0 +1,8 @@
+
+
+RasorFile.popitem
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.popitem

@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.values
+===================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.values

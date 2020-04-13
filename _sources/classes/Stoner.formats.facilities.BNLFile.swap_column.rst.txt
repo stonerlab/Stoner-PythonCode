@@ -1,0 +1,8 @@
+
+
+BNLFile.swap_column
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.swap_column

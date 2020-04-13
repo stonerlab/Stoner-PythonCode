@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.closest
+============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.closest

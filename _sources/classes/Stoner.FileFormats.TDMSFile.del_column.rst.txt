@@ -1,8 +1,0 @@
-
-
-TDMSFile.del_column
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.del_column

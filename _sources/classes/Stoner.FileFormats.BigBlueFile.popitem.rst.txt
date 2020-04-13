@@ -1,8 +1,0 @@
-
-
-BigBlueFile.popitem
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.popitem

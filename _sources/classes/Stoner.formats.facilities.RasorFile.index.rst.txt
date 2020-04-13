@@ -1,0 +1,8 @@
+
+
+RasorFile.index
+=========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.index

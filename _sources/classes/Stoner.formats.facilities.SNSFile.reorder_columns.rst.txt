@@ -1,0 +1,8 @@
+
+
+SNSFile.reorder_columns
+=================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.reorder_columns

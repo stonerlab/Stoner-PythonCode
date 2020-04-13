@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.get
+========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.get

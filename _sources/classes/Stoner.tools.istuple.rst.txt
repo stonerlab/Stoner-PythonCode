@@ -1,6 +1,6 @@
-istuple
+isTuple
 =======
 
 .. currentmodule:: Stoner.tools
 
-.. autofunction:: istuple
+.. autofunction:: isTuple

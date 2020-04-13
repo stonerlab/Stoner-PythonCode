@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="KerrStack" href="Stoner.Image.kerr.KerrStack.html" />
-    <link rel="prev" title="convert" href="Stoner.Image.util.convert.html" />
+    <link rel="prev" title="changes_size" href="Stoner.Image.util.changes_size.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Image.util.convert.html" title="Previous document">convert</a>
+          <a href="Stoner.Image.util.changes_size.html" title="Previous document">changes_size</a>
         </li>
         <li>
           <a href="Stoner.Image.kerr.KerrStack.html" title="Next document">KerrStack</a>
@@ -88,7 +88,7 @@
 <td><p>Return the coordinates of the centre of the image.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.clone" title="Stoner.Image.kerr.KerrArray.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></p></td>
-<td><p>return a copy of the instance</p></td>
+<td><p>Return a copy of the instance.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.ctypes" title="Stoner.Image.kerr.KerrArray.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></p></td>
 <td><p>An object to simplify the interaction of the array with the ctypes module.</p></td>
@@ -97,7 +97,7 @@
 <td><p>Returns the underlying data, as a view of the masked array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.draw" title="Stoner.Image.kerr.KerrArray.draw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw</span></code></a></p></td>
-<td><p>DrawProxy is an opbject for accessing the skimage draw sub module.</p></td>
+<td><p>Access the DrawProxy opbject for accessing the skimage draw sub module.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.dtype" title="Stoner.Image.kerr.KerrArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
 <td><p>Data-type of the array’s elements.</p></td>
@@ -127,7 +127,7 @@
 <td><p>Current mask.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.max_box" title="Stoner.Image.kerr.KerrArray.max_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_box</span></code></a></p></td>
-<td><p>return the coordinate extent (xmin,xmax,ymin,ymax)</p></td>
+<td><p>Return the coordinate extent (xmin,xmax,ymin,ymax).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.metadata" title="Stoner.Image.kerr.KerrArray.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></td>
 <td><p>Read the metadata dictionary.</p></td>
@@ -193,61 +193,49 @@
 <td><p>Return the image converted to floating point type.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.asint" title="Stoner.Image.kerr.KerrArray.asint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asint</span></code></a>([dtype])</p></td>
-<td><p>convert the image to unsigned integer format.</p></td>
+<td><p>Convert the image to unsigned integer format.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.astype" title="Stoner.Image.kerr.KerrArray.astype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></a>(dtype[, order, casting, subok, copy])</p></td>
 <td><p>Copy of the array, cast to a specified type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.box" title="Stoner.Image.kerr.KerrArray.box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">box</span></code></a>(*args, **kargs)</p></td>
-<td><p>Alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageArray.crop()</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.byteswap" title="Stoner.Image.kerr.KerrArray.byteswap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byteswap</span></code></a>([inplace])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.byteswap" title="Stoner.Image.kerr.KerrArray.byteswap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byteswap</span></code></a>([inplace])</p></td>
 <td><p>Swap the bytes of the array elements</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.choose" title="Stoner.Image.kerr.KerrArray.choose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choose</span></code></a>(choices[, out, mode])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.choose" title="Stoner.Image.kerr.KerrArray.choose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choose</span></code></a>(choices[, out, mode])</p></td>
 <td><p>Use an index array to construct a new array from a set of choices.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.clear" title="Stoner.Image.kerr.KerrArray.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.clear" title="Stoner.Image.kerr.KerrArray.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.clip" title="Stoner.Image.kerr.KerrArray.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>([min, max, out])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.clip" title="Stoner.Image.kerr.KerrArray.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>([min, max, out])</p></td>
 <td><p>Return an array whose values are limited to <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.clip_intensity" title="Stoner.Image.kerr.KerrArray.clip_intensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_intensity</span></code></a>([clip_negative, limits])</p></td>
-<td><p>Clip intensity outside the range -1,1 or 0,1</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.clip_intensity" title="Stoner.Image.kerr.KerrArray.clip_intensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_intensity</span></code></a>([clip_negative, limits])</p></td>
+<td><p>Clip intensity outside the range -1,1 or 0,1.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.compress" title="Stoner.Image.kerr.KerrArray.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>(condition[, axis, out])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.compress" title="Stoner.Image.kerr.KerrArray.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>(condition[, axis, out])</p></td>
 <td><p>Return <cite>a</cite> where condition is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.compressed" title="Stoner.Image.kerr.KerrArray.compressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.compressed" title="Stoner.Image.kerr.KerrArray.compressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compressed</span></code></a>()</p></td>
 <td><p>Return all the non-masked data as a 1-D array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.conj" title="Stoner.Image.kerr.KerrArray.conj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conj</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.conj" title="Stoner.Image.kerr.KerrArray.conj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conj</span></code></a>()</p></td>
 <td><p>Complex-conjugate all elements.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.conjugate" title="Stoner.Image.kerr.KerrArray.conjugate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conjugate</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.conjugate" title="Stoner.Image.kerr.KerrArray.conjugate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conjugate</span></code></a>()</p></td>
 <td><p>Return the complex conjugate, element-wise.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.convert_float" title="Stoner.Image.kerr.KerrArray.convert_float"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_float</span></code></a>([clip_neg])</p></td>
-<td><p>Deproicated compatability.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.convert_int" title="Stoner.Image.kerr.KerrArray.convert_int"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_int</span></code></a>()</p></td>
-<td><p>Depricated compatability meothd.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.copy" title="Stoner.Image.kerr.KerrArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([order])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.copy" title="Stoner.Image.kerr.KerrArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([order])</p></td>
 <td><p>Return a copy of the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.count" title="Stoner.Image.kerr.KerrArray.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis, keepdims])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.count" title="Stoner.Image.kerr.KerrArray.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis, keepdims])</p></td>
 <td><p>Count the non-masked elements of the array along the given axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.crop" title="Stoner.Image.kerr.KerrArray.crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop</span></code></a>(*args, **kargs)</p></td>
-<td><p>Crop the image.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.crop_image" title="Stoner.Image.kerr.KerrArray.crop_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_image</span></code></a>(*args, **kargs)</p></td>
-<td><p>Back compatability alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageArray.crop()</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.crop" title="Stoner.Image.kerr.KerrArray.crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop</span></code></a>(*args, **kargs)</p></td>
+<td><p>Crop the image according to a box.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.crop_text" title="Stoner.Image.kerr.KerrArray.crop_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_text</span></code></a>([copy])</p></td>
-<td><p>Crop the bottom text area from a standard Kermit image</p></td>
+<td><p>Crop the bottom text area from a standard Kermit image.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.cumprod" title="Stoner.Image.kerr.KerrArray.cumprod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumprod</span></code></a>([axis, dtype, out])</p></td>
 <td><p>Return the cumulative product of the array elements over the given axis.</p></td>
@@ -256,10 +244,10 @@
 <td><p>Return the cumulative sum of the array elements over the given axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.defect_mask" title="Stoner.Image.kerr.KerrArray.defect_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defect_mask</span></code></a>([thresh, corner_thresh, radius, …])</p></td>
-<td><p>Tries to create a boolean array which is a mask for typical defects found in Image images.</p></td>
+<td><p>Try to create a boolean array which is a mask for typical defects found in Image images.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.defect_mask_subtract_image" title="Stoner.Image.kerr.KerrArray.defect_mask_subtract_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defect_mask_subtract_image</span></code></a>([threshmin, …])</p></td>
-<td><p>Create a mask array for a typical subtract Image image Uses a denoise algorithm followed by simple thresholding.</p></td>
+<td><p>Create a mask array for a typical subtract Image image.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.diagonal" title="Stoner.Image.kerr.KerrArray.diagonal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagonal</span></code></a>([offset, axis1, axis2])</p></td>
 <td><p>Return specified diagonals.</p></td>
@@ -286,7 +274,7 @@
 <td><p>Return a copy of the array collapsed into one dimension.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.float_and_croptext" title="Stoner.Image.kerr.KerrArray.float_and_croptext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float_and_croptext</span></code></a>()</p></td>
-<td><p>convert image to float and crop_text Just to group typical functions together</p></td>
+<td><p>Convert image to float and crop_text.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.get" title="Stoner.Image.kerr.KerrArray.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(k[,d])</p></td>
 <td><p></p></td>
@@ -316,7 +304,7 @@
 <td><p>Copy an element of an array to a standard Python scalar and return it.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.items" title="Stoner.Image.kerr.KerrArray.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
-<td><p>Make sure we implement an items that doesn’t just iterate over self!</p></td>
+<td><p>Make sure we implement an items that doesn’t just iterate over self.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.itemset" title="Stoner.Image.kerr.KerrArray.itemset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itemset</span></code></a>(*args)</p></td>
 <td><p>Insert scalar into an array (scalar is cast to array’s dtype, if possible)</p></td>
@@ -343,7 +331,7 @@
 <td><p>Return the indices of unmasked elements that are not zero.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.ocr_metadata" title="Stoner.Image.kerr.KerrArray.ocr_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ocr_metadata</span></code></a>([field_only])</p></td>
-<td><p>Use image recognition to try to pull the metadata numbers off the image Requirements: This function uses tesseract to recognise the image, therefore tesseract file1 file2 must be valid on your command line.</p></td>
+<td><p>Use image recognition to try to pull the metadata numbers off the image.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.partition" title="Stoner.Image.kerr.KerrArray.partition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partition</span></code></a>(kth[, axis, kind, order])</p></td>
 <td><p>Rearranges the elements in the array in such a way that the value of the element in kth position is in the position it would be in a sorted array.</p></td>
@@ -385,7 +373,7 @@
 <td><p>Return each element rounded to the given number of decimals.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.save" title="Stoner.Image.kerr.KerrArray.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</p></td>
-<td><p>Saves the image into the file ‘filename’.</p></td>
+<td><p>Save the image into the file ‘filename’.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.save_npy" title="Stoner.Image.kerr.KerrArray.save_npy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_npy</span></code></a>(filename)</p></td>
 <td><p>Save the ImageArray as a numpy array.</p></td>
@@ -471,8 +459,8 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.var" title="Stoner.Image.kerr.KerrArray.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a>([axis, dtype, out, ddof, keepdims])</p></td>
 <td><p>Compute the variance along the specified axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.view" title="Stoner.Image.kerr.KerrArray.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>([dtype, type])</p></td>
-<td><p>New view of array with the same data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrArray.view" title="Stoner.Image.kerr.KerrArray.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>([dtype, type, fill_value])</p></td>
+<td><p>Return a view of the MaskedArray data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -533,7 +521,7 @@
 <dl class="attribute">
 <dt id="Stoner.Image.kerr.KerrArray.clone">
 <code class="sig-name descname">clone</code><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.clone" title="Permalink to this definition">¶</a></dt>
-<dd><p>return a copy of the instance</p>
+<dd><p>Return a copy of the instance.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -565,7 +553,7 @@ flags and data-type of this array should be respected when passing this
 attribute to arbitrary C-code to avoid trouble that can include Python
 crashing. User Beware! The value of this attribute is exactly the same
 as <code class="docutils literal notranslate"><span class="pre">self._array_interface_['data'][0]</span></code>.</p>
-<p>Note that unlike <cite>data_as</cite>, a reference will not be kept to the array:
+<p>Note that unlike <code class="docutils literal notranslate"><span class="pre">data_as</span></code>, a reference will not be kept to the array:
 code like <code class="docutils literal notranslate"><span class="pre">ctypes.c_void_p((a</span> <span class="pre">+</span> <span class="pre">b).ctypes.data)</span></code> will result in a
 pointer to a deallocated array, and should be spelt
 <code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">+</span> <span class="pre">b).ctypes.data_as(ctypes.c_void_p)</span></code></p>
@@ -675,7 +663,7 @@ attribute.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.kerr.KerrArray.draw">
 <code class="sig-name descname">draw</code><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.draw" title="Permalink to this definition">¶</a></dt>
-<dd><p>DrawProxy is an opbject for accessing the skimage draw sub module.</p>
+<dd><p>Access the DrawProxy opbject for accessing the skimage draw sub module.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -851,7 +839,7 @@ Fortran-style contiguous arrays is true.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.kerr.KerrArray.max_box">
 <code class="sig-name descname">max_box</code><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.max_box" title="Permalink to this definition">¶</a></dt>
-<dd><p>return the coordinate extent (xmin,xmax,ymin,ymax)</p>
+<dd><p>Return the coordinate extent (xmin,xmax,ymin,ymax).</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1049,7 +1037,7 @@ position in the next row.  As such, the strides for the array <cite>x</cite> wil
 are masked: if the output would have been a scalar and that all the
 values are masked, then the output is <cite>masked</cite>.</p>
 <p>Refer to <cite>numpy.all</cite> for full documentation.</p>
-<p>ndarray.all : corresponding function for ndarrays
+<p>numpy.ndarray.all : corresponding function for ndarrays
 numpy.all : equivalent function</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 <span class="go">True</span>
@@ -1094,7 +1082,7 @@ the array type.</p>
 <dd><p>Returns True if any of the elements of <cite>a</cite> evaluate to True.</p>
 <p>Masked values are considered as False during computation.</p>
 <p>Refer to <cite>numpy.any</cite> for full documentation.</p>
-<p>ndarray.any : corresponding function for ndarrays
+<p>numpy.ndarray.any : corresponding function for ndarrays
 numpy.any : equivalent function</p>
 </dd></dl>
 
@@ -1215,7 +1203,7 @@ In other words, <code class="docutils literal notranslate"><span class="pre">a[i
 </dl>
 <p>MaskedArray.sort : Describes sorting algorithms used.
 lexsort : Indirect stable sort with multiple keys.
-ndarray.sort : Inplace sort.</p>
+numpy.ndarray.sort : Inplace sort.</p>
 <p>See <cite>sort</cite> for notes on the different sorting algorithms.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
@@ -1250,7 +1238,7 @@ If clip_negative then further clip values to range 0,1</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.asint">
 <code class="sig-name descname">asint</code><span class="sig-paren">(</span><em class="sig-param">dtype=&lt;class 'numpy.uint16'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.asint" title="Permalink to this definition">¶</a></dt>
-<dd><p>convert the image to unsigned integer format.</p>
+<dd><p>Convert the image to unsigned integer format.</p>
 <p>May raise warnings about loss of precision.</p>
 </dd></dl>
 
@@ -1324,17 +1312,13 @@ one should use <code class="docutils literal notranslate"><span class="pre">a.re
 </dd></dl>
 
 <dl class="method">
-<dt id="Stoner.Image.kerr.KerrArray.box">
-<code class="sig-name descname">box</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.box" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageArray.crop()</span></code></p>
-</dd></dl>
-
-<dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.byteswap">
 <code class="sig-name descname">byteswap</code><span class="sig-paren">(</span><em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.byteswap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Swap the bytes of the array elements</p>
 <p>Toggle between low-endian and big-endian data representation by
-returning a byteswapped array, optionally swapped in-place.</p>
+returning a byteswapped array, optionally swapped in-place.
+Arrays of byte-strings are not swapped. The real and imaginary
+parts of a complex number are swapped individually.</p>
 <dl class="simple">
 <dt>inplace<span class="classifier">bool, optional</span></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, swap bytes in-place, default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 </dd>
@@ -1353,12 +1337,25 @@ a view to self.</p>
 <span class="go">[&#39;0x100&#39;, &#39;0x1&#39;, &#39;0x3322&#39;]</span>
 </pre></div>
 </div>
-<p>Arrays of strings are not swapped</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;ceg&#39;</span><span class="p">,</span> <span class="s1">&#39;fac&#39;</span><span class="p">])</span>
+<p>Arrays of byte-strings are not swapped</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="sa">b</span><span class="s1">&#39;ceg&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;fac&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">byteswap</span><span class="p">()</span>
-<span class="gt">Traceback (most recent call last):</span>
-    <span class="o">...</span>
-<span class="gr">UnicodeDecodeError</span>: <span class="n">...</span>
+<span class="go">array([b&#39;ceg&#39;, b&#39;fac&#39;], dtype=&#39;|S3&#39;)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">A.newbyteorder().byteswap()</span></code> produces an array with the same values</dt><dd><p>but different representation in memory</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="go">array([1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,</span>
+<span class="go">       0, 0], dtype=uint8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">()</span><span class="o">.</span><span class="n">byteswap</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">array([1, 2, 3])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="go">array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0,</span>
+<span class="go">       0, 3], dtype=uint8)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1388,7 +1385,7 @@ One of max or min must be given.</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.clip_intensity">
 <code class="sig-name descname">clip_intensity</code><span class="sig-paren">(</span><em class="sig-param">clip_negative=False</em>, <em class="sig-param">limits=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.clip_intensity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clip intensity outside the range -1,1 or 0,1</p>
+<dd><p>Clip intensity outside the range -1,1 or 0,1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1489,18 +1486,6 @@ The output of <a class="reference internal" href="#Stoner.Image.kerr.KerrArray.c
 </dd></dl>
 
 <dl class="method">
-<dt id="Stoner.Image.kerr.KerrArray.convert_float">
-<code class="sig-name descname">convert_float</code><span class="sig-paren">(</span><em class="sig-param">clip_neg=True</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.convert_float" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deproicated compatability. <code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageArray.asfloat()</span></code> preferred</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Image.kerr.KerrArray.convert_int">
-<code class="sig-name descname">convert_int</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.convert_int" title="Permalink to this definition">¶</a></dt>
-<dd><p>Depricated compatability meothd. <code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageArray.asint()</span></code> preferred</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.copy">
 <code class="sig-name descname">copy</code><span class="sig-paren">(</span><em class="sig-param">order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of the array.</p>
@@ -1546,7 +1531,7 @@ numpy.copyto</p>
 <dd><p>Count the non-masked elements of the array along the given axis.</p>
 <dl>
 <dt>axis<span class="classifier">None or int or tuple of ints, optional</span></dt><dd><p>Axis or axes along which the count is performed.
-The default (<cite>axis</cite> = <cite>None</cite>) performs the count over all
+The default, None, performs the count over all
 the dimensions of the input array. <cite>axis</cite> may be negative, in
 which case it counts from the last to the first axis.</p>
 <div class="versionadded">
@@ -1594,13 +1579,7 @@ returned.</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.crop">
 <code class="sig-name descname">crop</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.crop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop the image.</p>
-<p>This is essentially like taking a view onto the array
-but uses image x,y coords (x,y –&gt; col,row)
-Returns a view according to the coords given. If box is None it will
-allow the user to select a rectangle. If a tuple is given with None
-included then max extent is used for that coord (analagous to slice).
-If copy then return a copy of self with the cropped image.</p>
+<dd><p>Crop the image according to a box.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>box</strong> (<em>tuple</em>) – (xmin,xmax,ymin,ymax)
@@ -1614,21 +1593,48 @@ a box (bit experimental)</p>
 <dd class="field-odd"><p><em>(ImageArray)</em> –     view or copy of array asked for</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>This is essentially like taking a view onto the array
+but uses image x,y coords (x,y –&gt; col,row)
+Returns a view according to the coords given. If box is None it will
+allow the user to select a rectangle. If a tuple is given with None
+included then max extent is used for that coord (analagous to slice).
+If copy then return a copy of self with the cropped image.</p>
+<dl>
+<dt>The box can be specified in a number of ways:</dt><dd><ul>
+<li><p>(int):
+A border around all sides of the given number pixels is ignored.</p></li>
+<li><p>(float 0.0-1.0):
+A border of the given fraction of the images height and width is ignored</p></li>
+<li><p>(string):
+A correspoinding item of metadata is located and used  to specify the box</p></li>
+<li><p>(tuple of 4 ints or floats):
+For each item in the tuple it is interpreted as foloows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>(int):
+A pixel co-ordinate in either the x or y direction</p></li>
+<li><p>(float 0.0-1.0):
+A fraction of the width or height in from the left, right, top, bottom sides</p></li>
+<li><p>(float &gt; 1.0):
+Is rounded to the nearest integer and used a pixel cordinate.</p></li>
+<li><p>None:
+The extent of the image is used.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+</dl>
 <p class="rubric">Example</p>
 <p>a=ImageFile(np.arange(12).reshape(3,4))</p>
 <p>a.crop(1,3,None,None)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="Stoner.Image.kerr.KerrArray.crop_image">
-<code class="sig-name descname">crop_image</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.crop_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Back compatability alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageArray.crop()</span></code></p>
-</dd></dl>
-
-<dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.crop_text">
 <code class="sig-name descname">crop_text</code><span class="sig-paren">(</span><em class="sig-param">copy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/kerr.html#KerrArray.crop_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.crop_text" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop the bottom text area from a standard Kermit image</p>
+<dd><p>Crop the bottom text area from a standard Kermit image.</p>
 <dl class="simple">
 <dt>KeywordArguments:</dt><dd><dl class="simple">
 <dt>copy(bool):</dt><dd><p>Whether to return a copy of the data or the original data</p>
@@ -1654,7 +1660,7 @@ the same locations.</p>
 <p>The mask is lost if <cite>out</cite> is not a valid MaskedArray !</p>
 <p>Arithmetic is modular when using integer types, and no error is
 raised on overflow.</p>
-<p>ndarray.cumprod : corresponding function for ndarrays
+<p>numpy.ndarray.cumprod : corresponding function for ndarrays
 numpy.cumprod : equivalent function</p>
 </dd></dl>
 
@@ -1669,7 +1675,7 @@ the same locations.</p>
 <p>The mask is lost if <cite>out</cite> is not a valid <code class="xref py py-class docutils literal notranslate"><span class="pre">MaskedArray</span></code> !</p>
 <p>Arithmetic is modular when using integer types, and no error is
 raised on overflow.</p>
-<p>ndarray.cumsum : corresponding function for ndarrays
+<p>numpy.ndarray.cumsum : corresponding function for ndarrays
 numpy.cumsum : equivalent function</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">marr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">marr</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
@@ -1684,26 +1690,32 @@ numpy.cumsum : equivalent function</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.defect_mask">
 <code class="sig-name descname">defect_mask</code><span class="sig-paren">(</span><em class="sig-param">thresh=0.6</em>, <em class="sig-param">corner_thresh=0.05</em>, <em class="sig-param">radius=1</em>, <em class="sig-param">return_extra=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/kerr.html#KerrArray.defect_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.defect_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tries to create a boolean array which is a mask for typical defects found in Image images.</p>
+<dd><p>Try to create a boolean array which is a mask for typical defects found in Image images.</p>
 <p>Best for unprocessed raw images. (for subtract images
 see defect_mask_subtract_image)
 Looks for big bright things by thresholding and small and dark defects using
 skimage’s corner_fast algorithm</p>
+<p>Parameters:
+thresh (float):</p>
+<blockquote>
+<div><p>brighter stuff than this gets removed (after image levelling)</p>
+</div></blockquote>
 <dl class="simple">
-<dt>thresh float</dt><dd><p>brighter stuff than this gets removed (after image levelling)</p>
+<dt>corner_thresh (float):</dt><dd><p>see corner_fast (skimage):</p>
 </dd>
-<dt>corner_thresh float</dt><dd><p>see corner_fast skimage</p>
+<dt>radius (float):</dt><dd><p>radius of pixels around corners that are added to mask</p>
 </dd>
-<dt>radius:</dt><dd><p>radius of pixels around corners that are added to mask</p>
-</dd>
-<dt>return_extra dict</dt><dd><p>this returns a dictionary with some of the intermediate steps of the
+<dt>return_extra (bool):</dt><dd><p>this returns a dictionary with some of the intermediate steps of the
 calculation</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>totmask ndarray of bool</dt><dd><p>mask</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>totmask (ndarray of bool)</em> –     mask</p>
 </dd>
-<dt>info (optional) dict</dt><dd><p>dictionary of intermediate calculation steps</p>
+</dl>
+<dl class="simple">
+<dt>info (<em>optional</em> dict):</dt><dd><p>dictionary of intermediate calculation steps</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1711,12 +1723,16 @@ calculation</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.defect_mask_subtract_image">
 <code class="sig-name descname">defect_mask_subtract_image</code><span class="sig-paren">(</span><em class="sig-param">threshmin=0.25</em>, <em class="sig-param">threshmax=0.9</em>, <em class="sig-param">denoise_weight=0.1</em>, <em class="sig-param">return_extra=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/kerr.html#KerrArray.defect_mask_subtract_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.defect_mask_subtract_image" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a mask array for a typical subtract Image image
-Uses a denoise algorithm followed by simple thresholding.</p>
-<dl class="simple">
-<dt>totmask: ndarray of bool</dt><dd><p>the created mask</p>
-</dd>
-<dt>info (optional) dict:</dt><dd><p>the intermediate denoised image</p>
+<dd><p>Create a mask array for a typical subtract Image image.</p>
+<p>Uses a denoise algorithm followed by simple thresholding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p><em>totmask (ndarray of bool)</em> –     the created mask
+info (<em>optional</em> dict):</p>
+<blockquote>
+<div><p>the intermediate denoised image</p>
+</div></blockquote>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1832,8 +1848,10 @@ pickle.loads or numpy.loads will convert the string back to an array.</p>
 <strong>However</strong>, if there are no masked values to fill, self will be
 returned instead as an ndarray.</p>
 <dl class="simple">
-<dt>fill_value<span class="classifier">scalar, optional</span></dt><dd><p>The value to use for invalid entries (None by default).
-If None, the <cite>fill_value</cite> attribute of the array is used instead.</p>
+<dt>fill_value<span class="classifier">array_like, optional</span></dt><dd><p>The value to use for invalid entries. Can be scalar or non-scalar.
+If non-scalar, the resulting ndarray must be broadcastable over
+input array. Default is None, in which case, the <cite>fill_value</cite>
+attribute of the array is used instead.</p>
 </dd>
 </dl>
 <dl class="simple">
@@ -1847,6 +1865,8 @@ be replaced.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">999</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">filled</span><span class="p">()</span>
 <span class="go">array([   1,    2, -999,    4, -999])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="go">array([   1,    2, 1000,    4, 1000])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">filled</span><span class="p">())</span>
 <span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
 </pre></div>
@@ -1894,8 +1914,8 @@ flat : A 1-D flat iterator over the array.</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.float_and_croptext">
 <code class="sig-name descname">float_and_croptext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/kerr.html#KerrArray.float_and_croptext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.float_and_croptext" title="Permalink to this definition">¶</a></dt>
-<dd><p>convert image to float and crop_text
-Just to group typical functions together</p>
+<dd><p>Convert image to float and crop_text.</p>
+<p>Just to group typical functions together</p>
 </dd></dl>
 
 <dl class="method">
@@ -2101,7 +2121,7 @@ array using Python’s optimized math.</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.items">
 <code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.items" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make sure we implement an items that doesn’t just iterate over self!</p>
+<dd><p>Make sure we implement an items that doesn’t just iterate over self.</p>
 </dd></dl>
 
 <dl class="method">
@@ -2162,6 +2182,10 @@ be of the same shape and buffer length as the expected output.</p>
 <dt>fill_value<span class="classifier">{var}, optional</span></dt><dd><p>Value used to fill in the masked values.
 If None, use the output of maximum_fill_value().</p>
 </dd>
+<dt>keepdims<span class="classifier">bool, optional</span></dt><dd><p>If this is set to True, the axes which are reduced are left
+in the result as dimensions with size one. With this option,
+the result will broadcast correctly against the array.</p>
+</dd>
 </dl>
 <dl class="simple">
 <dt>amax<span class="classifier">array_like</span></dt><dd><p>New array holding the result.
@@ -2181,7 +2205,7 @@ If <code class="docutils literal notranslate"><span class="pre">out</span></code
 <p>Masked entries are ignored, and result elements which are not
 finite will be masked.</p>
 <p>Refer to <cite>numpy.mean</cite> for full documentation.</p>
-<p>ndarray.mean : corresponding function for ndarrays
+<p>numpy.ndarray.mean : corresponding function for ndarrays
 numpy.mean : Equivalent function
 numpy.ma.average: Weighted average.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
@@ -2208,6 +2232,10 @@ the same shape and buffer length as the expected output.</p>
 </dd>
 <dt>fill_value<span class="classifier">{var}, optional</span></dt><dd><p>Value used to fill in the masked values.
 If None, use the output of <cite>minimum_fill_value</cite>.</p>
+</dd>
+<dt>keepdims<span class="classifier">bool, optional</span></dt><dd><p>If this is set to True, the axes which are reduced are left
+in the result as dimensions with size one. With this option,
+the result will broadcast correctly against the array.</p>
 </dd>
 </dl>
 <dl class="simple">
@@ -2342,7 +2370,7 @@ element.</p>
 <dt>flatnonzero :</dt><dd><p>Return indices that are non-zero in the flattened version of the input
 array.</p>
 </dd>
-<dt>ndarray.nonzero :</dt><dd><p>Equivalent ndarray method.</p>
+<dt>numpy.ndarray.nonzero :</dt><dd><p>Equivalent ndarray method.</p>
 </dd>
 <dt>count_nonzero :</dt><dd><p>Counts the number of non-zero elements in the input array.</p>
 </dd>
@@ -2407,18 +2435,19 @@ yields the indices of the <cite>a</cite> where the condition is true.</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.ocr_metadata">
 <code class="sig-name descname">ocr_metadata</code><span class="sig-paren">(</span><em class="sig-param">field_only=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/kerr.html#KerrArray.ocr_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.ocr_metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use image recognition to try to pull the metadata numbers off the image
-Requirements: This function uses tesseract to recognise the image, therefore
+<dd><p>Use image recognition to try to pull the metadata numbers off the image.</p>
+<dl class="simple">
+<dt>Requirements:</dt><dd><p>This function uses tesseract to recognise the image, therefore
 tesseract file1 file2 must be valid on your command line.
 Install tesseract from
-<a class="reference external" href="https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar">https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar</a>
-KeywordArguments:</p>
-<blockquote>
-<div><dl class="simple">
+<a class="reference external" href="https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar">https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar</a></p>
+</dd>
+<dt>KeywordArguments:</dt><dd><dl class="simple">
 <dt>field_only(bool):</dt><dd><p>only try to return a field value</p>
 </dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><p><em>metadata</em> –</p>
@@ -2499,7 +2528,7 @@ sort : Full sort.</p>
 <p>Refer to <cite>numpy.prod</cite> for full documentation.</p>
 <p>Arithmetic is modular when using integer types, and no error is raised
 on overflow.</p>
-<p>ndarray.prod : corresponding function for ndarrays
+<p>numpy.ndarray.prod : corresponding function for ndarrays
 numpy.prod : equivalent function</p>
 </dd></dl>
 
@@ -2511,7 +2540,7 @@ numpy.prod : equivalent function</p>
 <p>Refer to <cite>numpy.prod</cite> for full documentation.</p>
 <p>Arithmetic is modular when using integer types, and no error is raised
 on overflow.</p>
-<p>ndarray.prod : corresponding function for ndarrays
+<p>numpy.ndarray.prod : corresponding function for ndarrays
 numpy.prod : equivalent function</p>
 </dd></dl>
 
@@ -2529,6 +2558,10 @@ have the same shape and buffer length as the expected output
 but the type will be cast if necessary.</p>
 </dd>
 <dt>fill_value<span class="classifier">{var}, optional</span></dt><dd><p>Value used to fill in the masked values.</p>
+</dd>
+<dt>keepdims<span class="classifier">bool, optional</span></dt><dd><p>If this is set to True, the axes which are reduced are left
+in the result as dimensions with size one. With this option,
+the result will broadcast correctly against the array.</p>
 </dd>
 </dl>
 <dl class="simple">
@@ -2723,19 +2756,14 @@ future releases of NumPy.</p>
 <code class="sig-name descname">round</code><span class="sig-paren">(</span><em class="sig-param">decimals=0</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.round" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return each element rounded to the given number of decimals.</p>
 <p>Refer to <cite>numpy.around</cite> for full documentation.</p>
-<p>ndarray.around : corresponding function for ndarrays
+<p>numpy.ndarray.around : corresponding function for ndarrays
 numpy.around : equivalent function</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.save">
 <code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the image into the file ‘filename’.</p>
-<p>Metadata will be preserved in .png and .tif format.</p>
-<p>fmt can be ‘png’, ‘npy’, ‘tif’, ‘tiff’  or a list of more than one of those.
-tif is recommended since metadata is lost in .npy format but data is
-converted to integer format for png so that definition cannot be
-saved.</p>
+<dd><p>Save the image into the file ‘filename’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>string, bool or None</em>) – Filename to save data as, if this is None then the current filename for the object is used
@@ -2750,6 +2778,12 @@ int type (will be unsigned).</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Metadata will be preserved in .png and .tif format.</p>
+<p>fmt can be ‘png’, ‘npy’, ‘tif’, ‘tiff’  or a list of more than one of those.
+tif is recommended since metadata is lost in .npy format but data is
+converted to integer format for png so that definition cannot be
+saved.</p>
 <p>Since Stoner.Image is meant to be a general 2d array often with negative
 and floating point data this poses a problem for saving images. Images
 are naturally saved as 8 or more bit unsigned integer values representing colour.
@@ -2768,8 +2802,8 @@ save metadata.</p>
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.save_png">
 <code class="sig-name descname">save_png</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.save_png" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the ImageArray with metadata in a png file.
-This can only save as 8bit unsigned integer so there is likely
+<dd><p>Save the ImageArray with metadata in a png file.</p>
+<p>This can only save as 8bit unsigned integer so there is likely
 to be a loss of precision on floating point data</p>
 </dd></dl>
 
@@ -2980,7 +3014,7 @@ If <code class="docutils literal notranslate"><span class="pre">fill_value</span
 <dt>sorted_array<span class="classifier">ndarray</span></dt><dd><p>Array of the same type and shape as <cite>a</cite>.</p>
 </dd>
 </dl>
-<p>ndarray.sort : Method to sort an array in-place.
+<p>numpy.ndarray.sort : Method to sort an array in-place.
 argsort : Indirect sort.
 lexsort : Indirect stable sort on multiple keys.
 searchsorted : Find elements in a sorted array.</p>
@@ -3028,7 +3062,7 @@ searchsorted : Find elements in a sorted array.</p>
 <dd><p>Returns the standard deviation of the array elements along given axis.</p>
 <p>Masked entries are ignored.</p>
 <p>Refer to <cite>numpy.std</cite> for full documentation.</p>
-<p>ndarray.std : corresponding function for ndarrays
+<p>numpy.ndarray.std : corresponding function for ndarrays
 numpy.std : Equivalent function</p>
 </dd></dl>
 
@@ -3038,7 +3072,7 @@ numpy.std : Equivalent function</p>
 <dd><p>Return the sum of the array elements over the given axis.</p>
 <p>Masked elements are set to 0 internally.</p>
 <p>Refer to <cite>numpy.sum</cite> for full documentation.</p>
-<p>ndarray.sum : corresponding function for ndarrays
+<p>numpy.ndarray.sum : corresponding function for ndarrays
 numpy.sum : equivalent function</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]],</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
@@ -3100,7 +3134,7 @@ case <cite>MaskedArray.fill_value</cite> is used.</p>
 </ul>
 </dd>
 </dl>
-<p>ndarray.tobytes
+<p>numpy.ndarray.tobytes
 tolist, tofile</p>
 <p>As for <cite>ndarray.tobytes</cite>, information about the shape, dtype, etc.,
 but also about <cite>fill_value</cite>, will be lost.</p>
@@ -3328,7 +3362,7 @@ compute the variance of the flattened array.</p>
 instead of a single axis or all the axes as before.</p>
 </dd>
 <dt>dtype<span class="classifier">data-type, optional</span></dt><dd><p>Type to use in computing the variance.  For arrays of integer type
-the default is <cite>float32</cite>; for arrays of float types it is the same as
+the default is <cite>float64</cite>; for arrays of float types it is the same as
 the array type.</p>
 </dd>
 <dt>out<span class="classifier">ndarray, optional</span></dt><dd><p>Alternate output array in which to place the result.  It must have
@@ -3355,7 +3389,7 @@ otherwise, a reference to the output array is returned.</p>
 </dd>
 </dl>
 <p>std, mean, nanmean, nanstd, nanvar
-numpy.doc.ufuncs : Section “Output arguments”</p>
+ufuncs-output-type</p>
 <p>The variance is the average of the squared deviations from the mean,
 i.e.,  <code class="docutils literal notranslate"><span class="pre">var</span> <span class="pre">=</span> <span class="pre">mean(abs(x</span> <span class="pre">-</span> <span class="pre">x.mean())**2)</span></code>.</p>
 <p>The mean is normally calculated as <code class="docutils literal notranslate"><span class="pre">x.sum()</span> <span class="pre">/</span> <span class="pre">N</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">len(x)</span></code>.
@@ -3399,19 +3433,25 @@ keyword can alleviate this issue.</p>
 
 <dl class="method">
 <dt id="Stoner.Image.kerr.KerrArray.view">
-<code class="sig-name descname">view</code><span class="sig-paren">(</span><em class="sig-param">dtype=None</em>, <em class="sig-param">type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.view" title="Permalink to this definition">¶</a></dt>
-<dd><p>New view of array with the same data.</p>
+<code class="sig-name descname">view</code><span class="sig-paren">(</span><em class="sig-param">dtype=None</em>, <em class="sig-param">type=None</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrArray.view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a view of the MaskedArray data.</p>
 <dl class="simple">
-<dt>dtype<span class="classifier">data-type or ndarray sub-class, optional</span></dt><dd><p>Data-type descriptor of the returned view, e.g., float32 or int16. The
-default, None, results in the view having the same data-type as <cite>a</cite>.
-This argument can also be specified as an ndarray sub-class, which
-then specifies the type of the returned object (this is equivalent to
-setting the <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter).</p>
+<dt>dtype<span class="classifier">data-type or ndarray sub-class, optional</span></dt><dd><p>Data-type descriptor of the returned view, e.g., float32 or int16.
+The default, None, results in the view having the same data-type
+as <cite>a</cite>. As with <code class="docutils literal notranslate"><span class="pre">ndarray.view</span></code>, dtype can also be specified as
+an ndarray sub-class, which then specifies the type of the
+returned object (this is equivalent to setting the <code class="docutils literal notranslate"><span class="pre">type</span></code>
+parameter).</p>
 </dd>
-<dt>type<span class="classifier">Python type, optional</span></dt><dd><p>Type of the returned view, e.g., ndarray or matrix.  Again, the
+<dt>type<span class="classifier">Python type, optional</span></dt><dd><p>Type of the returned view, either ndarray or a subclass.  The
 default None results in type preservation.</p>
 </dd>
+<dt>fill_value<span class="classifier">scalar, optional</span></dt><dd><p>The value to use for invalid entries (None by default).
+If None, then this argument is inferred from the passed <cite>dtype</cite>, or
+in its absence the original array, as discussed in the notes below.</p>
+</dd>
 </dl>
+<p>numpy.ndarray.view : Equivalent method on ndarray object.</p>
 <p><code class="docutils literal notranslate"><span class="pre">a.view()</span></code> is used two different ways:</p>
 <p><code class="docutils literal notranslate"><span class="pre">a.view(some_dtype)</span></code> or <code class="docutils literal notranslate"><span class="pre">a.view(dtype=some_dtype)</span></code> constructs a view
 of the array’s memory with a different data-type.  This can cause a
@@ -3420,6 +3460,12 @@ reinterpretation of the bytes of memory.</p>
 returns an instance of <cite>ndarray_subclass</cite> that looks at the same array
 (same shape, dtype, etc.)  This does not cause a reinterpretation of the
 memory.</p>
+<p>If <cite>fill_value</cite> is not specified, but <cite>dtype</cite> is specified (and is not
+an ndarray sub-class), the <cite>fill_value</cite> of the MaskedArray will be
+reset. If neither <cite>fill_value</cite> nor <cite>dtype</cite> are specified (or if
+<cite>dtype</cite> is an ndarray sub-class), then the fill value is preserved.
+Finally, if <cite>fill_value</cite> is specified, but <cite>dtype</cite> is not, the fill
+value is set to the specified value.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">a.view(some_dtype)</span></code>, if <code class="docutils literal notranslate"><span class="pre">some_dtype</span></code> has a different number of
 bytes per entry than the previous dtype (for example, converting a
 regular array to a structured array), then the behavior of the view
@@ -3428,62 +3474,6 @@ by <code class="docutils literal notranslate"><span class="pre">print(a)</span><
 memory. Therefore if <code class="docutils literal notranslate"><span class="pre">a</span></code> is C-ordered versus fortran-ordered, versus
 defined as a slice or transpose, etc., the view may give different
 results.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)])</span>
-</pre></div>
-</div>
-<p>Viewing array data using a different type and dtype:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
-<span class="go">matrix([[513]], dtype=int16)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-<span class="go">&lt;class &#39;numpy.matrix&#39;&gt;</span>
-</pre></div>
-</div>
-<p>Creating a view on a structured array so it can be used in calculations</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">xv</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">xv</span>
-<span class="go">array([[1, 2],</span>
-<span class="go">       [3, 4]], dtype=int8)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">xv</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">array([2.,  3.])</span>
-</pre></div>
-</div>
-<p>Making changes to the view changes the underlying array</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">xv</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([(1, 20), (3,  4)], dtype=[(&#39;a&#39;, &#39;i1&#39;), (&#39;b&#39;, &#39;i1&#39;)])</span>
-</pre></div>
-</div>
-<p>Using a view to convert an array to a recarray:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">recarray</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">a</span>
-<span class="go">array([1, 3], dtype=int8)</span>
-</pre></div>
-</div>
-<p>Views share data:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="go">(9, 10)</span>
-</pre></div>
-</div>
-<p>Views that change the dtype size (bytes per entry) should normally be
-avoided on arrays defined by slices, transposes, fortran-ordering, etc.:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
-<span class="go">array([[1, 2],</span>
-<span class="go">       [4, 5]], dtype=int16)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)])</span>
-<span class="gt">Traceback (most recent call last):</span>
-    <span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">To change to a dtype of a different size, the array must be C-contiguous</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)])</span>
-<span class="go">array([[(1, 2)],</span>
-<span class="go">       [(4, 5)]], dtype=[(&#39;width&#39;, &#39;&lt;i2&#39;), (&#39;length&#39;, &#39;&lt;i2&#39;)])</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </dd></dl>
@@ -3500,8 +3490,8 @@ avoided on arrays defined by slices, transposes, fortran-ordering, etc.:</p>
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Image.util.convert.html"
-                        title="previous chapter">convert</a></p>
+  <p class="topless"><a href="Stoner.Image.util.changes_size.html"
+                        title="previous chapter">changes_size</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.kerr.KerrStack.html"
                         title="next chapter">KerrStack</a></p>
@@ -3528,7 +3518,7 @@ avoided on arrays defined by slices, transposes, fortran-ordering, etc.:</p>
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Image.util.convert.html" title="Previous document">convert</a>
+          <a href="Stoner.Image.util.changes_size.html" title="Previous document">changes_size</a>
         </li>
         <li>
           <a href="Stoner.Image.kerr.KerrStack.html" title="Next document">KerrStack</a>
@@ -3545,9 +3535,9 @@ avoided on arrays defined by slices, transposes, fortran-ordering, etc.:</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

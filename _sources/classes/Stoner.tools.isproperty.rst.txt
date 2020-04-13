@@ -1,6 +1,6 @@
-isproperty
+isProperty
 ==========
 
 .. currentmodule:: Stoner.tools
 
-.. autofunction:: isproperty
+.. autofunction:: isProperty

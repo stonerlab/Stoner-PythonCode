@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.split
+==========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.split

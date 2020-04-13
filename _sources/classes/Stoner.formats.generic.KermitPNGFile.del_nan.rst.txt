@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.del_nan
+============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.del_nan

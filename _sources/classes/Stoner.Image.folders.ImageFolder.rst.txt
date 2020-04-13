@@ -23,6 +23,7 @@ ImageFolder
       ~ImageFolder.instance
       ~ImageFolder.is_empty
       ~ImageFolder.key
+      ~ImageFolder.layout
       ~ImageFolder.loaded
       ~ImageFolder.loader
       ~ImageFolder.ls
@@ -34,6 +35,7 @@ ImageFolder
       ~ImageFolder.objects
       ~ImageFolder.pattern
       ~ImageFolder.root
+      ~ImageFolder.setas
       ~ImageFolder.shape
       ~ImageFolder.size
       ~ImageFolder.trunkdepth
@@ -44,6 +46,7 @@ ImageFolder
    .. autosummary::
 
       ~ImageFolder.add_group
+      ~ImageFolder.align
       ~ImageFolder.all
       ~ImageFolder.append
       ~ImageFolder.apply_all
@@ -58,6 +61,7 @@ ImageFolder
       ~ImageFolder.filter
       ~ImageFolder.filterout
       ~ImageFolder.flatten
+      ~ImageFolder.from_tiff
       ~ImageFolder.get
       ~ImageFolder.getlist
       ~ImageFolder.group
@@ -83,6 +87,7 @@ ImageFolder
       ~ImageFolder.sort
       ~ImageFolder.stddev
       ~ImageFolder.stderr
+      ~ImageFolder.to_tiff
       ~ImageFolder.unflatten
       ~ImageFolder.unload
       ~ImageFolder.update
@@ -106,6 +111,7 @@ ImageFolder
    .. autoattribute:: instance
    .. autoattribute:: is_empty
    .. autoattribute:: key
+   .. autoattribute:: layout
    .. autoattribute:: loaded
    .. autoattribute:: loader
    .. autoattribute:: ls
@@ -117,6 +123,7 @@ ImageFolder
    .. autoattribute:: objects
    .. autoattribute:: pattern
    .. autoattribute:: root
+   .. autoattribute:: setas
    .. autoattribute:: shape
    .. autoattribute:: size
    .. autoattribute:: trunkdepth
@@ -125,6 +132,7 @@ ImageFolder
    .. rubric:: Methods Documentation
 
    .. automethod:: add_group
+   .. automethod:: align
    .. automethod:: all
    .. automethod:: append
    .. automethod:: apply_all
@@ -139,6 +147,7 @@ ImageFolder
    .. automethod:: filter
    .. automethod:: filterout
    .. automethod:: flatten
+   .. automethod:: from_tiff
    .. automethod:: get
    .. automethod:: getlist
    .. automethod:: group
@@ -164,6 +173,7 @@ ImageFolder
    .. automethod:: sort
    .. automethod:: stddev
    .. automethod:: stderr
+   .. automethod:: to_tiff
    .. automethod:: unflatten
    .. automethod:: unload
    .. automethod:: update

@@ -1,0 +1,8 @@
+
+
+OVFFile.add_column
+=============================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.add_column

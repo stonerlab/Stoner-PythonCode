@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.split
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.split

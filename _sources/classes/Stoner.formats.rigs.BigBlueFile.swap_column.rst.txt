@@ -1,0 +1,8 @@
+
+
+BigBlueFile.swap_column
+===========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.swap_column

@@ -1,0 +1,8 @@
+
+
+XRDFile.count
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.count

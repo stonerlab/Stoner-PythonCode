@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -55,17 +52,17 @@
 <span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
 
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">cumtrapz</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
 
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">istuple</span><span class="p">,</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">isTuple</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="kn">import</span> <span class="n">string_types</span>
 <span class="kn">from</span> <span class="nn">.core.exceptions</span> <span class="kn">import</span> <span class="n">assertion</span>
 <span class="kn">from</span> <span class="nn">.analysis.utils</span> <span class="kn">import</span> <span class="n">threshold</span> <span class="k">as</span> <span class="n">_threshold</span><span class="p">,</span> <span class="n">ApplyAffineTransform</span><span class="p">,</span> <span class="n">GetAffineTransform</span>
 
 <span class="c1"># from matplotlib.pylab import * #Surely not?</span>
 
 
-<div class="viewcode-block" id="AnalysisMixin"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin">[docs]</a><span class="k">class</span> <span class="nc">AnalysisMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin">[docs]</a><span class="k">class</span> <span class="nc">AnalysisMixin</span><span class="p">:</span>
 
     <span class="sd">&quot;&quot;&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods.&quot;&quot;&quot;</span>
 
@@ -122,14 +119,14 @@
             <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">(</span><span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">):</span>
             <span class="k">pass</span>
-        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>
             <span class="n">nc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">nc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="c1"># Evaluate the data row by row</span>
         <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">()):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
             <span class="n">nc</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span>
         <span class="c1"># Work out how to handle the result</span>
@@ -302,8 +299,7 @@
         <span class="bp">self</span><span class="p">[</span><span class="n">result_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">final</span>
         <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;result&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">final</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="AnalysisMixin.normalise"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.normalise">[docs]</a>    <span class="k">def</span> <span class="nf">normalise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot;Normalise data columns by dividing through by a base column value.</span>
@@ -347,14 +343,14 @@
                 <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span> <span class="o">+</span> <span class="s2">&quot;(norm)&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">header</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">istuple</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isTuple</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">istuple</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">isTuple</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
                     <span class="n">scale</span> <span class="o">=</span> <span class="n">base</span>
                 <span class="k">elif</span> <span class="n">scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">istuple</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">isTuple</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;limit parameter is either None, or limit or base is a tuple of two floats.&quot;</span><span class="p">)</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">)])</span>
@@ -373,125 +369,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">setas</span>
         <span class="k">return</span> <span class="bp">self</span></div>
-
-<div class="viewcode-block" id="AnalysisMixin.peaks"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.peaks">[docs]</a>    <span class="k">def</span> <span class="nf">peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Locates peaks and/or troughs in a column of data by using SG-differentiation.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            ycol (index):</span>
-<span class="sd">                the column name or index of the data in which to search for peaks</span>
-<span class="sd">            width (int or float):</span>
-<span class="sd">                the expected minium halalf-width of a peak in terms of the number of data points (int) or distance</span>
-<span class="sd">                in x (float). This is used in the differnetiation code to find local maxima. Bigger equals less</span>
-<span class="sd">                sensitive to experimental noise, smaller means better eable to see sharp peaks</span>
-<span class="sd">            poly (int):</span>
-<span class="sd">                the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers</span>
-<span class="sd">                will find sharper peaks more accurately but at the risk of finding more false positives.</span>
-
-<span class="sd">        Keyword Arguments:</span>
-<span class="sd">            significance (float):</span>
-<span class="sd">                used to decide whether a local maxmima is a significant peak. Essentially just the curvature</span>
-<span class="sd">                of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the</span>
-<span class="sd">                maximum curvature/(2*width)</span>
-<span class="sd">            xcol (index or None):</span>
-<span class="sd">                name or index of data column that p[rovides the x-coordinate (default None)</span>
-<span class="sd">            peaks (bool):</span>
-<span class="sd">                select whether to measure peaks in data (default True)</span>
-<span class="sd">            troughs (bool):</span>
-<span class="sd">                select whether to measure troughs in data (default False)</span>
-<span class="sd">            sort (bool):</span>
-<span class="sd">                Sor the results by significance of peak</span>
-<span class="sd">            modify (book):</span>
-<span class="sd">                If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</span>
-<span class="sd">            full_data (bool):</span>
-<span class="sd">                If True (default) then all columns of the data at which peaks in the *ycol* column are found.</span>
-<span class="sd">                *modify* true implies *full_data* is also true. If *full_data* is False, then only the x-column</span>
-<span class="sd">                values of the peaks are returned.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (various):</span>
-<span class="sd">                If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.</span>
-<span class="sd">                If *modify* is false (default), then the return value depends on *ycol* and *xcol*. If *ycol* is</span>
-<span class="sd">                not None and *xcol* is None, then returns conplete rows of data corresponding to the found</span>
-<span class="sd">                peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then returns a 1D array</span>
-<span class="sd">                of the x positions of the peaks/troughs.</span>
-
-<span class="sd">        See Also:</span>
-<span class="sd">            User guide section :ref:`peak_finding`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">/</span> <span class="mi">20</span><span class="p">))</span>
-        <span class="n">peaks</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;peaks&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">troughs</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;troughs&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">poly</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;poly&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">assertion</span><span class="p">(</span>
-            <span class="n">poly</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;poly must be at least 2nd order in peaks for checking for significance of peak or trough&quot;</span>
-        <span class="p">)</span>
-
-        <span class="n">sort</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sort&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">modify</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;modify&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">full_data</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;full_data&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">ycol</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span>
-        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ycol</span><span class="p">):</span>
-            <span class="n">ycol</span> <span class="o">=</span> <span class="n">ycol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>  <span class="c1"># Convert a floating point width unto an integer.</span>
-            <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
-            <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">*</span> <span class="n">width</span> <span class="o">/</span> <span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">))</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">poly</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">d1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-        <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span>
-            <span class="n">ycol</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">width</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>  <span class="c1"># 2nd differential requires more smoothing</span>
-
-        <span class="c1"># We&#39;re going to ignore the start and end of the arrays</span>
-        <span class="n">index_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">d1</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="n">index_offset</span><span class="p">:</span><span class="o">-</span><span class="n">index_offset</span><span class="p">]</span>
-        <span class="n">d2</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="n">index_offset</span><span class="p">:</span><span class="o">-</span><span class="n">index_offset</span><span class="p">]</span>
-
-        <span class="c1"># Pad the ends of d2 with the mean value</span>
-        <span class="n">pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">d2</span><span class="p">[</span><span class="n">index_offset</span><span class="p">:</span><span class="o">-</span><span class="n">index_offset</span><span class="p">])</span>
-        <span class="n">d2</span><span class="p">[:</span><span class="n">index_offset</span><span class="p">]</span> <span class="o">=</span> <span class="n">pad</span>
-        <span class="n">d2</span><span class="p">[</span><span class="o">-</span><span class="n">index_offset</span><span class="p">:]</span> <span class="o">=</span> <span class="n">pad</span>
-
-        <span class="c1"># Set the significance from the 2nd ifferential if not already set</span>
-        <span class="n">significance</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
-            <span class="s2">&quot;significance&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
-        <span class="p">)</span>  <span class="c1"># Base an apriori significance on max d2y/dx2 / 20</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">significance</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c1"># integer significance is inverse to floating</span>
-            <span class="n">significance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span> <span class="o">/</span> <span class="n">significance</span>  <span class="c1"># Base an apriori significance on max d2y/dx2 / 20</span>
-
-        <span class="n">d2_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">)),</span> <span class="n">d2</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
-        <span class="c1"># Ensure we have some X-data</span>
-        <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">xdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">xdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
-        <span class="n">xdata</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span> <span class="n">xdata</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
-
-        <span class="n">possible_peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">troughs</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">peaks</span><span class="p">))</span>
-        <span class="n">curvature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d2_interp</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">))</span>
-
-        <span class="c1"># Filter just the significant peaks</span>
-        <span class="n">possible_peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">)</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">curvature</span><span class="p">[</span><span class="n">ix</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">significance</span><span class="p">])</span>
-        <span class="c1"># Sort in order of significance</span>
-        <span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
-            <span class="n">possible_peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d2_interp</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">))))</span>
-
-        <span class="n">xdat</span> <span class="o">=</span> <span class="n">xdata</span><span class="p">(</span><span class="n">possible_peaks</span> <span class="o">+</span> <span class="n">index_offset</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">modify</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">xdat</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="k">elif</span> <span class="n">full_data</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">xdat</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">xdat</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">setas</span>
-        <span class="c1"># Return - but remembering to add back on the offset that we took off due to differentials not working at</span>
-        <span class="c1"># start and end</span>
-        <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="AnalysisMixin.stitch"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.stitch">[docs]</a>    <span class="k">def</span> <span class="nf">stitch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_overlap</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;All&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Apply a scaling to this data set to make it stich to another dataset.</span>
@@ -602,7 +479,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">assertion</span><span class="p">(</span><span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">),</span> <span class="s2">&quot;Keyword func should be callable if given&quot;</span><span class="p">)</span>
             <span class="n">args</span> <span class="o">=</span> <span class="n">getfullargspec</span><span class="p">(</span><span class="n">func</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># pylint: disable=W1505</span>
-            <span class="n">assertion</span><span class="p">(</span><span class="n">isiterable</span><span class="p">(</span><span class="n">p0</span><span class="p">),</span> <span class="s2">&quot;Keyword parameter p0 shoiuld be iterable if keyword func is given&quot;</span><span class="p">)</span>
+            <span class="n">assertion</span><span class="p">(</span><span class="n">isIterable</span><span class="p">(</span><span class="n">p0</span><span class="p">),</span> <span class="s2">&quot;Keyword parameter p0 shoiuld be iterable if keyword func is given&quot;</span><span class="p">)</span>
             <span class="n">assertion</span><span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">p0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Keyword p0 should be the same length as the optional arguments to func&quot;</span>
             <span class="p">)</span>
@@ -682,7 +559,7 @@
         <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
         <span class="c1"># Recursively call if we&#39;ve got an iterable threshold</span>
-        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">threshold</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">threshold</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">threshold</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
             <span class="k">else</span><span class="p">:</span>
@@ -706,10 +583,9 @@
                     <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">]</span>
                     <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">return</span> <span class="n">ret</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">_threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">rising</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">falling</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">all_vals</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">_threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">rising</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">falling</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_vals</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
             <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -767,16 +643,13 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

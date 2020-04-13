@@ -1,0 +1,8 @@
+
+
+RasorFile.del_nan
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.del_nan

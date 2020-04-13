@@ -1,8 +1,0 @@
-
-
-QDFile.del_rows
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.del_rows

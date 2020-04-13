@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ImageStack" href="Stoner.Image.stack.ImageStack.html" />
@@ -66,16 +66,13 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.allmeta" title="Stoner.Image.stack.ImageStackMixin.allmeta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allmeta</span></code></a></p></td>
-<td><p>List of complete metadata for each image in ImageStack</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.imarray" title="Stoner.Image.stack.ImageStackMixin.imarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imarray</span></code></a></p></td>
+<td><p>Produce the 3D stack of images - as [image,x,y].</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.imarray" title="Stoner.Image.stack.ImageStackMixin.imarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imarray</span></code></a></p></td>
-<td><p>“Produce the 3D stack of images - as [image,x,y]</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.max_size" title="Stoner.Image.stack.ImageStackMixin.max_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_size</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.max_size" title="Stoner.Image.stack.ImageStackMixin.max_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_size</span></code></a></p></td>
 <td><p>Get the biggest image dimensions in the stack.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.shape" title="Stoner.Image.stack.ImageStackMixin.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.shape" title="Stoner.Image.stack.ImageStackMixin.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Return the stack shape - after re-ordering the indices.</p></td>
 </tr>
 </tbody>
@@ -90,31 +87,28 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.asfloat" title="Stoner.Image.stack.ImageStackMixin.asfloat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asfloat</span></code></a>([normalise, clip, clip_negative])</p></td>
 <td><p>Convert stack to floating point type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.correct_drifts" title="Stoner.Image.stack.ImageStackMixin.correct_drifts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_drifts</span></code></a>(refindex[, threshold, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.convert" title="Stoner.Image.stack.ImageStackMixin.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a>(dtype[, force_copy, uniform, normalise])</p></td>
+<td><p>Convert an image to the requested data-type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.correct_drifts" title="Stoner.Image.stack.ImageStackMixin.correct_drifts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_drifts</span></code></a>(refindex[, threshold, …])</p></td>
 <td><p>Align images to correct for image drift.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.crop_stack" title="Stoner.Image.stack.ImageStackMixin.crop_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_stack</span></code></a>(box)</p></td>
-<td><p>Crop the imagestack.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.crop_stack" title="Stoner.Image.stack.ImageStackMixin.crop_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_stack</span></code></a>(box)</p></td>
+<td><p>Crop the imagestack to a box.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.dtype_limits" title="Stoner.Image.stack.ImageStackMixin.dtype_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype_limits</span></code></a>([clip_negative])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.dtype_limits" title="Stoner.Image.stack.ImageStackMixin.dtype_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype_limits</span></code></a>([clip_negative])</p></td>
 <td><p>Return intensity limits, i.e.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.show" title="Stoner.Image.stack.ImageStackMixin.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
-<td><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.stack.ImageStackMixin.show" title="Stoner.Image.stack.ImageStackMixin.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
+<td><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
 <dl class="attribute">
-<dt id="Stoner.Image.stack.ImageStackMixin.allmeta">
-<code class="sig-name descname">allmeta</code><a class="headerlink" href="#Stoner.Image.stack.ImageStackMixin.allmeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of complete metadata for each image in ImageStack</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="Stoner.Image.stack.ImageStackMixin.imarray">
 <code class="sig-name descname">imarray</code><a class="headerlink" href="#Stoner.Image.stack.ImageStackMixin.imarray" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Produce the 3D stack of images - as [image,x,y]</p>
+<dd><p>Produce the 3D stack of images - as [image,x,y].</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -133,12 +127,7 @@
 <dl class="method">
 <dt id="Stoner.Image.stack.ImageStackMixin.asfloat">
 <code class="sig-name descname">asfloat</code><span class="sig-paren">(</span><em class="sig-param">normalise=True</em>, <em class="sig-param">clip=False</em>, <em class="sig-param">clip_negative=False</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStackMixin.asfloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.ImageStackMixin.asfloat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert stack to floating point type.
-Analagous behaviour to ImageFile.asfloat()</p>
-<p>If currently an int type and normalise then floats will be normalised
-to the maximum allowed value of the int type.
-If currently a float type then no change occurs.
-If clip_negative then clip values outside the range 0,1</p>
+<dd><p>Convert stack to floating point type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
@@ -146,6 +135,54 @@ If clip_negative then clip values outside the range 0,1</p>
 <li><p><strong>clip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – clip resulting range to values between -1 and 1</p></li>
 <li><p><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – clip range further to 0,1</p></li>
 </ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Analagous behaviour to ImageFile.asfloat()</p>
+<p>If currently an int type and normalise then floats will be normalised
+to the maximum allowed value of the int type.
+If currently a float type then no change occurs.
+If clip_negative then clip values outside the range 0,1</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.Image.stack.ImageStackMixin.convert">
+<code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param">dtype</em>, <em class="sig-param">force_copy=False</em>, <em class="sig-param">uniform=False</em>, <em class="sig-param">normalise=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStackMixin.convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.ImageStackMixin.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an image to the requested data-type.</p>
+<p>Warnings are issued in case of precision loss, or when negative values
+are clipped during conversion to unsigned integer types (sign loss).</p>
+<p>Floating point values are expected to be normalized and will be clipped
+to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or
+signed integers respectively.</p>
+<p>Numbers are not shifted to the negative side when converting from
+unsigned to signed integer types. Negative values will be clipped when
+converting to unsigned integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>ndarray</em>) – Input image.</p></li>
+<li><p><strong>dtype</strong> (<em>dtype</em>) – Target data-type.</p></li>
+<li><p><strong>force_copy</strong> (<em>bool</em>) – Force a copy of the data, irrespective of its current dtype.</p></li>
+<li><p><strong>uniform</strong> (<em>bool</em>) – Uniformly quantize the floating point range to the integer range.
+By default (uniform=False) floating point values are scaled and
+rounded to the nearest integers, which minimizes back and forth
+conversion errors.</p></li>
+<li><p><strong>normalise</strong> (<em>bool</em>) – When converting from int types to float normalise the resulting array
+by the maximum allowed value of the int type.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ol class="arabic simple">
+<li><p>DirectX data conversion rules.
+<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx">http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx</a></p></li>
+</ol>
+<dl class="simple">
+<dt>2,  Data Conversions.</dt><dd><p>In “OpenGL ES 2.0 Specification v2.0.25”, pp 7-8. Khronos Group, 2010.</p>
+</dd>
+<dt>3,  Proper treatment of pixels as integers. A.W. Paeth.</dt><dd><p>In “Graphics Gems I”, pp 249-256. Morgan Kaufmann, 1990.</p>
+</dd>
+<dt>4,  Dirty Pixels. J. Blinn.</dt><dd><p>In “Jim Blinn’s corner: Dirty Pixels”, pp 47-57. Morgan Kaufmann, 1998.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -176,8 +213,7 @@ If clip_negative then clip values outside the range 0,1</p>
 <dl class="method">
 <dt id="Stoner.Image.stack.ImageStackMixin.crop_stack">
 <code class="sig-name descname">crop_stack</code><span class="sig-paren">(</span><em class="sig-param">box</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStackMixin.crop_stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.ImageStackMixin.crop_stack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop the imagestack.
-Crops to the box given</p>
+<dd><p>Crop the imagestack to a box.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>box</strong> (<em>array or list of type int</em>) – [xmin,xmax,ymin,ymax]</p>
@@ -206,7 +242,7 @@ even if the image dtype allows negative values.</p>
 <dl class="method">
 <dt id="Stoner.Image.stack.ImageStackMixin.show">
 <code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStackMixin.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.ImageStackMixin.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a></p>
+<dd><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -268,9 +304,9 @@ even if the image dtype allows negative values.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

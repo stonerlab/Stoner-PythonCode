@@ -1,0 +1,8 @@
+
+
+BigBlueFile.reverse
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.reverse

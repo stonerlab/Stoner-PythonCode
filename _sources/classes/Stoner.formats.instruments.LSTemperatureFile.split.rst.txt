@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.split
+==================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.split

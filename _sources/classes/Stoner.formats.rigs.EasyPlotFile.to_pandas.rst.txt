@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.to_pandas
+==========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.to_pandas

@@ -11,6 +11,7 @@ proxy
    .. autosummary::
 
       ~proxy.all
+      ~proxy.all_by_keys
       ~proxy.common_keys
       ~proxy.common_metadata
 
@@ -27,6 +28,7 @@ proxy
    .. rubric:: Attributes Documentation
 
    .. autoattribute:: all
+   .. autoattribute:: all_by_keys
    .. autoattribute:: common_keys
    .. autoattribute:: common_metadata
 

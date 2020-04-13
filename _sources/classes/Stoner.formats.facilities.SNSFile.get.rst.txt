@@ -1,0 +1,8 @@
+
+
+SNSFile.get
+=====================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.get

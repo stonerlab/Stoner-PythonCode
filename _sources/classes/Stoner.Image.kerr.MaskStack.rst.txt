@@ -10,7 +10,6 @@ MaskStack
 
    .. autosummary::
 
-      ~MaskStack.allmeta
       ~MaskStack.basenames
       ~MaskStack.clone
       ~MaskStack.debug
@@ -26,6 +25,7 @@ MaskStack
       ~MaskStack.instance
       ~MaskStack.is_empty
       ~MaskStack.key
+      ~MaskStack.layout
       ~MaskStack.loaded
       ~MaskStack.loader
       ~MaskStack.ls
@@ -38,6 +38,7 @@ MaskStack
       ~MaskStack.objects
       ~MaskStack.pattern
       ~MaskStack.root
+      ~MaskStack.setas
       ~MaskStack.shape
       ~MaskStack.size
       ~MaskStack.trunkdepth
@@ -49,6 +50,7 @@ MaskStack
 
       ~MaskStack.HcMap
       ~MaskStack.add_group
+      ~MaskStack.align
       ~MaskStack.all
       ~MaskStack.append
       ~MaskStack.apply_all
@@ -58,6 +60,7 @@ MaskStack
       ~MaskStack.average_Hcmap
       ~MaskStack.clear
       ~MaskStack.compress
+      ~MaskStack.convert
       ~MaskStack.correct_drifts
       ~MaskStack.count
       ~MaskStack.crop_stack
@@ -71,6 +74,7 @@ MaskStack
       ~MaskStack.filterout
       ~MaskStack.find_threshold
       ~MaskStack.flatten
+      ~MaskStack.from_tiff
       ~MaskStack.get
       ~MaskStack.getlist
       ~MaskStack.group
@@ -102,6 +106,7 @@ MaskStack
       ~MaskStack.stderr
       ~MaskStack.subtract
       ~MaskStack.switch_index
+      ~MaskStack.to_tiff
       ~MaskStack.unflatten
       ~MaskStack.unload
       ~MaskStack.update
@@ -112,7 +117,6 @@ MaskStack
 
    .. rubric:: Attributes Documentation
 
-   .. autoattribute:: allmeta
    .. autoattribute:: basenames
    .. autoattribute:: clone
    .. autoattribute:: debug
@@ -128,6 +132,7 @@ MaskStack
    .. autoattribute:: instance
    .. autoattribute:: is_empty
    .. autoattribute:: key
+   .. autoattribute:: layout
    .. autoattribute:: loaded
    .. autoattribute:: loader
    .. autoattribute:: ls
@@ -140,6 +145,7 @@ MaskStack
    .. autoattribute:: objects
    .. autoattribute:: pattern
    .. autoattribute:: root
+   .. autoattribute:: setas
    .. autoattribute:: shape
    .. autoattribute:: size
    .. autoattribute:: trunkdepth
@@ -149,6 +155,7 @@ MaskStack
 
    .. automethod:: HcMap
    .. automethod:: add_group
+   .. automethod:: align
    .. automethod:: all
    .. automethod:: append
    .. automethod:: apply_all
@@ -158,6 +165,7 @@ MaskStack
    .. automethod:: average_Hcmap
    .. automethod:: clear
    .. automethod:: compress
+   .. automethod:: convert
    .. automethod:: correct_drifts
    .. automethod:: count
    .. automethod:: crop_stack
@@ -171,6 +179,7 @@ MaskStack
    .. automethod:: filterout
    .. automethod:: find_threshold
    .. automethod:: flatten
+   .. automethod:: from_tiff
    .. automethod:: get
    .. automethod:: getlist
    .. automethod:: group
@@ -202,6 +211,7 @@ MaskStack
    .. automethod:: stderr
    .. automethod:: subtract
    .. automethod:: switch_index
+   .. automethod:: to_tiff
    .. automethod:: unflatten
    .. automethod:: unload
    .. automethod:: update

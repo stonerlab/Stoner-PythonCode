@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.add_column
+==========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.add_column

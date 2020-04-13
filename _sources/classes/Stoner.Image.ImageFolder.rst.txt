@@ -15,6 +15,7 @@ Stoner.Image.ImageFolder
    
       ~Stoner.Image.ImageFolder.__init__
       ~Stoner.Image.ImageFolder.add_group
+      ~Stoner.Image.ImageFolder.align
       ~Stoner.Image.ImageFolder.all
       ~Stoner.Image.ImageFolder.append
       ~Stoner.Image.ImageFolder.apply_all
@@ -29,6 +30,7 @@ Stoner.Image.ImageFolder
       ~Stoner.Image.ImageFolder.filter
       ~Stoner.Image.ImageFolder.filterout
       ~Stoner.Image.ImageFolder.flatten
+      ~Stoner.Image.ImageFolder.from_tiff
       ~Stoner.Image.ImageFolder.get
       ~Stoner.Image.ImageFolder.getlist
       ~Stoner.Image.ImageFolder.group
@@ -54,6 +56,7 @@ Stoner.Image.ImageFolder
       ~Stoner.Image.ImageFolder.sort
       ~Stoner.Image.ImageFolder.stddev
       ~Stoner.Image.ImageFolder.stderr
+      ~Stoner.Image.ImageFolder.to_tiff
       ~Stoner.Image.ImageFolder.unflatten
       ~Stoner.Image.ImageFolder.unload
       ~Stoner.Image.ImageFolder.update
@@ -84,6 +87,7 @@ Stoner.Image.ImageFolder
       ~Stoner.Image.ImageFolder.instance
       ~Stoner.Image.ImageFolder.is_empty
       ~Stoner.Image.ImageFolder.key
+      ~Stoner.Image.ImageFolder.layout
       ~Stoner.Image.ImageFolder.loaded
       ~Stoner.Image.ImageFolder.loader
       ~Stoner.Image.ImageFolder.ls
@@ -95,6 +99,7 @@ Stoner.Image.ImageFolder
       ~Stoner.Image.ImageFolder.objects
       ~Stoner.Image.ImageFolder.pattern
       ~Stoner.Image.ImageFolder.root
+      ~Stoner.Image.ImageFolder.setas
       ~Stoner.Image.ImageFolder.shape
       ~Stoner.Image.ImageFolder.size
       ~Stoner.Image.ImageFolder.trunkdepth

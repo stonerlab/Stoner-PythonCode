@@ -1,0 +1,8 @@
+
+
+SPCFile.section
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.section

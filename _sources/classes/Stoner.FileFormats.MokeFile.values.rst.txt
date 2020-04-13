@@ -1,8 +1,0 @@
-
-
-MokeFile.values
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.values

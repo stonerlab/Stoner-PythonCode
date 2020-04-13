@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -52,25 +49,26 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DataFolder&quot;</span><span class="p">,</span> <span class="s2">&quot;PlotFolder&quot;</span><span class="p">]</span>
 
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">make_Data</span>
 <span class="kn">from</span> <span class="nn">.folders.core</span> <span class="kn">import</span> <span class="n">baseFolder</span>
-<span class="kn">from</span> <span class="nn">.folders.mixins</span> <span class="kn">import</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">DataMethodsMixin</span><span class="p">,</span> <span class="n">PlotMethodsMixin</span>
+
+<span class="kn">from</span> <span class="nn">.folders.mixins</span> <span class="kn">import</span> <span class="n">DiskBasedFolderMixin</span><span class="p">,</span> <span class="n">DataMethodsMixin</span><span class="p">,</span> <span class="n">PlotMethodsMixin</span>
 
 
-<div class="viewcode-block" id="DataFolder"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.html#Stoner.DataFolder">[docs]</a><span class="k">class</span> <span class="nc">DataFolder</span><span class="p">(</span><span class="n">DataMethodsMixin</span><span class="p">,</span> <span class="n">DiskBasedFolder</span><span class="p">,</span> <span class="n">baseFolder</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.html#Stoner.DataFolder">[docs]</a><span class="k">class</span> <span class="nc">DataFolder</span><span class="p">(</span><span class="n">DataMethodsMixin</span><span class="p">,</span> <span class="n">DiskBasedFolderMixin</span><span class="p">,</span> <span class="n">baseFolder</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Provide an interface to manipulating lots of data files stored within a directory structure on disc.</span>
 
-<span class="sd">    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy open strategy, so that</span>
-<span class="sd">    files are only read in from disc when actually needed.</span>
+<span class="sd">    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy</span>
+<span class="sd">    open strategy, so that files are only read in from disc when actually needed.</span>
 
 <span class="sd">    .. inheritance-diagram:: DataFolder</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DataFolder.__init__"><a class="viewcode-back" href="../../classes/Stoner.DataFolder.__init__.html#Stoner.DataFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">Data</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Set the default type before creating the DataFolder.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">make_Data</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div></div>
 
 
@@ -108,16 +106,13 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

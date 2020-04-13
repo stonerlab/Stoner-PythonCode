@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.section
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.section

@@ -1,8 +1,0 @@
-
-
-XRDFile.pop
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.pop

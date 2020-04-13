@@ -1,0 +1,8 @@
+
+
+DataFile.to_pandas
+==============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.to_pandas

@@ -1,8 +1,0 @@
-
-
-XRDFile.unique
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.unique

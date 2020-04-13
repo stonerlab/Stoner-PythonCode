@@ -1,0 +1,8 @@
+
+
+BNLFile.unique
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.unique

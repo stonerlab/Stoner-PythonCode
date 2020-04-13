@@ -1,0 +1,8 @@
+
+
+SNSFile.unique
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.unique

@@ -1,0 +1,8 @@
+
+
+GenXFile.append
+==========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.append

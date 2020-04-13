@@ -1,8 +1,0 @@
-
-
-QDFile.setdefault
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.setdefault

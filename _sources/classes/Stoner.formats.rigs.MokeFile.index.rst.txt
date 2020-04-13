@@ -1,0 +1,8 @@
+
+
+MokeFile.index
+==================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.index

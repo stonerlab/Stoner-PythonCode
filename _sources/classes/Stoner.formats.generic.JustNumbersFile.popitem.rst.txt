@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.popitem
+==============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.popitem

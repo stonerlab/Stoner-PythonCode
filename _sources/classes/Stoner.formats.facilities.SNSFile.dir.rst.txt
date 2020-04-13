@@ -1,0 +1,8 @@
+
+
+SNSFile.dir
+=====================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.dir

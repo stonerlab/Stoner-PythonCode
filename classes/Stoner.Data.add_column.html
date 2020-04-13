@@ -9,15 +9,15 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Data.adjust_setas" href="Stoner.Data.adjust_setas.html" />
+    <link rel="next" title="Data.annotate_fit" href="Stoner.Data.annotate_fit.html" />
     <link rel="prev" title="Data.add" href="Stoner.Data.add.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.Data.add.html" title="Previous document">Data.add</a>
         </li>
         <li>
-          <a href="Stoner.Data.adjust_setas.html" title="Next document">Data.adjust_setas</a>
+          <a href="Stoner.Data.annotate_fit.html" title="Next document">Data.annotate_fit</a>
           &rarr;
         </li>
     </ul>
@@ -60,18 +60,17 @@
 <dl class="method">
 <dt id="Stoner.Data.add_column">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">add_column</code><span class="sig-paren">(</span><em class="sig-param">column_data</em>, <em class="sig-param">header=None</em>, <em class="sig-param">index=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.add_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a column of data or inserts a column to a datafile instance.</p>
+<dd><p>Append a column of data or inserts a column to a datafile instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>column_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.array</span></code> or list or callable) – Data to append or insert or a callable function that will generate new data</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>column_header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The text to set the column header to,
-if not supplied then defaults to ‘col#’</p></li>
+<li><p><strong>column_header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The text to set the column header to, if not supplied then defaults to ‘col#’</p></li>
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The  index (numeric or string) to insert (or replace) the data</p></li>
-<li><p><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – If column_data is a callable object, then this argument
-can be used to supply a dictionary of function arguments to the callable object.</p></li>
+<li><p><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – If column_data is a callable object, then this argument can be used to supply a dictionary of function
+arguments to the callable object.</p></li>
 <li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Replace the data or insert the data (default)</p></li>
 <li><p><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</p></li>
 </ul>
@@ -102,8 +101,8 @@ the original DataFile Instance as well as returning it.</p>
   <p class="topless"><a href="Stoner.Data.add.html"
                         title="previous chapter">Data.add</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Data.adjust_setas.html"
-                        title="next chapter">Data.adjust_setas</a></p>
+  <p class="topless"><a href="Stoner.Data.annotate_fit.html"
+                        title="next chapter">Data.annotate_fit</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -130,7 +129,7 @@ the original DataFile Instance as well as returning it.</p>
           <a href="Stoner.Data.add.html" title="Previous document">Data.add</a>
         </li>
         <li>
-          <a href="Stoner.Data.adjust_setas.html" title="Next document">Data.adjust_setas</a>
+          <a href="Stoner.Data.annotate_fit.html" title="Next document">Data.annotate_fit</a>
           &rarr;
         </li>
     </ul>
@@ -147,9 +146,9 @@ the original DataFile Instance as well as returning it.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

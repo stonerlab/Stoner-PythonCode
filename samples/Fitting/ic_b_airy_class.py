@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Fit Ic(B) to Airy function.
-"""
+"""Fit Ic(B) to Airy function."""
+# pylint: disable=invalid-name
+import os
 
 from Stoner import Data, __home__
-from Stoner.Fit import Ic_B_Airy
-
-import os
+from Stoner.analysis.fitting.models.superconductivity import Ic_B_Airy
 
 os.chdir(os.path.join(__home__, "..", "doc", "samples", "Fitting"))
 

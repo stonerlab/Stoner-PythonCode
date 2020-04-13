@@ -1,8 +1,0 @@
-
-
-SPCFile.closest
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.closest

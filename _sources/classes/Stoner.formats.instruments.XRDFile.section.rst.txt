@@ -1,0 +1,8 @@
+
+
+XRDFile.section
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.section

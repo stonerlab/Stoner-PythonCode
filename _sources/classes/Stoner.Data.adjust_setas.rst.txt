@@ -1,8 +1,0 @@
-
-
-Data.adjust_setas
-========================
-
-.. currentmodule:: Stoner
-
-.. automethod:: Data.adjust_setas

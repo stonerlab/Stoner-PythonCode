@@ -1,0 +1,8 @@
+
+
+VSMFile.popitem
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.popitem

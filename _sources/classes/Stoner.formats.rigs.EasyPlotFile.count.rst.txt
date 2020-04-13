@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.count
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.count

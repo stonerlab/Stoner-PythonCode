@@ -1,14 +1,15 @@
 """Use curve_fit to fit a plane to some data."""
-from __future__ import print_function
-from Stoner import Data
+# pylint: disable=invalid-name
 from numpy.random import normal
 from numpy import linspace, meshgrid, column_stack
 import matplotlib.cm as cmap
 import matplotlib.pyplot as plt
 
+from Stoner import Data
+
 
 def plane(coord, a, b, c):
-    """Function to define a plane"""
+    """Function to define a plane."""
     return c - (coord[0] * a + coord[1] * b)
 
 

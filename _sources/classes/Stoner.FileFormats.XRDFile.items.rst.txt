@@ -1,8 +1,0 @@
-
-
-XRDFile.items
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.items

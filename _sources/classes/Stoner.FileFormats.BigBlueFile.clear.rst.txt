@@ -1,8 +1,0 @@
-
-
-BigBlueFile.clear
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.clear

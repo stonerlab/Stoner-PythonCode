@@ -1,8 +1,0 @@
-
-
-BNLFile.reorder_columns
-==========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.reorder_columns

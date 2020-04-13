@@ -1,8 +1,0 @@
-
-
-LSTemperatureFile.del_nan
-============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: LSTemperatureFile.del_nan

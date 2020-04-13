@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -47,7 +44,7 @@
             
   <h1>Source code for Stoner.plot.formats</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Plot Templates module - contains classes that style plots produced by :class:`.Data`</span>
+<span class="sd">&quot;&quot;&quot;Plot Templates module - contains classes that style plots produced by :class:`.Data`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -61,13 +58,15 @@
     <span class="s2">&quot;SketchPlot&quot;</span><span class="p">,</span>
     <span class="s2">&quot;SeabornPlotStyle&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">realpath</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getfile</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
+
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">EngFormatter</span><span class="p">,</span> <span class="n">Formatter</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">AutoLocator</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">realpath</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getfile</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
@@ -76,21 +75,19 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">SEABORN</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
-
 
 <span class="k">def</span> <span class="nf">_round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Provate method to round numbers for the TexFormatters to avoid crazy numbers of decimal places&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Round numbers for the TexFormatters to avoid crazy numbers of decimal places.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-        <span class="n">vt</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">vt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">i</span> <span class="o">-</span> <span class="n">offset</span><span class="p">):</span>
+        <span class="n">vt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">vt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">i</span> <span class="o">-</span> <span class="n">offset</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">vt</span>
             <span class="k">break</span>
     <span class="k">return</span> <span class="n">value</span>
 
 
 <span class="k">def</span> <span class="nf">_add_dots</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;replace __ with . in key.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Replace __ with . in key.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
 
 
@@ -100,18 +97,18 @@
 
 <div class="viewcode-block" id="TexFormatter"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter">[docs]</a><span class="k">class</span> <span class="nc">TexFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;An axis tick label formatter that emits Tex formula mode code.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;An axis tick label formatter that emits Tex formula mode code.</span>
 
-<span class="sd">    Formating is set so that large numbers are registered as \\times 10^{power}</span>
+<span class="sd">    Formating is set so that large numbers are registered as :math`\times 10^{power}`</span>
 <span class="sd">    rather than using E notation.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TexFormatter.__call__"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">_np_</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">elif</span> <span class="n">value</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">power</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">power</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">power</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_round</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">_round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="n">power</span><span class="p">))</span>
@@ -121,7 +118,7 @@
         <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="TexFormatter.format_data"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter.format_data">[docs]</a>    <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the full string representation of the value with the position unspecified.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the full string representation of the value with the position unspecified.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TexFormatter.format_data_short"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter.format_data_short">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>  <span class="c1"># pylint: disable=r0201</span>
@@ -160,21 +157,21 @@
     <span class="p">}</span>
 
 <div class="viewcode-block" id="TexEngFormatter.__call__"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexEngFormatter.html#Stoner.plot.formats.TexEngFormatter.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">_np_</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">elif</span> <span class="n">value</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">power</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-            <span class="n">pre</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">power</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
+            <span class="n">power</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+            <span class="n">pre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">power</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
             <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">power</span> <span class="o">&lt;=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">pre</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{}</span><span class="se">\\</span><span class="s2">,</span><span class="se">\\</span><span class="s2">mathrm{{</span><span class="si">{}</span><span class="s2">}}$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">power</span> <span class="o">=</span> <span class="n">power</span> <span class="o">%</span> <span class="mi">3</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">_round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="n">pre</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
                     <span class="n">v</span> <span class="o">*=</span> <span class="mi">1000</span>
                     <span class="n">pre</span> <span class="o">-=</span> <span class="mi">3</span>
-                <span class="k">elif</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1000.0</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1000.0</span><span class="p">:</span>
                     <span class="n">v</span> <span class="o">/=</span> <span class="mi">1000</span>
                     <span class="n">pre</span> <span class="o">+=</span> <span class="mf">3.0</span>
 
@@ -184,7 +181,7 @@
         <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="TexEngFormatter.format_data"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexEngFormatter.html#Stoner.plot.formats.TexEngFormatter.format_data">[docs]</a>    <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the full string representation of the value with the position unspecified.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the full string representation of the value with the position unspecified.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TexEngFormatter.format_data_short"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.TexEngFormatter.html#Stoner.plot.formats.TexEngFormatter.format_data_short">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>  <span class="c1"># pylint: disable=r0201</span>
@@ -223,12 +220,14 @@
     <span class="c1"># Internal class attributes.</span>
     <span class="n">_inches_per_pt</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">72.27</span>  <span class="c1"># Convert pt to inch</span>
     <span class="n">_mm_per_inch</span> <span class="o">=</span> <span class="mf">25.4</span>
-    <span class="n">_golden_mean</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># Aesthetic ratio</span>
+    <span class="n">_golden_mean</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>  <span class="c1"># Aesthetic ratio</span>
 
     <span class="c1"># Settings for this figure type. All instance attributes which start template_</span>
     <span class="c1"># will be used. Once the leading template_ is stripped, all _ characters are replaced</span>
     <span class="c1"># with . and then the attributes are mapped to a dictionary and used to update the rcParams</span>
     <span class="c1"># dictionary</span>
+
+    <span class="c1"># pylint: disable=attribute-defined-outside-init</span>
 
     <span class="n">show_xlabel</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">show_ylabel</span> <span class="o">=</span> <span class="kc">True</span>
@@ -272,10 +271,13 @@
 <span class="sd">        which will be used to upodate the rcParams first.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># self.fig_width = None</span>
+        <span class="c1"># self.fig_height = None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DefaultPlotStyle.__call__"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calling the template object can manipulate the rcParams that will be set.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Call the template object can manipulate the rcParams that will be set.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>
                 <span class="n">nk</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">k</span><span class="p">[:</span><span class="mi">9</span><span class="p">])</span>
@@ -305,12 +307,10 @@
             <span class="n">attrname</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">9</span><span class="p">:])</span>
             <span class="k">if</span> <span class="n">attrname</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">attrname</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;template attribute not in rcParams&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;showlegend&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;template attribute not in rcParams&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;showlegend&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_legend</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to match *name* to a style setting.&quot;&quot;&quot;</span>
@@ -320,8 +320,7 @@
             <span class="k">pass</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over stylesjeet settings.&quot;&quot;&quot;</span>
@@ -359,6 +358,7 @@
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_allowed_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Private method to test if this is a template attribute we can set.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
             <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">template</span><span class="p">)</span> <span class="o">^</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">)</span>
@@ -412,7 +412,7 @@
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set the stylesheet value, this is dervied from the stylename aatribute.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DefaultPlotStyle.clear"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Custom clear method that resets everything back o defaults.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reset everything back o defaults.&quot;&quot;&quot;</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allowed_attr</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
         <span class="n">defaults</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
@@ -443,7 +443,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="DefaultPlotStyle.new_figure"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.new_figure">[docs]</a>    <span class="k">def</span> <span class="nf">new_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This is called by PlotMixin to setup a new figure before we do anything.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Create a new figure.</span>
+
+<span class="sd">        This is called by PlotMixin to setup a new figure before we do anything.&quot;&quot;&quot;</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">()</span>  <span class="c1"># Start by resetting to our default settings</span>
         <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
@@ -463,7 +465,7 @@
                     <span class="n">params</span><span class="p">[</span><span class="n">attrname</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>  <span class="c1"># Apply these parameters</span>
         <span class="n">projection</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;projection&quot;</span><span class="p">,</span> <span class="s2">&quot;rectilinear&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;figsize&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;figsize&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_figure__figsize</span><span class="p">)</span>  <span class="c1"># pylint: disable=W0201</span>
         <span class="k">if</span> <span class="s2">&quot;ax&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>  <span class="c1"># Giving an axis instance in kargs means we can use that as out figure</span>
             <span class="n">ax</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
@@ -496,7 +498,7 @@
         <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">ax</span></div>
 
 <div class="viewcode-block" id="DefaultPlotStyle.apply"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Scan for all attributes that start template_ and build them into a dictionary to update matplotlib settings with.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Update matplotlib rc parameters from any attributes starting template_.&quot;&quot;&quot;</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stylesheet</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
@@ -509,7 +511,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DefaultPlotStyle.customise"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.customise">[docs]</a>    <span class="k">def</span> <span class="nf">customise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Hook to customise plot.</span>
+        <span class="sd">&quot;&quot;&quot;Implement hook to customise plot.</span>
 
 <span class="sd">        This method is supplied for sub classes to override to provide additional</span>
 <span class="sd">        plot customisation after the rc paramaters are updated from the class and</span>
@@ -517,10 +519,11 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="DefaultPlotStyle.customise_axes"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This method is run when we have an axis to manipulate.</span>
+        <span class="sd">&quot;&quot;&quot;Implement hook for for when we have an axis to manipulate.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            ax (matplotlib axes): The axes to be modified by this function.</span>
+<span class="sd">            ax (matplotlib axes):</span>
+<span class="sd">                The axes to be modified by this function.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            In the DefaultPlotStyle class this method is used to set SI units</span>
@@ -550,9 +553,12 @@
         <span class="sd">&quot;&quot;&quot;Call all the routines necessary to annotate the axes etc.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            ix(integer): Index of current subplot</span>
-<span class="sd">            multiple (string): how to handle multiple subplots</span>
-<span class="sd">            plot (Stoner.plot.PlotMixin): The PlotMixin boject we&#39;re working with</span>
+<span class="sd">            ix(integer):</span>
+<span class="sd">                Index of current subplot</span>
+<span class="sd">            multiple (string):</span>
+<span class="sd">                how to handle multiple subplots</span>
+<span class="sd">            plot (Stoner.plot.PlotMixin):</span>
+<span class="sd">                The PlotMixin boject we&#39;re working with</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">multiple</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subplot_settings</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -586,12 +592,10 @@
 <span class="sd">    This is largely an experimental class for trying things out rather than</span>
 <span class="sd">    for serious plotting.</span>
 
-<span class="sd">    Example</span>
+<span class="sd">    Example:</span>
 <span class="sd">        .. plot:: samples/plotstyles/GBStyle.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: gbstyle</span>
-
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
@@ -599,7 +603,7 @@
     <span class="n">stylename</span> <span class="o">=</span> <span class="s2">&quot;GBStyle&quot;</span>
 
 <div class="viewcode-block" id="GBPlotStyle.customise_axes"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.GBPlotStyle.html#Stoner.plot.formats.GBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override the default axis configuration&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Override the default axis configuration.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GBPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
@@ -614,18 +618,17 @@
 
     <span class="sd">&quot;&quot;&quot;Template class for Joe&#39;s Plot settings.</span>
 
-<span class="sd">    Example</span>
+<span class="sd">    Example:</span>
 <span class="sd">        .. plot:: samples/plotstyles/JTBStyle.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: jtbstyle</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">show_title</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">stylename</span> <span class="o">=</span> <span class="s2">&quot;JTB&quot;</span>
 
 <div class="viewcode-block" id="JTBPlotStyle.customise_axes"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.JTBPlotStyle.html#Stoner.plot.formats.JTBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override the default axis configuration (or not)&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Override the default axis configuration (or not).&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 
 
@@ -637,7 +640,7 @@
     <span class="n">stylename</span> <span class="o">=</span> <span class="s2">&quot;JTBinset&quot;</span>
 
 <div class="viewcode-block" id="JTBinsetStyle.customise_axes"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.JTBinsetStyle.html#Stoner.plot.formats.JTBinsetStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override the default axis configuration (or not)&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Override the default axis configuration (or not).&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 
 
@@ -678,8 +681,6 @@
 <span class="sd">        .. plot:: samples/plotstyles/SketchStyle.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: sketchstyle</span>
-
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">stylename</span> <span class="o">=</span> <span class="s2">&quot;sketch&quot;</span>
@@ -689,7 +690,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SketchPlot.customise_axes"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.SketchPlot.html#Stoner.plot.formats.SketchPlot.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override the default axis configuration&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Override the default axis configuration.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SketchPlot</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">plot</span><span class="o">.</span><span class="n">multiple</span> <span class="o">==</span> <span class="s2">&quot;y2&quot;</span><span class="p">:</span>
@@ -717,11 +718,14 @@
         <span class="sd">&quot;&quot;&quot;A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</span>
 
 <span class="sd">        Attributes:</span>
-<span class="sd">            stylename (str): The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks</span>
-<span class="sd">            context (str): The seaborn plot context for scaling elements - paper,notebook,talk, or poster</span>
-<span class="sd">            palette (str): A name of a predefined seaborn palette.</span>
+<span class="sd">            stylename (str):</span>
+<span class="sd">                The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks</span>
+<span class="sd">            context (str):</span>
+<span class="sd">                The seaborn plot context for scaling elements - paper,notebook,talk, or poster</span>
+<span class="sd">            palette (str):</span>
+<span class="sd">                A name of a predefined seaborn palette.</span>
 
-<span class="sd">        Example</span>
+<span class="sd">        Example:</span>
 <span class="sd">            .. plot:: samples/plotstyles/SeabornStyle.py</span>
 <span class="sd">                :include-source:</span>
 <span class="sd">                :outname: seabornstyle</span>
@@ -813,16 +817,13 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

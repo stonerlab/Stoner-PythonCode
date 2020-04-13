@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.del_rows
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.del_rows

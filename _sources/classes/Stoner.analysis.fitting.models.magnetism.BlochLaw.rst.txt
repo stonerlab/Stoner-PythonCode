@@ -1,0 +1,29 @@
+BlochLaw
+========
+
+.. currentmodule:: Stoner.analysis.fitting.models.magnetism
+
+.. autoclass:: BlochLaw
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~BlochLaw.display_names
+      ~BlochLaw.units
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~BlochLaw.guess
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: display_names
+   .. autoattribute:: units
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: guess

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.column
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.column

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.search
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.search

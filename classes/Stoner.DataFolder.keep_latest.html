@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DataFolder.keys" href="Stoner.DataFolder.keys.html" />
@@ -61,10 +61,11 @@
 <dt id="Stoner.DataFolder.keep_latest">
 <code class="sig-prename descclassname">DataFolder.</code><code class="sig-name descname">keep_latest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.DataFolder.keep_latest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter out earlier revisions of files with the same name.</p>
-<p>The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an integer revision number just before the
-filename extension. This method will look for instances of several files which differ in name only by the presence of the revision number and will
-kepp only the highest revision number. This is useful if several measurements of the same experiment have been carried out, but only the last file is
-the correct one.</p>
+<p>The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an
+integer revision number just before the filename extension. This method will look for instances of several
+files which differ in name only by the presence of the revision number and will kepp only the highest revision
+number. This is useful if several measurements of the same experiment have been carried out, but only the
+last file is the correct one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A copy of the DataFolder.</p>
@@ -132,9 +133,9 @@ the correct one.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

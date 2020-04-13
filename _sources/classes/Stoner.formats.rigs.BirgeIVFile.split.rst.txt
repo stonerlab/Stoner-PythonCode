@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.split
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.split

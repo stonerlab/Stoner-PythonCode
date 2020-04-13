@@ -1,0 +1,8 @@
+
+
+SPCFile.rename
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.rename

@@ -1,0 +1,8 @@
+
+
+DataFile.del_rows
+=============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.del_rows

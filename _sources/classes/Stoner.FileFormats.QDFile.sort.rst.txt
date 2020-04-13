@@ -1,8 +1,0 @@
-
-
-QDFile.sort
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.sort

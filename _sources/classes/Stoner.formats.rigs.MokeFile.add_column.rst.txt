@@ -1,0 +1,8 @@
+
+
+MokeFile.add_column
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.add_column

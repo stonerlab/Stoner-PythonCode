@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.insert
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.insert

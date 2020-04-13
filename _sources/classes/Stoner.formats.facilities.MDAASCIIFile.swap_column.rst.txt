@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.swap_column
+==================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.swap_column

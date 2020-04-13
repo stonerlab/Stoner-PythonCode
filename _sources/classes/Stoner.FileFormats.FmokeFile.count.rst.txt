@@ -1,8 +1,0 @@
-
-
-FmokeFile.count
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.count

@@ -1,0 +1,8 @@
+
+
+XRDFile.rolling_window
+=================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.rolling_window

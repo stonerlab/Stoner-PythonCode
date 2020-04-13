@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.insert_rows
+==================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.insert_rows

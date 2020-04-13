@@ -1,0 +1,8 @@
+
+
+OVFFile.unique
+=========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.unique

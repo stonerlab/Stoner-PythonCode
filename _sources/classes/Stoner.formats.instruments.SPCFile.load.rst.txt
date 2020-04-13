@@ -1,0 +1,8 @@
+
+
+SPCFile.load
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.load

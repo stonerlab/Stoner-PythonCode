@@ -1,8 +1,0 @@
-
-
-OVFFile.rows
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.rows

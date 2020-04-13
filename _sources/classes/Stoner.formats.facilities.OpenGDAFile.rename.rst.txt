@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.rename
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.rename

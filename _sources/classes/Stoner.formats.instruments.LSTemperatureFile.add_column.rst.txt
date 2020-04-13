@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.add_column
+=======================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.add_column

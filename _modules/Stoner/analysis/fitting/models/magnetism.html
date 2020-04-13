@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,17 +45,15 @@
   <h1>Source code for Stoner.analysis.fitting.models.magnetism</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:py:class:`lmfit.Model` model classes and functions for various magnetism and magnetic materials models.</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
+<span class="sd">&quot;&quot;&quot;:py:class:`lmfit.Model` model classes and functions for various magnetism and magnetic materials models.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;BlochLaw&quot;</span><span class="p">,</span>
     <span class="s2">&quot;FMR_Power&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Inverse_Kittel&quot;</span><span class="p">,</span>
     <span class="s2">&quot;KittelEquation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Langevin&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Model&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;blochLaw&quot;</span><span class="p">,</span>
     <span class="s2">&quot;fmr_power&quot;</span><span class="p">,</span>
     <span class="s2">&quot;inverse_kittel&quot;</span><span class="p">,</span>
     <span class="s2">&quot;kittelEquation&quot;</span><span class="p">,</span>
@@ -67,6 +62,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.constants</span> <span class="k">as</span> <span class="nn">cnst</span>
+<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">k</span><span class="p">,</span> <span class="n">mu_0</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">electron_mass</span><span class="p">,</span> <span class="n">hbar</span>
+<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span>
@@ -102,7 +99,7 @@
 
 
 <span class="k">def</span> <span class="nf">langevin</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">M_s</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;&quot;The Langevin function for paramagnetic M-H loops/</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Langevin function for paramagnetic M-H loops.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        H (array): The applied magnetic field</span>
@@ -121,7 +118,6 @@
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: langevin</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">k</span><span class="p">,</span> <span class="n">mu_0</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="n">mu_0</span> <span class="o">*</span> <span class="n">H</span> <span class="o">*</span> <span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">T</span><span class="p">)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">M_s</span> <span class="o">/</span> <span class="n">m</span>
@@ -153,7 +149,7 @@
 
 
 <span class="k">def</span> <span class="nf">inverse_kittel</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">M_s</span><span class="p">,</span> <span class="n">H_k</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        f (array): Resonance Frequency in Hz</span>
@@ -166,11 +162,14 @@
 
 <span class="sd">    Notes:</span>
 <span class="sd">        In practice one often measures FMR by sweepign field for constant frequency and then locates the</span>
-<span class="sd">        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a :math:`H_{res}\pm \Delta H_{res}`</span>
-<span class="sd">        In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`</span>
+<span class="sd">        peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a</span>
+<span class="sd">        :math:`H_{res}\pm \Delta H_{res}`</span>
+<span class="sd">        In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or</span>
+<span class="sd">        :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`</span>
 <span class="sd">        it makes more sense to fit the Kittel Equation written in terms of H than frequency.</span>
 
-<span class="sd">       :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2} \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`</span>
+<span class="sd">       :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2}</span>
+<span class="sd">       \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">gamma</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="n">cnst</span><span class="o">.</span><span class="n">e</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">cnst</span><span class="o">.</span><span class="n">m_e</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span>
@@ -192,7 +191,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Array of model absorption values.</span>
 
-<span class="sd">    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`</span>
+<span class="sd">    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}</span>
+<span class="sd">    \right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{</span>
+<span class="sd">    \left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="mi">4</span> <span class="o">*</span> <span class="n">Delta_H</span> <span class="o">*</span> <span class="n">K_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Delta_H</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">H</span> <span class="o">-</span> <span class="n">H_res</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
@@ -200,7 +201,7 @@
     <span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">BlochLaw</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="BlochLaw"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.magnetism.BlochLaw.html#Stoner.analysis.fitting.models.magnetism.BlochLaw">[docs]</a><span class="k">class</span> <span class="nc">BlochLaw</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bloch&#39;s law for spontaneous magnetism at low temperatures.</span>
 
@@ -231,24 +232,23 @@
         <span class="sd">&quot;&quot;&quot;Configure Initial fitting function.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BlochLaw</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">blochLaw</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BlochLaw.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.magnetism.BlochLaw.html#Stoner.analysis.fitting.models.magnetism.BlochLaw.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Guess some starting values.&quot;&quot;&quot;</span>
-
         <span class="n">Ms</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1.001</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">data</span> <span class="o">/</span> <span class="n">Ms</span><span class="p">)</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">d2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">x0</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">Ms</span><span class="o">=</span><span class="n">Ms</span><span class="p">,</span> <span class="n">Tc</span><span class="o">=</span><span class="n">x0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Langevin"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.magnetism.Langevin.html#Stoner.analysis.fitting.models.magnetism.Langevin">[docs]</a><span class="k">class</span> <span class="nc">Langevin</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;&quot;The Langevin function for paramagnetic M-H loops/</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Langevin function for paramagnetic M-H loops.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        H (array): The applied magnetic field</span>
@@ -273,13 +273,10 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Langevin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">langevin</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Langevin.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.magnetism.Langevin.html#Stoner.analysis.fitting.models.magnetism.Langevin.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess some starting values.</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Guess some starting values.</span>
 
 <span class="sd">        M_s is taken as half the difference of the range of thew M data,</span>
-<span class="sd">        we can find m/T from the susceptibility chi= M_s \mu_o m / kT,&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
-        <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">k</span><span class="p">,</span> <span class="n">mu_0</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">electron_mass</span><span class="p">,</span> <span class="n">hbar</span>
-
+<span class="sd">        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`,&quot;&quot;&quot;</span>
         <span class="n">M_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">)))</span>
@@ -383,6 +380,7 @@
 
 
 <div class="viewcode-block" id="FMR_Power"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.html#Stoner.analysis.fitting.models.magnetism.FMR_Power">[docs]</a><span class="k">class</span> <span class="nc">FMR_Power</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</span>
 
 <span class="sd">    Args:</span>
@@ -394,7 +392,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Array of model absorption values.</span>
 
-<span class="sd">    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`</span>
+<span class="sd">    :math:`\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}</span>
+<span class="sd">    \right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(</span>
+<span class="sd">    \Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">display_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;H_</span><span class="si">{res}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\Delta_H&quot;</span><span class="p">,</span> <span class="s2">&quot;K_1&quot;</span><span class="p">,</span> <span class="s2">&quot;K_2&quot;</span><span class="p">]</span>
 
@@ -403,8 +403,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">FMR_Power</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fmr_power</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FMR_Power.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.html#Stoner.analysis.fitting.models.magnetism.FMR_Power.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H&quot;&quot;&quot;</span>
-
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Guess parameters as :math:`\gamma=2, H_k=0, M_s~(\pi f)^2/\mu_0^2.H)-H`.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -457,16 +456,13 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

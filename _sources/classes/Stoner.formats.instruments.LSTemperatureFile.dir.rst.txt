@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.dir
+================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.dir

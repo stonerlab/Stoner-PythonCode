@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.reverse
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.reverse

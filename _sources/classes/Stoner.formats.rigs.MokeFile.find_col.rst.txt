@@ -1,0 +1,8 @@
+
+
+MokeFile.find_col
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.find_col

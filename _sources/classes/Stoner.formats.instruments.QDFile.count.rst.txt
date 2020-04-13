@@ -1,0 +1,8 @@
+
+
+QDFile.count
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.count

@@ -1,8 +1,0 @@
-
-
-FmokeFile.reorder_columns
-============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.reorder_columns

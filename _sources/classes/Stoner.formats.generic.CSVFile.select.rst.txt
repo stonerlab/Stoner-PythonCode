@@ -1,0 +1,8 @@
+
+
+CSVFile.select
+=====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.select

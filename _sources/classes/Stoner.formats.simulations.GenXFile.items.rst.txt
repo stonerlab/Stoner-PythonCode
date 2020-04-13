@@ -1,0 +1,8 @@
+
+
+GenXFile.items
+=========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.items

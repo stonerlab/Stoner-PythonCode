@@ -1,0 +1,8 @@
+
+
+BigBlueFile.rename
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.rename

@@ -1,0 +1,8 @@
+
+
+RasorFile.closest
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.closest

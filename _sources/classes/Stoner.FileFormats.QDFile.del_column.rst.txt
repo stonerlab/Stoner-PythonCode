@@ -1,8 +1,0 @@
-
-
-QDFile.del_column
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.del_column

@@ -1,0 +1,8 @@
+
+
+XRDFile.split
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.split

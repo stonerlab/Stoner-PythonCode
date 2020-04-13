@@ -1,8 +1,0 @@
-
-
-RasorFile.select
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.select

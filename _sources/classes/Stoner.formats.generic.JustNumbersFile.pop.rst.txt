@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.pop
+==========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.pop

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.reverse
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.reverse

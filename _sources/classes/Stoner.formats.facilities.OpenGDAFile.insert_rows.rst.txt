@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.insert_rows
+=================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.insert_rows

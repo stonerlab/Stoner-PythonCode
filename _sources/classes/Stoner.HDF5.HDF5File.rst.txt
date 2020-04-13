@@ -20,7 +20,9 @@ HDF5File
 
    .. autosummary::
 
+      ~HDF5File.read_HDF
       ~HDF5File.save
+      ~HDF5File.to_HDF
 
    .. rubric:: Attributes Documentation
 
@@ -32,4 +34,6 @@ HDF5File
 
    .. rubric:: Methods Documentation
 
+   .. automethod:: read_HDF
    .. automethod:: save
+   .. automethod:: to_HDF

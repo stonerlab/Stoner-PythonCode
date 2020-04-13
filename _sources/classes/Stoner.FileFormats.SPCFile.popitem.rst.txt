@@ -1,8 +1,0 @@
-
-
-SPCFile.popitem
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.popitem

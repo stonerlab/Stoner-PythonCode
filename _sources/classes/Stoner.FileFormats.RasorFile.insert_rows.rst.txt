@@ -1,8 +1,0 @@
-
-
-RasorFile.insert_rows
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.insert_rows

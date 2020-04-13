@@ -1,0 +1,8 @@
+
+
+SPCFile.select
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.select

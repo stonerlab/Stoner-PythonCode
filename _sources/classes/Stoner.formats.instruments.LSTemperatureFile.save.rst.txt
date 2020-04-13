@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.save
+=================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.save

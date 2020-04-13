@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PlotMethodsMixin" href="Stoner.folders.mixins.PlotMethodsMixin.html" />
-    <link rel="prev" title="DiskBasedFolder" href="Stoner.folders.mixins.DiskBasedFolder.html" />
+    <link rel="prev" title="DiskBasedFolderMixin" href="Stoner.folders.mixins.DiskBasedFolderMixin.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.folders.mixins.DiskBasedFolder.html" title="Previous document">DiskBasedFolder</a>
+          <a href="Stoner.folders.mixins.DiskBasedFolderMixin.html" title="Previous document">DiskBasedFolderMixin</a>
         </li>
         <li>
           <a href="Stoner.folders.mixins.PlotMethodsMixin.html" title="Next document">PlotMethodsMixin</a>
@@ -58,7 +58,7 @@
 <dt id="Stoner.folders.mixins.DataMethodsMixin">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.folders.mixins.</code><code class="sig-name descname">DataMethodsMixin</code><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#DataMethodsMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.DataMethodsMixin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A mixin class that provides a <a class="reference internal" href="Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFolder</span></code></a> with methods for working with <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> objects.</p>
+<p>Methods for wokring with <code class="xref py py-class docutils literal notranslate"><span class="pre">Stner.Data</span></code> in py:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>Stoner.DataFolder`s.</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -70,10 +70,10 @@
 <td><p>Concatentates all the files in a objectFolder into a single metadataObject like object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.mixins.DataMethodsMixin.extract" title="Stoner.folders.mixins.DataMethodsMixin.extract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract</span></code></a>(*metadata, **kargs)</p></td>
-<td><p>Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.</p></td>
+<td><p>Extract metadata from each of the files in the terminal group.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.mixins.DataMethodsMixin.gather" title="Stoner.folders.mixins.DataMethodsMixin.gather"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gather</span></code></a>([xcol, ycol])</p></td>
-<td><p>Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code></p></td>
+<td><p>Collect xy and y columns from the subfiles in the final group in the tree.</p></td>
 </tr>
 </tbody>
 </table>
@@ -85,8 +85,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sort</strong> (<em>column index</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, or </em><em>clallable function</em>) – Sort the resultant metadataObject by this column (if a column index),
-or by the <em>x</em> column if None or True, or not at all if False. <em>sort</em> is passed directly to the eponymous method as the
+<li><p><strong>sort</strong> (<em>column index</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, or </em><em>clallable function</em>) – Sort the resultant metadataObject by this column (if a column index), or by the <em>x</em> column if None
+or True, or not at all if False. <em>sort</em> is passed directly to the eponymous method as the
 <em>order</em> paramter.</p></li>
 <li><p><strong>reverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Reverse the order of the sort (defaults to False)</p></li>
 </ul>
@@ -100,14 +100,19 @@ or by the <em>x</em> column if None or True, or not at all if False. <em>sort</e
 <dl class="method">
 <dt id="Stoner.folders.mixins.DataMethodsMixin.extract">
 <code class="sig-name descname">extract</code><span class="sig-paren">(</span><em class="sig-param">*metadata</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#DataMethodsMixin.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.DataMethodsMixin.extract" title="Permalink to this definition">¶</a></dt>
-<dd><p>Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.</p>
+<dd><p>Extract metadata from each of the files in the terminal group.</p>
+<p>Walks through the terminal group and gets the listed metadata from each file and constructsa replacement
+metadataObject.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>*metadata</strong> (<em>str</em>) – One or more metadata indices that should be used to construct the new data file.</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Ketyword Arguments:</dt><dd><p>copy (bool): Take a copy of the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> before starting the extract (default is True)</p>
+<dt>Ketyword Arguments:</dt><dd><dl class="simple">
+<dt>copy (bool):</dt><dd><p>Take a copy of the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> before starting the extract (default is True)</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -120,17 +125,19 @@ or by the <em>x</em> column if None or True, or not at all if False. <em>sort</e
 <dl class="method">
 <dt id="Stoner.folders.mixins.DataMethodsMixin.gather">
 <code class="sig-name descname">gather</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#DataMethodsMixin.gather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.DataMethodsMixin.gather" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code></p>
+<dd><p>Collect xy and y columns from the subfiles in the final group in the tree.</p>
+<p>Builds the collected data into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column in each file that has x data. if None, then the setas settings are used</p></li>
-<li><p><strong>ycol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column(s) in each filwe that contain the y data. If none, then the setas settings are used.</p></li>
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column in each file that has x data. if None, then the setas settings are used</p></li>
+<li><p><strong>ycol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column(s) in each filwe that contain the y data. If none, then the setas settings are used.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>This is a wrapper around walk_groups that assembles the data into a single file for further analysis/plotting.</p>
+<p>This is a wrapper around walk_groups that assembles the data into a single file for
+further analysis or plotting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -147,8 +154,8 @@ or by the <em>x</em> column if None or True, or not at all if False. <em>sort</e
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.folders.mixins.DiskBasedFolder.html"
-                        title="previous chapter">DiskBasedFolder</a></p>
+  <p class="topless"><a href="Stoner.folders.mixins.DiskBasedFolderMixin.html"
+                        title="previous chapter">DiskBasedFolderMixin</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.folders.mixins.PlotMethodsMixin.html"
                         title="next chapter">PlotMethodsMixin</a></p>
@@ -175,7 +182,7 @@ or by the <em>x</em> column if None or True, or not at all if False. <em>sort</e
     <ul>
         <li>
           &larr;
-          <a href="Stoner.folders.mixins.DiskBasedFolder.html" title="Previous document">DiskBasedFolder</a>
+          <a href="Stoner.folders.mixins.DiskBasedFolderMixin.html" title="Previous document">DiskBasedFolderMixin</a>
         </li>
         <li>
           <a href="Stoner.folders.mixins.PlotMethodsMixin.html" title="Next document">PlotMethodsMixin</a>
@@ -192,9 +199,9 @@ or by the <em>x</em> column if None or True, or not at all if False. <em>sort</e
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

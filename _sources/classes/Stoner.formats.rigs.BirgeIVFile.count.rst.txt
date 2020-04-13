@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.count
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.count

@@ -1,0 +1,8 @@
+
+
+FmokeFile.remove
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.remove

@@ -1,0 +1,8 @@
+
+
+SPCFile.popitem
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.popitem

@@ -1,8 +1,0 @@
-
-
-VSMFile.setdefault
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.setdefault

@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.get_filename
+===================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.get_filename

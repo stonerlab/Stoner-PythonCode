@@ -1,0 +1,8 @@
+
+
+BNLFile.insert
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.insert

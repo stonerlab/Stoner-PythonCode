@@ -1,8 +1,0 @@
-
-
-RigakuFile.sort
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.sort

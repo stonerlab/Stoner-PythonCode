@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.save
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.save

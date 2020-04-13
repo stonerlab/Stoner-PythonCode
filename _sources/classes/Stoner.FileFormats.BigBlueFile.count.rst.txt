@@ -1,8 +1,0 @@
-
-
-BigBlueFile.count
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.count

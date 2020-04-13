@@ -6,12 +6,22 @@ item
 .. autoclass:: item
    :show-inheritance:
 
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~item.setas
+
    .. rubric:: Methods Summary
 
    .. autosummary::
 
       ~item.__call__
       ~item.iter
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: setas
 
    .. rubric:: Methods Documentation
 

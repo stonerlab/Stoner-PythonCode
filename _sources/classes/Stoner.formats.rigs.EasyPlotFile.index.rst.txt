@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.index
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.index

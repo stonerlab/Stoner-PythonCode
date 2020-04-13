@@ -1,8 +1,0 @@
-
-
-CSVFile.count
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: CSVFile.count

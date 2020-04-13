@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -53,7 +50,7 @@
 <span class="sd">These functions depend only on Stoner.compat which is used to ensure a consistent namespace between python 2.7 and 3.x.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;_attribute_store&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AttributeStore&quot;</span><span class="p">,</span>
     <span class="s2">&quot;all_size&quot;</span><span class="p">,</span>
     <span class="s2">&quot;all_type&quot;</span><span class="p">,</span>
     <span class="s2">&quot;fix_signature&quot;</span><span class="p">,</span>
@@ -61,27 +58,39 @@
     <span class="s2">&quot;format_val&quot;</span><span class="p">,</span>
     <span class="s2">&quot;html_escape&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isAnyNone&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isComparable&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isNone&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;isiterable&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;islike_list&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;isproperty&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;istuple&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isIterable&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isLikeList&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isProperty&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isTuple&quot;</span><span class="p">,</span>
     <span class="s2">&quot;quantize&quot;</span><span class="p">,</span>
     <span class="s2">&quot;tex_escape&quot;</span><span class="p">,</span>
     <span class="s2">&quot;typedList&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_option&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_option&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ordinal&quot;</span><span class="p">,</span>
 <span class="p">]</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">MutableSequence</span>
-<span class="kn">from</span> <span class="nn">.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">bytes2str</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">MutableSequence</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">logical_and</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="nb">round</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">dtype</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
-<span class="kn">from</span> <span class="nn">cgi</span> <span class="kn">import</span> <span class="n">escape</span> <span class="k">as</span> <span class="n">html_escape</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="n">logical_and</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="nb">round</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">dtype</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">memoization</span> <span class="kn">import</span> <span class="n">cached</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">cached</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Null dectorator.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">bytes2str</span>
+<span class="kn">from</span> <span class="nn">.classes</span> <span class="kn">import</span> <span class="n">attributeStore</span> <span class="k">as</span> <span class="n">AttributeStore</span><span class="p">,</span> <span class="n">typedList</span><span class="p">,</span> <span class="n">Options</span><span class="p">,</span> <span class="n">get_option</span><span class="p">,</span> <span class="n">set_option</span>
+<span class="kn">from</span> <span class="nn">.tests</span> <span class="kn">import</span> <span class="n">all_size</span><span class="p">,</span> <span class="n">all_type</span><span class="p">,</span> <span class="n">isAnyNone</span><span class="p">,</span> <span class="n">isComparable</span><span class="p">,</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">isLikeList</span><span class="p">,</span> <span class="n">isNone</span><span class="p">,</span> <span class="n">isProperty</span><span class="p">,</span> <span class="n">isTuple</span>
+<span class="kn">from</span> <span class="nn">.formatting</span> <span class="kn">import</span> <span class="n">format_error</span><span class="p">,</span> <span class="n">format_val</span><span class="p">,</span> <span class="n">quantize</span><span class="p">,</span> <span class="n">html_escape</span><span class="p">,</span> <span class="n">tex_escape</span><span class="p">,</span> <span class="n">ordinal</span>
 
 <span class="n">operator</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;eq&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="o">==</span> <span class="n">v</span><span class="p">,</span>
@@ -104,291 +113,21 @@
     <span class="s2">&quot;iendsswith&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">upper</span><span class="p">()),</span>
 <span class="p">}</span>
 
-<span class="n">prefs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
-        <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
-        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
-        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
-        <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
-        <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
-        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;latex&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
-        <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
-        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
-        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
-        <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
-        <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
-        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\mu&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
-        <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
-        <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
-        <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
-        <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
-        <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
-        <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;&amp;micro;&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span>
-        <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
-    <span class="p">},</span>
-<span class="p">}</span>
-
-<span class="n">_options</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;short_repr&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;short_data_repr&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;short_folder_rrepr&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;short_img_repr&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;no_figs&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;multiprocessing&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;nt&quot;</span><span class="p">,</span>  <span class="c1"># multiprocess doesn&#39;t run too well under Windows due to spawn()</span>
-    <span class="s2">&quot;threading&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">}</span>
 
 <span class="c1">###############################################################################################################</span>
 <span class="c1">######################  Functions #############################################################################</span>
 <span class="c1">###############################################################################################################</span>
 
 
-<div class="viewcode-block" id="all_size"><a class="viewcode-back" href="../../classes/Stoner.tools.all_size.html#Stoner.tools.all_size">[docs]</a><span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether each element of *iterator* is the same length/shape.</span>
+<span class="nd">@cached</span>
+<span class="k">def</span> <span class="nf">make_Data</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return an instance of Stoner.Data passig through constructor arguments.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        iterator (Iterable): list or other iterable of things with a length or shape</span>
-
-<span class="sd">    Keyword Arguments:</span>
-<span class="sd">        size(int, tuple or None): Required size of each item in iterator.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if all objects are the size specified (or the same size if size is None).</span>
+<span class="sd">    Calling make_Data(None) is a speical case to return the Data class ratther than an instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterator</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;shape&quot;</span><span class="p">):</span>
-        <span class="n">sizer</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">sizer</span> <span class="o">=</span> <span class="nb">len</span>
-
-    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">sizer</span><span class="p">(</span><span class="n">iterator</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">sizer</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
-            <span class="k">break</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-
-<div class="viewcode-block" id="format_error"><a class="viewcode-back" href="../../classes/Stoner.tools.format_error.html#Stoner.tools.format_error">[docs]</a><span class="k">def</span> <span class="nf">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf&#39;s than the uncertainty.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        value (float): The value to be formated</span>
-<span class="sd">        error (float): The uncertainty in the value</span>
-<span class="sd">        fmt (str): Specify the output format, opyions are:</span>
-<span class="sd">            *  &quot;text&quot; - plain text output</span>
-<span class="sd">            * &quot;latex&quot; - latex output</span>
-<span class="sd">            * &quot;html&quot; - html entities</span>
-<span class="sd">        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</span>
-<span class="sd">        mode (string): If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
-<span class="sd">            to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a scientifc,</span>
-<span class="sd">            i.e. mantissa and exponent format is used.</span>
-<span class="sd">        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
-<span class="sd">            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
-<span class="sd">        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
-<span class="sd">            inside the math-mode markers, but not embedded in \mathrm.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">)</span>
-    <span class="n">units</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">latex</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">fmt</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span> <span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
-    <span class="n">escape</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">escape_func</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span> <span class="n">tex_escape</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">html_escape</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>  <span class="c1"># special case for zero uncertainty</span>
-        <span class="k">return</span> <span class="n">format_val</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">escape</span><span class="p">:</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="n">units</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
-
-    <span class="c1"># Sort out special fomatting for different modes</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>  <span class="c1"># Standard</span>
-        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;eng&quot;</span><span class="p">:</span>  <span class="c1"># Use SI prefixes</span>
-        <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">v_mag</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
-        <span class="n">prefixes</span> <span class="o">=</span> <span class="n">prefs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">prefs</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">v_mag</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
-                <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\,\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">]</span>
-            <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-            <span class="n">error</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Implies 10^-3&lt;x&lt;10^3</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sci&quot;</span><span class="p">:</span>  <span class="c1"># Scientific mode - raise to common power of 10</span>
-        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\times 10^{{{{</span><span class="si">{}</span><span class="s2">}}}}\,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&amp;times; 10&lt;sup&gt;</span><span class="si">{}</span><span class="s2">&lt;/sup&gt; &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-        <span class="n">error</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Bad mode</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised mode: </span><span class="si">{}</span><span class="s2"> in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
-
-    <span class="c1"># Now do the rounding of the value based on error to 1 s.f.</span>
-    <span class="n">e2</span> <span class="o">=</span> <span class="n">error</span>
-    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>  <span class="c1"># work out the scale of the error</span>
-    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">error</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c1"># round the error, but this could round to 0.x0</span>
-    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>  <span class="c1"># so go round the loop again</span>
-    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">e2</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c1"># and get a new error magnitude</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>
-    <span class="n">u_mag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">u_mag</span><span class="p">)</span>  <span class="c1"># Force integer results to have no dp</span>
-
-    <span class="c1"># Protect {} in units string</span>
-    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">{{:.</span><span class="si">{}</span><span class="s2">f}}\pm &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s2">&quot;$&quot;</span>
-    <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{:.</span><span class="si">{}</span><span class="s2">f}}&amp;plusmin;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
-        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Plain text</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{:.</span><span class="si">{}</span><span class="s2">f}}+/-&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
-        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
-    <span class="k">if</span> <span class="n">u_mag</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># the error is less than 1, so con strain decimal places</span>
-        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;{:.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span> <span class="o">+</span> <span class="s2">&quot;f}&quot;</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># We&#39;ll be converting it to an integer anyway</span>
-        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span>
-    <span class="n">fmt_str</span> <span class="o">=</span> <span class="n">val_fmt_str</span> <span class="o">+</span> <span class="n">err_fmt_str</span> <span class="o">+</span> <span class="n">suffix_val</span> <span class="o">+</span> <span class="n">suffix_fmt</span>
-    <span class="k">if</span> <span class="n">error</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="format_val"><a class="viewcode-back" href="../../classes/Stoner.tools.format_val.html#Stoner.tools.format_val">[docs]</a><span class="k">def</span> <span class="nf">format_val</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Format a number as an SI quantity</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        value(float): Value to format</span>
-
-<span class="sd">    Keyword Arguments:</span>
-<span class="sd">        fmt (str): Specify the output format, opyions are:</span>
-<span class="sd">            *  &quot;text&quot; - plain text output</span>
-<span class="sd">            * &quot;latex&quot; - latex output</span>
-<span class="sd">            * &quot;html&quot; - html entities</span>
-<span class="sd">        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</span>
-<span class="sd">        mode (string): If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
-<span class="sd">            to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a scientifc,</span>
-<span class="sd">            i.e. mantissa and exponent format is used.</span>
-<span class="sd">        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
-<span class="sd">            prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
-<span class="sd">        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
-<span class="sd">            inside the math-mode markers, but not embedded in \mathrm.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (str): The formatted value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">mode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;float&quot;</span><span class="p">)</span>
-    <span class="n">units</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">latex</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">fmt</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span> <span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
-    <span class="n">places</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;places&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">escape</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-    <span class="n">escape_func</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;latex&quot;</span><span class="p">:</span> <span class="n">tex_escape</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">html_escape</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">escape</span><span class="p">:</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="n">units</span> <span class="o">=</span> <span class="n">escape_func</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>  <span class="c1"># Standard</span>
-        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;eng&quot;</span><span class="p">:</span>  <span class="c1"># Use SI prefixes</span>
-        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
-        <span class="n">prefixes</span> <span class="o">=</span> <span class="n">prefs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">prefs</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">v_mag</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
-                <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">suffix_val</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">]</span>
-            <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Implies 10^-3&lt;x&lt;10^3</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sci&quot;</span><span class="p">:</span>  <span class="c1"># Scientific mode - raise to common power of 10</span>
-        <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\times 10^{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&amp;times; 10&lt;sup&gt;</span><span class="si">{}</span><span class="s2">&lt;/sup&gt; &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
-        <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Bad mode</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised mode: </span><span class="si">{}</span><span class="s2"> in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
-
-    <span class="c1"># Protect {} in units string</span>
-    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;latex&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm{{{{</span><span class="si">{}</span><span class="s2">}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s2">&quot;$&quot;</span>
-    <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Plain text</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">{{}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
-        <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
-    <span class="n">fmt_str</span> <span class="o">=</span> <span class="n">val_fmt_str</span> <span class="o">+</span> <span class="n">suffix_val</span> <span class="o">+</span> <span class="n">suffix_fmt</span>
-    <span class="k">if</span> <span class="n">places</span><span class="p">:</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">places</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;Stoner.core.data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Data</span>
+    <span class="k">return</span> <span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;Stoner.core.data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="fix_signature"><a class="viewcode-back" href="../../classes/Stoner.tools.fix_signature.html#Stoner.tools.fix_signature">[docs]</a><span class="k">def</span> <span class="nf">fix_signature</span><span class="p">(</span><span class="n">proxy_func</span><span class="p">,</span> <span class="n">wrapped_func</span><span class="p">):</span>
@@ -400,396 +139,9 @@
             <span class="n">proxy_func</span><span class="o">.</span><span class="n">__signature__</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">pass</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">wrapped_func</span><span class="p">,</span> <span class="s2">&quot;changes_size&quot;</span><span class="p">):</span>
+        <span class="n">proxy_func</span><span class="o">.</span><span class="n">changes_size</span> <span class="o">=</span> <span class="n">wrapped_func</span><span class="o">.</span><span class="n">changes_size</span>
     <span class="k">return</span> <span class="n">proxy_func</span></div>
-
-
-<div class="viewcode-block" id="get_option"><a class="viewcode-back" href="../../classes/Stoner.tools.get_option.html#Stoner.tools.get_option">[docs]</a><span class="k">def</span> <span class="nf">get_option</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the option value&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid package option&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../classes/Stoner.tools.all_type.html#Stoner.tools.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determines if an interable omnly contains a common type.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        iterator (Iterable): The object to check if it is all iterable</span>
-<span class="sd">        typ (class): The type to check for.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if all elements are of the type typ, or False if not.</span>
-
-<span class="sd">    Notes:</span>
-<span class="sd">        Routine will iterate the *iterator* and break when an element is not of</span>
-<span class="sd">        the search type *typ*.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">):</span>  <span class="c1"># Try to short circuit for arrays</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">iterator</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">dtype</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-    <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
-                <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-
-<div class="viewcode-block" id="isAnyNone"><a class="viewcode-back" href="../../classes/Stoner.tools.isAnyNone.html#Stoner.tools.isAnyNone">[docs]</a><span class="k">def</span> <span class="nf">isAnyNone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Intelligently check whether any of the inputs are None.&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<span class="k">def</span> <span class="nf">isComparable</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns true if v1 and v2 can be compared sensibly</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        v1,v2 (any): Two values to compare</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        False if both v1 and v2 are numerical and both nan, otherwise True.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isnan</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span>
-    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="ow">not</span> <span class="n">logical_and</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span> <span class="n">isnan</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-
-<div class="viewcode-block" id="isiterable"><a class="viewcode-back" href="../../classes/Stoner.tools.isiterable.html#Stoner.tools.isiterable">[docs]</a><span class="k">def</span> <span class="nf">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Chack to see if a value is iterable.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        value (object): Entitiy to check if it is iterable</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (bool): True if value is an instance of collections.Iterable.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="islike_list"><a class="viewcode-back" href="../../classes/Stoner.tools.islike_list.html#Stoner.tools.islike_list">[docs]</a><span class="k">def</span> <span class="nf">islike_list</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if value is an iterable but not a string.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../classes/Stoner.tools.isNone.html#Stoner.tools.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if input is None or an empty iterator, or an iterator of None.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        iterator (None or Iterable):</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if iterator is None, empty or full of None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">iterator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pylint: disable=len-as-condition</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-
-<div class="viewcode-block" id="isproperty"><a class="viewcode-back" href="../../classes/Stoner.tools.isproperty.html#Stoner.tools.isproperty">[docs]</a><span class="k">def</span> <span class="nf">isproperty</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether an attribute of an object or class is a property.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        obj (instance or class): Thing that has the attribute to check</span>
-<span class="sd">        name (str): Name of the attrbiute that might be a property</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (bool): Whether the name is a property or not.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;Can only check for property status on attributes of an object or a class not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
-        <span class="p">)</span>
-    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="nb">property</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="istuple"><a class="viewcode-back" href="../../classes/Stoner.tools.istuple.html#Stoner.tools.istuple">[docs]</a><span class="k">def</span> <span class="nf">istuple</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determine if obj is a tuple of a certain signature.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        obj(object): The object to check</span>
-<span class="sd">        *args(type): Each of the suceeding arguments are used to determine the expected type of each element.</span>
-
-<span class="sd">    Keywoprd Arguments:</span>
-<span class="sd">        strict(bool): Whether the elements of the tuple have to be exactly the type specified or just castable as the type</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (bool): True if obj is a matching tuple.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">strict</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-                <span class="n">bad</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">_</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">bad</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">break</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">bad</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="ow">not</span> <span class="n">bad</span></div>
-
-
-<div class="viewcode-block" id="quantize"><a class="viewcode-back" href="../../classes/Stoner.tools.quantize.html#Stoner.tools.quantize">[docs]</a><span class="k">def</span> <span class="nf">quantize</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">quantum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Round a number to the nearest multiple of a quantum.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        number (float,array): Number(s) to be rounded to the nearest qyuantum</span>
-<span class="sd">        quantum (float): Quantum to round to</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        number rounded to qunatum</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">number</span> <span class="o">/</span> <span class="n">quantum</span><span class="p">)</span> <span class="o">*</span> <span class="n">quantum</span></div>
-
-
-<div class="viewcode-block" id="set_option"><a class="viewcode-back" href="../../classes/Stoner.tools.set_option.html#Stoner.tools.set_option">[docs]</a><span class="k">def</span> <span class="nf">set_option</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set a global package option.</span>
-
-<span class="sd">    - short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.</span>
-<span class="sd">    - short_data_repr (bool): Just use short representation for DataFiles</span>
-<span class="sd">    - short_img_repr (bool): Just use a short representation for image file</span>
-<span class="sd">    - no_figs (bool): Do not return figures from plotting functions, just plot them.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid package option&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> takes a boolean value not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-    <span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
-
-
-<div class="viewcode-block" id="tex_escape"><a class="viewcode-back" href="../../classes/Stoner.tools.tex_escape.html#Stoner.tools.tex_escape">[docs]</a><span class="k">def</span> <span class="nf">tex_escape</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Escapes spacecial text charcters in a string.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        text (str): a plain text message</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        the message escaped to appear correctly in LaTeX</span>
-
-<span class="sd">    From `Stackoverflow &lt;http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates&gt;`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">conv</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;&amp;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\&amp;&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;%&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\%&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;$&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\$&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;#&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\#&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\_&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;{&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\{&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;}&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\}&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;~&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textasciitilde</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;^&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\^</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textbackslash</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textless&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;\textgreater&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">conv</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))))</span>
-    <span class="k">return</span> <span class="n">regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="n">conv</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()],</span> <span class="n">text</span><span class="p">)</span></div>
-
-
-<span class="c1">###############################################################################################################</span>
-<span class="c1">######################  Classes ###############################################################################</span>
-<span class="c1">###############################################################################################################</span>
-
-
-<div class="viewcode-block" id="_attribute_store"><a class="viewcode-back" href="../../classes/Stoner.tools._attribute_store.html#Stoner.tools._attribute_store">[docs]</a><span class="k">class</span> <span class="nc">_attribute_store</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;A dictionary=like class that provides attributes that work like indices.</span>
-
-<span class="sd">    Used to implement the mapping of column types to indices in the setas attriobutes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialise from a dictionary.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">_attribute_store</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Setting an attribute is equivalent to setting an item.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Getting an attrbute is equivalent to getting an item.&quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span></div>
-
-
-<div class="viewcode-block" id="typedList"><a class="viewcode-back" href="../../classes/Stoner.tools.typedList.html#Stoner.tools.typedList">[docs]</a><span class="k">class</span> <span class="nc">typedList</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Subclass list to make setitem enforce  strict typing of members of the list.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Construct the typedList.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">args</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">type</span><span class="p">))):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="nb">str</span>  <span class="c1"># Default list type is a string</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;List should be constructed with at most two arguments, a type and an iterable&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="s2">&quot;List should be initialised with elements that are all of type </span><span class="si">{}</span><span class="s2"> not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add operator works like ordinary lists.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
-            <span class="n">new</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-            <span class="n">new</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">new</span>
-        <span class="k">return</span> <span class="bp">NotImplemented</span>
-
-    <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Inplace-add works like a list.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span>
-        <span class="k">return</span> <span class="bp">NotImplemented</span>
-
-    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Support add on the right like a list.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">other</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span>
-        <span class="k">return</span> <span class="bp">NotImplemented</span>
-
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Equality test.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="o">==</span> <span class="n">other</span>
-
-    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove an item like in a list.&quot;&quot;&quot;</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get an item like in a list.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement the len function like a list.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Textual representation like a list.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Setting an item requires some type checks.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">all_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Elelements of this list should be of type </span><span class="si">{}</span><span class="s2"> and must set the correct number of elements&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Elelements of this list should be of type </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-<div class="viewcode-block" id="typedList.extend"><a class="viewcode-back" href="../../classes/Stoner.tools.typedList.html#Stoner.tools.typedList.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>  <span class="c1"># pylint:  disable=arguments-differ</span>
-        <span class="sd">&quot;&quot;&quot;Extending a list also requires some type checking.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">all_type</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Elelements of this list should be of type </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="typedList.index"><a class="viewcode-back" href="../../classes/Stoner.tools.typedList.html#Stoner.tools.typedList.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pylint:  disable=arguments-differ</span>
-        <span class="sd">&quot;&quot;&quot;Index works like a list except we support Python 3 optional parameters everywhere.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">search</span><span class="p">)</span> <span class="o">+</span> <span class="n">start</span></div>
-
-<div class="viewcode-block" id="typedList.insert"><a class="viewcode-back" href="../../classes/Stoner.tools.typedList.html#Stoner.tools.typedList.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>  <span class="c1"># pylint:  disable=arguments-differ</span>
-        <span class="sd">&quot;&quot;&quot;Inserting an element also requires some type checking.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Elelements of this list should be of type </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span></div></div>
-
-
-<span class="k">class</span> <span class="nc">_Options</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Dead simple class to allow access to package options.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">_options</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">_Options</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a recognised option.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">])):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> takes a </span><span class="si">{}</span><span class="s2"> not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">_options</span><span class="p">[</span><span class="n">name</span><span class="p">]),</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-        <span class="n">set_option</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a recognised option.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">get_option</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_options</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a recognised option.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-        <span class="n">set_option</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;Stoner Package Options</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;~~~~~~~~~~~~~~~~~~~~~~</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> : </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">get_option</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
           </div>
@@ -821,16 +173,13 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

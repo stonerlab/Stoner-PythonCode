@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="proxy" href="Stoner.folders.metadata.proxy.html" />
@@ -58,12 +58,23 @@
 <dt id="Stoner.folders.each.item">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.folders.each.</code><code class="sig-name descname">item</code><span class="sig-paren">(</span><em class="sig-param">folder</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.item" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Provides a proxy object for accessing methods on the inividual members of a Folder.
-8
-.. rubric:: Notes</p>
-<p>The prupose of this class is to allow it to be explicit that we’re calling methods
+<p>Provides a proxy object for accessing methods on the inividual members of a Folder.</p>
+<p class="rubric">Notes</p>
+<p>The pupose of this class is to allow it to be explicit that we’re calling methods
 on the members of the folder rather than a collective method. This allows us to work
 around nameclashes.</p>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.each.item.setas" title="Stoner.folders.each.item.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
+<td><p>Return a proxy object for manipulating all the setas objects in a folder.</p></td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -79,6 +90,13 @@ around nameclashes.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.folders.each.item.setas">
+<code class="sig-name descname">setas</code><a class="headerlink" href="#Stoner.folders.each.item.setas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a proxy object for manipulating all the setas objects in a folder.</p>
+</dd></dl>
+
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.folders.each.item.__call__">
@@ -86,7 +104,8 @@ around nameclashes.</p>
 <dd><p>Iterate over the baseFolder, calling func on each item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>func</strong> (<em>callable</em>) – A Callable object that must take a metadataObject type instance as it’s first argument.</p>
+<dd class="field-odd"><p><strong>func</strong> (<em>callable, str</em>) – Either a callable object, or the name of a callable object (either method or global) that must take
+a metadataObject type instance as it’s first argument.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><p><strong>_return</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Controls how the return value from <em>func</em> is added to the DataFolder</p>
@@ -96,10 +115,11 @@ around nameclashes.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If <em>_return</em> is None and the return type of <em>func</em> is the same type as the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code> is storing, then
-the return value replaces trhe original <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataobject</span></code> in the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code>.
-If <em>_result</em> is True the return value is added to the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>’s metadata under the name
-of the function. If <em>_result</em> is a string. then return result is stored in the corresponding name.</p>
+<p>If <em>_return</em> is None and the return type of <em>func</em> is the same type as the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code> is
+storing, then the return value replaces trhe original <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataobject</span></code> in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code>. If <em>_result</em> is True the return value is added to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>’s metadata under the name of the function. If <em>_result</em> is a
+string. then return result is stored in the corresponding name.</p>
 </dd></dl>
 
 <dl class="method">
@@ -118,10 +138,11 @@ of the function. If <em>_result</em> is a string. then return result is stored i
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If <em>_return</em> is None and the return type of <em>func</em> is the same type as the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code> is storing, then
-the return value replaces trhe original <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataobject</span></code> in the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code>.
-If <em>_result</em> is True the return value is added to the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>’s metadata under the name
-of the function. If <em>_result</em> is a string. then return result is stored in the corresponding name.</p>
+<p>If <em>_return</em> is None and the return type of <em>func</em> is the same type as the <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code> is
+storing, then the return value replaces trhe original <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataobject</span></code> in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code>. If <em>_result</em> is True the return value is added to the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>’s metadata under the name of the function. If <em>_result</em> is a
+string. then return result is stored in the corresponding name.</p>
 </dd></dl>
 
 </dd></dl>
@@ -183,9 +204,9 @@ of the function. If <em>_result</em> is a string. then return result is stored i
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

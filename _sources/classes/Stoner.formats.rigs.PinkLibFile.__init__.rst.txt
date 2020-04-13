@@ -1,0 +1,8 @@
+
+
+PinkLibFile.__init__
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.__init__

@@ -1,0 +1,89 @@
+Stoner.formats.instruments.VSMFile
+==================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. autoclass:: VSMFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.instruments.VSMFile.__init__
+      ~Stoner.formats.instruments.VSMFile.add_column
+      ~Stoner.formats.instruments.VSMFile.append
+      ~Stoner.formats.instruments.VSMFile.clear
+      ~Stoner.formats.instruments.VSMFile.closest
+      ~Stoner.formats.instruments.VSMFile.column
+      ~Stoner.formats.instruments.VSMFile.columns
+      ~Stoner.formats.instruments.VSMFile.count
+      ~Stoner.formats.instruments.VSMFile.del_column
+      ~Stoner.formats.instruments.VSMFile.del_nan
+      ~Stoner.formats.instruments.VSMFile.del_rows
+      ~Stoner.formats.instruments.VSMFile.dir
+      ~Stoner.formats.instruments.VSMFile.extend
+      ~Stoner.formats.instruments.VSMFile.filter
+      ~Stoner.formats.instruments.VSMFile.find_col
+      ~Stoner.formats.instruments.VSMFile.get
+      ~Stoner.formats.instruments.VSMFile.get_filename
+      ~Stoner.formats.instruments.VSMFile.index
+      ~Stoner.formats.instruments.VSMFile.insert
+      ~Stoner.formats.instruments.VSMFile.insert_rows
+      ~Stoner.formats.instruments.VSMFile.items
+      ~Stoner.formats.instruments.VSMFile.keys
+      ~Stoner.formats.instruments.VSMFile.load
+      ~Stoner.formats.instruments.VSMFile.pop
+      ~Stoner.formats.instruments.VSMFile.popitem
+      ~Stoner.formats.instruments.VSMFile.remove
+      ~Stoner.formats.instruments.VSMFile.rename
+      ~Stoner.formats.instruments.VSMFile.reorder_columns
+      ~Stoner.formats.instruments.VSMFile.reverse
+      ~Stoner.formats.instruments.VSMFile.rolling_window
+      ~Stoner.formats.instruments.VSMFile.rows
+      ~Stoner.formats.instruments.VSMFile.save
+      ~Stoner.formats.instruments.VSMFile.search
+      ~Stoner.formats.instruments.VSMFile.section
+      ~Stoner.formats.instruments.VSMFile.select
+      ~Stoner.formats.instruments.VSMFile.setdefault
+      ~Stoner.formats.instruments.VSMFile.sort
+      ~Stoner.formats.instruments.VSMFile.split
+      ~Stoner.formats.instruments.VSMFile.swap_column
+      ~Stoner.formats.instruments.VSMFile.to_pandas
+      ~Stoner.formats.instruments.VSMFile.unique
+      ~Stoner.formats.instruments.VSMFile.update
+      ~Stoner.formats.instruments.VSMFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.instruments.VSMFile.T
+      ~Stoner.formats.instruments.VSMFile.basename
+      ~Stoner.formats.instruments.VSMFile.clone
+      ~Stoner.formats.instruments.VSMFile.column_headers
+      ~Stoner.formats.instruments.VSMFile.data
+      ~Stoner.formats.instruments.VSMFile.dict_records
+      ~Stoner.formats.instruments.VSMFile.dims
+      ~Stoner.formats.instruments.VSMFile.dtype
+      ~Stoner.formats.instruments.VSMFile.filename
+      ~Stoner.formats.instruments.VSMFile.header
+      ~Stoner.formats.instruments.VSMFile.mask
+      ~Stoner.formats.instruments.VSMFile.metadata
+      ~Stoner.formats.instruments.VSMFile.mime_type
+      ~Stoner.formats.instruments.VSMFile.patterns
+      ~Stoner.formats.instruments.VSMFile.priority
+      ~Stoner.formats.instruments.VSMFile.records
+      ~Stoner.formats.instruments.VSMFile.setas
+      ~Stoner.formats.instruments.VSMFile.shape
+      ~Stoner.formats.instruments.VSMFile.subclasses
+   
+   

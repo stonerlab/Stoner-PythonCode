@@ -1,8 +1,0 @@
-
-
-BNLFile.adjust_setas
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.adjust_setas

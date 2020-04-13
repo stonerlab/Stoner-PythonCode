@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.closest
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.closest

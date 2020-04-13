@@ -1,8 +1,0 @@
-
-
-QDFile.unique
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.unique

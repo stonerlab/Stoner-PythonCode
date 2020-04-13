@@ -1,0 +1,8 @@
+
+
+FmokeFile.unique
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.unique

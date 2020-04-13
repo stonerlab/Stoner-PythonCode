@@ -1,0 +1,8 @@
+
+
+FmokeFile.pop
+=================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.pop

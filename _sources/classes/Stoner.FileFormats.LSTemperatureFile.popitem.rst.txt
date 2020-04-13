@@ -1,8 +1,0 @@
-
-
-LSTemperatureFile.popitem
-============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: LSTemperatureFile.popitem

@@ -1,0 +1,8 @@
+
+
+RasorFile.filter
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.filter

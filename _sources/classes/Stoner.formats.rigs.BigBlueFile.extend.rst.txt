@@ -1,0 +1,8 @@
+
+
+BigBlueFile.extend
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.extend

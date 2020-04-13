@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.index
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.index

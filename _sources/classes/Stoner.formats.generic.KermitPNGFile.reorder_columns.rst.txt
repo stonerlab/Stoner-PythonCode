@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.reorder_columns
+====================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.reorder_columns

@@ -1,0 +1,8 @@
+
+
+BNLFile.__init__
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.__init__

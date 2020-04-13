@@ -1,0 +1,8 @@
+
+
+CSVFile.get_filename
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.get_filename

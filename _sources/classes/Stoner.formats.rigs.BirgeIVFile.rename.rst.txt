@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.rename
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.rename

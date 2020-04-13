@@ -1,8 +1,0 @@
-
-
-FmokeFile.split
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.split

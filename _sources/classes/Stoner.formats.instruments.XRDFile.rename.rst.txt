@@ -1,0 +1,8 @@
+
+
+XRDFile.rename
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.rename

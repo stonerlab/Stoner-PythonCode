@@ -1,0 +1,8 @@
+
+
+QDFile.del_column
+============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.del_column

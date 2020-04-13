@@ -1,0 +1,8 @@
+
+
+OVFFile.del_nan
+==========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.del_nan

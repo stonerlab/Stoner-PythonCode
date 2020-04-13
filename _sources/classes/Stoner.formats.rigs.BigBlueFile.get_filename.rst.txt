@@ -1,0 +1,8 @@
+
+
+BigBlueFile.get_filename
+============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.get_filename

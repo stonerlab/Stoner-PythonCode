@@ -1,0 +1,89 @@
+Stoner.formats.rigs.EasyPlotFile
+================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. autoclass:: EasyPlotFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.rigs.EasyPlotFile.__init__
+      ~Stoner.formats.rigs.EasyPlotFile.add_column
+      ~Stoner.formats.rigs.EasyPlotFile.append
+      ~Stoner.formats.rigs.EasyPlotFile.clear
+      ~Stoner.formats.rigs.EasyPlotFile.closest
+      ~Stoner.formats.rigs.EasyPlotFile.column
+      ~Stoner.formats.rigs.EasyPlotFile.columns
+      ~Stoner.formats.rigs.EasyPlotFile.count
+      ~Stoner.formats.rigs.EasyPlotFile.del_column
+      ~Stoner.formats.rigs.EasyPlotFile.del_nan
+      ~Stoner.formats.rigs.EasyPlotFile.del_rows
+      ~Stoner.formats.rigs.EasyPlotFile.dir
+      ~Stoner.formats.rigs.EasyPlotFile.extend
+      ~Stoner.formats.rigs.EasyPlotFile.filter
+      ~Stoner.formats.rigs.EasyPlotFile.find_col
+      ~Stoner.formats.rigs.EasyPlotFile.get
+      ~Stoner.formats.rigs.EasyPlotFile.get_filename
+      ~Stoner.formats.rigs.EasyPlotFile.index
+      ~Stoner.formats.rigs.EasyPlotFile.insert
+      ~Stoner.formats.rigs.EasyPlotFile.insert_rows
+      ~Stoner.formats.rigs.EasyPlotFile.items
+      ~Stoner.formats.rigs.EasyPlotFile.keys
+      ~Stoner.formats.rigs.EasyPlotFile.load
+      ~Stoner.formats.rigs.EasyPlotFile.pop
+      ~Stoner.formats.rigs.EasyPlotFile.popitem
+      ~Stoner.formats.rigs.EasyPlotFile.remove
+      ~Stoner.formats.rigs.EasyPlotFile.rename
+      ~Stoner.formats.rigs.EasyPlotFile.reorder_columns
+      ~Stoner.formats.rigs.EasyPlotFile.reverse
+      ~Stoner.formats.rigs.EasyPlotFile.rolling_window
+      ~Stoner.formats.rigs.EasyPlotFile.rows
+      ~Stoner.formats.rigs.EasyPlotFile.save
+      ~Stoner.formats.rigs.EasyPlotFile.search
+      ~Stoner.formats.rigs.EasyPlotFile.section
+      ~Stoner.formats.rigs.EasyPlotFile.select
+      ~Stoner.formats.rigs.EasyPlotFile.setdefault
+      ~Stoner.formats.rigs.EasyPlotFile.sort
+      ~Stoner.formats.rigs.EasyPlotFile.split
+      ~Stoner.formats.rigs.EasyPlotFile.swap_column
+      ~Stoner.formats.rigs.EasyPlotFile.to_pandas
+      ~Stoner.formats.rigs.EasyPlotFile.unique
+      ~Stoner.formats.rigs.EasyPlotFile.update
+      ~Stoner.formats.rigs.EasyPlotFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.rigs.EasyPlotFile.T
+      ~Stoner.formats.rigs.EasyPlotFile.basename
+      ~Stoner.formats.rigs.EasyPlotFile.clone
+      ~Stoner.formats.rigs.EasyPlotFile.column_headers
+      ~Stoner.formats.rigs.EasyPlotFile.data
+      ~Stoner.formats.rigs.EasyPlotFile.dict_records
+      ~Stoner.formats.rigs.EasyPlotFile.dims
+      ~Stoner.formats.rigs.EasyPlotFile.dtype
+      ~Stoner.formats.rigs.EasyPlotFile.filename
+      ~Stoner.formats.rigs.EasyPlotFile.header
+      ~Stoner.formats.rigs.EasyPlotFile.mask
+      ~Stoner.formats.rigs.EasyPlotFile.metadata
+      ~Stoner.formats.rigs.EasyPlotFile.mime_type
+      ~Stoner.formats.rigs.EasyPlotFile.patterns
+      ~Stoner.formats.rigs.EasyPlotFile.priority
+      ~Stoner.formats.rigs.EasyPlotFile.records
+      ~Stoner.formats.rigs.EasyPlotFile.setas
+      ~Stoner.formats.rigs.EasyPlotFile.shape
+      ~Stoner.formats.rigs.EasyPlotFile.subclasses
+   
+   

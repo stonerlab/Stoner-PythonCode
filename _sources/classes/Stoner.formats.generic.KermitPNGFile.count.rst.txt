@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.count
+==========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.count

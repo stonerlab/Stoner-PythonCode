@@ -1,8 +1,0 @@
-
-
-VSMFile.section
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.section

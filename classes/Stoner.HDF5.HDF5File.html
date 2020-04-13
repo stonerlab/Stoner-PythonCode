@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="HDF5Folder" href="Stoner.HDF5.HDF5Folder.html" />
-    <link rel="prev" title="make_model" href="Stoner.Fit.make_model.html" />
+    <link rel="prev" title="OVFFile.values" href="Stoner.formats.simulations.OVFFile.values.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.make_model.html" title="Previous document">make_model</a>
+          <a href="Stoner.formats.simulations.OVFFile.values.html" title="Previous document">OVFFile.values</a>
         </li>
         <li>
           <a href="Stoner.HDF5.HDF5Folder.html" title="Next document">HDF5Folder</a>
@@ -109,8 +109,14 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.save" title="Stoner.HDF5.HDF5File.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</p></td>
-<td><p>Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.read_HDF" title="Stoner.HDF5.HDF5File.read_HDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_HDF</span></code></a>(filename, *args, **kargs)</p></td>
+<td><p>Create a new HDF5File from an actual HDF file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.save" title="Stoner.HDF5.HDF5File.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</p></td>
+<td><p>Write the current object into  an hdf5 file or group within a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.HDF5.HDF5File.to_HDF" title="Stoner.HDF5.HDF5File.to_HDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_HDF</span></code></a>([filename])</p></td>
+<td><p>Write the current object into  an hdf5 file or group within a file.</p></td>
 </tr>
 </tbody>
 </table>
@@ -142,14 +148,37 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
 
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
+<dt id="Stoner.HDF5.HDF5File.read_HDF">
+<em class="property">classmethod </em><code class="sig-name descname">read_HDF</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File.read_HDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File.read_HDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new HDF5File from an actual HDF file.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="Stoner.HDF5.HDF5File.save">
 <code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.</p>
+<dd><p>Write the current object into  an hdf5 file or group within a file.</p>
+<p>The data is written in afashion that is compatible with being loaded in again.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>string or h5py.Group</em>) – Either a string, of h5py.File or h5py.Group object into which
-to save the file. If this is a string, the corresponding file is opened for
-writing, written to and save again.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string or h5py.Group</em>) – Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
+the corresponding file is opened for writing, written to and save again.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>A copy of the object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.HDF5.HDF5File.to_HDF">
+<code class="sig-name descname">to_HDF</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File.to_HDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File.to_HDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the current object into  an hdf5 file or group within a file.</p>
+<p>Writes the data in afashion that is compatible with being loaded in again.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string or h5py.Group</em>) – Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
+the corresponding file is opened for writing, written to and save again.</p>
 </dd>
 </dl>
 <dl class="simple">
@@ -172,8 +201,8 @@ writing, written to and save again.</p>
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.make_model.html"
-                        title="previous chapter">make_model</a></p>
+  <p class="topless"><a href="Stoner.formats.simulations.OVFFile.values.html"
+                        title="previous chapter">OVFFile.values</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.HDF5.HDF5Folder.html"
                         title="next chapter">HDF5Folder</a></p>
@@ -200,7 +229,7 @@ writing, written to and save again.</p>
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Fit.make_model.html" title="Previous document">make_model</a>
+          <a href="Stoner.formats.simulations.OVFFile.values.html" title="Previous document">OVFFile.values</a>
         </li>
         <li>
           <a href="Stoner.HDF5.HDF5Folder.html" title="Next document">HDF5Folder</a>
@@ -217,9 +246,9 @@ writing, written to and save again.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

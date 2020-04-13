@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.keys
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.keys

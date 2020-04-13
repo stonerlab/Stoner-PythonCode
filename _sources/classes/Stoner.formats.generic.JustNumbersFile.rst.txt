@@ -1,0 +1,89 @@
+Stoner.formats.generic.JustNumbersFile
+======================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. autoclass:: JustNumbersFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.generic.JustNumbersFile.__init__
+      ~Stoner.formats.generic.JustNumbersFile.add_column
+      ~Stoner.formats.generic.JustNumbersFile.append
+      ~Stoner.formats.generic.JustNumbersFile.clear
+      ~Stoner.formats.generic.JustNumbersFile.closest
+      ~Stoner.formats.generic.JustNumbersFile.column
+      ~Stoner.formats.generic.JustNumbersFile.columns
+      ~Stoner.formats.generic.JustNumbersFile.count
+      ~Stoner.formats.generic.JustNumbersFile.del_column
+      ~Stoner.formats.generic.JustNumbersFile.del_nan
+      ~Stoner.formats.generic.JustNumbersFile.del_rows
+      ~Stoner.formats.generic.JustNumbersFile.dir
+      ~Stoner.formats.generic.JustNumbersFile.extend
+      ~Stoner.formats.generic.JustNumbersFile.filter
+      ~Stoner.formats.generic.JustNumbersFile.find_col
+      ~Stoner.formats.generic.JustNumbersFile.get
+      ~Stoner.formats.generic.JustNumbersFile.get_filename
+      ~Stoner.formats.generic.JustNumbersFile.index
+      ~Stoner.formats.generic.JustNumbersFile.insert
+      ~Stoner.formats.generic.JustNumbersFile.insert_rows
+      ~Stoner.formats.generic.JustNumbersFile.items
+      ~Stoner.formats.generic.JustNumbersFile.keys
+      ~Stoner.formats.generic.JustNumbersFile.load
+      ~Stoner.formats.generic.JustNumbersFile.pop
+      ~Stoner.formats.generic.JustNumbersFile.popitem
+      ~Stoner.formats.generic.JustNumbersFile.remove
+      ~Stoner.formats.generic.JustNumbersFile.rename
+      ~Stoner.formats.generic.JustNumbersFile.reorder_columns
+      ~Stoner.formats.generic.JustNumbersFile.reverse
+      ~Stoner.formats.generic.JustNumbersFile.rolling_window
+      ~Stoner.formats.generic.JustNumbersFile.rows
+      ~Stoner.formats.generic.JustNumbersFile.save
+      ~Stoner.formats.generic.JustNumbersFile.search
+      ~Stoner.formats.generic.JustNumbersFile.section
+      ~Stoner.formats.generic.JustNumbersFile.select
+      ~Stoner.formats.generic.JustNumbersFile.setdefault
+      ~Stoner.formats.generic.JustNumbersFile.sort
+      ~Stoner.formats.generic.JustNumbersFile.split
+      ~Stoner.formats.generic.JustNumbersFile.swap_column
+      ~Stoner.formats.generic.JustNumbersFile.to_pandas
+      ~Stoner.formats.generic.JustNumbersFile.unique
+      ~Stoner.formats.generic.JustNumbersFile.update
+      ~Stoner.formats.generic.JustNumbersFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.generic.JustNumbersFile.T
+      ~Stoner.formats.generic.JustNumbersFile.basename
+      ~Stoner.formats.generic.JustNumbersFile.clone
+      ~Stoner.formats.generic.JustNumbersFile.column_headers
+      ~Stoner.formats.generic.JustNumbersFile.data
+      ~Stoner.formats.generic.JustNumbersFile.dict_records
+      ~Stoner.formats.generic.JustNumbersFile.dims
+      ~Stoner.formats.generic.JustNumbersFile.dtype
+      ~Stoner.formats.generic.JustNumbersFile.filename
+      ~Stoner.formats.generic.JustNumbersFile.header
+      ~Stoner.formats.generic.JustNumbersFile.mask
+      ~Stoner.formats.generic.JustNumbersFile.metadata
+      ~Stoner.formats.generic.JustNumbersFile.mime_type
+      ~Stoner.formats.generic.JustNumbersFile.patterns
+      ~Stoner.formats.generic.JustNumbersFile.priority
+      ~Stoner.formats.generic.JustNumbersFile.records
+      ~Stoner.formats.generic.JustNumbersFile.setas
+      ~Stoner.formats.generic.JustNumbersFile.shape
+      ~Stoner.formats.generic.JustNumbersFile.subclasses
+   
+   

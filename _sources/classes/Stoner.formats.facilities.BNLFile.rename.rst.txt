@@ -1,0 +1,8 @@
+
+
+BNLFile.rename
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.rename

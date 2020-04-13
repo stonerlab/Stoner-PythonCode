@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TexFormatter" href="Stoner.plot.formats.TexFormatter.html" />
-    <link rel="prev" title="PlotFile" href="Stoner.plot.PlotFile.html" />
+    <link rel="prev" title="Ic_B_Airy" href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.plot.PlotFile.html" title="Previous document">PlotFile</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" title="Previous document">Ic_B_Airy</a>
         </li>
         <li>
           <a href="Stoner.plot.formats.TexFormatter.html" title="Next document">TexFormatter</a>
@@ -62,8 +62,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> (<em>tuple</em>) – Arguements to pass to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></p></li>
-<li><p><strong>kargs</strong> (<em>dict</em>) – keyword arguments to pass to  DataFile.__init__</p></li>
+<li><p><strong>args</strong> (<em>tuple</em>) – Arguements to pass to <a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></a></p></li>
+<li><p><strong>kargs</strong> (<em>dict</em>) – keyword arguments to pass to b DataFile.__init__</p></li>
 </ul>
 </dd>
 </dl>
@@ -125,7 +125,8 @@
 <dl class="attribute">
 <dt id="Stoner.plot.PlotMixin.showfig">
 <code class="sig-name descname">showfig</code><a class="headerlink" href="#Stoner.plot.PlotMixin.showfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)</p>
+<dd><p>Controls whether plot functions return a copy of the figure (True), the DataFile (False) or
+Nothing (None)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)">None</a></p>
@@ -136,7 +137,9 @@
 <dl class="attribute">
 <dt id="Stoner.plot.PlotMixin.subplots">
 <code class="sig-name descname">subplots</code><a class="headerlink" href="#Stoner.plot.PlotMixin.subplots" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>essentially the same as <a class="reference internal" href="#Stoner.plot.PlotMixin.axes" title="Stoner.plot.PlotMixin.axes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PlotMixin.axes</span></code></a> but ensures that the list of subplots is
+synchronised to the number fo Axes.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>list of matplotlib.Axes</p>
 </dd>
@@ -177,31 +180,25 @@
 <td><p>Return the current figure number.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.labels" title="Stoner.plot.PlotMixin.labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">labels</span></code></a></p></td>
-<td><p>Return the labels for the plot columns</p></td>
+<td><p>Return the labels for the plot columns.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.legend" title="Stoner.plot.PlotMixin.legend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">legend</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.multiple" title="Stoner.plot.PlotMixin.multiple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiple</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.multiple" title="Stoner.plot.PlotMixin.multiple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiple</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.no_fmt" title="Stoner.plot.PlotMixin.no_fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">no_fmt</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.no_fmt" title="Stoner.plot.PlotMixin.no_fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">no_fmt</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.positional_fmt" title="Stoner.plot.PlotMixin.positional_fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">positional_fmt</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.positional_fmt" title="Stoner.plot.PlotMixin.positional_fmt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">positional_fmt</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.showfig" title="Stoner.plot.PlotMixin.showfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showfig</span></code></a></p></td>
+<td><p>Return either the current figure or self or None.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.showfig" title="Stoner.plot.PlotMixin.showfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showfig</span></code></a></p></td>
-<td><p>Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.subplots" title="Stoner.plot.PlotMixin.subplots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplots</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.subplots" title="Stoner.plot.PlotMixin.subplots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplots</span></code></a></p></td>
 <td><p>Return the subplot instances.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.template" title="Stoner.plot.PlotMixin.template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.template" title="Stoner.plot.PlotMixin.template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template</span></code></a></p></td>
 <td><p>Return the current plot template.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.title" title="Stoner.plot.PlotMixin.title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">title</span></code></a></p></td>
-<td><p>Unmask the underlying attribute so we can fiddle plots.</p></td>
 </tr>
 </tbody>
 </table>
@@ -213,19 +210,19 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.add_column" title="Stoner.plot.PlotMixin.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[, header, index])</p></td>
-<td><p>Appends a column of data or inserts a column to a datafile instance.</p></td>
+<td><p>Append a column of data or inserts a column to a datafile instance.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.colormap_xyz" title="Stoner.plot.PlotMixin.colormap_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colormap_xyz</span></code></a>([xcol, ycol, zcol])</p></td>
-<td><p>An xyz plot that forces the use of plt.contour.</p></td>
+<td><p>Make a xyz plot that forces the use of plt.contour.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.contour_xyz" title="Stoner.plot.PlotMixin.contour_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contour_xyz</span></code></a>([xcol, ycol, zcol, shape, xlim, …])</p></td>
-<td><p>An xyz plot that forces the use of plt.contour.</p></td>
+<td><p>Make a xyz plot that forces the use of plt.contour.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.figure" title="Stoner.plot.PlotMixin.figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">figure</span></code></a>([figure, projection])</p></td>
 <td><p>Set the figure used by <a class="reference internal" href="#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.griddata" title="Stoner.plot.PlotMixin.griddata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">griddata</span></code></a>([xcol, ycol, zcol, shape, xlim, …])</p></td>
-<td><p>Function to convert xyz data onto a regular grid.</p></td>
+<td><p>Convert xyz data onto a regular grid.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.image_plot" title="Stoner.plot.PlotMixin.image_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">image_plot</span></code></a>([xcol, ycol, zcol, shape, xlim, ylim])</p></td>
 <td><p>Grid up the three columns of data and plot.</p></td>
@@ -233,40 +230,43 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.inset" title="Stoner.plot.PlotMixin.inset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inset</span></code></a>([parent, loc, width, height])</p></td>
 <td><p>Add a new set of axes as an inset to the current plot.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(*args, **kargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.legend" title="Stoner.plot.PlotMixin.legend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">legend</span></code></a>(*args, **kargs)</p></td>
+<td><p>Pass Through to stop attribute access over-riding a handy method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(*args, **kargs)</p></td>
 <td><p>Try to make an appropriate plot based on the defined column assignments.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_matrix" title="Stoner.plot.PlotMixin.plot_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_matrix</span></code></a>([xvals, yvals, rectang, cmap, …])</p></td>
-<td><p>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_matrix" title="Stoner.plot.PlotMixin.plot_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_matrix</span></code></a>([xvals, yvals, rectang, cmap, …])</p></td>
+<td><p>Plot a surface plot by assuming that the current dataset represents a regular matrix of points.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xy</span></code></a>([xcol, ycol, fmt, xerr, yerr])</p></td>
-<td><p>Makes a simple X-Y plot of the specified data.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xy" title="Stoner.plot.PlotMixin.plot_xy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xy</span></code></a>([xcol, ycol, fmt, xerr, yerr])</p></td>
+<td><p>Makesa simple X-Y plot of the specified data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyuv" title="Stoner.plot.PlotMixin.plot_xyuv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuv</span></code></a>([xcol, ycol, ucol, vcol, wcol])</p></td>
-<td><p>Makes an overlaid image and quiver plot.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyuv" title="Stoner.plot.PlotMixin.plot_xyuv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuv</span></code></a>([xcol, ycol, ucol, vcol, wcol])</p></td>
+<td><p>Make an overlaid image and quiver plot.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyuvw" title="Stoner.plot.PlotMixin.plot_xyuvw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuvw</span></code></a>([xcol, ycol, ucol, vcol, wcol])</p></td>
-<td><p>Makes an overlaid image and quiver plot.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyuvw" title="Stoner.plot.PlotMixin.plot_xyuvw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyuvw</span></code></a>([xcol, ycol, ucol, vcol, wcol])</p></td>
+<td><p>Make an overlaid image and quiver plot.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyz</span></code></a>([xcol, ycol, zcol, shape, xlim, …])</p></td>
-<td><p>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyz" title="Stoner.plot.PlotMixin.plot_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyz</span></code></a>([xcol, ycol, zcol, shape, xlim, …])</p></td>
+<td><p>Plot a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyzuvw" title="Stoner.plot.PlotMixin.plot_xyzuvw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyzuvw</span></code></a>([xcol, ycol, zcol, ucol, vcol, wcol])</p></td>
-<td><p>Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.plot_xyzuvw" title="Stoner.plot.PlotMixin.plot_xyzuvw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_xyzuvw</span></code></a>([xcol, ycol, zcol, ucol, vcol, wcol])</p></td>
+<td><p>Plot a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.quiver_plot" title="Stoner.plot.PlotMixin.quiver_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quiver_plot</span></code></a>([xcol, ycol, ucol, vcol])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.quiver_plot" title="Stoner.plot.PlotMixin.quiver_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quiver_plot</span></code></a>([xcol, ycol, ucol, vcol])</p></td>
 <td><p>Make a 2D Quiver plot from the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot" title="Stoner.plot.PlotMixin.subplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot</span></code></a>(*args, **kargs)</p></td>
-<td><p>Pass throuygh for plt.subplot().</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot" title="Stoner.plot.PlotMixin.subplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot</span></code></a>(*args, **kargs)</p></td>
+<td><p>Pass throuygh for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot.html#matplotlib.pyplot.subplot" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot()</span></code></a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot2grid" title="Stoner.plot.PlotMixin.subplot2grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot2grid</span></code></a>(*args, **kargs)</p></td>
-<td><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v3.1.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.subplot2grid" title="Stoner.plot.PlotMixin.subplot2grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot2grid</span></code></a>(*args, **kargs)</p></td>
+<td><p>Provide a pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.x2" title="Stoner.plot.PlotMixin.x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x2</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.x2" title="Stoner.plot.PlotMixin.x2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x2</span></code></a>()</p></td>
 <td><p>Generate a new set of axes with a second x-scale.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.y2" title="Stoner.plot.PlotMixin.y2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y2</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.PlotMixin.y2" title="Stoner.plot.PlotMixin.y2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y2</span></code></a>()</p></td>
 <td><p>Generate a new set of axes with a second y-scale.</p></td>
 </tr>
 </tbody>
@@ -305,13 +305,8 @@
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">labels</code></dt>
-<dd><p>Return the labels for the plot columns</p>
+<dd><p>Return the labels for the plot columns.</p>
 </dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.plot.PlotMixin.legend">
-<code class="sig-name descname">legend</code><em class="property"> = True</em><a class="headerlink" href="#Stoner.plot.PlotMixin.legend" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.plot.PlotMixin.multiple">
@@ -331,7 +326,8 @@
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">showfig</code></dt>
-<dd><p>Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.</p>
+<dd><p>Return either the current figure or self or None.</p>
+<p>The return value depeds on whether the attribute is True or False or None.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -346,28 +342,21 @@
 <dd><p>Return the current plot template.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="Stoner.plot.PlotMixin.title">
-<code class="sig-name descname">title</code><a class="headerlink" href="#Stoner.plot.PlotMixin.title" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unmask the underlying attribute so we can fiddle plots.</p>
-</dd></dl>
-
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.add_column">
 <code class="sig-name descname">add_column</code><span class="sig-paren">(</span><em class="sig-param">column_data</em>, <em class="sig-param">header=None</em>, <em class="sig-param">index=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.add_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.add_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a column of data or inserts a column to a datafile instance.</p>
+<dd><p>Append a column of data or inserts a column to a datafile instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>column_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.array</span></code> or list or callable) – Data to append or insert or a callable function that will generate new data</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>column_header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The text to set the column header to,
-if not supplied then defaults to ‘col#’</p></li>
+<li><p><strong>column_header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The text to set the column header to, if not supplied then defaults to ‘col#’</p></li>
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The  index (numeric or string) to insert (or replace) the data</p></li>
-<li><p><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – If column_data is a callable object, then this argument
-can be used to supply a dictionary of function arguments to the callable object.</p></li>
+<li><p><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – If column_data is a callable object, then this argument can be used to supply a dictionary of function
+arguments to the callable object.</p></li>
 <li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Replace the data or insert the data (default)</p></li>
 <li><p><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</p></li>
 </ul>
@@ -386,7 +375,7 @@ the original DataFile Instance as well as returning it.</p>
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.colormap_xyz">
 <code class="sig-name descname">colormap_xyz</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.colormap_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.colormap_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>An xyz plot that forces the use of plt.contour.</p>
+<dd><p>Make a xyz plot that forces the use of plt.contour.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -397,14 +386,15 @@ the original DataFile Instance as well as returning it.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</p></li>
+<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the
+length of the data.</p></li>
 <li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</p></li>
 <li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</p></li>
 <li><p><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</p></li>
 <li><p><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Draw the z-scale color bar beside the plot (True by default)</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If set to a string, save the plot with this filename</p></li>
-<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.1.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
+<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.2.1)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</p></li>
 </ul>
 </dd>
@@ -417,29 +407,36 @@ the original DataFile Instance as well as returning it.</p>
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.contour_xyz">
 <code class="sig-name descname">contour_xyz</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">plotter=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.contour_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.contour_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>An xyz plot that forces the use of plt.contour.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>xcol</strong> (<em>index</em>) – Xcolumn index or label</p></li>
-<li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
-<li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
-</ul>
+<dd><p>Make a xyz plot that forces the use of plt.contour.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>xcol (index):</dt><dd><p>Xcolumn index or label</p>
 </dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</p></li>
+<dt>ycol (index):</dt><dd><p>Y column index or label</p>
+</dd>
+<dt>zcol (index):</dt><dd><p>Z column index or label</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the
+length of the data.</p></li>
 <li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</p></li>
 <li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</p></li>
 <li><p><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If set to a string, save the plot with this filename</p></li>
-<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.1.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
+<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.2.1)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A matplotlib figure</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A matplotlib figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -450,10 +447,10 @@ the original DataFile Instance as well as returning it.</p>
 <dd><p>Set the figure used by <a class="reference internal" href="#Stoner.plot.PlotMixin" title="Stoner.plot.PlotMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>figure A matplotlib figure or figure number</strong></p>
+<dd class="field-odd"><p><strong>figure</strong> (<em>matplotlib.Figure or int</em>) – Figure to switch to</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The current  Stoner.plot.PlotMixin instance</p>
+<dd class="field-even"><p>The current Stoner.plot.PlotMixin instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -461,23 +458,24 @@ the original DataFile Instance as well as returning it.</p>
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.griddata">
 <code class="sig-name descname">griddata</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.griddata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.griddata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to convert xyz data onto a regular grid.</p>
-<p>Args:
-xcol (index): Column to be used for the X-Data
-ycol (index): column to be used for Y-Data - default value is column to the right of the x-data column
-zcol (index): column to be used for the Z-data - default value is the column to the right of the y-data column</p>
+<dd><p>Convert xyz data onto a regular grid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</p></li>
-<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits</p></li>
-<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – </p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Type of interploation to use, default is linear</p></li>
+<li><p><strong>xcol</strong> (<em>index</em>) – Xcolumn index or label</p></li>
+<li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
+<li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="simple">
-<dt>ReturnsL</dt><dd><p>X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data</p>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of
+the length of the data.</p></li>
+<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits</p></li>
+<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The ylimits</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Type of interploation to use, default is linear</p></li>
+<li><p><strong>ReturnsL</strong> – X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -489,23 +487,24 @@ zcol (index): column to be used for the Z-data - default value is the column to 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xcol</strong> (<em>index</em>) – Column to be used for the X-Data</p></li>
-<li><p><strong>ycol</strong> (<em>index</em>) – column to be used for Y-Data - default value is column to the right of the x-data column</p></li>
-<li><p><strong>zcol</strong> (<em>index</em>) – column to be used for the Z-data - default value is the column to the right of the y-data column</p></li>
+<li><p><strong>xcol</strong> (<em>index</em>) – Xcolumn index or label</p></li>
+<li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
+<li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</p></li>
+<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the
+length of the data.</p></li>
 <li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</p></li>
 <li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</p></li>
-<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – </p></li>
+<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – X axes label. Deafult is None - guess from xvals or metadata</p></li>
 <li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</p></li>
 <li><p><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</p></li>
 <li><p><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If set to a string, save the plot with this filename</p></li>
-<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.1.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
+<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.2.1)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</p></li>
 </ul>
 </dd>
@@ -524,7 +523,8 @@ zcol (index): column to be used for the Z-data - default value is the column to 
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parent</strong> (<em>matplotlib axes</em>) – Which set of axes to add inset to, defaults to the current set</p></li>
 <li><p><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Inset location - can be a string like <em>top right</em> or <em>upper right</em> or a number.</p></li>
-<li><p><strong>width</strong><strong>,</strong><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – </p></li>
+<li><p><strong>width</strong><strong>,</strong><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – the dimensions of the inset specified as a integer %, or floating point fraction of the parent axes,
+or as a string measurement.</p></li>
 <li><p><strong>kargs</strong> (<em>dictionary</em>) – all other keywords are passed through to inset_locator.inset_axes</p></li>
 </ul>
 </dd>
@@ -532,6 +532,12 @@ zcol (index): column to be used for the Z-data - default value is the column to 
 <dd class="field-even"><p>A new set of axes</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.plot.PlotMixin.legend">
+<code class="sig-name descname">legend</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.legend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.legend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass Through to stop attribute access over-riding a handy method.</p>
 </dd></dl>
 
 <dl class="method">
@@ -546,14 +552,16 @@ the selected plotting routine.</p>
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.plot_matrix">
 <code class="sig-name descname">plot_matrix</code><span class="sig-paren">(</span><em class="sig-param">xvals=None</em>, <em class="sig-param">yvals=None</em>, <em class="sig-param">rectang=None</em>, <em class="sig-param">cmap=&lt;matplotlib.colors.ListedColormap object&gt;</em>, <em class="sig-param">show_plot=True</em>, <em class="sig-param">title=''</em>, <em class="sig-param">xlabel=None</em>, <em class="sig-param">ylabel=None</em>, <em class="sig-param">zlabel=None</em>, <em class="sig-param">figure=None</em>, <em class="sig-param">plotter=None</em>, <em class="sig-param">**kwords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.plot_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.plot_matrix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</p>
+<dd><p>Plot a surface plot by assuming that the current dataset represents a regular matrix of points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xvals</strong> (<em>index, list or numpy.array</em>) – Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data</p></li>
-<li><p><strong>yvals</strong> (<em>int or list</em>) – Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats</p></li>
-<li><p><strong>rectang</strong> (<em>tuple</em>) – a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of
-columns) of data to be used for the z0data matrix</p></li>
+<li><p><strong>xvals</strong> (<em>index, list or numpy.array</em>) – Either a column index or name or a list or numpytarray of column values. The default (None) uses
+the first column of data</p></li>
+<li><p><strong>yvals</strong> (<em>int or list</em>) – Either a row index or a list or numpy array of row values. The default (None) uses the <a href="#id1"><span class="problematic" id="id2">column_</span></a>
+headings interpreted as floats</p></li>
+<li><p><strong>rectang</strong> (<em>tuple</em>) – a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin,
+number of rows, number of columns) of data to be used for the z0data matrix</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
@@ -561,17 +569,17 @@ columns) of data to be used for the z0data matrix</p></li>
 <li><p><strong>cmap</strong> (<em>matplotlib colour map</em>) – Surface colour map - defaults to the jet colour map</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – True Turns on interactive plot control</p></li>
 <li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</p></li>
-<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – </p></li>
+<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – X axes label. Deafult is None - guess from xvals or metadata</p></li>
 <li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</p></li>
 <li><p><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</p></li>
-<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
-always used, otherwise it will default to using the last figure used by this DataFile object.</p></li>
-<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</p></li>
+<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If
+False then a new figure is always used, otherwise it will default to using the last figure used
+by this DataFile object.</p></li>
+<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be
+plt.plot (default), py.semilogy, plt.semilogx</p></li>
 <li><p><strong>kwords</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
+<li><p><strong>Returns</strong> – The matplotib figure with the data plotted</p></li>
 </ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The matplotib figure with the data plotted</p>
 </dd>
 </dl>
 </dd></dl>
@@ -579,33 +587,35 @@ always used, otherwise it will default to using the last figure used by this Dat
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.plot_xy">
 <code class="sig-name descname">plot_xy</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">fmt=None</em>, <em class="sig-param">xerr=None</em>, <em class="sig-param">yerr=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.plot_xy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.plot_xy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a simple X-Y plot of the specified data.</p>
+<dd><p>Makesa simple X-Y plot of the specified data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xcol</strong> (<em>index</em>) – Column to be used for the X-Data</p></li>
-<li><p><strong>ycol</strong> (<em>index</em>) – column to be used for Y-Data - default value is column to the right of the x-data column</p></li>
+<li><p><strong>xcol</strong> (<em>index</em>) – Xcolumn index or label</p></li>
+<li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>fmt</strong> (<em>strong</em><em> or </em><em>sequence of strings</em>) – Specifies the format for the plot - see matplotlib documentation for details</p></li>
-<li><p><strong>xerr</strong><strong>,</strong><strong>yerr</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Columns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar</p></li>
-<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – </p></li>
+<li><p><strong>xerr</strong><strong>,</strong><strong>yerr</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – C</p></li>
+<li><p><strong>of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar</strong> (<em>olumns</em>) – </p></li>
+<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – X axes label. Deafult is None - guess from xvals or metadata</p></li>
 <li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</p></li>
-<li><p><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</p></li>
 <li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</p></li>
 <li><p><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.plot unless error bars are set</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If set to a string, save the plot with this filename</p></li>
-<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.1.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
-<li><p><strong>multiple</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – <p>how to handle multiple y-axes with a common x axis. Options are:</p>
-<ul>
+<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.2.1)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
+<li><p><strong>multiple</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – <dl class="simple">
+<dt>how to handle multiple y-axes with a common x axis. Options are:</dt><dd><ul>
 <li><p><em>common</em> single y-axis (default)</p></li>
 <li><p><em>panels</em> panels sharing common x axis</p></li>
 <li><p><em>sub plots</em> sub plots</p></li>
 <li><p><em>y2</em> single axes with 2 y scales</p></li>
 </ul>
+</dd>
+</dl>
 </p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</p></li>
 </ul>
@@ -619,7 +629,7 @@ always used, otherwise it will default to using the last figure used by this Dat
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.plot_xyuv">
 <code class="sig-name descname">plot_xyuv</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">ucol=None</em>, <em class="sig-param">vcol=None</em>, <em class="sig-param">wcol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.plot_xyuv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.plot_xyuv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes an overlaid image and quiver plot.</p>
+<dd><p>Make an overlaid image and quiver plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -636,9 +646,11 @@ always used, otherwise it will default to using the last figure used by this Dat
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – True Turns on interactive plot control</p></li>
 <li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Filename used to save the plot</p></li>
-<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
-always used, otherwise it will default to using the last figure used by this DataFile object.</p></li>
-<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</p></li>
+<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False
+then a new figure is always used, otherwise it will default to using the last figure used by this
+DataFile object.</p></li>
+<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter,
+but contour plot and pcolormesh also work.</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
 </ul>
 </dd>
@@ -648,7 +660,7 @@ always used, otherwise it will default to using the last figure used by this Dat
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.plot_xyuvw">
 <code class="sig-name descname">plot_xyuvw</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">ucol=None</em>, <em class="sig-param">vcol=None</em>, <em class="sig-param">wcol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.plot.PlotMixin.plot_xyuvw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes an overlaid image and quiver plot.</p>
+<dd><p>Make an overlaid image and quiver plot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -665,9 +677,11 @@ always used, otherwise it will default to using the last figure used by this Dat
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – True Turns on interactive plot control</p></li>
 <li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Filename used to save the plot</p></li>
-<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
-always used, otherwise it will default to using the last figure used by this DataFile object.</p></li>
-<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</p></li>
+<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False
+then a new figure is always used, otherwise it will default to using the last figure used by this
+DataFile object.</p></li>
+<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter,
+but contour plot and pcolormesh also work.</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
 </ul>
 </dd>
@@ -677,7 +691,7 @@ always used, otherwise it will default to using the last figure used by this Dat
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.plot_xyz">
 <code class="sig-name descname">plot_xyz</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">projection='3d'</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.plot_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.plot_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</p>
+<dd><p>Plot a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -688,17 +702,20 @@ always used, otherwise it will default to using the last figure used by this Dat
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate
+<li><p><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then
+the routine will attempt to calculate
 these from the data provided</p></li>
 <li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Defines the x-axis limits and grid of the data to be plotted</p></li>
-<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – </p></li>
+<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Defines the Y-axis limits and grid of the data data to be plotted</p></li>
 <li><p><strong>cmap</strong> (<em>matplotlib colour map</em>) – Surface colour map - defaults to the jet colour map</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – True Turns on interactive plot control</p></li>
 <li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Filename used to save the plot</p></li>
-<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
-always used, otherwise it will default to using the last figure used by this DataFile object.</p></li>
-<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</p></li>
+<li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If
+False then a new figure is always used, otherwise it will default to using the last figure used
+by this DataFile object.</p></li>
+<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface
+plotter, but contour plot and pcolormesh also work.</p></li>
 <li><p><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Whether to use a 3D projection or regular 2D axes (deault is 3D)</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
 </ul>
@@ -712,7 +729,7 @@ always used, otherwise it will default to using the last figure used by this Dat
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.plot_xyzuvw">
 <code class="sig-name descname">plot_xyzuvw</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">ucol=None</em>, <em class="sig-param">vcol=None</em>, <em class="sig-param">wcol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.plot_xyzuvw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.plot_xyzuvw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</p>
+<dd><p>Plot a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -720,7 +737,8 @@ always used, otherwise it will default to using the last figure used by this Dat
 <li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
 <li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
 <li><p><strong>ucol</strong> (<em>index</em>) – U column index or label</p></li>
-<li><p><strong>vcol</strong> (<em>index</em>) – V column index or label</p></li>
+<li><p><strong>vcol</strong> (<em>index</em>) – V column i
+ndex or label</p></li>
 <li><p><strong>wcol</strong> (<em>index</em>) – W column index or label</p></li>
 </ul>
 </dd>
@@ -730,9 +748,11 @@ always used, otherwise it will default to using the last figure used by this Dat
 <li><p><strong>colors</strong> (<em>column index</em><em> or </em><em>numpy array</em>) – Values used to map the colors of the resultant file.</p></li>
 <li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – glyph type, default is “cone”</p></li>
 <li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Scale-size of glyphs.</p></li>
-<li><p><strong>figure</strong> (<em>mlab figure</em>) – Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used,
+<li><p><strong>figure</strong> (<em>mlab figure</em>) – Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new
+figure is always used,
 otherwise it will default to using the last figure used by this DataFile object.</p></li>
-<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</p></li>
+<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be
+plt.plot (default), py.semilogy, plt.semilogx</p></li>
 <li><p><strong>kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
 </ul>
 </dd>
@@ -753,20 +773,21 @@ otherwise it will default to using the last figure used by this DataFile object.
 <li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
 <li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
 <li><p><strong>ucol</strong> (<em>index</em>) – U column index or label</p></li>
-<li><p><strong>vcol</strong> (<em>index</em>) – V column index or label</p></li>
+<li><p><strong>vcol</strong> (<em>index</em>) – V column i
+ndex or label</p></li>
 <li><p><strong>wcol</strong> (<em>index</em>) – W column index or label</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – </p></li>
+<li><p><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – X axes label. Deafult is None - guess from xvals or metadata</p></li>
 <li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Y axes label, Default is None - guess from metadata</p></li>
 <li><p><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Z axis label, Default is None - guess from metadata</p></li>
 <li><p><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</p></li>
 <li><p><strong>headlength</strong><strong>,</strong><strong>headwidth</strong><strong>,</strong><strong>headaxislength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Controls the size of the quiver heads</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If set to a string, save the plot with this filename</p></li>
-<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.1.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
+<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.2.1)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</p></li>
 </ul>
 </dd>
@@ -780,7 +801,7 @@ otherwise it will default to using the last figure used by this DataFile object.
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.subplot">
 <code class="sig-name descname">subplot</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.subplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.subplot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass throuygh for plt.subplot().</p>
+<dd><p>Pass throuygh for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot.html#matplotlib.pyplot.subplot" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -802,7 +823,7 @@ function maintains a list of the current sub-plot axes via the subplots attribut
 <dl class="method">
 <dt id="Stoner.plot.PlotMixin.subplot2grid">
 <code class="sig-name descname">subplot2grid</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.subplot2grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.PlotMixin.subplot2grid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v3.1.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</p>
+<dd><p>Provide a pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.subplot2grid.html#matplotlib.pyplot.subplot2grid" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.subplot2grid()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -841,8 +862,8 @@ function maintains a list of the current sub-plot axes via the subplots attribut
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.plot.PlotFile.html"
-                        title="previous chapter">PlotFile</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html"
+                        title="previous chapter">Ic_B_Airy</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.plot.formats.TexFormatter.html"
                         title="next chapter">TexFormatter</a></p>
@@ -869,7 +890,7 @@ function maintains a list of the current sub-plot axes via the subplots attribut
     <ul>
         <li>
           &larr;
-          <a href="Stoner.plot.PlotFile.html" title="Previous document">PlotFile</a>
+          <a href="Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html" title="Previous document">Ic_B_Airy</a>
         </li>
         <li>
           <a href="Stoner.plot.formats.TexFormatter.html" title="Next document">TexFormatter</a>
@@ -886,9 +907,9 @@ function maintains a list of the current sub-plot axes via the subplots attribut
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

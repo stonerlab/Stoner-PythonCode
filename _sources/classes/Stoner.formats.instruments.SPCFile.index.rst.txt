@@ -1,0 +1,8 @@
+
+
+SPCFile.index
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.index

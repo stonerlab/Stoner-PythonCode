@@ -1,0 +1,8 @@
+
+
+QDFile.insert_rows
+=============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.insert_rows

@@ -1,0 +1,8 @@
+
+
+VSMFile.__init__
+===========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.__init__

@@ -1,0 +1,8 @@
+
+
+FmokeFile.__init__
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.__init__

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.select
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.select

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.items
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.items

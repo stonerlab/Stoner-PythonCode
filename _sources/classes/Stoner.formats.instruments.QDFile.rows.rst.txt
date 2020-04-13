@@ -1,0 +1,8 @@
+
+
+QDFile.rows
+======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.rows

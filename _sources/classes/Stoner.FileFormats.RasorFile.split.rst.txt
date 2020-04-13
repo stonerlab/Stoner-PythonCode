@@ -1,8 +1,0 @@
-
-
-RasorFile.split
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.split

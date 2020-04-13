@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.filter
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.filter

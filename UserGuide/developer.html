@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Contributors and Credits" href="credits.html" />
@@ -88,7 +88,7 @@ arrows represent direct attributes. The arrow labels indicate the attribute name
 <div class="section" id="adding-new-data-file-types">
 <h2>Adding New Data File Types<a class="headerlink" href="#adding-new-data-file-types" title="Permalink to this headline">¶</a></h2>
 <p>The first question to ask is whether the data file format that you are working with is one that others in the group will be interested in using.
-If so, then the best thing would be to include it in the <a class="reference internal" href="../Stoner.html#module-Stoner.FileFormats" title="Stoner.FileFormats"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.FileFormats</span></code></a> module in the package, otherwise you should just write
+If so, then the best thing would be to include it in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.FileFormats</span></code> module in the package, otherwise you should just write
 the class in your own script files. In either case, develop the class in your own script files first.</p>
 <p>The best way to implement handling a new data format is to write a new subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">NewInstrumentFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
@@ -127,8 +127,8 @@ exception if it tries loading an incorrect file, then you can give it a lower pr
 force it to run earlier. Conversely if your only way of identifying your own files is seeing they make
 sense when you try to load them and that you might partially succeed with a file from another system (as
 can happen if you have a tab or comma separated text file), then you should raise the priority number.
-Currently Lpy:class:<cite>DataFile</cite> defaults to 32, <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.CSVFile</span></code></a> and
-<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> have values of 128 and 64 respectively.</p>
+Currently Lpy:class:<cite>DataFile</cite> defaults to 32, <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.CSVFile</span></code> and
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code> have values of 128 and 64 respectively.</p>
 <p>THe other attribute one might add is <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.patterns" title="Stoner.Core.DataFile.patterns"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.patterns</span></code></a> which is a list of filename extension glob patterns that
 will match the expected filenames for this format:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.txt&quot;</span><span class="p">,</span><span class="s2">&quot;*/dat&quot;</span><span class="p">,</span><span class="s2">&quot;*/qda&quot;</span><span class="p">]</span>
@@ -205,9 +205,9 @@ strings so that the API documentation is picked up correctly.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

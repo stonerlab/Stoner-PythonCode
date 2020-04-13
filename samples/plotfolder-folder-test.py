@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Dec  1 17:37:39 2017
+"""Demonstrate PlotFolder Class."""
+# pylint: disable=invalid-name
+from os.path import join
 
-@author: phygbu
-"""
 from numpy import where, append, atleast_2d
 from scipy.constants import mu_0
 from scipy.stats import gmean
-from os.path import join
 
 from Stoner import Data, __home__
-from Stoner.Fit import FMR_Power, Inverse_Kittel, Linear
+from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel
+from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 from Stoner.Folders import PlotFolder
 
@@ -24,13 +23,13 @@ template.yformatter = TexEngFormatter
 
 
 def field_sign(r):
-    """Custom function for split"""
+    """Custom function for split."""
     pos = r["Field"] >= 0
-    return where(pos, 1, -1)
+    return where(pos, "pos", "neg")
 
 
 def extra(i, j, d):
-    """Function for customising each individual plot"""
+    """Function for customising each individual plot."""
     d.axvline(x=d["cut"], ls="--")
     d.title = r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency") / 1e9)
     d.xlabel = r"Field $\mu_0H\,$"
@@ -80,7 +79,7 @@ if __name__ == "__main__":
     # Split the data file into separate files by frequencies and sign of field
     fldr = PlotFolder(fldr)  # Convert to a PlotFolder
     fldr.template = template  # Set my custom plot template
-    for f in fldr[-1]:  # Invert the negative field side
+    for f in fldr["neg"]:  # Invert the negative field side
         f.x = -f.x[::-1]
         f.y = -f.y[::-1]
 

@@ -1,0 +1,8 @@
+
+
+SPCFile.count
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.count

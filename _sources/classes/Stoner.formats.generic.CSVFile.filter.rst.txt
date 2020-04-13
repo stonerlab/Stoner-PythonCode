@@ -1,0 +1,8 @@
+
+
+CSVFile.filter
+=====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.filter

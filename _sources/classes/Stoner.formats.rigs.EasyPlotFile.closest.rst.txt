@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.closest
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.closest

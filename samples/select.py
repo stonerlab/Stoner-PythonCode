@@ -1,4 +1,5 @@
 """Example using select method to pick out data."""
+# pylint: disable=invalid-name
 from Stoner import Data
 
 d = Data("sample.txt", setas="xy")

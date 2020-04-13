@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.index
+==========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.index

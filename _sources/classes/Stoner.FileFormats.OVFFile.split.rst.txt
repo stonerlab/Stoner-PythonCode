@@ -1,8 +1,0 @@
-
-
-OVFFile.split
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.split

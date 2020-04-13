@@ -1,6 +1,0 @@
-convert
-=======
-
-.. currentmodule:: Stoner.Image.util
-
-.. autofunction:: convert

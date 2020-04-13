@@ -1,0 +1,8 @@
+
+
+XRDFile.search
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.search

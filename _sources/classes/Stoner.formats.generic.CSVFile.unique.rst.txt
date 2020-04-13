@@ -1,0 +1,8 @@
+
+
+CSVFile.unique
+=====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.unique

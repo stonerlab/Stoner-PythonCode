@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.setdefault
+===============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.setdefault

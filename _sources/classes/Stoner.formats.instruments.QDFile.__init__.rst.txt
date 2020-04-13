@@ -1,0 +1,8 @@
+
+
+QDFile.__init__
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.__init__

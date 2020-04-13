@@ -1,0 +1,8 @@
+
+
+QDFile.reverse
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.reverse

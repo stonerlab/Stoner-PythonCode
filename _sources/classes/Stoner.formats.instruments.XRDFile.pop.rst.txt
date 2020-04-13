@@ -1,0 +1,8 @@
+
+
+XRDFile.pop
+======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.pop

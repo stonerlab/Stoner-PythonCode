@@ -1,0 +1,8 @@
+
+
+MokeFile.dir
+================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.dir

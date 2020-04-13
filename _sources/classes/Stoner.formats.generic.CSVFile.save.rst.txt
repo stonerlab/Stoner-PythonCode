@@ -1,0 +1,8 @@
+
+
+CSVFile.save
+===================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.save

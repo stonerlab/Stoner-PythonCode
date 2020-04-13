@@ -1,0 +1,8 @@
+
+
+VSMFile.split
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.split

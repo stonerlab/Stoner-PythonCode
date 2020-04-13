@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.pop
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.pop

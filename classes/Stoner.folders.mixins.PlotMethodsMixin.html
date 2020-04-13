@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="item" href="Stoner.folders.each.item.html" />
@@ -61,18 +61,17 @@
 <p>A Mixin for <a class="reference internal" href="Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFolder</span></code></a> with extra methods for plotting lots of files.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Created on Fri Dec  1 17:37:39 2017</span>
+<span class="sd">&quot;&quot;&quot;Demonstrate PlotFolder Class.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
 
-<span class="sd">@author: phygbu</span>
-<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">atleast_2d</span>
 <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">mu_0</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gmean</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
 
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
-<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">Linear</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.magnetism</span> <span class="kn">import</span> <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">Inverse_Kittel</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.generic</span> <span class="kn">import</span> <span class="n">Linear</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="n">TexEngFormatter</span>
 <span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="kn">import</span> <span class="n">PlotFolder</span>
 
@@ -86,13 +85,13 @@
 
 
 <span class="k">def</span> <span class="nf">field_sign</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom function for split&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Custom function for split.&quot;&quot;&quot;</span>
     <span class="n">pos</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;neg&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">extra</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Function for customising each individual plot&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Function for customising each individual plot.&quot;&quot;&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\nu=</span><span class="si">{:.1f}</span><span class="s2">\,$GHz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Field $\mu_0H\,$&quot;</span>
@@ -142,7 +141,7 @@
     <span class="c1"># Split the data file into separate files by frequencies and sign of field</span>
     <span class="n">fldr</span> <span class="o">=</span> <span class="n">PlotFolder</span><span class="p">(</span><span class="n">fldr</span><span class="p">)</span>  <span class="c1"># Convert to a PlotFolder</span>
     <span class="n">fldr</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>  <span class="c1"># Set my custom plot template</span>
-    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fldr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># Invert the negative field side</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fldr</span><span class="p">[</span><span class="s2">&quot;neg&quot;</span><span class="p">]:</span>  <span class="c1"># Invert the negative field side</span>
         <span class="n">f</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">f</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
@@ -223,7 +222,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.mixins.PlotMethodsMixin.figure" title="Stoner.folders.mixins.PlotMethodsMixin.figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">figure</span></code></a>(*args, **kargs)</p></td>
-<td><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.1.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p></td>
+<td><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.mixins.PlotMethodsMixin.plot" title="Stoner.folders.mixins.PlotMethodsMixin.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(*args, **kargs)</p></td>
 <td><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p></td>
@@ -234,7 +233,7 @@
 <dl class="method">
 <dt id="Stoner.folders.mixins.PlotMethodsMixin.figure">
 <code class="sig-name descname">figure</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#PlotMethodsMixin.figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.PlotMethodsMixin.figure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.1.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p>
+<dd><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p>
 </dd></dl>
 
 <dl class="method">
@@ -250,14 +249,14 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a><em>(</em><a class="reference internal" href="Stoner.core.DataArray.html#Stoner.core.DataArray.i" title="Stoner.core.DataArray.i"><em>i</em></a><em>,</em><em>j</em><em>,</em><em>d</em><em>)</em>) – A callable that can carry out additional processing per plot after the plot is done</p></li>
+<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a><em>(</em><a class="reference internal" href="Stoner.core.array.DataArray.html#Stoner.core.array.DataArray.i" title="Stoner.core.array.DataArray.i"><em>i</em></a><em>,</em><em>j</em><em>,</em><em>d</em><em>)</em>) – A callable that can carry out additional processing per plot after the plot is done</p></li>
 <li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>(</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><em>x</em></a><em>,</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><em>y</em></a><em>)</em>) – Size of the figure to create</p></li>
 <li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – dots per inch on the figure</p></li>
 <li><p><strong>edgecolor</strong><strong>,</strong><strong>facecolor</strong> (<em>matplotlib colour</em>) – figure edge and frame colours.</p></li>
 <li><p><strong>frameon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turns figure frames on or off</p></li>
 <li><p><strong>FigureClass</strong> (<em>class</em>) – Passed to matplotlib figure call.</p></li>
 <li><p><strong>plots_per_page</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – maximum number of plots per figure.</p></li>
-<li><p><strong>tight_layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><em>False</em></a>) – If not False, arguments to pass to a call of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="(in Matplotlib v3.1.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.tight_layout()</span></code></a>. Defaults to {}</p></li>
+<li><p><strong>tight_layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><em>False</em></a>) – If not False, arguments to pass to a call of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.tight_layout()</span></code></a>. Defaults to {}</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -265,8 +264,9 @@
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If the underlying type of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances in the <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code>
-lacks a <strong>plot</strong> method, then the instances are converted to <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>.</p>
+<p>If the underlying type of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code> lacks a <strong>plot</strong> method, then the instances are converted to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>.</p>
 <p>Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
 from the aspect ratio of the figure and the number of files in the <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code>.</p>
 </dd></dl>
@@ -330,9 +330,9 @@ from the aspect ratio of the figure and the number of files in the <code class="
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

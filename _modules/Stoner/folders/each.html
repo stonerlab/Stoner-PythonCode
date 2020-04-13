@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -47,16 +44,17 @@
             
   <h1>Source code for Stoner.folders.each</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:py:mod:`Stoner.folders.each` provides the classes and support functions for the :py:attr:`Stoner.DataFolder.each`</span>
-<span class="sd">magic attribute.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;item&quot;</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableSequence</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">format_exc</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="kn">import</span> <span class="n">isIterable</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">string_types</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_pool</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isiterable</span>
 
 
 <span class="k">def</span> <span class="nf">_worker</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -82,12 +80,85 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ret</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="item"><a class="viewcode-back" href="../../../classes/Stoner.folders.each.item.html#Stoner.folders.each.item">[docs]</a><span class="k">class</span> <span class="nc">item</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">setas_wrapper</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Manages wrapping each member of the folder&#39;s setas attribute.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Note a reference to the parent item class instance and folder.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_each</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_folder</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass through the calls the setas method of each item in our folder.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the lengths of all the setas elements in the folder (or a sclar if all the same).&quot;&quot;&quot;</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">lengths</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">lengths</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the corresponding item from all the setas items in the folder.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the value of the specified item on the setas elements in the folder.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index (int):</span>
+<span class="sd">                The column index of the individual setas attributes to change</span>
+<span class="sd">            value (iterable):</span>
+<span class="sd">                The set of values to apply to the setas attributes.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If value has a length less than the data folder, then the final value is repeated to encompass the</span>
+<span class="sd">            remaining elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">+</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_object_attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;.&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">setas</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">index</span><span class="p">:</span>
+            <span class="n">setas</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;.&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">setas</span><span class="p">)))</span>
+        <span class="n">setas</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="s2">&quot;setas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">setas</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cannot delete items from the proxy setas object - so simply clear it instead.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_object_attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;.&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)])</span>
+        <span class="n">setas</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="s2">&quot;setas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">setas</span>
+
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cannot insert items into the proxy setas object.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;Cannot insert into the objectFolder&#39;s setas - insdert into the objectFolder instead!&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">collapse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Collapse the setas into a single list if possible.&quot;&quot;&quot;</span>
+        <span class="n">setas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">setas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">setas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">setas</span>
+
+
+<div class="viewcode-block" id="item"><a class="viewcode-back" href="../../../classes/Stoner.folders.each.item.html#Stoner.folders.each.item">[docs]</a><span class="k">class</span> <span class="nc">item</span><span class="p">:</span>
 
     <span class="sd">&quot;&quot;&quot;Provides a proxy object for accessing methods on the inividual members of a Folder.</span>
-<span class="sd">    8</span>
+
 <span class="sd">    Notes:</span>
-<span class="sd">        The prupose of this class is to allow it to be explicit that we&#39;re calling methods</span>
+<span class="sd">        The pupose of this class is to allow it to be explicit that we&#39;re calling methods</span>
 <span class="sd">        on the members of the folder rather than a collective method. This allows us to work</span>
 <span class="sd">        around nameclashes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -95,14 +166,31 @@
     <span class="n">_folder</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the each proxy object.</span>
 
+<span class="sd">        Notes the partent folder that created us.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="o">=</span> <span class="n">folder</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a proxy object for manipulating all the setas objects in a folder.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">setas_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@setas</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Manipualte the setas property of all the objects in the folder.&quot;&quot;&quot;</span>
+        <span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
+        <span class="n">setas</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="s2">&quot;setas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">setas</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">setas</span>
 
 <div class="viewcode-block" id="item.__call__"><a class="viewcode-back" href="../../../classes/Stoner.folders.each.item.html#Stoner.folders.each.item.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over the baseFolder, calling func on each item.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            func (callable): A Callable object that must take a metadataObject type instance as it&#39;s first argument.</span>
+<span class="sd">            func (callable, str):</span>
+<span class="sd">                Either a callable object, or the name of a callable object (either method or global) that must take</span>
+<span class="sd">                a metadataObject type instance as it&#39;s first argument.</span>
 
 <span class="sd">        Keyword Args:</span>
 <span class="sd">            _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder</span>
@@ -111,27 +199,33 @@
 <span class="sd">            A list of the results of evaluating *func* for each item in the folder.</span>
 
 <span class="sd">        Notes:</span>
-<span class="sd">            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then</span>
-<span class="sd">            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.</span>
-<span class="sd">            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`&#39;s metadata under the name</span>
-<span class="sd">            of the function. If *_result* is a string. then return result is stored in the corresponding name.</span>
+<span class="sd">            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is</span>
+<span class="sd">            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the</span>
+<span class="sd">            :py:class:`baseFolder`. If *_result* is True the return value is added to the</span>
+<span class="sd">            :py:class:`Stoner.Core.metadataObject`&#39;s metadata under the name of the function. If *_result* is a</span>
+<span class="sd">            string. then return result is stored in the corresponding name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Just call the iter generator but assemble into a list.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;_byname&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">func</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span> <span class="ow">and</span> <span class="n">callable</span><span class="p">(</span><span class="nb">globals</span><span class="p">()[</span><span class="n">func</span><span class="p">]):</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="n">func</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">))</span></div>
 
     <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of the common set of attributes of the instances in the folder.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                 <span class="n">res</span> <span class="o">&amp;=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Handles some special case attributes that provide alternative views of the objectFolder</span>
+        <span class="sd">&quot;&quot;&quot;Handle some special case attributes that provide alternative views of the objectFolder.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            item (string): The attribute name being requested</span>
@@ -158,7 +252,7 @@
                 <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
                     <span class="n">ret</span> <span class="o">=</span> <span class="p">[(</span><span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">]</span>
                     <span class="n">mask</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ret</span><span class="p">)</span>
-                    <span class="n">ret</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+                    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
                     <span class="n">ret</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">ret</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -170,7 +264,7 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="p">):</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="p">[(</span><span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">]</span>
                 <span class="n">mask</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">ret</span><span class="p">)</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">err</span>
@@ -178,7 +272,9 @@
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.</span>
+        <span class="sd">&quot;&quot;&quot;Proxy call to set an attribute.</span>
+
+<span class="sd">        Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name(str): Attribute to set</span>
@@ -192,12 +288,12 @@
 <span class="sd">            If *value* is iterable and the same length as the folder, then each element in the folder is loaded and</span>
 <span class="sd">            the corresponding element of *value* is assigned to the attribute of the member.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>  <span class="c1"># Handle setting our own attributes</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">or</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>  <span class="c1"># Handle setting our own attributes</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="p">)</span>
         <span class="p">):</span>  <span class="c1"># This is an instance attribute</span>
-            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">):</span>
                 <span class="n">force_load</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">force_load</span> <span class="o">=</span> <span class="kc">False</span>
@@ -224,7 +320,7 @@
 
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">meth</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">_wrapper_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Wraps a call to the metadataObject type for magic method calling.</span>
+            <span class="sd">&quot;&quot;&quot;Wrap a call to the metadataObject type for magic method calling.</span>
 
 <span class="sd">            Keyword Arguments:</span>
 <span class="sd">                _return (index types or None): specify to store the return value in the individual object&#39;s metadata</span>
@@ -233,9 +329,7 @@
 <span class="sd">                This relies on being defined inside the enclosure of the objectFolder method</span>
 <span class="sd">                so we have access to self and item</span>
 <span class="sd">            &quot;&quot;&quot;</span>
-            <span class="n">kargs</span><span class="p">[</span>
-                <span class="s2">&quot;_byname&quot;</span>
-            <span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Tell the call that we&#39;re going to find the function by name as an instance method</span>
+            <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;_byname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>  <span class="c1"># Develove to self.__call__ where we have multiprocess magic</span>
 
         <span class="c1"># Ok that&#39;s the wrapper function, now return  it for the user to mess around with.</span>
@@ -252,7 +346,7 @@
 
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">_wrapper_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Wraps a call to the metadataObject type for magic method calling.</span>
+            <span class="sd">&quot;&quot;&quot;Wrap a call to the metadataObject type for magic method calling.</span>
 
 <span class="sd">            Keyword Arguments:</span>
 <span class="sd">                _return (index types or None): specify to store the return value in the individual object&#39;s metadata</span>
@@ -280,15 +374,17 @@
 <span class="sd">            A list of the results of evaluating *func* for each item in the folder.</span>
 
 <span class="sd">        Notes:</span>
-<span class="sd">            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is storing, then</span>
-<span class="sd">            the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the :py:class:`baseFolder`.</span>
-<span class="sd">            If *_result* is True the return value is added to the :py:class:`Stoner.Core.metadataObject`&#39;s metadata under the name</span>
-<span class="sd">            of the function. If *_result* is a string. then return result is stored in the corresponding name.</span>
+<span class="sd">            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is</span>
+<span class="sd">            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the</span>
+<span class="sd">            :py:class:`baseFolder`. If *_result* is True the return value is added to the</span>
+<span class="sd">            :py:class:`Stoner.Core.metadataObject`&#39;s metadata under the name of the function. If *_result* is a</span>
+<span class="sd">            string. then return result is stored in the corresponding name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_return</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_return&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">_byname</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_byname&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">_serial</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_serial&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>  <span class="c1"># Prefetch thefolder in case we can do it in parallel</span>
-        <span class="n">p</span><span class="p">,</span> <span class="n">imap</span> <span class="o">=</span> <span class="n">get_pool</span><span class="p">()</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">imap</span> <span class="o">=</span> <span class="n">get_pool</span><span class="p">(</span><span class="n">_serial</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ret</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
             <span class="n">imap</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">_worker</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">kargs</span><span class="o">=</span><span class="n">kargs</span><span class="p">,</span> <span class="n">byname</span><span class="o">=</span><span class="n">_byname</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span>
         <span class="p">):</span>
@@ -344,16 +440,13 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

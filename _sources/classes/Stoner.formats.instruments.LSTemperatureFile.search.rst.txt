@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.search
+===================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.search

@@ -55,7 +55,6 @@ ImageArray
       ~ImageArray.asfloat
       ~ImageArray.asint
       ~ImageArray.astype
-      ~ImageArray.box
       ~ImageArray.byteswap
       ~ImageArray.choose
       ~ImageArray.clear
@@ -65,12 +64,9 @@ ImageArray
       ~ImageArray.compressed
       ~ImageArray.conj
       ~ImageArray.conjugate
-      ~ImageArray.convert_float
-      ~ImageArray.convert_int
       ~ImageArray.copy
       ~ImageArray.count
       ~ImageArray.crop
-      ~ImageArray.crop_image
       ~ImageArray.cumprod
       ~ImageArray.cumsum
       ~ImageArray.diagonal
@@ -187,7 +183,6 @@ ImageArray
    .. automethod:: asfloat
    .. automethod:: asint
    .. automethod:: astype
-   .. automethod:: box
    .. automethod:: byteswap
    .. automethod:: choose
    .. automethod:: clear
@@ -197,12 +192,9 @@ ImageArray
    .. automethod:: compressed
    .. automethod:: conj
    .. automethod:: conjugate
-   .. automethod:: convert_float
-   .. automethod:: convert_int
    .. automethod:: copy
    .. automethod:: count
    .. automethod:: crop
-   .. automethod:: crop_image
    .. automethod:: cumprod
    .. automethod:: cumsum
    .. automethod:: diagonal

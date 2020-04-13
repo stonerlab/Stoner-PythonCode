@@ -1,0 +1,8 @@
+
+
+RasorFile.extend
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.extend

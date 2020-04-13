@@ -1,0 +1,8 @@
+
+
+SPCFile.rolling_window
+=================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.rolling_window

@@ -1,0 +1,8 @@
+
+
+MokeFile.search
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.search

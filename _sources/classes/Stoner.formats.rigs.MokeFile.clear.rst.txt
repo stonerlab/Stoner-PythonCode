@@ -1,0 +1,8 @@
+
+
+MokeFile.clear
+==================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.clear

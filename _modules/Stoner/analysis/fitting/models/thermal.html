@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,10 +45,8 @@
   <h1>Source code for Stoner.analysis.fitting.models.thermal</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:py:class:`lmfit.Model` model classes and functions for various thermal physics models.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
+<span class="sd">&quot;&quot;&quot;:py:class:`lmfit.Model` model classes and functions for various thermal physics models.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;Arrhenius&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ModArrhenius&quot;</span><span class="p">,</span>
@@ -160,7 +155,7 @@
 <span class="sd">    Return:</span>
 <span class="sd">        Rates according the VFT equation.</span>
 
-<span class="sd">    The VFT equation is defined as as rr`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents</span>
+<span class="sd">    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents</span>
 <span class="sd">    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.</span>
 
 <span class="sd">    Example:</span>
@@ -308,7 +303,7 @@
 <span class="sd">    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents</span>
 <span class="sd">    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.</span>
 
-<span class="sd">    See :py:func:`Stoner.Fit.vftEquation` for an example.</span>
+<span class="sd">    See :py:func:`vftEquation` for an example.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        .. plot:: samples/Fitting/vftEquation.py</span>
@@ -373,16 +368,13 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

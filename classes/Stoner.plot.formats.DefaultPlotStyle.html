@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="GBPlotStyle" href="Stoner.plot.formats.GBPlotStyle.html" />
@@ -153,9 +153,11 @@ method to carry out additional plot formatting.</p>
 
 <dl>
 <dt>Example</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example plot using default style.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
+
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 
 <span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
     <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;sample.txt&quot;</span><span class="p">)</span>
@@ -211,25 +213,25 @@ method to carry out additional plot formatting.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.__call__" title="Stoner.plot.formats.DefaultPlotStyle.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(**kargs)</p></td>
-<td><p>Calling the template object can manipulate the rcParams that will be set.</p></td>
+<td><p>Call the template object can manipulate the rcParams that will be set.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.annotate" title="Stoner.plot.formats.DefaultPlotStyle.annotate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annotate</span></code></a>(ix, multiple, plot, **kargs)</p></td>
 <td><p>Call all the routines necessary to annotate the axes etc.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.apply" title="Stoner.plot.formats.DefaultPlotStyle.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a>()</p></td>
-<td><p>Scan for all attributes that start <a href="#id1"><span class="problematic" id="id2">template_</span></a> and build them into a dictionary to update matplotlib settings with.</p></td>
+<td><p>Update matplotlib rc parameters from any attributes starting <a href="#id1"><span class="problematic" id="id2">template_</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.clear" title="Stoner.plot.formats.DefaultPlotStyle.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
-<td><p>Custom clear method that resets everything back o defaults.</p></td>
+<td><p>Reset everything back o defaults.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.customise" title="Stoner.plot.formats.DefaultPlotStyle.customise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">customise</span></code></a>()</p></td>
-<td><p>Hook to customise plot.</p></td>
+<td><p>Implement hook to customise plot.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.customise_axes" title="Stoner.plot.formats.DefaultPlotStyle.customise_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">customise_axes</span></code></a>(ax, plot)</p></td>
-<td><p>This method is run when we have an axis to manipulate.</p></td>
+<td><p>Implement hook for for when we have an axis to manipulate.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.new_figure" title="Stoner.plot.formats.DefaultPlotStyle.new_figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_figure</span></code></a>([figure])</p></td>
-<td><p>This is called by PlotMixin to setup a new figure before we do anything.</p></td>
+<td><p>Create a new figure.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.update" title="Stoner.plot.formats.DefaultPlotStyle.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(*args, **kargs)</p></td>
 <td><p>Update the template with new attributes from keyword arguments.</p></td>
@@ -282,7 +284,7 @@ method to carry out additional plot formatting.</p>
 <dl class="method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.__call__">
 <code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calling the template object can manipulate the rcParams that will be set.</p>
+<dd><p>Call the template object can manipulate the rcParams that will be set.</p>
 </dd></dl>
 
 <dl class="method">
@@ -303,19 +305,19 @@ method to carry out additional plot formatting.</p>
 <dl class="method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.apply">
 <code class="sig-name descname">apply</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scan for all attributes that start <a href="#id3"><span class="problematic" id="id4">template_</span></a> and build them into a dictionary to update matplotlib settings with.</p>
+<dd><p>Update matplotlib rc parameters from any attributes starting <a href="#id3"><span class="problematic" id="id4">template_</span></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.clear">
 <code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.clear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Custom clear method that resets everything back o defaults.</p>
+<dd><p>Reset everything back o defaults.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.customise">
 <code class="sig-name descname">customise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.customise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.customise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hook to customise plot.</p>
+<dd><p>Implement hook to customise plot.</p>
 <p>This method is supplied for sub classes to override to provide additional
 plot customisation after the rc paramaters are updated from the class and
 instance attributes.</p>
@@ -324,7 +326,7 @@ instance attributes.</p>
 <dl class="method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.customise_axes">
 <code class="sig-name descname">customise_axes</code><span class="sig-paren">(</span><em class="sig-param">ax</em>, <em class="sig-param">plot</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.customise_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.customise_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method is run when we have an axis to manipulate.</p>
+<dd><p>Implement hook for for when we have an axis to manipulate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>ax</strong> (<em>matplotlib axes</em>) – The axes to be modified by this function.</p>
@@ -340,7 +342,8 @@ plotting mode for all axes.</p>
 <dl class="method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.new_figure">
 <code class="sig-name descname">new_figure</code><span class="sig-paren">(</span><em class="sig-param">figure=False</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.new_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.new_figure" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is called by PlotMixin to setup a new figure before we do anything.</p>
+<dd><p>Create a new figure.</p>
+<p>This is called by PlotMixin to setup a new figure before we do anything.</p>
 </dd></dl>
 
 <dl class="method">
@@ -411,9 +414,9 @@ may be specified, with .’s replaced with _ and )_ replaced with __.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

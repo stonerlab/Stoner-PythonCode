@@ -1,8 +1,0 @@
-
-
-QDFile.popitem
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.popitem

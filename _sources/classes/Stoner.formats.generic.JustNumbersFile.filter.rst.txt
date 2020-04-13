@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.filter
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.filter

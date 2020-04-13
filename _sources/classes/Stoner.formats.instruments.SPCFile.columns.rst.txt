@@ -1,0 +1,8 @@
+
+
+SPCFile.columns
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.columns

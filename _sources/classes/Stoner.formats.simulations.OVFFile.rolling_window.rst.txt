@@ -1,0 +1,8 @@
+
+
+OVFFile.rolling_window
+=================================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.rolling_window

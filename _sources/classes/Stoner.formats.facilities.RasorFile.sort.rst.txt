@@ -1,0 +1,8 @@
+
+
+RasorFile.sort
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.sort

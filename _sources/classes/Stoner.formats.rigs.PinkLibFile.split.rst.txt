@@ -1,0 +1,8 @@
+
+
+PinkLibFile.split
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.split

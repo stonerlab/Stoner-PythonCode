@@ -1,0 +1,8 @@
+
+
+VSMFile.unique
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.unique

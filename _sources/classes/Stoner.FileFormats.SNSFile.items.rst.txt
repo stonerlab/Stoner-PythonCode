@@ -1,8 +1,0 @@
-
-
-SNSFile.items
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.items

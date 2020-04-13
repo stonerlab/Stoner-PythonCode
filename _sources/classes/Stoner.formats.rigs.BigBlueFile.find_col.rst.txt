@@ -1,0 +1,8 @@
+
+
+BigBlueFile.find_col
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.find_col

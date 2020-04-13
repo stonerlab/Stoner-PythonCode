@@ -1,0 +1,8 @@
+
+
+FmokeFile.closest
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.closest

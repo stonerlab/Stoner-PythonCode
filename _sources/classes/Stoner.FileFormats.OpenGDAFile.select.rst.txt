@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.select
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.select

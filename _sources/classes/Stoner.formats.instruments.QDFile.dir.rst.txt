@@ -1,0 +1,8 @@
+
+
+QDFile.dir
+=====================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.dir

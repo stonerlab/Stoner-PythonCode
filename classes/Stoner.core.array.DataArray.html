@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="setas" href="Stoner.core.setas.setas.html" />
@@ -73,8 +73,8 @@
 <dl class="attribute">
 <dt id="Stoner.core.array.DataArray.i">
 <code class="sig-name descname">i</code><a class="headerlink" href="#Stoner.core.array.DataArray.i" title="Permalink to this definition">¶</a></dt>
-<dd><p>When read, returns the row  umbers of the data. When written to, sets the
-base row index. The base row index is preserved when a DataArray is indexed.</p>
+<dd><p>When read, returns the row  umbers of the data. When written to, sets the base row index. The base row
+index is preserved when a DataArray is indexed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>array of integers</p>
@@ -85,8 +85,8 @@ base row index. The base row index is preserved when a DataArray is indexed.</p>
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">x,y,z</code></dt>
-<dd><p>When a column is declared to contain <em>x</em>, <em>y</em>, or <em>z</em> data, then these attributes access
-the corresponding columns. When written to, the attributes overwrite the existing column’s data.</p>
+<dd><p>When a column is declared to contain <em>x</em>, <em>y</em>, or <em>z</em> data, then these attributes access the corresponding
+columns. When written to, the attributes overwrite the existing column’s data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>1D DataArray</p>
@@ -97,8 +97,8 @@ the corresponding columns. When written to, the attributes overwrite the existin
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">d,e,f</code></dt>
-<dd><p>Where a column is identified as containing uncertainities for <em>x</em>, <em>y</em> or <em>z</em> data, then these
-attributes provide a quick access to them. When written to, the attributes overwrite the existing column’s data.</p>
+<dd><p>Where a column is identified as containing uncertainities for <em>x</em>, <em>y</em> or <em>z</em> data, then these attributes
+provide a quick access to them. When written to, the attributes overwrite the existing column’s data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>1D DataArray</p>
@@ -164,7 +164,7 @@ more attractive.</p>
 <td><p>Return the row indices of the DataArray or sets the base index - the row number of the first row.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.isrow" title="Stoner.core.array.DataArray.isrow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isrow</span></code></a></p></td>
-<td><p>Defines whether this is a single row or a column if 1D.</p></td>
+<td><p>Define whether this is a single row or a column if 1D.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.p" title="Stoner.core.array.DataArray.p"><code class="xref py py-obj docutils literal notranslate"><span class="pre">p</span></code></a></p></td>
 <td><p>Calculate the inclination <span class="math notranslate nohighlight">\(\phi\)</span> co-ordinate for spherical co-ordinate systems.</p></td>
@@ -176,7 +176,7 @@ more attractive.</p>
 <td><p>Calculate the radius <span class="math notranslate nohighlight">\(\rho\)</span> co-ordinate if using spherical or polar co-ordinate systems.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.setas" title="Stoner.core.array.DataArray.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
-<td><p>Returns an object for setting column assignments.</p></td>
+<td><p>Return an object for setting column assignments.</p></td>
 </tr>
 </tbody>
 </table>
@@ -191,7 +191,7 @@ more attractive.</p>
 <td><p>Return a list of column headers.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.swap_column" title="Stoner.core.array.DataArray.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp, **kargs)</p></td>
-<td><p>Swaps pairs of columns in the data.</p></td>
+<td><p>Swap pairs of columns in the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -211,7 +211,7 @@ more attractive.</p>
 <dl class="attribute">
 <dt id="Stoner.core.array.DataArray.isrow">
 <code class="sig-name descname">isrow</code><a class="headerlink" href="#Stoner.core.array.DataArray.isrow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines whether this is a single row or a column if 1D.</p>
+<dd><p>Define whether this is a single row or a column if 1D.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -235,7 +235,7 @@ more attractive.</p>
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">setas</code></dt>
-<dd><p>Returns an object for setting column assignments.</p>
+<dd><p>Return an object for setting column assignments.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
@@ -248,21 +248,19 @@ more attractive.</p>
 <dl class="method">
 <dt id="Stoner.core.array.DataArray.swap_column">
 <code class="sig-name descname">swap_column</code><span class="sig-paren">(</span><em class="sig-param">*swp</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/array.html#DataArray.swap_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.array.DataArray.swap_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Swaps pairs of columns in the data.</p>
+<dd><p>Swap pairs of columns in the data.</p>
 <p>Useful for reordering data for idiot programs that expect columns in a fixed order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>swp</strong> (<em>tuple of list of tuples of two elements</em>) – Each
-element will be iused as a column index (using the normal rules
+<li><p><strong>swp</strong> (<em>tuple of list of tuples of two elements</em>) – Each element will be iused as a column index (using the normal rules
 for matching columns).  The two elements represent the two
 columns that are to be swapped.</p></li>
-<li><p><strong>headers_too</strong> (<em>bool</em>) – Indicates the column headers
-are swapped as well</p></li>
+<li><p><strong>headers_too</strong> (<em>bool</em>) – Indicates the column headers are swapped as well</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>self</em> – A copy of the modified <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> objects</p>
+<dd class="field-even"><p><em>self</em> –     A copy of the modified <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> objects</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -332,9 +330,9 @@ lists of lists of tuples</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

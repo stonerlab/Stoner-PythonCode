@@ -1,8 +1,0 @@
-
-
-OVFFile.clear
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.clear

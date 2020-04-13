@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.values
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.values

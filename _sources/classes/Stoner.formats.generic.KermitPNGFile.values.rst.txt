@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.values
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.values

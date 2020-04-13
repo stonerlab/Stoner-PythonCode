@@ -1,8 +1,0 @@
-
-
-QDFile.filter
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.filter

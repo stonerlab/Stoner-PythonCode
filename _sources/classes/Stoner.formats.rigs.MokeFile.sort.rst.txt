@@ -1,0 +1,8 @@
+
+
+MokeFile.sort
+=================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.sort

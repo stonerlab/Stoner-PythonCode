@@ -1,8 +1,0 @@
-
-
-RigakuFile.save
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.save

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.keys
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.keys

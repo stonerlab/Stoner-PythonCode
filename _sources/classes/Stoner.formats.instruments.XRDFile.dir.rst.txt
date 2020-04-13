@@ -1,0 +1,8 @@
+
+
+XRDFile.dir
+======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.dir

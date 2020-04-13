@@ -1,0 +1,8 @@
+
+
+RasorFile.__init__
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.__init__

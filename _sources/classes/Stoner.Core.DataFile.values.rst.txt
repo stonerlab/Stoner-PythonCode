@@ -1,0 +1,8 @@
+
+
+DataFile.values
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.values

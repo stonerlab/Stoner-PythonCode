@@ -1,0 +1,8 @@
+
+
+PinkLibFile.swap_column
+===========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.swap_column

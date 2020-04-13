@@ -1,0 +1,8 @@
+
+
+CSVFile.items
+====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.items

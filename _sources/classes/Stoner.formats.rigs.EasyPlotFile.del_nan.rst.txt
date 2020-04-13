@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.del_nan
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.del_nan

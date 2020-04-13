@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.adjust_setas
-============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.adjust_setas

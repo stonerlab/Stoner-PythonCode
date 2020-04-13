@@ -1,0 +1,8 @@
+
+
+SNSFile.rows
+======================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.rows

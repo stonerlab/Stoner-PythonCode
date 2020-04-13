@@ -1,0 +1,589 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.core.methods &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.core.methods</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Mxinin classes for DataFile objects.&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DataFileSearchMixin&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">int_types</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="kn">import</span> <span class="n">operator</span><span class="p">,</span> <span class="n">isIterable</span>
+
+
+<span class="k">class</span> <span class="nc">DataFileSearchMixin</span><span class="p">:</span>
+
+    <span class="sd">&quot;&quot;&quot;Mixin class that provides the search, selecting and sorting methods for a DataFile.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_search_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an array of booleans for indexing matching rows for use with search method.&quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">int_types</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">less_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">x</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span><span class="p">),</span> <span class="n">accuracy</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="n">low</span> <span class="o">-=</span> <span class="n">accuracy</span>
+            <span class="n">u</span> <span class="o">+=</span> <span class="n">accuracy</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">x</span><span class="p">]</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">low</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span>
+            <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">v</span> <span class="o">&gt;</span> <span class="n">low</span><span class="p">,</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="n">u</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_index</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown search value type </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ix</span>
+
+    <span class="k">def</span> <span class="nf">closest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the row in a data file which has an x-column value closest to the given value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (float):</span>
+<span class="sd">                Value to search for.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            xcol (index or None):</span>
+<span class="sd">                Column in which to look for value, or None to use setas.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray:</span>
+<span class="sd">                A single row of data as a :py:class:`Stoner.Core.DataArray`.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i`</span>
+<span class="sd">            index attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">)</span>
+        <span class="n">xdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span> <span class="o">//</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span> <span class="o">-</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">xdata</span><span class="o">.</span><span class="n">argmin</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extract one or more columns of data from the datafile.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col (int, string, list or re):</span>
+<span class="sd">                is the column index as defined for :py:meth:`DataFile.find_col`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (ndarray):</span>
+<span class="sd">                One or more columns of data as a :py:class:`numpy.ndarray`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">find_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indexes the column headers in order to locate a column of data.shape.</span>
+
+<span class="sd">        Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.</span>
+
+<span class="sd">        -   Integer indices are simply checked to ensure that they are in range</span>
+<span class="sd">        -   String indices are first checked for an exact match against a column header</span>
+<span class="sd">            if that fails they are then compiled to a regular expression and the first</span>
+<span class="sd">            match to a column header is taken.</span>
+<span class="sd">        -   A regular expression index is simply matched against the column headers and the</span>
+<span class="sd">            first match found is taken. This allows additional regular expression options</span>
+<span class="sd">            such as case insensitivity.</span>
+<span class="sd">        -   A slice index is converted to a list of integers and processed as below</span>
+<span class="sd">        -   A list index returns the results of feading each item in the list at :py:meth:`find_col`</span>
+<span class="sd">            in turn.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col (int, a string, a re, a slice or a list):</span>
+<span class="sd">                Which column(s) to retuirn indices for.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            force_list (bool):</span>
+<span class="sd">                Force the output always to be a list. Mainly for internal use only</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int, list of ints:</span>
+<span class="sd">                The matching column index as an integer or a KeyError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">rolling_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exclude_centre</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate with a rolling window section of the data.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            window (int):</span>
+<span class="sd">                Size of the rolling window (must be odd and &gt;= 3)</span>
+<span class="sd">            wrap (bool):</span>
+<span class="sd">                Whether to use data from the other end of the array when at one end or the other.</span>
+<span class="sd">            exclude_centre (odd int or bool):</span>
+<span class="sd">                Exclude the ciurrent row from the rolling window (defaults to False)</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            ndarray:</span>
+<span class="sd">                Yields with a section of data that is window rows long, each iteration moves the marker</span>
+<span class="sd">                one row further on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exclude_centre</span><span class="p">:</span>
+            <span class="n">exclude_centre</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="n">int_types</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">exclude_centre</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If excluding the centre of the window, this must be an odd number of rows.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">window</span> <span class="o">-</span> <span class="n">exclude_centre</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">window</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">window</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sd">&quot;&quot;&quot;Window must be at least two bigger than the number of rows exluded from the centre, bigger than</span>
+<span class="sd">                    3 and odd&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">hw</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">window</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">exclude_centre</span><span class="p">:</span>
+            <span class="n">hc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">exclude_centre</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">hw</span><span class="p">:</span>
+                <span class="n">pre_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">hw</span> <span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pre_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="n">hw</span><span class="p">:</span>
+                <span class="n">post_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">hw</span> <span class="o">-</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">post_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">starti</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">hw</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">stopi</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">i</span> <span class="o">+</span> <span class="n">hw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exclude_centre</span><span class="p">:</span>  <span class="c1"># hacked to stop problems with DataArray concatenation</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>  <span class="c1"># copy all properties</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">starti</span> <span class="p">:</span> <span class="n">i</span> <span class="o">-</span> <span class="n">hc</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">hc</span> <span class="p">:</span> <span class="n">stopi</span><span class="p">]))</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># guarantee an ndarray</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># get the DataArray</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">starti</span><span class="p">:</span><span class="n">stopi</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">wrap</span><span class="p">:</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>  <span class="c1"># copy all properties</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">pre_data</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">post_data</span><span class="p">))</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>  <span class="c1"># guarantee an ndarray</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># get the DataArray</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="k">yield</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search the numerica data part of the file for lines that match and returns  the corresponding rows.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            xcol (index types):</span>
+<span class="sd">                a Search Column Index</span>
+<span class="sd">            value (float, tuple, list or callable):</span>
+<span class="sd">                Value to look for</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            columns (index or array of indices or None (default)):</span>
+<span class="sd">                columns of data to return - none represents all columns.</span>
+<span class="sd">            accuracy (float):</span>
+<span class="sd">                Uncertainty to accept when testing equalities</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: numpy array of matching rows or column values depending on the arguements.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The value is interpreted as follows:</span>
+
+<span class="sd">            - a float looks for an exact match</span>
+<span class="sd">            - a list is a list of exact matches</span>
+<span class="sd">            - a tuple should contain a (min,max) value.</span>
+<span class="sd">            - A callable object should have accept a float and an array representing the value of</span>
+<span class="sd">              the search col for the the current row and the entire row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_index</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Get the whole slice</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="n">columns</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="n">c</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            x (float, tuple, list or callable):</span>
+<span class="sd">                x values ,atch this condition are included inth e section</span>
+<span class="sd">            y (float, tuple, list  or callable):</span>
+<span class="sd">                y values ,atch this condition are included inth e section</span>
+<span class="sd">            z (float, tuple,list  or callable):</span>
+<span class="sd">                z values ,atch this condition are included inth e section</span>
+<span class="sd">            r (callable): a</span>
+<span class="sd">            function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (DataFile):</span>
+<span class="sd">                A :py:class:`DataFile` like object that includes only those lines from the original that match the</span>
+<span class="sd">                section specification</span>
+
+<span class="sd">        Internally this function is calling :py:meth:`DataFile.search` to pull out matching sections of the data array.</span>
+<span class="sd">        To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that</span>
+<span class="sd">        axis. Specifying conditions on two axes will return a line of points along the third axis. The final</span>
+<span class="sd">        keyword parameter allows you to select data points that lie in an arbitary plane or line. eg::</span>
+
+<span class="sd">            d.section(r=lambda x,y,z:abs(2+3*x-2*y)&lt;0.1 and z==2)</span>
+
+<span class="sd">        would extract points along the line 2y=3x+2 (note the use of an &lt; operator to avoid floating point rounding</span>
+<span class="sd">        errors) where the z-co-ordinate is 2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">()</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">xcol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">cols</span><span class="o">.</span><span class="n">has_xcol</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">ycol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;ycol&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cols</span><span class="o">.</span><span class="n">has_ucol</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">zcol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;zcol&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cols</span><span class="o">.</span><span class="n">has_zcol</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="s2">&quot;accuracy&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">accuracy</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">),</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;y&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">),</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;z&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">zcol</span><span class="p">,</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">),</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;r&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)(</span><span class="n">r</span><span class="p">[</span><span class="n">xcol</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">ycol</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">zcol</span><span class="p">])</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">kargs</span><span class="p">:</span>  <span class="c1"># Fallback to working with select if nothing else.</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tmp</span>
+
+    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Produce a copy of the DataFile with only data rows that match a criteria.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (various):</span>
+<span class="sd">                A single positional argument if present is interpreted as follows:</span>
+
+<span class="sd">                -   If a callable function is given, the entire row is presented to it. If it evaluates True then that</span>
+<span class="sd">                    row is selected. This allows arbitary select operations</span>
+<span class="sd">                -   If a dict is given, then it and the kargs dictionary are merged and used to select the rows</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            kargs (various):</span>
+<span class="sd">                Arbitary keyword arguments are interpreted as requestion matches against the corresponding</span>
+<span class="sd">                columns. The keyword argument may have an additional *__operator** appended to it which is interpreted</span>
+<span class="sd">                as follows:</span>
+
+<span class="sd">                -   *eq*  value equals argument value (this is the default test for scalar argument)</span>
+<span class="sd">                -   *ne*  value doe not equal argument value</span>
+<span class="sd">                -   *gt*  value doe greater than argument value</span>
+<span class="sd">                -   *lt*  value doe less than argument value</span>
+<span class="sd">                -   *ge*  value doe greater than or equal to argument value</span>
+<span class="sd">                -   *le*  value doe less than or equal to argument value</span>
+<span class="sd">                -   *between*  value lies beween the minimum and maximum values of the arguement (the default test</span>
+<span class="sd">                    for 2-length tuple arguments)</span>
+<span class="sd">                -   *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (DatFile): a copy the DataFile instance that contains just the matching rows.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            if the operator is preceeded by *__not__* then the sense of the test is negated.</span>
+
+<span class="sd">            If any of the tests is True, then the row will be selected, so the effect is a logical OR. To</span>
+<span class="sd">            achieve a logical AND, you can chain two selects together::</span>
+
+<span class="sd">                d.select(temp__le=4.2,vti_temp__lt=4.2).select(field_gt=3.0)</span>
+
+<span class="sd">            will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values</span>
+<span class="sd">            greater than 3.</span>
+
+<span class="sd">            If you need to select on a row value that ends in an operator word, then append</span>
+<span class="sd">            *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid</span>
+<span class="sd">            python identifiers, then pass them via the first positional dictionary value.</span>
+
+<span class="sd">            There is a &quot;magic&quot; column name &quot;_i&quot; which is interpreted as the row numbers of the data.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">            .. plot:: samples/select_example.py</span>
+<span class="sd">                :include-source:</span>
+<span class="sd">                :outname: select</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">kargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parts</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]))</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">operator</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;eq&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;not&quot;</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+                <span class="n">negate</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">negate</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;_i&quot;</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span><span class="n">negate</span><span class="p">,</span> <span class="n">operator</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]](</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">])))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="n">end</span><span class="p">])</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span><span class="n">negate</span><span class="p">,</span> <span class="n">operator</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]](</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">])))</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">res</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sort the data by column name.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            order (column index or list of indices or callable function):</span>
+<span class="sd">                One or more sort order keys.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            reverse (boolean):</span>
+<span class="sd">                If true, the sorted array isreversed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (self):</span>
+<span class="sd">                A copy of the :py:class:`DataFile` sorted object</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Sorts in place and returns a copy of the sorted data object fo chaining methods.</span>
+
+<span class="sd">            If the argument is a callable function then it should take a two tuple arguments and</span>
+<span class="sd">            return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise</span>
+<span class="sd">            if the argument is interpreted as a column index. If a single argument is supplied, then it may be</span>
+<span class="sd">            a list of column indices. If no sort orders are supplied then the data is sorted by the</span>
+<span class="sd">            :py:attr:`DataFile.setas` attribute or if that is not set, then order of the columns in the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reverse</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;reverse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">order</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]]</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;ycol&quot;</span><span class="p">])</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;zcol&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">order</span><span class="p">:</span>  <span class="c1"># Ok, no setas here then</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)))</span>
+        <span class="n">recs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="nb">cmp</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">recs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">order</span><span class="p">)]]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">recs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to work out how to sort by a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">order</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">setas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">ch</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">final</span><span class="o">=</span><span class="s2">&quot;files&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Recursively splits the current DataFile into a :py:class:`Stoner.Forlders.DataFolder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args (column index or function):</span>
+<span class="sd">                Each argument is used in turn to find key values for the files in the DataFolder</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            final (str):</span>
+<span class="sd">                Controls whether the final argument plaes the files in the DataFolder (default: &quot;files&quot;) or in</span>
+<span class="sd">                groups (&quot;groups&quot;)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Stoner.Folders.DataFolder:</span>
+<span class="sd">                A :py:class:`Stoner.Folders.DataFolder` object containing the individual</span>
+<span class="sd">                :py:class:`AnalysisMixin` objects</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Creates a DataFolder of  DataFiles where each one contains the rows from the original object which</span>
+<span class="sd">            had the same value of a given column(s) or function.</span>
+
+
+<span class="sd">            On each iteration the first argument is called. If it is a column type then rows which amtch each unique</span>
+<span class="sd">            value are collated together and made into a separate file. If the argument is a callable, then it is</span>
+<span class="sd">            called for each row, passing the row as a single 1D array and the return result is used to group lines</span>
+<span class="sd">            together. The return value should be hashable.</span>
+
+<span class="sd">            Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument,</span>
+<span class="sd">            then the method is called recusivelyt for each file and the resulting DataFolder added into the root</span>
+<span class="sd">            DataFolder and the file is removed.</span>
+
+<span class="sd">            Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.</span>
+
+<span class="sd">            .. warning::</span>
+
+<span class="sd">                There has been a change in the arguments for the split function  from version 0.8 of the Stoner</span>
+<span class="sd">                Package.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">DataFolder</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">xcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">xcol</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">)):</span>
+                <span class="n">newfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+                <span class="n">newfile</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">xcol</span><span class="p">)]</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">newfile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">newfile</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">xcol</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1"># Try to call function with all data in one go</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="n">xcol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Not returning an index of keys&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># Ok try instead to do it row by row</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">xcol</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">keys</span> <span class="o">==</span> <span class="n">key</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">xcol</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to split a file with an argument of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">DataFolder</span><span class="p">(</span><span class="n">nolist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">final</span> <span class="o">==</span> <span class="s2">&quot;files&quot;</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">+=</span> <span class="n">f</span>
+                <span class="k">elif</span> <span class="n">final</span> <span class="o">==</span> <span class="s2">&quot;groups&quot;</span><span class="p">:</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">f</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">final</span><span class="si">}</span><span class="s2"> not recognised as a valid value for final&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the unique values from the specified column - pass through for numpy.unique.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col (index):</span>
+<span class="sd">                Column to look for unique values in</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            return_index (bool):</span>
+<span class="sd">                Pass through to :py:func:`np.unique`</span>
+<span class="sd">            reverse (bool):</span>
+<span class="sd">                Pass through to :py:func:`np.unique`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (1D array):</span>
+<span class="sd">                Array of unique values from the column.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">return_index</span><span class="p">,</span> <span class="n">return_inverse</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

@@ -1,0 +1,8 @@
+
+
+VSMFile.load
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.load

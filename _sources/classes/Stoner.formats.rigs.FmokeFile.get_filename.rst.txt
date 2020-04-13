@@ -1,0 +1,8 @@
+
+
+FmokeFile.get_filename
+==========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.get_filename

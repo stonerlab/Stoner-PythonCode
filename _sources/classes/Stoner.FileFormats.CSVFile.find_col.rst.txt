@@ -1,8 +1,0 @@
-
-
-CSVFile.find_col
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: CSVFile.find_col

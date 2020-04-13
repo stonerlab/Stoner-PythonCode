@@ -1,0 +1,8 @@
+
+
+MokeFile.pop
+================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.pop

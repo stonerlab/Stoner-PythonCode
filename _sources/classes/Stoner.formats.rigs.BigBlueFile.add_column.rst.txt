@@ -1,0 +1,8 @@
+
+
+BigBlueFile.add_column
+==========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.add_column

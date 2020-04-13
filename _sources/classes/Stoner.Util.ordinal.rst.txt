@@ -1,6 +1,0 @@
-ordinal
-=======
-
-.. currentmodule:: Stoner.Util
-
-.. autofunction:: ordinal

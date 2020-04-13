@@ -9,15 +9,15 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="_attribute_store" href="Stoner.tools._attribute_store.html" />
+    <link rel="next" title="ordinal" href="Stoner.tools.ordinal.html" />
     <link rel="prev" title="get_option" href="Stoner.tools.get_option.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.tools.get_option.html" title="Previous document">get_option</a>
         </li>
         <li>
-          <a href="Stoner.tools._attribute_store.html" title="Next document">_attribute_store</a>
+          <a href="Stoner.tools.ordinal.html" title="Next document">ordinal</a>
           &rarr;
         </li>
     </ul>
@@ -56,14 +56,42 @@
 <h1>set_option<a class="headerlink" href="#set-option" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="Stoner.tools.set_option">
-<code class="sig-prename descclassname">Stoner.tools.</code><code class="sig-name descname">set_option</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#set_option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.set_option" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.tools.</code><code class="sig-name descname">set_option</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools/classes.html#set_option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.set_option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a global package option.</p>
-<ul class="simple">
-<li><p>short_repr (bool): Instead of using a rich representation, use a short description for DataFile and Imagefile.</p></li>
-<li><p>short_data_repr (bool): Just use short representation for DataFiles</p></li>
-<li><p>short_img_repr (bool): Just use a short representation for image file</p></li>
-<li><p>no_figs (bool): Do not return figures from plotting functions, just plot them.</p></li>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul>
+<li><p><strong>name</strong> (<em>str</em>) –</p>
+<dl class="simple">
+<dt>Option Name, one of:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>short_repr (bool):</dt><dd><p>Instead of using a rich representation, use a short description for DataFile and Imagefile.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>short_data_repr (bool):</dt><dd><p>Just use short representation for DataFiles</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>short_img_repr (bool):</dt><dd><p>Just use a short representation for image file</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>no_figs (bool):</dt><dd><p>Do not return figures from plotting functions, just plot them.</p>
+</dd>
+</dl>
+</li>
 </ul>
+</dd>
+</dl>
+</li>
+<li><p><strong>value</strong> (<em>depends on name</em>) – The value to set (see <em>name</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -81,8 +109,8 @@
   <p class="topless"><a href="Stoner.tools.get_option.html"
                         title="previous chapter">get_option</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.tools._attribute_store.html"
-                        title="next chapter">_attribute_store</a></p>
+  <p class="topless"><a href="Stoner.tools.ordinal.html"
+                        title="next chapter">ordinal</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -109,7 +137,7 @@
           <a href="Stoner.tools.get_option.html" title="Previous document">get_option</a>
         </li>
         <li>
-          <a href="Stoner.tools._attribute_store.html" title="Next document">_attribute_store</a>
+          <a href="Stoner.tools.ordinal.html" title="Next document">ordinal</a>
           &rarr;
         </li>
     </ul>
@@ -123,9 +151,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,0 +1,89 @@
+Stoner.formats.rigs.BirgeIVFile
+===============================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. autoclass:: BirgeIVFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.rigs.BirgeIVFile.__init__
+      ~Stoner.formats.rigs.BirgeIVFile.add_column
+      ~Stoner.formats.rigs.BirgeIVFile.append
+      ~Stoner.formats.rigs.BirgeIVFile.clear
+      ~Stoner.formats.rigs.BirgeIVFile.closest
+      ~Stoner.formats.rigs.BirgeIVFile.column
+      ~Stoner.formats.rigs.BirgeIVFile.columns
+      ~Stoner.formats.rigs.BirgeIVFile.count
+      ~Stoner.formats.rigs.BirgeIVFile.del_column
+      ~Stoner.formats.rigs.BirgeIVFile.del_nan
+      ~Stoner.formats.rigs.BirgeIVFile.del_rows
+      ~Stoner.formats.rigs.BirgeIVFile.dir
+      ~Stoner.formats.rigs.BirgeIVFile.extend
+      ~Stoner.formats.rigs.BirgeIVFile.filter
+      ~Stoner.formats.rigs.BirgeIVFile.find_col
+      ~Stoner.formats.rigs.BirgeIVFile.get
+      ~Stoner.formats.rigs.BirgeIVFile.get_filename
+      ~Stoner.formats.rigs.BirgeIVFile.index
+      ~Stoner.formats.rigs.BirgeIVFile.insert
+      ~Stoner.formats.rigs.BirgeIVFile.insert_rows
+      ~Stoner.formats.rigs.BirgeIVFile.items
+      ~Stoner.formats.rigs.BirgeIVFile.keys
+      ~Stoner.formats.rigs.BirgeIVFile.load
+      ~Stoner.formats.rigs.BirgeIVFile.pop
+      ~Stoner.formats.rigs.BirgeIVFile.popitem
+      ~Stoner.formats.rigs.BirgeIVFile.remove
+      ~Stoner.formats.rigs.BirgeIVFile.rename
+      ~Stoner.formats.rigs.BirgeIVFile.reorder_columns
+      ~Stoner.formats.rigs.BirgeIVFile.reverse
+      ~Stoner.formats.rigs.BirgeIVFile.rolling_window
+      ~Stoner.formats.rigs.BirgeIVFile.rows
+      ~Stoner.formats.rigs.BirgeIVFile.save
+      ~Stoner.formats.rigs.BirgeIVFile.search
+      ~Stoner.formats.rigs.BirgeIVFile.section
+      ~Stoner.formats.rigs.BirgeIVFile.select
+      ~Stoner.formats.rigs.BirgeIVFile.setdefault
+      ~Stoner.formats.rigs.BirgeIVFile.sort
+      ~Stoner.formats.rigs.BirgeIVFile.split
+      ~Stoner.formats.rigs.BirgeIVFile.swap_column
+      ~Stoner.formats.rigs.BirgeIVFile.to_pandas
+      ~Stoner.formats.rigs.BirgeIVFile.unique
+      ~Stoner.formats.rigs.BirgeIVFile.update
+      ~Stoner.formats.rigs.BirgeIVFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.rigs.BirgeIVFile.T
+      ~Stoner.formats.rigs.BirgeIVFile.basename
+      ~Stoner.formats.rigs.BirgeIVFile.clone
+      ~Stoner.formats.rigs.BirgeIVFile.column_headers
+      ~Stoner.formats.rigs.BirgeIVFile.data
+      ~Stoner.formats.rigs.BirgeIVFile.dict_records
+      ~Stoner.formats.rigs.BirgeIVFile.dims
+      ~Stoner.formats.rigs.BirgeIVFile.dtype
+      ~Stoner.formats.rigs.BirgeIVFile.filename
+      ~Stoner.formats.rigs.BirgeIVFile.header
+      ~Stoner.formats.rigs.BirgeIVFile.mask
+      ~Stoner.formats.rigs.BirgeIVFile.metadata
+      ~Stoner.formats.rigs.BirgeIVFile.mime_type
+      ~Stoner.formats.rigs.BirgeIVFile.patterns
+      ~Stoner.formats.rigs.BirgeIVFile.priority
+      ~Stoner.formats.rigs.BirgeIVFile.records
+      ~Stoner.formats.rigs.BirgeIVFile.setas
+      ~Stoner.formats.rigs.BirgeIVFile.shape
+      ~Stoner.formats.rigs.BirgeIVFile.subclasses
+   
+   

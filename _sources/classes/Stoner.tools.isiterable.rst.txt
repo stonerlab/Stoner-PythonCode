@@ -1,6 +1,6 @@
-isiterable
+isIterable
 ==========
 
 .. currentmodule:: Stoner.tools
 
-.. autofunction:: isiterable
+.. autofunction:: isIterable

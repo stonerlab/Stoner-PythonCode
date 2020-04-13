@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.reverse
+====================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.reverse

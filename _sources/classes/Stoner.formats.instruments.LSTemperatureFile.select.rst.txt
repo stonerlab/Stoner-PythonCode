@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.select
+===================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.select

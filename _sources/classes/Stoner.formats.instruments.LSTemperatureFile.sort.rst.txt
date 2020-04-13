@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.sort
+=================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.sort

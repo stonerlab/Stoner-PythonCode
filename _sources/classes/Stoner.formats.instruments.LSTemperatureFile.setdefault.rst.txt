@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.setdefault
+=======================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.setdefault

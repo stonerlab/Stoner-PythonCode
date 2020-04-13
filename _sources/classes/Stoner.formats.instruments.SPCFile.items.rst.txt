@@ -1,0 +1,8 @@
+
+
+SPCFile.items
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.items

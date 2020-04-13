@@ -1,0 +1,8 @@
+
+
+XRDFile.remove
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.remove

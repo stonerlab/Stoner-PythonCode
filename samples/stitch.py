@@ -1,4 +1,5 @@
 """Scale data to stitch it together."""
+# pylint: disable=invalid-name
 from Stoner import Data
 
 from Stoner.Util import format_error

@@ -1,4 +1,5 @@
 """Re-binning data example."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.plot.utils import errorfill
 
@@ -23,6 +24,6 @@ for i, (binned, label) in enumerate(
     binned.plot(plotter=errorfill, label=label)
 
     d.xlim = (1, 6)
-    d.ylim(-0.1, 0.4)
+    d.ylim(-0.1, 0.4)  # pylint: disable=E1102
     d.title = "Bin demo" if i == 0 else ""
 d.tight_layout()

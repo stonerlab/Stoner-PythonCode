@@ -1,0 +1,8 @@
+
+
+RasorFile.count
+=========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.count

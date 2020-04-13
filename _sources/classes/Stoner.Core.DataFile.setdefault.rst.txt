@@ -1,0 +1,8 @@
+
+
+DataFile.setdefault
+===============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.setdefault

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.setdefault
+==========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.setdefault

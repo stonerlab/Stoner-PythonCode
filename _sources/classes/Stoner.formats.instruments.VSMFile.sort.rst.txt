@@ -1,0 +1,8 @@
+
+
+VSMFile.sort
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.sort

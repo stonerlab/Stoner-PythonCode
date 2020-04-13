@@ -1,0 +1,8 @@
+
+
+MokeFile.select
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.select

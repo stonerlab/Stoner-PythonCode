@@ -1,0 +1,8 @@
+
+
+GenXFile.to_pandas
+=============================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.to_pandas

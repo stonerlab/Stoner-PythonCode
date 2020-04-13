@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.del_column
+===============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.del_column

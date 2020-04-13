@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.rename
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.rename

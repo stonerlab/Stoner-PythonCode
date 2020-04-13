@@ -1,8 +1,0 @@
-
-
-MokeFile.update
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.update

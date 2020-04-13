@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -40,11 +40,8 @@
           <div class="body" role="main">
             
   <h1>All modules for which code is available</h1>
-<ul><li><a href="Stoner.html">Stoner</a></li>
 <ul><li><a href="Stoner/Analysis.html">Stoner.Analysis</a></li>
 <li><a href="Stoner/Core.html">Stoner.Core</a></li>
-<li><a href="Stoner/FileFormats.html">Stoner.FileFormats</a></li>
-<li><a href="Stoner/Fit.html">Stoner.Fit</a></li>
 <li><a href="Stoner/Folders.html">Stoner.Folders</a></li>
 <li><a href="Stoner/HDF5.html">Stoner.HDF5</a></li>
 <li><a href="Stoner/Image/core.html">Stoner.Image.core</a></li>
@@ -56,6 +53,7 @@
 <li><a href="Stoner/Util.html">Stoner.Util</a></li>
 <li><a href="Stoner/Zip.html">Stoner.Zip</a></li>
 <li><a href="Stoner/analysis/columns.html">Stoner.analysis.columns</a></li>
+<li><a href="Stoner/analysis/features.html">Stoner.analysis.features</a></li>
 <li><a href="Stoner/analysis/filtering.html">Stoner.analysis.filtering</a></li>
 <li><a href="Stoner/analysis/fitting/mixins.html">Stoner.analysis.fitting.mixins</a></li>
 <li><a href="Stoner/analysis/fitting/models/e_transport.html">Stoner.analysis.fitting.models.e_transport</a></li>
@@ -66,21 +64,29 @@
 <li><a href="Stoner/analysis/fitting/models/tunnelling.html">Stoner.analysis.fitting.models.tunnelling</a></li>
 <li><a href="Stoner/core/array.html">Stoner.core.array</a></li>
 <li><a href="Stoner/core/base.html">Stoner.core.base</a></li>
+<li><a href="Stoner/core/data.html">Stoner.core.data</a></li>
 <li><a href="Stoner/core/exceptions.html">Stoner.core.exceptions</a></li>
+<li><a href="Stoner/core/interfaces.html">Stoner.core.interfaces</a></li>
+<li><a href="Stoner/core/methods.html">Stoner.core.methods</a></li>
 <li><a href="Stoner/core/setas.html">Stoner.core.setas</a></li>
 <li><a href="Stoner/core/utils.html">Stoner.core.utils</a></li>
 <li><a href="Stoner/folders/core.html">Stoner.folders.core</a></li>
 <li><a href="Stoner/folders/each.html">Stoner.folders.each</a></li>
 <li><a href="Stoner/folders/metadata.html">Stoner.folders.metadata</a></li>
 <li><a href="Stoner/folders/mixins.html">Stoner.folders.mixins</a></li>
+<li><a href="Stoner/formats/attocube.html">Stoner.formats.attocube</a></li>
 <li><a href="Stoner/formats/facilities.html">Stoner.formats.facilities</a></li>
 <li><a href="Stoner/formats/generic.html">Stoner.formats.generic</a></li>
 <li><a href="Stoner/formats/instruments.html">Stoner.formats.instruments</a></li>
 <li><a href="Stoner/formats/rigs.html">Stoner.formats.rigs</a></li>
+<li><a href="Stoner/formats/simulations.html">Stoner.formats.simulations</a></li>
 <li><a href="Stoner/plot/core.html">Stoner.plot.core</a></li>
 <li><a href="Stoner/plot/formats.html">Stoner.plot.formats</a></li>
 <li><a href="Stoner/plot/utils.html">Stoner.plot.utils</a></li>
 <li><a href="Stoner/tools.html">Stoner.tools</a></li>
+<ul><li><a href="Stoner/tools/classes.html">Stoner.tools.classes</a></li>
+<li><a href="Stoner/tools/formatting.html">Stoner.tools.formatting</a></li>
+<li><a href="Stoner/tools/tests.html">Stoner.tools.tests</a></li>
 </ul><li><a href="collections/abc.html">collections.abc</a></li>
 <li><a href="numpy/ma/core.html">numpy.ma.core</a></li>
 </ul>
@@ -115,9 +121,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

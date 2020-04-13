@@ -1,0 +1,8 @@
+
+
+FmokeFile.index
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.index

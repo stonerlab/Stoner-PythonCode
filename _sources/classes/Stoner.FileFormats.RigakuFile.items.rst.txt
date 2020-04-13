@@ -1,8 +1,0 @@
-
-
-RigakuFile.items
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.items

@@ -1,0 +1,8 @@
+
+
+MokeFile.extend
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.extend

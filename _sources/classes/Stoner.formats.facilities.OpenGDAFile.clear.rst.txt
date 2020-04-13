@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.clear
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.clear

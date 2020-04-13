@@ -1,0 +1,8 @@
+
+
+SPCFile.to_pandas
+============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.to_pandas

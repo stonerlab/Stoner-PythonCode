@@ -1,8 +1,0 @@
-
-
-BNLFile.del_nan
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.del_nan

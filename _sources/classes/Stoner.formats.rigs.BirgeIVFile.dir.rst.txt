@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.dir
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.dir

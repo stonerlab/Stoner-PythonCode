@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="odr_Model" href="Stoner.analysis.fitting.odr_Model.html" />
-    <link rel="prev" title="DataFile" href="Stoner.Core.DataFile.html" />
+    <link rel="prev" title="DataFile.values" href="Stoner.Core.DataFile.values.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Core.DataFile.html" title="Previous document">DataFile</a>
+          <a href="Stoner.Core.DataFile.values.html" title="Previous document">DataFile.values</a>
         </li>
         <li>
           <a href="Stoner.analysis.fitting.odr_Model.html" title="Next document">odr_Model</a>
@@ -81,13 +81,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Stoner.Analysis.AnalysisMixin.normalise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalise</span></code></a>([target, base, replace, header, …])</p></td>
 <td><p>Normalise data columns by dividing through by a base column value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.peaks" title="Stoner.Analysis.AnalysisMixin.peaks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peaks</span></code></a>(**kargs)</p></td>
-<td><p>Locates peaks and/or troughs in a column of data by using SG-differentiation.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.stitch" title="Stoner.Analysis.AnalysisMixin.stitch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stitch</span></code></a>(other[, xcol, ycol, overlap, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.stitch" title="Stoner.Analysis.AnalysisMixin.stitch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stitch</span></code></a>(other[, xcol, ycol, overlap, …])</p></td>
 <td><p>Apply a scaling to this data set to make it stich to another dataset.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.threshold" title="Stoner.Analysis.AnalysisMixin.threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold</span></code></a>(threshold, **kargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.threshold" title="Stoner.Analysis.AnalysisMixin.threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold</span></code></a>(threshold, **kargs)</p></td>
 <td><p>Finds partial indices where the data in column passes the threshold, rising or falling.</p></td>
 </tr>
 </tbody>
@@ -164,10 +161,10 @@ assignments are used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Index of column with x data - defaults to first x column in self.setas</p></li>
-<li><p><strong>ycol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><em>list of indices</em>) – indices of y column(s) data</p></li>
-<li><p><strong>sym</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Index of column to place symmetric data in default, append to end of data</p></li>
-<li><p><strong>asym</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Index of column for asymmetric part of ata. Defaults to appending to end of data</p></li>
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Index of column with x data - defaults to first x column in self.setas</p></li>
+<li><p><strong>ycol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><em>list of indices</em>) – indices of y column(s) data</p></li>
+<li><p><strong>sym</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Index of column to place symmetric data in default, append to end of data</p></li>
+<li><p><strong>asym</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Index of column for asymmetric part of ata. Defaults to appending to end of data</p></li>
 <li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Overwrite data with output (true)</p></li>
 </ul>
 </dd>
@@ -176,7 +173,8 @@ assignments are used.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Decompose Example&quot;&quot;&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Decompose Into symmetric and antisymmetric parts example.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">format_val</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">reshape</span><span class="p">,</span> <span class="n">array</span>
@@ -221,7 +219,7 @@ assignments are used.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>result</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
+<li><p><strong>result</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
 or True to add a new column or None to not store the cumulative result.</p></li>
 <li><p><strong>result_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The metadata name for the final result</p></li>
 <li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The name of the header for the results column.</p></li>
@@ -254,7 +252,7 @@ If None then the default ‘y’ column is used.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>base</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – The column to normalise to, can be an integer or string. <strong>Depricated</strong> can also be a tuple (low,
+<li><p><strong>base</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – The column to normalise to, can be an integer or string. <strong>Depricated</strong> can also be a tuple (low,
 high) being the output range</p></li>
 <li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Set True(default) to overwrite  the target data columns</p></li>
 <li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The new column header - default is target name(norm)</p></li>
@@ -271,50 +269,6 @@ high) being the output range</p></li>
 outliers then this setting can be used to clip the input range before normalising. The parameters in
 the limit are the values at the <em>low</em> and <em>high</em> fractions of the cumulative distribution function of
 the data.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Analysis.AnalysisMixin.peaks">
-<code class="sig-name descname">peaks</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.peaks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.peaks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Locates peaks and/or troughs in a column of data by using SG-differentiation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ycol</strong> (<em>index</em>) – the column name or index of the data in which to search for peaks</p></li>
-<li><p><strong>width</strong> (<em>int or float</em>) – the expected minium halalf-width of a peak in terms of the number of data points (int) or distance
-in x (float). This is used in the differnetiation code to find local maxima. Bigger equals less
-sensitive to experimental noise, smaller means better eable to see sharp peaks</p></li>
-<li><p><strong>poly</strong> (<em>int</em>) – the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
-will find sharper peaks more accurately but at the risk of finding more false positives.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>significance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the
-maximum curvature/(2*width)</p></li>
-<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – name or index of data column that p[rovides the x-coordinate (default None)</p></li>
-<li><p><strong>peaks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – select whether to measure peaks in data (default True)</p></li>
-<li><p><strong>troughs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – select whether to measure troughs in data (default False)</p></li>
-<li><p><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Sor the results by significance of peak</p></li>
-<li><p><strong>modify</strong> (<em>book</em>) – If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</p></li>
-<li><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found.
-<em>modify</em> true implies <em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column
-values of the peaks are returned.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(various)</em> –     If <em>modify</em> is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
-If <em>modify</em> is false (default), then the return value depends on <em>ycol</em> and <em>xcol</em>. If <em>ycol</em> is
-not None and <em>xcol</em> is None, then returns conplete rows of data corresponding to the found
-peaks/troughs. If <em>xcol</em> is not None, or <em>ycol</em> is None and <em>xcol</em> is None, then returns a 1D array
-of the x positions of the peaks/troughs.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p>User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#peak-finding"><span class="std std-ref">Peak Finding</span></a></p>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -376,10 +330,10 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>col</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a>) – Column index to look for data in</p></li>
+<li><p><strong>col</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Column index to look for data in</p></li>
 <li><p><strong>rising</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – look for case where the data is increasing in value (defaukt True)</p></li>
 <li><p><strong>falling</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – look for case where data is fallinh in value (default False)</p></li>
-<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – rather than returning a fractional row index, return the
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – rather than returning a fractional row index, return the
 interpolated value in column xcol. If xcol is False, then return a complete row
 all_vals (bool): return all crossing points of the threshold or just the first. (default False)</p></li>
 <li><p><strong>transpose</strong> (<em>bbool</em>) – Swap the x and y columns around - this is most useful when the column assignments
@@ -418,8 +372,8 @@ present order.</p>
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Core.DataFile.html"
-                        title="previous chapter">DataFile</a></p>
+  <p class="topless"><a href="Stoner.Core.DataFile.values.html"
+                        title="previous chapter">DataFile.values</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.analysis.fitting.odr_Model.html"
                         title="next chapter">odr_Model</a></p>
@@ -446,7 +400,7 @@ present order.</p>
     <ul>
         <li>
           &larr;
-          <a href="Stoner.Core.DataFile.html" title="Previous document">DataFile</a>
+          <a href="Stoner.Core.DataFile.values.html" title="Previous document">DataFile.values</a>
         </li>
         <li>
           <a href="Stoner.analysis.fitting.odr_Model.html" title="Next document">odr_Model</a>
@@ -463,9 +417,9 @@ present order.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

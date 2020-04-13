@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Working with Images" href="image.html" />
@@ -254,32 +254,17 @@ parameter. For example,</p>
 </div>
 <p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.folders.groups.GroupsDict.compress()</span></code> is useful when a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> contains a chain of sub-folers that have only one sub-folder in them - as can
 result when reading one specific directory from a deep directory tree. The <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFolder.compress()</span></code> method adjusts the virtual tree so that the
-root group is at the first level that contains more than just a single sub-folder.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">::</span>
+root group is at the first level that contains more than just a single sub-folder.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">---&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+     <span class="o">|</span>
+     <span class="o">|</span>
+     <span class="o">|-&gt;</span> <span class="n">A</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+          <span class="o">|</span>
+          <span class="o">|--&gt;</span> <span class="n">B</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">0</span> <span class="n">files</span><span class="p">)</span>
+                <span class="o">|</span>
+                <span class="o">|--&gt;</span> <span class="n">C</span><span class="o">--&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="n">files</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><dl>
-<dt>Root—&gt; (0 files)</dt><dd><div class="line-block">
-<div class="line"><br /></div>
-<div class="line"><br /></div>
-</div>
-<dl>
-<dt><a href="#id1"><span class="problematic" id="id2">|</span></a>-&gt; A–&gt; (0 files)</dt><dd><div class="line-block">
-<div class="line"><br /></div>
-</div>
-<dl>
-<dt><a href="#id3"><span class="problematic" id="id4">|</span></a>–&gt; B–&gt; (0 files)</dt><dd><div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p><a href="#id5"><span class="problematic" id="id6">|</span></a>–&gt; C–&gt; (5 files)</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
-</div></blockquote>
 <p><strong>root.groups.compress</strong> will reformat the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a> to:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Root</span><span class="o">/</span><span class="n">A</span><span class="o">/</span><span class="n">B</span><span class="o">/</span><span class="n">C</span><span class="o">---&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="n">files</span><span class="p">)</span>
 </pre></div>
@@ -450,7 +435,7 @@ is missing.:</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">array</span><span class="p">([</span><span class="mf">12.56</span><span class="p">,</span> <span class="mf">12.56</span><span class="p">,</span> <span class="mf">12.56</span><span class="p">,</span> <span class="mf">12.56</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>The :py:meth:<a href="#id7"><span class="problematic" id="id8">`</span></a>combined_metadata_proxy.slice” method procides more control over how the metadata stored in the data folder can be returned.:</p>
+<p>The :py:meth:<a href="#id1"><span class="problematic" id="id2">`</span></a>combined_metadata_proxy.slice” method procides more control over how the metadata stored in the data folder can be returned.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="s2">&quot;Startupaxis-X&quot;</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="p">[{</span><span class="s1">&#39;Startupaxis-X&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
      <span class="p">{</span><span class="s1">&#39;Startupaxis-X&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
@@ -514,7 +499,7 @@ like methods such as <code class="xref py py-meth docutils literal notranslate">
 keys defined in <strong>any</strong> of the data files, then there are versions <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.all_keys()</span></code>,
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.all_values()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">combined_metadata_proxy.all_items()</span></code>. The <code class="xref py py-attr docutils literal notranslate"><span class="pre">combined_metadata_proxy.all</span></code>
 provides a list of all the metadata dictionaries for all the data files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code></a>.</p>
-<p>Using the <a href="#id9"><span class="problematic" id="id10">*</span></a>output*=”Data” is particularly powerful as it can be used to gather the results from e.g. a curve fitting across lots of datra files into a
+<p>Using the <a href="#id3"><span class="problematic" id="id4">*</span></a>output*=”Data” is particularly powerful as it can be used to gather the results from e.g. a curve fitting across lots of datra files into a
 single <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object ready ofr plotting or further analysis.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fldr</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">fldr</span><span class="o">.</span><span class="n">each</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">PowerLaw</span><span class="p">)</span>
@@ -789,9 +774,9 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

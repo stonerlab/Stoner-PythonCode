@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.pop
+=========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.pop

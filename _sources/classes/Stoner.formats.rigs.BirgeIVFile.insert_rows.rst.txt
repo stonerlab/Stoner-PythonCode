@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.insert_rows
+===========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.insert_rows

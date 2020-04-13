@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="RSJ_Simple" href="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html" />
@@ -61,7 +61,7 @@
 <dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.superconductivity.</code><code class="sig-name descname">RSJ_Noiseless</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#RSJ_Noiseless"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
-<p>Implements a simple noiseless RSJ model.</p>
+<p>Implement a simple noiseless RSJ model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -84,14 +84,15 @@
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Fit IV data to various RSJ models</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Fit IV data to various RSJ models.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
-<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">RSJ_Noiseless</span><span class="p">,</span> <span class="n">RSJ_Simple</span>
-
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.superconductivity</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RSJ_Noiseless</span><span class="p">,</span>
+    <span class="n">RSJ_Simple</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;Fitting&quot;</span><span class="p">))</span>
 
@@ -119,6 +120,10 @@
 <span class="p">)</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../samples/Fitting/rsj_noiseless_class.png">png</a>, <a class="reference external" href="../samples/Fitting/rsj_noiseless_class.hires.png">hires.png</a>, <a class="reference external" href="../samples/Fitting/rsj_noiseless_class.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="../_images/rsj_noiseless_class.png" src="../_images/rsj_noiseless_class.png" />
+</div>
 <p class="rubric">Attributes Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -139,7 +144,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data, **kwargs)</p></td>
-<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p></td>
+<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H.</p></td>
 </tr>
 </tbody>
 </table>
@@ -153,7 +158,7 @@
 <dl class="method">
 <dt id="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess">
 <code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/superconductivity.html#RSJ_Noiseless.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
+<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H.</p>
 </dd></dl>
 
 </dd></dl>
@@ -218,9 +223,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

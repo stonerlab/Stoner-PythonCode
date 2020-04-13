@@ -1,0 +1,8 @@
+
+
+BigBlueFile.insert_rows
+===========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.insert_rows

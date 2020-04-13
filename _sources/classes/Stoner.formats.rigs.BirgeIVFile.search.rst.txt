@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.search
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.search

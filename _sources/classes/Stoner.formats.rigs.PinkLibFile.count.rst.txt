@@ -1,0 +1,8 @@
+
+
+PinkLibFile.count
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.count

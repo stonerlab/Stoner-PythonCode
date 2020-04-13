@@ -1,0 +1,8 @@
+
+
+BigBlueFile.unique
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.unique

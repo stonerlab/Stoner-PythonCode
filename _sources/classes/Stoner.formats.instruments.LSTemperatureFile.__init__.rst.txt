@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.__init__
+=====================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.__init__

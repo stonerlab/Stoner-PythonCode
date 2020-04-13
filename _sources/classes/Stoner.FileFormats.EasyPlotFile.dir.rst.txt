@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.dir
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.dir

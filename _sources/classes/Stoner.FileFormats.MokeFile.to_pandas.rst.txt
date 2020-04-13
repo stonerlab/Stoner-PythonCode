@@ -1,8 +1,0 @@
-
-
-MokeFile.to_pandas
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.to_pandas

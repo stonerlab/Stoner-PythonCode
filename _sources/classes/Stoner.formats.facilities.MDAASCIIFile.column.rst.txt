@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.column
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.column

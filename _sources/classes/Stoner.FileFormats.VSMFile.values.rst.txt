@@ -1,8 +1,0 @@
-
-
-VSMFile.values
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.values

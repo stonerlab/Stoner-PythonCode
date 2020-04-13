@@ -1,8 +1,0 @@
-
-
-MokeFile.setdefault
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.setdefault

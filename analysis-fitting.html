@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Linear" href="classes/Stoner.analysis.fitting.models.generic.Linear.html" />
@@ -72,7 +72,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">linear</span></code>(x, intercept, slope)</p></td>
-<td><p>Simple linear function</p></td>
+<td><p>Calculate a linear function.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lorentzian_diff</span></code>(x, A, sigma, mu)</p></td>
 <td><p>Implement a differential form of a Lorentzian peak.</p></td>
@@ -81,10 +81,10 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Power Law Fitting Equation.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">quadratic</span></code>(x, a, b, c)</p></td>
-<td><p>A Simple quadratic fitting function.</p></td>
+<td><p>Calculate a simple quadratic fitting function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stretchedExp</span></code>(x, A, beta, x_0)</p></td>
-<td><p>A stretched exponential fuinction.</p></td>
+<td><p>Calculate a stretched exponential fuinction.</p></td>
 </tr>
 </tbody>
 </table>
@@ -98,10 +98,10 @@ and so can simplify the fitting code considerably. Many of the models come with 
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Linear.html#Stoner.analysis.fitting.models.generic.Linear" title="Stoner.analysis.fitting.models.generic.Linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Linear</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
-<td><p>Simple linear fit</p></td>
+<td><p>Simple linear fit class.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.Lorentzian_diff.html#Stoner.analysis.fitting.models.generic.Lorentzian_diff" title="Stoner.analysis.fitting.models.generic.Lorentzian_diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lorentzian_diff</span></code></a>(*args, **kwargs)</p></td>
-<td><p>lmfit Model rerprenting the differential form of a Lorentzian Peak.</p></td>
+<td><p>Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
 <td><p></p></td>
@@ -199,7 +199,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Simmons model of electron tunnelling.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tersoffHammann</span></code>(V, A)</p></td>
-<td><p>TersoffHamman model for tunnelling through STM tip.</p></td>
+<td><p>Tersoff-Hamman model for tunnelling through STM tip.</p></td>
 </tr>
 </tbody>
 </table>
@@ -225,7 +225,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Simmons model of electron tunnelling.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html#Stoner.analysis.fitting.models.tunnelling.TersoffHammann" title="Stoner.analysis.fitting.models.tunnelling.TersoffHammann"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TersoffHammann</span></code></a>(*args, **kwargs)</p></td>
-<td><p>TersoffHamman model for tunnelling through STM tip.</p></td>
+<td><p>Tersoff-Hamman model for tunnelling through STM tip.</p></td>
 </tr>
 </tbody>
 </table>
@@ -236,7 +236,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <h2>Other Electron Transpoort models<a class="headerlink" href="#other-electron-transpoort-models" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-Stoner.analysis.fitting.models.e_transport">
 <span id="stoner-analysis-fitting-models-e-transport-module"></span><h3>Stoner.analysis.fitting.models.e_transport Module<a class="headerlink" href="#module-Stoner.analysis.fitting.models.e_transport" title="Permalink to this headline">¶</a></h3>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.Model</span></code> model classes and functions for various models of electron transport (other than tunnelling processes).</p>
+<p>Model classes and functions for various models of electron transport (other than tunnelling processes).</p>
 <div class="section" id="id5">
 <h4>Functions<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
 <table class="longtable docutils align-default">
@@ -246,13 +246,13 @@ and so can simplify the fitting code considerably. Many of the models come with 
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">blochGrueneisen</span></code>(T, thetaD, rho0, A, n)</p></td>
-<td><p>BlochGrueneiseen Function for fitting R(T).</p></td>
+<td><p>Calculate the BlochGrueneiseen Function for fitting R(T).</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fluchsSondheimer</span></code>(t, l, p, sigma_0)</p></td>
 <td><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">wlfit</span></code>(B, s0, DS, B1, B2)</p></td>
-<td><p>Weak localisation</p></td>
+<td><p>Implement the Weak localisation fitting function.</p></td>
 </tr>
 </tbody>
 </table>
@@ -272,7 +272,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.e_transport.WLfit.html#Stoner.analysis.fitting.models.e_transport.WLfit" title="Stoner.analysis.fitting.models.e_transport.WLfit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WLfit</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Weak localisation</p></td>
+<td><p>Weak localisation model class.</p></td>
 </tr>
 </tbody>
 </table>
@@ -292,17 +292,20 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmr_power</span></code>(H, H_res, Delta_H, K_1, K_2)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">blochLaw</span></code>(T, Ms, Tc)</p></td>
+<td><p>Bloch’s law for spontaneous magnetism at low temperatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmr_power</span></code>(H, H_res, Delta_H, K_1, K_2)</p></td>
 <td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_kittel</span></code>(f, g, M_s, H_k)</p></td>
-<td><p>Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_kittel</span></code>(f, g, M_s, H_k)</p></td>
+<td><p>Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kittelEquation</span></code>(H, g, M_s, H_k)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kittelEquation</span></code>(H, g, M_s, H_k)</p></td>
 <td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">langevin</span></code>(H, M_s, m, T)</p></td>
-<td><p>“The Langevin function for paramagnetic M-H loops/</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">langevin</span></code>(H, M_s, m, T)</p></td>
+<td><p>The Langevin function for paramagnetic M-H loops.</p></td>
 </tr>
 </tbody>
 </table>
@@ -315,20 +318,20 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.html#Stoner.analysis.fitting.models.magnetism.FMR_Power" title="Stoner.analysis.fitting.models.magnetism.FMR_Power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FMR_Power</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.BlochLaw.html#Stoner.analysis.fitting.models.magnetism.BlochLaw" title="Stoner.analysis.fitting.models.magnetism.BlochLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BlochLaw</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Bloch’s law for spontaneous magnetism at low temperatures.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.html#Stoner.analysis.fitting.models.magnetism.FMR_Power" title="Stoner.analysis.fitting.models.magnetism.FMR_Power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FMR_Power</span></code></a>(*args, **kwargs)</p></td>
 <td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html#Stoner.analysis.fitting.models.magnetism.Inverse_Kittel" title="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Inverse_Kittel</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html#Stoner.analysis.fitting.models.magnetism.Inverse_Kittel" title="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Inverse_Kittel</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.KittelEquation.html#Stoner.analysis.fitting.models.magnetism.KittelEquation" title="Stoner.analysis.fitting.models.magnetism.KittelEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KittelEquation</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.KittelEquation.html#Stoner.analysis.fitting.models.magnetism.KittelEquation" title="Stoner.analysis.fitting.models.magnetism.KittelEquation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KittelEquation</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Langevin.html#Stoner.analysis.fitting.models.magnetism.Langevin" title="Stoner.analysis.fitting.models.magnetism.Langevin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Langevin</span></code></a>(*args, **kwargs)</p></td>
-<td><p>“The Langevin function for paramagnetic M-H loops/</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Langevin.html#Stoner.analysis.fitting.models.magnetism.Langevin" title="Stoner.analysis.fitting.models.magnetism.Langevin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Langevin</span></code></a>(*args, **kwargs)</p></td>
+<td><p>The Langevin function for paramagnetic M-H loops.</p></td>
 </tr>
 </tbody>
 </table>
@@ -349,16 +352,16 @@ and so can simplify the fitting code considerably. Many of the models come with 
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsj_noiseless</span></code>(I, Ic_p, Ic_n, Rn, V_offset)</p></td>
-<td><p>Implements a simple noiseless RSJ model.</p></td>
+<td><p>Implement a simple noiseless RSJ model.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsj_simple</span></code>(I, Ic, Rn, V_offset)</p></td>
-<td><p>Implements a simple noiseless symmetric RSJ model.</p></td>
+<td><p>Implement a simple noiseless symmetric RSJ model.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">strijkers</span></code>(V, omega, delta, P, Z)</p></td>
-<td><p>strijkers Model for point-contact Andreev Reflection Spectroscopy.</p></td>
+<td><p>Strijkers Model for point-contact Andreev Reflection Spectroscopy.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ic_B_airy</span></code>(B, Ic0, B_offset, A)</p></td>
-<td><p>Critical Current for a round Josepshon Junction wrt to Field.</p></td>
+<td><p>Calculate Critical Current for a round Josepshon Junction wrt to Field.</p></td>
 </tr>
 </tbody>
 </table>
@@ -372,7 +375,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSJ_Noiseless</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Implements a simple noiseless RSJ model.</p></td>
+<td><p>Implement a simple noiseless RSJ model.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple" title="Stoner.analysis.fitting.models.superconductivity.RSJ_Simple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSJ_Simple</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Implements a simple noiseless symmetric RSJ model.</p></td>
@@ -500,9 +503,9 @@ and so can simplify the fitting code considerably. Many of the models come with 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,8 +1,0 @@
-
-
-FmokeFile.del_nan
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.del_nan

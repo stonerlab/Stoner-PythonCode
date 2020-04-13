@@ -1,0 +1,8 @@
+
+
+BigBlueFile.section
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.section

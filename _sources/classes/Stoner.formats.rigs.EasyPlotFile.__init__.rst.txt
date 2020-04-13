@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.__init__
+=========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.__init__

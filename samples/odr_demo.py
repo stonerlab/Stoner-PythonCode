@@ -1,9 +1,8 @@
-"""Demo of new Stoner.Analysis.AnalyseFile.lmfit
-"""
-from __future__ import print_function
-from Stoner import __home__
+"""Demo of new Stoner.Analysis.AnalyseFile.lmfit."""
+# pylint: disable=invalid-name
 from os.path import join
-from Stoner.Fit import cfg_data_from_ini, cfg_model_from_ini
+from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
+from Stoner import __home__
 
 config = join(__home__, "..", "scripts", "PCAR-New.ini")
 datafile = join(__home__, "..", "sample-data", "PCAR Co Data.csv")

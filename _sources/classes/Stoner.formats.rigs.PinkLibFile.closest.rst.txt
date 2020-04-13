@@ -1,0 +1,8 @@
+
+
+PinkLibFile.closest
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.closest

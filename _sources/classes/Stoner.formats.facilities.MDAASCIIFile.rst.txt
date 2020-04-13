@@ -1,0 +1,89 @@
+Stoner.formats.facilities.MDAASCIIFile
+======================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. autoclass:: MDAASCIIFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.facilities.MDAASCIIFile.__init__
+      ~Stoner.formats.facilities.MDAASCIIFile.add_column
+      ~Stoner.formats.facilities.MDAASCIIFile.append
+      ~Stoner.formats.facilities.MDAASCIIFile.clear
+      ~Stoner.formats.facilities.MDAASCIIFile.closest
+      ~Stoner.formats.facilities.MDAASCIIFile.column
+      ~Stoner.formats.facilities.MDAASCIIFile.columns
+      ~Stoner.formats.facilities.MDAASCIIFile.count
+      ~Stoner.formats.facilities.MDAASCIIFile.del_column
+      ~Stoner.formats.facilities.MDAASCIIFile.del_nan
+      ~Stoner.formats.facilities.MDAASCIIFile.del_rows
+      ~Stoner.formats.facilities.MDAASCIIFile.dir
+      ~Stoner.formats.facilities.MDAASCIIFile.extend
+      ~Stoner.formats.facilities.MDAASCIIFile.filter
+      ~Stoner.formats.facilities.MDAASCIIFile.find_col
+      ~Stoner.formats.facilities.MDAASCIIFile.get
+      ~Stoner.formats.facilities.MDAASCIIFile.get_filename
+      ~Stoner.formats.facilities.MDAASCIIFile.index
+      ~Stoner.formats.facilities.MDAASCIIFile.insert
+      ~Stoner.formats.facilities.MDAASCIIFile.insert_rows
+      ~Stoner.formats.facilities.MDAASCIIFile.items
+      ~Stoner.formats.facilities.MDAASCIIFile.keys
+      ~Stoner.formats.facilities.MDAASCIIFile.load
+      ~Stoner.formats.facilities.MDAASCIIFile.pop
+      ~Stoner.formats.facilities.MDAASCIIFile.popitem
+      ~Stoner.formats.facilities.MDAASCIIFile.remove
+      ~Stoner.formats.facilities.MDAASCIIFile.rename
+      ~Stoner.formats.facilities.MDAASCIIFile.reorder_columns
+      ~Stoner.formats.facilities.MDAASCIIFile.reverse
+      ~Stoner.formats.facilities.MDAASCIIFile.rolling_window
+      ~Stoner.formats.facilities.MDAASCIIFile.rows
+      ~Stoner.formats.facilities.MDAASCIIFile.save
+      ~Stoner.formats.facilities.MDAASCIIFile.search
+      ~Stoner.formats.facilities.MDAASCIIFile.section
+      ~Stoner.formats.facilities.MDAASCIIFile.select
+      ~Stoner.formats.facilities.MDAASCIIFile.setdefault
+      ~Stoner.formats.facilities.MDAASCIIFile.sort
+      ~Stoner.formats.facilities.MDAASCIIFile.split
+      ~Stoner.formats.facilities.MDAASCIIFile.swap_column
+      ~Stoner.formats.facilities.MDAASCIIFile.to_pandas
+      ~Stoner.formats.facilities.MDAASCIIFile.unique
+      ~Stoner.formats.facilities.MDAASCIIFile.update
+      ~Stoner.formats.facilities.MDAASCIIFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.facilities.MDAASCIIFile.T
+      ~Stoner.formats.facilities.MDAASCIIFile.basename
+      ~Stoner.formats.facilities.MDAASCIIFile.clone
+      ~Stoner.formats.facilities.MDAASCIIFile.column_headers
+      ~Stoner.formats.facilities.MDAASCIIFile.data
+      ~Stoner.formats.facilities.MDAASCIIFile.dict_records
+      ~Stoner.formats.facilities.MDAASCIIFile.dims
+      ~Stoner.formats.facilities.MDAASCIIFile.dtype
+      ~Stoner.formats.facilities.MDAASCIIFile.filename
+      ~Stoner.formats.facilities.MDAASCIIFile.header
+      ~Stoner.formats.facilities.MDAASCIIFile.mask
+      ~Stoner.formats.facilities.MDAASCIIFile.metadata
+      ~Stoner.formats.facilities.MDAASCIIFile.mime_type
+      ~Stoner.formats.facilities.MDAASCIIFile.patterns
+      ~Stoner.formats.facilities.MDAASCIIFile.priority
+      ~Stoner.formats.facilities.MDAASCIIFile.records
+      ~Stoner.formats.facilities.MDAASCIIFile.setas
+      ~Stoner.formats.facilities.MDAASCIIFile.shape
+      ~Stoner.formats.facilities.MDAASCIIFile.subclasses
+   
+   

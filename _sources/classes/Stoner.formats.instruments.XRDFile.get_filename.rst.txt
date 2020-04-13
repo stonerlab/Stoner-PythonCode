@@ -1,0 +1,8 @@
+
+
+XRDFile.get_filename
+===============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.get_filename

@@ -1,0 +1,8 @@
+
+
+CSVFile.load
+===================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.load

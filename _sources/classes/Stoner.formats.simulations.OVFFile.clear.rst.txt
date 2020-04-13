@@ -1,0 +1,8 @@
+
+
+OVFFile.clear
+========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.clear

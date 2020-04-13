@@ -1,8 +1,0 @@
-
-
-MokeFile.sort
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.sort

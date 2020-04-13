@@ -1,4 +1,5 @@
 """Extrapolate data example."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from numpy import linspace, ones_like, column_stack
 from numpy.random import normal

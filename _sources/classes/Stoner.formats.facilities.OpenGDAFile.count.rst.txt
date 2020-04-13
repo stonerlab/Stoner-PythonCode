@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.count
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.count

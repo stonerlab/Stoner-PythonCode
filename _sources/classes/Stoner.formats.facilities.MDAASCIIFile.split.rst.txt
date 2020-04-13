@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.split
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.split

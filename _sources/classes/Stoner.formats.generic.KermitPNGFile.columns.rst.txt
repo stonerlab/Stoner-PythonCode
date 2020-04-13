@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.columns
+============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.columns

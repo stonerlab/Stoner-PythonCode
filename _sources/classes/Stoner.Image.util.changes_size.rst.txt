@@ -1,0 +1,6 @@
+changes_size
+============
+
+.. currentmodule:: Stoner.Image.util
+
+.. autofunction:: changes_size

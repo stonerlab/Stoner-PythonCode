@@ -9,15 +9,15 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="correct_drift" href="Stoner.Image.imagefuncs.correct_drift.html" />
+    <link rel="next" title="convert" href="Stoner.Image.imagefuncs.convert.html" />
     <link rel="prev" title="adjust_contrast" href="Stoner.Image.imagefuncs.adjust_contrast.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.Image.imagefuncs.adjust_contrast.html" title="Previous document">adjust_contrast</a>
         </li>
         <li>
-          <a href="Stoner.Image.imagefuncs.correct_drift.html" title="Next document">correct_drift</a>
+          <a href="Stoner.Image.imagefuncs.convert.html" title="Next document">convert</a>
           &rarr;
         </li>
     </ul>
@@ -56,7 +56,7 @@
 <h1>align<a class="headerlink" href="#align" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="Stoner.Image.imagefuncs.align">
-<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">align</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">ref</em>, <em class="sig-param">method=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#align"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.align" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">align</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">ref</em>, <em class="sig-param">method='scharr'</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#align"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.align" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use one of a variety of algroithms to align two images.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -69,6 +69,8 @@
 <dd class="field-even"><ul class="simple">
 <li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If given specifies which module to try and use.
 Options: ‘scharr’, ‘chi2_shift’, ‘imreg_dft’, ‘cv2’</p></li>
+<li><p><strong>box</strong> (<em>integer</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>tuple of images</em><em> or </em><em>floats</em>) – Used with ImageArray.crop to select a subset of the image to use for the aligning process.</p></li>
+<li><p><strong>oversample</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Rescale the image and reference image by constant factor before finding the translation vector.</p></li>
 <li><p><strong>**kargs</strong> (<em>various</em>) – All other keyword arguments are passed to the specific algorithm.</p></li>
 </ul>
 </dd>
@@ -108,8 +110,8 @@ from: <a class="reference external" href="http://www.learnopencv.com/image-align
   <p class="topless"><a href="Stoner.Image.imagefuncs.adjust_contrast.html"
                         title="previous chapter">adjust_contrast</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Image.imagefuncs.correct_drift.html"
-                        title="next chapter">correct_drift</a></p>
+  <p class="topless"><a href="Stoner.Image.imagefuncs.convert.html"
+                        title="next chapter">convert</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -136,7 +138,7 @@ from: <a class="reference external" href="http://www.learnopencv.com/image-align
           <a href="Stoner.Image.imagefuncs.adjust_contrast.html" title="Previous document">adjust_contrast</a>
         </li>
         <li>
-          <a href="Stoner.Image.imagefuncs.correct_drift.html" title="Next document">correct_drift</a>
+          <a href="Stoner.Image.imagefuncs.convert.html" title="Next document">convert</a>
           &rarr;
         </li>
     </ul>
@@ -150,9 +152,9 @@ from: <a class="reference external" href="http://www.learnopencv.com/image-align
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

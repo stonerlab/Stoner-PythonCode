@@ -1,0 +1,8 @@
+
+
+GenXFile.remove
+==========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.remove

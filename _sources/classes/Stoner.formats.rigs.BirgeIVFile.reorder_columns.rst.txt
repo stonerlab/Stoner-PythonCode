@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.reorder_columns
+===============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.reorder_columns

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.search
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.search

@@ -1,0 +1,8 @@
+
+
+QDFile.to_pandas
+===========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.to_pandas

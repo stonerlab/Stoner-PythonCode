@@ -1,8 +1,0 @@
-
-
-QDFile.insert_rows
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.insert_rows

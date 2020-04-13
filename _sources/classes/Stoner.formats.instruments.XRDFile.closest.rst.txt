@@ -1,0 +1,8 @@
+
+
+XRDFile.closest
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.closest

@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.index
+==================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.index

@@ -1,0 +1,8 @@
+
+
+FmokeFile.count
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.count

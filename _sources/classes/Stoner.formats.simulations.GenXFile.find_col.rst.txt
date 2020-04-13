@@ -1,0 +1,8 @@
+
+
+GenXFile.find_col
+============================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.find_col

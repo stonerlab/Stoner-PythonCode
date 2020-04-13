@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.find_col
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.find_col

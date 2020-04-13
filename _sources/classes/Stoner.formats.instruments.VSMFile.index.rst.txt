@@ -1,0 +1,8 @@
+
+
+VSMFile.index
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.index

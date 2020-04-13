@@ -1,0 +1,8 @@
+
+
+BNLFile.clear
+=======================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.clear

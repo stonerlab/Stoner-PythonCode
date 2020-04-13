@@ -1,0 +1,8 @@
+
+
+VSMFile.extend
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.extend

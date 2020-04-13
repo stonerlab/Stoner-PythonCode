@@ -1,0 +1,8 @@
+
+
+SNSFile.__init__
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.__init__

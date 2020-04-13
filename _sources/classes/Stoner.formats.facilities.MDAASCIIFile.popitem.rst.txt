@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.popitem
+==============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.popitem

@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.items
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.items

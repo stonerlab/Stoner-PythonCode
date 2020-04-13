@@ -1,8 +1,0 @@
-
-
-QDFile.pop
-=============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.pop

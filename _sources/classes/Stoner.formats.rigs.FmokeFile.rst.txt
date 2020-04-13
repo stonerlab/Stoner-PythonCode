@@ -1,0 +1,89 @@
+Stoner.formats.rigs.FmokeFile
+=============================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. autoclass:: FmokeFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.rigs.FmokeFile.__init__
+      ~Stoner.formats.rigs.FmokeFile.add_column
+      ~Stoner.formats.rigs.FmokeFile.append
+      ~Stoner.formats.rigs.FmokeFile.clear
+      ~Stoner.formats.rigs.FmokeFile.closest
+      ~Stoner.formats.rigs.FmokeFile.column
+      ~Stoner.formats.rigs.FmokeFile.columns
+      ~Stoner.formats.rigs.FmokeFile.count
+      ~Stoner.formats.rigs.FmokeFile.del_column
+      ~Stoner.formats.rigs.FmokeFile.del_nan
+      ~Stoner.formats.rigs.FmokeFile.del_rows
+      ~Stoner.formats.rigs.FmokeFile.dir
+      ~Stoner.formats.rigs.FmokeFile.extend
+      ~Stoner.formats.rigs.FmokeFile.filter
+      ~Stoner.formats.rigs.FmokeFile.find_col
+      ~Stoner.formats.rigs.FmokeFile.get
+      ~Stoner.formats.rigs.FmokeFile.get_filename
+      ~Stoner.formats.rigs.FmokeFile.index
+      ~Stoner.formats.rigs.FmokeFile.insert
+      ~Stoner.formats.rigs.FmokeFile.insert_rows
+      ~Stoner.formats.rigs.FmokeFile.items
+      ~Stoner.formats.rigs.FmokeFile.keys
+      ~Stoner.formats.rigs.FmokeFile.load
+      ~Stoner.formats.rigs.FmokeFile.pop
+      ~Stoner.formats.rigs.FmokeFile.popitem
+      ~Stoner.formats.rigs.FmokeFile.remove
+      ~Stoner.formats.rigs.FmokeFile.rename
+      ~Stoner.formats.rigs.FmokeFile.reorder_columns
+      ~Stoner.formats.rigs.FmokeFile.reverse
+      ~Stoner.formats.rigs.FmokeFile.rolling_window
+      ~Stoner.formats.rigs.FmokeFile.rows
+      ~Stoner.formats.rigs.FmokeFile.save
+      ~Stoner.formats.rigs.FmokeFile.search
+      ~Stoner.formats.rigs.FmokeFile.section
+      ~Stoner.formats.rigs.FmokeFile.select
+      ~Stoner.formats.rigs.FmokeFile.setdefault
+      ~Stoner.formats.rigs.FmokeFile.sort
+      ~Stoner.formats.rigs.FmokeFile.split
+      ~Stoner.formats.rigs.FmokeFile.swap_column
+      ~Stoner.formats.rigs.FmokeFile.to_pandas
+      ~Stoner.formats.rigs.FmokeFile.unique
+      ~Stoner.formats.rigs.FmokeFile.update
+      ~Stoner.formats.rigs.FmokeFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.rigs.FmokeFile.T
+      ~Stoner.formats.rigs.FmokeFile.basename
+      ~Stoner.formats.rigs.FmokeFile.clone
+      ~Stoner.formats.rigs.FmokeFile.column_headers
+      ~Stoner.formats.rigs.FmokeFile.data
+      ~Stoner.formats.rigs.FmokeFile.dict_records
+      ~Stoner.formats.rigs.FmokeFile.dims
+      ~Stoner.formats.rigs.FmokeFile.dtype
+      ~Stoner.formats.rigs.FmokeFile.filename
+      ~Stoner.formats.rigs.FmokeFile.header
+      ~Stoner.formats.rigs.FmokeFile.mask
+      ~Stoner.formats.rigs.FmokeFile.metadata
+      ~Stoner.formats.rigs.FmokeFile.mime_type
+      ~Stoner.formats.rigs.FmokeFile.patterns
+      ~Stoner.formats.rigs.FmokeFile.priority
+      ~Stoner.formats.rigs.FmokeFile.records
+      ~Stoner.formats.rigs.FmokeFile.setas
+      ~Stoner.formats.rigs.FmokeFile.shape
+      ~Stoner.formats.rigs.FmokeFile.subclasses
+   
+   

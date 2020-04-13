@@ -1,0 +1,8 @@
+
+
+CSVFile.rename
+=====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.rename

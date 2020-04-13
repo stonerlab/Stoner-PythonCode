@@ -1,0 +1,8 @@
+
+
+QDFile.find_col
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.find_col

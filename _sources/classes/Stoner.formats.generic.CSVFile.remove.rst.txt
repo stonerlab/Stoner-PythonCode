@@ -1,0 +1,8 @@
+
+
+CSVFile.remove
+=====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.remove

@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.insert
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.insert

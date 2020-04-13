@@ -1,4 +1,5 @@
 """Fit a sphere with curve_fit."""
+# pylint: disable=invalid-name, redefined-outer-name
 from Stoner import Data
 from numpy import (
     sin,
@@ -40,7 +41,12 @@ y -= 4.0
 z += 2.0
 
 # Construct the  DataFile object
-d = Data(column_stack((x, y, z)), setas="xyz", filename="Best fit sphere")
+d = Data(
+    column_stack((x, y, z)),
+    setas="xyz",
+    filename="Best fit sphere",
+    column_headers=["X", "Y", "Z"],
+)
 d.template.fig_width = 5.2
 d.template.fig_height = 5.0  # Square aspect ratio
 d.plot_xyz(plotter="scatter")

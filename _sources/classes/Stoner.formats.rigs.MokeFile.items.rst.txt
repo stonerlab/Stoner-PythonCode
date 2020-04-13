@@ -1,0 +1,8 @@
+
+
+MokeFile.items
+==================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.items

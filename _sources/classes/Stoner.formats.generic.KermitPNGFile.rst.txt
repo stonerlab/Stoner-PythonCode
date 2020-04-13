@@ -1,0 +1,89 @@
+Stoner.formats.generic.KermitPNGFile
+====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. autoclass:: KermitPNGFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.generic.KermitPNGFile.__init__
+      ~Stoner.formats.generic.KermitPNGFile.add_column
+      ~Stoner.formats.generic.KermitPNGFile.append
+      ~Stoner.formats.generic.KermitPNGFile.clear
+      ~Stoner.formats.generic.KermitPNGFile.closest
+      ~Stoner.formats.generic.KermitPNGFile.column
+      ~Stoner.formats.generic.KermitPNGFile.columns
+      ~Stoner.formats.generic.KermitPNGFile.count
+      ~Stoner.formats.generic.KermitPNGFile.del_column
+      ~Stoner.formats.generic.KermitPNGFile.del_nan
+      ~Stoner.formats.generic.KermitPNGFile.del_rows
+      ~Stoner.formats.generic.KermitPNGFile.dir
+      ~Stoner.formats.generic.KermitPNGFile.extend
+      ~Stoner.formats.generic.KermitPNGFile.filter
+      ~Stoner.formats.generic.KermitPNGFile.find_col
+      ~Stoner.formats.generic.KermitPNGFile.get
+      ~Stoner.formats.generic.KermitPNGFile.get_filename
+      ~Stoner.formats.generic.KermitPNGFile.index
+      ~Stoner.formats.generic.KermitPNGFile.insert
+      ~Stoner.formats.generic.KermitPNGFile.insert_rows
+      ~Stoner.formats.generic.KermitPNGFile.items
+      ~Stoner.formats.generic.KermitPNGFile.keys
+      ~Stoner.formats.generic.KermitPNGFile.load
+      ~Stoner.formats.generic.KermitPNGFile.pop
+      ~Stoner.formats.generic.KermitPNGFile.popitem
+      ~Stoner.formats.generic.KermitPNGFile.remove
+      ~Stoner.formats.generic.KermitPNGFile.rename
+      ~Stoner.formats.generic.KermitPNGFile.reorder_columns
+      ~Stoner.formats.generic.KermitPNGFile.reverse
+      ~Stoner.formats.generic.KermitPNGFile.rolling_window
+      ~Stoner.formats.generic.KermitPNGFile.rows
+      ~Stoner.formats.generic.KermitPNGFile.save
+      ~Stoner.formats.generic.KermitPNGFile.search
+      ~Stoner.formats.generic.KermitPNGFile.section
+      ~Stoner.formats.generic.KermitPNGFile.select
+      ~Stoner.formats.generic.KermitPNGFile.setdefault
+      ~Stoner.formats.generic.KermitPNGFile.sort
+      ~Stoner.formats.generic.KermitPNGFile.split
+      ~Stoner.formats.generic.KermitPNGFile.swap_column
+      ~Stoner.formats.generic.KermitPNGFile.to_pandas
+      ~Stoner.formats.generic.KermitPNGFile.unique
+      ~Stoner.formats.generic.KermitPNGFile.update
+      ~Stoner.formats.generic.KermitPNGFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.generic.KermitPNGFile.T
+      ~Stoner.formats.generic.KermitPNGFile.basename
+      ~Stoner.formats.generic.KermitPNGFile.clone
+      ~Stoner.formats.generic.KermitPNGFile.column_headers
+      ~Stoner.formats.generic.KermitPNGFile.data
+      ~Stoner.formats.generic.KermitPNGFile.dict_records
+      ~Stoner.formats.generic.KermitPNGFile.dims
+      ~Stoner.formats.generic.KermitPNGFile.dtype
+      ~Stoner.formats.generic.KermitPNGFile.filename
+      ~Stoner.formats.generic.KermitPNGFile.header
+      ~Stoner.formats.generic.KermitPNGFile.mask
+      ~Stoner.formats.generic.KermitPNGFile.metadata
+      ~Stoner.formats.generic.KermitPNGFile.mime_type
+      ~Stoner.formats.generic.KermitPNGFile.patterns
+      ~Stoner.formats.generic.KermitPNGFile.priority
+      ~Stoner.formats.generic.KermitPNGFile.records
+      ~Stoner.formats.generic.KermitPNGFile.setas
+      ~Stoner.formats.generic.KermitPNGFile.shape
+      ~Stoner.formats.generic.KermitPNGFile.subclasses
+   
+   

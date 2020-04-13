@@ -1,0 +1,89 @@
+Stoner.formats.simulations.GenXFile
+===================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. autoclass:: GenXFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.simulations.GenXFile.__init__
+      ~Stoner.formats.simulations.GenXFile.add_column
+      ~Stoner.formats.simulations.GenXFile.append
+      ~Stoner.formats.simulations.GenXFile.clear
+      ~Stoner.formats.simulations.GenXFile.closest
+      ~Stoner.formats.simulations.GenXFile.column
+      ~Stoner.formats.simulations.GenXFile.columns
+      ~Stoner.formats.simulations.GenXFile.count
+      ~Stoner.formats.simulations.GenXFile.del_column
+      ~Stoner.formats.simulations.GenXFile.del_nan
+      ~Stoner.formats.simulations.GenXFile.del_rows
+      ~Stoner.formats.simulations.GenXFile.dir
+      ~Stoner.formats.simulations.GenXFile.extend
+      ~Stoner.formats.simulations.GenXFile.filter
+      ~Stoner.formats.simulations.GenXFile.find_col
+      ~Stoner.formats.simulations.GenXFile.get
+      ~Stoner.formats.simulations.GenXFile.get_filename
+      ~Stoner.formats.simulations.GenXFile.index
+      ~Stoner.formats.simulations.GenXFile.insert
+      ~Stoner.formats.simulations.GenXFile.insert_rows
+      ~Stoner.formats.simulations.GenXFile.items
+      ~Stoner.formats.simulations.GenXFile.keys
+      ~Stoner.formats.simulations.GenXFile.load
+      ~Stoner.formats.simulations.GenXFile.pop
+      ~Stoner.formats.simulations.GenXFile.popitem
+      ~Stoner.formats.simulations.GenXFile.remove
+      ~Stoner.formats.simulations.GenXFile.rename
+      ~Stoner.formats.simulations.GenXFile.reorder_columns
+      ~Stoner.formats.simulations.GenXFile.reverse
+      ~Stoner.formats.simulations.GenXFile.rolling_window
+      ~Stoner.formats.simulations.GenXFile.rows
+      ~Stoner.formats.simulations.GenXFile.save
+      ~Stoner.formats.simulations.GenXFile.search
+      ~Stoner.formats.simulations.GenXFile.section
+      ~Stoner.formats.simulations.GenXFile.select
+      ~Stoner.formats.simulations.GenXFile.setdefault
+      ~Stoner.formats.simulations.GenXFile.sort
+      ~Stoner.formats.simulations.GenXFile.split
+      ~Stoner.formats.simulations.GenXFile.swap_column
+      ~Stoner.formats.simulations.GenXFile.to_pandas
+      ~Stoner.formats.simulations.GenXFile.unique
+      ~Stoner.formats.simulations.GenXFile.update
+      ~Stoner.formats.simulations.GenXFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.simulations.GenXFile.T
+      ~Stoner.formats.simulations.GenXFile.basename
+      ~Stoner.formats.simulations.GenXFile.clone
+      ~Stoner.formats.simulations.GenXFile.column_headers
+      ~Stoner.formats.simulations.GenXFile.data
+      ~Stoner.formats.simulations.GenXFile.dict_records
+      ~Stoner.formats.simulations.GenXFile.dims
+      ~Stoner.formats.simulations.GenXFile.dtype
+      ~Stoner.formats.simulations.GenXFile.filename
+      ~Stoner.formats.simulations.GenXFile.header
+      ~Stoner.formats.simulations.GenXFile.mask
+      ~Stoner.formats.simulations.GenXFile.metadata
+      ~Stoner.formats.simulations.GenXFile.mime_type
+      ~Stoner.formats.simulations.GenXFile.patterns
+      ~Stoner.formats.simulations.GenXFile.priority
+      ~Stoner.formats.simulations.GenXFile.records
+      ~Stoner.formats.simulations.GenXFile.setas
+      ~Stoner.formats.simulations.GenXFile.shape
+      ~Stoner.formats.simulations.GenXFile.subclasses
+   
+   

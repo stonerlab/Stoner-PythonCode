@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DataFolder" href="Stoner.Folders.DataFolder.html" />
-    <link rel="prev" title="_attribute_store" href="Stoner.tools._attribute_store.html" />
+    <link rel="prev" title="AttributeStore" href="Stoner.tools.AttributeStore.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.tools._attribute_store.html" title="Previous document">_attribute_store</a>
+          <a href="Stoner.tools.AttributeStore.html" title="Previous document">AttributeStore</a>
         </li>
         <li>
           <a href="Stoner.Folders.DataFolder.html" title="Next document">DataFolder</a>
@@ -56,7 +56,7 @@
 <h1>typedList<a class="headerlink" href="#typedlist" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.tools.typedList">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.tools.</code><code class="sig-name descname">typedList</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.tools.</code><code class="sig-name descname">typedList</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools/classes.html#typedList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableSequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableSequence</span></code></a></p>
 <p>Subclass list to make setitem enforce  strict typing of members of the list.</p>
 <p class="rubric">Methods Summary</p>
@@ -80,19 +80,19 @@
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="Stoner.tools.typedList.extend">
-<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.extend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools/classes.html#typedList.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.extend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extending a list also requires some type checking.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.tools.typedList.index">
-<code class="sig-name descname">index</code><span class="sig-paren">(</span><em class="sig-param">search</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">index</code><span class="sig-paren">(</span><em class="sig-param">search</em>, <em class="sig-param">start=0</em>, <em class="sig-param">end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools/classes.html#typedList.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Index works like a list except we support Python 3 optional parameters everywhere.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.tools.typedList.insert">
-<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">obj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools.html#typedList.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.insert" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param">index</em>, <em class="sig-param">obj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/tools/classes.html#typedList.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.tools.typedList.insert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inserting an element also requires some type checking.</p>
 </dd></dl>
 
@@ -110,8 +110,8 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.tools._attribute_store.html"
-                        title="previous chapter">_attribute_store</a></p>
+  <p class="topless"><a href="Stoner.tools.AttributeStore.html"
+                        title="previous chapter">AttributeStore</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Folders.DataFolder.html"
                         title="next chapter">DataFolder</a></p>
@@ -138,7 +138,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.tools._attribute_store.html" title="Previous document">_attribute_store</a>
+          <a href="Stoner.tools.AttributeStore.html" title="Previous document">AttributeStore</a>
         </li>
         <li>
           <a href="Stoner.Folders.DataFolder.html" title="Next document">DataFolder</a>
@@ -155,9 +155,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,0 +1,8 @@
+
+
+BigBlueFile.pop
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.pop

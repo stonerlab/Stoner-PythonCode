@@ -1,0 +1,8 @@
+
+
+MokeFile.get_filename
+=========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.get_filename

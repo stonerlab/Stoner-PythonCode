@@ -1,0 +1,8 @@
+
+
+CSVFile.search
+=====================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.search

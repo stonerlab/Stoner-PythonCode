@@ -1,0 +1,89 @@
+Stoner.formats.instruments.SPCFile
+==================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. autoclass:: SPCFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.instruments.SPCFile.__init__
+      ~Stoner.formats.instruments.SPCFile.add_column
+      ~Stoner.formats.instruments.SPCFile.append
+      ~Stoner.formats.instruments.SPCFile.clear
+      ~Stoner.formats.instruments.SPCFile.closest
+      ~Stoner.formats.instruments.SPCFile.column
+      ~Stoner.formats.instruments.SPCFile.columns
+      ~Stoner.formats.instruments.SPCFile.count
+      ~Stoner.formats.instruments.SPCFile.del_column
+      ~Stoner.formats.instruments.SPCFile.del_nan
+      ~Stoner.formats.instruments.SPCFile.del_rows
+      ~Stoner.formats.instruments.SPCFile.dir
+      ~Stoner.formats.instruments.SPCFile.extend
+      ~Stoner.formats.instruments.SPCFile.filter
+      ~Stoner.formats.instruments.SPCFile.find_col
+      ~Stoner.formats.instruments.SPCFile.get
+      ~Stoner.formats.instruments.SPCFile.get_filename
+      ~Stoner.formats.instruments.SPCFile.index
+      ~Stoner.formats.instruments.SPCFile.insert
+      ~Stoner.formats.instruments.SPCFile.insert_rows
+      ~Stoner.formats.instruments.SPCFile.items
+      ~Stoner.formats.instruments.SPCFile.keys
+      ~Stoner.formats.instruments.SPCFile.load
+      ~Stoner.formats.instruments.SPCFile.pop
+      ~Stoner.formats.instruments.SPCFile.popitem
+      ~Stoner.formats.instruments.SPCFile.remove
+      ~Stoner.formats.instruments.SPCFile.rename
+      ~Stoner.formats.instruments.SPCFile.reorder_columns
+      ~Stoner.formats.instruments.SPCFile.reverse
+      ~Stoner.formats.instruments.SPCFile.rolling_window
+      ~Stoner.formats.instruments.SPCFile.rows
+      ~Stoner.formats.instruments.SPCFile.save
+      ~Stoner.formats.instruments.SPCFile.search
+      ~Stoner.formats.instruments.SPCFile.section
+      ~Stoner.formats.instruments.SPCFile.select
+      ~Stoner.formats.instruments.SPCFile.setdefault
+      ~Stoner.formats.instruments.SPCFile.sort
+      ~Stoner.formats.instruments.SPCFile.split
+      ~Stoner.formats.instruments.SPCFile.swap_column
+      ~Stoner.formats.instruments.SPCFile.to_pandas
+      ~Stoner.formats.instruments.SPCFile.unique
+      ~Stoner.formats.instruments.SPCFile.update
+      ~Stoner.formats.instruments.SPCFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.instruments.SPCFile.T
+      ~Stoner.formats.instruments.SPCFile.basename
+      ~Stoner.formats.instruments.SPCFile.clone
+      ~Stoner.formats.instruments.SPCFile.column_headers
+      ~Stoner.formats.instruments.SPCFile.data
+      ~Stoner.formats.instruments.SPCFile.dict_records
+      ~Stoner.formats.instruments.SPCFile.dims
+      ~Stoner.formats.instruments.SPCFile.dtype
+      ~Stoner.formats.instruments.SPCFile.filename
+      ~Stoner.formats.instruments.SPCFile.header
+      ~Stoner.formats.instruments.SPCFile.mask
+      ~Stoner.formats.instruments.SPCFile.metadata
+      ~Stoner.formats.instruments.SPCFile.mime_type
+      ~Stoner.formats.instruments.SPCFile.patterns
+      ~Stoner.formats.instruments.SPCFile.priority
+      ~Stoner.formats.instruments.SPCFile.records
+      ~Stoner.formats.instruments.SPCFile.setas
+      ~Stoner.formats.instruments.SPCFile.shape
+      ~Stoner.formats.instruments.SPCFile.subclasses
+   
+   

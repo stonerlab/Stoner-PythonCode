@@ -1,0 +1,8 @@
+
+
+SNSFile.insert_rows
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.insert_rows

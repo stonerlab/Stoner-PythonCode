@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.pop
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.pop

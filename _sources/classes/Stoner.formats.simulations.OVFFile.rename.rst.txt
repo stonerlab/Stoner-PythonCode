@@ -1,0 +1,8 @@
+
+
+OVFFile.rename
+=========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.rename

@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.closest
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.closest

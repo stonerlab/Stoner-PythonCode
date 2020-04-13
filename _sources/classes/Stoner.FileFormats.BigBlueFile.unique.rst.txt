@@ -1,8 +1,0 @@
-
-
-BigBlueFile.unique
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.unique

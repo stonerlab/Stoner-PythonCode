@@ -1,0 +1,8 @@
+
+
+RasorFile.pop
+=======================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.pop

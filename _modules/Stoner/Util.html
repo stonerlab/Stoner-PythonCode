@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -47,38 +44,37 @@
             
   <h1>Source code for Stoner.Util</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes</span>
-
-<span class="sd">Created on Tue Oct 08 20:14:34 2013</span>
-
-<span class="sd">@author: phygbu</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;split_up_down&quot;</span><span class="p">,</span> <span class="s2">&quot;ordinal&quot;</span><span class="p">,</span> <span class="s2">&quot;hysteresis_correct&quot;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">format_error</span>
-<span class="kn">import</span> <span class="nn">Stoner.Core</span> <span class="k">as</span> <span class="nn">_SC_</span>  <span class="c1"># pylint: disable=import-error</span>
-<span class="kn">from</span> <span class="nn">.Folders</span> <span class="kn">import</span> <span class="n">DataFolder</span> <span class="k">as</span> <span class="n">_SF_</span>
-<span class="kn">from</span> <span class="nn">.Fit</span> <span class="kn">import</span> <span class="n">linear</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="nb">max</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">mean</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">sem</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">fsolve</span>
 
+<span class="kn">from</span> <span class="nn">.Core</span> <span class="kn">import</span> <span class="n">DataFile</span>
+
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">format_error</span><span class="p">,</span> <span class="n">make_Data</span><span class="p">,</span> <span class="n">ordinal</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">DataFolder</span>
+<span class="kn">from</span> <span class="nn">.analysis.fitting.models.generic</span> <span class="kn">import</span> <span class="n">linear</span>
+
 
 <span class="k">def</span> <span class="nf">_step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simple sloping step function for fitting to the extrema of a hysteresis loop.</span>
+    <span class="sd">&quot;&quot;&quot;Provide a sloping step function for fitting to the extrema of a hysteresis loop.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        x (array-like): Field (x) data of loop.</span>
-<span class="sd">        m (float): susceptibility(slopee) of loop.</span>
-<span class="sd">        c (float): vertical offset of loop.</span>
-<span class="sd">        h (float): Saturatted moement (height) of loop.</span>
+<span class="sd">        x (array-like):</span>
+<span class="sd">            Field (x) data of loop.</span>
+<span class="sd">        m (float):</span>
+<span class="sd">            susceptibility(slopee) of loop.</span>
+<span class="sd">        c (float):</span>
+<span class="sd">            vertical offset of loop.</span>
+<span class="sd">        h (float):</span>
+<span class="sd">            Saturatted moement (height) of loop.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        y (Tarray-like): Calculated moment of loop.</span>
+<span class="sd">        y (Tarray-like):</span>
+<span class="sd">            Calculated moment of loop.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.0</span>
 
     <span class="n">X</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">mid</span>
@@ -97,10 +93,12 @@
 <span class="sd">    rather than the read-back value.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data (Data): DataFile like object with x and y columns set</span>
+<span class="sd">        data (Data):</span>
+<span class="sd">            DataFile like object with x and y columns set</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (Data, Data): Tuple of two DataFile like instances for the rising and falling data.</span>
+<span class="sd">        (Data, Data):</span>
+<span class="sd">            Tuple of two DataFile like instances for the rising and falling data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Calculate x span and mid-point for working out limits to search for maxima.</span>
     <span class="n">lx</span><span class="p">,</span> <span class="n">hx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">xcol</span><span class="p">)</span>
@@ -149,7 +147,7 @@
 
 
 <div class="viewcode-block" id="split_up_down"><a class="viewcode-back" href="../../classes/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down">[docs]</a><span class="k">def</span> <span class="nf">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Splits the DataFile data into several files where the column *col* is either rising or falling</span>
+    <span class="sd">&quot;&quot;&quot;Split the DataFile data into several files where the column *col* is either rising or falling.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (:py:class:`Stoner.Core.DataFile`):</span>
@@ -161,9 +159,10 @@
 <span class="sd">            rising and falling files to groups of this DataFolder, otherwise create a new one</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (:py:class:`Sonter.Folder.DataFolder`): with two groups, rising and falling</span>
+<span class="sd">        (:py:class:`Sonter.Folder.DataFolder`):</span>
+<span class="sd">            with two groups, rising and falling</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">_col_args</span><span class="p">()</span>
         <span class="n">col</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">xcol</span>
@@ -182,7 +181,7 @@
     <span class="k">elif</span> <span class="n">troughs</span><span class="p">:</span>  <span class="c1"># Fall then rise</span>
         <span class="n">order</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># No peaks or troughs so just return a single rising</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="n">_SF_</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">DataFolder</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ret</span> <span class="o">+=</span> <span class="n">data</span>
         <span class="k">return</span> <span class="n">ret</span>
     <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span>
@@ -190,8 +189,8 @@
     <span class="n">splits</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span>
     <span class="n">splits</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
     <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">_SF_</span><span class="p">):</span>  <span class="c1"># Create a new DataFolder object</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">_SF_</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">DataFolder</span><span class="p">):</span>  <span class="c1"># Create a new DataFolder object</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">DataFolder</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">folder</span>
     <span class="n">output</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;rising&quot;</span><span class="p">)</span>
@@ -209,28 +208,6 @@
 
 
 <span class="n">Hickeyify</span> <span class="o">=</span> <span class="n">format_error</span>
-
-
-<div class="viewcode-block" id="ordinal"><a class="viewcode-back" href="../../classes/Stoner.Util.ordinal.html#Stoner.Util.ordinal">[docs]</a><span class="k">def</span> <span class="nf">ordinal</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Format an integer into an ordinal string.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        value (int):</span>
-<span class="sd">            Number to be written as an ordinal string</span>
-
-<span class="sd">    Return:</span>
-<span class="sd">        (str): Ordinal String such as &#39;1st&#39;,&#39;2nd&#39; etc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span>
-
-    <span class="n">last_digit</span> <span class="o">=</span> <span class="n">value</span> <span class="o">%</span> <span class="mi">10</span>
-    <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="mi">100</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">]:</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;th&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;st&quot;</span><span class="p">,</span> <span class="s2">&quot;nd&quot;</span><span class="p">,</span> <span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">][</span><span class="n">last_digit</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="hysteresis_correct"><a class="viewcode-back" href="../../classes/Stoner.Util.hysteresis_correct.html#Stoner.Util.hysteresis_correct">[docs]</a><span class="k">def</span> <span class="nf">hysteresis_correct</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -253,12 +230,15 @@
 <span class="sd">            fully saturated. If an integer is given it will use that many data points at the end of the loop.</span>
 <span class="sd">        h_sat_method (str):</span>
 <span class="sd">            The method used to determine thwe saturation field. Options are -</span>
-<span class="sd">            -   &quot;linear_intercept&quot; (default): Fit a straight line to the central region of each branch of the loop and look at the</span>
+<span class="sd">            -   &quot;linear_intercept&quot; (default): Fit a straight line to the central region of each branch of the loop</span>
+<span class="sd">                and look at the</span>
 <span class="sd">                intercept with the relevant saturation moment.</span>
 <span class="sd">            -   &quot;delta_M&quot;: Look for a field where the moment has changed by *h_sat_fraction* times the error in M_s.</span>
-<span class="sd">            -   &quot;susceptibility&quot; - Calcualte H_sat from where the susceptibility changes by 1% of the average susceptibility</span>
+<span class="sd">            -   &quot;susceptibility&quot; - Calcualte H_sat from where the susceptibility changes by 1% of the average</span>
+<span class="sd">                susceptibility</span>
 <span class="sd">        h_sat_fraction (float):</span>
-<span class="sd">            The central fraction of the saturation moment that is used for calculating the saturation field. Defaults to 0.5</span>
+<span class="sd">            The central fraction of the saturation moment that is used for calculating the saturation field. Defaults</span>
+<span class="sd">            to 0.5</span>
 <span class="sd">        xcol (column index):</span>
 <span class="sd">            Column with the x data in it</span>
 <span class="sd">        ycol (column_index):</span>
@@ -268,13 +248,13 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (:py:class:`Stoner.Data`):</span>
-<span class="sd">            The original loop with the x and y columns replaced with corrected data and extra metadata added to give the</span>
-<span class="sd">            background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.</span>
+<span class="sd">            The original loop with the x and y columns replaced with corrected data and extra metadata added to give</span>
+<span class="sd">            the background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_SC_</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="vm">__class__</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">Data</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="c1"># Get other keyword arguments</span>
@@ -353,7 +333,7 @@
             <span class="n">Hc_err</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;linear_intercept&quot;</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">Linear</span>
+            <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.generic</span> <span class="kn">import</span> <span class="n">Linear</span>
 
             <span class="c1"># Fit a striaght line to the central fraction of the data</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -374,7 +354,7 @@
             <span class="n">xi</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">xi</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x.y&quot;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x.y&quot;</span><span class="p">)</span>
             <span class="n">threshold</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="mi">7</span> <span class="o">&lt;</span> <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
             <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
             <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
@@ -385,7 +365,7 @@
         <span class="k">elif</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;delta_M&quot;</span><span class="p">:</span>  <span class="c1"># threshold on m_sat</span>
             <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
             <span class="n">threshold</span> <span class="o">=</span> <span class="n">m_sat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
@@ -463,16 +443,13 @@
       <li><a href="../../index.html">Stoner Package</a></li>
       <li>
         <a href="../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

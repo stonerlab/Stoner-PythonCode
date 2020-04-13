@@ -1,0 +1,8 @@
+
+
+MokeFile.unique
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.unique

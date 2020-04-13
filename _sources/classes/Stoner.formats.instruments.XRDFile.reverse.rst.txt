@@ -1,0 +1,8 @@
+
+
+XRDFile.reverse
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.reverse

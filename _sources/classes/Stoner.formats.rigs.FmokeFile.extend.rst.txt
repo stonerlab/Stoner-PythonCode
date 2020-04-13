@@ -1,0 +1,8 @@
+
+
+FmokeFile.extend
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.extend

@@ -1,0 +1,8 @@
+
+
+RasorFile.columns
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.columns

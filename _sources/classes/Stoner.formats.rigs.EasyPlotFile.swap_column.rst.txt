@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.swap_column
+============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.swap_column

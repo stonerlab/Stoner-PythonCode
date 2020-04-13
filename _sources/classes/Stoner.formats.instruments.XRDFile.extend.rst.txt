@@ -1,0 +1,8 @@
+
+
+XRDFile.extend
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.extend

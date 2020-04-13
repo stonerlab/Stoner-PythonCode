@@ -1,8 +1,0 @@
-
-
-OVFFile.columns
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.columns

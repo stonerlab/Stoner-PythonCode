@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.__init__
+==============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.__init__

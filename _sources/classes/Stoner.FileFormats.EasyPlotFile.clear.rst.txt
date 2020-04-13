@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.clear
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.clear

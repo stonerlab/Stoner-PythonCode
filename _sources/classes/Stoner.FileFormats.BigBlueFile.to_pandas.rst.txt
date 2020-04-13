@@ -1,8 +1,0 @@
-
-
-BigBlueFile.to_pandas
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.to_pandas

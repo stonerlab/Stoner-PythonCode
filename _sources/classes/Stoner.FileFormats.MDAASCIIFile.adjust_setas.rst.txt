@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.adjust_setas
-============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.adjust_setas

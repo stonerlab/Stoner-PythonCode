@@ -1,0 +1,8 @@
+
+
+QDFile.extend
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.extend

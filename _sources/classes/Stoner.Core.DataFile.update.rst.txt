@@ -1,0 +1,8 @@
+
+
+DataFile.update
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.update

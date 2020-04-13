@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.filter
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.filter

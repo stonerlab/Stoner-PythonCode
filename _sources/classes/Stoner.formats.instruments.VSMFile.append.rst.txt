@@ -1,0 +1,8 @@
+
+
+VSMFile.append
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.append

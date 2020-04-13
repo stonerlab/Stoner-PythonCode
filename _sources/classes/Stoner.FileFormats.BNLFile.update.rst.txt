@@ -1,8 +1,0 @@
-
-
-BNLFile.update
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.update

@@ -1,0 +1,8 @@
+
+
+AttocubeScan.read_HDF
+=============================================
+
+.. currentmodule:: Stoner.formats.attocube
+
+.. automethod:: AttocubeScan.read_HDF

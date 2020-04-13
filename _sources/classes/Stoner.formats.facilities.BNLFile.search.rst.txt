@@ -1,0 +1,8 @@
+
+
+BNLFile.search
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.search

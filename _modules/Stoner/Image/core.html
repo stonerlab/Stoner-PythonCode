@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -49,41 +46,27 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Implements core image handling classes for the :mod:`Stoner.Image` package.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageArray&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageFile&quot;</span><span class="p">]</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span> <span class="k">as</span> <span class="n">StreamIO</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">color</span><span class="p">,</span>
-    <span class="n">exposure</span><span class="p">,</span>
-    <span class="n">feature</span><span class="p">,</span>
-    <span class="n">io</span><span class="p">,</span>
-    <span class="n">measure</span><span class="p">,</span>
-    <span class="n">filters</span><span class="p">,</span>
-    <span class="n">graph</span><span class="p">,</span>
-    <span class="n">util</span><span class="p">,</span>
-    <span class="n">restoration</span><span class="p">,</span>
-    <span class="n">morphology</span><span class="p">,</span>
-    <span class="n">segmentation</span><span class="p">,</span>
-    <span class="n">transform</span><span class="p">,</span>
-    <span class="n">viewer</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">PngImagePlugin</span>  <span class="c1"># for saving metadata</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">PngImagePlugin</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="kn">import</span> <span class="n">typeHintedDict</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">,</span> <span class="n">regexpDict</span><span class="p">,</span> <span class="n">DataFile</span>
-<span class="kn">from</span> <span class="nn">Stoner.Image.util</span> <span class="kn">import</span> <span class="n">convert</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">istuple</span><span class="p">,</span> <span class="n">fix_signature</span><span class="p">,</span> <span class="n">islike_list</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="p">(</span>
+
+<span class="kn">from</span> <span class="nn">..core.base</span> <span class="kn">import</span> <span class="n">typeHintedDict</span><span class="p">,</span> <span class="n">metadataObject</span>
+<span class="kn">from</span> <span class="nn">..Core</span> <span class="kn">import</span> <span class="n">DataFile</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="kn">import</span> <span class="n">isTuple</span><span class="p">,</span> <span class="n">fix_signature</span><span class="p">,</span> <span class="n">isLikeList</span><span class="p">,</span> <span class="n">make_Data</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">string_types</span><span class="p">,</span>
     <span class="n">get_filedialog</span><span class="p">,</span>
     <span class="n">int_types</span><span class="p">,</span>
 <span class="p">)</span>  <span class="c1"># Some things to help with Python2 and Python3 compatibility</span>
 <span class="kn">from</span> <span class="nn">.attrs</span> <span class="kn">import</span> <span class="n">DrawProxy</span><span class="p">,</span> <span class="n">MaskProxy</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">build_funcs_proxy</span><span class="p">,</span> <span class="n">changes_size</span>
 
 <span class="n">IMAGE_FILES</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;Tiff File&quot;</span><span class="p">,</span> <span class="s2">&quot;*.tif;*.tiff&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;PNG files&quot;</span><span class="p">,</span> <span class="s2">&quot;*.png&quot;</span><span class="p">,</span> <span class="s2">&quot;Numpy Files&quot;</span><span class="p">,</span> <span class="s2">&quot;*.npy&quot;</span><span class="p">)]</span>
 
@@ -94,9 +77,9 @@
     <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">65535</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="mi">127</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">32768</span><span class="p">,</span> <span class="mi">32767</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">63</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">63</span><span class="p">),</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">63</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">64</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">31</span><span class="p">),</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
@@ -143,7 +126,7 @@
 
 <div class="viewcode-block" id="ImageArray"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray">[docs]</a><span class="k">class</span> <span class="nc">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods.</span>
+    <span class="sd">&quot;&quot;&quot;A numpy array like class with a metadata parameter and pass through to skimage methods.</span>
 
 <span class="sd">    ImageArray is for manipulating images stored as a 2d numpy array.</span>
 <span class="sd">    It is built to be almost identical to a numpy array except for one extra</span>
@@ -170,27 +153,25 @@
 <span class="sd">    instance, it will clone it first then return the clone after performing the</span>
 <span class="sd">    function on it.</span>
 
-<span class="sd">   Note:</span>
+<span class="sd">    Note:</span>
+<span class="sd">         For arrays the indexing is (row, column). However the normal way to index</span>
+<span class="sd">         an image would be to do (horizontal, vert), which is the opposite.</span>
+<span class="sd">         In ImageArray the coordinate system is chosen similar to skimage. y points</span>
+<span class="sd">         down x points right and the origin is in the top left corner of the image.</span>
+<span class="sd">         When indexing the array therefore you need to give it (y,x) coordinates</span>
+<span class="sd">         for (row, column).::</span>
 
-<span class="sd">        For arrays the indexing is (row, column). However the normal way to index</span>
-<span class="sd">        an image would be to do (horizontal, vert), which is the opposite.</span>
-<span class="sd">        In ImageArray the coordinate system is chosen similar to skimage. y points</span>
-<span class="sd">        down x points right and the origin is in the top left corner of the image.</span>
-<span class="sd">        When indexing the array therefore you need to give it (y,x) coordinates</span>
-<span class="sd">        for (row, column).::</span>
+<span class="sd">              ----&gt; x (column)</span>
+<span class="sd">             |</span>
+<span class="sd">             |</span>
+<span class="sd">             v</span>
+<span class="sd">             y (row)</span>
 
-<span class="sd">             ----&gt; x (column)</span>
-<span class="sd">            |</span>
-<span class="sd">            |</span>
-<span class="sd">            v</span>
-<span class="sd">            y (row)</span>
+<span class="sd">         eg I want the 4th pixel in the horizontal direction and the 10th pixel down</span>
+<span class="sd">         from the top I would ask for ImageArray[10,4]</span>
 
-<span class="sd">        eg I want the 4th pixel in the horizontal direction and the 10th pixel down</span>
-<span class="sd">        from the top I would ask for ImageArray[10,4]</span>
-
-<span class="sd">        but if I want to translate the image 4 in the x direction and 10 in the y</span>
-<span class="sd">        I would call im=im.translate((4,10))</span>
-
+<span class="sd">         but if I want to translate the image 4 in the x direction and 10 in the y</span>
+<span class="sd">         I would call im=im.translate((4,10))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Proxy attributess for storing imported functions. Only do the import when needed</span>
@@ -212,7 +193,6 @@
 <span class="sd">        We&#39;re using __new__ rather than __init__ to imitate a numpy array as</span>
 <span class="sd">        close as possible.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ImageArray expects 0 or 1 arguments, </span><span class="si">{}</span><span class="s2"> given&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
 
@@ -250,14 +230,13 @@
                 <span class="n">arg</span> <span class="o">=</span> <span class="n">get_filedialog</span><span class="p">(</span><span class="n">what</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">filetypes</span><span class="o">=</span><span class="n">patterns</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No file given&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">loadfromfile</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">loadfromfile</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">loadfromfile</span><span class="p">:</span>
                 <span class="c1"># Filename- load datafile</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File path does not exist </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">array_args</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">array_args</span><span class="p">)</span>  <span class="c1"># pylint disable=-member</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">ImageFile</span><span class="p">):</span>
                 <span class="c1"># extract the image</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">image</span>
@@ -270,7 +249,7 @@
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No constructor for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)))</span>
             <span class="k">if</span> <span class="n">asfloat</span> <span class="ow">and</span> <span class="n">ret</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>  <span class="c1"># convert to float type in place</span>
                 <span class="n">meta</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span>  <span class="c1"># preserve any metadata we may already have</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
 
         <span class="c1"># all constructors call array_finalise so metadata is now initialised</span>
@@ -282,7 +261,7 @@
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;__array_finalize__ and __array_wrap__ are necessary functions when subclassing numpy.ndarray to fix some behaviours.</span>
+        <span class="sd">&quot;&quot;&quot;__array_finalize__ is a  necessary functions when subclassing numpy.ndarray to fix some behaviours.</span>
 
 <span class="sd">        See http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for</span>
 <span class="sd">        more info and examples</span>
@@ -308,67 +287,6 @@
         <span class="sd">&quot;&quot;&quot;Support the numpy machinery for subclassing ndarray.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__array_prepare__</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Part of the numpy array machinery.</span>
-
-<span class="sd">        see __array_finalize__ for info. This is for if ImageArray is called</span>
-<span class="sd">        via ufuncs. array_finalize is called after.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor method for :py:class:`ImageArray`.</span>
-
-<span class="sd">        various forms are recognised</span>
-
-<span class="sd">        .. py:function:: ImageArray(&#39;filename&#39;)</span>
-<span class="sd">            :noindex:</span>
-
-<span class="sd">            Creates the new ImageArray object and then loads data from the</span>
-<span class="sd">            given *filename*.</span>
-
-<span class="sd">        .. py:function:: ImageArray(array)</span>
-<span class="sd">            :noindex:</span>
-
-<span class="sd">            Creates a new ImageArray object and assigns the *array*.</span>
-
-<span class="sd">        .. py:function:: ImageArray(ImageFile)</span>
-<span class="sd">            :noindex:</span>
-
-<span class="sd">            Creates a new ImageArray object and assigns the *array* using</span>
-<span class="sd">            the ImageFile.image property.</span>
-
-
-<span class="sd">        .. py:function:: ImageArray(ImageArray)</span>
-<span class="sd">            :noindex:</span>
-
-<span class="sd">            Creates the new ImageArray object and initialises all data from the</span>
-<span class="sd">            existing :py:class:`ImageArray` instance. This on the face of it does the same as</span>
-<span class="sd">            the assignment operator, but is more useful when one or other of the</span>
-<span class="sd">            ImageArray objects is an instance of a sub - class of ImageArray</span>
-
-<span class="sd">        .. py:function:: ImageArray(bool)</span>
-<span class="sd">            :noindex:</span>
-
-<span class="sd">           if arg[0] is bool and False then open a file dialog to locate the</span>
-<span class="sd">           file to open.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            arg (positional arguments):</span>
-<span class="sd">                an argument that matches one of the definitions above</span>
-
-<span class="sd">        Keyword Arguments:</span>
-<span class="sd">            asfloat(bool):</span>
-<span class="sd">                if True  and loading the image from file, convert the image</span>
-<span class="sd">                to float values between 0 and 1 (necessary for some forms</span>
-<span class="sd">                of processing)</span>
-
-<span class="sd">        All keyword arguments that match public attributes are used to set those public attributes eg metadata.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load an image from a file and return as a ImageArray.&quot;&quot;&quot;</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
@@ -384,7 +302,7 @@
         <span class="sd">&quot;&quot;&quot;Load image data from a numpy file.&quot;&quot;&quot;</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-        <span class="n">image</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>  <span class="c1"># pylint disable=-member</span>
         <span class="n">image</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">image</span>
 
@@ -406,8 +324,9 @@
                     <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint32&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                <span class="k">if</span> <span class="s2">&quot;b&#39;&quot;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;b&#39;&quot;</span><span class="p">):</span>
                     <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; b&#39;&quot;</span><span class="p">)</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">image</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="n">image</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">image</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -428,8 +347,15 @@
                 <span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">loads</span>
 
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">metadata_string</span> <span class="o">=</span> <span class="n">tags</span><span class="p">[</span><span class="mi">270</span><span class="p">]</span>
-                    <span class="n">metadata</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">metadata_string</span><span class="p">)</span>
+                    <span class="n">userdata</span> <span class="o">=</span> <span class="n">loads</span><span class="p">(</span><span class="n">tags</span><span class="p">[</span><span class="mi">270</span><span class="p">])</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="n">userdata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+                    <span class="n">mod</span> <span class="o">=</span> <span class="n">userdata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">)</span>
+
+                    <span class="n">mod</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
+                    <span class="n">typ</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">ImageArray</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bad type in Tiff file </span><span class="si">{</span><span class="n">typ</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not a subclass of Stoner.ImageArray&quot;</span><span class="p">)</span>
+                    <span class="n">metadata</span> <span class="o">=</span> <span class="n">userdata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">[])</span>
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="n">metadata</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -484,12 +410,15 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">box</span><span class="p">:</span>  <span class="c1"># experimental</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Select crop area&quot;</span><span class="p">)</span>
                 <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_rectangle</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">islike_list</span><span class="p">(</span><span class="n">box</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">box</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># Full box as a list</span>
+            <span class="k">elif</span> <span class="n">isLikeList</span><span class="p">(</span><span class="n">box</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">box</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># Full box as a list</span>
                 <span class="n">box</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">box</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">box</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Whole image</span>
                 <span class="n">box</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c1"># Take a border of n pixels out</span>
                 <span class="n">box</span> <span class="o">=</span> <span class="p">[</span><span class="n">box</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">box</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">box</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">box</span><span class="p">]</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box</span><span class="p">(</span><span class="o">*</span><span class="n">box</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>  <span class="c1"># Keep the central fraction of the image</span>
                 <span class="n">box</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">box</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
@@ -503,11 +432,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">box</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">box</span><span class="p">):</span>  <span class="c1"># replace None with max extent</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">item</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">item</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">item</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
                 <span class="k">pass</span>
             <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -531,7 +462,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;return a copy of the instance&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return a copy of the instance.&quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optinfo</span><span class="p">[</span><span class="s2">&quot;mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span>  <span class="c1"># Make sure we&#39;ve updated our mask record</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optinfo</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -548,7 +479,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">max_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;return the coordinate extent (xmin,xmax,ymin,ymax)&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the coordinate extent (xmin,xmax,ymin,ymax).&quot;&quot;&quot;</span>
         <span class="n">box</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">box</span>
 
@@ -575,84 +506,14 @@
 <span class="sd">        takes a first argument that is an ndarray of image data, so with __getattrr__ and _func_generator we</span>
 <span class="sd">        can make a bound method through duck typing.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func_proxy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Buyild the cache</span>
-            <span class="n">func_proxy</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">regexpDict</span><span class="p">()</span>
-            <span class="p">)</span>  <span class="c1"># Cache is a regular expression dictionary - keys matched directly and then by regular expression</span>
-
-            <span class="n">short_names</span> <span class="o">=</span> <span class="p">[]</span>
-
-            <span class="c1"># Get the Stoner.Image.imagefuncs mopdule first</span>
-            <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="kn">import</span> <span class="n">imagefuncs</span>
-
-            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">imagefuncs</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
-                    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">imagefuncs</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">and</span> <span class="n">func</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="n">imagefuncs</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">__</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
-                        <span class="n">func_proxy</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
-                        <span class="n">short_names</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
-
-            <span class="c1"># Get the Stoner.Image.util mopdule next</span>
-            <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="kn">import</span> <span class="n">util</span> <span class="k">as</span> <span class="n">SIutil</span>
-
-            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">SIutil</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
-                    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">SIutil</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">and</span> <span class="n">func</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="n">SIutil</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">__</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
-                        <span class="n">func_proxy</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
-                        <span class="n">short_names</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
-
-            <span class="c1"># Add scipy.ndimage functions</span>
-            <span class="kn">import</span> <span class="nn">scipy.ndimage</span> <span class="k">as</span> <span class="nn">ndi</span>
-
-            <span class="n">_sp_mods</span> <span class="o">=</span> <span class="p">[</span><span class="n">ndi</span><span class="o">.</span><span class="n">interpolation</span><span class="p">,</span> <span class="n">ndi</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span> <span class="n">ndi</span><span class="o">.</span><span class="n">measurements</span><span class="p">,</span> <span class="n">ndi</span><span class="o">.</span><span class="n">morphology</span><span class="p">,</span> <span class="n">ndi</span><span class="o">.</span><span class="n">fourier</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">_sp_mods</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
-                        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">and</span> <span class="n">func</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="n">mod</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-                            <span class="n">func</span><span class="o">.</span><span class="n">transpose</span> <span class="o">=</span> <span class="kc">True</span>
-                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">__</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
-                            <span class="n">func_proxy</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
-                            <span class="n">short_names</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
-
-            <span class="c1"># Add the scikit images modules</span>
-            <span class="n">_ski_modules</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">color</span><span class="p">,</span>
-                <span class="n">exposure</span><span class="p">,</span>
-                <span class="n">feature</span><span class="p">,</span>
-                <span class="n">io</span><span class="p">,</span>
-                <span class="n">measure</span><span class="p">,</span>
-                <span class="n">filters</span><span class="p">,</span>
-                <span class="n">filters</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
-                <span class="n">graph</span><span class="p">,</span>
-                <span class="n">util</span><span class="p">,</span>
-                <span class="n">restoration</span><span class="p">,</span>
-                <span class="n">morphology</span><span class="p">,</span>
-                <span class="n">segmentation</span><span class="p">,</span>
-                <span class="n">transform</span><span class="p">,</span>
-                <span class="n">viewer</span><span class="p">,</span>
-            <span class="p">]</span>
-            <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">_ski_modules</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
-                        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">__</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)</span>
-                            <span class="n">func_proxy</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
-                            <span class="n">short_names</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">func</span><span class="p">))</span>
-
-            <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">short_names</span><span class="p">):</span>
-                <span class="n">func_proxy</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_func_proxy</span> <span class="o">=</span> <span class="n">func_proxy</span>  <span class="c1"># Store the cache</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_func_proxy</span> <span class="o">=</span> <span class="n">build_funcs_proxy</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func_proxy</span>
 
     <span class="c1"># ==============================================================</span>
     <span class="c1"># function generator</span>
     <span class="c1"># ==============================================================</span>
     <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement code for dir()&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement code for dir() to include proxy functions.&quot;&quot;&quot;</span>
         <span class="n">proxy</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_funcs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)))</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">proxy</span> <span class="o">|</span> <span class="n">parent</span><span class="p">))</span>
@@ -670,7 +531,7 @@
 <span class="sd">        The callable is then passed to self._func_generator for wrapping into a</span>
 <span class="sd">        &#39;on the fly&#39; method of this class.</span>
 
-<span class="sd">        TODO:</span>
+<span class="sd">        Todo:</span>
 <span class="sd">            An alternative nested attribute system could be something like</span>
 <span class="sd">            http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects</span>
 <span class="sd">            might be cool sometime.</span>
@@ -683,6 +544,9 @@
             <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;_hardmask&quot;</span><span class="p">:</span>
                     <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># Ugh</span>
+                    <span class="n">ret</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
             <span class="k">elif</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;$&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_funcs</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_funcs</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;$&quot;</span><span class="p">]</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func_generator</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
@@ -694,7 +558,7 @@
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">_func_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workingfunc</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Used by __getattr__ to wrap an arbitary callbable to make it a bound method of this class.</span>
+        <span class="sd">&quot;&quot;&quot;Wrap an arbitary callbable to make it a bound method of this class.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            workingfunc (callable):</span>
@@ -713,20 +577,21 @@
 <span class="sd">        thus ensuring that Spyder&#39;s help window can generate useful information.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Avoid PEP257/black issue</span>
 
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">workingfunc</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">gen_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Wrapped magic proxy function call.&quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;Wrap magic proxy function call.&quot;&quot;&quot;</span>
             <span class="n">transpose</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">workingfunc</span><span class="p">,</span> <span class="s2">&quot;transpose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
                 <span class="n">change</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="o">.</span><span class="n">T</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">change</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">workingfunc</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># send copy of self as the first arg</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">make_Data</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
                 <span class="k">pass</span>  <span class="c1"># Data return is ok</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>  <span class="c1"># 1D Array</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                 <span class="n">r</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="n">r</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">workingfunc</span><span class="o">.</span><span class="vm">__name__</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>  <span class="c1"># make sure we return a ImageArray</span>
@@ -744,7 +609,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;DrawProxy is an opbject for accessing the skimage draw sub module.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Access the DrawProxy opbject for accessing the skimage draw sub module.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DrawProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="c1"># ==============================================================================</span>
@@ -752,13 +617,13 @@
     <span class="c1"># ==============================================================================</span>
 
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Help with pickling ImageArrays&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Help with pickling ImageArrays.&quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;numpy&quot;</span><span class="p">:</span> <span class="n">ret</span><span class="p">,</span> <span class="s2">&quot;ImageArray&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">}}</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Help with pickling ImageArrays&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Help with pickling ImageArrays.&quot;&quot;&quot;</span>
         <span class="n">original</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">())</span>
         <span class="n">local</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ImageArray&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="n">local</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{})</span>
@@ -788,8 +653,7 @@
             <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">image</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Patch string index through to metadata.&quot;&quot;&quot;</span>
@@ -810,15 +674,9 @@
     <span class="c1">############################################################################################################</span>
     <span class="c1">############### Custom Methods for ImageArray###############################################################</span>
 
-<div class="viewcode-block" id="ImageArray.crop"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Crop the image.</span>
-
-<span class="sd">        This is essentially like taking a view onto the array</span>
-<span class="sd">        but uses image x,y coords (x,y --&gt; col,row)</span>
-<span class="sd">        Returns a view according to the coords given. If box is None it will</span>
-<span class="sd">        allow the user to select a rectangle. If a tuple is given with None</span>
-<span class="sd">        included then max extent is used for that coord (analagous to slice).</span>
-<span class="sd">        If copy then return a copy of self with the cropped image.</span>
+<div class="viewcode-block" id="ImageArray.crop"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.crop">[docs]</a>    <span class="nd">@changes_size</span>
+    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Crop the image according to a box.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            box(tuple) or 4 separate args or None:</span>
@@ -832,6 +690,32 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            (ImageArray):</span>
 <span class="sd">                view or copy of array asked for</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            This is essentially like taking a view onto the array</span>
+<span class="sd">            but uses image x,y coords (x,y --&gt; col,row)</span>
+<span class="sd">            Returns a view according to the coords given. If box is None it will</span>
+<span class="sd">            allow the user to select a rectangle. If a tuple is given with None</span>
+<span class="sd">            included then max extent is used for that coord (analagous to slice).</span>
+<span class="sd">            If copy then return a copy of self with the cropped image.</span>
+
+<span class="sd">            The box can be specified in a number of ways:</span>
+<span class="sd">                -   (int):</span>
+<span class="sd">                    A border around all sides of the given number pixels is ignored.</span>
+<span class="sd">                -   (float 0.0-1.0):</span>
+<span class="sd">                    A border of the given fraction of the images height and width is ignored</span>
+<span class="sd">                -   (string):</span>
+<span class="sd">                    A correspoinding item of metadata is located and used  to specify the box</span>
+<span class="sd">                -   (tuple of 4 ints or floats):</span>
+<span class="sd">                    For each item in the tuple it is interpreted as foloows:</span>
+<span class="sd">                        -   (int):</span>
+<span class="sd">                            A pixel co-ordinate in either the x or y direction</span>
+<span class="sd">                        -   (float 0.0-1.0):</span>
+<span class="sd">                            A fraction of the width or height in from the left, right, top, bottom sides</span>
+<span class="sd">                        -   (float &gt; 1.0):</span>
+<span class="sd">                            Is rounded to the nearest integer and used a pixel cordinate.</span>
+<span class="sd">                        -   None:</span>
+<span class="sd">                            The extent of the image is used.</span>
 
 <span class="sd">        Example:</span>
 <span class="sd">            a=ImageFile(np.arange(12).reshape(3,4))</span>
@@ -882,8 +766,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="n">normalise</span><span class="p">)</span>  <span class="c1"># preserve metadata</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="n">normalise</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>  <span class="c1"># preserve metadata</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>  <span class="c1"># copy formatting and apply to new array</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">_optinfo</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
@@ -892,7 +775,7 @@
         <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="ImageArray.clip_intensity"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.clip_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">clip_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Clip intensity outside the range -1,1 or 0,1</span>
+        <span class="sd">&quot;&quot;&quot;Clip intensity outside the range -1,1 or 0,1.</span>
 
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            clip_negative(bool):</span>
@@ -911,40 +794,41 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="ImageArray.asint"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.asint">[docs]</a>    <span class="k">def</span> <span class="nf">asint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;convert the image to unsigned integer format.</span>
+        <span class="sd">&quot;&quot;&quot;Convert the image to unsigned integer format.</span>
 
 <span class="sd">        May raise warnings about loss of precision.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;f&quot;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
             <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalise</span><span class="p">()</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optinfo</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="ImageArray.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves the image into the file &#39;filename&#39;.</span>
-
-<span class="sd">        Metadata will be preserved in .png and .tif format.</span>
-
-<span class="sd">        fmt can be &#39;png&#39;, &#39;npy&#39;, &#39;tif&#39;, &#39;tiff&#39;  or a list of more than one of those.</span>
-<span class="sd">        tif is recommended since metadata is lost in .npy format but data is</span>
-<span class="sd">        converted to integer format for png so that definition cannot be</span>
-<span class="sd">        saved.</span>
+        <span class="sd">&quot;&quot;&quot;Save the image into the file &#39;filename&#39;.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (string, bool or None):</span>
 <span class="sd">                Filename to save data as, if this is None then the current filename for the object is used</span>
 <span class="sd">                If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.</span>
 
-<span class="sd">        Keyword args:</span>
+<span class="sd">        Keyword Args:</span>
 <span class="sd">            fmt (string or list):</span>
 <span class="sd">                format to save data as. &#39;tif&#39;, &#39;png&#39; or &#39;npy&#39; or a list of them. If not included will guess from</span>
 <span class="sd">                filename.</span>
 <span class="sd">            forcetype (bool):</span>
 <span class="sd">                integer data will be converted to np.float32 type for saving. if forcetype then preserve and save as</span>
 <span class="sd">                int type (will be unsigned).</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Metadata will be preserved in .png and .tif format.</span>
+
+<span class="sd">            fmt can be &#39;png&#39;, &#39;npy&#39;, &#39;tif&#39;, &#39;tiff&#39;  or a list of more than one of those.</span>
+<span class="sd">            tif is recommended since metadata is lost in .npy format but data is</span>
+<span class="sd">            converted to integer format for png so that definition cannot be</span>
+<span class="sd">            saved.</span>
 
 <span class="sd">        Since Stoner.Image is meant to be a general 2d array often with negative</span>
 <span class="sd">        and floating point data this poses a problem for saving images. Images</span>
@@ -982,6 +866,7 @@
 
 <div class="viewcode-block" id="ImageArray.save_png"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.save_png">[docs]</a>    <span class="k">def</span> <span class="nf">save_png</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save the ImageArray with metadata in a png file.</span>
+
 <span class="sd">        This can only save as 8bit unsigned integer so there is likely</span>
 <span class="sd">        to be a loss of precision on floating point data&quot;&quot;&quot;</span>
         <span class="n">pngname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
@@ -1005,6 +890,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str):</span>
 <span class="sd">                Filename to save file as.</span>
+
 <span class="sd">        Keyword Args:</span>
 <span class="sd">            forcetype(bool):</span>
 <span class="sd">                (depricated) if forcetype then preserve data type as best as possible on save.</span>
@@ -1041,37 +927,23 @@
                 <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                     <span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
         <span class="n">ifd</span> <span class="o">=</span> <span class="n">ImageFileDirectory_v2</span><span class="p">()</span>
-        <span class="n">ifd</span><span class="p">[</span><span class="mi">270</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export_all</span><span class="p">())</span>
+        <span class="n">ifd</span><span class="p">[</span><span class="mi">270</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export_all</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
         <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.tif&quot;</span><span class="p">,</span> <span class="s2">&quot;.tiff&quot;</span><span class="p">]:</span>  <span class="c1"># ensure extension is preserved in save</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># default to tiff</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tiff&quot;</span>
         <span class="n">tiffname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ext</span>
-        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tiffname</span><span class="p">,</span> <span class="n">tiffinfo</span><span class="o">=</span><span class="n">ifd</span><span class="p">)</span></div>
+        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tiffname</span><span class="p">,</span> <span class="n">tiffinfo</span><span class="o">=</span><span class="n">ifd</span><span class="p">)</span></div></div>
 
     <span class="c1">############################################################################################################</span>
     <span class="c1">############## Depricated Methods ##########################################################################</span>
-
-<div class="viewcode-block" id="ImageArray.box"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.box">[docs]</a>    <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Alias for :py:meth:`ImageArray.crop`&quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The box method was replaced by crop and will raise and error in future versions.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ImageArray.crop_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.crop_image">[docs]</a>    <span class="k">def</span> <span class="nf">crop_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Back compatability alias for :py:meth:`ImageArray.crop`&quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The crop_image method was replaced by crop and will raise and error in future versions.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ImageArray.convert_float"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.convert_float">[docs]</a>    <span class="k">def</span> <span class="nf">convert_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_neg</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deproicated compatability. :py:meth:`ImageArray.asfloat` preferred&quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The convert_float method was replaced by asfloat and will raise and error in future versions.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="n">clip_neg</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ImageArray.convert_int"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.convert_int">[docs]</a>    <span class="k">def</span> <span class="nf">convert_int</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Depricated compatability meothd. :py:meth:`ImageArray.asint` preferred&quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The convert_int method was replaced by asint and will raise and error in future versions.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">asint</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="ImageFile"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageFile.html#Stoner.Image.ImageFile">[docs]</a><span class="k">class</span> <span class="nc">ImageFile</span><span class="p">(</span><span class="n">metadataObject</span><span class="p">):</span>
@@ -1160,12 +1032,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;alias for image[:]. Equivalence to Stoner.data behaviour&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Alias for image[:]. Equivalence to Stoner.data behaviour.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span>
 
     <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Simple minded pass through.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Access the image data by data attribute.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
@@ -1208,8 +1080,7 @@
         <span class="sd">&quot;&quot;&quot;Pass through to image attribute.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">filename</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
     <span class="nd">@filename</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1239,12 +1110,14 @@
 
     <span class="nd">@metadata</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the metadata attribute.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="c1">###################################################################################################################</span>
     <span class="c1">############################# Special methods #####################################################################</span>
+
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A pass through to ImageArray.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to ImageArray.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -1253,7 +1126,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A Pass through to ImageArray.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to ImageArray.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1267,28 +1140,28 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">parent</span> <span class="o">|</span> <span class="n">this</span> <span class="o">|</span> <span class="n">image</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Helper for pickling ImageFiles.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Record state for pickling ImageFiles.&quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
         <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">})</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Helper for pickling ImageFiles.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Write state for unpickling ImageFiles.&quot;&quot;&quot;</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A Pass through to ImageArray.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to ImageArray.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;Handles attriobute access.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Handle attriobute access.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ImageFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">n</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>  <span class="c1"># we have a method</span>
@@ -1296,44 +1169,44 @@
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Handles setting attributes.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Handle setting attributes.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="ow">and</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="s2">&quot;_protected_attrs&quot;</span><span class="p">,</span> <span class="p">[]):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">ImageFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement the subtract operator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement the subtract operator.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement the inplace subtract operator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement the inplace subtract operator.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__add_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement the divide operator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement the divide operator.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="fm">__itruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement the inplace divide operator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement the inplace divide operator.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__div_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement the subtract operator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement the subtract operator.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="fm">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implement the inplace subtract operator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement the inplace subtract operator.&quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
@@ -1354,15 +1227,24 @@
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Equivalent to clockwise rotation&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Equivalent to clockwise rotation.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">CW</span>
 
     <span class="k">def</span> <span class="fm">__floordiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate and XMCD ratio on the images.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ImageFile</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">image</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio.&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;Mimatch is </span><span class="si">{self.image.dtype}</span><span class="s2"> vs </span><span class="si">{other.image.dtype}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">&quot;f&quot;</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">clone</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">image</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">image</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">image</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -1394,14 +1276,14 @@
 <span class="sd">            zcol (column index):</span>
 <span class="sd">                Column in the datafile that defines the intensity</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">,</span> <span class="s2">&quot;unique&quot;</span><span class="p">)</span>
 
         <span class="n">_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">zcol</span><span class="p">)</span>  <span class="c1"># pylint: disable=not-callable</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">&quot;unique&quot;</span><span class="p">:</span>
             <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span>
-        <span class="k">elif</span> <span class="n">istuple</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">isTuple</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">):</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">shape</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1412,9 +1294,9 @@
         <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;y_vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_func_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workingfunc</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;ImageFile generator.</span>
+        <span class="sd">&quot;&quot;&quot;Make wrappers for ImageFile functions.</span>
 
-<span class="sd">        Note:</span>
+<span class="sd">        Notes:</span>
 <span class="sd">            The wrapped functions take additional keyword arguments that are stripped off from the call.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -1428,20 +1310,19 @@
 <span class="sd">                * False (default) - Imagearray return types are substituted if they are the same size as the original</span>
 <span class="sd">                * None - A copy of the current object is taken and the returned ImageArray provides the data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Avoid PEP257/black issue</span>
 
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">workingfunc</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">gen_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;This will wrap a called method.&quot;&quot;&quot;</span>
-
+            <span class="sd">&quot;&quot;&quot;Wrap a called method to capture the result back into the calling object.&quot;&quot;&quot;</span>
             <span class="n">box</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_box&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">ImageFile</span><span class="p">):</span>
                         <span class="n">args</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">image</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">_box</span><span class="p">(</span><span class="n">box</span><span class="p">)]</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">workingfunc</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;crop&quot;</span> <span class="ow">and</span> <span class="s2">&quot;_&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="p">):</span>  <span class="c1"># special case for common function crop which will change the array shape</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">workingfunc</span><span class="p">,</span> <span class="s2">&quot;changes_size&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;_&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+                <span class="c1"># special case for common function crop which will change the array shape</span>
                 <span class="n">force</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">force</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -1460,21 +1341,23 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
 
                 <span class="k">return</span> <span class="bp">self</span>
-            <span class="k">elif</span> <span class="n">force</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">force</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">force</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-                <span class="c1"># Now swap the iamge in, but keep the metadata</span>
-                <span class="n">r</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">):</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+                    <span class="c1"># Now swap the iamge in, but keep the metadata</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">filename</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">r</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
                 <span class="k">return</span> <span class="n">ret</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">r</span>
+            <span class="k">return</span> <span class="n">r</span>
 
         <span class="k">return</span> <span class="n">fix_signature</span><span class="p">(</span><span class="n">gen_func</span><span class="p">,</span> <span class="n">workingfunc</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement standard representation for text based consoles.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(</span><span class="si">{}</span><span class="s2">) of shape </span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">) and </span><span class="si">{}</span><span class="s2"> items of metadata&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
         <span class="p">)</span>
@@ -1492,26 +1375,25 @@
         <span class="k">return</span> <span class="n">ret</span>
 
 <div class="viewcode-block" id="ImageFile.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.ImageFile.save.html#Stoner.Image.ImageFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves the image into the file &#39;filename&#39;.</span>
+        <span class="sd">&quot;&quot;&quot;Save the image into the file &#39;filename&#39;.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (string, bool or None):</span>
 <span class="sd">                Filename to save data as, if this is None then the current filename for the object is used</span>
 <span class="sd">                If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.</span>
 
-<span class="sd">        Keyword args:</span>
+<span class="sd">        Keyword Args:</span>
 <span class="sd">            fmt (string or list):</span>
 <span class="sd">                format to save data as. &#39;tif&#39;, &#39;png&#39; or &#39;npy&#39; or a list of them. If not included will guess from</span>
 <span class="sd">                filename.</span>
 
-<span class="sd">        notes:</span>
+<span class="sd">        Notes:</span>
 <span class="sd">            Metadata will be preserved in .png and .tif format.</span>
 
 <span class="sd">            fmt can be &#39;png&#39;, &#39;npy&#39;, &#39;tif&#39;, &#39;tiff&#39;  or a list of more than one of those.</span>
 <span class="sd">            tif is recommended since metadata is lost in .npy format but data is</span>
 <span class="sd">            converted to integer format for png so that definition cannot be</span>
 <span class="sd">            saved.</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># catch before metadataObject tries to take over.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div></div>
@@ -1546,16 +1428,13 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

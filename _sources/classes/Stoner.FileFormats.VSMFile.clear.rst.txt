@@ -1,8 +1,0 @@
-
-
-VSMFile.clear
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.clear

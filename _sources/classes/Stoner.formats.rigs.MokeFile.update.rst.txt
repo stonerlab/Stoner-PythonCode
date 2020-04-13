@@ -1,0 +1,8 @@
+
+
+MokeFile.update
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.update

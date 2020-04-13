@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.clear
+==================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.clear

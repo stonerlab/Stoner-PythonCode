@@ -1,0 +1,8 @@
+
+
+BigBlueFile.index
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.index

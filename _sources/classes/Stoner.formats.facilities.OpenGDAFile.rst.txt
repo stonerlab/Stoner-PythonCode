@@ -1,0 +1,89 @@
+Stoner.formats.facilities.OpenGDAFile
+=====================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. autoclass:: OpenGDAFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.facilities.OpenGDAFile.__init__
+      ~Stoner.formats.facilities.OpenGDAFile.add_column
+      ~Stoner.formats.facilities.OpenGDAFile.append
+      ~Stoner.formats.facilities.OpenGDAFile.clear
+      ~Stoner.formats.facilities.OpenGDAFile.closest
+      ~Stoner.formats.facilities.OpenGDAFile.column
+      ~Stoner.formats.facilities.OpenGDAFile.columns
+      ~Stoner.formats.facilities.OpenGDAFile.count
+      ~Stoner.formats.facilities.OpenGDAFile.del_column
+      ~Stoner.formats.facilities.OpenGDAFile.del_nan
+      ~Stoner.formats.facilities.OpenGDAFile.del_rows
+      ~Stoner.formats.facilities.OpenGDAFile.dir
+      ~Stoner.formats.facilities.OpenGDAFile.extend
+      ~Stoner.formats.facilities.OpenGDAFile.filter
+      ~Stoner.formats.facilities.OpenGDAFile.find_col
+      ~Stoner.formats.facilities.OpenGDAFile.get
+      ~Stoner.formats.facilities.OpenGDAFile.get_filename
+      ~Stoner.formats.facilities.OpenGDAFile.index
+      ~Stoner.formats.facilities.OpenGDAFile.insert
+      ~Stoner.formats.facilities.OpenGDAFile.insert_rows
+      ~Stoner.formats.facilities.OpenGDAFile.items
+      ~Stoner.formats.facilities.OpenGDAFile.keys
+      ~Stoner.formats.facilities.OpenGDAFile.load
+      ~Stoner.formats.facilities.OpenGDAFile.pop
+      ~Stoner.formats.facilities.OpenGDAFile.popitem
+      ~Stoner.formats.facilities.OpenGDAFile.remove
+      ~Stoner.formats.facilities.OpenGDAFile.rename
+      ~Stoner.formats.facilities.OpenGDAFile.reorder_columns
+      ~Stoner.formats.facilities.OpenGDAFile.reverse
+      ~Stoner.formats.facilities.OpenGDAFile.rolling_window
+      ~Stoner.formats.facilities.OpenGDAFile.rows
+      ~Stoner.formats.facilities.OpenGDAFile.save
+      ~Stoner.formats.facilities.OpenGDAFile.search
+      ~Stoner.formats.facilities.OpenGDAFile.section
+      ~Stoner.formats.facilities.OpenGDAFile.select
+      ~Stoner.formats.facilities.OpenGDAFile.setdefault
+      ~Stoner.formats.facilities.OpenGDAFile.sort
+      ~Stoner.formats.facilities.OpenGDAFile.split
+      ~Stoner.formats.facilities.OpenGDAFile.swap_column
+      ~Stoner.formats.facilities.OpenGDAFile.to_pandas
+      ~Stoner.formats.facilities.OpenGDAFile.unique
+      ~Stoner.formats.facilities.OpenGDAFile.update
+      ~Stoner.formats.facilities.OpenGDAFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.facilities.OpenGDAFile.T
+      ~Stoner.formats.facilities.OpenGDAFile.basename
+      ~Stoner.formats.facilities.OpenGDAFile.clone
+      ~Stoner.formats.facilities.OpenGDAFile.column_headers
+      ~Stoner.formats.facilities.OpenGDAFile.data
+      ~Stoner.formats.facilities.OpenGDAFile.dict_records
+      ~Stoner.formats.facilities.OpenGDAFile.dims
+      ~Stoner.formats.facilities.OpenGDAFile.dtype
+      ~Stoner.formats.facilities.OpenGDAFile.filename
+      ~Stoner.formats.facilities.OpenGDAFile.header
+      ~Stoner.formats.facilities.OpenGDAFile.mask
+      ~Stoner.formats.facilities.OpenGDAFile.metadata
+      ~Stoner.formats.facilities.OpenGDAFile.mime_type
+      ~Stoner.formats.facilities.OpenGDAFile.patterns
+      ~Stoner.formats.facilities.OpenGDAFile.priority
+      ~Stoner.formats.facilities.OpenGDAFile.records
+      ~Stoner.formats.facilities.OpenGDAFile.setas
+      ~Stoner.formats.facilities.OpenGDAFile.shape
+      ~Stoner.formats.facilities.OpenGDAFile.subclasses
+   
+   

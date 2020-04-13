@@ -1,8 +1,0 @@
-
-
-VSMFile.to_pandas
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.to_pandas

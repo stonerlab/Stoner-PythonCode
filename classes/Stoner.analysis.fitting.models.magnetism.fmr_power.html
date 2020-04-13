@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Inverse_Kittel" href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" />
-    <link rel="prev" title="WLfit" href="Stoner.analysis.fitting.models.e_transport.WLfit.html" />
+    <link rel="prev" title="BlochLaw" href="Stoner.analysis.fitting.models.magnetism.BlochLaw.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +29,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.e_transport.WLfit.html" title="Previous document">WLfit</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.BlochLaw.html" title="Previous document">BlochLaw</a>
         </li>
         <li>
           <a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" title="Next document">Inverse_Kittel</a>
@@ -75,7 +75,9 @@
 <dd class="field-even"><p>Array of model absorption values.</p>
 </dd>
 </dl>
-<p><span class="math notranslate nohighlight">\(\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\frac{4 \Delta_{H} K_{1} \left(H - H_{res}\right)}{\left(\Delta_{H}^{2} + 4 \left(H - H_{res}
+\right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(
+\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}\)</span></p>
 <p class="rubric">Attributes Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -96,7 +98,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.FMR_Power.guess" title="Stoner.analysis.fitting.models.magnetism.FMR_Power.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
-<td><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p></td>
+<td><p>Guess parameters as <span class="math notranslate nohighlight">\(\gamma=2, H_k=0, M_s~(\pi f)^2/\mu_0^2.H)-H\)</span>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -110,7 +112,7 @@
 <dl class="method">
 <dt id="Stoner.analysis.fitting.models.magnetism.FMR_Power.guess">
 <code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#FMR_Power.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.FMR_Power.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H</p>
+<dd><p>Guess parameters as <span class="math notranslate nohighlight">\(\gamma=2, H_k=0, M_s~(\pi f)^2/\mu_0^2.H)-H\)</span>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -127,8 +129,8 @@
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.analysis.fitting.models.e_transport.WLfit.html"
-                        title="previous chapter">WLfit</a></p>
+  <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.BlochLaw.html"
+                        title="previous chapter">BlochLaw</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html"
                         title="next chapter">Inverse_Kittel</a></p>
@@ -155,7 +157,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.analysis.fitting.models.e_transport.WLfit.html" title="Previous document">WLfit</a>
+          <a href="Stoner.analysis.fitting.models.magnetism.BlochLaw.html" title="Previous document">BlochLaw</a>
         </li>
         <li>
           <a href="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html" title="Next document">Inverse_Kittel</a>
@@ -175,9 +177,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

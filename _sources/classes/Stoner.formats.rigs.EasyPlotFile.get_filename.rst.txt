@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.get_filename
+=============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.get_filename

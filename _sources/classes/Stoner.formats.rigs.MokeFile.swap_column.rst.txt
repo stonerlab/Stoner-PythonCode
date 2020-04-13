@@ -1,0 +1,8 @@
+
+
+MokeFile.swap_column
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.swap_column

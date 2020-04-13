@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.rename
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.rename

@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.popitem
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.popitem

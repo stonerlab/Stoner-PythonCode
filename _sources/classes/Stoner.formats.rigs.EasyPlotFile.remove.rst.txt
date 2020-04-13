@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.remove
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.remove

@@ -1,0 +1,8 @@
+
+
+XRDFile.filter
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.filter

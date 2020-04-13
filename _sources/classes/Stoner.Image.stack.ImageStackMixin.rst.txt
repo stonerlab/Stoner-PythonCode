@@ -10,7 +10,6 @@ ImageStackMixin
 
    .. autosummary::
 
-      ~ImageStackMixin.allmeta
       ~ImageStackMixin.imarray
       ~ImageStackMixin.max_size
       ~ImageStackMixin.shape
@@ -20,6 +19,7 @@ ImageStackMixin
    .. autosummary::
 
       ~ImageStackMixin.asfloat
+      ~ImageStackMixin.convert
       ~ImageStackMixin.correct_drifts
       ~ImageStackMixin.crop_stack
       ~ImageStackMixin.dtype_limits
@@ -27,7 +27,6 @@ ImageStackMixin
 
    .. rubric:: Attributes Documentation
 
-   .. autoattribute:: allmeta
    .. autoattribute:: imarray
    .. autoattribute:: max_size
    .. autoattribute:: shape
@@ -35,6 +34,7 @@ ImageStackMixin
    .. rubric:: Methods Documentation
 
    .. automethod:: asfloat
+   .. automethod:: convert
    .. automethod:: correct_drifts
    .. automethod:: crop_stack
    .. automethod:: dtype_limits

@@ -1,0 +1,8 @@
+
+
+SPCFile.remove
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.remove

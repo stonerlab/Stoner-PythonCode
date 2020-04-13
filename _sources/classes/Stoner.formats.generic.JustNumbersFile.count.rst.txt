@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.count
+============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.count

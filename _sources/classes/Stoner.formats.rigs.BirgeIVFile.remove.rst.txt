@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.remove
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.remove

@@ -1,0 +1,8 @@
+
+
+VSMFile.reorder_columns
+==================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.reorder_columns

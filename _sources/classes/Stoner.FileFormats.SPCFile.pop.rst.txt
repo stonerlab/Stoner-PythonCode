@@ -1,8 +1,0 @@
-
-
-SPCFile.pop
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.pop

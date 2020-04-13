@@ -1,8 +1,0 @@
-
-
-SPCFile.items
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.items

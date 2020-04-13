@@ -1,0 +1,8 @@
+
+
+MokeFile.__init__
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.__init__

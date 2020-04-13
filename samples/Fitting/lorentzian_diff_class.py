@@ -1,4 +1,5 @@
 """Test langevin fitting."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import (
     Lorentzian_diff,

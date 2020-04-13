@@ -1,0 +1,8 @@
+
+
+BNLFile.index
+=======================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.index

@@ -1,0 +1,8 @@
+
+
+SPCFile.reorder_columns
+==================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.reorder_columns

@@ -17,13 +17,16 @@ ImageFolderMixin
 
    .. autosummary::
 
+      ~ImageFolderMixin.align
       ~ImageFolderMixin.apply_all
       ~ImageFolderMixin.as_stack
       ~ImageFolderMixin.average
+      ~ImageFolderMixin.from_tiff
       ~ImageFolderMixin.loadgroup
       ~ImageFolderMixin.mean
       ~ImageFolderMixin.stddev
       ~ImageFolderMixin.stderr
+      ~ImageFolderMixin.to_tiff
       ~ImageFolderMixin.view
 
    .. rubric:: Attributes Documentation
@@ -33,11 +36,14 @@ ImageFolderMixin
 
    .. rubric:: Methods Documentation
 
+   .. automethod:: align
    .. automethod:: apply_all
    .. automethod:: as_stack
    .. automethod:: average
+   .. automethod:: from_tiff
    .. automethod:: loadgroup
    .. automethod:: mean
    .. automethod:: stddev
    .. automethod:: stderr
+   .. automethod:: to_tiff
    .. automethod:: view

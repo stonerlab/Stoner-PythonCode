@@ -1,0 +1,90 @@
+Stoner.formats.rigs.MokeFile
+============================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. autoclass:: MokeFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.rigs.MokeFile.__init__
+      ~Stoner.formats.rigs.MokeFile.add_column
+      ~Stoner.formats.rigs.MokeFile.append
+      ~Stoner.formats.rigs.MokeFile.clear
+      ~Stoner.formats.rigs.MokeFile.closest
+      ~Stoner.formats.rigs.MokeFile.column
+      ~Stoner.formats.rigs.MokeFile.columns
+      ~Stoner.formats.rigs.MokeFile.count
+      ~Stoner.formats.rigs.MokeFile.del_column
+      ~Stoner.formats.rigs.MokeFile.del_nan
+      ~Stoner.formats.rigs.MokeFile.del_rows
+      ~Stoner.formats.rigs.MokeFile.dir
+      ~Stoner.formats.rigs.MokeFile.extend
+      ~Stoner.formats.rigs.MokeFile.filter
+      ~Stoner.formats.rigs.MokeFile.find_col
+      ~Stoner.formats.rigs.MokeFile.get
+      ~Stoner.formats.rigs.MokeFile.get_filename
+      ~Stoner.formats.rigs.MokeFile.index
+      ~Stoner.formats.rigs.MokeFile.insert
+      ~Stoner.formats.rigs.MokeFile.insert_rows
+      ~Stoner.formats.rigs.MokeFile.items
+      ~Stoner.formats.rigs.MokeFile.keys
+      ~Stoner.formats.rigs.MokeFile.load
+      ~Stoner.formats.rigs.MokeFile.pop
+      ~Stoner.formats.rigs.MokeFile.popitem
+      ~Stoner.formats.rigs.MokeFile.remove
+      ~Stoner.formats.rigs.MokeFile.rename
+      ~Stoner.formats.rigs.MokeFile.reorder_columns
+      ~Stoner.formats.rigs.MokeFile.reverse
+      ~Stoner.formats.rigs.MokeFile.rolling_window
+      ~Stoner.formats.rigs.MokeFile.rows
+      ~Stoner.formats.rigs.MokeFile.save
+      ~Stoner.formats.rigs.MokeFile.search
+      ~Stoner.formats.rigs.MokeFile.section
+      ~Stoner.formats.rigs.MokeFile.select
+      ~Stoner.formats.rigs.MokeFile.setdefault
+      ~Stoner.formats.rigs.MokeFile.sort
+      ~Stoner.formats.rigs.MokeFile.split
+      ~Stoner.formats.rigs.MokeFile.swap_column
+      ~Stoner.formats.rigs.MokeFile.to_pandas
+      ~Stoner.formats.rigs.MokeFile.unique
+      ~Stoner.formats.rigs.MokeFile.update
+      ~Stoner.formats.rigs.MokeFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.rigs.MokeFile.T
+      ~Stoner.formats.rigs.MokeFile.basename
+      ~Stoner.formats.rigs.MokeFile.clone
+      ~Stoner.formats.rigs.MokeFile.column_headers
+      ~Stoner.formats.rigs.MokeFile.data
+      ~Stoner.formats.rigs.MokeFile.dict_records
+      ~Stoner.formats.rigs.MokeFile.dims
+      ~Stoner.formats.rigs.MokeFile.dtype
+      ~Stoner.formats.rigs.MokeFile.filename
+      ~Stoner.formats.rigs.MokeFile.header
+      ~Stoner.formats.rigs.MokeFile.mask
+      ~Stoner.formats.rigs.MokeFile.metadata
+      ~Stoner.formats.rigs.MokeFile.mime_type
+      ~Stoner.formats.rigs.MokeFile.patterns
+      ~Stoner.formats.rigs.MokeFile.priority
+      ~Stoner.formats.rigs.MokeFile.priotity
+      ~Stoner.formats.rigs.MokeFile.records
+      ~Stoner.formats.rigs.MokeFile.setas
+      ~Stoner.formats.rigs.MokeFile.shape
+      ~Stoner.formats.rigs.MokeFile.subclasses
+   
+   

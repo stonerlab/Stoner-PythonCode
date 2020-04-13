@@ -15,7 +15,6 @@ AnalysisMixin
       ~AnalysisMixin.decompose
       ~AnalysisMixin.integrate
       ~AnalysisMixin.normalise
-      ~AnalysisMixin.peaks
       ~AnalysisMixin.stitch
       ~AnalysisMixin.threshold
 
@@ -26,6 +25,5 @@ AnalysisMixin
    .. automethod:: decompose
    .. automethod:: integrate
    .. automethod:: normalise
-   .. automethod:: peaks
    .. automethod:: stitch
    .. automethod:: threshold

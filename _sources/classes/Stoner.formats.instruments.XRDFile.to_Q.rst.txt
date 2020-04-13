@@ -1,0 +1,8 @@
+
+
+XRDFile.to_Q
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.to_Q

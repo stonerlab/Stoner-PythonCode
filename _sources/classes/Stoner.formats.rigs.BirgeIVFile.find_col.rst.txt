@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.find_col
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.find_col

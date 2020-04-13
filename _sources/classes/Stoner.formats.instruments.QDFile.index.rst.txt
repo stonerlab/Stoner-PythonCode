@@ -1,0 +1,8 @@
+
+
+QDFile.index
+=======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.index

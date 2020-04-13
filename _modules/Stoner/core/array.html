@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,43 +45,51 @@
   <h1>Source code for Stoner.core.array</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Provides the DataArray class - a subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Provides the DataArray class.</span>
+
+<span class="sd">A subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names.&quot;&quot;&quot;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DataArray&quot;</span><span class="p">]</span>
 
-<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">_ma_</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isiterable</span><span class="p">,</span> <span class="n">all_type</span><span class="p">,</span> <span class="n">isNone</span><span class="p">,</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">all_size</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">all_type</span><span class="p">,</span> <span class="n">isNone</span><span class="p">,</span> <span class="n">AttributeStore</span><span class="p">,</span> <span class="n">all_size</span>
 
 <span class="kn">from</span> <span class="nn">.setas</span> <span class="kn">import</span> <span class="n">setas</span> <span class="k">as</span> <span class="n">_setas</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">StonerSetasError</span>
 
 
-<div class="viewcode-block" id="DataArray"><a class="viewcode-back" href="../../../classes/Stoner.core.array.DataArray.html#Stoner.core.DataArray">[docs]</a><span class="k">class</span> <span class="nc">DataArray</span><span class="p">(</span><span class="n">_ma_</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+<div class="viewcode-block" id="DataArray"><a class="viewcode-back" href="../../../classes/Stoner.core.array.DataArray.html#Stoner.core.array.DataArray">[docs]</a><span class="k">class</span> <span class="nc">DataArray</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
 
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        column_headers (list): of strings of the column names of the data.</span>
-<span class="sd">        i (array of integers): When read, returns the row  umbers of the data. When written to, sets the</span>
-<span class="sd">            base row index. The base row index is preserved when a DataArray is indexed.</span>
-<span class="sd">        x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access</span>
-<span class="sd">            the corresponding columns. When written to, the attributes overwrite the existing column&#39;s data.</span>
-<span class="sd">        d,e,f (1D DataArray): Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these</span>
-<span class="sd">            attributes provide a quick access to them. When written to, the attributes overwrite the existing column&#39;s data.</span>
-<span class="sd">        u,v,w (1D DataArray): Columns may be identieid as containing vectgor field information. These attributes provide quick</span>
+<span class="sd">        column_headers (list):</span>
+<span class="sd">            of strings of the column names of the data.</span>
+<span class="sd">        i (array of integers):</span>
+<span class="sd">            When read, returns the row  umbers of the data. When written to, sets the base row index. The base row</span>
+<span class="sd">            index is preserved when a DataArray is indexed.</span>
+<span class="sd">        x,y,z (1D DataArray):</span>
+<span class="sd">            When a column is declared to contain *x*, *y*, or *z* data, then these attributes access the corresponding</span>
+<span class="sd">            columns. When written to, the attributes overwrite the existing column&#39;s data.</span>
+<span class="sd">        d,e,f (1D DataArray):</span>
+<span class="sd">            Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these attributes</span>
+<span class="sd">            provide a quick access to them. When written to, the attributes overwrite the existing column&#39;s data.</span>
+<span class="sd">        u,v,w (1D DataArray):</span>
+<span class="sd">            Columns may be identieid as containing vectgor field information. These attributes provide quick</span>
 <span class="sd">            access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes</span>
 <span class="sd">            overwrite the existing column&#39;s data.</span>
-<span class="sd">        p,q,r (1D DataArray): These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`</span>
+<span class="sd">        p,q,r (1D DataArray):</span>
+<span class="sd">            These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`</span>
 <span class="sd">            into :math:`(\phi,\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar</span>
 <span class="sd">            co-ordinates are returned for *q* and *r*.</span>
-<span class="sd">        setas (list or string): Actually a proxy to a magic class that handles the assignment of columns to different axes and</span>
+<span class="sd">        setas (list or string):</span>
+<span class="sd">            Actually a proxy to a magic class that handles the assignment of columns to different axes and</span>
 <span class="sd">            also tracks the names of columns (so that columns may be accessed as named items).</span>
-
-
 
 <span class="sd">    This array type is used to represent numeric data in the Stoner Package - primarily as a 2D</span>
 <span class="sd">    matrix in :py:class:`Stoner.Core.DataFile` but also when a 1D row is required. In con trast to</span>
@@ -94,27 +99,27 @@
 <span class="sd">    more attractive.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># ============================================================================================================================</span>
-    <span class="c1">############################                       Object Construction                        ###############################</span>
-    <span class="c1"># ============================================================================================================================</span>
+    <span class="c1"># ==============================================================================================================</span>
+    <span class="c1">############################           Object Construction                       ###############################</span>
+    <span class="c1"># ==============================================================================================================</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create the new instance of the DataArray.&quot;&quot;&quot;</span>
         <span class="c1"># Input array is an already formed ndarray instance</span>
         <span class="c1"># We first cast to be our class type</span>
         <span class="n">setas</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">,</span> <span class="n">_setas</span><span class="p">())</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
             <span class="n">default_mask</span> <span class="o">=</span> <span class="n">input_array</span><span class="o">.</span><span class="n">mask</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">default_mask</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">default_mask</span><span class="p">))</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">default_mask</span><span class="p">))</span>
         <span class="n">column_headers</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;column_headers&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="n">_row</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;isrow&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">input_array</span><span class="o">.</span><span class="n">i</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="c1"># add the new attribute to the created instance</span>
         <span class="n">setas</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">setas</span>
@@ -127,6 +132,8 @@
         <span class="n">obj</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_row</span> <span class="o">=</span> <span class="n">_row</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="c1"># Set shared mask - stops some deprication warnings</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">unshare_mask</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
         <span class="k">return</span> <span class="n">obj</span>
 
@@ -138,6 +145,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">_setas</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">_row</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -145,30 +154,33 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">i</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">mask</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">fill_value</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">_row</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">_setas</span><span class="p">,</span> <span class="s2">&quot;_row&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">_row</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,))</span>
 
     <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Make sure ufuncs do the right thing with DataArrays&quot;&quot;&quot;</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">MaskedArray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Make sure ufuncs do the right thing with DataArrays.&quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="c1"># ============================================================================================================================</span>
-    <span class="c1">############################                  Property Accessor Functions                     ###############################</span>
-    <span class="c1"># ============================================================================================================================</span>
+    <span class="c1"># ==============================================================================================================</span>
+    <span class="c1">############################          Property Accessor Functions                ###############################</span>
+    <span class="c1"># ==============================================================================================================</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the DataArray as a normal numpy array for those operations that need this&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Return the DataArray as a normal numpy array for those operations that need this.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">isrow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Defines whether this is a single row or a column if 1D.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Define whether this is a single row or a column if 1D.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">_row</span>
 
     <span class="nd">@isrow</span><span class="o">.</span><span class="n">setter</span>
@@ -183,11 +195,11 @@
         <span class="n">m</span> <span class="o">=</span> <span class="p">[</span>
             <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">z</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">z</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">w</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">z</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">z</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">w</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
         <span class="p">]</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">axes</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -204,11 +216,11 @@
         <span class="n">m</span> <span class="o">=</span> <span class="p">[</span>
             <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">v</span><span class="p">),</span>
         <span class="p">]</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">axes</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -226,18 +238,17 @@
             <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">w</span><span class="p">),</span>
-            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">w</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">w</span><span class="p">),</span>
+            <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">w</span><span class="p">),</span>
         <span class="p">]</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">axes</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">StonerSetasError</span><span class="p">(</span>
                 <span class="s2">&quot;Insufficient axes defined in setas to calculate the phi component. need 3 not </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">i</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -255,22 +266,22 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">isrow</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)])</span>
+            <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span><span class="p">])</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>  <span class="c1"># Iterable and the correct length - assing straight</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Iterable but not the correct length - count from min of value</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>  <span class="c1"># Iterable and the correct length - assing straight</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Iterable but not the correct length - count from min of value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span>
             <span class="k">elif</span> <span class="p">(</span>
-                <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="n">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
             <span class="p">):</span>  <span class="c1"># Iterable but not the correct length - count from min of value</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># No iterable</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -284,8 +295,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns an object for setting column assignments.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;_setas&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return an object for setting column assignments.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">_setas</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
@@ -293,16 +304,18 @@
 
     <span class="nd">@setas</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the object for setting column assignments.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_setas</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
         <span class="n">setas</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="c1"># ============================================================================================================================</span>
-    <span class="c1">############################              Speical Methods                ####################################################</span>
-    <span class="c1"># ============================================================================================================================</span>
+    <span class="c1"># ==============================================================================================================</span>
+    <span class="c1">############################        Speical Methods         ####################################################</span>
+    <span class="c1"># ==============================================================================================================</span>
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement hooks for pickling.&quot;&quot;&quot;</span>
         <span class="c1"># Get the parent&#39;s __reduce__ tuple</span>
         <span class="n">pickled_state</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__reduce__</span><span class="p">()</span>
         <span class="c1"># Create our own tuple to pass to __setstate__</span>
@@ -311,6 +324,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">pickled_state</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pickled_state</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">new_state</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implement hooks for unpickling.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># Set the info attribute</span>
         <span class="c1"># Call the parent&#39;s __setstate__ with the other tuple elements.</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
@@ -345,9 +359,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">indexer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">isiterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
+            <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
                 <span class="n">indexer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">None</span>
@@ -356,14 +370,14 @@
                 <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">indexer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
         <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">StonerSetasError</span><span class="p">(</span><span class="s2">&quot;Tried accessing a </span><span class="si">{}</span><span class="s2"> column, but setas is not defined.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Indexing function for DataArray.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            ix (various): Index to find.</span>
+<span class="sd">            ix (various):</span>
+<span class="sd">                Index to find.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An indexed part of the DataArray object with extra attributes.</span>
@@ -395,14 +409,14 @@
             <span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">ix</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ix</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ix</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="p">):</span>  <span class="c1"># Indexing with a numpy array</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">ix</span> <span class="o">=</span> <span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ix</span> <span class="ow">and</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># indexing with a list of columns</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ix</span> <span class="ow">and</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># indexing with a list of columns</span>
             <span class="n">ix</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">all_type</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">bool</span><span class="p">):</span>
-                <span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
             <span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
             <span class="n">ix</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ix</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># oops! backwards indexing</span>
@@ -412,43 +426,47 @@
             <span class="n">ix</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
             <span class="c1"># Now can index with our constructed multidimesnional indexer</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ret</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ret</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">MaskedConstant</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>  <span class="c1"># bugout for scalar resturns</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>  <span class="c1"># bugout for scalar resturns</span>
             <span class="k">return</span> <span class="n">ret</span>
-        <span class="k">elif</span> <span class="n">ret</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Potentially 2D array here</span>
+        <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Potentially 2D array here</span>
             <span class="k">if</span> <span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Special case for increasing an array dimension</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Going from 1 D to 2D</span>
                     <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
                     <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
                     <span class="n">ret</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;Column&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">ret</span>
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># A regular 2D array</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span> <span class="o">=</span> <span class="n">single_row</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># pylint: disable=len-as-condition</span>
-                    <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
-                <span class="c1"># Sort out whether we need an array of row labels</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pylint: disable=len-as-condition</span>
-                    <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">int_types</span><span class="p">):</span>
-                        <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">[</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span> <span class="o">=</span> <span class="n">single_row</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># pylint: disable=len-as-condition</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="c1"># Sort out whether we need an array of row labels</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pylint: disable=len-as-condition</span>
+                <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">int_types</span><span class="p">):</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">[</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
         <span class="k">elif</span> <span class="n">ret</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Potentially a single row or single column</span>
             <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span> <span class="o">=</span> <span class="n">single_row</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">):</span>
-                <span class="n">tmp</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-                <span class="n">tmpcol</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">tmpcol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">tmpcol</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
             <span class="c1"># Sort out whether we need an array of row labels</span>
-            <span class="k">if</span> <span class="n">single_row</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">single_row</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">[</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># This is a single element?</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
@@ -475,9 +493,9 @@
 
         <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
-    <span class="c1"># ============================================================================================================================</span>
-    <span class="c1">############################              Private Methods                ####################################################</span>
-    <span class="c1"># ============================================================================================================================</span>
+    <span class="c1"># ==============================================================================================================</span>
+    <span class="c1">############################              Private Methods                #######################################</span>
+    <span class="c1"># ==============================================================================================================</span>
 
     <span class="k">def</span> <span class="nf">_col_args</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -493,7 +511,7 @@
         <span class="n">zerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Utility method that creates an object which has keys  based either on arguments or setas attribute.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Create an object which has keys  based either on arguments or setas attribute.&quot;&quot;&quot;</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="n">xcol</span><span class="p">,</span>
             <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="n">ycol</span><span class="p">,</span>
@@ -507,11 +525,11 @@
         <span class="p">}</span>
         <span class="n">no_guess</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cols</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># User specification wins out</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># User specification wins out</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># User didn&#39;t set any values, setas will win</span>
             <span class="n">no_guess</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="n">_attribute_store</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="n">no_guess</span><span class="o">=</span><span class="n">no_guess</span><span class="p">))</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">AttributeStore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="n">no_guess</span><span class="o">=</span><span class="n">no_guess</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="k">if</span> <span class="n">isNone</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]):</span>  <span class="c1"># Not defined, fallback on setas</span>
                 <span class="k">del</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
@@ -522,7 +540,7 @@
                     <span class="k">del</span> <span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
                 <span class="k">continue</span>
             <span class="k">elif</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ret</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
                     <span class="k">continue</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
                 <span class="k">continue</span>
@@ -539,38 +557,39 @@
             <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;has_&quot;</span><span class="p">):</span>
                     <span class="k">continue</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="ow">and</span> <span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="ow">and</span> <span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">]])</span>
                 <span class="k">elif</span> <span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span> <span class="s2">&quot;xerr&quot;</span><span class="p">,</span> <span class="s2">&quot;ycol&quot;</span><span class="p">,</span> <span class="s2">&quot;yerr&quot;</span><span class="p">,</span> <span class="s2">&quot;zcol&quot;</span><span class="p">,</span> <span class="s2">&quot;zerr&quot;</span><span class="p">,</span> <span class="s2">&quot;ucol&quot;</span><span class="p">,</span> <span class="s2">&quot;vcol&quot;</span><span class="p">,</span> <span class="s2">&quot;wcol&quot;</span><span class="p">,</span> <span class="s2">&quot;axes&quot;</span><span class="p">]:</span>
-            <span class="n">ret</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;has_</span><span class="si">{n}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ret</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+            <span class="n">ret</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;has_</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ret</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
 
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="c1"># ============================================================================================================================</span>
-    <span class="c1">############################              Public Methods                ####################################################</span>
-    <span class="c1"># ============================================================================================================================</span>
+    <span class="c1"># ==============================================================================================================</span>
+    <span class="c1">############################              Public Methods                ########################################</span>
+    <span class="c1"># ==============================================================================================================</span>
 
-<div class="viewcode-block" id="DataArray.keys"><a class="viewcode-back" href="../../../classes/Stoner.core.array.DataArray.html#Stoner.core.DataArray.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataArray.keys"><a class="viewcode-back" href="../../../classes/Stoner.core.array.DataArray.html#Stoner.core.array.DataArray.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of column headers.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span></div>
 
-<div class="viewcode-block" id="DataArray.swap_column"><a class="viewcode-back" href="../../../classes/Stoner.core.array.DataArray.html#Stoner.core.DataArray.swap_column">[docs]</a>    <span class="k">def</span> <span class="nf">swap_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">swp</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Swaps pairs of columns in the data.</span>
+<div class="viewcode-block" id="DataArray.swap_column"><a class="viewcode-back" href="../../../classes/Stoner.core.array.DataArray.html#Stoner.core.array.DataArray.swap_column">[docs]</a>    <span class="k">def</span> <span class="nf">swap_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">swp</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Swap pairs of columns in the data.</span>
 
 <span class="sd">        Useful for reordering data for idiot programs that expect columns in a fixed order.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            swp  (tuple of list of tuples of two elements): Each</span>
-<span class="sd">                element will be iused as a column index (using the normal rules</span>
+<span class="sd">            swp  (tuple of list of tuples of two elements):</span>
+<span class="sd">                Each element will be iused as a column index (using the normal rules</span>
 <span class="sd">                for matching columns).  The two elements represent the two</span>
 <span class="sd">                columns that are to be swapped.</span>
-<span class="sd">            headers_too (bool): Indicates the column headers</span>
-<span class="sd">                are swapped as well</span>
+<span class="sd">            headers_too (bool):</span>
+<span class="sd">                Indicates the column headers are swapped as well</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: A copy of the modified :py:class:`DataFile` objects</span>
+<span class="sd">            self:</span>
+<span class="sd">                A copy of the modified :py:class:`DataFile` objects</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            If swp is a list, then the function is called recursively on each</span>
@@ -632,16 +651,13 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

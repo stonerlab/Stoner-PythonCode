@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,11 +45,8 @@
   <h1>Source code for Stoner.analysis.fitting.models.tunnelling</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:py:class:`lmfit.Model` model classes and functions for various models of electron tunnelling.</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
+<span class="sd">&quot;&quot;&quot;:py:class:`lmfit.Model` model classes and functions for various models of electron tunnelling.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;BDR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;FowlerNordheim&quot;</span><span class="p">,</span>
@@ -166,7 +160,7 @@
 
 
 <span class="k">def</span> <span class="nf">tersoffHammann</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip.</span>
+    <span class="sd">&quot;&quot;&quot;Tersoff-Hamman model for tunnelling through STM tip.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        V (array): bias voltage</span>
@@ -280,7 +274,7 @@
 
 <div class="viewcode-block" id="TersoffHammann"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.tunnelling.TersoffHammann.html#Stoner.analysis.fitting.models.tunnelling.TersoffHammann">[docs]</a><span class="k">class</span> <span class="nc">TersoffHammann</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip.</span>
+    <span class="sd">&quot;&quot;&quot;Tersoff-Hamman model for tunnelling through STM tip.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        V (array): bias voltage</span>
@@ -329,16 +323,13 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

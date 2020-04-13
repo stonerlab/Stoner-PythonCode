@@ -1,8 +1,0 @@
-
-
-XRDFile.count
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.count

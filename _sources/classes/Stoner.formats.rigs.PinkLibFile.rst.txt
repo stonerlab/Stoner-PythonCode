@@ -1,0 +1,89 @@
+Stoner.formats.rigs.PinkLibFile
+===============================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. autoclass:: PinkLibFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.rigs.PinkLibFile.__init__
+      ~Stoner.formats.rigs.PinkLibFile.add_column
+      ~Stoner.formats.rigs.PinkLibFile.append
+      ~Stoner.formats.rigs.PinkLibFile.clear
+      ~Stoner.formats.rigs.PinkLibFile.closest
+      ~Stoner.formats.rigs.PinkLibFile.column
+      ~Stoner.formats.rigs.PinkLibFile.columns
+      ~Stoner.formats.rigs.PinkLibFile.count
+      ~Stoner.formats.rigs.PinkLibFile.del_column
+      ~Stoner.formats.rigs.PinkLibFile.del_nan
+      ~Stoner.formats.rigs.PinkLibFile.del_rows
+      ~Stoner.formats.rigs.PinkLibFile.dir
+      ~Stoner.formats.rigs.PinkLibFile.extend
+      ~Stoner.formats.rigs.PinkLibFile.filter
+      ~Stoner.formats.rigs.PinkLibFile.find_col
+      ~Stoner.formats.rigs.PinkLibFile.get
+      ~Stoner.formats.rigs.PinkLibFile.get_filename
+      ~Stoner.formats.rigs.PinkLibFile.index
+      ~Stoner.formats.rigs.PinkLibFile.insert
+      ~Stoner.formats.rigs.PinkLibFile.insert_rows
+      ~Stoner.formats.rigs.PinkLibFile.items
+      ~Stoner.formats.rigs.PinkLibFile.keys
+      ~Stoner.formats.rigs.PinkLibFile.load
+      ~Stoner.formats.rigs.PinkLibFile.pop
+      ~Stoner.formats.rigs.PinkLibFile.popitem
+      ~Stoner.formats.rigs.PinkLibFile.remove
+      ~Stoner.formats.rigs.PinkLibFile.rename
+      ~Stoner.formats.rigs.PinkLibFile.reorder_columns
+      ~Stoner.formats.rigs.PinkLibFile.reverse
+      ~Stoner.formats.rigs.PinkLibFile.rolling_window
+      ~Stoner.formats.rigs.PinkLibFile.rows
+      ~Stoner.formats.rigs.PinkLibFile.save
+      ~Stoner.formats.rigs.PinkLibFile.search
+      ~Stoner.formats.rigs.PinkLibFile.section
+      ~Stoner.formats.rigs.PinkLibFile.select
+      ~Stoner.formats.rigs.PinkLibFile.setdefault
+      ~Stoner.formats.rigs.PinkLibFile.sort
+      ~Stoner.formats.rigs.PinkLibFile.split
+      ~Stoner.formats.rigs.PinkLibFile.swap_column
+      ~Stoner.formats.rigs.PinkLibFile.to_pandas
+      ~Stoner.formats.rigs.PinkLibFile.unique
+      ~Stoner.formats.rigs.PinkLibFile.update
+      ~Stoner.formats.rigs.PinkLibFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.rigs.PinkLibFile.T
+      ~Stoner.formats.rigs.PinkLibFile.basename
+      ~Stoner.formats.rigs.PinkLibFile.clone
+      ~Stoner.formats.rigs.PinkLibFile.column_headers
+      ~Stoner.formats.rigs.PinkLibFile.data
+      ~Stoner.formats.rigs.PinkLibFile.dict_records
+      ~Stoner.formats.rigs.PinkLibFile.dims
+      ~Stoner.formats.rigs.PinkLibFile.dtype
+      ~Stoner.formats.rigs.PinkLibFile.filename
+      ~Stoner.formats.rigs.PinkLibFile.header
+      ~Stoner.formats.rigs.PinkLibFile.mask
+      ~Stoner.formats.rigs.PinkLibFile.metadata
+      ~Stoner.formats.rigs.PinkLibFile.mime_type
+      ~Stoner.formats.rigs.PinkLibFile.patterns
+      ~Stoner.formats.rigs.PinkLibFile.priority
+      ~Stoner.formats.rigs.PinkLibFile.records
+      ~Stoner.formats.rigs.PinkLibFile.setas
+      ~Stoner.formats.rigs.PinkLibFile.shape
+      ~Stoner.formats.rigs.PinkLibFile.subclasses
+   
+   

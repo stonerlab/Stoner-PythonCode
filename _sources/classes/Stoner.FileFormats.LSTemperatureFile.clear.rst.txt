@@ -1,8 +1,0 @@
-
-
-LSTemperatureFile.clear
-==========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: LSTemperatureFile.clear

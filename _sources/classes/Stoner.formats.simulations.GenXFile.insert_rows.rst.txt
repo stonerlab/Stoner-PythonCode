@@ -1,0 +1,8 @@
+
+
+GenXFile.insert_rows
+===============================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.insert_rows

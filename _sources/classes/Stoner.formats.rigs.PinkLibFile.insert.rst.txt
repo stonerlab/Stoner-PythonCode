@@ -1,0 +1,8 @@
+
+
+PinkLibFile.insert
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.insert

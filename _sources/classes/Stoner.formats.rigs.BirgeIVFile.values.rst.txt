@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.values
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.values

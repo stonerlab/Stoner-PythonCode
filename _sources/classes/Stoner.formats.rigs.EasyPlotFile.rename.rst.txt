@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.rename
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.rename

@@ -1,0 +1,8 @@
+
+
+SNSFile.pop
+=====================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.pop

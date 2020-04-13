@@ -1,0 +1,89 @@
+Stoner.formats.facilities.SNSFile
+=================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. autoclass:: SNSFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.facilities.SNSFile.__init__
+      ~Stoner.formats.facilities.SNSFile.add_column
+      ~Stoner.formats.facilities.SNSFile.append
+      ~Stoner.formats.facilities.SNSFile.clear
+      ~Stoner.formats.facilities.SNSFile.closest
+      ~Stoner.formats.facilities.SNSFile.column
+      ~Stoner.formats.facilities.SNSFile.columns
+      ~Stoner.formats.facilities.SNSFile.count
+      ~Stoner.formats.facilities.SNSFile.del_column
+      ~Stoner.formats.facilities.SNSFile.del_nan
+      ~Stoner.formats.facilities.SNSFile.del_rows
+      ~Stoner.formats.facilities.SNSFile.dir
+      ~Stoner.formats.facilities.SNSFile.extend
+      ~Stoner.formats.facilities.SNSFile.filter
+      ~Stoner.formats.facilities.SNSFile.find_col
+      ~Stoner.formats.facilities.SNSFile.get
+      ~Stoner.formats.facilities.SNSFile.get_filename
+      ~Stoner.formats.facilities.SNSFile.index
+      ~Stoner.formats.facilities.SNSFile.insert
+      ~Stoner.formats.facilities.SNSFile.insert_rows
+      ~Stoner.formats.facilities.SNSFile.items
+      ~Stoner.formats.facilities.SNSFile.keys
+      ~Stoner.formats.facilities.SNSFile.load
+      ~Stoner.formats.facilities.SNSFile.pop
+      ~Stoner.formats.facilities.SNSFile.popitem
+      ~Stoner.formats.facilities.SNSFile.remove
+      ~Stoner.formats.facilities.SNSFile.rename
+      ~Stoner.formats.facilities.SNSFile.reorder_columns
+      ~Stoner.formats.facilities.SNSFile.reverse
+      ~Stoner.formats.facilities.SNSFile.rolling_window
+      ~Stoner.formats.facilities.SNSFile.rows
+      ~Stoner.formats.facilities.SNSFile.save
+      ~Stoner.formats.facilities.SNSFile.search
+      ~Stoner.formats.facilities.SNSFile.section
+      ~Stoner.formats.facilities.SNSFile.select
+      ~Stoner.formats.facilities.SNSFile.setdefault
+      ~Stoner.formats.facilities.SNSFile.sort
+      ~Stoner.formats.facilities.SNSFile.split
+      ~Stoner.formats.facilities.SNSFile.swap_column
+      ~Stoner.formats.facilities.SNSFile.to_pandas
+      ~Stoner.formats.facilities.SNSFile.unique
+      ~Stoner.formats.facilities.SNSFile.update
+      ~Stoner.formats.facilities.SNSFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.facilities.SNSFile.T
+      ~Stoner.formats.facilities.SNSFile.basename
+      ~Stoner.formats.facilities.SNSFile.clone
+      ~Stoner.formats.facilities.SNSFile.column_headers
+      ~Stoner.formats.facilities.SNSFile.data
+      ~Stoner.formats.facilities.SNSFile.dict_records
+      ~Stoner.formats.facilities.SNSFile.dims
+      ~Stoner.formats.facilities.SNSFile.dtype
+      ~Stoner.formats.facilities.SNSFile.filename
+      ~Stoner.formats.facilities.SNSFile.header
+      ~Stoner.formats.facilities.SNSFile.mask
+      ~Stoner.formats.facilities.SNSFile.metadata
+      ~Stoner.formats.facilities.SNSFile.mime_type
+      ~Stoner.formats.facilities.SNSFile.patterns
+      ~Stoner.formats.facilities.SNSFile.priority
+      ~Stoner.formats.facilities.SNSFile.records
+      ~Stoner.formats.facilities.SNSFile.setas
+      ~Stoner.formats.facilities.SNSFile.shape
+      ~Stoner.formats.facilities.SNSFile.subclasses
+   
+   

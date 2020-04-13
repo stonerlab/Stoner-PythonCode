@@ -1,0 +1,8 @@
+
+
+BNLFile.extend
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.extend

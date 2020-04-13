@@ -1,0 +1,8 @@
+
+
+PinkLibFile.section
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.section

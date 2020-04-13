@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,9 +45,7 @@
   <h1>Source code for Stoner.core.exceptions</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Stoner Package specific exceptions</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Stoner Package specific exceptions.&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="StonerLoadError"><a class="viewcode-back" href="../../../classes/Stoner.core.exceptions.StonerLoadError.html#Stoner.core.exceptions.StonerLoadError">[docs]</a><span class="k">class</span> <span class="nc">StonerLoadError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -61,9 +56,7 @@
 <span class="sd">    attmpts and then fails to load some data from disk. Generally speaking this is not a real</span>
 <span class="sd">    error, but simply indicates that the file format is not recognised by that particular subclass,</span>
 <span class="sd">    and thus another subclass should have a go instead.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
+<span class="sd">    &quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="StonerUnrecognisedFormat"><a class="viewcode-back" href="../../../classes/Stoner.core.exceptions.StonerUnrecognisedFormat.html#Stoner.core.exceptions.StonerUnrecognisedFormat">[docs]</a><span class="k">class</span> <span class="nc">StonerUnrecognisedFormat</span><span class="p">(</span><span class="ne">IOError</span><span class="p">):</span>
@@ -71,27 +64,23 @@
     <span class="sd">&quot;&quot;&quot;An exception thrown by the file loading routines in the Stoner Package.</span>
 
 <span class="sd">    This special exception is thrown when none of the subclasses was able to load the specified file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
+<span class="sd">    &quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="StonerSetasError"><a class="viewcode-back" href="../../../classes/Stoner.core.exceptions.StonerSetasError.html#Stoner.core.exceptions.StonerSetasError">[docs]</a><span class="k">class</span> <span class="nc">StonerSetasError</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;An exception tjrown when we try to access a column in data without setas being set.&quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;An exception tjrown when we try to access a column in data without setas being set.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="StonerAssertionError"><a class="viewcode-back" href="../../../classes/Stoner.core.exceptions.StonerAssertionError.html#Stoner.core.exceptions.StonerAssertionError">[docs]</a><span class="k">class</span> <span class="nc">StonerAssertionError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;An exception raised when the library thinks an assertion has failed.&quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;An exception raised when the library thinks an assertion has failed.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="assertion"><a class="viewcode-back" href="../../../classes/Stoner.core.exceptions.assertion.html#Stoner.core.exceptions.assertion">[docs]</a><span class="k">def</span> <span class="nf">assertion</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Library Assertion Error set&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A utility functiuon to be used when assert might have been.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raise an error when condition is false.</span>
+
+<span class="sd">    A utility functiuon to be used when assert might have been.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">condition</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">StonerAssertionError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 </pre></div>
@@ -125,16 +114,13 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

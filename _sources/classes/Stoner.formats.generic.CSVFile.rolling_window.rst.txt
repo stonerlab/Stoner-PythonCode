@@ -1,0 +1,8 @@
+
+
+CSVFile.rolling_window
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.rolling_window

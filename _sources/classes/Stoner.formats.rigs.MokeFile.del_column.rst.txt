@@ -1,0 +1,8 @@
+
+
+MokeFile.del_column
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.del_column

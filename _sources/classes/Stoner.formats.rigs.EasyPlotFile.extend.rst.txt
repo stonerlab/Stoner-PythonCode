@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.extend
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.extend

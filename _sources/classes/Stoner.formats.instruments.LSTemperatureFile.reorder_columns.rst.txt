@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.reorder_columns
+============================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.reorder_columns

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.unique
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.unique

@@ -1,8 +1,0 @@
-
-
-RigakuFile.to_pandas
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.to_pandas

@@ -1,0 +1,8 @@
+
+
+SNSFile.columns
+=========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.columns

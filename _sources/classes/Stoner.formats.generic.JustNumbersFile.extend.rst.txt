@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.extend
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.extend

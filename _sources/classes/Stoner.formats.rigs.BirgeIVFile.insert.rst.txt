@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.insert
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.insert

@@ -1,0 +1,8 @@
+
+
+SPCFile.filter
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.filter

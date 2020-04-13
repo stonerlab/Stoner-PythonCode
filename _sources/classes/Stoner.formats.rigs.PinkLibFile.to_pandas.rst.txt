@@ -1,0 +1,8 @@
+
+
+PinkLibFile.to_pandas
+=========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.to_pandas

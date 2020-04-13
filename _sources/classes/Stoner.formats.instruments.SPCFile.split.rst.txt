@@ -1,0 +1,8 @@
+
+
+SPCFile.split
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.split

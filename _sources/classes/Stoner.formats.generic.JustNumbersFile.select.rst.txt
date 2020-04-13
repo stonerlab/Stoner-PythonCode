@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.select
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.select

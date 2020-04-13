@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.sort
+=========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.sort

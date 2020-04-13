@@ -1,0 +1,8 @@
+
+
+FmokeFile.rename
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.rename

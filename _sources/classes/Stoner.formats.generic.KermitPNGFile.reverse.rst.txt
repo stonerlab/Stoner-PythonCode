@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.reverse
+============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.reverse

@@ -1,0 +1,8 @@
+
+
+QDFile.sort
+======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.sort

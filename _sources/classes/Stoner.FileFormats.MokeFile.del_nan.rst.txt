@@ -1,8 +1,0 @@
-
-
-MokeFile.del_nan
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.del_nan

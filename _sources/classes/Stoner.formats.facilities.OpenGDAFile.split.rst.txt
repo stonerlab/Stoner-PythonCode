@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.split
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.split

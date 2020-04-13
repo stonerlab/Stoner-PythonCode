@@ -1,0 +1,8 @@
+
+
+DataFile.index
+==========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.index

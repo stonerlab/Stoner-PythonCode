@@ -1,0 +1,8 @@
+
+
+SNSFile.setdefault
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.setdefault

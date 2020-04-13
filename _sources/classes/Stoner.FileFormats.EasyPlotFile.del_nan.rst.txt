@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.del_nan
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.del_nan

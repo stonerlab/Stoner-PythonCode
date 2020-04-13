@@ -1,0 +1,8 @@
+
+
+VSMFile.setdefault
+=============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.setdefault

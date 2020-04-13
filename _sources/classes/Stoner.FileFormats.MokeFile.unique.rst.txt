@@ -1,8 +1,0 @@
-
-
-MokeFile.unique
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.unique

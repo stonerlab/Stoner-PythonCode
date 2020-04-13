@@ -1,0 +1,8 @@
+
+
+PinkLibFile.reorder_columns
+===============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.reorder_columns

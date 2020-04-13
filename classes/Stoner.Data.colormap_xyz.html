@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.column" href="Stoner.Data.column.html" />
@@ -60,7 +60,7 @@
 <dl class="method">
 <dt id="Stoner.Data.colormap_xyz">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">colormap_xyz</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.colormap_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>An xyz plot that forces the use of plt.contour.</p>
+<dd><p>Make a xyz plot that forces the use of plt.contour.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -71,14 +71,15 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</p></li>
+<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of the
+length of the data.</p></li>
 <li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits, defaults to automatically determined from data</p></li>
 <li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The ylimits, defaults to automatically determined from data</p></li>
 <li><p><strong>plotter</strong> (<em>function</em>) – Function to use to plot data. Defaults to plt.contour</p></li>
 <li><p><strong>colorbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Draw the z-scale color bar beside the plot (True by default)</p></li>
 <li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turn on interfactive plotting and show plot when drawn</p></li>
 <li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If set to a string, save the plot with this filename</p></li>
-<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.1.2)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
+<li><p><strong>figure</strong> (<em>integer</em><em> or </em><a class="reference external" href="https://matplotlib.org/api/figure_api.html#module-matplotlib.figure" title="(in Matplotlib v3.2.1)"><em>matplotlib.figure</em></a><em> or </em><em>boolean</em>) – Controls which figure is used for the plot, or if a new figure is opened.</p></li>
 <li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Other arguments are passed on to the plotter.</p></li>
 </ul>
 </dd>
@@ -148,9 +149,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,0 +1,89 @@
+Stoner.formats.instruments.QDFile
+=================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. autoclass:: QDFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.instruments.QDFile.__init__
+      ~Stoner.formats.instruments.QDFile.add_column
+      ~Stoner.formats.instruments.QDFile.append
+      ~Stoner.formats.instruments.QDFile.clear
+      ~Stoner.formats.instruments.QDFile.closest
+      ~Stoner.formats.instruments.QDFile.column
+      ~Stoner.formats.instruments.QDFile.columns
+      ~Stoner.formats.instruments.QDFile.count
+      ~Stoner.formats.instruments.QDFile.del_column
+      ~Stoner.formats.instruments.QDFile.del_nan
+      ~Stoner.formats.instruments.QDFile.del_rows
+      ~Stoner.formats.instruments.QDFile.dir
+      ~Stoner.formats.instruments.QDFile.extend
+      ~Stoner.formats.instruments.QDFile.filter
+      ~Stoner.formats.instruments.QDFile.find_col
+      ~Stoner.formats.instruments.QDFile.get
+      ~Stoner.formats.instruments.QDFile.get_filename
+      ~Stoner.formats.instruments.QDFile.index
+      ~Stoner.formats.instruments.QDFile.insert
+      ~Stoner.formats.instruments.QDFile.insert_rows
+      ~Stoner.formats.instruments.QDFile.items
+      ~Stoner.formats.instruments.QDFile.keys
+      ~Stoner.formats.instruments.QDFile.load
+      ~Stoner.formats.instruments.QDFile.pop
+      ~Stoner.formats.instruments.QDFile.popitem
+      ~Stoner.formats.instruments.QDFile.remove
+      ~Stoner.formats.instruments.QDFile.rename
+      ~Stoner.formats.instruments.QDFile.reorder_columns
+      ~Stoner.formats.instruments.QDFile.reverse
+      ~Stoner.formats.instruments.QDFile.rolling_window
+      ~Stoner.formats.instruments.QDFile.rows
+      ~Stoner.formats.instruments.QDFile.save
+      ~Stoner.formats.instruments.QDFile.search
+      ~Stoner.formats.instruments.QDFile.section
+      ~Stoner.formats.instruments.QDFile.select
+      ~Stoner.formats.instruments.QDFile.setdefault
+      ~Stoner.formats.instruments.QDFile.sort
+      ~Stoner.formats.instruments.QDFile.split
+      ~Stoner.formats.instruments.QDFile.swap_column
+      ~Stoner.formats.instruments.QDFile.to_pandas
+      ~Stoner.formats.instruments.QDFile.unique
+      ~Stoner.formats.instruments.QDFile.update
+      ~Stoner.formats.instruments.QDFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.instruments.QDFile.T
+      ~Stoner.formats.instruments.QDFile.basename
+      ~Stoner.formats.instruments.QDFile.clone
+      ~Stoner.formats.instruments.QDFile.column_headers
+      ~Stoner.formats.instruments.QDFile.data
+      ~Stoner.formats.instruments.QDFile.dict_records
+      ~Stoner.formats.instruments.QDFile.dims
+      ~Stoner.formats.instruments.QDFile.dtype
+      ~Stoner.formats.instruments.QDFile.filename
+      ~Stoner.formats.instruments.QDFile.header
+      ~Stoner.formats.instruments.QDFile.mask
+      ~Stoner.formats.instruments.QDFile.metadata
+      ~Stoner.formats.instruments.QDFile.mime_type
+      ~Stoner.formats.instruments.QDFile.patterns
+      ~Stoner.formats.instruments.QDFile.priority
+      ~Stoner.formats.instruments.QDFile.records
+      ~Stoner.formats.instruments.QDFile.setas
+      ~Stoner.formats.instruments.QDFile.shape
+      ~Stoner.formats.instruments.QDFile.subclasses
+   
+   

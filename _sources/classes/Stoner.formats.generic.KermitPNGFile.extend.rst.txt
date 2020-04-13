@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.extend
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.extend

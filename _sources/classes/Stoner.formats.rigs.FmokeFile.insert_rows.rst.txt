@@ -1,0 +1,8 @@
+
+
+FmokeFile.insert_rows
+=========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.insert_rows

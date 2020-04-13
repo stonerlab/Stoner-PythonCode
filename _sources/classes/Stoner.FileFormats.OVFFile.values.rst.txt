@@ -1,8 +1,0 @@
-
-
-OVFFile.values
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.values

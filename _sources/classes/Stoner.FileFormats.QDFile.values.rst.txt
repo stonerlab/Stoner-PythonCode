@@ -1,8 +1,0 @@
-
-
-QDFile.values
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.values

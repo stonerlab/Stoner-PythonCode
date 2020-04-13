@@ -1,0 +1,8 @@
+
+
+RasorFile.load
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.load

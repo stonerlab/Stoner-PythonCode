@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.insert
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.insert

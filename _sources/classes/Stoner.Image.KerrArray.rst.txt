@@ -56,7 +56,6 @@ KerrArray
       ~KerrArray.asfloat
       ~KerrArray.asint
       ~KerrArray.astype
-      ~KerrArray.box
       ~KerrArray.byteswap
       ~KerrArray.choose
       ~KerrArray.clear
@@ -66,12 +65,9 @@ KerrArray
       ~KerrArray.compressed
       ~KerrArray.conj
       ~KerrArray.conjugate
-      ~KerrArray.convert_float
-      ~KerrArray.convert_int
       ~KerrArray.copy
       ~KerrArray.count
       ~KerrArray.crop
-      ~KerrArray.crop_image
       ~KerrArray.crop_text
       ~KerrArray.cumprod
       ~KerrArray.cumsum
@@ -195,7 +191,6 @@ KerrArray
    .. automethod:: asfloat
    .. automethod:: asint
    .. automethod:: astype
-   .. automethod:: box
    .. automethod:: byteswap
    .. automethod:: choose
    .. automethod:: clear
@@ -205,12 +200,9 @@ KerrArray
    .. automethod:: compressed
    .. automethod:: conj
    .. automethod:: conjugate
-   .. automethod:: convert_float
-   .. automethod:: convert_int
    .. automethod:: copy
    .. automethod:: count
    .. automethod:: crop
-   .. automethod:: crop_image
    .. automethod:: crop_text
    .. automethod:: cumprod
    .. automethod:: cumsum

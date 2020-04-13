@@ -1,0 +1,8 @@
+
+
+QDFile.select
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.select

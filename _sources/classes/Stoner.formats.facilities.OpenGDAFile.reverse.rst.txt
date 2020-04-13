@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.reverse
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.reverse

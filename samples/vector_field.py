@@ -1,6 +1,8 @@
 """Create a 2D vector field plot."""
-from Stoner import Data, __home__
+# pylint: disable=invalid-name
 from os import path
+
+from Stoner import Data, __home__
 
 d = Data(path.join(__home__, "..", "sample-data", "OVF1.ovf"))
 e = (

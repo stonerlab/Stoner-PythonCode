@@ -1,4 +1,5 @@
 """Detect outlying points from a lione."""
+# pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.utils import poly_outlier
 import numpy as np

@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.save
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.save

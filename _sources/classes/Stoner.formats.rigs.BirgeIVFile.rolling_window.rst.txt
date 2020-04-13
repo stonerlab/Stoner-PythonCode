@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.rolling_window
+==============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.rolling_window

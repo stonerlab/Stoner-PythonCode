@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DataFolder.zip_groups" href="Stoner.DataFolder.zip_groups.html" />
@@ -60,28 +60,30 @@
 <dl class="method">
 <dt id="Stoner.DataFolder.walk_groups">
 <code class="sig-prename descclassname">DataFolder.</code><code class="sig-name descname">walk_groups</code><span class="sig-paren">(</span><em class="sig-param">walker</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.DataFolder.walk_groups" title="Permalink to this definition">¶</a></dt>
-<dd><p>Walks through a heirarchy of groups and calls walker for each file.</p>
+<dd><p>Walk through a heirarchy of groups and calls walker for each file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>walker</strong> (<em>callable</em>) – a callable object that takes either a metadataObject instance or a objectFolder instance.</p>
+<dd class="field-odd"><p><strong>walker</strong> (<em>callable</em>) – A callable object that takes either a metadataObject instance or a objectFolder instance.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (default False) determines whether the walker function will expect to be given the objectFolder
 representing the lowest level group or individual metadataObject objects from the lowest level group</p></li>
-<li><p><strong>replace_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if group is True and the walker function returns an instance of metadataObject then the return value is appended
-to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.</p></li>
-<li><p><strong>obly_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)</p></li>
-<li><p><strong>walker_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – a dictionary of static arguments for the walker function.</p></li>
+<li><p><strong>replace_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If group is True and the walker function returns an instance of metadataObject then the return value
+is appended to the files and the group is removed from the current objectFolder. This will unwind
+the group heirarchy by one level.</p></li>
+<li><p><strong>obly_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal
+groups)</p></li>
+<li><p><strong>walker_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of static arguments for the walker function.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<dl class="simple">
-<dt>The walker function should have a prototype of the form:</dt><dd><p>walker(f,list_of_group_names,**walker_args)
-where f is either a objectFolder or metadataObject.</p>
-</dd>
-</dl>
+<p>The walker function should have a prototype of the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">walker</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">list_of_group_names</span><span class="p">,</span><span class="o">**</span><span class="n">walker_args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where f is either a objectFolder or metadataObject.</p>
 </dd></dl>
 
 </div>
@@ -144,9 +146,9 @@ where f is either a objectFolder or metadataObject.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

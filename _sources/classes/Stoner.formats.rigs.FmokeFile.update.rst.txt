@@ -1,0 +1,8 @@
+
+
+FmokeFile.update
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.update

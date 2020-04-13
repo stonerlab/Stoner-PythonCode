@@ -1,8 +1,0 @@
-
-
-BNLFile.to_pandas
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.to_pandas

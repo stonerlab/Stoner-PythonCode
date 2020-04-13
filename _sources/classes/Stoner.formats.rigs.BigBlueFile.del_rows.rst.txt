@@ -1,0 +1,8 @@
+
+
+BigBlueFile.del_rows
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.del_rows

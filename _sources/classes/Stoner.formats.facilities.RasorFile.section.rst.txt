@@ -1,0 +1,8 @@
+
+
+RasorFile.section
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.section

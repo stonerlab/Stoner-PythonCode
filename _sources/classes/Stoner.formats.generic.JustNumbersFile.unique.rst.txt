@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.unique
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.unique

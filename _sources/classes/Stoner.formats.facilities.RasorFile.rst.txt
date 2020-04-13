@@ -1,0 +1,89 @@
+Stoner.formats.facilities.RasorFile
+===================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. autoclass:: RasorFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.facilities.RasorFile.__init__
+      ~Stoner.formats.facilities.RasorFile.add_column
+      ~Stoner.formats.facilities.RasorFile.append
+      ~Stoner.formats.facilities.RasorFile.clear
+      ~Stoner.formats.facilities.RasorFile.closest
+      ~Stoner.formats.facilities.RasorFile.column
+      ~Stoner.formats.facilities.RasorFile.columns
+      ~Stoner.formats.facilities.RasorFile.count
+      ~Stoner.formats.facilities.RasorFile.del_column
+      ~Stoner.formats.facilities.RasorFile.del_nan
+      ~Stoner.formats.facilities.RasorFile.del_rows
+      ~Stoner.formats.facilities.RasorFile.dir
+      ~Stoner.formats.facilities.RasorFile.extend
+      ~Stoner.formats.facilities.RasorFile.filter
+      ~Stoner.formats.facilities.RasorFile.find_col
+      ~Stoner.formats.facilities.RasorFile.get
+      ~Stoner.formats.facilities.RasorFile.get_filename
+      ~Stoner.formats.facilities.RasorFile.index
+      ~Stoner.formats.facilities.RasorFile.insert
+      ~Stoner.formats.facilities.RasorFile.insert_rows
+      ~Stoner.formats.facilities.RasorFile.items
+      ~Stoner.formats.facilities.RasorFile.keys
+      ~Stoner.formats.facilities.RasorFile.load
+      ~Stoner.formats.facilities.RasorFile.pop
+      ~Stoner.formats.facilities.RasorFile.popitem
+      ~Stoner.formats.facilities.RasorFile.remove
+      ~Stoner.formats.facilities.RasorFile.rename
+      ~Stoner.formats.facilities.RasorFile.reorder_columns
+      ~Stoner.formats.facilities.RasorFile.reverse
+      ~Stoner.formats.facilities.RasorFile.rolling_window
+      ~Stoner.formats.facilities.RasorFile.rows
+      ~Stoner.formats.facilities.RasorFile.save
+      ~Stoner.formats.facilities.RasorFile.search
+      ~Stoner.formats.facilities.RasorFile.section
+      ~Stoner.formats.facilities.RasorFile.select
+      ~Stoner.formats.facilities.RasorFile.setdefault
+      ~Stoner.formats.facilities.RasorFile.sort
+      ~Stoner.formats.facilities.RasorFile.split
+      ~Stoner.formats.facilities.RasorFile.swap_column
+      ~Stoner.formats.facilities.RasorFile.to_pandas
+      ~Stoner.formats.facilities.RasorFile.unique
+      ~Stoner.formats.facilities.RasorFile.update
+      ~Stoner.formats.facilities.RasorFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.facilities.RasorFile.T
+      ~Stoner.formats.facilities.RasorFile.basename
+      ~Stoner.formats.facilities.RasorFile.clone
+      ~Stoner.formats.facilities.RasorFile.column_headers
+      ~Stoner.formats.facilities.RasorFile.data
+      ~Stoner.formats.facilities.RasorFile.dict_records
+      ~Stoner.formats.facilities.RasorFile.dims
+      ~Stoner.formats.facilities.RasorFile.dtype
+      ~Stoner.formats.facilities.RasorFile.filename
+      ~Stoner.formats.facilities.RasorFile.header
+      ~Stoner.formats.facilities.RasorFile.mask
+      ~Stoner.formats.facilities.RasorFile.metadata
+      ~Stoner.formats.facilities.RasorFile.mime_type
+      ~Stoner.formats.facilities.RasorFile.patterns
+      ~Stoner.formats.facilities.RasorFile.priority
+      ~Stoner.formats.facilities.RasorFile.records
+      ~Stoner.formats.facilities.RasorFile.setas
+      ~Stoner.formats.facilities.RasorFile.shape
+      ~Stoner.formats.facilities.RasorFile.subclasses
+   
+   

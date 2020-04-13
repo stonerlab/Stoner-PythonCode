@@ -1,0 +1,8 @@
+
+
+BNLFile.setdefault
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.setdefault

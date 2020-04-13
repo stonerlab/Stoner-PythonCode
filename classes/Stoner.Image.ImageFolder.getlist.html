@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ImageFolder.group" href="Stoner.Image.ImageFolder.group.html" />
@@ -60,26 +60,24 @@
 <dl class="method">
 <dt id="Stoner.Image.ImageFolder.getlist">
 <code class="sig-prename descclassname">ImageFolder.</code><code class="sig-name descname">getlist</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageFolder.getlist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scans the current directory, optionally recursively to build a list of filenames</p>
+<dd><p>Scan the current directory, optionally recursively to build a list of filenames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Do a walk through all the directories for files</p></li>
 <li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><em>False</em></a>) – Either a string path to a new directory or False to open a dialog box or not set in which case existing
 directory is used.</p></li>
-<li><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of</p></li>
+<li><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the
+previous behaviour of <code class="xref py py-meth docutils literal notranslate"><span class="pre">objectFolder.getlist()</span></code>)</p></li>
 </ul>
 </dd>
-</dl>
-<p>:keyword <code class="xref py py-meth docutils literal notranslate"><span class="pre">objectFolder.getlist:</span>
-<span class="pre">:kwtype</span> <span class="pre">:py:meth:`objectFolder.getlist:</span> <span class="pre">)()</span></code></p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A copy of the current DataFoder directory with the files stored in the files attribute</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the current DataFoder directory with the files stored in the files attribute</p>
 </dd>
 </dl>
-<p>getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
-directory tree finding sub directories and creating groups in the data folder for each sub directory.</p>
+<p>getlist() scans a directory tree finding files that match the pattern. By default it will recurse through
+the entire directory tree finding sub directories and creating groups in the data folder for each sub
+directory.</p>
 </dd></dl>
 
 </div>
@@ -142,9 +140,9 @@ directory tree finding sub directories and creating groups in the data folder fo
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

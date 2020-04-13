@@ -1,0 +1,8 @@
+
+
+BigBlueFile.__init__
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.__init__

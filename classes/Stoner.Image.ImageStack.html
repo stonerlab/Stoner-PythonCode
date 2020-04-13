@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="KerrArray" href="Stoner.Image.KerrArray.html" />
@@ -57,7 +57,7 @@
 <dl class="class">
 <dt id="Stoner.Image.ImageStack">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.Image.</code><code class="sig-name descname">ImageStack</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageStack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.stack.StackAnalysisMixin</span></code>, <a class="reference internal" href="Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin" title="Stoner.Image.stack.ImageStackMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.stack.ImageStackMixin</span></code></a>, <a class="reference internal" href="Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" title="Stoner.Image.folders.ImageFolderMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.folders.ImageFolderMixin</span></code></a>, <a class="reference internal" href="Stoner.folders.mixins.DiskBasedFolder.html#Stoner.folders.mixins.DiskBasedFolder" title="Stoner.folders.mixins.DiskBasedFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.mixins.DiskBasedFolder</span></code></a>, <a class="reference internal" href="Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFolder</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.stack.StackAnalysisMixin</span></code>, <a class="reference internal" href="Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin" title="Stoner.Image.stack.ImageStackMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.stack.ImageStackMixin</span></code></a>, <a class="reference internal" href="Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" title="Stoner.Image.folders.ImageFolderMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.folders.ImageFolderMixin</span></code></a>, <a class="reference internal" href="Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin" title="Stoner.folders.mixins.DiskBasedFolderMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.mixins.DiskBasedFolderMixin</span></code></a>, <a class="reference internal" href="Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFolder</span></code></a></p>
 <p>An alternative implementation of an image stack based on baseFolder.</p>
 <p class="rubric">Attributes Summary</p>
 <table class="longtable docutils align-default">
@@ -66,53 +66,53 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.allmeta" title="Stoner.Image.ImageStack.allmeta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allmeta</span></code></a></p></td>
-<td><p>List of complete metadata for each image in ImageStack</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.basenames" title="Stoner.Image.ImageStack.basenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basenames</span></code></a></p></td>
+<td><p>Return a list of just the filename parts of the objectFolder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.basenames" title="Stoner.Image.ImageStack.basenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basenames</span></code></a></p></td>
-<td><p>Returns a list of just the filename parts of the objectFolder.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.clone" title="Stoner.Image.ImageStack.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.clone" title="Stoner.Image.ImageStack.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></p></td>
 <td><p>Clone just does a deepcopy as a property for compatibility with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.debug" title="Stoner.Image.ImageStack.debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.debug" title="Stoner.Image.ImageStack.debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug</span></code></a></p></td>
 <td><p>Just read the local debug value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.defaults" title="Stoner.Image.ImageStack.defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaults</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.defaults" title="Stoner.Image.ImageStack.defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">defaults</span></code></a></p></td>
 <td><p>Build a single list of all of our defaults by iterating over the __mro__, caching the result.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">depth</span></code></a></p></td>
-<td><p>Gives the maximum number of levels of group below the current objectFolder.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">depth</span></code></a></p></td>
+<td><p>Give the maximum number of levels of group below the current objectFolder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.directory" title="Stoner.Image.ImageStack.directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">directory</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.directory" title="Stoner.Image.ImageStack.directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">directory</span></code></a></p></td>
 <td><p>Just alias directory to root now.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.each" title="Stoner.Image.ImageStack.each"><code class="xref py py-obj docutils literal notranslate"><span class="pre">each</span></code></a></p></td>
-<td><p>Return a <a class="reference internal" href="Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.each.item</span></code></a> proxy object for calling attributes of the member type of the folder.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.each" title="Stoner.Image.ImageStack.each"><code class="xref py py-obj docutils literal notranslate"><span class="pre">each</span></code></a></p></td>
+<td><p>Return a <a class="reference internal" href="Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.each.item</span></code></a> proxy object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.files" title="Stoner.Image.ImageStack.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.files" title="Stoner.Image.ImageStack.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
 <td><p>Return an iterator of potentially unloaded named objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.groups" title="Stoner.Image.ImageStack.groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groups</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.groups" title="Stoner.Image.ImageStack.groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groups</span></code></a></p></td>
 <td><p>Subfolders are held in an ordered dictionary of groups.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.images" title="Stoner.Image.ImageStack.images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">images</span></code></a></p></td>
-<td><p>A generator that iterates over just the images in the Folder.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.images" title="Stoner.Image.ImageStack.images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">images</span></code></a></p></td>
+<td><p>Iterate over just the images in the Folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.imarray" title="Stoner.Image.ImageStack.imarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imarray</span></code></a></p></td>
-<td><p>“Produce the 3D stack of images - as [image,x,y]</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.imarray" title="Stoner.Image.ImageStack.imarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imarray</span></code></a></p></td>
+<td><p>Produce the 3D stack of images - as [image,x,y].</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.instance" title="Stoner.Image.ImageStack.instance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance</span></code></a></p></td>
-<td><p>A default instance of the type of object in the folder.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.instance" title="Stoner.Image.ImageStack.instance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance</span></code></a></p></td>
+<td><p>Return a default instance of the type of object in the folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.is_empty" title="Stoner.Image.ImageStack.is_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_empty</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.is_empty" title="Stoner.Image.ImageStack.is_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_empty</span></code></a></p></td>
 <td><p>Return True if the folder is empty.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.key" title="Stoner.Image.ImageStack.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.key" title="Stoner.Image.ImageStack.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a></p></td>
 <td><p>Override the parent class <em>key</em> to use the <em>directory</em> attribute.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.layout" title="Stoner.Image.ImageStack.layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layout</span></code></a></p></td>
+<td><p>Return a tuple that describes the number of files and groups in the folder.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.loaded" title="Stoner.Image.ImageStack.loaded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loaded</span></code></a></p></td>
-<td><p>An iterator that indicates wether the contents of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.objectFolder</span></code> has been loaded into memory.</p></td>
+<td><p>Iterate only over those members of the folder in memory.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.loader" title="Stoner.Image.ImageStack.loader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loader</span></code></a></p></td>
 <td><p>Return a callable that will load the files on demand.</p></td>
@@ -121,25 +121,25 @@
 <td><p>List just the names of the objects in the folder.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.lsgrp" title="Stoner.Image.ImageStack.lsgrp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lsgrp</span></code></a></p></td>
-<td><p>Returns a list of the groups as a generator.</p></td>
+<td><p>Return a list of the groups as a generator.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.max_size" title="Stoner.Image.ImageStack.max_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_size</span></code></a></p></td>
 <td><p>Get the biggest image dimensions in the stack.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.metadata" title="Stoner.Image.ImageStack.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></td>
-<td><p>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.metadata.combined_metadata_pryx</span></code> object for operations on combined metadata.</p></td>
+<td><p>Return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.metadata.combined_metadata_pryx</span></code> object.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.mindepth" title="Stoner.Image.ImageStack.mindepth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mindepth</span></code></a></p></td>
-<td><p>Gives the minimum number of levels of group below the current objectFolder.</p></td>
+<td><p>Give the minimum number of levels of group below the current objectFolder.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.not_empty" title="Stoner.Image.ImageStack.not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">not_empty</span></code></a></p></td>
-<td><p>An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.</p></td>
+<td><p>Iterate over the objectFolder that checks whether the loaded metadataObject objects have any data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.not_loaded" title="Stoner.Image.ImageStack.not_loaded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">not_loaded</span></code></a></p></td>
 <td><p>Return an array of True/False for whether we’ve loaded a metadataObject yet.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.objects" title="Stoner.Image.ImageStack.objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">objects</span></code></a></p></td>
-<td><p>The objects in the folder are stored in a <code class="xref py py-class docutils literal notranslate"><span class="pre">regexpDict</span></code>.</p></td>
+<td><p>Return the objects in the folder are stored in a <code class="xref py py-class docutils literal notranslate"><span class="pre">regexpDict</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.pattern" title="Stoner.Image.ImageStack.pattern"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pattern</span></code></a></p></td>
 <td><p>Provide support for getting the pattern attribute.</p></td>
@@ -147,17 +147,20 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.root" title="Stoner.Image.ImageStack.root"><code class="xref py py-obj docutils literal notranslate"><span class="pre">root</span></code></a></p></td>
 <td><p>Return the real folder root.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.shape" title="Stoner.Image.ImageStack.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.setas" title="Stoner.Image.ImageStack.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
+<td><p>Return the proxy for the setas attribute for each object in the folder.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.shape" title="Stoner.Image.ImageStack.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Return the stack shape - after re-ordering the indices.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.size" title="Stoner.Image.ImageStack.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.size" title="Stoner.Image.ImageStack.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></p></td>
 <td><p>Return the size of an individual image or False if not all images are the same size.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.trunkdepth" title="Stoner.Image.ImageStack.trunkdepth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunkdepth</span></code></a></p></td>
-<td><p>The number of levels of group before a group with files is found.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.trunkdepth" title="Stoner.Image.ImageStack.trunkdepth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunkdepth</span></code></a></p></td>
+<td><p>Return the number of levels of group before a group with files is found.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.type" title="Stoner.Image.ImageStack.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></td>
-<td><p>Defines the (sub)class of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.type" title="Stoner.Image.ImageStack.type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code></a></p></td>
+<td><p>Return the (sub)class of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</p></td>
 </tr>
 </tbody>
 </table>
@@ -171,29 +174,35 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.add_group" title="Stoner.Image.ImageStack.add_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_group</span></code></a>(key)</p></td>
 <td><p>Add a new group to the current baseFolder with the given key.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.all" title="Stoner.Image.ImageStack.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>()</p></td>
-<td><p>Iterates over all the files in the Folder and all it’s sub Folders recursively.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.align" title="Stoner.Image.ImageStack.align"><code class="xref py py-obj docutils literal notranslate"><span class="pre">align</span></code></a>(*args, **kargs)</p></td>
+<td><p>Align each image in the folder to the reference image.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.append" title="Stoner.Image.ImageStack.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(value)</p></td>
-<td><p>Append an item to the folder object</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.all" title="Stoner.Image.ImageStack.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>()</p></td>
+<td><p>Iterate over all the files in the Folder and all it’s sub Folders recursively.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.apply_all" title="Stoner.Image.ImageStack.apply_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_all</span></code></a>(*args, **kargs)</p></td>
-<td><p>apply function to all images in the stack</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.append" title="Stoner.Image.ImageStack.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(value)</p></td>
+<td><p>Append an item to the folder object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.as_stack" title="Stoner.Image.ImageStack.as_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_stack</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.apply_all" title="Stoner.Image.ImageStack.apply_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_all</span></code></a>(func, *args, **kargs)</p></td>
+<td><p>Apply function to all images in the stack.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.as_stack" title="Stoner.Image.ImageStack.as_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_stack</span></code></a>()</p></td>
 <td><p>Return a ImageStack of the images in the current group.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.asfloat" title="Stoner.Image.ImageStack.asfloat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asfloat</span></code></a>([normalise, clip, clip_negative])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.asfloat" title="Stoner.Image.ImageStack.asfloat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asfloat</span></code></a>([normalise, clip, clip_negative])</p></td>
 <td><p>Convert stack to floating point type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.average" title="Stoner.Image.ImageStack.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.average" title="Stoner.Image.ImageStack.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box])</p></td>
 <td><p>Get an array of average pixel values for the stack.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.clear" title="Stoner.Image.ImageStack.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.clear" title="Stoner.Image.ImageStack.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p>Clear the subgroups.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.compress" title="Stoner.Image.ImageStack.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base, key, keep_terminal])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.compress" title="Stoner.Image.ImageStack.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>([base, key, keep_terminal])</p></td>
 <td><p>Compresses all empty groups from the root up until the first non-empty group is located.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.convert" title="Stoner.Image.ImageStack.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a>(dtype[, force_copy, uniform, normalise])</p></td>
+<td><p>Convert an image to the requested data-type.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.correct_drifts" title="Stoner.Image.ImageStack.correct_drifts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correct_drifts</span></code></a>(refindex[, threshold, …])</p></td>
 <td><p>Align images to correct for image drift.</p></td>
@@ -202,7 +211,7 @@
 <td><p>Provide a count method like a sequence.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.crop_stack" title="Stoner.Image.ImageStack.crop_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_stack</span></code></a>(box)</p></td>
-<td><p>Crop the imagestack.</p></td>
+<td><p>Crop the imagestack to a box.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.dtype_limits" title="Stoner.Image.ImageStack.dtype_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype_limits</span></code></a>([clip_negative])</p></td>
 <td><p>Return intensity limits, i.e.</p></td>
@@ -211,106 +220,112 @@
 <td><p>S.extend(iterable) – extend sequence by appending elements from the iterable</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.fetch" title="Stoner.Image.ImageStack.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fetch</span></code></a>()</p></td>
-<td><p>Preload the contents of the DiskbasedFolder.</p></td>
+<td><p>Preload the contents of the DiskBasedFolderMixin.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.file" title="Stoner.Image.ImageStack.file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file</span></code></a>(name, value[, create, pathsplit])</p></td>
 <td><p>Recursively add groups in order to put the named value into a virtual tree of <code class="xref py py-class docutils literal notranslate"><span class="pre">baseFolder</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.filter" title="Stoner.Image.ImageStack.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([filter, invert, copy])</p></td>
-<td><p>Filter the current set of files by some criterion</p></td>
+<td><p>Filter the current set of files by some criterion.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.filterout" title="Stoner.Image.ImageStack.filterout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filterout</span></code></a>(filter[, copy])</p></td>
-<td><p>Synonym for self.filter(filter,invert=True)</p></td>
+<td><p>Synonym for self.filter(filter,invert=True).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.flatten" title="Stoner.Image.ImageStack.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>([depth])</p></td>
 <td><p>Compresses all the groups and sub-groups iunto a single flat file list.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.get" title="Stoner.Image.ImageStack.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(name[, default])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.from_tiff" title="Stoner.Image.ImageStack.from_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_tiff</span></code></a>(filename, **kargs)</p></td>
+<td><p>Create a new ImageArray from a tiff file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.get" title="Stoner.Image.ImageStack.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(name[, default])</p></td>
 <td><p>Return either a sub-group or named object from this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.getlist" title="Stoner.Image.ImageStack.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>(**kargs)</p></td>
-<td><p>Scans the current directory, optionally recursively to build a list of filenames</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.getlist" title="Stoner.Image.ImageStack.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>(**kargs)</p></td>
+<td><p>Scan the current directory, optionally recursively to build a list of filenames.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.group" title="Stoner.Image.ImageStack.group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group</span></code></a>(key)</p></td>
-<td><p>Take the files and sort them into a series of separate objectFolder objects according to the value of the key</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.group" title="Stoner.Image.ImageStack.group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group</span></code></a>(key)</p></td>
+<td><p>Sort Files into a series of objectFolders according to the value of the key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.index" title="Stoner.Image.ImageStack.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(name[, start, end])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.index" title="Stoner.Image.ImageStack.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(name[, start, end])</p></td>
 <td><p>Provide an index method like a sequence.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.insert" title="Stoner.Image.ImageStack.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(ix, value)</p></td>
-<td><p>Implements the insert method with the option to append as well.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.insert" title="Stoner.Image.ImageStack.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(ix, value)</p></td>
+<td><p>Implement the insert method with the option to append as well.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.items" title="Stoner.Image.ImageStack.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.items" title="Stoner.Image.ImageStack.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
 <td><p>Return the key,value pairs for the subbroups of this folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.keep_latest" title="Stoner.Image.ImageStack.keep_latest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_latest</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.keep_latest" title="Stoner.Image.ImageStack.keep_latest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keep_latest</span></code></a>()</p></td>
 <td><p>Filter out earlier revisions of files with the same name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.keys" title="Stoner.Image.ImageStack.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.keys" title="Stoner.Image.ImageStack.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
 <td><p>Return the keys used to access the sub-=groups of this folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.loadgroup" title="Stoner.Image.ImageStack.loadgroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadgroup</span></code></a>()</p></td>
-<td><p>Load all files from this group into memory</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.loadgroup" title="Stoner.Image.ImageStack.loadgroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadgroup</span></code></a>()</p></td>
+<td><p>Load all files from this group into memory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.make_name" title="Stoner.Image.ImageStack.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.make_name" title="Stoner.Image.ImageStack.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</p></td>
 <td><p>Construct a name from the value object if possible.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.mean" title="Stoner.Image.ImageStack.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.mean" title="Stoner.Image.ImageStack.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box])</p></td>
 <td><p>Calculate the mean value of all the images in the stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.next" title="Stoner.Image.ImageStack.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.next" title="Stoner.Image.ImageStack.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a>()</p></td>
 <td><p>Python 2.7 style iterator function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.on_load_process" title="Stoner.Image.ImageStack.on_load_process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_load_process</span></code></a>(tmp)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.on_load_process" title="Stoner.Image.ImageStack.on_load_process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_load_process</span></code></a>(tmp)</p></td>
 <td><p>Carry out processing on a newly loaded file to set means and extra metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.pop" title="Stoner.Image.ImageStack.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name, default])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.pop" title="Stoner.Image.ImageStack.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name, default])</p></td>
 <td><p>Return and remove either a subgroup or named object from this folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.popitem" title="Stoner.Image.ImageStack.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.popitem" title="Stoner.Image.ImageStack.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
 <td><p>Return the most recent subgroup from this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.prune" title="Stoner.Image.ImageStack.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.prune" title="Stoner.Image.ImageStack.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
 <td><p>Remove any empty groups from the objectFolder (and subgroups).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.remove" title="Stoner.Image.ImageStack.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.remove" title="Stoner.Image.ImageStack.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
 <td><p>S.remove(value) – remove first occurrence of value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.reverse" title="Stoner.Image.ImageStack.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.reverse" title="Stoner.Image.ImageStack.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
 <td><p>S.reverse() – reverse <em>IN PLACE</em></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.save" title="Stoner.Image.ImageStack.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
-<td><p>Save the entire data folder out to disc using the groups as a directory tree, calling the save method for each file in turn.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.save" title="Stoner.Image.ImageStack.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
+<td><p>Save the entire data folder out to disc using the groups as a directory tree.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.select" title="Stoner.Image.ImageStack.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
-<td><p>A generator that can be used to select particular data files from the objectFolder</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.select" title="Stoner.Image.ImageStack.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
+<td><p>Select a subset of the objects in the folder based on flexible search criteria on the metadata.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.setdefault" title="Stoner.Image.ImageStack.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[, d])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.setdefault" title="Stoner.Image.ImageStack.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[, d])</p></td>
 <td><p>Return or set a subgroup or named object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.show" title="Stoner.Image.ImageStack.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
-<td><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.show" title="Stoner.Image.ImageStack.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
+<td><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.slice_metadata" title="Stoner.Image.ImageStack.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[, output])</p></td>
-<td><p>Return an array of the metadata values for each item/file in the top level group</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.slice_metadata" title="Stoner.Image.ImageStack.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[, output])</p></td>
+<td><p>Return an array of the metadata values for each item/file in the top level group.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.sort" title="Stoner.Image.ImageStack.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key, reverse])</p></td>
-<td><p>Sort the files by some key</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.sort" title="Stoner.Image.ImageStack.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key, reverse, recursive])</p></td>
+<td><p>Sort the files by some key.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.stddev" title="Stoner.Image.ImageStack.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights])</p></td>
-<td><p>Calculate weighted standard deviation for stack</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.stddev" title="Stoner.Image.ImageStack.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights])</p></td>
+<td><p>Calculate weighted standard deviation for stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.stderr" title="Stoner.Image.ImageStack.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights])</p></td>
-<td><p>Standard error in the stack average</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.stderr" title="Stoner.Image.ImageStack.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights])</p></td>
+<td><p>Calculate standard error in the stack average.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.subtract" title="Stoner.Image.ImageStack.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(background[, contrast, clip_intensity])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.subtract" title="Stoner.Image.ImageStack.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(background[, contrast, clip_intensity])</p></td>
 <td><p>Subtract a background image (or index) from all images in the stack.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.to_tiff" title="Stoner.Image.ImageStack.to_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_tiff</span></code></a>(filename)</p></td>
+<td><p>Save the ImageArray as a tiff image with metadata.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.unflatten" title="Stoner.Image.ImageStack.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</p></td>
-<td><p>Takes a file list an unflattens them according to the file paths.</p></td>
+<td><p>Take the file list an unflattens them according to the file paths.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.unload" title="Stoner.Image.ImageStack.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>([name])</p></td>
-<td><p>Removes the instance from memory without losing the name in the Folder.</p></td>
+<td><p>Remove the instance from memory without losing the name in the Folder.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.update" title="Stoner.Image.ImageStack.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</p></td>
 <td><p>Update this folder with a dictionary or another folder.</p></td>
@@ -322,24 +337,18 @@
 <td><p>Create a matplotlib animated view of the contents.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.walk_groups" title="Stoner.Image.ImageStack.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker, **kargs)</p></td>
-<td><p>Walks through a heirarchy of groups and calls walker for each file.</p></td>
+<td><p>Walk through a heirarchy of groups and calls walker for each file.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageStack.zip_groups" title="Stoner.Image.ImageStack.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</p></td>
-<td><p>Return a list of tuples of metadataObjects drawn from the specified groups</p></td>
+<td><p>Return a list of tuples of metadataObjects drawn from the specified groups.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
 <dl class="attribute">
-<dt id="Stoner.Image.ImageStack.allmeta">
-<code class="sig-name descname">allmeta</code><a class="headerlink" href="#Stoner.Image.ImageStack.allmeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of complete metadata for each image in ImageStack</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="Stoner.Image.ImageStack.basenames">
 <code class="sig-name descname">basenames</code><a class="headerlink" href="#Stoner.Image.ImageStack.basenames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of just the filename parts of the objectFolder.</p>
+<dd><p>Return a list of just the filename parts of the objectFolder.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -363,7 +372,7 @@
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.depth">
 <code class="sig-name descname">depth</code><a class="headerlink" href="#Stoner.Image.ImageStack.depth" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the maximum number of levels of group below the current objectFolder.</p>
+<dd><p>Give the maximum number of levels of group below the current objectFolder.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -375,7 +384,8 @@
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.each">
 <code class="sig-name descname">each</code><a class="headerlink" href="#Stoner.Image.ImageStack.each" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a <a class="reference internal" href="Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.each.item</span></code></a> proxy object for calling attributes of the member type of the folder.</p>
+<dd><p>Return a <a class="reference internal" href="Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.each.item</span></code></a> proxy object.</p>
+<p>This is for calling attributes of the member type of the folder.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -393,19 +403,19 @@
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.images">
 <code class="sig-name descname">images</code><a class="headerlink" href="#Stoner.Image.ImageStack.images" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generator that iterates over just the images in the Folder.</p>
+<dd><p>Iterate over just the images in the Folder.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.imarray">
 <code class="sig-name descname">imarray</code><a class="headerlink" href="#Stoner.Image.ImageStack.imarray" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Produce the 3D stack of images - as [image,x,y]</p>
+<dd><p>Produce the 3D stack of images - as [image,x,y].</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.instance">
 <code class="sig-name descname">instance</code><a class="headerlink" href="#Stoner.Image.ImageStack.instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>A default instance of the type of object in the folder.</p>
+<dd><p>Return a default instance of the type of object in the folder.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -421,9 +431,15 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="Stoner.Image.ImageStack.layout">
+<code class="sig-name descname">layout</code><a class="headerlink" href="#Stoner.Image.ImageStack.layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tuple that describes the number of files and groups in the folder.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="Stoner.Image.ImageStack.loaded">
 <code class="sig-name descname">loaded</code><a class="headerlink" href="#Stoner.Image.ImageStack.loaded" title="Permalink to this definition">¶</a></dt>
-<dd><p>An iterator that indicates wether the contents of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.objectFolder</span></code> has been loaded into memory.</p>
+<dd><p>Iterate only over those members of the folder in memory.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -441,7 +457,7 @@
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.lsgrp">
 <code class="sig-name descname">lsgrp</code><a class="headerlink" href="#Stoner.Image.ImageStack.lsgrp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of the groups as a generator.</p>
+<dd><p>Return a list of the groups as a generator.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -453,19 +469,20 @@
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.metadata">
 <code class="sig-name descname">metadata</code><a class="headerlink" href="#Stoner.Image.ImageStack.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.metadata.combined_metadata_pryx</span></code> object for operations on combined metadata.</p>
+<dd><p>Return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.metadata.combined_metadata_pryx</span></code> object.</p>
+<p>This allows for operations on combined metadata.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.mindepth">
 <code class="sig-name descname">mindepth</code><a class="headerlink" href="#Stoner.Image.ImageStack.mindepth" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the minimum number of levels of group below the current objectFolder.</p>
+<dd><p>Give the minimum number of levels of group below the current objectFolder.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.not_empty">
 <code class="sig-name descname">not_empty</code><a class="headerlink" href="#Stoner.Image.ImageStack.not_empty" title="Permalink to this definition">¶</a></dt>
-<dd><p>An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.</p>
+<dd><p>Iterate over the objectFolder that checks whether the loaded metadataObject objects have any data.</p>
 <p>Returns the next non-empty DatFile member of the objectFolder.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -483,7 +500,7 @@ and exception.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.objects">
 <code class="sig-name descname">objects</code><a class="headerlink" href="#Stoner.Image.ImageStack.objects" title="Permalink to this definition">¶</a></dt>
-<dd><p>The objects in the folder are stored in a <code class="xref py py-class docutils literal notranslate"><span class="pre">regexpDict</span></code>.</p>
+<dd><p>Return the objects in the folder are stored in a <code class="xref py py-class docutils literal notranslate"><span class="pre">regexpDict</span></code>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -496,6 +513,12 @@ and exception.</p>
 <dt id="Stoner.Image.ImageStack.root">
 <code class="sig-name descname">root</code><a class="headerlink" href="#Stoner.Image.ImageStack.root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the real folder root.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Image.ImageStack.setas">
+<code class="sig-name descname">setas</code><a class="headerlink" href="#Stoner.Image.ImageStack.setas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the proxy for the setas attribute for each object in the folder.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -513,13 +536,13 @@ and exception.</p>
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.trunkdepth">
 <code class="sig-name descname">trunkdepth</code><a class="headerlink" href="#Stoner.Image.ImageStack.trunkdepth" title="Permalink to this definition">¶</a></dt>
-<dd><p>The number of levels of group before a group with files is found.</p>
+<dd><p>Return the number of levels of group before a group with files is found.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Image.ImageStack.type">
 <code class="sig-name descname">type</code><a class="headerlink" href="#Stoner.Image.ImageStack.type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the (sub)class of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</p>
+<dd><p>Return the (sub)class of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
@@ -546,9 +569,33 @@ and exception.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="Stoner.Image.ImageStack.align">
+<code class="sig-name descname">align</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.align" title="Permalink to this definition">¶</a></dt>
+<dd><p>Align each image in the folder to the reference image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ref</strong> (<em>str, int, ImageFile, ImageArray or 2D array</em>) – The reference image to align to. If a string or an int, then this is used to lookup the corresponding
+member of the ImageFolder which is then used. ImageFiles, ImageArrays and 2D arrays are used directly
+as reference images.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The mthod is passed to the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stone.Image.ImageArray.align</span></code> method to control how the image
+alignment is done. By default the ‘Scharr’ method is used.</p></li>
+<li><p><strong>box</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>tuple of ints</em><em> or </em><em>floats</em>) – Specifies a subset of the images to be used to calculate the alignment with.</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Magnification factor to scale the image by before doing the alignment for better sub=pixel alignments.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The aligned ImageFolder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="Stoner.Image.ImageStack.all">
 <code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterates over all the files in the Folder and all it’s sub Folders recursively.</p>
+<dd><p>Iterate over all the files in the Folder and all it’s sub Folders recursively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Yields</dt>
 <dd class="field-odd"><p>(path/filename,file)</p>
@@ -559,13 +606,13 @@ and exception.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.append">
 <code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append an item to the folder object</p>
+<dd><p>Append an item to the folder object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.apply_all">
-<code class="sig-name descname">apply_all</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.apply_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>apply function to all images in the stack</p>
+<code class="sig-name descname">apply_all</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.apply_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply function to all images in the stack.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -589,12 +636,7 @@ and exception.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.asfloat">
 <code class="sig-name descname">asfloat</code><span class="sig-paren">(</span><em class="sig-param">normalise=True</em>, <em class="sig-param">clip=False</em>, <em class="sig-param">clip_negative=False</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.asfloat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert stack to floating point type.
-Analagous behaviour to ImageFile.asfloat()</p>
-<p>If currently an int type and normalise then floats will be normalised
-to the maximum allowed value of the int type.
-If currently a float type then no change occurs.
-If clip_negative then clip values outside the range 0,1</p>
+<dd><p>Convert stack to floating point type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
@@ -604,6 +646,12 @@ If clip_negative then clip values outside the range 0,1</p>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Analagous behaviour to ImageFile.asfloat()</p>
+<p>If currently an int type and normalise then floats will be normalised
+to the maximum allowed value of the int type.
+If currently a float type then no change occurs.
+If clip_negative then clip values outside the range 0,1</p>
 </dd></dl>
 
 <dl class="method">
@@ -627,6 +675,48 @@ If clip_negative then clip values outside the range 0,1</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A copy of the now flattened DatFolder</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.Image.ImageStack.convert">
+<code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param">dtype</em>, <em class="sig-param">force_copy=False</em>, <em class="sig-param">uniform=False</em>, <em class="sig-param">normalise=True</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an image to the requested data-type.</p>
+<p>Warnings are issued in case of precision loss, or when negative values
+are clipped during conversion to unsigned integer types (sign loss).</p>
+<p>Floating point values are expected to be normalized and will be clipped
+to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or
+signed integers respectively.</p>
+<p>Numbers are not shifted to the negative side when converting from
+unsigned to signed integer types. Negative values will be clipped when
+converting to unsigned integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>ndarray</em>) – Input image.</p></li>
+<li><p><strong>dtype</strong> (<em>dtype</em>) – Target data-type.</p></li>
+<li><p><strong>force_copy</strong> (<em>bool</em>) – Force a copy of the data, irrespective of its current dtype.</p></li>
+<li><p><strong>uniform</strong> (<em>bool</em>) – Uniformly quantize the floating point range to the integer range.
+By default (uniform=False) floating point values are scaled and
+rounded to the nearest integers, which minimizes back and forth
+conversion errors.</p></li>
+<li><p><strong>normalise</strong> (<em>bool</em>) – When converting from int types to float normalise the resulting array
+by the maximum allowed value of the int type.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<ol class="arabic simple">
+<li><p>DirectX data conversion rules.
+<a class="reference external" href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx">http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx</a></p></li>
+</ol>
+<dl class="simple">
+<dt>2,  Data Conversions.</dt><dd><p>In “OpenGL ES 2.0 Specification v2.0.25”, pp 7-8. Khronos Group, 2010.</p>
+</dd>
+<dt>3,  Proper treatment of pixels as integers. A.W. Paeth.</dt><dd><p>In “Graphics Gems I”, pp 249-256. Morgan Kaufmann, 1990.</p>
+</dd>
+<dt>4,  Dirty Pixels. J. Blinn.</dt><dd><p>In “Jim Blinn’s corner: Dirty Pixels”, pp 47-57. Morgan Kaufmann, 1998.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -666,16 +756,17 @@ If clip_negative then clip values outside the range 0,1</p>
 <dd class="field-even"><p><em>(int)</em> – The number of matching metadataObject instances.</p>
 </dd>
 </dl>
-<p>If <em>name</em> is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
-<em>name</em> may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
-if <em>name</em> is a metadataObject, then it matches for an equyality test.</p>
+<p class="rubric">Notes</p>
+<p>If <em>name</em> is a string, then matching is based on either exact matches of the name, or if it includes a
+* or ? then the basis of a globbing match. <em>name</em> may also be a regular expressiuon, in which case
+matches are made on the basis of  the match with the name of the metadataObject. Finally, if <em>name</em>
+is a metadataObject, then  it matches for an equyality test.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.crop_stack">
 <code class="sig-name descname">crop_stack</code><span class="sig-paren">(</span><em class="sig-param">box</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.crop_stack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop the imagestack.
-Crops to the box given</p>
+<dd><p>Crop the imagestack to a box.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>box</strong> (<em>array or list of type int</em>) – [xmin,xmax,ymin,ymax]</p>
@@ -710,7 +801,7 @@ even if the image dtype allows negative values.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.fetch">
 <code class="sig-name descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.fetch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Preload the contents of the DiskbasedFolder.</p>
+<dd><p>Preload the contents of the DiskBasedFolderMixin.</p>
 <p>With multiprocess enabled this will parallel load the contents of the folder into memory.</p>
 </dd></dl>
 
@@ -727,13 +818,17 @@ even if the image dtype allows negative values.</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Keyword Aprameters:</dt><dd><p>create(bool): Whether to create missing groups or to raise an error (default True to create groups).
-pathsplit(str or None): Character to use to split the name into path components. Defaults to using os.path.split()</p>
+<dt>Keyword Aprameters:</dt><dd><dl class="simple">
+<dt>create(bool):</dt><dd><p>Whether to create missing groups or to raise an error (default True to create groups).</p>
+</dd>
+<dt>pathsplit(str or None):</dt><dd><p>Character to use to split the name into path components. Defaults to using os.path.split()</p>
+</dd>
+</dl>
 </dd>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(baseFolder)</em> – A reference to the group where the value was eventually filed</p>
+<dd class="field-odd"><p><em>(baseFolder)</em> –     A reference to the group where the value was eventually filed</p>
 </dd>
 </dl>
 </dd></dl>
@@ -741,16 +836,17 @@ pathsplit(str or None): Character to use to split the name into path components.
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.filter">
 <code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">filter=None</em>, <em class="sig-param">invert=False</em>, <em class="sig-param">copy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter the current set of files by some criterion</p>
+<dd><p>Filter the current set of files by some criterion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
-metadataObject and evaluates True or False</p>
+<dd class="field-odd"><p><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an
+instance of a metadataObject and evaluates True or False</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Invert the sense of the filter (done by doing an XOR whith the filter condition</p></li>
-<li><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False - work in place.</p></li>
+<li><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False -
+work in place.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -762,14 +858,15 @@ metadataObject and evaluates True or False</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.filterout">
 <code class="sig-name descname">filterout</code><span class="sig-paren">(</span><em class="sig-param">filter</em>, <em class="sig-param">copy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.filterout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Synonym for self.filter(filter,invert=True)</p>
+<dd><p>Synonym for self.filter(filter,invert=True).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a
-metadataObject and evaluates True or False</p>
+<dd class="field-odd"><p><strong>filter</strong> (<em>string or callable</em>) – Either a string flename pattern or a callable function which takes a single parameter x which is an
+instance of a metadataObject and evaluates True or False</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False - work in place.</p>
+<dd class="field-even"><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If set True then the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFolder</span></code> is copied before being filtered. Default is False -
+work in place.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The current objectFolder object with the files in the file list filtered.</p>
@@ -783,12 +880,21 @@ metadataObject and evaluates True or False</p>
 <dd><p>Compresses all the groups and sub-groups iunto a single flat file list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>)</strong> (<a class="reference internal" href="#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – Only flatten ub-=groups that are within (<em>depth</em> of the deepest level.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>)</strong> (<a class="reference internal" href="#Stoner.Image.ImageStack.depth" title="Stoner.Image.ImageStack.depth"><em>depth</em></a>) – </p></li>
+<li><p><strong>flatten ub-=groups that are within</strong><strong> (</strong><strong>depth of the deepest level.</strong> (<em>Only</em>) – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A copy of the now flattened DatFolder</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.Image.ImageStack.from_tiff">
+<em class="property">classmethod </em><code class="sig-name descname">from_tiff</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.from_tiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new ImageArray from a tiff file.</p>
 </dd></dl>
 
 <dl class="method">
@@ -800,44 +906,46 @@ metadataObject and evaluates True or False</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.getlist">
 <code class="sig-name descname">getlist</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.getlist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scans the current directory, optionally recursively to build a list of filenames</p>
+<dd><p>Scan the current directory, optionally recursively to build a list of filenames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Do a walk through all the directories for files</p></li>
 <li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><em>False</em></a>) – Either a string path to a new directory or False to open a dialog box or not set in which case existing
 directory is used.</p></li>
-<li><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of</p></li>
+<li><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the
+previous behaviour of <code class="xref py py-meth docutils literal notranslate"><span class="pre">objectFolder.getlist()</span></code>)</p></li>
 </ul>
 </dd>
-</dl>
-<p>:keyword <code class="xref py py-meth docutils literal notranslate"><span class="pre">objectFolder.getlist:</span>
-<span class="pre">:kwtype</span> <span class="pre">:py:meth:`objectFolder.getlist:</span> <span class="pre">)()</span></code></p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A copy of the current DataFoder directory with the files stored in the files attribute</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the current DataFoder directory with the files stored in the files attribute</p>
 </dd>
 </dl>
-<p>getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
-directory tree finding sub directories and creating groups in the data folder for each sub directory.</p>
+<p>getlist() scans a directory tree finding files that match the pattern. By default it will recurse through
+the entire directory tree finding sub directories and creating groups in the data folder for each sub
+directory.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.group">
 <code class="sig-name descname">group</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take the files and sort them into a series of separate objectFolder objects according to the value of the key</p>
+<dd><p>Sort Files into a series of objectFolders according to the value of the key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>key</strong> (<em>string or callable or list</em>) – Either a simple string or callable function or a list. If a string then it is interpreted as an item of
-metadata in each file. If a callable function then takes a single argument x which should be an instance of a metadataObject and returns
-some vale. If key is a list then the grouping is done recursively for each element in key.</p>
+metadata in each file. If a callable function then takes a single argument x which should be an
+instance of a metadataObject and returns some vale. If key is a list then the grouping is
+done recursively for each element in key.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files</p>
+<dd class="field-even"><p>A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder
+objects with sub lists of files</p>
 </dd>
 </dl>
-<p>If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group
-with key None. Metadata keys that are generated from the filename are supported.</p>
+<p class="rubric">Notes</p>
+<p>If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the
+fiiles will be returned into the grou with key None. Metadata keys that are generated from the filename
+are supported.</p>
 </dd></dl>
 
 <dl class="method">
@@ -849,21 +957,23 @@ with key None. Metadata keys that are generated from the filename are supported.
 <dd class="field-odd"><p><strong>name</strong> (str, regexp, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code>) – The thing to search for.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>start</strong><strong>,</strong><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – limit the index search to a sub-range as per Python 3.5+ list.index</p>
+<dd class="field-even"><p><strong>start</strong><strong>,</strong><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Limit the index search to a sub-range as per Python 3.5+ list.index</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(int)</em> – The index of the first matching metadataObject instances.</p>
+<dd class="field-odd"><p><em>(int)</em> –     The index of the first matching metadataObject instances.</p>
 </dd>
 </dl>
-<p>If <em>name</em> is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
-<em>name</em> may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
-if <em>name</em> is a metadataObject, then it matches for an equyality test.</p>
+<p class="rubric">Notes</p>
+<p>If <em>name</em> is a string, then matching is based on either exact matches of the name, or if it includes a
+* or ? then the basis of a globbing match. <em>name</em> may also be a regular expressiuon, in which case
+matches are made on the basis of  the match with the name of the metadataObject. Finally, if <em>name</em>
+is a metadataObject, then it matches for an equyality test.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.insert">
 <code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param">ix</em>, <em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.insert" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements the insert method with the option to append as well.</p>
+<dd><p>Implement the insert method with the option to append as well.</p>
 </dd></dl>
 
 <dl class="method">
@@ -876,10 +986,11 @@ if <em>name</em> is a metadataObject, then it matches for an equyality test.</p>
 <dt id="Stoner.Image.ImageStack.keep_latest">
 <code class="sig-name descname">keep_latest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.keep_latest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter out earlier revisions of files with the same name.</p>
-<p>The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an integer revision number just before the
-filename extension. This method will look for instances of several files which differ in name only by the presence of the revision number and will
-kepp only the highest revision number. This is useful if several measurements of the same experiment have been carried out, but only the last file is
-the correct one.</p>
+<p>The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an
+integer revision number just before the filename extension. This method will look for instances of several
+files which differ in name only by the presence of the revision number and will kepp only the highest revision
+number. This is useful if several measurements of the same experiment have been carried out, but only the
+last file is the correct one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A copy of the DataFolder.</p>
@@ -896,7 +1007,7 @@ the correct one.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.loadgroup">
 <code class="sig-name descname">loadgroup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.loadgroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load all files from this group into memory</p>
+<dd><p>Load all files from this group into memory.</p>
 </dd></dl>
 
 <dl class="method">
@@ -963,12 +1074,12 @@ Raise ValueError if the value is not present.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.save">
 <code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">root=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the entire data folder out to disc using the groups as a directory tree,
-calling the save method for each file in turn.</p>
+<dd><p>Save the entire data folder out to disc using the groups as a directory tree.</p>
+<p>Calls the save method for each file in turn.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>root</strong> (<em>string</em>) – The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder’s
-diretory attribute will be used.</p>
+<dd class="field-odd"><p><strong>root</strong> (<em>string</em>) – The root directory to start creating files and subdirectories under. If set to None or not specified,
+the current folder’s diretory attribute will be used.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of the saved files</p>
@@ -979,21 +1090,23 @@ diretory attribute will be used.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.select">
 <code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generator that can be used to select particular data files from the objectFolder</p>
+<dd><p>Select a subset of the objects in the folder based on flexible search criteria on the metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> (<em>various</em>) – A single positional argument if present is interpreted as follows:</p></li>
-<li><p><strong>* If a callable function is given, the entire metadataObject is presented to it.</strong> – If it evaluates True then that metadataObject is selected. This allows arbitary select operations</p></li>
-<li><p><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the metadataObjects</strong></p></li>
+<dd class="field-odd"><p><strong>args</strong> (<em>various</em>) – A single positional argument if present is interpreted as follows:</p>
+<ul class="simple">
+<li><p>If a callable function is given, the entire metadataObject is presented to it.
+If it evaluates True then that metadataObject is selected. This allows arbitary select operations</p></li>
+<li><p>If a dict is given, then it and the kargs dictionary are merged and used to select the
+metadataObjects</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>recurse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Also recursively slect through the sub groups</p></li>
 <li><p><strong>kargs</strong> (<em>varuous</em>) – <p>Arbitary keyword arguments are interpreted as requestion matches against the corresponding
-metadata values. The keyword argument may have an additional <em>__operator*</em> appended to it which is interpreted
-as follows:</p>
+metadata values. The keyword argument may have an additional <strong>__operator</strong> appended to it which is
+interpreted as follows:</p>
 <ul>
 <li><p><em>eq</em> metadata value equals argument value (this is the default test for scalar argument)</p></li>
 <li><p><em>ne</em> metadata value doe not equal argument value</p></li>
@@ -1002,11 +1115,16 @@ as follows:</p>
 <li><p><em>ge</em> metadata value doe greater than or equal to argument value</p></li>
 <li><p><em>le</em> metadata value doe less than or equal to argument value</p></li>
 <li><p><em>contains</em> metadata value contains argument value</p></li>
-<li><p><em>in</em> metadata value is in the argument value (this is the default test for non-tuple iterable arguments)</p></li>
+<li><dl class="simple">
+<dt><em>in</em> metadata value is in the argument value (this is the default test for non-tuple iterable</dt><dd><p>arguments)</p>
+</dd>
+</dl>
+</li>
 <li><p><em>startswith</em> metadata value startswith argument value</p></li>
 <li><p><em>endswith</em> metadata value endwith argument value</p></li>
 <li><p><em>icontains</em>,*iin*, <em>istartswith</em>,*iendswith* as above but case insensitive</p></li>
-<li><p><em>between</em> metadata value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)</p></li>
+<li><p><em>between</em> metadata value lies beween the minimum and maximum values of the arguement
+(the default test for 2-length tuple arguments)</p></li>
 <li><p><em>ibetween</em>,*ilbetween*,*iubetween* as above but include both,lower or upper values</p></li>
 </ul>
 </p></li>
@@ -1014,7 +1132,7 @@ as follows:</p>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(baseFGolder)</em> – a new baseFolder instance that contains just the matching metadataObjects.</p>
+<dd class="field-odd"><p><em>(baseFGolder)</em> –     A new baseFolder instance that contains just the matching metadataObjects.</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1024,11 +1142,17 @@ achieve a logical AND, you can chain two selects together:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">temp__le</span><span class="o">=</span><span class="mf">4.2</span><span class="p">,</span><span class="n">vti_temp__lt</span><span class="o">=</span><span class="mf">4.2</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">field_gt</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>will select metadata objects that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.</p>
-<p>If you need to select on a aparameter called <em>recurse</em>, pass a dictionary of {“recurse”:value} as the sole
-positional argument. If you need to select on a metadata value that ends in an operator word, then append
-<em>__eq</em> in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
-then pass them via the first positional dictionary value.</p>
+<p>will select metadata objects that have either temp or vti_temp metadata values below 4.2 AND field
+metadata values greater than 3.</p>
+<p>There are a few cases where special treatment is needed:</p>
+<ul class="simple">
+<li><p>If you need to select on a aparameter called <em>recurse</em>, pass a dictionary of {“recurse”:value} as
+the sole positional argument.</p></li>
+<li><p>If you need to select on a metadata value that ends in an operator word, then append <em>__eq</em> in the
+keyword name to force the equality test.</p></li>
+<li><p>If the metadata keys to select on are not valid python  identifiers, then pass them via the first
+positional dictionary value.</p></li>
+</ul>
 </div>
 </dd></dl>
 
@@ -1041,20 +1165,21 @@ then pass them via the first positional dictionary value.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.show">
 <code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a></p>
+<dd><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.slice_metadata">
 <code class="sig-name descname">slice_metadata</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">output='smart'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.slice_metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an array of the metadata values for each item/file in the top level group</p>
+<dd><p>Return an array of the metadata values for each item/file in the top level group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>key</strong> (<em>str, regexp or list of str</em>) – the meta data key(s) to return</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Keyword Parameters:</dt><dd><p>output (str): Output format - values are
+<dt>Keyword Parameters:</dt><dd><dl class="simple">
+<dt>output (str):</dt><dd><p>Output format - values are
 -   dict: return an array of dictionaries
 -   list: return a list of lists
 -   array: return a numpy array
@@ -1062,16 +1187,14 @@ then pass them via the first positional dictionary value.</p>
 -   smart: (default) return either a list if only one key or a list of dictionaries</p>
 </dd>
 </dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p><em>(array of metadata)</em> –</p>
-<dl class="simple">
-<dt>If single key is given and is an exact match then</dt><dd><p>returns an array of the matching values. If the key results in a regular
-expression match, then returns an array of dictionaries of all matching keys. If key is a
-list ir other iterable, then return a 2D array where each column corresponds to one of the keys.</p>
 </dd>
 </dl>
-</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>(array of metadata)</em> –     If single key is given and is an exact match then returns an array of the matching values.
+If the key results in a regular expression match, then returns an array of dictionaries of all
+matching keys. If key is a list ir other iterable, then return a 2D array where each column
+corresponds to one of the keys.</p>
 </dd>
 </dl>
 <div class="admonition-todo admonition" id="id2">
@@ -1082,20 +1205,21 @@ list ir other iterable, then return a 2D array where each column corresponds to 
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.sort">
-<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.sort" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sort the files by some key</p>
+<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">reverse=False</em>, <em class="sig-param">recursive=True</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort the files by some key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Either a string or a callable function. If a string then this is interpreted as a
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Either a string or a callable function. If a string then this is interpreted as a
 metadata key, if callable then it is assumed that this is a a function of one paramater x
 that is a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> object and that returns a key value.
-If key is not specified (default), then a sort is performed on the filename</p>
+If key is not specified (default), then a sort is performed on the filename</p></li>
+<li><p><strong>reverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Optionally sort in reverse order</p></li>
+<li><p><strong>recursive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True (default) sort the sub-groups as well.</p></li>
+</ul>
 </dd>
-</dl>
-<p>reverse (bool): Optionally sort in reverse order</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A copy of the current objectFolder object</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the current objectFolder object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1103,14 +1227,14 @@ If key is not specified (default), then a sort is performed on the filename</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.stddev">
 <code class="sig-name descname">stddev</code><span class="sig-paren">(</span><em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.stddev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate weighted standard deviation for stack</p>
+<dd><p>Calculate weighted standard deviation for stack.</p>
 <p>This is a biased standard deviation, may not be appropriate for small sample sizes</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.stderr">
 <code class="sig-name descname">stderr</code><span class="sig-paren">(</span><em class="sig-param">weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.stderr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Standard error in the stack average</p>
+<dd><p>Calculate standard error in the stack average.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1139,9 +1263,28 @@ as an index on the stack.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="Stoner.Image.ImageStack.to_tiff">
+<code class="sig-name descname">to_tiff</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.to_tiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the ImageArray as a tiff image with metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Filename to save file as.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PIL can save in modes “L” (8bit unsigned int), “I” (32bit signed int),
+or “F” (32bit signed float). In general max info is preserved for “F”
+type so if forcetype is not specified then this is the default. For
+boolean type data mode “L” will suffice and this is chosen in all cases.
+The type name is added as a string to the metadata before saving.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="Stoner.Image.ImageStack.unflatten">
 <code class="sig-name descname">unflatten</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.unflatten" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a file list an unflattens them according to the file paths.</p>
+<dd><p>Take the file list an unflattens them according to the file paths.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A copy of the objectFolder</p>
@@ -1152,7 +1295,7 @@ as an index on the stack.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.unload">
 <code class="sig-name descname">unload</code><span class="sig-paren">(</span><em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.unload" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the instance from memory without losing the name in the Folder.</p>
+<dd><p>Remove the instance from memory without losing the name in the Folder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>string,int or None</em>) – Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.</p>
@@ -1184,40 +1327,43 @@ as an index on the stack.</p>
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.walk_groups">
 <code class="sig-name descname">walk_groups</code><span class="sig-paren">(</span><em class="sig-param">walker</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.walk_groups" title="Permalink to this definition">¶</a></dt>
-<dd><p>Walks through a heirarchy of groups and calls walker for each file.</p>
+<dd><p>Walk through a heirarchy of groups and calls walker for each file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>walker</strong> (<em>callable</em>) – a callable object that takes either a metadataObject instance or a objectFolder instance.</p>
+<dd class="field-odd"><p><strong>walker</strong> (<em>callable</em>) – A callable object that takes either a metadataObject instance or a objectFolder instance.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (default False) determines whether the walker function will expect to be given the objectFolder
 representing the lowest level group or individual metadataObject objects from the lowest level group</p></li>
-<li><p><strong>replace_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if group is True and the walker function returns an instance of metadataObject then the return value is appended
-to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.</p></li>
-<li><p><strong>obly_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)</p></li>
-<li><p><strong>walker_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – a dictionary of static arguments for the walker function.</p></li>
+<li><p><strong>replace_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If group is True and the walker function returns an instance of metadataObject then the return value
+is appended to the files and the group is removed from the current objectFolder. This will unwind
+the group heirarchy by one level.</p></li>
+<li><p><strong>obly_terminal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal
+groups)</p></li>
+<li><p><strong>walker_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of static arguments for the walker function.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<dl class="simple">
-<dt>The walker function should have a prototype of the form:</dt><dd><p>walker(f,list_of_group_names,**walker_args)
-where f is either a objectFolder or metadataObject.</p>
-</dd>
-</dl>
+<p>The walker function should have a prototype of the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">walker</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">list_of_group_names</span><span class="p">,</span><span class="o">**</span><span class="n">walker_args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where f is either a objectFolder or metadataObject.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Image.ImageStack.zip_groups">
 <code class="sig-name descname">zip_groups</code><span class="sig-paren">(</span><em class="sig-param">groups</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageStack.zip_groups" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of tuples of metadataObjects drawn from the specified groups</p>
+<dd><p>Return a list of tuples of metadataObjects drawn from the specified groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>groups</strong> (<em>list of strings</em>) – A list of keys of groups in the Lpy:class:<cite>objectFolder</cite></p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>A list of tuples of groups of files</em> –     [(grp_1_file_1,grp_2_file_1….grp_n_files_1),(grp_1_file_2,grp_2_file_2….grp_n_file_2)….(grp_1_file_m,grp_2_file_m…grp_n_file_m)]</p>
+<dd class="field-even"><p><em>A list of tuples of groups of files</em> –     [(grp_1_file_1,grp_2_file_1….grp_n_files_1),(grp_1_file_2,
+grp_2_file_2….grp_n_file_2)….(grp_1_file_m,grp_2_file_m…grp_n_file_m)]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1281,9 +1427,9 @@ where f is either a objectFolder or metadataObject.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

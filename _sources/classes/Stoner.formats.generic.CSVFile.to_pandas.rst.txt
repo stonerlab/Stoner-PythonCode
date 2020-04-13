@@ -1,0 +1,8 @@
+
+
+CSVFile.to_pandas
+========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.to_pandas

@@ -1,8 +1,0 @@
-
-
-OVFFile.popitem
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.popitem

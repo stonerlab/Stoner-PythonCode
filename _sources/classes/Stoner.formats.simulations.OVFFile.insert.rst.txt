@@ -1,0 +1,8 @@
+
+
+OVFFile.insert
+=========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.insert

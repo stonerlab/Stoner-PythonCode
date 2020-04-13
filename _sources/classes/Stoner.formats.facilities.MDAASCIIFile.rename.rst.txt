@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.rename
+=============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.rename

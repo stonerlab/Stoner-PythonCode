@@ -1,0 +1,8 @@
+
+
+DataFile.popitem
+============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.popitem

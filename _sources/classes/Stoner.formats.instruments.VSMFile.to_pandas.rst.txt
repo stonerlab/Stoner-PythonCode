@@ -1,0 +1,8 @@
+
+
+VSMFile.to_pandas
+============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.to_pandas

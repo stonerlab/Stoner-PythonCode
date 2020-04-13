@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.remove
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.remove

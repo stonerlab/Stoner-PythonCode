@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.rename
+===================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.rename

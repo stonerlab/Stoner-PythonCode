@@ -1,0 +1,7 @@
+AttributeStore
+==============
+
+.. currentmodule:: Stoner.tools
+
+.. autoclass:: AttributeStore
+   :show-inheritance:

@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.dir
+========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.dir

@@ -1,0 +1,8 @@
+
+
+RasorFile.get_filename
+================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.get_filename

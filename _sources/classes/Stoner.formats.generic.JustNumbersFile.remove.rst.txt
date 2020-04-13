@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.remove
+=============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.remove

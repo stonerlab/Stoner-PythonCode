@@ -1,0 +1,8 @@
+
+
+PinkLibFile.sort
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.sort

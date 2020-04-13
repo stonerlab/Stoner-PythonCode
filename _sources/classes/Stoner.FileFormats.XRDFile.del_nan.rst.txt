@@ -1,8 +1,0 @@
-
-
-XRDFile.del_nan
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.del_nan

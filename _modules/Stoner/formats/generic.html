@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,26 +45,24 @@
   <h1>Source code for Stoner.formats.generic</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Implement DataFile classes for soem generic file formats</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Implement DataFile classes for soem generic file formats.&quot;&quot;&quot;</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CSVFile&quot;</span><span class="p">,</span> <span class="s2">&quot;HyperSpyFile&quot;</span><span class="p">,</span> <span class="s2">&quot;KermitPNGFile&quot;</span><span class="p">,</span> <span class="s2">&quot;TDMSFile&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">linecache</span>
-<span class="kn">import</span> <span class="nn">PIL</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
 
+<span class="kn">import</span> <span class="nn">PIL</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">Stoner.Core</span> <span class="k">as</span> <span class="nn">Core</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">hyperspy_ok</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">Hyperspy_ok</span>
 <span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="kn">import</span> <span class="n">string_to_type</span>
 
 
-<div class="viewcode-block" id="CSVFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile">[docs]</a><span class="k">class</span> <span class="nc">CSVFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+<div class="viewcode-block" id="CSVFile"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.CSVFile.html#Stoner.formats.generic.CSVFile">[docs]</a><span class="k">class</span> <span class="nc">CSVFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;A subclass of DataFiule for loading generic deliminated text fiules without metadata.&quot;&quot;&quot;</span>
 
@@ -83,7 +78,7 @@
     <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;header_line&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;data_line&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;header_delim&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;data_delim&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generic deliminated file loader routine.</span>
+        <span class="sd">&quot;&quot;&quot;Load generic deliminated files.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
@@ -139,8 +134,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_kargs</span> <span class="o">=</span> <span class="n">kargs</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="CSVFile.save"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.CSVFile.save.html#Stoner.FileFormats.CSVFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)</span>
+<div class="viewcode-block" id="CSVFile.save"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.CSVFile.save.html#Stoner.formats.generic.CSVFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (string): Fielname to save as (using the same rules as for the load routines)</span>
@@ -167,7 +162,7 @@
         <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">JustNumbersFile</span><span class="p">(</span><span class="n">CSVFile</span><span class="p">):</span>
+<div class="viewcode-block" id="JustNumbersFile"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.JustNumbersFile.html#Stoner.formats.generic.JustNumbersFile">[docs]</a><span class="k">class</span> <span class="nc">JustNumbersFile</span><span class="p">(</span><span class="n">CSVFile</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;A reader format for things which are just a block of numbers with no headers or metadata.&quot;&quot;&quot;</span>
 
@@ -176,12 +171,12 @@
     <span class="c1"># the file load/save dialog boxes.</span>
     <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;*.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;*.txt&quot;</span><span class="p">]</span>  <span class="c1"># Recognised filename patterns</span>
 
-    <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;header_line&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;data_line&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;header_delim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;data_delim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;header_line&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;data_line&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;header_delim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;data_delim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span></div>
 
 
-<span class="k">class</span> <span class="nc">KermitPNGFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+<div class="viewcode-block" id="KermitPNGFile"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.KermitPNGFile.html#Stoner.formats.generic.KermitPNGFile">[docs]</a><span class="k">class</span> <span class="nc">KermitPNGFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Loads PNG files with additional metadata embedded in them and extracts as metadata&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Loads PNG files with additional metadata embedded in them and extracts as metadata.&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
     <span class="c1">#   .. note::</span>
@@ -235,8 +230,8 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Overrides the save method to allow KermitPNGFiles to be written out to disc</span>
+<div class="viewcode-block" id="KermitPNGFile.save"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.KermitPNGFile.save.html#Stoner.formats.generic.KermitPNGFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override the save method to allow KermitPNGFiles to be written out to disc.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (string): Filename to save as (using the same rules as for the load routines)</span>
@@ -261,15 +256,15 @@
         <span class="n">img</span> <span class="o">=</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="n">pnginfo</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
 <span class="k">try</span><span class="p">:</span>  <span class="c1"># Optional tdms support</span>
     <span class="kn">from</span> <span class="nn">nptdms</span> <span class="kn">import</span> <span class="n">TdmsFile</span>
 
-<div class="viewcode-block" id="TDMSFile"><a class="viewcode-back" href="../../../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile">[docs]</a>    <span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;A first stab at writing a file that will import TDMS files&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;First stab at writing a file that will import TDMS files.&quot;&quot;&quot;</span>
 
         <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
         <span class="c1">#   .. note::</span>
@@ -326,17 +321,18 @@
 
                 <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a TDMS File </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_exc</span><span class="p">()))</span>
 
-            <span class="k">return</span> <span class="bp">self</span></div>
+            <span class="k">return</span> <span class="bp">self</span>
 
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">TDMSFile</span> <span class="o">=</span> <span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span>
 
-<span class="k">if</span> <span class="n">hyperspy_ok</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">Hyperspy_ok</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">hyperspy.api</span> <span class="k">as</span> <span class="nn">hs</span>
 
     <span class="k">class</span> <span class="nc">HyperSpyFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Elementary wrapper around HyperSpy to map to DataFile.&quot;&quot;&quot;</span>
+
+        <span class="sd">&quot;&quot;&quot;Wrap the HyperSpy file to map to DataFile.&quot;&quot;&quot;</span>
 
         <span class="n">priority</span> <span class="o">=</span> <span class="mi">64</span>  <span class="c1"># Makes an ID check but is quite generic</span>
 
@@ -364,7 +360,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;HyperSpy Loader file loader routine.</span>
+            <span class="sd">&quot;&quot;&quot;Load HyperSpy file loader routine.</span>
 
 <span class="sd">            Args:</span>
 <span class="sd">                filename (string or bool): File to load. If None then the existing filename is used,</span>
@@ -424,16 +420,13 @@
       <li><a href="../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

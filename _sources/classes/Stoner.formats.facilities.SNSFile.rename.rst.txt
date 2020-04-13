@@ -1,0 +1,8 @@
+
+
+SNSFile.rename
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.rename

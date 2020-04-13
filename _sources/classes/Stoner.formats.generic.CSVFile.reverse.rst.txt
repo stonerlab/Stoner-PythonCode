@@ -1,0 +1,8 @@
+
+
+CSVFile.reverse
+======================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.reverse

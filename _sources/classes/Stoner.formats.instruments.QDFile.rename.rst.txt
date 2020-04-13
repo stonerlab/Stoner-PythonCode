@@ -1,0 +1,8 @@
+
+
+QDFile.rename
+========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.rename

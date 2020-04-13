@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.swap_column
+==================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.swap_column

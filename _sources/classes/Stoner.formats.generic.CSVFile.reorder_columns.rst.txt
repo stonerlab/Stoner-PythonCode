@@ -1,0 +1,8 @@
+
+
+CSVFile.reorder_columns
+==============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.reorder_columns

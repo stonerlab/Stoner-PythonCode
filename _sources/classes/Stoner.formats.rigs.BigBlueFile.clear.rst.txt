@@ -1,0 +1,8 @@
+
+
+BigBlueFile.clear
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.clear

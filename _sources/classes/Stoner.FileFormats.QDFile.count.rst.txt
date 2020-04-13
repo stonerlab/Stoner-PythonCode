@@ -1,8 +1,0 @@
-
-
-QDFile.count
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.count

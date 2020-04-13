@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.select
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.select

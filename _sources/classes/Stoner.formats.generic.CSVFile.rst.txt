@@ -1,0 +1,89 @@
+Stoner.formats.generic.CSVFile
+==============================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. autoclass:: CSVFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.generic.CSVFile.__init__
+      ~Stoner.formats.generic.CSVFile.add_column
+      ~Stoner.formats.generic.CSVFile.append
+      ~Stoner.formats.generic.CSVFile.clear
+      ~Stoner.formats.generic.CSVFile.closest
+      ~Stoner.formats.generic.CSVFile.column
+      ~Stoner.formats.generic.CSVFile.columns
+      ~Stoner.formats.generic.CSVFile.count
+      ~Stoner.formats.generic.CSVFile.del_column
+      ~Stoner.formats.generic.CSVFile.del_nan
+      ~Stoner.formats.generic.CSVFile.del_rows
+      ~Stoner.formats.generic.CSVFile.dir
+      ~Stoner.formats.generic.CSVFile.extend
+      ~Stoner.formats.generic.CSVFile.filter
+      ~Stoner.formats.generic.CSVFile.find_col
+      ~Stoner.formats.generic.CSVFile.get
+      ~Stoner.formats.generic.CSVFile.get_filename
+      ~Stoner.formats.generic.CSVFile.index
+      ~Stoner.formats.generic.CSVFile.insert
+      ~Stoner.formats.generic.CSVFile.insert_rows
+      ~Stoner.formats.generic.CSVFile.items
+      ~Stoner.formats.generic.CSVFile.keys
+      ~Stoner.formats.generic.CSVFile.load
+      ~Stoner.formats.generic.CSVFile.pop
+      ~Stoner.formats.generic.CSVFile.popitem
+      ~Stoner.formats.generic.CSVFile.remove
+      ~Stoner.formats.generic.CSVFile.rename
+      ~Stoner.formats.generic.CSVFile.reorder_columns
+      ~Stoner.formats.generic.CSVFile.reverse
+      ~Stoner.formats.generic.CSVFile.rolling_window
+      ~Stoner.formats.generic.CSVFile.rows
+      ~Stoner.formats.generic.CSVFile.save
+      ~Stoner.formats.generic.CSVFile.search
+      ~Stoner.formats.generic.CSVFile.section
+      ~Stoner.formats.generic.CSVFile.select
+      ~Stoner.formats.generic.CSVFile.setdefault
+      ~Stoner.formats.generic.CSVFile.sort
+      ~Stoner.formats.generic.CSVFile.split
+      ~Stoner.formats.generic.CSVFile.swap_column
+      ~Stoner.formats.generic.CSVFile.to_pandas
+      ~Stoner.formats.generic.CSVFile.unique
+      ~Stoner.formats.generic.CSVFile.update
+      ~Stoner.formats.generic.CSVFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.generic.CSVFile.T
+      ~Stoner.formats.generic.CSVFile.basename
+      ~Stoner.formats.generic.CSVFile.clone
+      ~Stoner.formats.generic.CSVFile.column_headers
+      ~Stoner.formats.generic.CSVFile.data
+      ~Stoner.formats.generic.CSVFile.dict_records
+      ~Stoner.formats.generic.CSVFile.dims
+      ~Stoner.formats.generic.CSVFile.dtype
+      ~Stoner.formats.generic.CSVFile.filename
+      ~Stoner.formats.generic.CSVFile.header
+      ~Stoner.formats.generic.CSVFile.mask
+      ~Stoner.formats.generic.CSVFile.metadata
+      ~Stoner.formats.generic.CSVFile.mime_type
+      ~Stoner.formats.generic.CSVFile.patterns
+      ~Stoner.formats.generic.CSVFile.priority
+      ~Stoner.formats.generic.CSVFile.records
+      ~Stoner.formats.generic.CSVFile.setas
+      ~Stoner.formats.generic.CSVFile.shape
+      ~Stoner.formats.generic.CSVFile.subclasses
+   
+   

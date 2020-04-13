@@ -1,8 +1,0 @@
-
-
-MokeFile.clear
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.clear

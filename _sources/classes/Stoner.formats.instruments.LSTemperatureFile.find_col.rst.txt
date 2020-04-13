@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.find_col
+=====================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.find_col

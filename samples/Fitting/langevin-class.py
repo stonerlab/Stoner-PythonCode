@@ -1,9 +1,12 @@
 """Test langevin fitting."""
-from Stoner import Data
-from Stoner.analysis.fitting.models.magnetism import langevin, Langevin
+# pylint: disable=invalid-name
+from copy import copy
+
 from numpy import linspace, ones_like
 from numpy.random import normal
-from copy import copy
+
+from Stoner import Data
+from Stoner.analysis.fitting.models.magnetism import langevin, Langevin
 
 B = linspace(-0.01, 0.01, 100)
 params = [1, 1.0e-11, 250]

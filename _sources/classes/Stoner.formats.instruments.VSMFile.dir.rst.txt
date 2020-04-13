@@ -1,0 +1,8 @@
+
+
+VSMFile.dir
+======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.dir

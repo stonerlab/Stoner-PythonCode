@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Fit IV data to various RSJ models
-"""
+"""Fit IV data to various RSJ models."""
+# pylint: disable=invalid-name
+import os
 
 from Stoner import Data, __home__
-from Stoner.Fit import RSJ_Noiseless, RSJ_Simple
-
-import os
+from Stoner.analysis.fitting.models.superconductivity import (
+    RSJ_Noiseless,
+    RSJ_Simple,
+)
 
 os.chdir(os.path.join(__home__, "..", "doc", "samples", "Fitting"))
 

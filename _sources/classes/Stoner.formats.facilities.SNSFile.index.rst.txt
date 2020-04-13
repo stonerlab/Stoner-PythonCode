@@ -1,0 +1,8 @@
+
+
+SNSFile.index
+=======================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.index

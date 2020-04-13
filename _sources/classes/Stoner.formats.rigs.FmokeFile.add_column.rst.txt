@@ -1,0 +1,8 @@
+
+
+FmokeFile.add_column
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.add_column

@@ -1,0 +1,8 @@
+
+
+DataFile.insert
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.insert

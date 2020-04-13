@@ -1,8 +1,0 @@
-
-
-TDMSFile.items
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.items

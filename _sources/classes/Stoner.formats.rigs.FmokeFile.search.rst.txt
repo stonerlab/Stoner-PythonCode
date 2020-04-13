@@ -1,0 +1,8 @@
+
+
+FmokeFile.search
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.search

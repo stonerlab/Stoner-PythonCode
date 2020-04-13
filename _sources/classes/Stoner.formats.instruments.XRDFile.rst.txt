@@ -1,0 +1,90 @@
+Stoner.formats.instruments.XRDFile
+==================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. autoclass:: XRDFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.instruments.XRDFile.__init__
+      ~Stoner.formats.instruments.XRDFile.add_column
+      ~Stoner.formats.instruments.XRDFile.append
+      ~Stoner.formats.instruments.XRDFile.clear
+      ~Stoner.formats.instruments.XRDFile.closest
+      ~Stoner.formats.instruments.XRDFile.column
+      ~Stoner.formats.instruments.XRDFile.columns
+      ~Stoner.formats.instruments.XRDFile.count
+      ~Stoner.formats.instruments.XRDFile.del_column
+      ~Stoner.formats.instruments.XRDFile.del_nan
+      ~Stoner.formats.instruments.XRDFile.del_rows
+      ~Stoner.formats.instruments.XRDFile.dir
+      ~Stoner.formats.instruments.XRDFile.extend
+      ~Stoner.formats.instruments.XRDFile.filter
+      ~Stoner.formats.instruments.XRDFile.find_col
+      ~Stoner.formats.instruments.XRDFile.get
+      ~Stoner.formats.instruments.XRDFile.get_filename
+      ~Stoner.formats.instruments.XRDFile.index
+      ~Stoner.formats.instruments.XRDFile.insert
+      ~Stoner.formats.instruments.XRDFile.insert_rows
+      ~Stoner.formats.instruments.XRDFile.items
+      ~Stoner.formats.instruments.XRDFile.keys
+      ~Stoner.formats.instruments.XRDFile.load
+      ~Stoner.formats.instruments.XRDFile.pop
+      ~Stoner.formats.instruments.XRDFile.popitem
+      ~Stoner.formats.instruments.XRDFile.remove
+      ~Stoner.formats.instruments.XRDFile.rename
+      ~Stoner.formats.instruments.XRDFile.reorder_columns
+      ~Stoner.formats.instruments.XRDFile.reverse
+      ~Stoner.formats.instruments.XRDFile.rolling_window
+      ~Stoner.formats.instruments.XRDFile.rows
+      ~Stoner.formats.instruments.XRDFile.save
+      ~Stoner.formats.instruments.XRDFile.search
+      ~Stoner.formats.instruments.XRDFile.section
+      ~Stoner.formats.instruments.XRDFile.select
+      ~Stoner.formats.instruments.XRDFile.setdefault
+      ~Stoner.formats.instruments.XRDFile.sort
+      ~Stoner.formats.instruments.XRDFile.split
+      ~Stoner.formats.instruments.XRDFile.swap_column
+      ~Stoner.formats.instruments.XRDFile.to_Q
+      ~Stoner.formats.instruments.XRDFile.to_pandas
+      ~Stoner.formats.instruments.XRDFile.unique
+      ~Stoner.formats.instruments.XRDFile.update
+      ~Stoner.formats.instruments.XRDFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.instruments.XRDFile.T
+      ~Stoner.formats.instruments.XRDFile.basename
+      ~Stoner.formats.instruments.XRDFile.clone
+      ~Stoner.formats.instruments.XRDFile.column_headers
+      ~Stoner.formats.instruments.XRDFile.data
+      ~Stoner.formats.instruments.XRDFile.dict_records
+      ~Stoner.formats.instruments.XRDFile.dims
+      ~Stoner.formats.instruments.XRDFile.dtype
+      ~Stoner.formats.instruments.XRDFile.filename
+      ~Stoner.formats.instruments.XRDFile.header
+      ~Stoner.formats.instruments.XRDFile.mask
+      ~Stoner.formats.instruments.XRDFile.metadata
+      ~Stoner.formats.instruments.XRDFile.mime_type
+      ~Stoner.formats.instruments.XRDFile.patterns
+      ~Stoner.formats.instruments.XRDFile.priority
+      ~Stoner.formats.instruments.XRDFile.records
+      ~Stoner.formats.instruments.XRDFile.setas
+      ~Stoner.formats.instruments.XRDFile.shape
+      ~Stoner.formats.instruments.XRDFile.subclasses
+   
+   

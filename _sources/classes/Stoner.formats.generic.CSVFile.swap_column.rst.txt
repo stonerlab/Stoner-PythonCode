@@ -1,0 +1,8 @@
+
+
+CSVFile.swap_column
+==========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.swap_column

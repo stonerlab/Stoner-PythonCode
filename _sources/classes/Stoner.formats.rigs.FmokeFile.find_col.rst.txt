@@ -1,0 +1,8 @@
+
+
+FmokeFile.find_col
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.find_col

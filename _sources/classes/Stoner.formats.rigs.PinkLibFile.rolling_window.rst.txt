@@ -1,0 +1,8 @@
+
+
+PinkLibFile.rolling_window
+==============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.rolling_window

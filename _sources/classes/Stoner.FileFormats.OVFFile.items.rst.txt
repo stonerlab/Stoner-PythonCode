@@ -1,8 +1,0 @@
-
-
-OVFFile.items
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.items

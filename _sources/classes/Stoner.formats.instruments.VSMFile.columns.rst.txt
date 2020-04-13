@@ -1,0 +1,8 @@
+
+
+VSMFile.columns
+==========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.columns

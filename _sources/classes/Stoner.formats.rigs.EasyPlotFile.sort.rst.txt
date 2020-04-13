@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.sort
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.sort

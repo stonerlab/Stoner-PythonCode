@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,10 +45,8 @@
   <h1>Source code for Stoner.analysis.fitting.models.generic</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:py:class:`lmfit.Model` model classes and functions for various generic models.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
+<span class="sd">&quot;&quot;&quot;:py:class:`lmfit.Model` model classes and functions for various generic models.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;Linear&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Lorentzian_diff&quot;</span><span class="p">,</span>
@@ -83,12 +78,12 @@
 
 
 <span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Simple linear function&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Calculate a linear function.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">intercept</span>
 
 
 <span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A Simple quadratic fitting function.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate a simple quadratic fitting function.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x (aray): Input data</span>
@@ -131,7 +126,7 @@
 
 
 <span class="k">def</span> <span class="nf">stretchedExp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">x_0</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A stretched exponential fuinction.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate a stretched exponential fuinction.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x (array): x data values</span>
@@ -144,7 +139,7 @@
 
 <span class="sd">    The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span> <span class="o">/</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="n">beta</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">lorentzian_diff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
@@ -157,20 +152,20 @@
 <span class="sd">        mu (float): peak location in x</span>
 
 <span class="sd">        Returns</span>
-<span class="sd">            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`</span>
+<span class="sd">            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +</span>
+<span class="sd">                                                                      \left(- \mu + x\right)^{2}\right)^{2}}`</span>
 
 <span class="sd">    Example:</span>
-
-<span class="sd">    .. plot:: samples/Fitting/lorentzian.py</span>
-<span class="sd">        :include-source:</span>
-<span class="sd">        :outname: lorentzian_diff_func</span>
+<span class="sd">        .. plot:: samples/Fitting/lorentzian.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: lorentzian_diff_func</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Linear"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.Linear.html#Stoner.analysis.fitting.models.generic.Linear">[docs]</a><span class="k">class</span> <span class="nc">Linear</span><span class="p">(</span><span class="n">_Linear</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Simple linear fit&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Simple linear fit class.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
@@ -262,7 +257,8 @@
 
 
 <div class="viewcode-block" id="Lorentzian_diff"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.Lorentzian_diff.html#Stoner.analysis.fitting.models.generic.Lorentzian_diff">[docs]</a><span class="k">class</span> <span class="nc">Lorentzian_diff</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;lmfit Model rerprenting the differential form of a Lorentzian Peak.</span>
+
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x (array): x data</span>
@@ -271,14 +267,15 @@
 <span class="sd">        mu (float): peak location in x</span>
 
 <span class="sd">        Returns</span>
-<span class="sd">            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} + \left(- \mu + x\right)^{2}\right)^{2}}`</span>
+<span class="sd">            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +</span>
+<span class="sd">                                                                      \left(- \mu + x\right)^{2}\right)^{2}}`</span>
 
 <span class="sd">    Example:</span>
-
-<span class="sd">    .. plot:: samples/Fitting/lorentzian.py</span>
-<span class="sd">        :include-source:</span>
-<span class="sd">        :outname: lorentzian_diff_class</span>
+<span class="sd">        .. plot:: samples/Fitting/lorentzian.py</span>
+<span class="sd">            :include-source:</span>
+<span class="sd">            :outname: lorentzian_diff_class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">display_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\sigma&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\mu&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -286,8 +283,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Lorentzian_diff</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">lorentzian_diff</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Lorentzian_diff.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.generic.Lorentzian_diff.html#Stoner.analysis.fitting.models.generic.Lorentzian_diff.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H&quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -337,16 +333,13 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.dir
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.dir

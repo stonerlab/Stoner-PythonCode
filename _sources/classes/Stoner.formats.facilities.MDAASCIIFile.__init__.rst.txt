@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.__init__
+===============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.__init__

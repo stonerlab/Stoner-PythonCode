@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.index
+============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.index

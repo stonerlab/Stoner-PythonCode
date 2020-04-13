@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.update
+============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.update

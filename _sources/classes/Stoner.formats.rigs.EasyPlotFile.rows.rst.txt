@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.rows
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.rows

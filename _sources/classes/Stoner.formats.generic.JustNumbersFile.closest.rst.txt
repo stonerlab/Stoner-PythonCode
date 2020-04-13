@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.closest
+==============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.closest

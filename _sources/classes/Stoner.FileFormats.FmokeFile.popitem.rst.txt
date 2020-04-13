@@ -1,8 +1,0 @@
-
-
-FmokeFile.popitem
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.popitem

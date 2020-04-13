@@ -1,0 +1,8 @@
+
+
+FmokeFile.dir
+=================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.dir

@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.pop
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.pop

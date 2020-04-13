@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.rows
+=========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.rows

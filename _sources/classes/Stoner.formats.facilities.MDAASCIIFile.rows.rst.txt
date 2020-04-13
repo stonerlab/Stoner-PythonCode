@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.rows
+===========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.rows

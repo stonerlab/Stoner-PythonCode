@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.sort
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.sort

@@ -1,0 +1,8 @@
+
+
+XRDFile.setdefault
+=============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.setdefault

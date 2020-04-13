@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stoner.tools.tests &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../../../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../tools.html">Stoner.tools</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.tools.tests</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Utility functions that test whether things are true or not.&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;all_size&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;all_type&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isAnyNone&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isComparable&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isIterable&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isLikeList&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isNone&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isProperty&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isTuple&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">logical_and</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
+
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">string_types</span>
+
+
+<div class="viewcode-block" id="all_size"><a class="viewcode-back" href="../../../classes/Stoner.tools.all_size.html#Stoner.tools.all_size">[docs]</a><span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check whether each element of *iterator* is the same length/shape.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        iterator (Iterable): list or other iterable of things with a length or shape</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        size(int, tuple or None): Required size of each item in iterator.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if all objects are the size specified (or the same size if size is None).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterator</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;shape&quot;</span><span class="p">):</span>
+        <span class="n">sizer</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sizer</span> <span class="o">=</span> <span class="nb">len</span>
+
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">sizer</span><span class="p">(</span><span class="n">iterator</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sizer</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../../classes/Stoner.tools.all_type.html#Stoner.tools.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determines if an interable omnly contains a common type.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        iterator (Iterable):</span>
+<span class="sd">            The object to check if it is all iterable</span>
+<span class="sd">        typ (class):</span>
+<span class="sd">            The type to check for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if all elements are of the type typ, or False if not.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Routine will iterate the *iterator* and break when an element is not of</span>
+<span class="sd">        the search type *typ*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">):</span>  <span class="c1"># Try to short circuit for arrays</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">iterator</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">dtype</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="isAnyNone"><a class="viewcode-back" href="../../../classes/Stoner.tools.isAnyNone.html#Stoner.tools.isAnyNone">[docs]</a><span class="k">def</span> <span class="nf">isAnyNone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Intelligently check whether any of the inputs are None.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="isComparable"><a class="viewcode-back" href="../../../classes/Stoner.tools.isComparable.html#Stoner.tools.isComparable">[docs]</a><span class="k">def</span> <span class="nf">isComparable</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns true if v1 and v2 can be compared sensibly</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        v1,v2 (any):</span>
+<span class="sd">            Two values to compare</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        False if both v1 and v2 are numerical and both nan, otherwise True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isnan</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="n">logical_and</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span> <span class="n">isnan</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="isIterable"><a class="viewcode-back" href="../../../classes/Stoner.tools.isIterable.html#Stoner.tools.isIterable">[docs]</a><span class="k">def</span> <span class="nf">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Chack to see if a value is iterable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value :</span>
+<span class="sd">            Entitiy to check if it is iterable</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool):</span>
+<span class="sd">            True if value is an instance of collections.Iterable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="isLikeList"><a class="viewcode-back" href="../../../classes/Stoner.tools.isLikeList.html#Stoner.tools.isLikeList">[docs]</a><span class="k">def</span> <span class="nf">isLikeList</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns True if value is an iterable but not a string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../../classes/Stoner.tools.isNone.html#Stoner.tools.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns True if input is None or an empty iterator, or an iterator of None.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        iterator (None or Iterable):</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if iterator is None, empty or full of None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">iterator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pylint: disable=len-as-condition</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="isProperty"><a class="viewcode-back" href="../../../classes/Stoner.tools.isProperty.html#Stoner.tools.isProperty">[docs]</a><span class="k">def</span> <span class="nf">isProperty</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check whether an attribute of an object or class is a property.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj (instance or class):</span>
+<span class="sd">            Thing that has the attribute to check</span>
+<span class="sd">        name (str):</span>
+<span class="sd">            Name of the attrbiute that might be a property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool):</span>
+<span class="sd">            Whether the name is a property or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;Can only check for property status on attributes of an object or a class not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="nb">property</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="isTuple"><a class="viewcode-back" href="../../../classes/Stoner.tools.isTuple.html#Stoner.tools.isTuple">[docs]</a><span class="k">def</span> <span class="nf">isTuple</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determine if obj is a tuple of a certain signature.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj(object):</span>
+<span class="sd">            The object to check</span>
+<span class="sd">        *args(type):</span>
+<span class="sd">            Each of the suceeding arguments are used to determine the expected type of each element.</span>
+
+<span class="sd">    Keywoprd Arguments:</span>
+<span class="sd">        strict(bool):</span>
+<span class="sd">            Whether the elements of the tuple have to be exactly the type specified or just castable as the type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool):</span>
+<span class="sd">            True if obj is a matching tuple.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">strict</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+                <span class="n">bad</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">bad</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bad</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">bad</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+<form class="search" action="../../../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../../../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../../index.html">Module code</a>
+      </li>
+      <li>
+        <a href="../tools.html">Stoner.tools</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

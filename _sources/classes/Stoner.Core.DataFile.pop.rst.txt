@@ -1,0 +1,8 @@
+
+
+DataFile.pop
+========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.pop

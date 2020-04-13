@@ -1,0 +1,8 @@
+
+
+SNSFile.filter
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.filter

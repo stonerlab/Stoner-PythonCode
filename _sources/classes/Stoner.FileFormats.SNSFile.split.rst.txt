@@ -1,8 +1,0 @@
-
-
-SNSFile.split
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.split

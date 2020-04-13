@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.count
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.count

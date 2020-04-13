@@ -1,0 +1,8 @@
+
+
+SNSFile.search
+========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.search

@@ -1,0 +1,8 @@
+
+
+RasorFile.remove
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.remove

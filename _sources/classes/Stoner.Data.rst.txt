@@ -17,8 +17,8 @@ Stoner.Data
       ~Stoner.Data.__init__
       ~Stoner.Data.add
       ~Stoner.Data.add_column
-      ~Stoner.Data.adjust_setas
       ~Stoner.Data.annotate_fit
+      ~Stoner.Data.append
       ~Stoner.Data.apply
       ~Stoner.Data.bin
       ~Stoner.Data.clear
@@ -38,21 +38,26 @@ Stoner.Data
       ~Stoner.Data.diffsum
       ~Stoner.Data.dir
       ~Stoner.Data.divide
+      ~Stoner.Data.extend
       ~Stoner.Data.extrapolate
       ~Stoner.Data.figure
       ~Stoner.Data.filter
       ~Stoner.Data.find_col
+      ~Stoner.Data.find_peaks
       ~Stoner.Data.format
       ~Stoner.Data.get
       ~Stoner.Data.get_filename
       ~Stoner.Data.griddata
       ~Stoner.Data.image_plot
+      ~Stoner.Data.index
+      ~Stoner.Data.insert
       ~Stoner.Data.insert_rows
       ~Stoner.Data.inset
       ~Stoner.Data.integrate
       ~Stoner.Data.interpolate
       ~Stoner.Data.items
       ~Stoner.Data.keys
+      ~Stoner.Data.legend
       ~Stoner.Data.lmfit
       ~Stoner.Data.load
       ~Stoner.Data.make_bins
@@ -75,8 +80,10 @@ Stoner.Data
       ~Stoner.Data.pop
       ~Stoner.Data.popitem
       ~Stoner.Data.quiver_plot
+      ~Stoner.Data.remove
       ~Stoner.Data.rename
       ~Stoner.Data.reorder_columns
+      ~Stoner.Data.reverse
       ~Stoner.Data.rolling_window
       ~Stoner.Data.rows
       ~Stoner.Data.save
@@ -129,7 +136,6 @@ Stoner.Data
       ~Stoner.Data.filename
       ~Stoner.Data.header
       ~Stoner.Data.labels
-      ~Stoner.Data.legend
       ~Stoner.Data.mask
       ~Stoner.Data.metadata
       ~Stoner.Data.mime_type
@@ -145,6 +151,5 @@ Stoner.Data
       ~Stoner.Data.subclasses
       ~Stoner.Data.subplots
       ~Stoner.Data.template
-      ~Stoner.Data.title
    
    

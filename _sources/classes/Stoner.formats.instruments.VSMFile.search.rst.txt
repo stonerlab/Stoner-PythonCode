@@ -1,0 +1,8 @@
+
+
+VSMFile.search
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.search

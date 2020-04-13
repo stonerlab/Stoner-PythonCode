@@ -1,0 +1,8 @@
+
+
+GenXFile.column
+==========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.column

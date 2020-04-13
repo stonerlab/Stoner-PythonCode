@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -43,9 +43,9 @@
 <a class="reference external image-reference" href="https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master"><img alt="https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master" src="https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master" /></a>
 <a class="reference external image-reference" href="https://www.codacy.com/app/stonerlab/Stoner-PythonCode?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=stonerlab/Stoner-PythonCode&amp;amp;utm_campaign=Badge_Grade"><img alt="https://api.codacy.com/project/badge/Grade/372f2f9227134fab9c6c2f2ba83962ba" src="https://api.codacy.com/project/badge/Grade/372f2f9227134fab9c6c2f2ba83962ba" /></a>
 <a class="reference external image-reference" href="https://badge.fury.io/py/Stoner"><img alt="https://badge.fury.io/py/Stoner.svg" src="https://badge.fury.io/py/Stoner.svg" /></a>
+<a class="reference external image-reference" href="https://anaconda.org/phygbu/stoner"><img alt="https://anaconda.org/phygbu/stoner/badges/version.svg" src="https://anaconda.org/phygbu/stoner/badges/version.svg" /></a>
 <a class="reference external image-reference" href="http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest" /></a>
 <a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode"><img alt="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" src="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" /></a>
-<a class="reference external image-reference" href="http://depsy.org/package/python/Stoner"><img alt="http://depsy.org/api/package/pypi/Stoner/badge.svg" src="http://depsy.org/api/package/pypi/Stoner/badge.svg" /></a>
 <div class="section" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <p>The  <em>Stoner</em> Python package is a set of utility classes for writing data analysis code. It was written within
@@ -62,8 +62,16 @@ API Reference guide. The <a class="reference external" href="http://www.github.c
 scikit-image&gt;=0.13.0 &amp; scipy&gt;=1.0.0 and also optional depends on  filemagic, npTDMS, imreg_dft and numba.</p>
 <p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
 dependencies are collected together in the <strong>phygbu</strong> repositry on anaconda cloud. The easiest way to install the Stoner package is,
-therefore, to install the most recent Anaconda Python distribution (Python 3.7 or 3.6 (version &lt;=0.9.x are compatible
-with Python 2.7 and 3.5 as well), and then run:</p>
+therefore, to install the most recent Anaconda Python distribution.</p>
+<div class="section" id="compatibility">
+<h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
+<p>Versions 0.9.x (stable branch) are compatible with Python 2.7, 3.5, 3.6 and 3.7. The latest 0.9.6 version is also compatible with Python 3.8
+The development verstion (0.10dev, master branch) is compatrible with Python 3.6, 3.7 and 3.8 but not 2.7.</p>
+<p>Conda packages are prepared for the stable branch and when the development branch enters beta testing. Pip wheels are prepared for selected stable releases only.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>After installing the current Anaconda version, open a terminal (Mac/Linux) or Anaconda Prompt (Windows) an do:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>conda install -c phygbu Stoner
 </pre></div>
 </div>
@@ -74,10 +82,7 @@ with Python 2.7 and 3.5 as well), and then run:</p>
 <p>This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: <a class="reference external" href="https://github.com/stonerlab/Stoner-PythonCode">https://github.com/stonerlab/Stoner-PythonCode</a></p>
-<dl class="simple">
-<dt>The development codebase is compatible with, and tested under,  Python 3.6 and Python 3.7. Python 3.8 may well work,</dt><dd><p>although this is untested at present),</p>
-</dd>
-</dl>
+</div>
 </div>
 <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
@@ -127,9 +132,9 @@ can allow scripts to process large numbers of images to be written in only a few
 </div>
 <div class="section" id="multiprocessing">
 <h2>Multiprocessing<a class="headerlink" href="#multiprocessing" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>DataFolder</strong> and <strong>ImageFolder/ImageStack</strong> classes will make use of the <em>multiprocessing</em> module when applying a function
-to their members for more efficient parallel processing of large numbers of data files. This is disabled by default on Windows
-due to the large overhead of starting multiple instances of the python interpreter.</p>
+<p>The <strong>DataFolder</strong> and <strong>ImageFolder/ImageStack</strong> classes will optionally make use of the <em>multiprocessing</em> module when applying a function
+to their members for more efficient parallel processing of large numbers of data files. This is disabled by default due to issues with
+threading and plotting on posix platforms and slow process start ups on Windows.</p>
 </div>
 </div>
 <div class="section" id="resources">
@@ -168,9 +173,8 @@ dictionary with methods to prune and filter in the virtual tree of sub-folders.<
 <div class="section" id="build-status">
 <h3>Build Status<a class="headerlink" href="#build-status" title="Permalink to this headline">¶</a></h3>
 <p>Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls.</p>
-<p>Version 0.9 is tested with Python 2.7, 3.5, 3.6,</p>
-<p>The development version - which will be 0.10 will be tested with Python 3.6 and Python 3.7 only until Python 3.8 becomes stable in
-the anaconda envuronment.</p>
+<p>Version 0.9 is tested with Python 2.7, 3.5, 3.6 using the standard unittest module.</p>
+<p>The development version - which will be 0.10 is tested using pytest with Python 3.6, Python 3.7 and Python 3.8.</p>
 </div>
 <div class="section" id="citing-the-stoner-package">
 <h3>Citing the Stoner Package<a class="headerlink" href="#citing-the-stoner-package" title="Permalink to this headline">¶</a></h3>
@@ -187,7 +191,7 @@ encourage any users to cite this package via that doi.</p>
 <li><p>Overhaul of the documentation and user guide</p></li>
 <li><p>Dropping support for the older Stoner.Image.stack.ImageStack class</p></li>
 <li><p>Droppping support for matplotlib&lt;2.0</p></li>
-<li><p>Support for Python 3.7</p></li>
+<li><p>Support for Python 3.7 (and 3.8 from 0.9.6)</p></li>
 <li><p>Unit tests now &gt; 80% coverage across the package.</p></li>
 </ul>
 </div></blockquote>
@@ -233,7 +237,11 @@ encourage any users to cite this package via that doi.</p>
   <h3><a href="index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Introduction</a></li>
-<li><a class="reference internal" href="#getting-this-code">Getting this Code</a></li>
+<li><a class="reference internal" href="#getting-this-code">Getting this Code</a><ul>
+<li><a class="reference internal" href="#compatibility">Compatibility</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#overview">Overview</a><ul>
 <li><a class="reference internal" href="#data-and-friends">Data and Friends</a></li>
 <li><a class="reference internal" href="#datafolder">DataFolder</a></li>
@@ -284,9 +292,9 @@ encourage any users to cite this package via that doi.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

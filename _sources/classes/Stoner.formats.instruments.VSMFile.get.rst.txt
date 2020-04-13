@@ -1,0 +1,8 @@
+
+
+VSMFile.get
+======================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.get

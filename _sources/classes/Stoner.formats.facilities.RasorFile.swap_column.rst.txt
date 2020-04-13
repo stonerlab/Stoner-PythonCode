@@ -1,0 +1,8 @@
+
+
+RasorFile.swap_column
+===============================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.swap_column

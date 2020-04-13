@@ -1,0 +1,8 @@
+
+
+RasorFile.search
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.search

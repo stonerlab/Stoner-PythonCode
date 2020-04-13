@@ -1,0 +1,8 @@
+
+
+DataFile.split
+==========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.split

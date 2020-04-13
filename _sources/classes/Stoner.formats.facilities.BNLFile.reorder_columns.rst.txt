@@ -1,0 +1,8 @@
+
+
+BNLFile.reorder_columns
+=================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.reorder_columns

@@ -1,0 +1,89 @@
+Stoner.formats.instruments.LSTemperatureFile
+============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. autoclass:: LSTemperatureFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.formats.instruments.LSTemperatureFile.__init__
+      ~Stoner.formats.instruments.LSTemperatureFile.add_column
+      ~Stoner.formats.instruments.LSTemperatureFile.append
+      ~Stoner.formats.instruments.LSTemperatureFile.clear
+      ~Stoner.formats.instruments.LSTemperatureFile.closest
+      ~Stoner.formats.instruments.LSTemperatureFile.column
+      ~Stoner.formats.instruments.LSTemperatureFile.columns
+      ~Stoner.formats.instruments.LSTemperatureFile.count
+      ~Stoner.formats.instruments.LSTemperatureFile.del_column
+      ~Stoner.formats.instruments.LSTemperatureFile.del_nan
+      ~Stoner.formats.instruments.LSTemperatureFile.del_rows
+      ~Stoner.formats.instruments.LSTemperatureFile.dir
+      ~Stoner.formats.instruments.LSTemperatureFile.extend
+      ~Stoner.formats.instruments.LSTemperatureFile.filter
+      ~Stoner.formats.instruments.LSTemperatureFile.find_col
+      ~Stoner.formats.instruments.LSTemperatureFile.get
+      ~Stoner.formats.instruments.LSTemperatureFile.get_filename
+      ~Stoner.formats.instruments.LSTemperatureFile.index
+      ~Stoner.formats.instruments.LSTemperatureFile.insert
+      ~Stoner.formats.instruments.LSTemperatureFile.insert_rows
+      ~Stoner.formats.instruments.LSTemperatureFile.items
+      ~Stoner.formats.instruments.LSTemperatureFile.keys
+      ~Stoner.formats.instruments.LSTemperatureFile.load
+      ~Stoner.formats.instruments.LSTemperatureFile.pop
+      ~Stoner.formats.instruments.LSTemperatureFile.popitem
+      ~Stoner.formats.instruments.LSTemperatureFile.remove
+      ~Stoner.formats.instruments.LSTemperatureFile.rename
+      ~Stoner.formats.instruments.LSTemperatureFile.reorder_columns
+      ~Stoner.formats.instruments.LSTemperatureFile.reverse
+      ~Stoner.formats.instruments.LSTemperatureFile.rolling_window
+      ~Stoner.formats.instruments.LSTemperatureFile.rows
+      ~Stoner.formats.instruments.LSTemperatureFile.save
+      ~Stoner.formats.instruments.LSTemperatureFile.search
+      ~Stoner.formats.instruments.LSTemperatureFile.section
+      ~Stoner.formats.instruments.LSTemperatureFile.select
+      ~Stoner.formats.instruments.LSTemperatureFile.setdefault
+      ~Stoner.formats.instruments.LSTemperatureFile.sort
+      ~Stoner.formats.instruments.LSTemperatureFile.split
+      ~Stoner.formats.instruments.LSTemperatureFile.swap_column
+      ~Stoner.formats.instruments.LSTemperatureFile.to_pandas
+      ~Stoner.formats.instruments.LSTemperatureFile.unique
+      ~Stoner.formats.instruments.LSTemperatureFile.update
+      ~Stoner.formats.instruments.LSTemperatureFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.formats.instruments.LSTemperatureFile.T
+      ~Stoner.formats.instruments.LSTemperatureFile.basename
+      ~Stoner.formats.instruments.LSTemperatureFile.clone
+      ~Stoner.formats.instruments.LSTemperatureFile.column_headers
+      ~Stoner.formats.instruments.LSTemperatureFile.data
+      ~Stoner.formats.instruments.LSTemperatureFile.dict_records
+      ~Stoner.formats.instruments.LSTemperatureFile.dims
+      ~Stoner.formats.instruments.LSTemperatureFile.dtype
+      ~Stoner.formats.instruments.LSTemperatureFile.filename
+      ~Stoner.formats.instruments.LSTemperatureFile.header
+      ~Stoner.formats.instruments.LSTemperatureFile.mask
+      ~Stoner.formats.instruments.LSTemperatureFile.metadata
+      ~Stoner.formats.instruments.LSTemperatureFile.mime_type
+      ~Stoner.formats.instruments.LSTemperatureFile.patterns
+      ~Stoner.formats.instruments.LSTemperatureFile.priority
+      ~Stoner.formats.instruments.LSTemperatureFile.records
+      ~Stoner.formats.instruments.LSTemperatureFile.setas
+      ~Stoner.formats.instruments.LSTemperatureFile.shape
+      ~Stoner.formats.instruments.LSTemperatureFile.subclasses
+   
+   

@@ -1,0 +1,8 @@
+
+
+RasorFile.insert
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.insert

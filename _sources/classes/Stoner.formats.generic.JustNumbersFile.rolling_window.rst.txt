@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.rolling_window
+=====================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.rolling_window

@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.unique
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.unique

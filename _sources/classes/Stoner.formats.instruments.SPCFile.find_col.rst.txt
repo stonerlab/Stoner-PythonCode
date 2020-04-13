@@ -1,0 +1,8 @@
+
+
+SPCFile.find_col
+===========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.find_col

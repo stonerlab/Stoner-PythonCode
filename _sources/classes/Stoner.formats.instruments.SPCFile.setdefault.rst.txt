@@ -1,0 +1,8 @@
+
+
+SPCFile.setdefault
+=============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.setdefault

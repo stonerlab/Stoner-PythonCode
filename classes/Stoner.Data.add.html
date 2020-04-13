@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.add_column" href="Stoner.Data.add_column.html" />
@@ -59,19 +59,19 @@
 <h1>Data.add<a class="headerlink" href="#data-add" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Data.add">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">replace=False</em>, <em class="sig-param">header=None</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one column, number or array (b) to another column (a).</p>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">col_a</em>, <em class="sig-param">col_b</em>, <em class="sig-param">replace=False</em>, <em class="sig-param">header=None</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add one column, number or array (col_b) to another column (col_a).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>index</em>) – First column to work with</p></li>
-<li><p><strong>b</strong> (<em>index, float or 1D array</em>) – Second column to work with.</p></li>
+<li><p><strong>col_a</strong> (<em>index</em>) – First column to work with</p></li>
+<li><p><strong>col_b</strong> (<em>index, float or 1D array</em>) – Second column to work with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – new column header  (defaults to a-b</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Replace the a column with the new data</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Replace the col_a column with the new data</p></li>
 <li><p><strong>index</strong> (<em>column index</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column to insert new data at.</p></li>
 </ul>
 </dd>
@@ -79,7 +79,7 @@
 <dd class="field-odd"><p>(<a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a>) –     The newly modified Data object.</p>
 </dd>
 </dl>
-<p>If a and b are tuples of length two, then the firstelement is assumed to be the value and
+<p>If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
 the second element an uncertainty in the value. The uncertainties will then be propagated and an
 additional column with the uncertainites will be added to the data.</p>
 </dd></dl>
@@ -144,9 +144,9 @@ additional column with the uncertainites will be added to the data.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,0 +1,8 @@
+
+
+OVFFile.count
+========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.count

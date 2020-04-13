@@ -1,8 +1,0 @@
-
-
-RasorFile.to_pandas
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.to_pandas

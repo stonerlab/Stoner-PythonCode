@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.rolling_window
+===============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.rolling_window

@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.search
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.search

@@ -1,4 +1,5 @@
 """Plot 3d fdata as a colourmap."""
+# pylint: disable=invalid-name
 from Stoner import Data
 import numpy as np
 

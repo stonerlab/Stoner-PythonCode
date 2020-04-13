@@ -1,8 +1,0 @@
-
-
-TDMSFile.del_nan
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.del_nan

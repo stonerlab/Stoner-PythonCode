@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Data.find_peaks &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data.format" href="Stoner.Data.format.html" />
+    <link rel="prev" title="Data.find_col" href="Stoner.Data.find_col.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Data.find_col.html" title="Previous document">Data.find_col</a>
+        </li>
+        <li>
+          <a href="Stoner.Data.format.html" title="Next document">Data.format</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.Data.html">Stoner.Data</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="data-find-peaks">
+<h1>Data.find_peaks<a class="headerlink" href="#data-find-peaks" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Data.find_peaks">
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">find_peaks</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.find_peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interface to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html#scipy.signal.find_peaks" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.find_peaks()</span></code></a> for loacating peaks in data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ycol</strong> (<em>index</em>) – the column name or index of the data in which to search for peaks</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – the column name or index of the x data that the peaks correspond to.</p></li>
+<li><p><strong>height</strong> – number or ndarray or sequence, optional
+Required height of peaks. Either a number, <code class="docutils literal notranslate"><span class="pre">None</span></code>, an array matching
+<cite>ycol</cite> or a 2-element sequence of the former. The first element is
+always interpreted as the  minimal and the second, if supplied, as the
+maximal required height.</p></li>
+<li><p><strong>threshold</strong> – number or ndarray or sequence, optional
+Required threshold of peaks, the vertical distance to its neighbouring
+samples. Either a number, <code class="docutils literal notranslate"><span class="pre">None</span></code>, an array matching <cite>ycol</cite> or a
+2-element sequence of the former. The first element is always
+interpreted as the  minimal and the second, if supplied, as the maximal
+required threshold.</p></li>
+<li><p><strong>distance</strong> – number, optional
+Required minimal horizontal distance (&gt;= 1) in samples between
+neighbouring peaks. Smaller peaks are removed first until the condition
+is fulfilled for all remaining peaks. If this is a <em>float</em> and <em>xcol</em> is set, then
+the units are in terms of the x-data, otherwise in rwo indices.</p></li>
+<li><p><strong>prominence</strong> – number or ndarray or sequence, optional
+Required prominence of peaks. Either a number, <code class="docutils literal notranslate"><span class="pre">None</span></code>, an array
+matching <cite>ycol</cite> or a 2-element sequence of the former. The first
+element is always interpreted as the  minimal and the second, if
+supplied, as the maximal required prominence.</p></li>
+<li><p><strong>width</strong> – number or ndarray or sequence, optional
+Required width of peaks in samples. Either a number, <code class="docutils literal notranslate"><span class="pre">None</span></code>, an array
+matching <cite>ycol</cite> or a 2-element sequence of the former. The first
+element is always interpreted as the  minimal and the second, if
+supplied, as the maximal required width. If this is a <em>float</em> and <em>xcol</em> is set, then
+the units are in terms of the x-data, otherwise in rwo indices.</p></li>
+<li><p><strong>wlen</strong> – int, optional
+Used for calculation of the peaks prominences, thus it is only used if
+one of the arguments <cite>prominence</cite> or <cite>width</cite> is given. See argument
+<cite>wlen</cite> in <cite>peak_prominences</cite> for a full description of its effects.</p></li>
+<li><p><strong>rel_height</strong> – float, optional
+Used for calculation of the peaks width, thus it is only used if <cite>width</cite>
+is given. See argument  <cite>rel_height</cite> in <cite>peak_widths</cite> for a full
+description of its effects.</p></li>
+<li><p><strong>plateau_size</strong> – number or ndarray or sequence, optional
+Required size of the flat top of peaks in samples. Either a number,
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, an array matching <cite>ycol</cite> or a 2-element sequence of the former.
+The first element is always interpreted as the minimal and the second,
+if supplied as the maximal required plateau size. If this is a <em>float</em> and <em>xcol</em> is set, then
+the units are in terms of the x-data, otherwise in rwo indices.</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – If et, then the metadata keys that return information about the peaks is returned with the given
+prefix. Default is None - no prefix.</p></li>
+<li><p><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Sor the results by prominence of peak</p></li>
+<li><p><strong>modify</strong> (<em>book</em>) – If true, then the returned object is a copy of self with only the peaks left in the data.</p></li>
+<li><p><strong>full_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True (default) then all columns of the data at which peaks in the <em>ycol</em> column are found.
+<em>modify</em> true implies <em>full_data</em> is also true. If <em>full_data</em> is False, then only the x-column
+values of the peaks are returned.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>(various)</em> –     If <em>modify</em> is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
+If <em>modify</em> is false (default), then the return value depends on <em>ycol</em> and <em>xcol</em>. If <em>ycol</em> is
+not None and <em>xcol</em> is None, then returns conplete rows of data corresponding to the found
+peaks/troughs. If <em>xcol</em> is not None, or <em>ycol</em> is None and <em>xcol</em> is None, then returns a 1D array
+of the x positions of the peaks/troughs.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#peak-finding"><span class="std std-ref">Peak Finding</span></a></p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Data.find_col.html"
+                        title="previous chapter">Data.find_col</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Data.format.html"
+                        title="next chapter">Data.format</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Data.find_peaks.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Data.find_col.html" title="Previous document">Data.find_col</a>
+        </li>
+        <li>
+          <a href="Stoner.Data.format.html" title="Next document">Data.format</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.Data.html">Stoner.Data</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

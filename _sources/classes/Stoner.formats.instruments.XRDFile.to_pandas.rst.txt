@@ -1,0 +1,8 @@
+
+
+XRDFile.to_pandas
+============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.to_pandas

@@ -1,0 +1,8 @@
+
+
+SNSFile.count
+=======================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.count

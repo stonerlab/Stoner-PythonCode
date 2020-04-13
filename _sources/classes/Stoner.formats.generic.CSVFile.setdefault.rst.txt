@@ -1,0 +1,8 @@
+
+
+CSVFile.setdefault
+=========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.setdefault

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.insert_rows
+===========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.insert_rows

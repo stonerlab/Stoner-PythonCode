@@ -1,0 +1,8 @@
+
+
+FmokeFile.append
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.append

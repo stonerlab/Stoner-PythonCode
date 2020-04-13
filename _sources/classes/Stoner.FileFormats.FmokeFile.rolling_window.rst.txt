@@ -1,8 +1,0 @@
-
-
-FmokeFile.rolling_window
-===========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.rolling_window

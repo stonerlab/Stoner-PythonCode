@@ -1,8 +1,0 @@
-
-
-LSTemperatureFile.pop
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: LSTemperatureFile.pop

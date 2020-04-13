@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.select
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.select

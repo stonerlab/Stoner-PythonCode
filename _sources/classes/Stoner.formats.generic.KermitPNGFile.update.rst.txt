@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.update
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.update

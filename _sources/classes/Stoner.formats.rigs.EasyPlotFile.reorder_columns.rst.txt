@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.reorder_columns
+================================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.reorder_columns

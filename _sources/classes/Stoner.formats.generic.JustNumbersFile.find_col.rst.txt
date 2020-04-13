@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.find_col
+===============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.find_col

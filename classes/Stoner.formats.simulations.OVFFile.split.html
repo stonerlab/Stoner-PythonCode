@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>OVFFile.split &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="OVFFile.swap_column" href="Stoner.formats.simulations.OVFFile.swap_column.html" />
+    <link rel="prev" title="OVFFile.sort" href="Stoner.formats.simulations.OVFFile.sort.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.formats.simulations.OVFFile.sort.html" title="Previous document">OVFFile.sort</a>
+        </li>
+        <li>
+          <a href="Stoner.formats.simulations.OVFFile.swap_column.html" title="Next document">OVFFile.swap_column</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.formats.simulations.OVFFile.html">Stoner.formats.simulations.OVFFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ovffile-split">
+<h1>OVFFile.split<a class="headerlink" href="#ovffile-split" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.formats.simulations.OVFFile.split">
+<code class="sig-prename descclassname">OVFFile.</code><code class="sig-name descname">split</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">final='files'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.simulations.OVFFile.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively splits the current DataFile into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>*args</strong> (<em>column index or function</em>) – Each argument is used in turn to find key values for the files in the DataFolder</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><p><strong>final</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Controls whether the final argument plaes the files in the DataFolder (default: “files”) or in
+groups (“groups”)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><em>Stoner.Folders.DataFolder</em> –     A <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object containing the individual
+<code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code> objects</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Creates a DataFolder of  DataFiles where each one contains the rows from the original object which
+had the same value of a given column(s) or function.</p>
+<p>On each iteration the first argument is called. If it is a column type then rows which amtch each unique
+value are collated together and made into a separate file. If the argument is a callable, then it is
+called for each row, passing the row as a single 1D array and the return result is used to group lines
+together. The return value should be hashable.</p>
+<p>Once this is done and the <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> exists, if there are remaining argument,
+then the method is called recusivelyt for each file and the resulting DataFolder added into the root
+DataFolder and the file is removed.</p>
+<p>Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>There has been a change in the arguments for the split function  from version 0.8 of the Stoner
+Package.</p>
+</div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.formats.simulations.OVFFile.sort.html"
+                        title="previous chapter">OVFFile.sort</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.formats.simulations.OVFFile.swap_column.html"
+                        title="next chapter">OVFFile.swap_column</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.formats.simulations.OVFFile.split.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.formats.simulations.OVFFile.sort.html" title="Previous document">OVFFile.sort</a>
+        </li>
+        <li>
+          <a href="Stoner.formats.simulations.OVFFile.swap_column.html" title="Next document">OVFFile.swap_column</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.formats.simulations.OVFFile.html">Stoner.formats.simulations.OVFFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      2.4.4
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

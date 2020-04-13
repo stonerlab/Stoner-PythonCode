@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.__init__
+===============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.__init__

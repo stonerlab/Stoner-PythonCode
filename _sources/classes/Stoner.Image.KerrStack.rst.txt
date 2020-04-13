@@ -10,7 +10,6 @@ KerrStack
 
    .. autosummary::
 
-      ~KerrStack.allmeta
       ~KerrStack.basenames
       ~KerrStack.clone
       ~KerrStack.debug
@@ -26,6 +25,7 @@ KerrStack
       ~KerrStack.instance
       ~KerrStack.is_empty
       ~KerrStack.key
+      ~KerrStack.layout
       ~KerrStack.loaded
       ~KerrStack.loader
       ~KerrStack.ls
@@ -38,6 +38,7 @@ KerrStack
       ~KerrStack.objects
       ~KerrStack.pattern
       ~KerrStack.root
+      ~KerrStack.setas
       ~KerrStack.shape
       ~KerrStack.size
       ~KerrStack.trunkdepth
@@ -49,6 +50,7 @@ KerrStack
 
       ~KerrStack.HcMap
       ~KerrStack.add_group
+      ~KerrStack.align
       ~KerrStack.all
       ~KerrStack.append
       ~KerrStack.apply_all
@@ -58,6 +60,7 @@ KerrStack
       ~KerrStack.average_Hcmap
       ~KerrStack.clear
       ~KerrStack.compress
+      ~KerrStack.convert
       ~KerrStack.correct_drifts
       ~KerrStack.count
       ~KerrStack.crop_stack
@@ -71,6 +74,7 @@ KerrStack
       ~KerrStack.filterout
       ~KerrStack.find_threshold
       ~KerrStack.flatten
+      ~KerrStack.from_tiff
       ~KerrStack.get
       ~KerrStack.getlist
       ~KerrStack.group
@@ -101,6 +105,7 @@ KerrStack
       ~KerrStack.stddev
       ~KerrStack.stderr
       ~KerrStack.subtract
+      ~KerrStack.to_tiff
       ~KerrStack.unflatten
       ~KerrStack.unload
       ~KerrStack.update
@@ -111,7 +116,6 @@ KerrStack
 
    .. rubric:: Attributes Documentation
 
-   .. autoattribute:: allmeta
    .. autoattribute:: basenames
    .. autoattribute:: clone
    .. autoattribute:: debug
@@ -127,6 +131,7 @@ KerrStack
    .. autoattribute:: instance
    .. autoattribute:: is_empty
    .. autoattribute:: key
+   .. autoattribute:: layout
    .. autoattribute:: loaded
    .. autoattribute:: loader
    .. autoattribute:: ls
@@ -139,6 +144,7 @@ KerrStack
    .. autoattribute:: objects
    .. autoattribute:: pattern
    .. autoattribute:: root
+   .. autoattribute:: setas
    .. autoattribute:: shape
    .. autoattribute:: size
    .. autoattribute:: trunkdepth
@@ -148,6 +154,7 @@ KerrStack
 
    .. automethod:: HcMap
    .. automethod:: add_group
+   .. automethod:: align
    .. automethod:: all
    .. automethod:: append
    .. automethod:: apply_all
@@ -157,6 +164,7 @@ KerrStack
    .. automethod:: average_Hcmap
    .. automethod:: clear
    .. automethod:: compress
+   .. automethod:: convert
    .. automethod:: correct_drifts
    .. automethod:: count
    .. automethod:: crop_stack
@@ -170,6 +178,7 @@ KerrStack
    .. automethod:: filterout
    .. automethod:: find_threshold
    .. automethod:: flatten
+   .. automethod:: from_tiff
    .. automethod:: get
    .. automethod:: getlist
    .. automethod:: group
@@ -200,6 +209,7 @@ KerrStack
    .. automethod:: stddev
    .. automethod:: stderr
    .. automethod:: subtract
+   .. automethod:: to_tiff
    .. automethod:: unflatten
    .. automethod:: unload
    .. automethod:: update

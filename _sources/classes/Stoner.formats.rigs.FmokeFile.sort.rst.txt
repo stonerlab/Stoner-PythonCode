@@ -1,0 +1,8 @@
+
+
+FmokeFile.sort
+==================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.sort

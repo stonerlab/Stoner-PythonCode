@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.del_column
+==========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.del_column

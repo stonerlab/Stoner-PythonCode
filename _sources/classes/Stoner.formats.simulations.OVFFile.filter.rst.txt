@@ -1,0 +1,8 @@
+
+
+OVFFile.filter
+=========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.filter

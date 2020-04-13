@@ -1,8 +1,0 @@
-
-
-QDFile.update
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDFile.update

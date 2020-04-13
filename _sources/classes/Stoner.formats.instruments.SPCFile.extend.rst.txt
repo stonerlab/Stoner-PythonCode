@@ -1,0 +1,8 @@
+
+
+SPCFile.extend
+=========================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.extend

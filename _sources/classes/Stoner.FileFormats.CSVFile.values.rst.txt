@@ -1,8 +1,0 @@
-
-
-CSVFile.values
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: CSVFile.values

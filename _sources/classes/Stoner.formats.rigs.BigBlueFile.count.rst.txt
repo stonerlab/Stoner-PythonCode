@@ -1,0 +1,8 @@
+
+
+BigBlueFile.count
+=====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.count

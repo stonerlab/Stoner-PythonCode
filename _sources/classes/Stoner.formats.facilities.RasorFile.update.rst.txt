@@ -1,0 +1,8 @@
+
+
+RasorFile.update
+==========================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.update

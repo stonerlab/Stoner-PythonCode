@@ -1,0 +1,8 @@
+
+
+GenXFile.pop
+=======================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.pop

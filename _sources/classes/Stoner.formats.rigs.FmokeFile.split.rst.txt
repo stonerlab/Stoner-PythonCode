@@ -1,0 +1,8 @@
+
+
+FmokeFile.split
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.split

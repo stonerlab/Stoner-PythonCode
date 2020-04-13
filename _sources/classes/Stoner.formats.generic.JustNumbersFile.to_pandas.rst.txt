@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.to_pandas
+================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.to_pandas

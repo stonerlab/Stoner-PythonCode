@@ -78,6 +78,7 @@ Stoner.DataFolder
       ~Stoner.DataFolder.instance
       ~Stoner.DataFolder.is_empty
       ~Stoner.DataFolder.key
+      ~Stoner.DataFolder.layout
       ~Stoner.DataFolder.loaded
       ~Stoner.DataFolder.loader
       ~Stoner.DataFolder.ls
@@ -89,6 +90,7 @@ Stoner.DataFolder
       ~Stoner.DataFolder.objects
       ~Stoner.DataFolder.pattern
       ~Stoner.DataFolder.root
+      ~Stoner.DataFolder.setas
       ~Stoner.DataFolder.shape
       ~Stoner.DataFolder.trunkdepth
       ~Stoner.DataFolder.type

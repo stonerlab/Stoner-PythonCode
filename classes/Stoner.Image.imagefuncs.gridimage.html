@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="hist" href="Stoner.Image.imagefuncs.hist.html" />
@@ -57,7 +57,7 @@
 <dl class="function">
 <dt id="Stoner.Image.imagefuncs.gridimage">
 <code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">gridimage</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">points=None</em>, <em class="sig-param">xi=None</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">fill_value=1.0</em>, <em class="sig-param">rescale=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#gridimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.gridimage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.2.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p>
+<dd><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -68,22 +68,23 @@
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>method</strong> (<em>&quot;linear&quot;</em><em>,</em><em>&quot;cubic&quot;</em><em>,</em><em>&quot;nearest&quot;</em>) – how to interpolate, default is linear</p></li>
-<li><p><strong>fill_value</strong> (<em>folat</em>) – What to put when the co-ordinates go out of range (default is 1.0). May be a callable in which
-case the initial image is presented as the only argument</p></li>
+<li><p><strong>fill_value</strong> (<em>folat</em>) – What to put when the co-ordinates go out of range (default is 1.0). May be a callable</p></li>
+<li><p><strong>which case the initial image is presented as the only argument</strong> (<em>in</em>) – </p></li>
 <li><p><strong>rescale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If the x and y co-ordinates are very different in scale, set this to True.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A copy of the modified image. The image data is interpolated and metadata kets “actual_x”,”actual_y”,”sample_x”,”samp[le_y” are
-set to give co-ordinates of new grid.</p>
+<dd class="field-odd"><p>A copy of the modified image. The image data is interpolated and metadata kets “actual_x”,”actual_y”,”<a href="#id1"><span class="problematic" id="id2">sample_</span></a>
+x”,”samp[le_y” are set to give co-ordinates of new grid.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If points and or xi are missed out then we try to construct them from the metadata. For points, the metadata keys
-“actual-x” and “actual_y” are looked for and for xi, the metadata keys “sample_x” and “sample_y” are used. These are set
-, for example, by the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.HDF5.SXTMImage</span></code> loader if the interformeter stage data was found in the file.</p>
-<p>The metadata used in this case is then adjusted as well to ensure that repeated application of this method doesn’t change the image
-after it has been corrected once.</p>
+<p>If points and or xi are missed out then we try to construct them from the metadata. For points, the metadata
+keys “actual-x” and “actual_y” are looked for and for xi, the metadata keys “sample_x” and “sample_y” are
+used. These are set, for example, by the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.HDF5.SXTMImage</span></code> loader if the interformeter stage
+data was found in the file.</p>
+<p>The metadata used in this case is then adjusted as well to ensure that repeated application of this method
+doesn’t change the image after it has been corrected once.</p>
 </dd></dl>
 
 </div>
@@ -143,9 +144,9 @@ after it has been corrected once.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

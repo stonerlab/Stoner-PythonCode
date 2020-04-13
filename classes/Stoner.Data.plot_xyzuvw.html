@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.polyfit" href="Stoner.Data.polyfit.html" />
@@ -60,7 +60,7 @@
 <dl class="method">
 <dt id="Stoner.Data.plot_xyzuvw">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">plot_xyzuvw</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">ucol=None</em>, <em class="sig-param">vcol=None</em>, <em class="sig-param">wcol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.plot_xyzuvw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</p>
+<dd><p>Plot a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -68,7 +68,8 @@
 <li><p><strong>ycol</strong> (<em>index</em>) – Y column index or label</p></li>
 <li><p><strong>zcol</strong> (<em>index</em>) – Z column index or label</p></li>
 <li><p><strong>ucol</strong> (<em>index</em>) – U column index or label</p></li>
-<li><p><strong>vcol</strong> (<em>index</em>) – V column index or label</p></li>
+<li><p><strong>vcol</strong> (<em>index</em>) – V column i
+ndex or label</p></li>
 <li><p><strong>wcol</strong> (<em>index</em>) – W column index or label</p></li>
 </ul>
 </dd>
@@ -78,9 +79,11 @@
 <li><p><strong>colors</strong> (<em>column index</em><em> or </em><em>numpy array</em>) – Values used to map the colors of the resultant file.</p></li>
 <li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – glyph type, default is “cone”</p></li>
 <li><p><strong>scale_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Scale-size of glyphs.</p></li>
-<li><p><strong>figure</strong> (<em>mlab figure</em>) – Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used,
+<li><p><strong>figure</strong> (<em>mlab figure</em>) – Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new
+figure is always used,
 otherwise it will default to using the last figure used by this DataFile object.</p></li>
-<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</p></li>
+<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Sensible choices might be
+plt.plot (default), py.semilogy, plt.semilogx</p></li>
 <li><p><strong>kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
 </ul>
 </dd>
@@ -150,9 +153,9 @@ otherwise it will default to using the last figure used by this DataFile object.
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

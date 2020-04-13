@@ -1,0 +1,8 @@
+
+
+BigBlueFile.append
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.append

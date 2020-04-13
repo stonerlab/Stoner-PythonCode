@@ -1,0 +1,8 @@
+
+
+DataFile.extend
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.extend

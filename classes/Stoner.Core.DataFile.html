@@ -4,20 +4,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>DataFile &#8212; Stoner Pacakge API Documentation</title>
+    <title>Stoner.Core.DataFile &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="AnalysisMixin" href="Stoner.Analysis.AnalysisMixin.html" />
+    <link rel="next" title="DataFile.__init__" href="Stoner.Core.DataFile.__init__.html" />
     <link rel="prev" title="tab_delimited" href="Stoner.core.utils.tab_delimited.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +32,7 @@
           <a href="Stoner.core.utils.tab_delimited.html" title="Previous document">tab_delimited</a>
         </li>
         <li>
-          <a href="Stoner.Analysis.AnalysisMixin.html" title="Next document">AnalysisMixin</a>
+          <a href="Stoner.Core.DataFile.__init__.html" title="Next document">DataFile.__init__</a>
           &rarr;
         </li>
     </ul>
@@ -52,13 +52,12 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="datafile">
-<h1>DataFile<a class="headerlink" href="#datafile" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="stoner-core-datafile">
+<h1>Stoner.Core.DataFile<a class="headerlink" href="#stoner-core-datafile" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Core.DataFile">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.Core.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" title="Stoner.core.base.metadataObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.core.base.metadataObject</span></code></a></p>
-<p><a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> is the base class object that represents a matrix of data, associated metadata and column headers.</p>
+<dd><p>Base class object that represents a matrix of data, associated metadata and column headers.</p>
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.column_headers">
 <code class="sig-name descname">column_headers</code><a class="headerlink" href="#Stoner.Core.DataFile.column_headers" title="Permalink to this definition">¶</a></dt>
@@ -73,8 +72,8 @@
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.data">
 <code class="sig-name descname">data</code><a class="headerlink" href="#Stoner.Core.DataFile.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>The attribute that stores the nuermical data for each DataFile. This is a <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> instance - which
-is itself a subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>.</p>
+<dd><p>The attribute that stores the nuermical data for each DataFile. This is a <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> instance -
+which is itself a subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>2D numpy masked array</p>
@@ -96,8 +95,8 @@ is itself a subclass of <a class="reference external" href="https://docs.scipy.o
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.filename">
 <code class="sig-name descname">filename</code><a class="headerlink" href="#Stoner.Core.DataFile.filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>The current filename of the data if loaded from or already saved to disc. This is the default filename used by
-the <a class="reference internal" href="#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.load()</span></code></a> and <a class="reference internal" href="#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.save()</span></code></a>.</p>
+<dd><p>The current filename of the data if loaded from or already saved to disc. This is the default filename
+used by the <a class="reference internal" href="Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.load()</span></code></a> and <a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.save()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>string</p>
@@ -130,7 +129,8 @@ the <a class="reference internal" href="#Stoner.Core.DataFile.load" title="Stone
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.mime_type">
 <code class="sig-name descname">mime_type</code><a class="headerlink" href="#Stoner.Core.DataFile.mime_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>The possible mime-types of data files represented by each matching filename pattern in <code class="xref py py-attr docutils literal notranslate"><span class="pre">Datafile.pattern</span></code>.</p>
+<dd><p>The possible mime-types of data files represented by each matching filename pattern in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">Datafile.pattern</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>list of str</p>
@@ -141,7 +141,8 @@ the <a class="reference internal" href="#Stoner.Core.DataFile.load" title="Stone
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.patterns">
 <code class="sig-name descname">patterns</code><a class="headerlink" href="#Stoner.Core.DataFile.patterns" title="Permalink to this definition">¶</a></dt>
-<dd><p>A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (<a href="#id1"><span class="problematic" id="id2">*</span></a>.txt and <a href="#id3"><span class="problematic" id="id4">*</span></a>.dat”)</p>
+<dd><p>A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile
+(<a href="#id1"><span class="problematic" id="id2">*</span></a>.txt and <a href="#id3"><span class="problematic" id="id4">*</span></a>.dat”)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
@@ -152,8 +153,8 @@ the <a class="reference internal" href="#Stoner.Core.DataFile.load" title="Stone
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.priority">
 <code class="sig-name descname">priority</code><a class="headerlink" href="#Stoner.Core.DataFile.priority" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to indicathe order in which subclasses of <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> are tried when loading data. A higher number means a lower
-priority (!)</p>
+<dd><p>Used to indicathe order in which subclasses of <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> are tried when loading data. A higher
+number means a lower priority (!)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
@@ -208,7 +209,8 @@ priority (!)</p>
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.dict_records">
 <code class="sig-name descname">dict_records</code><a class="headerlink" href="#Stoner.Core.DataFile.dict_records" title="Permalink to this definition">¶</a></dt>
-<dd><p>View the data as an array or dictionaries where each dictionary represnets one row with keys dervied from column headers.</p>
+<dd><p>View the data as an array or dictionaries where each dictionary represnets one row with keys dervied
+from column headers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>array of dictionaries</p>
@@ -361,7 +363,145 @@ string name of the subclass and the class object.</p>
 </dl>
 </dd></dl>
 
-<p class="rubric">Attributes Summary</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kargs)</p></td>
+<td><p>Initialise the DataFile from arrays, dictionaries and filenames.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[, header, index, …])</p></td>
+<td><p>Append a column of data or inserts a column to a datafile instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.append.html#Stoner.Core.DataFile.append" title="Stoner.Core.DataFile.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>(value)</p></td>
+<td><p>S.append(value) – append value to the end of the sequence</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.clear.html#Stoner.Core.DataFile.clear" title="Stoner.Core.DataFile.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.closest.html#Stoner.Core.DataFile.closest" title="Stoner.Core.DataFile.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[, xcol])</p></td>
+<td><p>Return the row in a data file which has an x-column value closest to the given value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</p></td>
+<td><p>Extract one or more columns of data from the datafile.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.columns.html#Stoner.Core.DataFile.columns" title="Stoner.Core.DataFile.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked, reset])</p></td>
+<td><p>Iterate over the columns of data int he datafile.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.count.html#Stoner.Core.DataFile.count" title="Stoner.Core.DataFile.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([value, axis, col])</p></td>
+<td><p>Count the number of un-masked elements in the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.del_column.html#Stoner.Core.DataFile.del_column" title="Stoner.Core.DataFile.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col, duplicates])</p></td>
+<td><p>Delete a column from the current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.del_nan.html#Stoner.Core.DataFile.del_nan" title="Stoner.Core.DataFile.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col, clone])</p></td>
+<td><p>Remove rows that have nan in them.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col, val, invert])</p></td>
+<td><p>Search in the numerica data for the lines that match and deletes the corresponding rows.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.dir.html#Stoner.Core.DataFile.dir" title="Stoner.Core.DataFile.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</p></td>
+<td><p>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.extend.html#Stoner.Core.DataFile.extend" title="Stoner.Core.DataFile.extend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend</span></code></a>(values)</p></td>
+<td><p>S.extend(iterable) – extend sequence by appending elements from the iterable</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func, cols, reset])</p></td>
+<td><p>Set the mask on rows of data by evaluating a function for each row.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[, force_list])</p></td>
+<td><p>Indexes the column headers in order to locate a column of data.shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.get.html#Stoner.Core.DataFile.get" title="Stoner.Core.DataFile.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(k[,d])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.get_filename.html#Stoner.Core.DataFile.get_filename" title="Stoner.Core.DataFile.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</p></td>
+<td><p>Force the user to choose a new filename using a system dialog box.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(value, [start, [stop]])</p></td>
+<td><p>Raises ValueError if the value is not present.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.insert.html#Stoner.Core.DataFile.insert" title="Stoner.Core.DataFile.insert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert</span></code></a>(index, obj)</p></td>
+<td><p>Implement the insert method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.insert_rows.html#Stoner.Core.DataFile.insert_rows" title="Stoner.Core.DataFile.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row, new_data)</p></td>
+<td><p>Insert new_data into the data array at position row.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.items.html#Stoner.Core.DataFile.items" title="Stoner.Core.DataFile.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>()</p></td>
+<td><p>Make sure we implement an items that doesn’t just iterate over self.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.keys.html#Stoner.Core.DataFile.keys" title="Stoner.Core.DataFile.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
+<td><p>Return the keys of the metadata dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(*args, **kargs)</p></td>
+<td><p>Load the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> in from disc guessing a better subclass if necessary.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.pop.html#Stoner.Core.DataFile.pop" title="Stoner.Core.DataFile.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>(k[,d])</p></td>
+<td><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.popitem.html#Stoner.Core.DataFile.popitem" title="Stoner.Core.DataFile.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<td><p>as a 2-tuple; but raise KeyError if D is empty.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.remove.html#Stoner.Core.DataFile.remove" title="Stoner.Core.DataFile.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
+<td><p>S.remove(value) – remove first occurrence of value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.rename.html#Stoner.Core.DataFile.rename" title="Stoner.Core.DataFile.rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code></a>(old_col, new_col)</p></td>
+<td><p>Rename columns without changing the underlying data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_columns</span></code></a>(cols[, headers_too, setas_too])</p></td>
+<td><p>Construct a new data array from the original data by assembling the columns in the order given.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.reverse.html#Stoner.Core.DataFile.reverse" title="Stoner.Core.DataFile.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
+<td><p>S.reverse() – reverse <em>IN PLACE</em></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.rolling_window.html#Stoner.Core.DataFile.rolling_window" title="Stoner.Core.DataFile.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window, wrap, exclude_centre])</p></td>
+<td><p>Iterate with a rolling window section of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.rows.html#Stoner.Core.DataFile.rows" title="Stoner.Core.DataFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked, reset])</p></td>
+<td><p>Iterate over rows of data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</p></td>
+<td><p>Save a string representation of the current DataFile object into the file ‘filename’.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a>(xcol, value[, columns, accuracy])</p></td>
+<td><p>Search the numerica data part of the file for lines that match and returns  the corresponding rows.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a>(**kargs)</p></td>
+<td><p>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.select.html#Stoner.Core.DataFile.select" title="Stoner.Core.DataFile.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
+<td><p>Produce a copy of the DataFile with only data rows that match a criteria.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.setdefault.html#Stoner.Core.DataFile.setdefault" title="Stoner.Core.DataFile.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[,d])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort" title="Stoner.Core.DataFile.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>(*order, **kargs)</p></td>
+<td><p>Sort the data by column name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.split.html#Stoner.Core.DataFile.split" title="Stoner.Core.DataFile.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(*args[, final])</p></td>
+<td><p>Recursively splits the current DataFile into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp, **kargs)</p></td>
+<td><p>Swap pairs of columns in the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.to_pandas.html#Stoner.Core.DataFile.to_pandas" title="Stoner.Core.DataFile.to_pandas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pandas</span></code></a>()</p></td>
+<td><p>Create a pandas DataFrame from a <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.unique.html#Stoner.Core.DataFile.unique" title="Stoner.Core.DataFile.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>(col[, return_index, return_inverse])</p></td>
+<td><p>Return the unique values from the specified column - pass through for numpy.unique.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.Core.DataFile.update.html#Stoner.Core.DataFile.update" title="Stoner.Core.DataFile.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>([E, ]**F)</p></td>
+<td><p>If E present and has a .keys() method, does:     for k in E: D[k] = E[k] If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v In either case, this is followed by: for k, v in F.items(): D[k] = v</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.Core.DataFile.values.html#Stoner.Core.DataFile.values" title="Stoner.Core.DataFile.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
+<td><p>Return the values of the metadata dictionary.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -369,13 +509,13 @@ string name of the subclass and the class object.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.T" title="Stoner.Core.DataFile.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p>Gets the current data transposed.</p></td>
+<td><p>Get the current data transposed.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.basename" title="Stoner.Core.DataFile.basename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basename</span></code></a></p></td>
-<td><p>Returns the basename of the current filename.</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">basename</span></code></p></td>
+<td><p>Return the basename of the current filename.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.clone" title="Stoner.Core.DataFile.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></p></td>
-<td><p>Gets a deep copy of the current DataFile.</p></td>
+<td><p>Get a deep copy of the current DataFile.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.column_headers" title="Stoner.Core.DataFile.column_headers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></a></p></td>
 <td><p>Pass through to the setas attribute.</p></td>
@@ -387,10 +527,10 @@ string name of the subclass and the class object.</p>
 <td><p>Return the data as a dictionary of single columns with column headers for the keys.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.dims" title="Stoner.Core.DataFile.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></a></p></td>
-<td><p>An alias for self.data.axes</p></td>
+<td><p>Alias for self.data.axes.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.dtype" title="Stoner.Core.DataFile.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></p></td>
-<td><p>Return the _np_ dtype attribute of the data</p></td>
+<td><p>Return the np dtype attribute of the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.filename" title="Stoner.Core.DataFile.filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filename</span></code></a></p></td>
 <td><p>Return DataFile filename, or make one up.</p></td>
@@ -399,944 +539,34 @@ string name of the subclass and the class object.</p>
 <td><p>Make a pretty header string that looks like the tabular representation.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.mask" title="Stoner.Core.DataFile.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
-<td><p>Returns the mask of the data array.</p></td>
+<td><p>Return the mask of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.mime_type" title="Stoner.Core.DataFile.mime_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mime_type</span></code></a></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></p></td>
+<td><p>Read the metadata dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.mime_type" title="Stoner.Core.DataFile.mime_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mime_type</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.patterns" title="Stoner.Core.DataFile.patterns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">patterns</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.patterns" title="Stoner.Core.DataFile.patterns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">patterns</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><code class="xref py py-obj docutils literal notranslate"><span class="pre">priority</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-obj docutils literal notranslate"><span class="pre">records</span></code></a></p></td>
-<td><p>Returns the data as a _np_ structured data array.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-obj docutils literal notranslate"><span class="pre">records</span></code></a></p></td>
+<td><p>Return the data as a np structured data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
 <td><p>Get the list of column assignments.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.shape" title="Stoner.Core.DataFile.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.shape" title="Stoner.Core.DataFile.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Pass through the numpy shape attribute of the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.subclasses" title="Stoner.Core.DataFile.subclasses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subclasses</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.subclasses" title="Stoner.Core.DataFile.subclasses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subclasses</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.__call__" title="Stoner.Core.DataFile.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(*args, **kargs)</p></td>
-<td><p>Clone the DataFile, but allowing additional arguments to modify the new clone.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_column</span></code></a>(column_data[, header, index, …])</p></td>
-<td><p>Appends a column of data or inserts a column to a datafile instance.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.adjust_setas" title="Stoner.Core.DataFile.adjust_setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_setas</span></code></a>(*args, **kargs)</p></td>
-<td><p>Adjust the setas of this object and return ourselves.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.closest" title="Stoner.Core.DataFile.closest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">closest</span></code></a>(value[, xcol])</p></td>
-<td><p>Return the row in a data file which has an x-column value closest to the given value.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column</span></code></a>(col)</p></td>
-<td><p>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.columns" title="Stoner.Core.DataFile.columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns</span></code></a>([not_masked])</p></td>
-<td><p>Generator method that will iterate over the columns of data int he datafile.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.count" title="Stoner.Core.DataFile.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a>([axis])</p></td>
-<td><p>Count the number of un-masked elements in the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.del_column" title="Stoner.Core.DataFile.del_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_column</span></code></a>([col, duplicates])</p></td>
-<td><p>Deletes a column from the current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.del_nan" title="Stoner.Core.DataFile.del_nan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_nan</span></code></a>([col, clone])</p></td>
-<td><p>Remove rows that have nan in them.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_rows</span></code></a>([col, val, invert])</p></td>
-<td><p>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.dir" title="Stoner.Core.DataFile.dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dir</span></code></a>([pattern])</p></td>
-<td><p>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter</span></code></a>([func, cols, reset])</p></td>
-<td><p>Sets the mask on rows of data by evaluating a function for each row.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_col</span></code></a>(col[, force_list])</p></td>
-<td><p>Indexes the column headers in order to locate a column of data.shape.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.get" title="Stoner.Core.DataFile.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(item[, default])</p></td>
-<td><p>A wrapper around __get_item__ that handles missing keys by returning None.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.get_filename" title="Stoner.Core.DataFile.get_filename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filename</span></code></a>(mode)</p></td>
-<td><p>Forces the user to choose a new filename using a system dialog box.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.insert_rows" title="Stoner.Core.DataFile.insert_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_rows</span></code></a>(row, new_data)</p></td>
-<td><p>Insert new_data into the data array at position row.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.keys" title="Stoner.Core.DataFile.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a>()</p></td>
-<td><p>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(*args, **kargs)</p></td>
-<td><p>Loads the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> in from disc guessing a better subclass if necessary.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.rename" title="Stoner.Core.DataFile.rename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rename</span></code></a>(old_col, new_col)</p></td>
-<td><p>Renames columns without changing the underlying data.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reorder_columns</span></code></a>(cols[, headers_too, setas_too])</p></td>
-<td><p>Construct a new data array from the original data by assembling the columns in the order given.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.rolling_window" title="Stoner.Core.DataFile.rolling_window"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_window</span></code></a>([window, wrap, exclude_centre])</p></td>
-<td><p>Iterator that return a rolling window section of the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.rows" title="Stoner.Core.DataFile.rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows</span></code></a>([not_masked, reset])</p></td>
-<td><p>Generator method that will iterate over rows of data</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([filename])</p></td>
-<td><p>Saves a string representation of the current DataFile object into the file ‘filename’.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a>(xcol, value[, columns, accuracy])</p></td>
-<td><p>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code></a>(**kargs)</p></td>
-<td><p>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.select" title="Stoner.Core.DataFile.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
-<td><p>Produce a copy of the DataFile with only data rows that match a criteria.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.sort" title="Stoner.Core.DataFile.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>(*order, **kargs)</p></td>
-<td><p>Sorts the data by column name.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.split" title="Stoner.Core.DataFile.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(*args[, final])</p></td>
-<td><p>Recursively splits the current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code> objects where each one contains the rows from the original object which had the same value of a given column(s) or function.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swap_column</span></code></a>(*swp, **kargs)</p></td>
-<td><p>Swaps pairs of columns in the data.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.to_pandas" title="Stoner.Core.DataFile.to_pandas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_pandas</span></code></a>()</p></td>
-<td><p>Create a pandas DataFrame from a <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Core.DataFile.unique" title="Stoner.Core.DataFile.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>(col[, return_index, return_inverse])</p></td>
-<td><p>Return the unique values from the specified column - pass through for numpy.unique.</p></td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">T</code></dt>
-<dd><p>Gets the current data transposed.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Core.DataFile.basename">
-<code class="sig-name descname">basename</code><a class="headerlink" href="#Stoner.Core.DataFile.basename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the basename of the current filename.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">clone</code></dt>
-<dd><p>Gets a deep copy of the current DataFile.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">column_headers</code></dt>
-<dd><p>Pass through to the setas attribute.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">data</code></dt>
-<dd><p>Property Accessors for the main numerical data.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">dict_records</code></dt>
-<dd><p>Return the data as a dictionary of single columns with column headers for the keys.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">dims</code></dt>
-<dd><p>An alias for self.data.axes</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">dtype</code></dt>
-<dd><p>Return the _np_ dtype attribute of the data</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">filename</code></dt>
-<dd><p>Return DataFile filename, or make one up.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">header</code></dt>
-<dd><p>Make a pretty header string that looks like the tabular representation.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">mask</code></dt>
-<dd><p>Returns the mask of the data array.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">mime_type</code><em class="property"> = ['text/plain']</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">patterns</code><em class="property"> = ['*.txt', '*.tdi', '*.dat', '*.png', '*.340', '*.ovf', '*.ras', '*.spc', '*.tdms', '*.fld', '*.dql', '*.iv', '*.rvt', '*.emd', '*.dm4', '*.csv', '*.hdf', '*.hf5', '*.zip']</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">priority</code><em class="property"> = 32</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">records</code></dt>
-<dd><p>Returns the data as a _np_ structured data array. If columns names are duplicated then they are made unique.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">setas</code></dt>
-<dd><p>Get the list of column assignments.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">shape</code></dt>
-<dd><p>Pass through the numpy shape attribute of the data.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">subclasses</code><em class="property"> = {'BNLFile': &lt;class 'Stoner.formats.facilities.BNLFile'&gt;, 'BigBlueFile': &lt;class 'Stoner.formats.rigs.BigBlueFile'&gt;, 'BirgeIVFile': &lt;class 'Stoner.formats.rigs.BirgeIVFile'&gt;, 'CSVFile': &lt;class 'Stoner.formats.generic.CSVFile'&gt;, 'Data': &lt;class 'Stoner.Data'&gt;, 'DataFile': &lt;class 'Stoner.Core.DataFile'&gt;, 'EasyPlotFile': &lt;class 'Stoner.FileFormats.EasyPlotFile'&gt;, 'FmokeFile': &lt;class 'Stoner.formats.rigs.FmokeFile'&gt;, 'GenXFile': &lt;class 'Stoner.FileFormats.GenXFile'&gt;, 'HDF5File': &lt;class 'Stoner.HDF5.HDF5File'&gt;, 'HGXFile': &lt;class 'Stoner.HDF5.HGXFile'&gt;, 'HyperSpyFile': &lt;class 'Stoner.formats.generic.HyperSpyFile'&gt;, 'JustNumbersFile': &lt;class 'Stoner.formats.generic.JustNumbersFile'&gt;, 'KermitPNGFile': &lt;class 'Stoner.formats.generic.KermitPNGFile'&gt;, 'LSTemperatureFile': &lt;class 'Stoner.formats.instruments.LSTemperatureFile'&gt;, 'MDAASCIIFile': &lt;class 'Stoner.formats.facilities.MDAASCIIFile'&gt;, 'MokeFile': &lt;class 'Stoner.formats.rigs.MokeFile'&gt;, 'OVFFile': &lt;class 'Stoner.FileFormats.OVFFile'&gt;, 'OpenGDAFile': &lt;class 'Stoner.formats.facilities.OpenGDAFile'&gt;, 'PinkLibFile': &lt;class 'Stoner.FileFormats.PinkLibFile'&gt;, 'QDFile': &lt;class 'Stoner.formats.instruments.QDFile'&gt;, 'RasorFile': &lt;class 'Stoner.formats.facilities.RasorFile'&gt;, 'RigakuFile': &lt;class 'Stoner.formats.instruments.RigakuFile'&gt;, 'SLS_STXMFile': &lt;class 'Stoner.HDF5.SLS_STXMFile'&gt;, 'SNSFile': &lt;class 'Stoner.formats.facilities.SNSFile'&gt;, 'SPCFile': &lt;class 'Stoner.formats.instruments.SPCFile'&gt;, 'TDMSFile': &lt;class 'Stoner.formats.generic.TDMSFile'&gt;, 'VSMFile': &lt;class 'Stoner.formats.instruments.VSMFile'&gt;, 'XRDFile': &lt;class 'Stoner.formats.instruments.XRDFile'&gt;, 'ZippedFile': &lt;class 'Stoner.Zip.ZippedFile'&gt;}</em></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="Stoner.Core.DataFile.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clone the DataFile, but allowing additional arguments to modify the new clone.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*args</strong> (<em>tuple</em>) – Positional arguments to pass through to the new clone.</p></li>
-<li><p><strong>**kargs</strong> (<em>dict</em>) – Keyword arguments to pass through to the new clone.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.8)"><strong>TypeError</strong></a> – If a keyword argument doesn’t match an attribute.</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>new_d (DataFile)</em> –     Modified clone of the current object.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.add_column">
-<code class="sig-name descname">add_column</code><span class="sig-paren">(</span><em class="sig-param">column_data</em>, <em class="sig-param">header=None</em>, <em class="sig-param">index=None</em>, <em class="sig-param">func_args=None</em>, <em class="sig-param">replace=False</em>, <em class="sig-param">setas=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.add_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.add_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a column of data or inserts a column to a datafile instance.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>column_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.array</span></code> or list or callable) – Data to append or insert or a callable function that will generate new data</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The text to set the column header to,
-if not supplied then defaults to ‘col#’</p></li>
-<li><p><strong>index</strong> (<em>index type</em>) – The  index (numeric or string) to insert (or replace) the data</p></li>
-<li><p><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – If column_data is a callable object, then this argument
-can be used to supply a dictionary of function arguments to the callable object.</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Replace the data or insert the data (default)</p></li>
-<li><p><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>self</em> – The <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> instance with the additonal column inserted.</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Like most <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> methods, this method operates in-place in that it also modifies
-the original DataFile Instance as well as returning it.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.adjust_setas">
-<code class="sig-name descname">adjust_setas</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.adjust_setas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.adjust_setas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adjust the setas of this object and return ourselves.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>This DataFile object</p>
-</dd>
-</dl>
-<p>This method is useful when chaining methods together to change the setas assignments on the fly.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.closest">
-<code class="sig-name descname">closest</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">xcol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.closest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.closest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the row in a data file which has an x-column value closest to the given value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – Value to search for.</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Column in which to look for value, or None to use setas.</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>ndarray</em> – A single row of data as a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataArray</span></code>.</p>
-</dd>
-</dl>
-<p>Notes: To find which row it is that has been returned, use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataArray.i</span></code> index attribute.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.column">
-<code class="sig-name descname">column</code><span class="sig-paren">(</span><em class="sig-param">col</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>col</strong> (<em>int, string, list or re</em>) – is the column index as defined for <a class="reference internal" href="#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.find_col()</span></code></a></p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>ndarray</em> – One or more columns of data as a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.columns">
-<code class="sig-name descname">columns</code><span class="sig-paren">(</span><em class="sig-param">not_masked=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.columns" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generator method that will iterate over the columns of data int he datafile.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
-<dd class="field-odd"><p><em>1D array</em> – Returns the next column of data.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.count">
-<code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param">axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Count the number of un-masked elements in the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>.</p>
-<dl class="simple">
-<dt>Keywords:</dt><dd><p>axis (int): Which axis to count the unmasked elements along.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(int)</em> – Number of unmasked elements.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.del_column">
-<code class="sig-name descname">del_column</code><span class="sig-paren">(</span><em class="sig-param">col=None</em>, <em class="sig-param">duplicates=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.del_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.del_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes a column from the current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>col</strong> (<em>int, string, iterable of booleans, list or re</em>) – is the column index as defined for <a class="reference internal" href="#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.find_col()</span></code></a> to the column to be deleted</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>duplicates</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (default False) look for duplicated columns</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>self</em> – The <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object with the column deleted.</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>If duplicates is True and col is None then all duplicate columns are removed,</p></li>
-<li><p>if col is not None and duplicates is True then all duplicates of the specified column are removed.</p></li>
-<li><dl class="simple">
-<dt>If duplicates is False and <em>col</em> is either None or False then all masked coplumns are deleeted. If</dt><dd><p><em>col</em> is True, then all columns that are not set i the <a class="reference internal" href="#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">setas</span></code></a> attrobute are delted.</p>
-</dd>
-</dl>
-</li>
-<li><p>If col is a list (duplicates should not be None) then the all the matching columns are found.</p></li>
-<li><p>If col is an iterable of booleans, then all columns whose elements are False are deleted.</p></li>
-<li><dl class="simple">
-<dt>If col is None and duplicates is None, then all columns with at least one elelemtn masked</dt><dd><p>will be deleted</p>
-</dd>
-</dl>
-</li>
-</ul>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.del_nan">
-<code class="sig-name descname">del_nan</code><span class="sig-paren">(</span><em class="sig-param">col=None</em>, <em class="sig-param">clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.del_nan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.del_nan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove rows that have nan in them.</p>
-<dl class="simple">
-<dt>eyword Arguments:</dt><dd><p>col (index types or None): column(s) to look for nan’s in. If None or not given, use setas columns.
-cone (boolean): if True clone the current object before running and then return the clone not self.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>self (DataFile)</em> – Returns a copy of the current object (or clone if <a href="#id5"><span class="problematic" id="id6">*</span></a>clone*=True)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.del_rows">
-<code class="sig-name descname">del_rows</code><span class="sig-paren">(</span><em class="sig-param">col=None</em>, <em class="sig-param">val=None</em>, <em class="sig-param">invert=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.del_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.del_rows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>col</strong> (<em>list,slice,int,string, re, callable or None</em>) – Column containg values to search for.</p></li>
-<li><p><strong>val</strong> (<em>float or callable</em>) – Specifies rows to delete. Maybe:</p>
-<ul>
-<li><p>None - in which case the <em>col</em> argument is used to identify rows to be deleted,</p></li>
-<li><p>a float in which case rows whose columncol = val are deleted</p></li>
-<li><p>or a function - in which case rows where the function evaluates to be true are deleted.</p></li>
-<li><p>a tuple, in which case rows where column col takes value between the minium and maximum of the tuple
-are deleted.</p></li>
-</ul>
-</li>
-</ul>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>invert</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Specifies whether to invert the logic of the test to delete a row. If True, keep the rows
-that would have been deleted otherwise.</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>self</em> – The current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If col is None, then all rows with masked data are deleted</p>
-<p>if <em>col</em> is callable then it is passed each row as a <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> and if it returns
-True, then the row will be deleted or kept depending on the value of <em>invert</em>.</p>
-<p>If <em>val</em> is a callable it should take two arguments - a float and a
-list. The float is the value of the current row that corresponds to column col abd the second
-argument is the current row.</p>
-</div>
-<div class="admonition-todo admonition" id="id7">
-<p class="admonition-title">Todo</p>
-<p>Implement val is a tuple for deletinging in a range of values.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.dir">
-<code class="sig-name descname">dir</code><span class="sig-paren">(</span><em class="sig-param">pattern=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/re.html#module-re" title="(in Python v3.8)"><em>re</em></a>) – is a regular expression or None to list all keys</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>list</em> – A list of metadata keys.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">func=None</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">reset=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the mask on rows of data by evaluating a function for each row.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>func</strong> (<em>callable</em>) – is a callable object that should take a single list as a p[arameter representing one row.</p></li>
-<li><p><strong>cols</strong> (<em>list</em>) – a list of column indices that are used to form the list of values passed to func.</p></li>
-<li><p><strong>reset</strong> (<em>bool</em>) – determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored
-in the filter (so the filter is logically or’d)) The default value of None results in a complete row being passed into func.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>self</em> – The current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object with the mask set</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.find_col">
-<code class="sig-name descname">find_col</code><span class="sig-paren">(</span><em class="sig-param">col</em>, <em class="sig-param">force_list=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.find_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.find_col" title="Permalink to this definition">¶</a></dt>
-<dd><p>Indexes the column headers in order to locate a column of data.shape.</p>
-<p>Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.</p>
-<ul class="simple">
-<li><p>Integer indices are simply checked to ensure that they are in range</p></li>
-<li><p>String indices are first checked for an exact match against a column header
-if that fails they are then compiled to a regular expression and the first
-match to a column header is taken.</p></li>
-<li><p>A regular expression index is simply matched against the column headers and the
-first match found is taken. This allows additional regular expression options
-such as case insensitivity.</p></li>
-<li><p>A slice index is converted to a list of integers and processed as below</p></li>
-<li><p>A list index returns the results of feading each item in the list at <a class="reference internal" href="#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_col()</span></code></a>
-in turn.</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>col</strong> (<em>int, a string, a re, a slice or a list</em>) – Which column(s) to retuirn indices for.</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>force_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Force the output always to be a list. Mainly for internal use only</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>int, list of ints</em> – The matching column index as an integer or a KeyError</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">item</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper around __get_item__ that handles missing keys by returning None.</p>
-<p>This is useful for the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folder.DataFolder</span></code> class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>item</strong> (<em>string</em>) – A string representing the metadata keyname</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>default</strong> (<a class="reference internal" href="Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.any" title="Stoner.Image.ImageArray.any"><em>any</em></a>) – Default value to return if key not found</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>mixed</em> – self.metadata[item] or None if item not in self.metadata</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.get_filename">
-<code class="sig-name descname">get_filename</code><span class="sig-paren">(</span><em class="sig-param">mode</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.get_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.get_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forces the user to choose a new filename using a system dialog box.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mode</strong> (<em>string</em>) – The mode of file operation to be used when calling the dialog box</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>str</em> – The new filename</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The filename attribute of the current instance is updated by this method as well.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.insert_rows">
-<code class="sig-name descname">insert_rows</code><span class="sig-paren">(</span><em class="sig-param">row</em>, <em class="sig-param">new_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.insert_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.insert_rows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert new_data into the data array at position row. This is a wrapper for numpy.insert.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>row</strong> (<em>int</em>) – Data row to insert into</p></li>
-<li><p><strong>new_data</strong> (<em>numpy array</em>) – An array with an equal number of columns as the main data array containing the new row(s) of data to insert</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>self</em> – A copy of the modified <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.keys">
-<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.keys" title="Permalink to this definition">¶</a></dt>
-<dd><p>An alias for <code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.dir(None)()</span></code> .</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a list of all the keys in the metadata dictionary</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.load">
-<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> in from disc guessing a better subclass if necessary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>string or None</em>) – path to file to load</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>auto_load</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True (default) then the load routine tries all the subclasses of <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> in turn to load the file</p></li>
-<li><p><strong>filetype</strong> (<a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a>, str) – If not none then tries using filetype as the loader.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>DataFile</em> – A copy of the loaded <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-data docutils literal notranslate"><span class="pre">DataFile</span></code></a> instance</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Possible subclasses to try and load from are identified at run time using the speciall <a class="reference internal" href="#Stoner.Core.DataFile.subclasses" title="Stoner.Core.DataFile.subclasses"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.subclasses</span></code></a> attribute.</p>
-<p>If <em>filetupe</em> is a string, then it is first tried as an exact match to a subclass name, otherwise it is used as a partial match
-and the first class in priority order is that matches is used.</p>
-<p>Some subclasses can be found in the <a class="reference internal" href="../Stoner.html#module-Stoner.FileFormats" title="Stoner.FileFormats"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.FileFormats</span></code></a> module.</p>
-<p>Each subclass is scanned in turn for a class attribute priority which governs the order in which they are tried. Subclasses which can
-make an early positive determination that a file has the correct format can have higher priority levels. Classes should return
-a suitable expcetion if they fail to load the file.</p>
-<p>If not class can load a file successfully then a RunttimeError exception is raised.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.rename">
-<code class="sig-name descname">rename</code><span class="sig-paren">(</span><em class="sig-param">old_col</em>, <em class="sig-param">new_col</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.rename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.rename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Renames columns without changing the underlying data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>old_col</strong> (<em>string, int, re</em>) – Old column index or name (using standard rules)</p></li>
-<li><p><strong>new_col</strong> (<em>string</em>) – New name of column</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>self</em> – A copy of the modified <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> instance</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.reorder_columns">
-<code class="sig-name descname">reorder_columns</code><span class="sig-paren">(</span><em class="sig-param">cols</em>, <em class="sig-param">headers_too=True</em>, <em class="sig-param">setas_too=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.reorder_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.reorder_columns" title="Permalink to this definition">¶</a></dt>
-<dd><p>Construct a new data array from the original data by assembling the columns in the order given.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cols</strong> (<em>list of column indices</em>) – (referred to the oriignal
-data set) from which to assemble the new data set</p></li>
-<li><p><strong>headers_too</strong> (<em>bool</em>) – Reorder the column headers in the same
-way as the data (defaults to True)</p></li>
-<li><p><strong>setas_too</strong> (<em>bool</em>) – Reorder the column assignments in the same
-way as the data (defaults to True)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>self</em> – A copy of the modified <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.rolling_window">
-<code class="sig-name descname">rolling_window</code><span class="sig-paren">(</span><em class="sig-param">window=7</em>, <em class="sig-param">wrap=True</em>, <em class="sig-param">exclude_centre=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.rolling_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.rolling_window" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterator that return a rolling window section of the data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Size of the rolling window (must be odd and &gt;= 3)</p></li>
-<li><p><strong>wrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Whether to use data from the other end of the array when at one end or the other.</p></li>
-<li><p><strong>exclude_centre</strong> (<em>odd int</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Exclude the ciurrent row from the rolling window (defaults to False)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Yields</dt>
-<dd class="field-even"><p><em>ndarray</em> – Yields with a section of data that is window rows long, each iteration moves the marker
-one row further on.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.rows">
-<code class="sig-name descname">rows</code><span class="sig-paren">(</span><em class="sig-param">not_masked=False</em>, <em class="sig-param">reset=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.rows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generator method that will iterate over rows of data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>not_masked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If a row is masked and this is true, then don’t return this row.</p>
-</dd>
-<dt class="field-even">Yields</dt>
-<dd class="field-even"><p><em>1D array</em> – Returns the next row of data</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves a string representation of the current DataFile object into the file ‘filename’.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>string, bool or None</em>) – Filename to save data as, if this is
-None then the current filename for the object is used
-If this is not set, then then a file dialog is used. If f
-ilename is False then a file dialog is forced.</p></li>
-<li><p><strong>as_loaded</strong> (<em>bool,str</em>) – If True, then the <em>Loaded as</em> key is inspected to see what the original
-class of the DataFile was and then this class’ save method is used to save the data. If a str then
-the keyword value is interpreted as the name of a subclass of the the current DataFile.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>self</em> – The current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.search">
-<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">xcol</em>, <em class="sig-param">value</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">accuracy=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.search" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>xcol</strong> (<em>int,string.re</em>)</p></li>
-<li><p><strong>value</strong> (<em>float, tuple, list or callable</em>) – Value to look for</p></li>
-</ul>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>columns</strong> (<a class="reference internal" href="Stoner.DataFolder.index.html#Stoner.DataFolder.index" title="Stoner.DataFolder.index"><em>index</em></a><em> or </em><em>array of indices</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> (</em><em>default</em><em>)</em>) – columns of data to return - none represents all columns.</p></li>
-<li><p><strong>accuracy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Uncertainty to accept when testing equalities</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>ndarray</em> – numpy array of matching rows or column values depending on the arguements.</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The value is interpreted as follows:</p>
-<ul class="simple">
-<li><p>a float looks for an exact match</p></li>
-<li><p>a list is a list of exact matches</p></li>
-<li><p>a tuple should contain a (min,max) value.</p></li>
-<li><p>A callable object should have accept a float and an array representing the value of
-the search col for the the current row and the entire row.</p></li>
-</ul>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.section">
-<code class="sig-name descname">section</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.section"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.section" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – x values ,atch this condition are included inth e section</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>  or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – y values ,atch this condition are included inth e section</p></li>
-<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>  or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – z values ,atch this condition are included inth e section</p></li>
-<li><p><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – a function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>DataFile</em> – A <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> like object that includes only those lines from the original that match the section specification</p>
-</dd>
-</dl>
-<p>Internally this function is calling <a class="reference internal" href="#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataFile.search()</span></code></a> to pull out matching sections of the data array.
-To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying
-conditions on two axes will return a line of points along the third axis. The final keyword parameter allows you to select
-data points that lie in an arbitary plane or line. eg:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span><span class="nb">abs</span><span class="p">(</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">0.1</span> <span class="ow">and</span> <span class="n">z</span><span class="o">==</span><span class="mi">2</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>would extract points along the line 2y=3x+2 (note the use of an &lt; operator to avoid floating point rounding errors) where
-the z-co-ordinate is 2.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.select">
-<code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produce a copy of the DataFile with only data rows that match a criteria.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> (<em>various</em>) – A single positional argument if present is interpreted as follows:</p></li>
-<li><p><strong>* If a callable function is given, the entire row is presented to it.</strong> – If it evaluates True then that row is selected. This allows arbitary select operations</p></li>
-<li><p><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the rows</strong></p></li>
-</ul>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>kargs</strong> (<em>various</em>) – <p>Arbitary keyword arguments are interpreted as requestion matches against the corresponding
-columns. The keyword argument may have an additional <em>__operator*</em> appended to it which is interpreted
-as follows:</p>
-<ul class="simple">
-<li><p><em>eq</em>  value equals argument value (this is the default test for scalar argument)</p></li>
-<li><p><em>ne</em>  value doe not equal argument value</p></li>
-<li><p><em>gt</em>  value doe greater than argument value</p></li>
-<li><p><em>lt</em>  value doe less than argument value</p></li>
-<li><p><em>ge</em>  value doe greater than or equal to argument value</p></li>
-<li><p><em>le</em>  value doe less than or equal to argument value</p></li>
-<li><p><em>between</em>  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)</p></li>
-<li><p><em>ibetween</em>,*ilbetween*,*iubetween* as above but include both,lower or upper values</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(DatFile)</em> – a copy the DataFile instance that contains just the matching rows.</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>if the operator is preceeded by <em>__not__</em> then the sense of the test is negated.</p>
-<p>If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
-achieve a logical AND, you can chain two selects together:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">temp__le</span><span class="o">=</span><span class="mf">4.2</span><span class="p">,</span><span class="n">vti_temp__lt</span><span class="o">=</span><span class="mf">4.2</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">field_gt</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.</p>
-<p>If you need to select on a row value that ends in an operator word, then append
-<em>__eq</em> in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
-then pass them via the first positional dictionary value.</p>
-<p>There is a “magic” column name “_i” which is interpreted as the row numbers of the data.</p>
-</div>
-<dl>
-<dt>Example</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example using select method to pick out data.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-
-<span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__gt</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mf">5.3</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 1&quot;</span>
-<span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__lt</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g&lt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 2&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>(<a class="reference external" href="../samples/select.png">png</a>, <a class="reference external" href="../samples/select.hires.png">hires.png</a>, <a class="reference external" href="../samples/select.pdf">pdf</a>)</p>
-<div class="figure align-default">
-<img alt="../_images/select.png" src="../_images/select.png" />
-</div>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.sort">
-<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">*order</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.sort" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*order</strong> (<em>column index or list of indices or callable function</em>) – One or more sort order keys.
-If the argument is a callable function then it should take a two tuple arguments and
-return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise
-if the argument is interpreted as a column index. If a single argument is supplied, then it may be
-a list of column indices. If no sort orders are supplied then the data is sorted by the <a class="reference internal" href="#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code></a> attribute
-or if that is not set, then order of the columns in the data.</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>reverse</strong> (<em>boolean</em>) – If true, the sorted array isreversed.</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>self</em> – A copy of the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> sorted object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.split">
-<code class="sig-name descname">split</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">final='files'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.split" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursively splits the current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> object into a <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Forlders.DataFolder</span></code> objects where each one contains the rows from the original object which had the same value of a given column(s) or function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*args</strong> (<em>column index or function</em>) – Each argument is used in turn to find key values for the files in the DataFolder</p>
-</dd>
-<dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>final</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Controls whether the final argument plaes the files in the DataFolder (default: “files”) or in groups (“groups”)</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>Stoner.Folders.DataFolder</em> –     A <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object containing the individual
-<code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code> objects</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>On each iteration the first argument is called. If it is a column type then rows which amtch each unique value are collated
-together and made into a separate file. If the argument is a callable, then it is called for each row, passing the row
-as a single 1D array and the return result is used to group lines together. The return value should be hashable.</p>
-<p>Once this is done and the <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> exists, if there are remaining argument, then the method is
-called recusivelyt for each file and the resulting DataFolder added into the root DataFolder and the file is removed.</p>
-<p>Thus, when all of the arguments are evaluated, the resulting DataFolder is a multi-level tree.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>There has been a change in the arguments for the split function  from version 0.8 of the Stoner Package.</p>
-</div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.swap_column">
-<code class="sig-name descname">swap_column</code><span class="sig-paren">(</span><em class="sig-param">*swp</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.swap_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.swap_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Swaps pairs of columns in the data.</p>
-<p>Useful for reordering data for idiot programs that expect columns in a fixed order.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>swp</strong> (<em>tuple of list of tuples of two elements</em>) – Each
-element will be iused as a column index (using the normal rules
-for matching columns).  The two elements represent the two
-columns that are to be swapped.</p></li>
-<li><p><strong>headers_too</strong> (<em>bool</em>) – Indicates the column headers
-are swapped as well</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>self</em> – A copy of the modified <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> objects</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If swp is a list, then the function is called recursively on each
-element of the list. Thus in principle the &#64;swp could contain
-lists of lists of tuples</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.to_pandas">
-<code class="sig-name descname">to_pandas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.to_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.to_pandas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a pandas DataFrame from a <a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object.</p>
-<p class="rubric">Notes</p>
-<p>In addition to transferring the numerical data, the DataFrame’s columns are set to
-a multi-level index of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Data.column_headers</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Data.setas</span></code>
-calues. A pandas DataFrame extension attribute, <em>metadata</em> is registered and is used to store
-the metada from the :py:class:1Stoner.Data` object. This pandas extension attribute is in fact a trivial
-subclass of the <a class="reference internal" href="Stoner.core.typeHintedDict.html#Stoner.core.typeHintedDict" title="Stoner.core.typeHintedDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.core.typeHintedDict</span></code></a>.</p>
-<p>The inverse operation can be carried out simply by passing a DataFrame into the copnstructor of the
-<a class="reference internal" href="Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>**NotImplementedError** if pandas didn't import correctly.</strong> – </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.Core.DataFile.unique">
-<code class="sig-name descname">unique</code><span class="sig-paren">(</span><em class="sig-param">col</em>, <em class="sig-param">return_index=False</em>, <em class="sig-param">return_inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.unique"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.unique" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the unique values from the specified column - pass through for numpy.unique.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>col</strong> (<em>index</em>) – Column to look for unique values in</p>
-</dd>
-</dl>
-<p>Keyword Arguments:</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -1354,8 +584,8 @@ subclass of the <a class="reference internal" href="Stoner.core.typeHintedDict.h
   <p class="topless"><a href="Stoner.core.utils.tab_delimited.html"
                         title="previous chapter">tab_delimited</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Analysis.AnalysisMixin.html"
-                        title="next chapter">AnalysisMixin</a></p>
+  <p class="topless"><a href="Stoner.Core.DataFile.__init__.html"
+                        title="next chapter">DataFile.__init__</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -1382,7 +612,7 @@ subclass of the <a class="reference internal" href="Stoner.core.typeHintedDict.h
           <a href="Stoner.core.utils.tab_delimited.html" title="Previous document">tab_delimited</a>
         </li>
         <li>
-          <a href="Stoner.Analysis.AnalysisMixin.html" title="Next document">AnalysisMixin</a>
+          <a href="Stoner.Core.DataFile.__init__.html" title="Next document">DataFile.__init__</a>
           &rarr;
         </li>
     </ul>
@@ -1396,9 +626,9 @@ subclass of the <a class="reference internal" href="Stoner.core.typeHintedDict.h
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

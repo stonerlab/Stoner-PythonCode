@@ -1,0 +1,8 @@
+
+
+CSVFile.sort
+===================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.sort

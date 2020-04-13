@@ -1,0 +1,8 @@
+
+
+VSMFile.insert_rows
+==============================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.insert_rows

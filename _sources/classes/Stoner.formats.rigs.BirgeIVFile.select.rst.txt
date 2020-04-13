@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.select
+======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.select

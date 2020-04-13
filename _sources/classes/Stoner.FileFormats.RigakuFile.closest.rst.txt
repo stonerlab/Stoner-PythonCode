@@ -1,8 +1,0 @@
-
-
-RigakuFile.closest
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.closest

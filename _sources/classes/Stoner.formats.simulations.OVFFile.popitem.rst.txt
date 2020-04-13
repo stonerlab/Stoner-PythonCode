@@ -1,0 +1,8 @@
+
+
+OVFFile.popitem
+==========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.popitem

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.del_rows
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.del_rows

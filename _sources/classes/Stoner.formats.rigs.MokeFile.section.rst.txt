@@ -1,0 +1,8 @@
+
+
+MokeFile.section
+====================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.section

@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.__init__
+========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.__init__

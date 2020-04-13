@@ -1,8 +1,0 @@
-
-
-MokeFile.section
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.section

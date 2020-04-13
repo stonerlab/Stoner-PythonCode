@@ -1,0 +1,8 @@
+
+
+OVFFile.split
+========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.split

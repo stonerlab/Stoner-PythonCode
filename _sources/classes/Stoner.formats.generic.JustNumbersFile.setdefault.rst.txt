@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.setdefault
+=================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.setdefault

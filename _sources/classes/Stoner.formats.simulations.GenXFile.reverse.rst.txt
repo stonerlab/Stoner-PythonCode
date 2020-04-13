@@ -1,0 +1,8 @@
+
+
+GenXFile.reverse
+===========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.reverse

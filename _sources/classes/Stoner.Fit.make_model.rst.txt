@@ -1,6 +1,0 @@
-make_model
-==========
-
-.. currentmodule:: Stoner.Fit
-
-.. autofunction:: make_model

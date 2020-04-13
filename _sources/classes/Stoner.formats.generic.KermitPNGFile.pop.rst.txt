@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.pop
+========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.pop

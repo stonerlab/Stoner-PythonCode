@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ZipFolder" href="Stoner.Zip.ZipFolder.html" />
@@ -58,7 +58,7 @@
 <dt id="Stoner.Zip.ZipFolderMixin">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.Zip.</code><code class="sig-name descname">ZipFolderMixin</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A sub class of <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> that provides a method to load and save data from a single Zip file.</p>
+<p>Provides methods to load and save data from a single Zip file.</p>
 <p>See <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> for documentation on constructor.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -88,10 +88,10 @@ provides a __setter__ method without causing a problem.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Stoner.Zip.ZipFolderMixin.getlist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getlist</span></code></a>([recursive, directory, flatten])</p></td>
-<td><p>Reads the Zip File to construct a list of ZipFile objects</p></td>
+<td><p>Read the Zip File to construct a list of ZipFile objects.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Zip.ZipFolderMixin.save" title="Stoner.Zip.ZipFolderMixin.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
-<td><p>Saves a load of files to a single Zip file, creating members as it goes.</p></td>
+<td><p>Save a load of files to a single Zip file, creating members as it goes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -112,13 +112,13 @@ provides a __setter__ method without causing a problem.</p>
 <dl class="method">
 <dt id="Stoner.Zip.ZipFolderMixin.getlist">
 <code class="sig-name descname">getlist</code><span class="sig-paren">(</span><em class="sig-param">recursive=None</em>, <em class="sig-param">directory=None</em>, <em class="sig-param">flatten=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads the Zip File to construct a list of ZipFile objects</p>
+<dd><p>Read the Zip File to construct a list of ZipFile objects.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="Stoner.Zip.ZipFolderMixin.save">
 <code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">root=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves a load of files to a single Zip file, creating members as it goes.</p>
+<dd><p>Save a load of files to a single Zip file, creating members as it goes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The name of the Zip file to save to if set to None, will prompt for a filename.</p>
@@ -188,9 +188,9 @@ provides a __setter__ method without causing a problem.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

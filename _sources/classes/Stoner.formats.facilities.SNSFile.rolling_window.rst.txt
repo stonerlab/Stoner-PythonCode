@@ -1,0 +1,8 @@
+
+
+SNSFile.rolling_window
+================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.rolling_window

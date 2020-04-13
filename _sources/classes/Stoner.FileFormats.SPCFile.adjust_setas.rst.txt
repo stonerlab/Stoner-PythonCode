@@ -1,8 +1,0 @@
-
-
-SPCFile.adjust_setas
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.adjust_setas

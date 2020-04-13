@@ -1,0 +1,8 @@
+
+
+OVFFile.__init__
+===========================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.__init__

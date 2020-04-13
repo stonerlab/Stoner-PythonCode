@@ -16,14 +16,12 @@ PlotMixin
       ~PlotMixin.fig
       ~PlotMixin.fignum
       ~PlotMixin.labels
-      ~PlotMixin.legend
       ~PlotMixin.multiple
       ~PlotMixin.no_fmt
       ~PlotMixin.positional_fmt
       ~PlotMixin.showfig
       ~PlotMixin.subplots
       ~PlotMixin.template
-      ~PlotMixin.title
 
    .. rubric:: Methods Summary
 
@@ -36,6 +34,7 @@ PlotMixin
       ~PlotMixin.griddata
       ~PlotMixin.image_plot
       ~PlotMixin.inset
+      ~PlotMixin.legend
       ~PlotMixin.plot
       ~PlotMixin.plot_matrix
       ~PlotMixin.plot_xy
@@ -57,14 +56,12 @@ PlotMixin
    .. autoattribute:: fig
    .. autoattribute:: fignum
    .. autoattribute:: labels
-   .. autoattribute:: legend
    .. autoattribute:: multiple
    .. autoattribute:: no_fmt
    .. autoattribute:: positional_fmt
    .. autoattribute:: showfig
    .. autoattribute:: subplots
    .. autoattribute:: template
-   .. autoattribute:: title
 
    .. rubric:: Methods Documentation
 
@@ -75,6 +72,7 @@ PlotMixin
    .. automethod:: griddata
    .. automethod:: image_plot
    .. automethod:: inset
+   .. automethod:: legend
    .. automethod:: plot
    .. automethod:: plot_matrix
    .. automethod:: plot_xy

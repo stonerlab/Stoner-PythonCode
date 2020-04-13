@@ -1,0 +1,8 @@
+
+
+KermitPNGFile.unique
+===========================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: KermitPNGFile.unique

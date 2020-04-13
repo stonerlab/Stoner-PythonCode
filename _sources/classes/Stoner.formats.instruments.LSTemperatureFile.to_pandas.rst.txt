@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.to_pandas
+======================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: LSTemperatureFile.to_pandas

@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.pop
+===================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.pop

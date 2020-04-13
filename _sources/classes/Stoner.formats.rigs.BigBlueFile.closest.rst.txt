@@ -1,0 +1,8 @@
+
+
+BigBlueFile.closest
+=======================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.closest

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.find_col
+=========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.find_col

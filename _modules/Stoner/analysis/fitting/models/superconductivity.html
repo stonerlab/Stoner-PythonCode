@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,9 +32,6 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
@@ -48,18 +45,15 @@
   <h1>Source code for Stoner.analysis.fitting.models.superconductivity</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:py:class:`lmfit.Model` model classes and functions for various superconductivity related models.</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-
+<span class="sd">&quot;&quot;&quot;:py:class:`lmfit.Model` model classes and functions for various superconductivity related models.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=invalid-name</span>
 <span class="c1"># This module can be used with Stoner v.0.9.0 asa standalone module</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">jv</span>
 <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">physical_constants</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;RSJ_Noiseless&quot;</span><span class="p">,</span>
@@ -91,7 +85,8 @@
         <span class="sd">&quot;&quot;&quot;Null decorator function.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">func</span>
 
-    <span class="k">class</span> <span class="nc">_dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">_dummy</span><span class="p">:</span>
+
         <span class="sd">&quot;&quot;&quot;A class that does nothing so that float64 can be an instance of it safely.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -105,7 +100,8 @@
 
 <span class="nd">@jit</span><span class="p">(</span><span class="n">float64</span><span class="p">[:](</span><span class="n">float64</span><span class="p">[:],</span> <span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">,</span> <span class="n">float64</span><span class="p">))</span>
 <span class="k">def</span> <span class="nf">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;strijkers Model for point-contact Andreev Reflection Spectroscopy</span>
+    <span class="sd">&quot;&quot;&quot;Implement strijkers Model for point-contact Andreev Reflection Spectroscopy.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        V = bias voltages, params=list of parameter values, imega, delta,P and Z</span>
 <span class="sd">        omega (float): Broadening</span>
@@ -116,9 +112,8 @@
 <span class="sd">    Return:</span>
 <span class="sd">        Conductance vs bias data.</span>
 
-<span class="sd">    .. note::</span>
-
-<span class="sd">       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</span>
+<span class="sd">    Note:</span>
+<span class="sd">           PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</span>
 
 <span class="sd">    This version only uses 1 delta, not modified for proximity</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -174,14 +169,19 @@
 
 
 <span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;strijkers Model for point-contact Andreev Reflection Spectroscopy.</span>
+    <span class="sd">&quot;&quot;&quot;Strijkers Model for point-contact Andreev Reflection Spectroscopy.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        V (array): bias voltages</span>
-<span class="sd">        omega (float): Broadening</span>
-<span class="sd">        delta (float): SC energy Gap</span>
-<span class="sd">        P (float): Interface parameter</span>
-<span class="sd">        Z (float): Current spin polarization through contact</span>
+<span class="sd">        V (array):</span>
+<span class="sd">            bias voltages</span>
+<span class="sd">        omega (float):</span>
+<span class="sd">            Broadening</span>
+<span class="sd">        delta (float):</span>
+<span class="sd">            SC energy Gap</span>
+<span class="sd">        P (float):</span>
+<span class="sd">            Interface parameter</span>
+<span class="sd">        Z (float):</span>
+<span class="sd">            Current spin polarization through contact</span>
 
 <span class="sd">    Return:</span>
 <span class="sd">        Conductance vs bias data.</span>
@@ -201,7 +201,7 @@
 
 
 <span class="k">def</span> <span class="nf">rsj_noiseless</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">Ic_p</span><span class="p">,</span> <span class="n">Ic_n</span><span class="p">,</span> <span class="n">Rn</span><span class="p">,</span> <span class="n">V_offset</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a simple noiseless RSJ model.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implement a simple noiseless RSJ model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        I (array-like): Current values</span>
@@ -222,9 +222,7 @@
 <span class="sd">        .. plot:: samples/Fitting/rsj_fit.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: rsj_noiseless_func</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">normal_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">I</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">Ic_p</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">Rn</span>
     <span class="n">normal_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">I</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">Ic_n</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">Rn</span>
     <span class="n">p_branch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">I</span> <span class="o">&gt;</span> <span class="n">Ic_p</span><span class="p">,</span> <span class="n">normal_p</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">I</span><span class="p">))</span>
@@ -233,7 +231,7 @@
 
 
 <span class="k">def</span> <span class="nf">rsj_simple</span><span class="p">(</span><span class="n">I</span><span class="p">,</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">Rn</span><span class="p">,</span> <span class="n">V_offset</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a simple noiseless symmetric RSJ model.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implement a simple noiseless symmetric RSJ model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        I (array-like):</span>
@@ -258,16 +256,14 @@
 <span class="sd">        .. plot:: samples/Fitting/rsj_fit.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: rsj_simple_func</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">normal</span> <span class="o">=</span> <span class="n">Rn</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">I</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">Ic</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">ic_branch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Ic</span><span class="p">,</span> <span class="n">ic_branch</span><span class="p">,</span> <span class="n">normal</span><span class="p">)</span> <span class="o">+</span> <span class="n">V_offset</span>
 
 
 <span class="k">def</span> <span class="nf">ic_B_airy</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">Ic0</span><span class="p">,</span> <span class="n">B_offset</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Critical Current for a round Josepshon Junction wrt to Field.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate Critical Current for a round Josepshon Junction wrt to Field.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        B (array-like):</span>
@@ -285,7 +281,8 @@
 
 <span class="sd">    Notes:</span>
 <span class="sd">        Represents the critical current as:</span>
-<span class="sd">            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`</span>
+<span class="sd">            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}</span>
+<span class="sd">                    {\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`</span>
 <span class="sd">        where :math:`J_1` is a first order Bessel function.</span>
 
 <span class="sd">        For small ($&lt;1^{-5}$)values of the Bessel function argument, this will return Ic0 to</span>
@@ -295,9 +292,7 @@
 <span class="sd">        .. plot:: samples/Fitting/ic_b_airy.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: ic_b_airy_func</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">B</span> <span class="o">-</span> <span class="n">B_offset</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">Phi_0</span>
 
     <span class="k">return</span> <span class="n">Ic0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">arg</span><span class="p">),</span> <span class="n">J1</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">/</span> <span class="n">arg</span><span class="p">))</span>
@@ -326,7 +321,6 @@
 <span class="sd">        Implements</span>
 
 <span class="sd">        Lmath:`I_cR_N = I_cR_N^0\zfrac{\sin(2E_x (d_f-d_0)/hv_f)}{2E_x(d_f-d_0)/hv_f}`</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s2">&quot;Planck constant in eV s&quot;</span><span class="p">]</span>
     <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">d_f</span> <span class="o">-</span> <span class="n">d_0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-9</span>
@@ -358,7 +352,6 @@
 <span class="sd">    Notes:</span>
 <span class="sd">        Implements Eq 18 from F.S. Bergeret, A.F. Volkov, and K.B. Efetov, Phys. Rev. B 64, 134506 (2001).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">L</span> <span class="o">=</span> <span class="n">v_f</span> <span class="o">*</span> <span class="n">tau</span> <span class="o">*</span> <span class="mf">1e-9</span>
     <span class="n">hbar</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s2">&quot;Planck constant over 2 pi&quot;</span><span class="p">]</span>
     <span class="n">kb</span> <span class="o">=</span> <span class="n">physical_constants</span><span class="p">[</span><span class="s2">&quot;Boltzmann constant&quot;</span><span class="p">]</span>
@@ -368,7 +361,7 @@
     <span class="n">integrad</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">mu</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sinh</span><span class="p">(</span><span class="n">d_f</span> <span class="o">*</span> <span class="n">k_m</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">L</span><span class="p">))))</span>
     <span class="n">prefactor</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">delta</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">delta</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">w_m</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
-    <span class="n">term</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">quad</span><span class="p">(</span><span class="n">integrad</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,))</span>
+    <span class="n">term</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">prefactor</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">quad</span><span class="p">(</span><span class="n">integrad</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,))</span>  <span class="c1"># pylint: disable=W0612</span>
 
 
 <div class="viewcode-block" id="Strijkers"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.Strijkers.html#Stoner.analysis.fitting.models.superconductivity.Strijkers">[docs]</a><span class="k">class</span> <span class="nc">Strijkers</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -404,13 +397,14 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Strijkers</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">strijkers</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Strijkers.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.Strijkers.html#Stoner.analysis.fitting.models.superconductivity.Strijkers.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
-        <span class="sd">&quot;&quot;&quot;Guess starting values for a good Nb contact to a ferromagnet at 4.2K&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Guess starting values for a good Nb contact to a ferromagnet at 4.2K.&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">omega</span><span class="o">=</span><span class="mf">0.36</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">1.50</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">0.42</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="RSJ_Noiseless"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless">[docs]</a><span class="k">class</span> <span class="nc">RSJ_Noiseless</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a simple noiseless RSJ model.</span>
+
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implement a simple noiseless RSJ model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        I (array-like): Current values</span>
@@ -431,7 +425,6 @@
 <span class="sd">        .. plot:: samples/Fitting/rsj_fit.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: rsj_noiseless_class</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">display_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;I_c^p&quot;</span><span class="p">,</span> <span class="s2">&quot;I_c^n&quot;</span><span class="p">,</span> <span class="s2">&quot;R_N&quot;</span><span class="p">,</span> <span class="s2">&quot;V_</span><span class="si">{offset}</span><span class="s2">&quot;</span><span class="p">]</span>
@@ -441,8 +434,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">RSJ_Noiseless</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rsj_noiseless</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RSJ_Noiseless.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H&quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H.&quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="n">v_offset_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -496,8 +488,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">RSJ_Simple</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rsj_simple</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RSJ_Simple.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.html#Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H&quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H.&quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="n">v_offset_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -538,7 +529,8 @@
 
 <span class="sd">    Notes:</span>
 <span class="sd">        Represents the critical current as:</span>
-<span class="sd">            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`</span>
+<span class="sd">            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}</span>
+<span class="sd">                        {\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`</span>
 <span class="sd">        where `J_1` is a first order Bessel function.</span>
 
 <span class="sd">    Example:</span>
@@ -555,8 +547,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Ic_B_Airy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ic_B_airy</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Ic_B_Airy.guess"><a class="viewcode-back" href="../../../../../classes/Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.html#Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess parameters as max(data), x[argmax(data)] and from FWHM of peak&quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Guess parameters as max(data), x[argmax(data)] and from FWHM of peak.&quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
 
         <span class="n">Ic0_guess</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
@@ -599,16 +590,13 @@
       <li><a href="../../../../../index.html">Stoner Package</a></li>
       <li>
         <a href="../../../../index.html">Module code</a>
-      </li>
-      <li>
-        <a href="../../../../Stoner.html">Stoner</a>
       </li> 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Jan 22, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.3.1
+      2.4.4
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

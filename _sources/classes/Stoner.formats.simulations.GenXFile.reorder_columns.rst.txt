@@ -1,0 +1,8 @@
+
+
+GenXFile.reorder_columns
+===================================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: GenXFile.reorder_columns

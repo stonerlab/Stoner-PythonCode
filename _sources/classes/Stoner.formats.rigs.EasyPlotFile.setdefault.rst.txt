@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.setdefault
+===========================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.setdefault
