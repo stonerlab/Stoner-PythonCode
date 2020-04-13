@@ -22,7 +22,7 @@ import Stoner.HDF5 as SH
 import Stoner.Zip as SZ
 
 from Stoner.formats.attocube import AttocubeScan
-
+from Stoner.core.utils import subclasses
 import warnings
 from traceback import format_exc
 
@@ -63,7 +63,7 @@ class FileFormats_test(unittest.TestCase):
                     fname=path.join(self.datadir,f)
                     d=Data(fname,debug=False)
                     self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(fname))
-                    if "save" in d.subclasses[d["Loaded as"]].__dict__:
+                    if "save" in subclasses()[d["Loaded as"]].__dict__:
                         print("Checking save routine for {}".format(d["Loaded as"]))
                         pth=os.path.join(tmpdir,f)
                         name,ext=os.path.splitext(pth)

@@ -58,7 +58,7 @@ install:
   - pip install --no-deps .
 
 # command to run tests
-script: pytest --cov=Stoner
+script: pytest --cov-report= --cov=Stoner tests/
 
 after_success:
   coveralls

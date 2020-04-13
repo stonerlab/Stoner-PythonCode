@@ -21,6 +21,8 @@ import numpy as np
 from Stoner.compat import index_types, int_types
 from Stoner.tools import all_type
 
+_subclasses = None  # Cache for DataFile Subclasses
+
 
 def add_core(other, newdata):
     """Implements the core work of adding other to self and modifying newdata.
@@ -275,9 +277,32 @@ def itersubclasses(cls, _seen=None):
     for sub in subs:
         if sub not in _seen:
             _seen.add(sub)
-            yield sub
-            for sub in itersubclasses(sub, _seen):
-                yield sub
+            itersubclasses(sub, _seen)
+    return list(_seen)
+
+
+def subclasses(cls=None):  # pylint: disable=no-self-argument
+    """Return a list of all in memory subclasses of this DataFile."""
+    global _subclasses
+    if cls is None:
+        from ..Core import DataFile  # pylint: disable=import-outside-toplevel
+
+        cls = DataFile
+
+    tmp = itersubclasses(cls)
+    if _subclasses is None or _subclasses[0] != len(tmp):  # pylint: disable=E1136
+        tmp = {
+            x: (x.priority, x.__name__)
+            for x in sorted(tmp, key=lambda c: (getattr(c, "priority", 256), getattr(c, "__name__", "None")))
+        }
+        tmp = {v[1]: k for k, v in tmp.items()}
+        ret = dict()
+        ret[cls.__name__] = cls
+        ret.update(tmp)
+        _subclasses = (len(tmp), ret)
+    else:
+        ret = dict(_subclasses[1])
+    return ret
 
 
 def decode_string(value):

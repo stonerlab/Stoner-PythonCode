@@ -37,7 +37,7 @@ from .core.operators import DataFileOperatorsMixin
 from .core.property import DataFilePropertyMixin
 from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
-from .core.utils import copy_into, tab_delimited
+from .core.utils import copy_into, tab_delimited, subclasses
 
 try:
     from tabulate import tabulate
@@ -534,14 +534,14 @@ class DataFile(
         patterns = self.patterns
         for p in patterns:  # pylint: disable=not-an-iterable
             descs[p] = self.__class__.__name__ + " file"
-        for c in DataFile.subclasses:  # pylint: disable=E1136, E1133
-            for p in DataFile.subclasses[c].patterns:  # pylint: disable=unsubscriptable-object
+        for c in subclasses(DataFile):  # pylint: disable=E1136, E1133
+            for p in subclasses(DataFile)[c].patterns:  # pylint: disable=unsubscriptable-object
                 if p in descs:
                     descs[p] += (
-                        ", " + DataFile.subclasses[c].__name__ + " file"  # pylint: disable=E1136
+                        ", " + subclasses(DataFile)[c].__name__ + " file"  # pylint: disable=E1136
                     )  # pylint: disable=unsubscriptable-object
                 else:
-                    descs[p] = DataFile.subclasses[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
+                    descs[p] = subclasses(DataFile)[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
 
         patterns = descs
 
@@ -1375,9 +1375,6 @@ class DataFile(
                 A copy of the loaded :py:data:`DataFile` instance
 
         Note:
-            Possible subclasses to try and load from are identified at run time using the speciall
-            :py:attr:`DataFile.subclasses` attribute.
-
             If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it
             is used as a partial match and the first class in priority order is that matches is used.
 
@@ -1396,9 +1393,9 @@ class DataFile(
 
         if isinstance(filetype, string_types):  # We can specify filetype as part of name
             try:
-                filetype = DataFile.subclasses[filetype]  # pylint: disable=E1136
+                filetype = subclasses(DataFile)[filetype]  # pylint: disable=E1136
             except KeyError:
-                for k, cls in DataFile.subclasses.items():  # pylint: disable=E1136, E1101
+                for k, cls in subclasses(DataFile).items():  # pylint: disable=E1136, E1101
                     if filetype in k:
                         filetype = cls
                         break
@@ -1421,7 +1418,7 @@ class DataFile(
         cls = self.__class__
         failed = True
         if auto_load:  # We're going to try every subclass we canA
-            for cls in DataFile.subclasses.values():  # pylint: disable=E1136, E1101
+            for cls in subclasses(DataFile).values():  # pylint: disable=E1136, E1101
                 if self.debug:
                     print(cls.__name__)
                 try:
@@ -1465,7 +1462,7 @@ class DataFile(
             else:
                 raise StonerUnrecognisedFormat(
                     f"Ran out of subclasses to try and load {filename} as."
-                    + f" Recognised filetype are:{list(DataFile.subclasses.keys())}"  # pylint: disable=E1101
+                    + f" Recognised filetype are:{list(subclasses(DataFile).keys())}"  # pylint: disable=E1101
                 )
         else:
             if filetype is None:
@@ -1602,11 +1599,11 @@ class DataFile(
             if (
                 isinstance(as_loaded, bool) and "Loaded as" in self
             ):  # Use the Loaded as key to find a different save routine
-                cls = DataFile.subclasses[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
-            elif (
-                isinstance(as_loaded, string_types) and as_loaded in DataFile.subclasses
+                cls = subclasses(DataFile)[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
+            elif isinstance(as_loaded, string_types) and as_loaded in subclasses(
+                DataFile
             ):  # pylint: disable=E1136, E1135
-                cls = DataFile.subclasses[as_loaded]  # pylint: disable=unsubscriptable-object
+                cls = subclasses(DataFile)[as_loaded]  # pylint: disable=unsubscriptable-object
             else:
                 raise ValueError(
                     f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)}"

@@ -13,7 +13,7 @@ from ..tools import get_option
 from ..compat import classproperty
 
 from .array import DataArray
-from .utils import copy_into, itersubclasses
+from .utils import copy_into, subclasses
 
 try:
     from tabulate import tabulate
@@ -184,7 +184,7 @@ class DataFilePropertyMixin:
     def patterns(cls):  # pylint: disable=no-self-argument
         """Return the possible filename patterns for use in dialog boxes."""
         patterns = cls._patterns
-        for cls_name, klass in DataFilePropertyMixin.subclasses.items():  # pylint: disable=not-an-iterable
+        for cls_name, klass in subclasses().items():  # pylint: disable=not-an-iterable
             if cls_name == "DataFile" or "patterns" not in klass.__dict__:
                 continue
             patterns.extend([p for p in klass.patterns if p not in patterns])
@@ -231,23 +231,6 @@ class DataFilePropertyMixin:
     def setas(self, value):
         """Set a new setas assignment by calling the setas object."""
         self._data._setas(value)
-
-    @classproperty
-    def subclasses(cls):  # pylint: disable=no-self-argument
-        """Return a list of all in memory subclasses of this DataFile."""
-        from ..Core import DataFile  # pylint: disable=import-outside-toplevel
-
-        tmp = [x for x in itersubclasses(DataFile)]
-        if cls._subclasses is None or cls._subclasses[0] != len(tmp):  # pylint: disable=E1136
-            subclasses = {x: (x.priority, x.__name__) for x in tmp}
-            ret = dict()
-            ret["DataFile"] = DataFile
-            for klass, _ in sorted(list(subclasses.items()), key=lambda c: c[1]):
-                ret[klass.__name__] = klass
-            cls._subclasses = (len(tmp), ret)
-        else:
-            ret = dict(cls._subclasses[1])
-        return ret
 
     @property
     def T(self):
