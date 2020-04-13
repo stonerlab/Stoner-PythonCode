@@ -6,50 +6,45 @@ from Stoner.compat import listdir_recursive
 from importlib import import_module
 import matplotlib.pyplot as plt
 from traceback import format_exc
+import pytest
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
-sys.path.insert(0,pth)
+datadir=path.join(pth,"doc","samples")
 
-skip_scipts=["plot-folder-test"]
+if pth not in sys.path:
+    sys.path.insert(0,pth)
+if datadir not in sys.path:
+    sys.path.insert(0,datadir)
 
-class DocSamples_test(unittest.TestCase):
+def get_scripts():
+    skip_scipts=["plot-folder-test"]
+    scripts=[path.relpath(x,datadir).replace(path.sep,".") for x in listdir_recursive(datadir,"*.py") if not x.endswith("__init__.py")]
+    ret=[]
+    for ix,filename in enumerate(scripts):
+        script=filename[:-3]
+        if script in skip_scipts:
+            continue
+        ret.append(script)
+    return ret
 
-    """Path to sample Data File"""
-    datadir=path.join(pth,"doc","samples")
 
-    def setUp(self):
-        self.scripts=[path.relpath(x,self.datadir).replace(path.sep,".") for x in listdir_recursive(self.datadir,"*.py") if not x.endswith("__init__.py")]
-        sys.path.insert(0,self.datadir)
-
-    def test_scripts(self):
-        """Import each of the sample scripts in turn and see if they ran without error"""
-        failures=[]
-        for ix,filename in enumerate(self.scripts):
-            os.chdir(self.datadir)
-            script=filename[:-3]
-            if script in skip_scipts:
-                print("Skippoing {}".format(filename))
-                continue
-            print("Trying script {}: {}".format(ix,filename))
-            try:
-                os.chdir(self.datadir)
-                code=import_module(script)
-                fignum=len(plt.get_fignums())
-                self.assertGreaterEqual(fignum,1,"{} Did not produce any figures !".format(script))
-                print("Done")
-                fig=plt.gcf()
-                plt.close(fig)
-                plt.close("all")
-            except Exception:
-                v=format_exc()
-                print("Failed with\n{}".format(v))
-                failures.append("Script file {} failed with {}".format(filename,v))
-        self.assertTrue(len(failures)==0,"\n".join(failures))
+@pytest.mark.parametrize("script", get_scripts(),ids=get_scripts())
+def test_scripts(script):
+    """Import each of the sample scripts in turn and see if they ran without error"""
+    print(f"Trying script {script}")
+    try:
+        os.chdir(datadir)
+        code=import_module(script)
+        fignum=len(plt.get_fignums())
+        assert fignum>=1,f"{script} Did not produce any figures !"
+        print("Done")
+        plt.close("all")
+    except Exception:
+        error=format_exc()
+        print(f"Failed with\n{error}")
+        assert False,f"Script {scipt} failed with {error}"
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=DocSamples_test("test_scripts")
-    test.setUp()
-    test.test_scripts()
-
+    pass
 

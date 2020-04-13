@@ -10,6 +10,9 @@
 .. image:: https://badge.fury.io/py/Stoner.svg
    :target: https://badge.fury.io/py/Stoner
 
+.. image:: https://anaconda.org/phygbu/stoner/badges/version.svg
+   :target: https://anaconda.org/phygbu/stoner
+
 .. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest
    :target: http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
@@ -17,8 +20,6 @@
 .. image:: https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg
    :target: https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode
 
-.. image:: http://depsy.org/api/package/pypi/Stoner/badge.svg
-   :target: http://depsy.org/package/python/Stoner
 
 Introduction
 ============
@@ -45,8 +46,20 @@ scikit-image>=0.13.0 & scipy>=1.0.0 and also optional depends on  filemagic, npT
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
 dependencies are collected together in the **phygbu** repositry on anaconda cloud. The easiest way to install the Stoner package is,
-therefore, to install the most recent Anaconda Python distribution (Python 3.7 or 3.6 (version <=0.9.x are compatible
-with Python 2.7 and 3.5 as well), and then run:
+therefore, to install the most recent Anaconda Python distribution.
+
+Compatibility
+--------------
+
+Versions 0.9.x (stable branch) are compatible with Python 2.7, 3.5, 3.6 and 3.7. The latest 0.9.6 version is also compatible with Python 3.8
+The development verstion (0.10dev, master branch) is compatrible with Python 3.6, 3.7 and 3.8 but not 2.7.
+
+Conda packages are prepared for the stable branch and when the development branch enters beta testing. Pip wheels are prepared for selected stable releases only.
+
+Installation
+------------
+
+After installing the current Anaconda version, open a terminal (Mac/Linux) or Anaconda Prompt (Windows) an do:
 
 .. code-block:: sh
 
@@ -62,11 +75,9 @@ This will install the Stoner package and any missing dependencies into your curr
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/stonerlab/Stoner-PythonCode
 
-The development codebase is compatible with, and tested under,  Python 3.6 and Python 3.7. Python 3.8 may well work,
- although this is untested at present),
-
 Overview
 ========
+
 The main part of the **Stoner** package provides two basic top-level classes that describe an individual file of experimental data and a
 list (such as a directory tree on disc) of many experimental files. For our research, a typical single experimental data file
 is essentially a single 2D table of floating point numbers with associated metadata, usually saved in some
@@ -120,9 +131,9 @@ can allow scripts to process large numbers of images to be written in only a few
 Multiprocessing
 ---------------
 
-The **DataFolder** and **ImageFolder/ImageStack** classes will make use of the *multiprocessing* module when applying a function
-to their members for more efficient parallel processing of large numbers of data files. This is disabled by default on Windows
-due to the large overhead of starting multiple instances of the python interpreter.
+The **DataFolder** and **ImageFolder/ImageStack** classes will optionally make use of the *multiprocessing* module when applying a function
+to their members for more efficient parallel processing of large numbers of data files. This is disabled by default due to issues with
+threading and plotting on posix platforms and slow process start ups on Windows.
 
 Resources
 ==========
@@ -169,10 +180,9 @@ Build Status
 
 Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls.
 
-Version 0.9 is tested with Python 2.7, 3.5, 3.6,
+Version 0.9 is tested with Python 2.7, 3.5, 3.6 using the standard unittest module.
 
-The development version - which will be 0.10 will be tested with Python 3.6 and Python 3.7 only until Python 3.8 becomes stable in
-the anaconda envuronment.
+The development version - which will be 0.10 is tested using pytest with Python 3.6, Python 3.7 and Python 3.8.
 
 
 Citing the Stoner Package
@@ -190,7 +200,7 @@ Version 0.9 is the current stable version. This is the last version to support P
     *   Overhaul of the documentation and user guide
     *   Dropping support for the older Stoner.Image.stack.ImageStack class
     *   Droppping support for matplotlib<2.0
-    *   Support for Python 3.7
+    *   Support for Python 3.7 (and 3.8 from 0.9.6)
     *   Unit tests now > 80% coverage across the package.
 
 Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
