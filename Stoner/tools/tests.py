@@ -169,7 +169,7 @@ def isProperty(obj, name):
         (bool):
             Whether the name is a property or not.
     """
-    if isinstance(obj, object):
+    if not isinstance(obj, type):
         obj = obj.__class__
     elif not issubclass(obj, object):
         raise TypeError(

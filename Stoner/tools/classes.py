@@ -64,11 +64,7 @@ class typedList(MutableSequence):
         else:
             if len(args) > 1:
                 raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
-            raise TypeError(
-                "List should be initialised with elements that are all of type {} not {}".format(
-                    self._type, args[0].dtype
-                )
-            )
+            raise TypeError(f"List should be initialised with elements that are all of type {self._type}")
 
     def __add__(self, other):
         """Add operator works like ordinary lists."""
@@ -202,7 +198,7 @@ class Options:
         """Clear and Option value back to defaults."""
         if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
-        set_option(name, self.defaults[name])
+        set_option(name, self._defaults[name])
 
     def __dir__(self):
         """Return a list of the aviailable options."""

@@ -104,7 +104,7 @@ def format_error(value, error=None, **kargs):
     latex = kargs.get("latex", False)
     fmt = kargs.get("fmt", "latex" if latex else "text")
     escape = kargs.get("escape", False)
-    escape_func = {"latex": tex_escape, "html": html_escape}.get(mode, lambda x: x)
+    escape_func = {"latex": tex_escape, "html": html_escape}.get(fmt, lambda x: x)
 
     if error == 0.0 or isnan(error):  # special case for zero uncertainty
         return format_val(value, **kargs)
@@ -217,7 +217,7 @@ def format_val(value, **kargs):
     fmt = kargs.pop("fmt", "latex" if latex else "text")
     places = kargs.pop("places", False)
     escape = kargs.pop("escape", False)
-    escape_func = {"latex": tex_escape, "html": html_escape}.get(mode, lambda x: x)
+    escape_func = {"latex": tex_escape, "html": html_escape}.get(fmt, lambda x: x)
 
     if escape:
         prefix = escape_func(prefix)
@@ -225,6 +225,7 @@ def format_val(value, **kargs):
 
     if mode == "float":  # Standard
         suffix_val = ""
+        v_mag = floor(log10(abs(value)))
     elif mode == "eng":  # Use SI prefixes
         v_mag = floor(log10(abs(value)) / 3.0) * 3.0
         prefixes = prefs.get(fmt, prefs["text"])
@@ -267,7 +268,8 @@ def format_val(value, **kargs):
     fmt_str = val_fmt_str + suffix_val + suffix_fmt
     if places:
         value = round(value, places)
-    return fmt_str.format(value)
+    ret = fmt_str.format(value)
+    return ret
 
 
 def quantize(number, quantum):
