@@ -34,11 +34,11 @@ class attributeStore(dict):
             super(attributeStore, self).__init__(*args, **kargs)
 
     def __setattr__(self, name, value):
-        """Setting an attribute is equivalent to setting an item."""
+        """Set an attribute (equivalent to setting an item)."""
         self[name] = value
 
     def __getattr__(self, name):
-        """Getting an attrbute is equivalent to getting an item."""
+        """Get an attrbute (equivalent to getting an item)."""
         try:
             return self[name]
         except KeyError:
@@ -108,7 +108,7 @@ class typedList(MutableSequence):
         return repr(self._store)
 
     def __setitem__(self, name, value):
-        """Setting an item requires some type checks."""
+        """Sett an item and do some type checks."""
         if isIterable(name) or isinstance(name, slice):
             if not isIterable(value) or not all_type(value, self._type):
                 raise TypeError(
@@ -121,7 +121,7 @@ class typedList(MutableSequence):
         self._store[name] = value
 
     def extend(self, other):  # pylint:  disable=arguments-differ
-        """Extending a list also requires some type checking."""
+        """Extend the list and do some type checking."""
         if not isIterable(other) or not all_type(other, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store.extend(other)
@@ -133,7 +133,7 @@ class typedList(MutableSequence):
         return self._store[start:end].index(search) + start
 
     def insert(self, index, obj):  # pylint:  disable=arguments-differ
-        """Inserting an element also requires some type checking."""
+        """Insert an element and do some type checking."""
         if not isinstance(obj, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store.insert(index, obj)
@@ -205,7 +205,7 @@ class Options:
         return list(_options.keys())
 
     def __repr__(self):
-        """Standard text representation of Options class."""
+        """Make a standard text representation of Options class."""
         s = "Stoner Package Options\n"
         s += "~~~~~~~~~~~~~~~~~~~~~~\n"
         for k in dir(self):

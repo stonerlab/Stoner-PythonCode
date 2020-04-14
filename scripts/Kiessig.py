@@ -1,4 +1,4 @@
-"""A very quick and dirty Kiessig Fringe Analysis code
+"""A very quick and dirty Kiessig Fringe Analysis code.
 
 Gavin Burnell 28/12/2010
 

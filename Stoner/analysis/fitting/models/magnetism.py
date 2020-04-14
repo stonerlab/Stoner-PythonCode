@@ -54,7 +54,7 @@ def blochLaw(T, Ms, Tc):
 
 
 def langevin(H, M_s, m, T):
-    r"""The Langevin function for paramagnetic M-H loops.
+    r"""Langevin function for paramagnetic M-H loops.
 
     Args:
         H (array): The applied magnetic field
@@ -73,7 +73,6 @@ def langevin(H, M_s, m, T):
             :include-source:
             :outname: langevin
     """
-
     x = mu_0 * H * m / (k * T)
     n = M_s / m
 
@@ -135,7 +134,7 @@ def inverse_kittel(f, g, M_s, H_k):
 
 
 def fmr_power(H, H_res, Delta_H, K_1, K_2):
-    r"""A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    r"""Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
         H (array) magnetic field data
@@ -276,7 +275,7 @@ class KittelEquation(Model):
         super(KittelEquation, self).__init__(kittelEquation, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
-        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
@@ -317,7 +316,7 @@ class Inverse_Kittel(Model):
         super(Inverse_Kittel, self).__init__(inverse_kittel, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
-        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
@@ -336,7 +335,7 @@ class Inverse_Kittel(Model):
 
 class FMR_Power(Model):
 
-    r"""A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
+    r"""Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
         H (array) magnetic field data
@@ -351,6 +350,7 @@ class FMR_Power(Model):
     \right)^{2}\right)^{2}} - \frac{K_{2} \left(\Delta_{H}^{2} - 4 \left(H - H_{res}\right)^{2}\right)}{\left(
     \Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
+
     display_names = ["H_{res}", r"\Delta_H", "K_1", "K_2"]
 
     def __init__(self, *args, **kwargs):

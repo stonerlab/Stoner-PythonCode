@@ -106,8 +106,8 @@ def lorentzian_diff(x, A, sigma, mu):
         sigma (float): peak wideth
         mu (float): peak location in x
 
-        Returns
-            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
+    Returns
+        :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
                                                                       \left(- \mu + x\right)^{2}\right)^{2}}`
 
     Example:
@@ -221,8 +221,8 @@ class Lorentzian_diff(Model):
         sigma (float): peak wideth
         mu (float): peak location in x
 
-        Returns
-            :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
+    Returns
+        :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
                                                                       \left(- \mu + x\right)^{2}\right)^{2}}`
 
     Example:

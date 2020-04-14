@@ -48,7 +48,7 @@ def deleteCorruptLines(data):
 
 
 def driftEliminator(data, N):
-    """Function takes off a linear drift of m with time from the data."""
+    """Take off a linear drift of m with time from the data."""
     maxHarg = int(np.argmax(data[: len(data[:, 0]) / 2, 1]))
     finalHarg = int(len(data[:, 1]) - 1)
     # linear fit to saturated data (+- N points from max field and final field)
@@ -77,7 +77,7 @@ def driftEliminator(data, N):
 
 
 def shift(data, N):
-    """Translates curve in y so that halfway between the saturated fieldsis zero.
+    """Translate curve in y so that halfway between the saturated fieldsis zero.
 
     (uses the average y value of all the saturated points given to determine upper and lower bounds of curve"""
     maxHarg = int(
@@ -92,7 +92,7 @@ def shift(data, N):
 
 
 def diamagBackgroundRem(data, N):
-    """Removes a diamagnetic background using a linear fit to the N data points surrounding the max and min field."""
+    """Remove a diamagnetic background using a linear fit to the N data points surrounding the max and min field."""
     maxHarg = int(np.argmax(data[: len(data[:, 0]) / 2, 1]))
     minHarg = int(np.argmin(data[:, 1]))
 
@@ -115,7 +115,7 @@ def diamagBackgroundRem(data, N):
 
 
 def invert(Data):
-    """flips data in y axis."""
+    """Flip data in y axis."""
     for i in range(len(Data.data[:, "0"])):
         Data.data[i, Data.find_col("m (emu)")] = -Data.data[
             i, Data.find_col("m (emu)")
@@ -136,17 +136,17 @@ def makeTruem(Data):
     return Data
 
 
-def plotmH(Data):
-    """Takes a stoner type data source."""
+def plotmH(data):
+    """Take a stoner type data source."""
     plot.clf()
     plot.xlabel("H(T)")
     plot.ylabel("m(1e-5 emu)")
-    plot.plot(Data.column("H"), Data.column("m (emu)"), "b-")
+    plot.plot(data.column("H"), data.column("m (emu)"), "b-")
     plot.draw()
 
 
 def splitFileName(myFileName):
-    """Splits a file name into its name and its extension part.
+    """Split a file name into its name and its extension part.
 
     (returns two part list ['name','ext'] or ['name',''] if no extension"""
     for i in range(len(myFileName) - 1, -1, -1):
@@ -158,7 +158,7 @@ def splitFileName(myFileName):
 
 
 def editData(Data, operations):
-    """Takes stoner type Data file and an operations list and performs the operations listed."""
+    """Take stoner type Data file and an operations list and performs the operations listed."""
     if 0 in operations:
         return Data
     N = int(input("Input the number of saturated data points on each arm:   "))

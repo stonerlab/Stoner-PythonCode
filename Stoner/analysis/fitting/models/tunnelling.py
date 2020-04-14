@@ -109,7 +109,7 @@ def fowlerNordheim(V, A, phi, d):
         .. plot:: samples/Fitting/FowlerNordheim.py
             :include-source:
             :outname: fowlernordheim
-        """
+    """
     I = V / np.abs(V) * 3.38e6 * A * V ** 2 / (d ** 2 * phi) * np.exp(-0.689 * phi ** 1.5 * d / np.abs(V))
     return I
 
@@ -158,7 +158,7 @@ class Simmons(Model):
         super(Simmons, self).__init__(simmons, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
-        """Just set the A, phi and d values to typical answers for a small tunnel junction"""
+        """Set the A, phi and d values to typical answers for a small tunnel junction."""
         pars = self.make_params(A=1e3, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
@@ -193,7 +193,7 @@ class BDR(Model):
         super(BDR, self).__init__(bdr, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
-        """Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction"""
+        """Set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction."""
         pars = self.make_params(A=1e-12, phi=3.0, d=10.0, dphi=1.0, mass=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
@@ -222,7 +222,7 @@ class FowlerNordheim(Model):
         super(FowlerNordheim, self).__init__(fowlerNordheim, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
-        """Just set the A, phi and d values to typical answers for a small tunnel junction"""
+        """Set the A, phi and d values to typical answers for a small tunnel junction."""
         pars = self.make_params(A=1e-12, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
@@ -244,6 +244,6 @@ class TersoffHammann(Model):
         super(TersoffHammann, self).__init__(tersoffHammann, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):
-        """Just set the A, phi and d values to typical answers for a small tunnel junction"""
+        """Set the parameter values from an apporximate line."""
         pars = self.make_params(A=np.mean(data / V))
         return update_param_vals(pars, self.prefix, **kwargs)

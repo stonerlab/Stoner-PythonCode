@@ -16,7 +16,7 @@ class working(Data):
     """Utility class to manipulate data and plot it."""
 
     def __init__(self, *args, **kargs):
-        """Setup the fitting code."""
+        """Initialise the fitting code."""
         super(working, self).__init__(*args, **kargs)
         inifile = __file__.replace(".py", ".ini")
 
@@ -124,7 +124,7 @@ class working(Data):
         return self
 
     def plot_results(self):
-        """Do the plotting of the data and the results"""
+        """Do the plotting of the data and the results."""
         self.figure()  # Make a new figure and show the results
         self.plot_xy(
             self.vcol,

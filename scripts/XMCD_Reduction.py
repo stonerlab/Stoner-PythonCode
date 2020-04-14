@@ -60,7 +60,7 @@ def alt_norm(f, _, **kargs):
 
 
 def norm_group(pos, _, **kargs):
-    """Takes the drain current for each file in group and builds an analysis file and works out the mean drain."""
+    """Take the drain current for each file in group and builds an analysis file and works out the mean drain."""
     if "signal" in kargs:
         signal = kargs["signal"]
     else:
@@ -91,7 +91,7 @@ def norm_group(pos, _, **kargs):
 
 
 def asym(grp, trail, **kargs):
-    """Takes a group of two files for Pos and Neg helicity and calcualtes the Asymmetry ratio."""
+    """Take a group of two files for Pos and Neg helicity and calcualtes the Asymmetry ratio."""
     posfile = grp["Pos"]
     negfile = grp["Neg"]
     pdat = posfile.column("normalised")

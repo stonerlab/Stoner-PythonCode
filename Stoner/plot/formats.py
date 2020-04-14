@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Plot Templates module - contains classes that style plots produced by :class:`.Data`.
-"""
+"""Plot Templates module - contains classes that style plots produced by :class:`.Data`."""
 
 __all__ = [
     "TexFormatter",
@@ -611,7 +610,7 @@ class PRBPlotStyle(DefaultPlotStyle):
 
     """A figure Style for making figures for Phys Rev * Jounrals.
 
-    Example
+    Example:
         .. plot:: samples/plotstyles/PRBStyle.py
             :include-source:
             :outname: prbstyle
@@ -632,7 +631,7 @@ class SketchPlot(DefaultPlotStyle):
     Implemented as a bit of a joke, but perhaps someone will use this in a real
     presentation one day ?
 
-    Example
+    Example:
         .. plot:: samples/plotstyles/SketchStyle.py
             :include-source:
             :outname: sketchstyle

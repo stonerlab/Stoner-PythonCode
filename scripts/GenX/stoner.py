@@ -18,14 +18,14 @@ class Plugin(Template):
     """Plugin class from GenX."""
 
     def __init__(self, parent):
-        """Housekeeping"""
+        """Initialise plugin and column assignments."""
         Template.__init__(self, parent)
         self.x_col = "Angle"
         self.y_col = "Counts"
         self.e_col = "Counts"
 
     def LoadData(self, data_item_number, filename):
-        """Loads the data from filename into the data_item_number."""
+        """Load the data from filename into the data_item_number."""
         try:
             datafile = Data(
                 str(filename), debug=True
@@ -75,11 +75,7 @@ class Plugin(Template):
             self.SendUpdateDataEvent()
 
     def SettingsDialog(self):
-        """SettingsDialog(self) --> None
-
-        This function should - if necessary implement a dialog box
-        that allows the user set import settings for example.
-        """
+        """Implement a dialog box that allows the user set import settings for example."""
         col_values = {
             "x": self.x_col,
             "y": self.y_col,

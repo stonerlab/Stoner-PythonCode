@@ -67,7 +67,7 @@ prefs = {
 
 
 def format_error(value, error=None, **kargs):
-    r"""Formats answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
+    r"""Format answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
 
     Args:
         value (float):

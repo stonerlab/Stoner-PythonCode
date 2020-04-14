@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Dec 17 17:43:35 2013
-
-Script to produce plots from GenX output
-
-@author: phygbu based on Sean Langridge's matlab code'
-"""
+"""Script to produce plots from GenX output."""
 # pylint: disable=invalid-name
 import numpy as np
 import matplotlib.pyplot as plt

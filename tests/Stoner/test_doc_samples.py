@@ -43,8 +43,7 @@ def test_scripts(script):
     except Exception:
         error=format_exc()
         print(f"Failed with\n{error}")
-        assert False,f"Script {scipt} failed with {error}"
+        assert False,f"Script {script} failed with {error}"
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    pass
-
+    pytest.main([__file__])

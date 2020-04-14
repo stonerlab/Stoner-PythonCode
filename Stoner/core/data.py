@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-The main Data Class definition
-"""
+"""The main Data Class definition."""
 
 from sys import float_info
 from Stoner.Analysis import AnalysisMixin

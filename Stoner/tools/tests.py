@@ -48,7 +48,7 @@ def all_size(iterator, size=None):
 
 
 def all_type(iterator, typ):
-    """Determines if an interable omnly contains a common type.
+    """Determine if an interable omnly contains a common type.
 
     Arguments:
         iterator (Iterable):
@@ -87,7 +87,7 @@ def isAnyNone(*args):
 
 
 def isComparable(v1, v2):
-    """Returns true if v1 and v2 can be compared sensibly
+    """Return true if v1 and v2 can be compared sensibly.
 
     Args:
         v1,v2 (any):
@@ -122,12 +122,12 @@ def isIterable(value):
 
 
 def isLikeList(value):
-    """Returns True if value is an iterable but not a string."""
+    """Return True if value is an iterable but not a string."""
     return isIterable(value) and not isinstance(value, string_types)
 
 
 def isNone(iterator):
-    """Returns True if input is None or an empty iterator, or an iterator of None.
+    """Return True if input is None or an empty iterator, or an iterator of None.
 
     Args:
         iterator (None or Iterable):

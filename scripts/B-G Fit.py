@@ -15,7 +15,7 @@ from Stoner.analysis.fitting.models.e_transport import blochGrueneisen
 
 
 def bg_wrapper(T, tD, r0, A):
-    """Fit wrapper."""
+    """Fit wrapper to reduce number of unknowns."""
     return blochGrueneisen(T, tD, r0, A, 5)
 
 

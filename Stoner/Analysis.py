@@ -1,5 +1,4 @@
-"""Stoner .Analysis provides a subclass of :class:`.Data` that has extra analysis routines builtin.
-"""
+"""Stoner .Analysis provides a subclass of :class:`.Data` that has extra analysis routines builtin."""
 
 __all__ = ["AnalysisMixin", "GetAffineTransform", "ApplyAffineTransform"]
 from inspect import getfullargspec
@@ -22,7 +21,7 @@ class AnalysisMixin:
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods."""
 
     def __dir__(self):
-        """Handles the local attributes as well as the inherited ones"""
+        """Handle the local attributes as well as the inherited ones."""
         attr = dir(type(self))
         attr.extend(super(AnalysisMixin, self).__dir__())
         attr.extend(list(self.__dict__.keys()))
@@ -30,7 +29,7 @@ class AnalysisMixin:
         return sorted(attr)
 
     def apply(self, func, col=None, replace=True, header=None, **kargs):
-        """Applies the given function to each row in the data set and adds to the data set.
+        """Apply the given function to each row in the data set and adds to the data set.
 
         Args:
             func (callable):
@@ -282,7 +281,6 @@ class AnalysisMixin:
                 The newly modified Data object.
 
         Notes:
-
             The *limits* parameter is used to set the input scale being normalised from - if the data has a few
             outliers then this setting can be used to clip the input range before normalising. The parameters in
             the limit are the values at the *low* and *high* fractions of the cumulative distribution function of
@@ -444,7 +442,7 @@ class AnalysisMixin:
         assertion(len(set1) == len(set2), "The number of points in the overlap are different in the two data sets")
 
         def transform(set1, *p):
-            """Wrapper function to fit for transform."""
+            """Construct the wrapper function to fit for transform."""
             m = int(len(set1) / 2)
             x = set1[:m]
             y = set1[m:]
@@ -463,7 +461,7 @@ class AnalysisMixin:
         return self
 
     def threshold(self, threshold, **kargs):
-        """Finds partial indices where the data in column passes the threshold, rising or falling.
+        """Find partial indices where the data in column passes the threshold, rising or falling.
 
         Args:
             threshold (float):

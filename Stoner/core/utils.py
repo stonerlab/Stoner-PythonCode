@@ -25,7 +25,7 @@ _subclasses = None  # Cache for DataFile Subclasses
 
 
 def add_core(other, newdata):
-    """Implements the core work of adding other to self and modifying newdata.
+    """Implement the core work of adding other to self and modifying newdata.
 
     Args:
         other (DataFile,array,list):
@@ -113,7 +113,7 @@ def add_core(other, newdata):
 
 
 def and_core(other, newdata):
-    """Implements the core of the & operator, returning data in newdata
+    """Implement the core of the & operator, returning data in newdata.
 
     Args:
         other (array,DataFile):
@@ -187,7 +187,7 @@ def and_core(other, newdata):
 
 
 def mod_core(other, newdata):
-    """Implements the column deletion method."""
+    """Implement the column deletion method."""
     if isinstance(other, index_types):
         newdata.del_column(other)
     else:
@@ -197,7 +197,7 @@ def mod_core(other, newdata):
 
 
 def sub_core(other, newdata):
-    """Actually do the subtraction."""
+    """Worker for the subtraction."""
     if isinstance(other, (slice, int_types)) or callable(other):
         newdata.del_rows(other)
     elif isinstance(other, list) and (all_type(other, int_types) or all_type(other, bool)):
@@ -209,7 +209,7 @@ def sub_core(other, newdata):
 
 
 def copy_into(source, dest):
-    """Copies the data associated with source to dest.
+    """Copy the data associated with source to dest.
 
     Args:
         source(DataFile): The DataFile object to be copied from
@@ -306,7 +306,7 @@ def subclasses(cls=None):  # pylint: disable=no-self-argument
 
 
 def decode_string(value):
-    """Expands a string of column assignments, replacing numbers with repeated characters."""
+    """Expand a string of column assignments, replacing numbers with repeated characters."""
     pattern = re.compile(r"(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))")
     while True:
         res = pattern.search(value)

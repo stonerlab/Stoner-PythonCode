@@ -71,7 +71,6 @@ class App(QWidget):
                 Either a string containing the absolute path to the file or directory, or None if the dialog
                 was cancelled.
         """
-
         if mode not in self.modes:
             raise ValueError(f"Unknown dialog mode {mode}")
         method = self.modes[mode]["method"]

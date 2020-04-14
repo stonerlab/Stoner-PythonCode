@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Stoner.compat ensures a consistent namespace for the rest of the package
-
-Handles differences between python 2.7 and 3.x as well as some optional dependencies.
-
-Created on Tue Jan 14 19:53:11 2014
-
-@author: Gavin Burnell
-"""
+"""Ensure a consistent namespace for the rest of the package irrespective of Python language version."""
 from sys import version_info as __vi__
 from os import walk, makedirs
 from os.path import join, commonpath
@@ -63,7 +56,7 @@ cmp = None
 
 
 def getargspec(*args, **kargs):
-    """Wrapper for getargspec for Python V3."""
+    """Wrap for getargspec for Python V3."""
     return getfullargspec(*args, **kargs)[:4]
 
 
@@ -95,10 +88,12 @@ def bytes2str(b):
 
 
 def get_filedialog(what="file", **opts):
-    """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
+    """Wrap around Tk file dialog to mange creating file dialogs in a cross platform way.
+
     Args:
         what (str): What sort of a dialog to create - options are 'file','directory','save','files'
         **opts (dict): Arguments to pass through to the underlying dialog function.
+
     Returns:
         A file name or directory or list of files.
     """
@@ -116,7 +111,7 @@ index_types = string_types + int_types + (_pattern_type,)
 
 
 def listdir_recursive(dirname, glob=None):
-    """Generator that does a recursive file list with optional globbing."""
+    """Make a recursive file list with optional globbing."""
     for dp, _, fn in walk(dirname):
         for f in fn:
             ret = join(dp, f)
@@ -131,7 +126,7 @@ class ClassPropertyDescriptor:
     """Supports adding class properties."""
 
     def __init__(self, fget, fset=None):
-        """Setup descriptor."""
+        """Initialise the descriptor."""
         self.fget = fget
         self.fset = fset
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""VSM Analysis v3
+"""VSM Analysis v3.
 
 Created on Sat Aug 24 20:18:05 2013
 
@@ -14,10 +14,10 @@ from Stoner.analysis.fitting.models.generic import Linear
 
 class VSMAnalysis(Data):
 
-    """A mixin of AnalyseFile and VSMFile so we can easily load and process the Data"""
+    """Augment Data with some extra methods."""
 
     def true_m(self):
-        """Calculates correct m from lockin X and Y components."""
+        """Calculate correct m from lockin X and Y components."""
         # Get some constants that scale betweent he columns
         s_vol = np.mean(self.column("Mvol") / self.column("m (emu)"))
         s_mass = np.mean(self.column("Mmass") / self.column("m (emu)"))
@@ -32,7 +32,7 @@ class VSMAnalysis(Data):
         return self
 
     def correct_drift(self, threshold=0.95):
-        """Corrects for drift in the signal.
+        """Correct for drift in the signal.
 
         Masks out data that isn't above threshold*maximum field and fits a straight line to
         Moment(Time) and then subtracts this from the data.
@@ -43,7 +43,6 @@ class VSMAnalysis(Data):
         Returns:
             the current object with a new corrected moment.
         """
-
         H_max = max(self.column("H_vsm"))
         for m in self.find_col(
             ["m (emu)", "Mvol", "Mmass", "X", "Y"]
@@ -61,7 +60,7 @@ class VSMAnalysis(Data):
             self.data[:, m] = correct_m  # and push it back
 
     def remove_diamagnetism_and_offset(self, threshold=0.85):
-        """Removes a diamagnetic component from the data.
+        """Remove a diamagnetic component from the data.
 
         Fits straight lines to the upper and lower parts of the curve (within
         threshold of the extreme fields) and uses this to remove diamangeteic omponents
@@ -94,7 +93,7 @@ class VSMAnalysis(Data):
         return self
 
     def find_Hc(self):
-        """Uses thresholding and interpolation to find fields for zero crossing moments."""
+        """Use thresholding and interpolation to find fields for zero crossing moments."""
         h_m = int(self.peaks(ycol="H_vsm", wiodth=15)[0])
         mask = self.mask
         self.mask = np.zeros(self.shape)
@@ -107,7 +106,7 @@ class VSMAnalysis(Data):
         return (hc_m, hc_p)
 
     def find_Br(self):
-        """Uses thresholding and interpolation to find moments for zero crossing fields."""
+        """Use thresholding and interpolation to find moments for zero crossing fields."""
         h_m = int(self.peaks(ycol="H_vsm", width=15)[0])
         mask = self.mask
         self.mask = np.zeros(self.shape)

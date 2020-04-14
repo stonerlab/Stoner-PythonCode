@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-
-"""
-Simple code to fit critical temperatures in R(T) data.
-
-"""
+"""Simple code to fit critical temperatures in R(T) data."""
 # pylint: disable=invalid-name
 import numpy as np
 

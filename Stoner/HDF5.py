@@ -47,11 +47,11 @@ def close_file(f, filename):
 
 
 def confirm_hdf5(filename):
-    """Sniffs a file to look for the HDF5 signature.
+    """Sniff a file to look for the HDF5 signature.
 
-     Args:
-         filename)str):
-            File to open.
+    Args:
+        filename)str):
+           File to open.
 
     Returns:
         (bool):
