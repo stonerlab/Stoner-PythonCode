@@ -15,7 +15,7 @@ Stoner.Options.multiprocessing=False
 testdir=os.path.join(os.path.dirname(__file__),"coretestdata","testims")
 
 istack2=ImageStack()
-for theta in np.linspace(0,360,91):
+for theta in np.linspace(0,360,16):
     i=ImageFile(np.zeros((100,100)))
     x,y=10*np.cos(np.pi*theta/180)+50,10*np.sin(np.pi*theta/180)+50
     i.draw.circle(x,y,25)
@@ -31,51 +31,79 @@ class ImageStackTest(unittest.TestCase):
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
         self.istack2=istack2.clone
 
-    def test_ImageStack(self):
-        self.assertTrue(self.istack2.shape==(91,100,100),"ImageStack.shape wrong at {}".format(self.istack2.shape))
+    def test_ImageStack_align(self):
+        self.assertTrue(self.istack2.shape==(16,100,100),"ImageStack.shape wrong at {}".format(self.istack2.shape))
         i=ImageFile(np.zeros((100,100))).draw.circle(50,50,25)
-        self.m1=self.istack2.mean().crop(10)
 
         istack2=self.istack2.clone
         istack2.align(i,method="chi2_shift")
         self.data=istack2.metadata.slice(["tvec"],output="Data")
-        self.assertTrue(self.data.shape==(91,2),"Slice metadata went a bit funny")
+        self.assertTrue(self.data.shape==(16,2),"Slice metadata went a bit funny")
 
         istack2=self.istack2.clone
+        try:
+            istack2.align(0,10,20,method="imreg_dft")
+        except ValueError:
+            pass
+        else:
+            self.assertTrue(False,"stack.align with more than one positional argument failed to raise ValueError")
+        try:
+            istack2.align(np.zeros(5),method="imreg_dft")
+        except TypeError:
+            pass
+        else:
+            self.assertTrue(False,"stack.align with a 1D array failed to raise a TypeError")
+        try:
+            istack2.align(object,method="imreg_dft")
+        except TypeError:
+            pass
+        else:
+            self.assertTrue(False,"stack.align with an object failed to raise a TypeError")
+
+        istack2.align(method="imreg_dft")
+        self.assertEqual(istack2[0]["tvec"],(0.0,0.0),"stack didn't align to first image")
+
+        istack2=self.istack2.clone
+
+        istack2.align(4)
+        self.data=istack2.metadata.slice(["tvec","angle","scale"],output="Data")
+        self.assertTrue(self.data.shape==(16,4),"Slice metadata went a bit funny")
+        self.assertTrue(sorted(self.data.column_headers)==['angle','scale','tvec[0]', 'tvec[1]'],"slice metadata column headers wrong at {}".format(self.data.column_headers))
+
+
+    def test_ImageStack_methods(self):
+
+        istack2=self.istack2.clone
+        self.m1=self.istack2.mean().crop(10)
         istack2.align(i,method="imreg_dft")
         self.data=istack2.metadata.slice(["tvec","angle","scale"],output="Data")
-        self.assertTrue(self.data.shape==(91,4),"Slice metadata went a bit funny")
+        self.assertTrue(self.data.shape==(16,4),"Slice metadata went a bit funny")
         self.assertTrue(sorted(self.data.column_headers)==['angle','scale','tvec[0]', 'tvec[1]'],"slice metadata column headers wrong at {}".format(self.data.column_headers))
 
         istack2.each.crop("translation_limits")
         self.m2=istack2.mean()
+        self.std=istack2.stddev()
+        self.err=istack2.stderr()
 
-        self.assertEqual(istack2.shape,(91,80,80),"Stack translation_limits and crop failed.")
-
-
-
-        istack2=self.istack2.clone
-
-        istack2.align(45)
-        self.data=istack2.metadata.slice(["tvec","angle","scale"],output="Data")
-        self.assertTrue(self.data.shape==(91,4),"Slice metadata went a bit funny")
-        self.assertTrue(sorted(self.data.column_headers)==['angle','scale','tvec[0]', 'tvec[1]'],"slice metadata column headers wrong at {}".format(self.data.column_headers))
+        self.assertLess(self.std.mean(), 0.003,"To big a standard deviation in stack after align")
+        self.assertLess(self.err.mean(),0.001, "To big a stadnard error in stack after align")
+        self.assertEqual(istack2.shape,(16,80,80),"Stack translation_limits and crop failed.")
 
         self.assertTrue(np.abs(self.m1.mean()-self.m2.mean())/self.m1.mean()<1E-2,"Problem calculating means of stacks.")
         s1=self.istack2[:,45:55,45:55]
         s2=self.istack2[:,50,:]
         s3=self.istack2[:,:,50]
-        s4=self.istack2[50,:,:]
-        self.assertEqual(s1.shape,(91,10,10),"3D slicing to produce 3D stack didn't work.")
-        self.assertEqual(s2.shape,(91,100),"3D slicing to 2D section z-y plane failed.")
-        self.assertEqual(s3.shape,(91,100),"3D slicing to 2D section z-x plane failed.")
+        s4=self.istack2[5,:,:]
+        self.assertEqual(s1.shape,(16,10,10),"3D slicing to produce 3D stack didn't work.")
+        self.assertEqual(s2.shape,(16,100),"3D slicing to 2D section z-y plane failed.")
+        self.assertEqual(s3.shape,(16,100),"3D slicing to 2D section z-x plane failed.")
         self.assertEqual(s4.shape,(100,100),"3D slicing to 2D section x-y plane failed.")
-        self.assertEqual(len(self.istack2.images),91,"len(ImageFolder.images) failed.")
+        self.assertEqual(len(self.istack2),16,"len(ImageFolder.images) failed.")
         sa=[]
         for im in self.istack2.images:
             sa.append(im.shape)
         sa=np.array(sa)
-        self.assertTrue(np.all(sa==np.ones((91,2))*100),"Result from iterating over images failed.")
+        self.assertTrue(np.all(sa==np.ones((16,2))*100),"Result from iterating over images failed.")
         self.istack2.each.normalise()
         self.assertEqual((np.array(self.istack2.each.min()).mean(),np.array(self.istack2.each.max()).mean()),(-1.0,1.0),"Adjust contrast failure")
         self.im1=self.istack2[0]
@@ -134,7 +162,7 @@ class ImageStackTest(unittest.TestCase):
     def test_methods(self):
         #check function generator machinery works
         self.istack2.each.crop(0,30,0,50)
-        self.assertTrue(self.istack2.shape==(91,50,30),"Unexpected size of imagestack got {} for 91x50x30".format(self.istack2.shape))
+        self.assertTrue(self.istack2.shape==(16,50,30),"Unexpected size of imagestack got {} for 16x50x30".format(self.istack2.shape))
         ist2 = ImageStack(np.arange(60).reshape(4,3,5))
         self.assertTrue(issubclass(ist2.imarray.dtype.type, np.integer),"Unexpected dtype in image stack2 got {} not int32".format(ist2.imarray.dtype))
         t1 = ImageStack(np.arange(60).reshape(4,3,5))

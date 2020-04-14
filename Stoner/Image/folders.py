@@ -17,81 +17,6 @@ from ..compat import string_types, int_types
 from . import ImageFile
 
 
-def _load_ImageArray(f, **kargs):
-    """Load an image array."""
-    kargs.pop("img_num", None)
-    return ImageArray(f, **kargs)
-
-
-class _generator:
-
-    """A helper class to iterator over ImageFolder yet remember it's own length."""
-
-    def __init__(self, fldr):
-        """Initialise the generator object.
-
-        Args:
-            fldr (ImageFolder): The folder that we iterate over.
-
-        Returns:
-            None.
-        """
-        self.fldr = fldr
-        self.len = len(fldr)
-        self.ix = 0
-
-    def __len__(self):
-        """Get the length of the iterator.
-
-        Returns:
-            int: Length of the generator object.
-
-        """
-        return self.len
-
-    def __iter__(self):
-        """Return an iterator object.
-
-        Returns:
-            __generator class: This is its own generator object.
-        """
-        self.ix = 0
-        return self
-
-    def __next__(self):
-        """Iterate over folder.
-
-        Raises:
-            StopIteration: Done iterating through the folder.
-
-        Returns:
-            ret (2D array): Image data.
-        """
-        if self.ix < len(self):
-            ret = self[self.ix]
-            self.ix += 1
-            return ret
-        raise StopIteration("Finished iterating Folder.")
-
-    def __getitem__(self, index):
-        """Item accessor method.
-
-        Args:
-            index (int): Image to return.
-
-        Returns:
-            ret (2D array): Image array data.
-        """
-        ret = self.fldr[index]
-        if hasattr(ret, "image"):
-            ret = ret.image
-        return ret
-
-    def next(self):
-        """Iterate to next value."""
-        return self.__next__()
-
-
 class ImageFolderMixin:
 
     """Mixin to provide a folder object for images.
@@ -132,11 +57,11 @@ class ImageFolderMixin:
     @property
     def size(self):
         """Return the size of an individual image or False if not all images are the same size."""
-        if len(self.images) > 0:
-            shape = self.images[0].shape
+        if len(self) > 0:
+            shape = self[0].shape
         else:
             shape = tuple()
-        for i in self.images:
+        for i in self:
             if i.shape != shape:
                 return False
         return shape
@@ -144,50 +69,56 @@ class ImageFolderMixin:
     @property
     def images(self):
         """Iterate over just the images in the Folder."""
-        return _generator(self)
+        for im in self:
+            if not isinstance(im, np.ndarray):
+                if hasattr(im, "image"):
+                    im = im.image
+                else:
+                    raise TypeError(f"Cannot represent {typer(im)} as an ImageArray.")
+            yield im
 
-    def _getattr_proxy(self, item):
-        """Override baseFolder proxy call to access a method of the ImageFile.
+    # def _getattr_proxy(self, item):
+    #     """Override baseFolder proxy call to access a method of the ImageFile.
 
-        Args:
-            item (string):
-                Name of method of metadataObject class to be called
+    #     Args:
+    #         item (string):
+    #             Name of method of metadataObject class to be called
 
-        Returns:
-            Either a modifed copy of this objectFolder or a list of return values
-            from evaluating the method for each file in the Folder.
-        """
-        meth = getattr(self.instance, item, None)
+    #     Returns:
+    #         Either a modifed copy of this objectFolder or a list of return values
+    #         from evaluating the method for each file in the Folder.
+    #     """
+    #     meth = getattr(self.instance, item, None)
 
-        def _wrapper_(*args, **kargs):
-            """Wrap a call to the metadataObject type for magic method calling.
+    #     def _wrapper_(*args, **kargs):
+    #         """Wrap a call to the metadataObject type for magic method calling.
 
-            Keyword Arguments:
-                _return (index types or None):
-                    specify to store the return value in the individual object's metadata
+    #         Keyword Arguments:
+    #             _return (index types or None):
+    #                 specify to store the return value in the individual object's metadata
 
-            Note:
-                This relies on being defined inside the enclosure of the objectFolder method
-                so we have access to self and item
-            """
-            retvals = []
-            _return = kargs.pop("_return", None)
-            for ix, f in enumerate(self):
-                meth = getattr(f, item, None)
-                ret = meth(*args, **kargs)  # overwriting array is handled by ImageFile proxy function
-                retvals.append(ret)
-                if getattr(meth, "changes_size", False):
-                    self[ix] = ret
-                if _return is not None:
-                    if isinstance(_return, bool) and _return:
-                        _return = meth.__name__
-                    self[ix][_return] = ret
-            return retvals
+    #         Note:
+    #             This relies on being defined inside the enclosure of the objectFolder method
+    #             so we have access to self and item
+    #         """
+    #         retvals = []
+    #         _return = kargs.pop("_return", None)
+    #         for ix, f in enumerate(self):
+    #             meth = getattr(f, item, None)
+    #             ret = meth(*args, **kargs)  # overwriting array is handled by ImageFile proxy function
+    #             retvals.append(ret)
+    #             if getattr(meth, "changes_size", False):
+    #                 self[ix] = ret
+    #             if _return is not None:
+    #                 if isinstance(_return, bool) and _return:
+    #                     _return = meth.__name__
+    #                 self[ix][_return] = ret
+    #         return retvals
 
-        # Ok that's the wrapper function, now return  it for the user to mess around with.
-        _wrapper_.__doc__ = meth.__doc__
-        _wrapper_.__name__ = meth.__name__
-        return _wrapper_
+    #     # Ok that's the wrapper function, now return  it for the user to mess around with.
+    #     _wrapper_.__doc__ = meth.__doc__
+    #     _wrapper_.__name__ = meth.__name__
+    #     return _wrapper_
 
     def align(self, *args, **kargs):
         """Align each image in the folder to the reference image.
@@ -268,11 +199,11 @@ class ImageFolderMixin:
         """
         if not self.size:
             raise RuntimeError("Cannot average Imagefolder if images have different sizes")
-        stack = np.stack(self.images, axis=0)
+        stack = np.stack(list(self.images), axis=0)
         average = np.average(stack, axis=0, weights=weights)
         ret = average.view(ImageArray)
         ret.metadata = self.metadata.common_metadata
-        return ImageFile(ret[ret._box(_box)])
+        return self._type(ret[ret._box(_box)])
 
     def loadgroup(self):
         """Load all files from this group into memory."""
@@ -281,7 +212,7 @@ class ImageFolderMixin:
 
     def as_stack(self):
         """Return a ImageStack of the images in the current group."""
-        stack = import_module("stack", ".")
+        stack = import_module(".stack", "Stoner.Image")
         k = stack.ImageStack(self)
         return k
 
@@ -337,22 +268,26 @@ class ImageFolderMixin:
         """
         return self.average(_box=_box)
 
-    def stddev(self, weights=None):
+    def stddev(self, weights=None, _box=None):
         """Calculate weighted standard deviation for stack.
 
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
         weights = np.ones(len(self)) if weights is None else weights
         avs = self.average(weights=weights)
+        if not isinstance(avs, np.ndarray) and hasattr(avs, "image"):
+            avs = avs.image
         sumsqdev = np.zeros_like(avs)
         for ix, img in enumerate(self.images):
             sumsqdev += weights[ix] * (img - avs) ** 2
         sumsqdev = np.sqrt(sumsqdev) / np.sum(weights, axis=0)
-        return sumsqdev.view(ImageArray)
+        ret = sumsqdev.view(ImageArray)
+        ret.metadata = self.metadata.common_metadata
+        return self._type(ret[ret._box(_box)])
 
-    def stderr(self, weights=None):
+    def stderr(self, weights=None, _box=None):
         """Calculate standard error in the stack average."""
-        serr = self.stddev(weights=weights) / np.sqrt(len(self))
+        serr = self.stddev(weights=weights, _box=_box) / np.sqrt(len(self))
         return serr
 
     def to_tiff(self, filename):
