@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Implements a baseFolder type structure for working with collections of images."""
-__all__ = ["_generator", "ImageFolderMixin", "ImageFolder"]
+__all__ = ["ImageFolderMixin", "ImageFolder"]
 from warnings import warn
 from importlib import import_module
 from os import path
@@ -74,7 +74,7 @@ class ImageFolderMixin:
                 if hasattr(im, "image"):
                     im = im.image
                 else:
-                    raise TypeError(f"Cannot represent {typer(im)} as an ImageArray.")
+                    raise TypeError(f"Cannot represent {type(im)} as an ImageArray.")
             yield im
 
     # def _getattr_proxy(self, item):
