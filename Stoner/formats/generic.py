@@ -253,24 +253,18 @@ try:  # Optional tdms support
                 column_headers = []
                 data = np.array([])
 
-                for grp in f.objects.keys():
-                    if grp == "/":
+                for grp in f.groups():
+                    if grp.path == "/":
                         pass  # skip the rooot group
-                    elif grp == "/'TDI Format 1.5'":
-                        metadata = f.object("TDI Format 1.5")
-                        for k, v in metadata.properties.items():
-                            self.metadata[k] = string_to_type(str(v))
+                    elif grp.path == "/'TDI Format 1.5'":
+                        tmp = Core.DataFile(grp.as_dataframe())
+                        self.data = tmp.data
+                        self.column_headers = tmp.column_headers
+                        self.metadata.update(grp.properties)
                     else:
-                        if f.objects[grp].has_data:
-                            chnl = grp.split("/")[-1]
-                            chnl.strip().strip("'")
-                            column_headers.append(chnl)
-                            if data.size == 0:
-                                data = f.objects[grp].data
-                            else:
-                                data = np.column_stack([data, f.objects[grp].data])
-                self.data = data
-                self.column_headers = column_headers
+                        tmp = Core.DataFile(grp.as_dataframe())
+                        self.data = tmp.data
+                        self.column_headers = tmp.column_headers
             except Exception:
                 from traceback import format_exc
 
