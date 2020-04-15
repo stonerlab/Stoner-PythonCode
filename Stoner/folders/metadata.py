@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute."""
 
-__all__ = ["proxy"]
+__all__ = ["MetadataProxy"]
 import fnmatch
 from collections.abc import MutableMapping
 
@@ -107,7 +107,7 @@ def _slice_keys(args, possible=None):
     return keys
 
 
-class proxy(MutableMapping):
+class MetadataProxy(MutableMapping):
 
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
 
@@ -216,7 +216,7 @@ class proxy(MutableMapping):
         """Implement an XOR operator that gives differences between metadata dictionaries."""
         if isinstance(other, self._folder.__class__):
             other = other.metadata
-        if isinstance(other, proxy):
+        if isinstance(other, MetadataProxy):
             other = other.all_by_keys
         elif isinstance(other, metadataObject):
             other = other.metadata

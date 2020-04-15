@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
-__all__ = ["item"]
+__all__ = ["Item"]
 from collections.abc import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
@@ -35,7 +35,7 @@ def _worker(d, **kwargs):
     return (d, ret)
 
 
-class setas_wrapper(MutableSequence):
+class SetasWrapper(MutableSequence):
 
     """Manages wrapping each member of the folder's setas attribute."""
 
@@ -46,16 +46,17 @@ class setas_wrapper(MutableSequence):
 
     def __call__(self, *args, **kargs):
         """Pass through the calls the setas method of each item in our folder."""
-        for obj in self._folder:
+        _ = self._folder._object_attrs.pop("setas", None)
+        for ix, obj in enumerate(self._folder):
             obj.setas(*args, **kargs)
+        self._folder._object_attrs["setas"] = self.collapse()
+
         return self._folder
 
     def __len__(self):
-        """Return the lengths of all the setas elements in the folder (or a sclar if all the same)."""
+        """Return the shortest length of all the setas elements in the folder."""
         lengths = np.array([len(data.setas) for data in self._folder])
-        if len(np.unique(lengths)) == 1:
-            return lengths[0]
-        return lengths.tolist()
+        return lengths.min()
 
     def __getitem__(self, index):
         """Get the corresponding item from all the setas items in the folder."""
@@ -78,9 +79,7 @@ class setas_wrapper(MutableSequence):
             value = value + value[-1] * (len(self._folder) - len(value))
         for v, data in zip(value, self._folder):
             data.setas[index] = v
-        setas = self._folder._object_attrs.get("setas", ["."] * len(self._folder))
-        if len(setas) <= index:
-            setas.extend(["."] * (index + 1 - len(setas)))
+        setas = self._folder._object_attrs.get("setas", self.collapse())
         setas[index] = v
         self._folder._object_attrs["setas"] = setas
 
@@ -88,7 +87,7 @@ class setas_wrapper(MutableSequence):
         """Cannot delete items from the proxy setas object - so simply clear it instead."""
         for data in self._folder:
             data.setas[index] = "."
-        setas = self._folder._object_attrs.get("setas", ["." * len(self._folder)])
+        setas = self._folder._object_attrs.get("setas", self.collapse())
         setas[index] = "."
         self._folder._object_attrs["setas"] = setas
 
@@ -108,7 +107,7 @@ class setas_wrapper(MutableSequence):
         return setas
 
 
-class item:
+class Item:
 
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
 
@@ -129,7 +128,7 @@ class item:
     @property
     def setas(self):
         """Return a proxy object for manipulating all the setas objects in a folder."""
-        return setas_wrapper(self)
+        return SetasWrapper(self)
 
     @setas.setter
     def setas(self, value):
@@ -194,7 +193,7 @@ class item:
             Lpy:attr:`Stoner.Data.setas` attribute (such as *.x*, *.y* or *.e* etc) can be accessed.
         """
         try:
-            return super(item, self).__getattr__(name)
+            return super(Item, self).__getattr__(name)
         except AttributeError:
             pass
         try:
@@ -202,7 +201,7 @@ class item:
             if callable(getattr(instance, name, None)):  # It's a method
                 ret = self.__getattr_proxy(name)
             else:  # It's a static attribute
-                if name in self._folder._object_attrs:
+                if name in self._folder._object_attrs and len(self._folder) == 0:
                     ret = self._folder._object_attrs[name]
                 elif len(self._folder):
                     ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
@@ -211,18 +210,18 @@ class item:
                     ret.mask = mask
                 else:
                     ret = getattr(instance, name, None)
-                if ret is None:
+                if ret is None or (hasattr(ret, "mask") and np.all(ret.mask)):
                     raise AttributeError
         except AttributeError:  # Ok, pass back
             raise AttributeError("{} is not an Attribute of {} or {}".format(name, type(self), type(instance)))
-        except TypeError as err:  # Can be triggered if self.instance lacks the attribute
-            if len(self._folder) and hasattr(self._folder[0], name):
-                ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
-                mask, values = zip(*ret)
-                ret = np.ma.MaskedArray(values)
-                ret.mask = mask
-            else:
-                raise err
+        # except TypeError as err:  # Can be triggered if self.instance lacks the attribute
+        #     if len(self._folder) and hasattr(self._folder[0], name):
+        #         ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
+        #         mask, values = zip(*ret)
+        #         ret = np.ma.MaskedArray(values)
+        #         ret.mask = mask
+        #     else:
+        #         raise err
 
         return ret
 
@@ -244,7 +243,7 @@ class item:
             the corresponding element of *value* is assigned to the attribute of the member.
         """
         if hasattr(self.__class__, name) or name.startswith("_"):  # Handle setting our own attributes
-            super(item, self).__setattr__(name, value)
+            super(Item, self).__setattr__(name, value)
         elif name in dir(self._folder.instance) or (
             len(self._folder) and hasattr(self._folder[0], name)
         ):  # This is an instance attribute

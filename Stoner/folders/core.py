@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""":py:mod:`Stoner.folders.core` provides the base class and functions for the :py:class:`Stoner.DataFolder` class."""
+"""Provide the base classes and functions for the :py:class:`Stoner.DataFolder` class."""
 __all__ = ["baseFolder"]
 
 from collections.abc import Iterable, MutableSequence
@@ -18,8 +18,8 @@ from ..core.base import regexpDict
 from ..core.base import metadataObject
 
 from .utils import pathjoin
-from .each import item as each_item
-from .metadata import proxy as combined_metadata_proxy
+from .each import Item as EachItem
+from .metadata import MetadataProxy
 from .groups import GroupsDict
 
 regexp_type = (_pattern_type,)
@@ -309,7 +309,7 @@ class baseFolder(MutableSequence):
         """Return a :py:class:`Stoner.folders.each.item` proxy object.
 
         This is for calling attributes of the member type of the folder."""
-        return each_item(self)
+        return EachItem(self)
 
     @property
     def files(self):
@@ -401,10 +401,10 @@ class baseFolder(MutableSequence):
 
     @property
     def metadata(self):
-        """Return a :py:class:`Stoner.folders.metadata.combined_metadata_pryx` object.
+        """Return a :py:class:`Stoner.folders.metadata.MetadataProxy` object.
 
         This allows for operations on combined metadata."""
-        return combined_metadata_proxy(self)
+        return MetadataProxy(self)
 
     @property
     def mindepth(self):
