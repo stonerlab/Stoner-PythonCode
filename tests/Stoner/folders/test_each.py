@@ -59,12 +59,8 @@ def test_each_setas():
 def test_each_attr():
     os.chdir(datadir)
     fldr6=DataFolder(".",pattern="QD*.dat",pruned=True)
-    try:
+    with pytest.raises(AttributeError):
         bad=fldr6.each.bad_item
-    except AttributeError:
-        pass
-    else:
-        assert False,"DataFolder.each.bad_attr didn't produce an attribute error"
     fldr6.each.column_headers=["X","Y"]
     assert fldr6.each.column_headers.size==4,"Read back of an attribute failed to return the right array length"
     res = [x[0] for x in fldr6.each.column_headers]
@@ -73,4 +69,4 @@ def test_each_attr():
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    pytest.main([__file__])
+    pytest.main(["--pdb", __file__])

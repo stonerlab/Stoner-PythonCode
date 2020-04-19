@@ -123,6 +123,8 @@ class DiskBasedFolderMixin:
         super(DiskBasedFolderMixin, self).__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
         if self.readlist and len(args) > 0 and isinstance(args[0], string_types):
             self.getlist(directory=args[0])
+        if len(args) > 0 and isinstance(args[0], bool) and not args[0]:
+            self.getlist(directory=args[0])
         if flat:
             self.flatten()
         if prefetch:
@@ -156,18 +158,15 @@ class DiskBasedFolderMixin:
             mode = "directory"
         else:
             mode = "files"
-        dlg = get_filedialog(what=mode, title=message, mustexist=not new_directory)
-        if len(dlg) != 0:
-            if not self.multifile:
-                self.directory = dlg
-                ret = self.directory
-            else:
-                ret = None
-        else:
+        dlg = get_filedialog(what=mode, title=message)
+        if not dlg or len(dlg) == 0:
+            raise RuntimeError("No directory or files selected!")
+        if self.multifile:
             self.pattern = [path.basename(name) for name in dlg]
-            self.directory = path.commonprefix(dlg)
-            ret = self.directory
-        return ret
+            self.directory = path.dirname(dlg[0]) if len(dlg) == 1 else path.commonprefix(dlg)
+        else:
+            self.directory = dlg
+        return self.directory
 
     def _save(self, grp, trail, root=None):
         """Save a group of files to disc by calling the save() method on each file.
@@ -351,13 +350,12 @@ class DiskBasedFolderMixin:
         directory = kargs.pop("directory", getattr(self, "directory", None))
         self.directory = directory
 
-        if isinstance(directory, bool) and not directory:
+        if self.multifile or isinstance(directory, bool) and not directory:
             self._dialog()
-        elif isinstance(directory, string_types):
-            if self.multifile:
-                self._dialog()
         elif directory is None:
             self.directory = os.getcwd()
+        elif isinstance(directory, string_types):
+            self.directory = directory
         root = self.directory
         dirs, files = scan_dir(root)
         if discard:
@@ -366,7 +364,7 @@ class DiskBasedFolderMixin:
         files = filter_files(files, self.pattern, keep=True)
         for f in files:
             self.__setter__(f, f)
-        if recursive:
+        if recursive and not self.multifile:  # No recursion in multifile mode
             for d in dirs:
                 if self.debug:
                     print("Entering directory {}".format(d))

@@ -15,22 +15,22 @@ class App(QWidget):
         "OpenFile": {
             "method": QFileDialog.getOpenFileName,
             "caption": "Select file to open...",
-            "arg": ["caption", "directory", "filter", "options"],
+            "arg": ["parent", "caption", "directory", "filter", "options"],
         },
         "OpenFiles": {
             "method": QFileDialog.getOpenFileNames,
             "caption": "Select file(s_ to open...",
-            "arg": ["caption", "directory", "filter", "options"],
+            "arg": ["parent", "caption", "directory", "filter", "options"],
         },
         "SaveFile": {
             "method": QFileDialog.getSaveFileName,
             "caption": "Save file as...",
-            "arg": ["caption", "directory", "filter", "options"],
+            "arg": ["parent", "caption", "directory", "filter", "options"],
         },
         "SelectDirectory": {
             "method": QFileDialog.getExistingDirectory,
             "caption": "Select folder...",
-            "arg": ["caption", "directory", "options"],
+            "arg": ["parent", "caption", "directory", "options"],
         },
     }
 

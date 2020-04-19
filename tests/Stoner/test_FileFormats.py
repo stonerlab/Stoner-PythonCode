@@ -30,16 +30,10 @@ from traceback import format_exc
 
 pth=path.join(__home__,"..")
 datadir=path.join(pth,"sample-data")
-tmpdir=tempfile.mkdtemp()
 
 sys.path.insert(0,pth)
 
 datadir=path.join(pth,"sample-data")
-
-def teardown_module(module):
-    os.rmdir(tmpdir)
-
-
 
 def list_files():
     skip_files=[] # HDF5 loader not working Python 3.5
@@ -54,7 +48,7 @@ def list_files():
 
 
 @pytest.mark.parametrize("filename", list_files(),ids=list_files())
-def test_one_file(filename):
+def test_one_file(tmpdir, filename):
     try:
         fname=path.join(datadir,filename)
         d=Data(fname,debug=False)
@@ -78,14 +72,13 @@ def test_csvfile():
     csv=Data(path.join(datadir,"working","CSVFile_test.dat"),filetype="JustNumbers",column_headers=["Q","I","dI"],setas="xye")
     assert csv.shape==(167,3),"Failed to load CSVFile from text"
 
-def test_attocube_scan():
+def test_attocube_scan(tmpdir):
     scandir=path.join(datadir,"attocube_scan")
     scan1=AttocubeScan("SC_085",scandir,regrid=False)
     scan2=AttocubeScan(85,scandir,regrid=False)
     assert scan1==scan2,"Loading scans by number and string not equal"
 
     #self.assertEqual(scan1,scan2,"Loading Attocube Scans by root name and number didn't match")
-    tmpdir=tempfile.mkdtemp()
 
     pth=os.path.join(tmpdir,f"SC_{scan1.scan_no:03d}.hdf5")
     scan1.to_HDF5(pth)
@@ -121,4 +114,4 @@ def test_attocube_scan():
     scan1["bwd"].regrid()
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    pytest.main([__file__])
+    pytest.main(["--pdb", __file__])

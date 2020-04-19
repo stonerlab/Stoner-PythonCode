@@ -8,7 +8,6 @@ Created on Mon Jul 18 14:13:39 2016
 """
 
 
-import unittest
 import sys
 import os.path as path
 import os
@@ -17,12 +16,12 @@ import re
 import fnmatch
 from numpy import ceil
 from copy import copy
-from Stoner.compat import *
-import Stoner.Folders as SF
+from Stoner.compat import Hyperspy_ok
+import pytest
+from Stoner import DataFolder
+from Stoner.folders import PlotFolder
 
-from Stoner import Data,set_option
-import Stoner.HDF5, Stoner.Zip
-from Stoner.Util import hysteresis_correct
+from Stoner import Data
 from Stoner.core.base import regexpDict
 from Stoner.folders.core import baseFolder
 import matplotlib.pyplot as plt
@@ -33,306 +32,271 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 
-class Folders_test(unittest.TestCase):
+"""Path to sample Data File"""
+datadir=path.join(pth,"sample-data")
 
-    """Path to sample Data File"""
-    datadir=path.join(pth,"sample-data")
+def test_Folders():
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    fl=len(fldr)
+    skip=1
+    datfiles=fnmatch.filter(os.listdir(datadir),"*.dat")
+    length = len([i for i in os.listdir(datadir) if path.isfile(os.path.join(datadir,i))])-skip # don't coiunt TDMS index
+    assert length==fl,"Failed to initialise DataFolder from sample data {} {} {} {}".format(fl,length,skip,Hyperspy_ok)
+    assert fldr.index(path.basename(fldr[-1].filename))==fl-1,"Failed to index back on filename"
+    assert fldr.count(path.basename(fldr[-1].filename))==1,"Failed to count filename with string"
+    assert fldr.count("*.dat")==len(datfiles),"Count with a glob pattern failed"
+    assert len(fldr[::2])==ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice"
 
-    def setUp(self):
-        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
+def test_loader_opts():
+    fldr7=DataFolder(path.join(datadir,"NLIV"),pattern=re.compile(r".*at (?P<field>[0-9\-\.]*)\.txt"),read_means=True)
+    x=fldr7.metadata.slice(["field","Voltage","Current"],output="Data")
+    assert x.span("field")==(-0.05,0.04),"Extract from name pattern and slice into metadata failed."
+    assert all(x//"Current"<0) and all(x//"Current">-1E-20),"Extract means failed."
+    assert list(fldr7.not_loaded)==[],"Not loaded attribute failed."
+    fldr7.unload(0)
+    assert len(list(fldr7.not_loaded))==1,"Unload by index failed."
+    fldr7.unload()
+    assert len(list(fldr7.not_loaded))==len(fldr7),"Unload all failed."
+    def add_col(d):
+        d.add_column(np.ones(len(d))*d["field"],header="field")
+    fldr7.each(add_col)
+    fldr7.concatenate()
+    assert fldr7[0].shape==(909,4),"Concatenate failed."
 
-    def test_Folders(self):
-        fldr=self.fldr
-        fl=len(fldr)
-        skip=1
-        datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
-        length = len([i for i in os.listdir(self.datadir) if path.isfile(os.path.join(self.datadir,i))])-skip # don't coiunt TDMS index
-        self.assertEqual(length,fl,"Failed to initialise DataFolder from sample data {} {} {} {}".format(fl,length,skip,Hyperspy_ok))
-        self.assertEqual(fldr.index(path.basename(fldr[-1].filename)),fl-1,"Failed to index back on filename")
-        self.assertEqual(fldr.count(path.basename(fldr[-1].filename)),1,"Failed to count filename with string")
-        self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
-        self.assertEqual(len(fldr[::2]),ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
+def test_groups_methods():
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    fldr.group("Loaded as")
+    fldr.groups.keep(["QDFile","OpenGDAFile"])
+    assert fldr.shape==(0, {'OpenGDAFile': (1, {}), 'QDFile': (4, {})}),"groups.keep method failed on folder"
 
-    def test_loader_opts(self):
-        self.fldr7=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern=re.compile(r".*at (?P<field>[0-9\-\.]*)\.txt"),read_means=True)
-        x=self.fldr7.metadata.slice(["field","Voltage","Current"],output="Data")
-        self.assertEqual(x.span("field"),(-0.05,0.04),"Extract from name pattern and slice into metadata failed.")
-        self.assertTrue(all(x//"Current"<0) and all(x//"Current">-1E-20),"Extract means failed.")
-        self.assertEqual(list(self.fldr7.not_loaded),[],"Not loaded attribute failed.")
-        self.fldr7.unload(0)
-        self.assertEqual(len(list(self.fldr7.not_loaded)),1,"Unload by index failed.")
-        self.fldr7.unload()
-        self.assertEqual(len(list(self.fldr7.not_loaded)),len(self.fldr7),"Unload all failed.")
-        def add_col(d):
-            d.add_column(np.ones(len(d))*d["field"],header="field")
-        self.fldr7.each(add_col)
-        self.fldr7.concatenate()
-        self.assertEqual(self.fldr7[0].shape,(909, 4),"Concatenate failed.")
+def test_discard_earlier():
+    fldr2=DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat",discard_earlier=True)
+    fldr3=DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat")
+    assert len(fldr2)==1,"Folder created with disacrd_earlier has wrong length ({})".format(len(fldr2))
+    assert len(fldr3)==5,"Folder created without disacrd_earlier has wrong length ({})".format(len(fldr3))
+    fldr3.keep_latest()
+    assert list(fldr2.ls)==list(fldr3.ls),"Folder.keep_latest didn't do the same as discard_earliest in constructor."
 
-    def test_groups_methods(self):
-        self.fldr.group("Loaded as")
-        self.fldr.groups.keep(["QDFile","OpenGDAFile"])
-        self.assertEqual(self.fldr.shape,(0, {'OpenGDAFile': (1, {}), 'QDFile': (4, {})}),"groups.keep method failed on folder")
+def test_Operators():
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    fl=len(fldr)
+    d=Data(np.ones((100,5)))
+    fldr+=d
+    assert fl+1==len(fldr),"Failed += operator on DataFolder"
+    fldr2=fldr+fldr
+    assert (fl+1)*2==len(fldr2),"Failed + operator with DataFolder on DataFolder"
+    fldr-="Untitled"
+    assert len(fldr)==fl,"Failed to remove Untitled-0 from DataFolder by name."
+    fldr-="New-XRay-Data.dql"
+    assert fl-1==len(fldr),"Failed to remove NEw Xray data by name."
+    fldr+="New-XRay-Data.dql"
+    assert len(fldr)==fl,"Failed += oeprator with string on DataFolder"
+    fldr/="Loaded as"
+    assert len(fldr["QDFile"])==4,"Failoed to group folder by Loaded As metadata with /= opeator."
+    assert isinstance(fldr["QDFile","Byapp"],Data),"Indexing group and then common metadata failed"
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    fldr2=DataFolder(path.join(datadir,"NLIV"),pattern="*.txt")
+    fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
+    fldr3=fldr+fldr2
+    assert fldr3.shape==(47, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
+    fldr4=fldr3-fldr2
+    fldr4.prune()
+    assert fldr4.shape==fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
+    del fldr2["one"]
+    assert fldr2.shape==(0, {'zero': (7, {})}),"Delitem with group failed"
+    fldr2.key=path.basename(fldr2.key)
+    assert repr(fldr2)=="DataFolder(NLIV) with pattern ('*.txt',) has 0 files and 1 groups\n\tDataFolder(zero) with pattern ['*.txt'] has 7 files and 0 groups","Representation methods failed"
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    names=list(fldr.ls)[::2]
+    fldr-=names
+    assert len(fldr)==23,"Failed to delete from a sequence"
+    with pytest.raises(TypeError):
+        fldr-0.34
+    with pytest.raises(RuntimeError):
+        fldr-Data()
+    with pytest.raises(RuntimeError):
+        fldr-"Wiggle"
 
-    def test_discard_earlier(self):
-        fldr2=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat",discard_earlier=True)
-        fldr3=SF.DataFolder(path.join(pth,"tests/Stoner/folder_data"),pattern="*.dat")
-        self.assertEqual(len(fldr2),1,"Folder created with disacrd_earlier has wrong length ({})".format(len(fldr2)))
-        self.assertEqual(len(fldr3),5,"Folder created without disacrd_earlier has wrong length ({})".format(len(fldr3)))
-        fldr3.keep_latest()
-        self.assertEqual(list(fldr2.ls),list(fldr3.ls),"Folder.keep_latest didn't do the same as discard_earliest in constructor.")
-
-    def test_Operators(self):
-        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        fl=len(fldr)
-        d=Data(np.ones((100,5)))
-        fldr+=d
-        self.assertEqual(fl+1,len(fldr),"Failed += operator on DataFolder")
-        fldr2=fldr+fldr
-        self.assertEqual((fl+1)*2,len(fldr2),"Failed + operator with DataFolder on DataFolder")
-        fldr-="Untitled"
-        self.assertEqual(len(fldr),fl,"Failed to remove Untitled-0 from DataFolder by name.")
-        fldr-="New-XRay-Data.dql"
-        self.assertEqual(fl-1,len(fldr),"Failed to remove NEw Xray data by name.")
-        fldr+="New-XRay-Data.dql"
-        self.assertEqual(len(fldr),fl,"Failed += oeprator with string on DataFolder")
-        fldr/="Loaded as"
-        self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
-        self.assertTrue(isinstance(fldr["QDFile","Byapp"],Data),"Indexing group and then common metadata failed")
-        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        fldr2=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern="*.txt")
-        fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
-        fldr3=fldr+fldr2
-        self.assertEqual(fldr3.shape,(47, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
-        fldr4=fldr3-fldr2
-        fldr4.prune()
-        self.assertEqual(fldr4.shape,fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape))
-        del fldr2["one"]
-        self.assertEqual(fldr2.shape,(0, {'zero': (7, {})}),"Delitem with group failed")
-        fldr2.key=path.basename(fldr2.key)
-        self.assertEqual(repr(fldr2),"DataFolder(NLIV) with pattern ('*.txt',) has 0 files and 1 groups\n\tDataFolder(zero) with pattern ['*.txt'] has 7 files and 0 groups","Representation methods failed")
-        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        names=list(self.fldr.ls)[::2]
-        self.fldr-=names
-        self.assertEqual(len(self.fldr),23,"Failed to delete from a sequence")
-        try:
-            self.fldr-0.34
-        except TypeError:
-            pass
-        else:
-            self.assertTrue(False,"Failed to throw a TypeError when subtracting a float")
-        try:
-            self.fldr-Data()
-        except RuntimeError:
-            pass
-        else:
-            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
-        try:
-            self.fldr-"Wiggle"
-        except RuntimeError:
-            pass
-        else:
-            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
-
-    def test_Base_Operators(self):
-        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        for d in fldr:
-            _=d["Loaded as"]
-        fldr=baseFolder(fldr)
-        fl=len(fldr)
-        d=Data(np.ones((100,5)))
-        fldr+=d
-        self.assertEqual(fl+1,len(fldr),"Failed += operator on DataFolder")
-        fldr2=fldr+fldr
-        self.assertEqual((fl+1)*2,len(fldr2),"Failed + operator with DataFolder on DataFolder")
-        fldr-="Untitled"
-        self.assertEqual(len(fldr),fl,"Failed to remove Untitled-0 from DataFolder by name.")
-        fldr-="New-XRay-Data.dql"
-        self.assertEqual(fl-1,len(fldr),"Failed to remove NEw Xray data by name.")
-        del fldr["1449 37.0 kx.emd"]
-        fldr/="Loaded as"
-        self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
-        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        for d in fldr:
-            _=d["Loaded as"]
-        fldr=baseFolder(fldr)
-        fldr2=SF.DataFolder(path.join(self.datadir,"NLIV"),pattern="*.txt")
-        fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
-        fldr3=fldr+fldr2
-        self.assertEqual(fldr3.shape,(47, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed")
-        fldr4=fldr3-fldr2
-        fldr4.prune()
-        self.assertEqual(fldr4.shape,fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape))
-        del fldr2["one"]
-        self.assertEqual(fldr2.shape,(0, {'zero': (7, {})}),"Delitem with group failed")
-        fldr2.key=path.basename(fldr2.key)
-        self.assertEqual(repr(fldr2),"DataFolder(NLIV) with pattern ('*.txt',) has 0 files and 1 groups\n\tDataFolder(zero) with pattern ['*.txt'] has 7 files and 0 groups","Representation methods failed")
-        self.fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        names=list(self.fldr.ls)[::2]
-        self.fldr-=names
-        self.assertEqual(len(self.fldr),23,"Failed to delete from a sequence")
-        try:
-            self.fldr-0.34
-        except TypeError:
-            pass
-        else:
-            self.assertTrue(False,"Failed to throw a TypeError when subtracting a float")
-        try:
-            self.fldr-Data()
-        except RuntimeError:
-            pass
-        else:
-            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
-        try:
-            self.fldr-"Wiggle"
-        except RuntimeError:
-            pass
-        else:
-            self.assertTrue(False,"Failed to throw a RuntimeError when subtracting a non-member")
+def test_Base_Operators():
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    for d in fldr:
+        _=d["Loaded as"]
+    fldr=baseFolder(fldr)
+    fl=len(fldr)
+    d=Data(np.ones((100,5)))
+    fldr+=d
+    assert fl+1==len(fldr),"Failed += operator on DataFolder"
+    fldr2=fldr+fldr
+    assert (fl+1)*2==len(fldr2),"Failed + operator with DataFolder on DataFolder"
+    fldr-="Untitled"
+    assert len(fldr)==fl,"Failed to remove Untitled-0 from DataFolder by name."
+    fldr-="New-XRay-Data.dql"
+    assert fl-1==len(fldr),"Failed to remove NEw Xray data by name."
+    del fldr["1449 37.0 kx.emd"]
+    fldr/="Loaded as"
+    assert len(fldr["QDFile"])==4,"Failoed to group folder by Loaded As metadata with /= opeator."
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    for d in fldr:
+        _=d["Loaded as"]
+    fldr=baseFolder(fldr)
+    fldr2=DataFolder(path.join(datadir,"NLIV"),pattern="*.txt")
+    fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
+    fldr3=fldr+fldr2
+    assert fldr3.shape==(47, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
+    fldr4=fldr3-fldr2
+    fldr4.prune()
+    assert fldr4.shape==fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
+    del fldr2["one"]
+    assert fldr2.shape==(0, {'zero': (7, {})}),"Delitem with group failed"
+    fldr2.key=path.basename(fldr2.key)
+    assert repr(fldr2)=="DataFolder(NLIV) with pattern ('*.txt',) has 0 files and 1 groups\n\tDataFolder(zero) with pattern ['*.txt'] has 7 files and 0 groups","Representation methods failed"
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    names=list(fldr.ls)[::2]
+    fldr-=names
+    assert len(fldr)==23,"Failed to delete from a sequence"
+    with pytest.raises(TypeError):
+        fldr-0.34
+    with pytest.raises(RuntimeError):
+        fldr-Data()
+    with pytest.raises(RuntimeError):
+        fldr-"Wiggle"
 
 
+def test_Properties():
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    assert fldr.mindepth==0,"Minimum depth of flat group n ot equal to zero."
+    fldr/="Loaded as"
+    grps=list(fldr.lsgrp)
+    skip=0 if Hyperspy_ok else 1
+    assert len(grps)==26-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps))
+    fldr.debug=True
+    fldr=fldr
+    assert fldr["XRDFile"][0].debug,"Setting debug on folder failed!"
+    fldr.debug=False
+    fldr["QDFile"].group("Byapp")
+    assert fldr.trunkdepth==1,"Trunkdepth failed"
+    assert fldr.mindepth==1,"mindepth attribute of folder failed."
+    assert fldr.depth==2,"depth attribute failed."
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    fldr+=Data()
+    skip=1 if Hyperspy_ok else 2
+    assert len(list(fldr.loaded))==1,"loaded attribute failed {}".format(len(list(fldr.loaded)))
+    assert len(list(fldr.not_empty))==len(fldr)-skip,"not_empty attribute failed."
+    fldr-="Untitled"
+    assert not fldr.is_empty,"fldr.is_empty failed"
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    objects=copy(fldr.objects)
+    fldr.objects=dict(objects)
+    assert isinstance(fldr.objects,regexpDict),"Folder objects not reset to regexp dictionary"
+    fldr.objects=objects
+    assert isinstance(fldr.objects,regexpDict),"Setting Folder objects mangled type"
+    fldr.type=Data()
+    assert issubclass(fldr.type,Data),"Settin type by instance of class failed"
 
+def test_methods():
+    sliced=np.array(['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile',
+   'DataFile', 'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile',
+   'DataFile', 'DataFile'],
+      dtype='<U12')
+    fldr=DataFolder(datadir, pattern='*.txt', recursive=False).sort()
+    fldr=fldr
+    test_sliced=fldr.slice_metadata("Loaded as")
+    assert len(sliced)==len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced)
+    assert np.all(test_sliced==sliced),"Slicing metadata failed to work."
+    fldr.insert(5,Data())
+    assert list(fldr.ls)[5]=="Untitled","Insert failed"
+    fldr=fldr
+    _=fldr[-1]
+    assert list(reversed(fldr))[0].filename==fldr[-1].filename
 
+def test_clone():
+     fldr=DataFolder(datadir, pattern='*.txt')
+     fldr.abc = 123 #add an attribute
+     t = fldr.__clone__()
+     assert t.pattern==fldr.pattern, 'pattern didnt copy over'
+     assert hasattr(t, "abc") and t.abc==123, 'user attribute didnt copy over'
+     assert isinstance(t['recursivefoldertest'],DataFolder), 'groups didnt copy over'
 
-    def test_Properties(self):
-        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        self.assertEqual(fldr.mindepth,0,"Minimum depth of flat group n ot equal to zero.")
-        fldr/="Loaded as"
-        grps=list(fldr.lsgrp)
-        skip=0 if Hyperspy_ok else 1
-        self.assertEqual(len(grps),26-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps)))
-        fldr.debug=True
-        self.fldr=fldr
-        self.assertTrue(fldr["XRDFile"][0].debug,"Setting debug on folder failed!")
-        fldr.debug=False
-        fldr["QDFile"].group("Byapp")
-        self.assertEqual(fldr.trunkdepth,1,"Trunkdepth failed")
-        self.assertEqual(fldr.mindepth,1,"mindepth attribute of folder failed.")
-        self.assertEqual(fldr.depth,2,"depth attribute failed.")
-        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        fldr+=Data()
-        skip=1 if Hyperspy_ok else 2
-        self.assertEqual(len(list(fldr.loaded)),1,"loaded attribute failed {}".format(len(list(fldr.loaded))))
-        self.assertEqual(len(list(fldr.not_empty)),len(fldr)-skip,"not_empty attribute failed.")
-        fldr-="Untitled"
-        self.assertFalse(fldr.is_empty,"fldr.is_empty failed")
-        fldr=SF.DataFolder(self.datadir,debug=False,recursive=False)
-        objects=copy(fldr.objects)
-        fldr.objects=dict(objects)
-        self.assertTrue(isinstance(fldr.objects,regexpDict),"Folder objects not reset to regexp dictionary")
-        fldr.objects=objects
-        self.assertTrue(isinstance(fldr.objects,regexpDict),"Setting Folder objects mangled type")
-        fldr.type=Data()
-        self.assertTrue(issubclass(fldr.type,Data),"Settin type by instance of class failed")
+def test_grouping():
+    fldr4=DataFolder()
+    x=np.linspace(-np.pi,np.pi,181)
+    for phase in np.linspace(0,1.0,5):
+        for amplitude in np.linspace(1,2,6):
+            for frequency in np.linspace(1,2,5):
+                y=amplitude*np.sin(frequency*x+phase*np.pi)
+                d=Data(x,y,setas="xy",column_headers=["X","Y"])
+                d["frequency"]=frequency
+                d["amplitude"]=amplitude
+                d["phase"]=phase
+                d["params"]=[phase,frequency,amplitude]
+                d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
+                fldr4+=d
+    fldr4.unflatten()
+    assert fldr4.mindepth==3,"Unflattened DataFolder had wrong mindepth."
+    assert fldr4.shape== (~~fldr4).shape,"Datafodler changed shape on flatten/unflatten"
+    fldr5=fldr4.select(amplitude=1.4,recurse=True)
+    fldr5.prune()
+    pruned=(0,
+            {'test': (0,
+               {'1.4': (0,
+                 {'0.0': (5, {}),
+                  '0.25': (5, {}),
+                  '0.5': (5, {}),
+                  '0.75': (5, {}),
+                  '1.0': (5, {})})})})
+    selected=(0,
+            {'test': (0,
+               {'1.4': (0,
+                 {'0.25': (1, {}), '0.5': (1, {}), '0.75': (1, {}), '1.0': (1, {})})})})
+    assert fldr5.shape==pruned,"Folder pruning gave an unxpected shape."
+    assert fldr5[("test","1.4","0.5",0,"phase")]==0.5,"Multilevel indexing of tree failed."
+    shape=(~(~fldr4).select(amplitude=1.4).select(frequency=1).select(phase__gt=0.2)).shape
+    fldr4=fldr4
+    assert shape==selected,"Multi selects and inverts failed."
+    g=(~fldr4)/10
+    assert g.shape==(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
+                                 'Group 5': (15, {}),'Group 6': (15, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Dive by int failed."
+    g["Group 6"]-=5
+    assert g.shape==(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
+                                 'Group 5': (15, {}),'Group 6': (14, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Sub by int failed."
+    remove=g["Group 3"][4]
+    g["Group 3"]-=remove
+    assert g.shape==(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (14, {}),'Group 4': (15, {}),
+                                 'Group 5': (15, {}),'Group 6': (14, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Sub by object failed."
+    d=fldr4["test",1.0,1.0].gather(0,1)
+    assert d.shape==(181,6),"Gather seems have failed."
+    assert np.all(fldr4["test",1.0,1.0].slice_metadata("phase")==
+                           np.ones(5)),"Slice metadata failure."
+    d=(~fldr4).extract("phase","frequency","amplitude","params")
+    assert d.shape==(150,6),"Extract failed to produce data of correct shape."
+    assert d.column_headers==['phase', 'frequency', 'amplitude', 'params', 'params', 'params'],"Exctract failed to get correct column headers."
+    p=fldr4["test",1.0,1.0]
+    p=PlotFolder(p)
+    p.plot()
+    assert len(plt.get_fignums())==1,"Failed to generate a single plot for PlotFolder."
+    plt.close("all")
 
-    def test_methods(self):
-        sliced=np.array(['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile',
-       'DataFile', 'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile',
-       'DataFile', 'DataFile'],
-          dtype='<U12')
-        fldr=SF.DataFolder(self.datadir, pattern='*.txt', recursive=False).sort()
-        self.fldr=fldr
-        test_sliced=fldr.slice_metadata("Loaded as")
-        self.assertEqual(len(sliced),len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced))
-        self.assertTrue(np.all(test_sliced==sliced),"Slicing metadata failed to work.")
-        fldr.insert(5,Data())
-        self.assertEqual(list(fldr.ls)[5],"Untitled","Insert failed")
-        self.fldr=fldr
-        _=fldr[-1]
-        self.assertEqual(list(reversed(fldr))[0].filename,fldr[-1].filename)
-
-    def test_clone(self):
-         fldr=SF.DataFolder(self.datadir, pattern='*.txt')
-         fldr.abc = 123 #add an attribute
-         self.t = fldr.__clone__()
-         self.assertTrue(self.t.pattern==fldr.pattern, 'pattern didnt copy over')
-         self.assertTrue(hasattr(self.t, "abc") and self.t.abc==123, 'user attribute didnt copy over')
-         self.assertTrue(isinstance(self.t['recursivefoldertest'],SF.DataFolder), 'groups didnt copy over')
-
-    def test_grouping(self):
-        fldr4=SF.DataFolder()
-        x=np.linspace(-np.pi,np.pi,181)
-        for phase in np.linspace(0,1.0,5):
-            for amplitude in np.linspace(1,2,6):
-                for frequency in np.linspace(1,2,5):
-                    y=amplitude*np.sin(frequency*x+phase*np.pi)
-                    d=Data(x,y,setas="xy",column_headers=["X","Y"])
-                    d["frequency"]=frequency
-                    d["amplitude"]=amplitude
-                    d["phase"]=phase
-                    d["params"]=[phase,frequency,amplitude]
-                    d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
-                    fldr4+=d
-        fldr4.unflatten()
-        self.assertEqual(fldr4.mindepth,3,"Unflattened DataFolder had wrong mindepth.")
-        self.assertEqual(fldr4.shape, (~~fldr4).shape,"Datafodler changed shape on flatten/unflatten")
-        fldr5=fldr4.select(amplitude=1.4,recurse=True)
-        fldr5.prune()
-        pruned=(0,
-                {'test': (0,
-                   {'1.4': (0,
-                     {'0.0': (5, {}),
-                      '0.25': (5, {}),
-                      '0.5': (5, {}),
-                      '0.75': (5, {}),
-                      '1.0': (5, {})})})})
-        selected=(0,
-                {'test': (0,
-                   {'1.4': (0,
-                     {'0.25': (1, {}), '0.5': (1, {}), '0.75': (1, {}), '1.0': (1, {})})})})
-        self.assertEqual(fldr5.shape,pruned,"Folder pruning gave an unxpected shape.")
-        self.assertEqual(fldr5[("test","1.4","0.5",0,"phase")],0.5,"Multilevel indexing of tree failed.")
-        shape=(~(~fldr4).select(amplitude=1.4).select(frequency=1).select(phase__gt=0.2)).shape
-        self.fldr4=fldr4
-        self.assertEqual(shape, selected,"Multi selects and inverts failed.")
-        g=(~fldr4)/10
-        self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
-                                     'Group 5': (15, {}),'Group 6': (15, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Dive by int failed.")
-        g["Group 6"]-=5
-        self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
-                                     'Group 5': (15, {}),'Group 6': (14, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Sub by int failed.")
-        remove=g["Group 3"][4]
-        g["Group 3"]-=remove
-        self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (14, {}),'Group 4': (15, {}),
-                                     'Group 5': (15, {}),'Group 6': (14, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Sub by object failed.")
-        d=fldr4["test",1.0,1.0].gather(0,1)
-        self.assertEqual(d.shape,(181,6),"Gather seems have failed.")
-        self.assertTrue(np.all(fldr4["test",1.0,1.0].slice_metadata("phase")==
-                               np.ones(5)),"Slice metadata failure.")
-        d=(~fldr4).extract("phase","frequency","amplitude","params")
-        self.assertEqual(d.shape,(150,6),"Extract failed to produce data of correct shape.")
-        self.assertEqual(d.column_headers,['phase', 'frequency', 'amplitude', 'params', 'params', 'params'],"Exctract failed to get correct column headers.")
-        p=fldr4["test",1.0,1.0]
-        p=SF.PlotFolder(p)
-        p.plot()
-        self.assertEqual(len(plt.get_fignums()),1,"Failed to generate a single plot for PlotFolder.")
-        plt.close("all")
-
-    def test_saving(self):
-        fldr4=SF.DataFolder()
-        x=np.linspace(-np.pi,np.pi,181)
-        for phase in np.linspace(0,1.0,5):
-            for amplitude in np.linspace(1,2,6):
-                for frequency in np.linspace(1,2,5):
-                    y=amplitude*np.sin(frequency*x+phase*np.pi)
-                    d=Data(x,y,setas="xy",column_headers=["X","Y"])
-                    d["frequency"]=frequency
-                    d["amplitude"]=amplitude
-                    d["phase"]=phase
-                    d["params"]=[phase,frequency,amplitude]
-                    d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
-                    fldr4+=d
-        fldr4.unflatten()
-        newdir=tempfile.mkdtemp()
-        fldr4.save(newdir)
-        fldr5=SF.DataFolder(newdir)
-        self.assertEqual(fldr4.shape,fldr5.shape,"Saved DataFolder and loaded DataFolder have different shapes")
+def test_saving():
+    fldr4=DataFolder()
+    x=np.linspace(-np.pi,np.pi,181)
+    for phase in np.linspace(0,1.0,5):
+        for amplitude in np.linspace(1,2,6):
+            for frequency in np.linspace(1,2,5):
+                y=amplitude*np.sin(frequency*x+phase*np.pi)
+                d=Data(x,y,setas="xy",column_headers=["X","Y"])
+                d["frequency"]=frequency
+                d["amplitude"]=amplitude
+                d["phase"]=phase
+                d["params"]=[phase,frequency,amplitude]
+                d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
+                fldr4+=d
+    fldr4.unflatten()
+    newdir=tempfile.mkdtemp()
+    fldr4.save(newdir)
+    fldr5=DataFolder(newdir)
+    assert fldr4.shape==fldr5.shape,"Saved DataFolder and loaded DataFolder have different shapes"
 
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=Folders_test("test_Folders")
-    test.setUp()
-    unittest.main()
-    #test.test_groups_methods()
-
+    pytest.main(["--pdb",__file__])

@@ -13,8 +13,6 @@ from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 from Stoner.Folders import PlotFolder
 
-# set_option("multiprocessing",os.name!="nt")
-
 # Customise a plot template
 template = DefaultPlotStyle()
 template.xformatter = TexEngFormatter()
@@ -35,26 +33,18 @@ def extra(i, j, d):
     d.xlabel = r"Field $\mu_0H\,$"
     d.ylabel = "Abs. (arb)"
     d.plt_legend(loc=3)
-    d.annotate_fit(FMR_Power, fontdict={"size": 8}, x=0, y=1000)
+    d.annotate_fit(FMR_Power, fontdict={"size": 8}, x=0.05, y=0.25)
 
 
 def do_fit(f):
     """Function to fit just one set of data."""
     f.template = template
     f["cut"] = f.threshold(1.75e5, rising=False, falling=True)
-    res = f.lmfit(
-        FMR_Power,
-        result=True,
-        header="Fit",
-        bounds=lambda x, r: x < f["cut"],
-        output="row",
+    f["Frequency"] = (f // "Frequency").mean()
+    f.lmfit(
+        FMR_Power, result=True, header="Fit", bounds=lambda x, r: x < f["cut"]
     )
-    ch = res.column_headers
-    res = append(res, [f.mean("Frequency"), f["Field Sign"]])
-    res = atleast_2d(res)
-    res.column_headers = ch + ["Frequency (Hz)", "Field Sign"]
-    f.setas[-1] = "y"
-    return res, res.column_headers
+    return f
 
 
 ###############################################################################################
@@ -92,30 +82,30 @@ if __name__ == "__main__":
         subfldr.metadata["Field Sign"] = s
 
         print("s={}".format(s))
-        result = []
-        for ix, res in enumerate(subfldr.each.iter(do_fit)):
-            result.append(res)
-
-        data, headers = zip(*result)
-        new_data = data[0]
-        for r in data[1:]:
-            new_data = append(new_data, r, axis=0)
-        result = Data(new_data)
-        result.column_headers = headers[0]
+        (do_fit @ subfldr.each)()
+        result = subfldr.metadata.slice("Frequency", FMR_Power, output="Data")
+        result.metadata.update(
+            {x: subfldr[0][x] for x in subfldr.metadata.common_keys}
+        )
 
         # Now plot all the fits
-
+        subfldr.setas[12] = "y"
         subfldr.plots_per_page = 6  # Plot results
-        subfldr.plot(figsize=(8, 8), extra=extra)
+        subfldr.plot(
+            figsize=(8, 8), fmt=["k.", "r-"], markersize=1, extra=extra
+        )
 
         # Work with the overall results
-        result.setas(  # pylint: disable=not-callable
-            y="H_res", e="H_res.stderr", x="Freq"
-        )  # pylint: disable=not-callable
-        result.y = result.y / mu_0  # Convert to A/m
-        result.e = result.e / mu_0
+        try:
+            result.setas(  # pylint: disable=not-callable
+                y="H_res$", e="H_res err", x="Frequency"
+            )  # pylint: disable=not-callable
+            result.y = result.y / mu_0  # Convert to A/m
+            result.e = result.e / mu_0
 
-        resfldr += result  # Stash the results
+            resfldr += result  # Stash the results
+        except KeyError:
+            continue
 
     # Merge the two field signs into a single file, taking care of the error columns too
     result = resfldr[0].clone
