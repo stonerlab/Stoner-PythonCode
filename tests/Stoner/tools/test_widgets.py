@@ -42,7 +42,7 @@ def test_filedialog():
 
 def test_loader():
     d=Data(False)
-    assert d.shape==(1676,3),"Failed to load data with dialog box"
+    assert d.shape==(1676,3) or d.shape==(100,2),"Failed to load data with dialog box"
     fldr=DataFolder(False)
     assert fldr.shape==(47, {'attocube_scan': (15, {}), 'NLIV': (11, {}), 'recursivefoldertest': (1, {}), 'working': (4, {})})
     fldr=DataFolder(False,multifile=True)
