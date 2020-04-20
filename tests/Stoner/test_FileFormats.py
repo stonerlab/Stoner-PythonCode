@@ -65,7 +65,7 @@ def test_one_file(tmpdir, filename):
             assert os.path.exists(pth2) or os.path.exists(d.filename),"Failed to save as {}".format(pth)
             os.remove(d.filename)
     except Exception as e:
-         assert False,"Failed in loading <{}>\n{}".format(path.join(datadir,f),format_exc())
+         assert False,f"Failed in loading <{fname}>\n{format_exc()}"
 
 def test_csvfile():
 

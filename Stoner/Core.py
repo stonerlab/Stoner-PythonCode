@@ -251,6 +251,75 @@ class DataFile(
         if self.debug:
             print("Done DataFile init")
 
+    def _init_array(self, arg):
+        """Initialise from a single numpy array."""
+        # numpy.array - set data
+        if np.issubdtype(arg.dtype, np.number):
+            self.data = DataArray(np.atleast_2d(arg), setas=self.data._setas)
+            self.column_headers = [f"Column_{x}" for x in range(np.shape(arg)[1])]
+        elif isinstance(arg[0], dict):
+            for row in arg:
+                self += row
+
+    def _init_datafile(self,arg):
+        """Initialise from datafile."""
+        for a in arg.__dict__:
+            if not callable(a) and a != "_baseclass":
+                super(DataFile, self).__setattr__(a, copy.copy(arg.__getattribute__(a)))
+        self.metadata = arg.metadata.copy()
+        self.data = DataArray(arg.data, setas=arg.setas.clone)
+        self.data.setas = arg.setas.clone
+
+    def _init_dict(self,arg):
+        """Initialise from dictionary."""
+        if (
+            all_type(arg.keys(), string_types)
+            and all_type(arg.values(), np.ndarray)
+            and np.all([len(arg[k].shape) == 1 and np.all(len(arg[k]) == len(list(arg.values())[0])) for k in arg])
+        ):
+            self.data = np.column_stack(tuple(arg.values()))
+            self.column_headers = list(arg.keys())
+        else:
+            self.metadata = arg.copy()
+
+    def _init_imagefile(self,arg):
+        """Initialise from an ImageFile."""
+        x = arg.get("x_vector", np.arange(arg.shape[1]))
+        y = arg.get("y_vector", np.arange(arg.shape[0]))
+        x, y = np.meshgrid(x, y)
+        z = arg.image
+
+        self.data = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+        self.metadata = copy.deepcopy(arg.metadata)
+        self.column_headers = ["X", "Y", "Image Intensity"]
+        self.setas = "xyz"
+
+    def _init_pandas(self,arg):
+        """Initialise from a pandas dataframe."""
+        self.data = arg.values
+        ch = []
+        for ix, col in enumerate(arg):
+            if isinstance(col, string_types):
+                ch.append(col)
+            elif isIterable(col):
+                for ch_i in col:
+                    if isinstance(ch_i, string_types):
+                        ch.append(ch_i)
+                        break
+                else:
+                    ch.append(f"Column {ix}")
+            else:
+                ch.append(f"Column {ix}:{col}")
+        self.column_headers = ch
+        self.metadata.update(arg.metadata)
+        if isinstance(arg.columns, pd.MultiIndex) and len(arg.columns.levels) > 1:
+            for label in arg.columns.get_level_values(1):
+                if label not in list("xyzdefuvw."):
+                    break
+            else:
+                self.setas = list(arg.columns.get_level_values(1))
+
+
     def _init_single(self, *args, **kargs):
         """Handle constructor with 1 arguement - called from __init__."""
         arg = args[0]
@@ -258,71 +327,23 @@ class DataFile(
             # Filename- load datafile
             self.load(filename=arg, **kargs)
         elif isinstance(arg, np.ndarray):
-            # numpy.array - set data
-            if np.issubdtype(arg.dtype, np.number):
-                self.data = DataArray(np.atleast_2d(arg), setas=self.data._setas)
-                self.column_headers = [f"Column_{x}" for x in range(np.shape(args[0])[1])]
-            elif isinstance(arg[0], dict):
-                for row in arg:
-                    self += row
+            self._init_array(arg)
         elif isinstance(arg, dict):  # Dictionary - use as data or metadata
-            if (
-                all_type(arg.keys(), string_types)
-                and all_type(arg.values(), np.ndarray)
-                and np.all([len(arg[k].shape) == 1 and np.all(len(arg[k]) == len(list(arg.values())[0])) for k in arg])
-            ):
-                self.data = np.column_stack(tuple(arg.values()))
-                self.column_headers = list(arg.keys())
-            else:
-                self.metadata = arg.copy()
+            self._init_dict(arg)
         elif isinstance(arg, DataFile):
-            for a in arg.__dict__:
-                if not callable(a) and a != "_baseclass":
-                    super(DataFile, self).__setattr__(a, copy.copy(arg.__getattribute__(a)))
-            self.metadata = arg.metadata.copy()
-            self.data = DataArray(arg.data, setas=arg.setas.clone)
-            self.data.setas = arg.setas.clone
+            self._init_datafile(arg)
         elif "<class 'Stoner.Image.core.ImageFile'>" in [
             str(x) for x in arg.__class__.__mro__
         ]:  # Crazy hack to avoid importing a circular ref!
-            x = arg.get("x_vector", np.arange(arg.shape[1]))
-            y = arg.get("y_vector", np.arange(arg.shape[0]))
-            x, y = np.meshgrid(x, y)
-            z = arg.image
-
-            self.data = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
-            self.metadata = copy.deepcopy(arg.metadata)
-            self.column_headers = ["X", "Y", "Image Intensity"]
-            self.setas = "xyz"
+            self._init_imagefile(arg)
         elif pd is not None and isinstance(arg, pd.DataFrame):
-            self.data = arg.values
-            ch = []
-            for ix, col in enumerate(arg):
-                if isinstance(col, string_types):
-                    ch.append(col)
-                elif isIterable(ch):
-                    for ch_i in col:
-                        if isinstance(ch_i, string_types):
-                            ch.append(ch_i)
-                            break
-                    else:
-                        ch.append(f"Column {ix}")
-                else:
-                    ch.append("Column {}:{}", format(ix, ch))
-            self.column_headers = ch
-            self.metadata.update(arg.metadata)
-            if isinstance(arg.columns, pd.MultiIndex) and len(arg.columns.levels) > 1:
-                for label in arg.columns.get_level_values(1):
-                    if label not in list("xyzdefuvw."):
-                        break
-                else:
-                    self.setas = list(arg.columns.get_level_values(1))
+            self._init_pandas(arg)
         elif isIterable(arg) and all_type(arg, string_types):
             self.column_headers = list(arg)
         elif isIterable(arg) and all_type(arg, np.ndarray):
             self._init_many(*arg, **kargs)
         else:
-            raise SyntaxError(f"No constructor for {type(arg)}")
+            raise TypeError(f"No constructor for {type(arg)}")
         self.data._setas.cols.update(self.setas._get_cols())
 
     def _init_double(self, *args, **kargs):
@@ -343,7 +364,7 @@ class DataFile(
         """Handle more than two arguments to the constructor - called from init."""
         for a in args:
             if not (isinstance(a, np.ndarray) and len(a.shape) == 1):
-                self.load(*args, **kargs)
+                self.load(a, **kargs)
                 break
         else:
             self.data = np.column_stack(args)
@@ -406,15 +427,14 @@ class DataFile(
         Augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle."""
         attr = dir(type(self))
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
-        for k in col_check:
-            if "_setas" not in self.__dict__:
-                break
-            if k.startswith("x"):
-                if k in self._data._setas.cols and self._data._setas.cols[k] is not None:
-                    attr.append(col_check[k])
-            else:
-                if k in self._data._setas.cols and self._data._setas.cols[k]:
-                    attr.append(col_check[k])
+        if not self.setas.empty:
+            for k in col_check:
+                if k.startswith("x"):
+                    if k in self._data._setas.cols and self._data._setas.cols[k] is not None:
+                        attr.append(col_check[k])
+                else:
+                    if k in self._data._setas.cols and self._data._setas.cols[k]:
+                        attr.append(col_check[k])
         return sorted(set(attr))
 
     def __getattr__(self, name):
@@ -866,6 +886,7 @@ class DataFile(
         args = len(_inspect_.getargs(func.__code__)[0])
         for r in self.rows():
             i += 1
+            r.mask=False
             if args == 2:
                 t = func(r[col], r)
             else:
@@ -1223,7 +1244,6 @@ class DataFile(
             Implement val is a tuple for deletinging in a range of values.
         """
         if col is None:
-            self.data = ma.mask_rows(self.data)
             self.data = ma.compress_rows(self.data)
         else:
             if isinstance(col, slice) and val is None:  # delete rows with a slice to make a list of indices
@@ -1595,6 +1615,8 @@ class DataFile(
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = self.__file_dialog("w")
+            if not filename:
+                raise RuntimeError("Cannot get filename to save")
         if as_loaded:
             if (
                 isinstance(as_loaded, bool) and "Loaded as" in self

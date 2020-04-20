@@ -219,6 +219,11 @@ class setas(MutableMapping):
         self._column_headers = typedList(string_types, value)
 
     @property
+    def empty(self):
+        """Determine if any columns are set."""
+        return len(self._setas)==0 or np.all(np.array(self._setas)==".")
+
+    @property
     def not_set(self):
         """Return a boolean array if not set."""
         return np.array([x == "." for x in self._setas])
@@ -226,7 +231,7 @@ class setas(MutableMapping):
     @property
     def set(self):
         """Return a boolean array if column is set."""
-        return ~self.not_set
+        return np.array([x != "." for x in self._setas])
 
     @property
     def setas(self):

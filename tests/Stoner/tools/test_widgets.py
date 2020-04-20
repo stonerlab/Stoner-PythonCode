@@ -17,9 +17,9 @@ ret_pth = Path(__home__)/".."/"sample-data"/"TDI_Format_RT.txt"
 def dummy(mode="getOpenFileName"):
     modes={"getOpenFileName":str(ret_pth),
            "getOpenFileNames":[str(ret_pth)],
-           "getSaveFileName":str(ret_pth),
+           "getSaveFileName":None,
            "getExistingDirectory":str(ret_pth.parent)}
-    return lambda *args,**kargs:modes[mode]
+    return lambda *args,**kargs:(modes[mode],None)
 
 from PyQt5.QtWidgets import QFileDialog
 for mode in ["getOpenFileName","getOpenFileNames","getSaveFileName","getExistingDirectory"]:
@@ -35,7 +35,7 @@ def test_filedialog():
     assert widgets.fileDialog.openDialog(title="Test",start=".")== str(ret_pth)
     assert widgets.fileDialog.openDialog(patterns={"*.bad":"Very bad files"})== str(ret_pth)
     assert widgets.fileDialog.openDialog(mode="OpenFiles")== [str(ret_pth)]
-    assert widgets.fileDialog.openDialog(mode="SaveFile")== str(ret_pth)
+    assert widgets.fileDialog.openDialog(mode="SaveFile")== None
     assert widgets.fileDialog.openDialog(mode="SelectDirectory")== str(ret_pth.parent)
     with pytest.raises(ValueError):
         widgets.fileDialog.openDialog(mode="Whateve")
@@ -43,6 +43,10 @@ def test_filedialog():
 def test_loader():
     d=Data(False)
     assert d.shape==(1676,3) or d.shape==(100,2),"Failed to load data with dialog box"
+    d.filename=None
+    d.save(False)
+    with pytest.raises(RuntimeError):
+        d.save(False)
     fldr=DataFolder(False)
     assert fldr.shape==(47, {'attocube_scan': (15, {}), 'NLIV': (11, {}), 'recursivefoldertest': (1, {}), 'working': (4, {})})
     fldr=DataFolder(False,multifile=True)

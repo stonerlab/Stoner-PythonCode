@@ -1,24 +1,23 @@
-# -*- coding: utf-8 -*-
-"""
-test_Core.py
+"""test_Core.py
 Created on Tue Jan 07 22:05:55 2014
 
 @author: phygbu
 """
 
-import unittest
 import sys
 import os, os.path as path
 import numpy as np
 import re
-from numpy import any,all,sqrt,nan
+import pandas as pd
+import pytest
+from numpy import all,sqrt,nan
 from collections import MutableMapping,OrderedDict
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 from Stoner import Data,__home__
-from Stoner.Core import typeHintedDict,metadataObject
+from Stoner.Core import metadataObject
 import Stoner.compat
 
 def extra_get_filedialog(what="file", **opts):
@@ -29,92 +28,110 @@ def mask_func(r):
 
 
 Stoner.Core.get_filedialog=extra_get_filedialog #Monkey patch to test the file dialog
+datadir=path.join(pth,"sample-data")
 
-class Datatest(unittest.TestCase):
+def setup_function(function):
+    global selfd, selfd1, selfd2, selfd3, selfd4
 
-    """Path to sample Data File"""
-    datadir=path.join(pth,"sample-data")
+    selfd=Data(path.join(path.dirname(__file__),"CoreTest.dat"),setas="xy")
+    selfd2=Data(path.join(__home__,"..","sample-data","TDI_Format_RT.txt"))
+    selfd3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
+    selfd4=Data(path.join(__home__,"..","sample-data","Cu_resistivity_vs_T.txt"))
 
-    def setUp(self):
-        self.d=Data(path.join(path.dirname(__file__),"CoreTest.dat"),setas="xy")
-        self.d2=Data(path.join(__home__,"..","sample-data","TDI_Format_RT.txt"))
-        self.d3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
-        self.d4=Data(path.join(__home__,"..","sample-data","Cu_resistivity_vs_T.txt"))
-
-    def test_repr(self):
-        header="""==============  ======  ======
+def test_repr():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    header="""==============  ======  ======
 TDI Format 1.5  X-Data  Y-Data
     index       0 (x)   1 (y)
 ==============  ======  ======"""
-        repr_header="""=============================  ========  ========
+    repr_header="""=============================  ========  ========
 TDI Format 1.5                   X-Data    Y-Data
 index                             0 (x)     1 (y)
 =============================  ========  ========"""
-        self.assertEqual(self.d.header,header,"Header output changed.")
-        self.assertEqual("\n".join(repr(self.d).split("\n")[:4]),repr_header,"Representation gave unexpcted header.")
+    assert selfd.header,header=="Header output changed."
+    assert "\n".join(repr(selfd).split("\n")[:4])==repr_header,"Representation gave unexpcted header."
+    assert len(repr(selfd2).split("\n"))==261,"Long file representation failed"
+    assert len(selfd2._repr_html_().split("\n"))==263,"Long file representation failed"
 
-    def test_base_class(self):
-        m=metadataObject()
-        m.update(self.d2.metadata)
-        self.assertTrue(isinstance(m,MutableMapping),"metadataObject is not a MutableMapping")
-        self.assertEqual(len(m),len(self.d2.metadata),"metadataObject length failure.")
-        self.assertEqual(len(m[".*"]),len(m),"Failure to index by regexp.")
-        for k in self.d2.metadata:
-            self.assertEqual(m[k],self.d2.metadata[k],"Failure to have equal keys for {}".format(k))
-            m[k]=k
-            self.assertEqual(m[k],k,"Failure to set keys for {}".format(k))
-            del m[k]
-        self.assertEqual(len(m),0,"Failed to delete from metadataObject.")
+def test_base_class():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    m=metadataObject()
+    m.update(selfd2.metadata)
+    assert isinstance(m,MutableMapping),"metadataObject is not a MutableMapping"
+    assert len(m)==len(selfd2.metadata), "metadataObject length failure."
+    assert len(m[".*"])==len(m),"Failure to index by regexp."
+    for k in selfd2.metadata:
+        assert m[k]==selfd2.metadata[k],f"Failure to have equal keys for {k}"
+        m[k]=k
+        assert m[k]==k,f"Failure to set keys for {k}"
+        del m[k]
+    assert len(m)==0,"Failed to delete from metadataObject."
 
-    def test_constructor(self):
-        """Constructor Tests"""
-        d=Data()
-        self.assertTrue(d.shape==(1,0),"Bare constructor failed")
-        d=Data(self.d)
-        self.assertTrue(np.all(d.data==self.d.data),"Constructor from DataFile failed")
-        d=Data([np.ones(100),np.zeros(100)])
-        self.assertTrue(d.shape==(100,2),"Constructor from iterable list of nd array failed")
-        d=Data([np.ones(100),np.zeros(100)],["X","Y"])
-        self.assertTrue(d.column_headers==["X","Y"],"Failed to set column headers in constructor: {}".format(d.column_headers))
-        c=np.zeros(100)
-        d=Data({"X-Data":c,"Y-Data":c,"Z-Data":c})
-        self.assertEqual(d.shape,(100,3),"Construction from dictionary of columns failed.")
-        d=Data(False)
-        self.assertEqual(self.d,d,"Faked file-dialog test")
-        d=self.d.clone
-        df=d.to_pandas()
-        e=Data(df)
-        self.assertEqual(d,e,"Roundtripping through Pandas DataFrame failed.")
-        d=self.d.clone
-        e=Data(d.dict_records)
-        e.metadata=d.metadata
-        self.assertEqual(d,e,"Copy from dict records failed.")
+def test_constructor():
+    """Constructor Tests"""
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    d=Data()
+    assert d.shape==(1,0),"Bare constructor failed"
+    d=Data(selfd)
+    assert np.all(d.data==selfd.data),"Constructor from DataFile failed"
+    d=Data([np.ones(100),np.zeros(100)])
+    assert d.shape==(100,2),"Constructor from iterable list of nd array failed"
+    d=Data([np.ones(100),np.zeros(100)],["X","Y"])
+    assert d.column_headers==["X","Y"],f"Failed to set column headers in constructor: {d.column_headers}"
+    c=np.zeros(100)
+    d=Data({"X-Data":c,"Y-Data":c,"Z-Data":c})
+    assert d.shape==(100,3),"Construction from dictionary of columns failed."
+    d=selfd.clone
+    df=d.to_pandas()
+    e=Data(df)
+    assert d==e,"Roundtripping through Pandas DataFrame failed."
+    d=selfd.clone
+    e=Data(d.dict_records)
+    e.metadata=d.metadata
+    assert d==e,"Copy from dict records failed."
+    d=Data(pd.DataFrame(np.zeros((100,3))))
+    assert d.column_headers==['Column 0:0', 'Column 1:1', 'Column 2:2']
+    d=Data(np.ones(100),np.zeros(100),np.zeros(100),selfd.filename)
+    assert d==selfd,"Multiple argument constructor dind't find it's filename"
+    with pytest.raises(TypeError):
+        e=d(setas=34)
+    with pytest.raises(TypeError):
+        e=d(column_headers=34)
 
-    def test_column(self):
-        for i,c in enumerate(self.d.column_headers):
-            # Column function checks
-            self.assertTrue(all(self.d.data[:,i]==self.d.column(i)),"Failed to Access column {} by index".format(i))
-            self.assertTrue(all(self.d.data[:,i]==self.d.column(c)),"Failed to Access column {} by name".format(i))
-            self.assertTrue(all(self.d.data[:,i]==self.d.column(c[0:3])),"Failed to Access column {} by partial name".format(i))
+    with pytest.raises(AttributeError):
+        d=Data(bad_attr=False)
+    with pytest.raises(TypeError):
+        d=Data(column_headers=43)
+    with pytest.raises(TypeError):
+        d=Data(object)
 
-        # Check that access by list of strings returns multpiple columns
-        self.assertTrue(all(self.d.column(self.d.column_headers)==self.d.data),"Failed to access all columns by list of string indices")
-        self.assertTrue(all(self.d.column([0,self.d.column_headers[1]])==self.d.data),"Failed to access all columns by mixed list of indices")
+def test_column():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    for i,c in enumerate(selfd.column_headers):
+        # Column function checks
+        assert all(selfd.data[:,i]==selfd.column(i)),f"Failed to Access column {i} by index"
+        assert all(selfd.data[:,i]==selfd.column(c)),f"Failed to Access column {i} by name"
+        assert all(selfd.data[:,i]==selfd.column(c[0:3])),f"Failed to Access column {i} by partial name"
 
-        # Check regular expression column access
-        self.assertTrue(all(self.d.column(re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed to access column by regular expression")
-        # Check attribute column access
-        self.assertTrue(all(self.d.X==self.d.column(0)),"Failed to access column by attribute name")
+    # Check that access by list of strings returns multpiple columns
+    assert all(selfd.column(selfd.column_headers)==selfd.data),"Failed to access all columns by list of string indices"
+    assert all(selfd.column([0,selfd.column_headers[1]])==selfd.data),"Failed to access all columns by mixed list of indices"
 
-    def test_deltions(self):
-        ch=["{}-Data".format(chr(x)) for x in range(65,91)]
-        data=np.zeros((100,26))
-        metadata=OrderedDict([("Key 1",True),("Key 2",12),("Key 3","Hellow world")])
-        self.dd=Data(metadata)
-        self.dd.data=data
-        self.dd.column_headers=ch
-        self.dd.setas="3.x3.y3.z"
-        self.repr_string="""===========================  ========  =======  ========  =======  ========  ========
+    # Check regular expression column access
+    assert all(selfd.column(re.compile(r"^X\-"))[:,0]==selfd.column(0)),"Failed to access column by regular expression"
+    # Check attribute column access
+    assert all(selfd.X==selfd.column(0)),"Failed to access column by attribute name"
+
+def test_deltions():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    ch=["{}-Data".format(chr(x)) for x in range(65,91)]
+    data=np.zeros((100,26))
+    metadata=OrderedDict([("Key 1",True),("Key 2",12),("Key 3","Hellow world")])
+    selfdd=Data(metadata)
+    selfdd.data=data
+    selfdd.column_headers=ch
+    selfdd.setas="3.x3.y3.z"
+    selfrepr_string="""===========================  ========  =======  ========  =======  ========  ========
 TDI Format 1.5                 D-Data   ....      H-Data   ....      Y-Data    Z-Data
 index                           3 (x)              7 (y)                 24        25
 ===========================  ========  =======  ========  =======  ========  ========
@@ -123,319 +140,345 @@ Key 2{I32}= 12                      0  ...             0  ...             0     
 Key 3{String}= Hellow world         0  ...             0  ...             0         0
 Stoner.class{String}= Data          0  ...             0  ...             0         0
 ...                                 0  ...             0  ...             0         0"""
-        self.assertEqual("\n".join(repr(self.dd).split("\n")[:9]),self.repr_string,"Representation with interesting columns failed.")
-        del self.dd["Key 1"]
-        self.assertEqual(len(self.dd.metadata),3,"Deletion of metadata failed.")
-        del self.dd[20:30]
-        self.assertEqual(self.dd.shape,(90,26),"Deleting rows directly failed.")
-        self.dd.del_column("Q")
-        self.assertEqual(self.dd.shape,(90,25),"Deleting rows directly failed.")
-        self.dd%=3
-        self.assertEqual(self.dd.shape,(90,24),"Deleting rows directly failed.")
-        self.dd.setas="x..y..z"
-        self.dd.del_column(self.dd.setas.not_set)
-        self.assertEqual(self.dd.shape,(90,3),"Deleting rows directly failed.")
-        self.dd.mask[50,1]=True
-        self.dd.del_column()
-        self.assertEqual(self.dd.shape,(90,2),"Deletion of masked rows failed.")
-        self.d5=Data(np.ones((10,10)))
-        self.d5.column_headers=["A"]*5+["B"]*5
-        self.d5.del_column("A",duplicates=True)
-        self.assertEqual(self.d5.shape,(10,6),"Failed to delete columns with duplicates True and col specified.")
-        self.d5=Data(np.ones((10,10)))
-        self.d5.column_headers=list("ABCDEFGHIJ")
-        self.d5.setas="..x..y"
-        self.d5.del_column(True)
-        self.assertEqual(self.d5.column_headers,["C","F"],"Failed to delete columns with col=True")
+    assert "\n".join(repr(selfdd).split("\n")[:9])==selfrepr_string,"Representation with interesting columns failed."
+    del selfdd["Key 1"]
+    assert len(selfdd.metadata)==3,"Deletion of metadata failed."
+    del selfdd[20:30]
+    assert selfdd.shape==(90,26),"Deleting rows directly failed."
+    selfdd.del_column("Q")
+    assert selfdd.shape==(90,25),"Deleting rows directly failed."
+    selfdd%=3
+    assert selfdd.shape==(90,24),"Deleting rows directly failed."
+    selfdd.setas="x..y..z"
+    selfdd.del_column(selfdd.setas.not_set)
+    assert selfdd.shape==(90,3),"Deleting rows directly failed."
+    selfdd.mask[50,1]=True
+    selfdd.del_column()
+    assert selfdd.shape==(90,2),"Deletion of masked rows failed."
+    selfd5=Data(np.ones((10,10)))
+    selfd5.column_headers=["A"]*5+["B"]*5
+    selfd5.del_column("A",duplicates=True)
+    assert selfd5.shape==(10,6),"Failed to delete columns with duplicates True and col specified."
+    selfd5=Data(np.ones((10,10)))
+    selfd5.column_headers=list("ABCDEFGHIJ")
+    selfd5.setas="..x..y"
+    selfd5.del_column(True)
+    assert selfd5.column_headers==["C","F"],"Failed to delete columns with col=True"
+
+def test_indexing():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    #Check all the indexing possibilities
+    data=np.array(selfd.data)
+    colname=selfd.column_headers[0]
+    assert all(selfd.column(colname)==selfd[:,0]),"Failed direct indexing versus column method"
+    assert all(selfd[:,0]==data[:,0]),"Failed direct idnexing versusus direct array index"
+    assert all(selfd[:,[0,1]]==data),"Failed direct list indexing"
+    assert all(selfd[::2,:]==data[::2]),"Failed slice indexing rows"
+    assert all(selfd[colname]==data[:,0]),"Failed direct indexing by column name"
+    assert all(selfd[:,colname]==data[:,0]),"Failed fallback indexing by column name"
+    assert selfd[25,1]==645.0,"Failed direct single cell index"
+    assert selfd[25,"Y-Data"]==645.0,"Failoed single cell index direct"
+    assert selfd["Y-Data",25]==645.0,"Failoed single cell fallback index order"
+    selfd["X-Dat"]=[11,12,13,14,15]
+    assert selfd["X-Dat",2]==13,"Failed indexing of metadata lists with tuple"
+    assert selfd["X-Dat"][2]==13,"Failed indexing of metadata lists with double indices"
+    d=Data(np.ones((10,10)))
+    d[0,0]=5 #Index by tuple into data
+    d["Column_1",0]=6 # Index by column name, row into data
+    d[0,"Column_2"]=7 #Index by row, column name into data
+    d["Column_3"]=[1,2,3,4] # Create a metadata
+    d["Column_3",2]=2 # Index existing metadata via tuple
+    d.metadata[0,5]=10
+    d[0,5]=12 # Even if tuple, index metadata if already existing.
+    assert np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),f"setitem on Data to index into Data.data failed.\n{d[0]}"
+    assert d.metadata["Column_3"]==[1,2,2,4],"Tuple indexing into metadata Failed."
+    assert d.metadata[0,5]==12,"Indexing of pre-existing metadta keys rather than Data./data failed."
+    assert d.metadata[1]==[1, 2, 2, 4],"Indexing metadata by integer failed."
+
+def test_len():
+    # Check that length of the column is the same as length of the data
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    assert len(Data())==0,"Empty DataFile not length zero"
+    assert len(selfd.column(0))==len(selfd),"Column 0 length not equal to DataFile length"
+    assert len(selfd)==selfd.data.shape[0],"DataFile length not equal to data.shape[0]"
+    # Check that self.column_headers returns the right length
+    assert len(selfd.column_headers)==selfd.data.shape[1],"Length of column_headers not equal to data.shape[1]"
+
+def test_attributes():
+    """Test various atribute accesses,"""
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    header='==============  ======  ======\nTDI Format 1.5  X-Data  Y-Data\n    index       0 (x)   1 (y)\n==============  ======  ======'
+    assert selfd.shape==(100,2),"shape attribute not correct."
+    assert selfd.dims==2,"dims attribute not correct."
+    assert selfd.header==header,"Shorter header not as expected"
+    assert all(selfd.T==selfd.data.T),"Transpose attribute not right"
+    assert all(selfd.x==selfd.column(0)),"x attribute quick access not right."
+    assert all(selfd.y==selfd.column(1)),"y attribute not right."
+    assert all(selfd.q==np.arctan2(selfd.data[:,0],selfd.data[:,1])),"Calculated theta attribute not right."
+    assert all(sqrt(selfd[:,0]**2+selfd[:,1]**2)==selfd.r),"Calculated r attribute not right."
+    assert selfd2.records._[5]["Column 2"]==selfd2.data[5,2],"Records and as array attributes problem"
+    d=Data(np.ones((10,2)),["A","A"])
+    assert d.records.dtype==np.dtype([('A_1', '<f8'), ('A', '<f8')]),".records with identical column headers handling failed"
+    e=selfd.clone
+    e.data=np.array([1,1,1])
+    e.T=selfd.T
+    e.column_headers=selfd.column_headers
+    assert e==selfd,"Writingto transposed data failed"
+    assert selfd.xcol == 0
+    assert selfd.ycol == [1]
+    with pytest.raises(AttributeError):
+        selfd.zcol == None
+    selfd.setas="xz"
+    assert selfd.zcol == [1]
+    selfd.x=np.ones((100,1))
+    assert all(selfd.x==np.ones(100))
+    selfd.x=np.ones((1,100))
+    assert all(selfd.x==np.ones(100))
+    with pytest.raises(RuntimeError):
+        selfd.x=np.ones((2,2))
 
 
-    def test_indexing(self):
-        #Check all the indexing possibilities
-        data=np.array(self.d.data)
-        colname=self.d.column_headers[0]
-        self.assertTrue(all(self.d.column(colname)==self.d[:,0]),"Failed direct indexing versus column method")
-        self.assertTrue(all(self.d[:,0]==data[:,0]),"Failed direct idnexing versusus direct array index")
-        self.assertTrue(all(self.d[:,[0,1]]==data),"Failed direct list indexing")
-        self.assertTrue(all(self.d[::2,:]==data[::2]),"Failed slice indexing rows")
-        self.assertTrue(all(self.d[colname]==data[:,0]),"Failed direct indexing by column name")
-        self.assertTrue(all(self.d[:,colname]==data[:,0]),"Failed fallback indexing by column name")
-        self.assertEqual(self.d[25,1],645.0,"Failed direct single cell index")
-        self.assertEqual(self.d[25,"Y-Data"],645.0,"Failoed single cell index direct")
-        self.assertEqual(self.d["Y-Data",25],645.0,"Failoed single cell fallback index order")
-        self.d["X-Dat"]=[11,12,13,14,15]
-        self.assertEqual(self.d["X-Dat",2],13,"Failed indexing of metadata lists with tuple")
-        self.assertEqual(self.d["X-Dat"][2],13,"Failed indexing of metadata lists with double indices")
-        d=Data(np.ones((10,10)))
-        d[0,0]=5 #Index by tuple into data
-        d["Column_1",0]=6 # Index by column name, row into data
-        d[0,"Column_2"]=7 #Index by row, column name into data
-        d["Column_3"]=[1,2,3,4] # Create a metadata
-        d["Column_3",2]=2 # Index existing metadata via tuple
-        d.metadata[0,5]=10
-        d[0,5]=12 # Even if tuple, index metadata if already existing.
-        self.assertTrue(np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),"setitem on Data to index into Data.data failed.\n{}".format(d[0]))
-        self.assertEqual(d.metadata["Column_3"],[1,2,2,4],"Tuple indexing into metadata Failed.")
-        self.assertEqual(d.metadata[0,5],12,"Indexing of pre-existing metadta keys rather than Data./data failed.")
-        self.assertEqual(d.metadata[1],[1, 2, 2, 4],"Indexing metadata by integer failed.")
+def test_mask():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    selflittle=Data()
+    p=np.linspace(0,np.pi,91)
+    q=np.linspace(0,2*np.pi,91)
+    r=np.cos(p)
+    x=r*np.sin(q)
+    y=r*np.cos(q)
+    selflittle.data=np.column_stack((x,y,r))
+    selflittle.setas="xyz"
+    selflittle.mask=mask_func
+    selflittle.mask[:,2]=True
+    assert len(repr(selflittle).split("\n"))==len(selflittle)+5,"Non shorterned representation failed."
+    selflittle.mask = lambda r:np.abs(r)>0.5
+    selflittle.del_rows()
+    assert selflittle.shape==(30,3)
 
-    def test_len(self):
-        # Check that length of the column is the same as length of the data
-        self.assertEqual(len(Data()),0,"Empty DataFile not length zero")
-        self.assertEqual(len(self.d.column(0)),len(self.d),"Column 0 length not equal to DataFile length")
-        self.assertEqual(len(self.d),self.d.data.shape[0],"DataFile length not equal to data.shape[0]")
-        # Check that self.column_headers returns the right length
-        self.assertEqual(len(self.d.column_headers),self.d.data.shape[1],"Length of column_headers not equal to data.shape[1]")
 
-    def test_attributes(self):
-        """Test various atribute accesses,"""
-        header='==============  ======  ======\nTDI Format 1.5  X-Data  Y-Data\n    index       0 (x)   1 (y)\n==============  ======  ======'
-        self.assertEqual(self.d.shape,(100,2),"shape attribute not correct.")
-        self.assertEqual(self.d.dims,2,"dims attribute not correct.")
-        self.assertEqual(self.d.header,header,"Shorter header not as expected")
-        self.assertTrue(all(self.d.T==self.d.data.T),"Transpose attribute not right")
-        self.assertTrue(all(self.d.x==self.d.column(0)),"x attribute quick access not right.")
-        self.assertTrue(all(self.d.y==self.d.column(1)),"y attribute not right.")
-        self.assertTrue(all(self.d.q==np.arctan2(self.d.data[:,0],self.d.data[:,1])),"Calculated theta attribute not right.")
-        self.assertTrue(all(sqrt(self.d[:,0]**2+self.d[:,1]**2)==self.d.r),"Calculated r attribute not right.")
-        self.assertTrue(self.d2.records._[5]["Column 2"]==self.d2.data[5,2],"Records and as array attributes problem")
-        d=Data(np.ones((10,2)),["A","A"])
-        self.assertEqual(d.records.dtype,np.dtype([('A_1', '<f8'), ('A', '<f8')]),".records with identical column headers handling failed")
-        e=self.d.clone
-        e.data=np.array([1,1,1])
-        e.T=self.d.T
-        e.column_headers=self.d.column_headers
-        self.assertEqual(e,self.d,"Writingto transposed data failed")
+def test_iterators():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    for i,c in enumerate(selfd.columns()):
+        assert all(selfd.column(i)==c),"Iterating over DataFile.columns not the same as direct indexing column"
+    for j,r in enumerate(selfd.rows()):
+        assert all(selfd[j]==r),"Iteratinf over DataFile.rows not the same as indexed access"
+    for k,r in enumerate(selfd):
+        pass
+    assert j==k,"Iterating over DataFile not the same as DataFile.rows"
+    assert selfd.data.shape==(j+1,i+1),"Iterating over rows and columns not the same as data.shape"
 
-    def test_iterators(self):
-        for i,c in enumerate(self.d.columns()):
-            self.assertTrue(all(self.d.column(i)==c),"Iterating over DataFile.columns not the same as direct indexing column")
-        for j,r in enumerate(self.d.rows()):
-            self.assertTrue(all(self.d[j]==r),"Iteratinf over DataFile.rows not the same as indexed access")
-        for k,r in enumerate(self.d):
-            pass
-        self.assertEqual(j,k,"Iterating over DataFile not the same as DataFile.rows")
-        self.assertEqual(self.d.data.shape,(j+1,i+1),"Iterating over rows and columns not the same as data.shape")
+def test_metadata():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    selfd["Test"]="This is a test"
+    selfd["Int"]=1
+    selfd["Float"]=1.0
+    keys,values=zip(*selfd.items())
+    assert tuple(selfd.keys())==keys,"Keys from items() not equal to keys from keys()"
+    assert tuple(selfd.values())==values,"Values from items() not equal to values from values()"
+    assert selfd["Int"]==1
+    assert selfd["Float"]==1.0
+    assert selfd["Test"]==selfd.metadata["Test"]
+    assert selfd.metadata._typehints["Int"]=="I32"
+    assert len(selfd.dir())==6,f"Failed meta data directory listing ({selfd.dir()})"
+    assert len(selfd3["Temperature"])==7,"Regular experssion metadata search failed"
 
-    def test_metadata(self):
-        self.d["Test"]="This is a test"
-        self.d["Int"]=1
-        self.d["Float"]=1.0
-        keys,values=zip(*self.d.items())
-        self.assertEqual(tuple(self.d.keys()),keys,"Keys from items() not equal to keys from keys()")
-        self.assertEqual(tuple(self.d.values()),values,"Values from items() not equal to values from values()")
-        self.assertEqual(self.d["Int"],1)
-        self.assertEqual(self.d["Float"],1.0)
-        self.assertEqual(self.d["Test"],self.d.metadata["Test"])
-        self.assertEqual(self.d.metadata._typehints["Int"],"I32")
-        self.assertEqual(len(self.d.dir()),6,"Failed meta data directory listing ({})".format(len(self.d.dir())))
-        self.assertEqual(len(self.d3["Temperature"]),7,"Regular experssion metadata search failed")
+def test_dir():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    assert selfd.dir("S")==["Stoner.class"],f"Dir method failed: dir was {selfd.dir()}"
+    bad_keys=set(['__metaclass__', 'iteritems', 'iterkeys', 'itervalues','__ge__', '__gt__', '__init_subclass__',
+                  '__le__', '__lt__', '__reversed__', '__slots__',"_abc_negative_cache","_abc_registry",
+                  "_abc_negative_cache_version","_abc_cache","_abc_impl"])
+    attrs=set(dir(selfd))-bad_keys
+    assert len(attrs)==238,"DataFile.__dir__ failed."
+    selfd.setas.clear()
+    attrs=set(dir(selfd))-bad_keys
+    assert len(attrs)==236,"DataFile.__dir__ failed."
 
-    def test_dir(self):
-        self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed: dir was {}".format(self.d.dir()))
-        bad_keys=set(['__metaclass__', 'iteritems', 'iterkeys', 'itervalues','__ge__', '__gt__', '__init_subclass__',
-                      '__le__', '__lt__', '__reversed__', '__slots__',"_abc_negative_cache","_abc_registry",
-                      "_abc_negative_cache_version","_abc_cache","_abc_impl"])
-        self.attrs=set(dir(self.d))-bad_keys
-        self.assertEqual(len(self.attrs),231,"DataFile.__dir__ failed.")
+def test_filter():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    selfd._push_mask()
+    ix=np.argmax(selfd.x)
+    selfd.filter(lambda r:r.x<=50)
+    assert np.max(selfd.x)==50,"Failure of filter method to set mask"
+    assert np.isnan(selfd.x[ix]),"Failed to mask maximum value"
+    selfd._pop_mask()
+    assert selfd2.select(Temp__not__gt=150).shape==(839,3),"Seect method failure."
+    assert selfd.select(lambda r:r.x<30)==selfd.select(X__lt=30),"Select  method as callable failed."
+    assert selfd.select(__=lambda r:r.x<30)==selfd.select(X__lt=30),"Select  method as callable failed."
 
-    def test_filter(self):
-        self.d._push_mask()
-        ix=np.argmax(self.d.x)
-        self.d.filter(lambda r:r.x<=50)
-        self.assertTrue(np.max(self.d.x)==50,"Failure of filter method to set mask")
-        self.assertTrue(np.isnan(self.d.x[ix]),"Failed to mask maximum value")
-        self.d._pop_mask()
-        self.assertEqual(self.d2.select(Temp__not__gt=150).shape,(839,3),"Seect method failure.")
-        self.assertEqual(self.d.select(lambda r:r.x<30),self.d.select(X__lt=30),"Select  method as callable failed.")
-        self.assertEqual(self.d.select(__=lambda r:r.x<30),self.d.select(X__lt=30),"Select  method as callable failed.")
+def test_operators():
+    #Test Column Indexer
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    assert all(selfd//0==selfd.column(0)),"Failed the // operator with integer"
+    assert all(selfd//"X-Data"==selfd.column(0)),"Failed the // operator with string"
+    assert all((selfd//re.compile(r"^X\-"))[:,0]==selfd.column(0)),"Failed the // operator with regexp"
+    t=[selfd%1,selfd%"Y-Data",(selfd%re.compile(r"Y\-"))]
+    for ix,tst in enumerate(["integer","string","regexp"]):
+        assert all(t[ix].data==np.atleast_2d(selfd.column(0)).T),f"Failed % operator with {tst} index"
+    d=selfd&selfd.x
+    assert d.shape[1]==3,"& operator failed."
+    assert len(d.setas)==3,"& messed up setas"
+    assert len(d.column_headers)==3,"& messed up setas"
+    d&=d.x
+    assert d.shape[1]==4,"Inplace & operator failed"
+    empty=Data()
+    empty=empty+np.zeros(10)
+    assert empty.shape==(1,10),"Adding to an empty array failed"
+    d=selfd+np.array([0,0])
+    assert len(d)==len(selfd)+1,"+ operator failed."
+    d+=np.array([0,0])
+    assert len(d)==len(selfd)+2,"Inplace + operator failed."
+    d=d-(-1)
+    assert len(d)==len(selfd)+1,f"Delete with integer index failed. {len(d)} vs {len(selfd)+1}"
+    d-=-1
+    assert len(d)==len(selfd),f"Inplace delete with integer index failed. {len(d)} vs {len(selfd)}"
+    d-=slice(0,-1,2)
+    assert len(d)==len(selfd)/2,f"Inplace delete with slice index failed. {len(d)} vs {len(selfd)/2}"
+    d=d%1
+    assert d.shape[1]==1,"Column division failed"
+    assert len(d.setas)==d.shape[1],"Column removal messed up setas"
+    assert len(d.column_headers)==d.shape[1],"Column removal messed up column headers"
+    e=selfd.clone
+    f=selfd2.clone
+    g=e+f
+    assert g.shape==(1776,2),"Add of 2 column and 3 column failed"
+    g=f+e
+    assert g.shape==(1776,3),"Add of 3 column and 2 column failed."
+    g=e&f
+    h=f&e
+    assert g.shape==h.shape,"Anding unequal column lengths faile!"
+    e=~selfd
+    assert e.setas[0]=="y","failed to invert setas columns"
+    f.setas="xyz"
+    f=selfd2.clone
+    f+={"Res":0.3,"Temp":1.2,"New_Column":25}
+    f1,f2=f.shape
+    assert f1==selfd2.shape[0]+1,"Failed to add a row by providing a dictionary"
+    assert f2==selfd2.shape[1]+1,"Failed to add an extra columns by adding a dictionary with a new key"
+    assert np.isnan(f[-1,2]) and np.isnan(f[0,-1]),"Unset values when adding a dictionary not NaN"
+    d=Data()
+    d+=np.ones(5)
+    d+=np.zeros(5)
+    assert np.all(d//1==np.array([1,0])),"Adding 1D arrays should add new rows"
+    with pytest.raises(TypeError):
+        d+=True
+    with open(selfd.filename,"r") as data:
+        lines=data.readlines()
+    e=Data()<<lines
+    e.setas=selfd.setas
+    e["Loaded as"]=selfd["Loaded as"]
+    assert e==selfd,"Failed to read and create from << operator"
+    d=Data(np.array([[1,2,3,4]]),setas="xdyz")
+    assert (~d).setas==["y","e","z","x"],"Inverting multi-axis array failed"
 
-    def test_operators(self):
-        #Test Column Indexer
-        self.assertTrue(all(self.d//0==self.d.column(0)),"Failed the // operator with integer")
-        self.assertTrue(all(self.d//"X-Data"==self.d.column(0)),"Failed the // operator with string")
-        self.assertTrue(all((self.d//re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed the // operator with regexp")
-        t=[self.d%1,self.d%"Y-Data",(self.d%re.compile(r"Y\-"))]
-        for ix,tst in enumerate(["integer","string","regexp"]):
-            self.assertTrue(all(t[ix].data==np.atleast_2d(self.d.column(0)).T),"Failed % operator with {} index".format(tst))
-        d=self.d&self.d.x
-        self.assertTrue(d.shape[1]==3,"& operator failed.")
-        self.assertTrue(len(d.setas)==3,"& messed up setas")
-        self.assertTrue(len(d.column_headers)==3,"& messed up setas")
-        d&=d.x
-        self.assertTrue(d.shape[1]==4,"Inplace & operator failed")
-        empty=Data()
-        empty=empty+np.zeros(10)
-        self.assertEqual(empty.shape,(1,10),"Adding to an empty array failed")
-        d=self.d+np.array([0,0])
-        self.assertTrue(len(d)==len(self.d)+1,"+ operator failed.")
-        d+=np.array([0,0])
-        self.assertTrue(len(d)==len(self.d)+2,"Inplace + operator failed.")
-        d=d-(-1)
-        self.assertTrue(len(d)==len(self.d)+1,"Delete with integer index failed. {} vs {}".format(len(d),len(self.d)+1))
-        d-=-1
-        self.assertTrue(len(d)==len(self.d),"Inplace delete with integer index failed. {} vs {}".format(len(d),len(self.d)))
-        d-=slice(0,-1,2)
-        self.assertTrue(len(d)==len(self.d)/2,"Inplace delete with slice index failed. {} vs {}".format(len(d),len(self.d)/2))
-        d=d%1
-        self.assertTrue(d.shape[1]==1,"Column division failed")
-        self.assertTrue(len(d.setas)==d.shape[1],"Column removal messed up setas")
-        self.assertTrue(len(d.column_headers)==d.shape[1],"Column removal messed up column headers")
-        e=self.d.clone
-        f=self.d2.clone
-        g=e+f
-        self.assertTrue(g.shape==(1776,2),"Add of 2 column and 3 column failed")
-        g=f+e
-        self.assertTrue(g.shape==(1776,3),"Add of 3 column and 2 column failed.")
-        g=e&f
-        h=f&e
-        self.assertTrue(g.shape==h.shape,"Anding unequal column lengths faile!")
-        e=~self.d
-        self.assertTrue(e.setas[0]=="y","failed to invert setas columns")
-        f.setas="xyz"
-        f=self.d2.clone
-        f+={"Res":0.3,"Temp":1.2,"New_Column":25}
-        f1,f2=f.shape
-        self.assertEqual(f1,self.d2.shape[0]+1,"Failed to add a row by providing a dictionary")
-        self.assertEqual(f2,self.d2.shape[1]+1,"Failed to add an extra columns by adding a dictionary with a new key")
-        self.assertTrue(np.isnan(f[-1,2]) and np.isnan(f[0,-1]),"Unset values when adding a dictionary not NaN")
-        d=Data()
-        d+=np.ones(5)
-        d+=np.zeros(5)
-        self.assertTrue(np.all(d//1==np.array([1,0])),"Adding 1D arrays should add new rows")
-        try:
-            d+=True
-        except TypeError:
-            pass
-        else:
-            self.assertTrue(False,"Failed to raise TypeError on adding unsupported type")
-        with open(self.d.filename,"r") as data:
-            lines=data.readlines()
-        e=Data()<<lines
-        e.setas=self.d.setas
-        e["Loaded as"]=self.d["Loaded as"]
-        self.e=e
-        self.assertEqual(e,self.d,"Failed to read and create from << operator")
-        d=Data(np.array([[1,2,3,4]]),setas="xdyz")
-        self.assertEqual((~d).setas,["y","e","z","x"],"Inverting multi-axis array failed")
+def test_properties():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    selflittle=Data()
+    p=np.linspace(0,np.pi,91)
+    q=np.linspace(0,2*np.pi,91)
+    r=np.cos(p)
+    x=r*np.sin(q)
+    y=r*np.cos(q)
+    selflittle.data=np.column_stack((x,y,r))
+    selflittle.setas="xyz"
+    q_ang=np.round(selflittle.q/np.pi,decimals=2)
+    p_ang=np.round(selflittle.p/np.pi,decimals=2)
+    assert np.max(q_ang)==1.0,"Data.q failure"
+    assert np.max(p_ang)==0.5,"Data.p failure"
+    assert np.min(p_ang)==-0.5,"Data.p failure"
 
-    def test_properties(self):
-        self.little=Data()
-        p=np.linspace(0,np.pi,91)
-        q=np.linspace(0,2*np.pi,91)
-        r=np.cos(p)
-        x=r*np.sin(q)
-        y=r*np.cos(q)
-        self.little.data=np.column_stack((x,y,r))
-        self.little.setas="xyz"
-        q_ang=np.round(self.little.q/np.pi,decimals=2)
-        p_ang=np.round(self.little.p/np.pi,decimals=2)
-        self.assertTrue(np.max(q_ang)==1.0,"Data.q failure")
-        self.assertTrue(np.max(p_ang)==0.5,"Data.p failure")
-        self.assertTrue(np.min(p_ang)==-0.5,"Data.p failure")
-        self.little.mask=mask_func
-        self.little.mask[:,2]=True
-        self.assertEqual(len(repr(self.little).split("\n")),len(self.little)+5,"Non shorterned representation failed.")
+def test_methods():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    d=selfd.clone
+    d&=np.where(d.x<50,1.0,0.0)
+    d.rename(2,"Z-Data")
+    d.setas="xyz"
+    assert all(d.unique(2)==np.array([0,1])),f"Unique values failed: {d.unique(2)}"
+    d=selfd.clone
+    d.insert_rows(10,np.zeros((2,2)))
+    assert len(d)==102,"Failed to inert extra rows"
+    assert d[9,0]==10 and d[10,0]==0 and d[12,0]==11, "Failed to insert rows properly."
+    d=selfd.clone
+    d.add_column(np.ones(len(d)),replace=False,header="added")
+    assert d.shape[1]==selfd.shape[1]+1,"Adding a column with replace=False did not add a column."
+    assert np.all(d.data[:,-1]==np.ones(len(d))),"Didn't add the new column to the end of the data."
+    assert len(d.column_headers)==len(selfd.column_headers)+1,"Column headers isn't bigger by one"
+    assert d.column_headers==selfd.column_headers+["added",],"Column header not added correctly"
+    d=selfd.clone
+    d.add_column(selfd.x)
+    assert np.all(d.x==d[:,2]),"Adding a column as a DataArray with column headers didn't work"
+    assert d.x.column_headers[0]==d.column_headers[2],"Adding a column as a DataArray with column headers didn't work"
+    e=d.clone
+    d.swap_column([(0,1),(0,2)])
+    assert d.column_headers==[e.column_headers[x] for x in [2,0,1]],f"Swap column test failed: {d.column_headers}"
+    e=selfd(setas="yx")
+    assert e.shape==selfd.shape and e.setas[0]=="y","Failed on a DataFile.__call__ test"
+    spl=len(repr(selfd).split("\n"))
+    assert spl,105==f"Failed to do repr function got {spl} lines"
+    e=selfd.clone
+    e=e.add_column(e.x,header=e.column_headers[0])
+    e.del_column(duplicates=True)
+    assert e.shape==(100,2),"Deleting duplicate columns failed"
+    e=selfd2.clone
+    e.reorder_columns([2,0,1])
+    assert e.column_headers==[selfd2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers)
+    d=selfd.clone
+    d.del_rows(0,10.0)
+    assert d.shape==(99,2),f"Del Rows with value and column failed - actual shape {d.shape}"
+    d=selfd.clone
+    d.del_rows(0,(10.0,20.0))
+    assert d.shape==(89,2),f"Del Rows with tuple and column failed - actual shape {d.shape}"
+    d=selfd.clone
+    d.mask[::2,0]=True
+    d.del_rows()
+    assert d.shape==(50,2),f"Del Rows with mask set - actual shape {d.shape}"
+    d=selfd.clone
+    d[::2,1]=nan
+    d.del_nan(1)
+    assert d.shape==(50,2),f"del_nan with explicit column set failed shape was {d.shape}"
+    d=selfd.clone
+    d[::2,1]=nan
+    d.del_nan(0)
+    assert d.shape==(100,2),f"del_nan with explicit column set and not nans failed shape was {d.shape}"
+    d=selfd.clone
+    d[::2,1]=nan
+    d.setas=".y"
+    d.del_nan()
+    assert d.shape==(50,2),f"del_nan with columns from setas failed shape was {d.shape}"
+    d=selfd.clone
+    d2=selfd.clone
+    d2.data=d2.data[::-1,:]
+    assert d.sort(reverse=True)==d2,"Sorting revserse not the same as manually reversed data."
 
-    def test_methods(self):
-        d=self.d.clone
-        d&=np.where(d.x<50,1.0,0.0)
-        d.rename(2,"Z-Data")
-        d.setas="xyz"
-        self.assertTrue(all(d.unique(2)==np.array([0,1])),"Unique values failed: {}".format(d.unique(2)))
-        d=self.d.clone
-        d.insert_rows(10,np.zeros((2,2)))
-        self.assertEqual(len(d),102,"Failed to inert extra rows")
-        self.assertTrue(d[9,0]==10 and d[10,0]==0 and d[12,0]==11, "Failed to insert rows properly.")
-        d=self.d.clone
-        d.add_column(np.ones(len(d)),replace=False,header="added")
-        self.assertTrue(d.shape[1]==self.d.shape[1]+1,"Adding a column with replace=False did not add a column.")
-        self.assertTrue(np.all(d.data[:,-1]==np.ones(len(d))),"Didn't add the new column to the end of the data.")
-        self.assertTrue(len(d.column_headers)==len(self.d.column_headers)+1,"Column headers isn't bigger by one")
-        self.assertTrue(d.column_headers==self.d.column_headers+["added",],"Column header not added correctly")
-        d=self.d.clone
-        d.add_column(self.d.x)
-        self.assertTrue(np.all(d.x==d[:,2]),"Adding a column as a DataArray with column headers didn't work")
-        self.assertTrue(d.x.column_headers[0]==d.column_headers[2],"Adding a column as a DataArray with column headers didn't work")
-        e=d.clone
-        d.swap_column([(0,1),(0,2)])
-        self.assertTrue(d.column_headers==[e.column_headers[x] for x in [2,0,1]],"Swap column test failed: {}".format(d.column_headers))
-        e=self.d(setas="yx")
-        self.assertTrue(e.shape==self.d.shape and e.setas[0]=="y","Failed on a DataFile.__call__ test")
-        spl=len(repr(self.d).split("\n"))
-        self.assertEqual(spl,105,"Failed to do repr function got {} lines".format(spl))
-        e=self.d.clone
-        e=e.add_column(e.x,header=e.column_headers[0])
-        e.del_column(duplicates=True)
-        self.assertTrue(e.shape==(100,2),"Deleting duplicate columns failed")
-        e=self.d2.clone
-        e.reorder_columns([2,0,1])
-        self.assertTrue(e.column_headers==[self.d2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers))
-        d=self.d.clone
-        d.del_rows(0,10.0)
-        self.assertEqual(d.shape,(99,2),"Del Rows with value and column failed - actual shape {}".format(d.shape))
-        d=self.d.clone
-        d.del_rows(0,(10.0,20.0))
-        self.assertEqual(d.shape,(89,2),"Del Rows with tuple and column failed - actual shape {}".format(d.shape))
-        d=self.d.clone
-        d.mask[::2,0]=True
-        d.del_rows()
-        self.assertEqual(d.shape,(50,2),"Del Rows with mask set - actual shape {}".format(d.shape))
-        d=self.d.clone
-        d[::2,1]=nan
-        d.del_nan(1)
-        self.assertEqual(d.shape,(50,2),"del_nan with explicit column set failed shape was {}".format(d.shape))
-        d=self.d.clone
-        d[::2,1]=nan
-        d.del_nan(0)
-        self.assertEqual(d.shape,(100,2),"del_nan with explicit column set and not nans failed shape was {}".format(d.shape))
-        d=self.d.clone
-        d[::2,1]=nan
-        d.setas=".y"
-        d.del_nan()
-        self.assertEqual(d.shape,(50,2),"del_nan with columns from setas failed shape was {}".format(d.shape))
-        d=self.d.clone
-        d2=self.d.clone
-        d2.data=d2.data[::-1,:]
-        self.assertEqual(d.sort(reverse=True),d2,"Sorting revserse not the same as manually reversed data.")
-
-    def test_metadata_save(self):
-        local = path.dirname(__file__)
-        t = np.arange(12).reshape(3,4) #set up a test data file with mixed metadata
-        t = Data(t)
-        t.column_headers = ["1","2","3","4"]
-        metitems = [True,1,0.2,{"a":1, "b":"abc"},(1,2),np.arange(3),[1,2,3], "abc", #all types accepted
-                    r"\\abc\cde", 1e-20, #extra tests
-                    [1,(1,2),"abc"], #list with different types
-                    [[[1]]], #nested list
-                    None, #None value
-                    ]
-        metnames = ["t"+str(i) for i in range(len(metitems))]
-        for k,v in zip(metnames,metitems):
-            t[k] = v
-        t.save(path.join(local, "mixedmetatest.dat"))
-        tl = Data(path.join(local, "mixedmetatest.txt")) #will change extension to txt if not txt or tdi, is this what we want?
-        t2 = self.d4.clone  #check that python tdi save is the same as labview tdi save
-        t2.save(path.join(local, "mixedmetatest2.txt"))
-        t2l = Data(path.join(local, "mixedmetatest2.txt"))
-        for orig, load in [(t,tl), (t2, t2l)]:
-            for k in ['Loaded as', 'TDI Format']:
-                orig[k]=load[k]
-            self.assertTrue(np.allclose(orig.data, load.data))
-            self.assertTrue(orig.column_headers==load.column_headers)
-            self.res=load.metadata^orig.metadata
-            self.assertTrue(load.metadata==orig.metadata,"Metadata not the same on round tripping to disc")
-        os.remove(path.join(local, "mixedmetatest.txt")) #clear up
-        os.remove(path.join(local, "mixedmetatest2.txt"))
+def test_metadata_save():
+    global selfd, selfd1, selfd2, selfd3, selfd4
+    local = path.dirname(__file__)
+    t = np.arange(12).reshape(3,4) #set up a test data file with mixed metadata
+    t = Data(t)
+    t.column_headers = ["1","2","3","4"]
+    metitems = [True,1,0.2,{"a":1, "b":"abc"},(1,2),np.arange(3),[1,2,3], "abc", #all types accepted
+                r"\\abc\cde", 1e-20, #extra tests
+                [1,(1,2),"abc"], #list with different types
+                [[[1]]], #nested list
+                None, #None value
+                ]
+    metnames = ["t"+str(i) for i in range(len(metitems))]
+    for k,v in zip(metnames,metitems):
+        t[k] = v
+    t.save(path.join(local, "mixedmetatest.dat"))
+    tl = Data(path.join(local, "mixedmetatest.txt")) #will change extension to txt if not txt or tdi, is this what we want?
+    t2 = selfd4.clone  #check that python tdi save is the same as labview tdi save
+    t2.save(path.join(local, "mixedmetatest2.txt"))
+    t2l = Data(path.join(local, "mixedmetatest2.txt"))
+    for orig, load in [(t,tl), (t2, t2l)]:
+        for k in ['Loaded as', 'TDI Format']:
+            orig[k]=load[k]
+        assert np.allclose(orig.data, load.data)
+        assert orig.column_headers==load.column_headers
+        selfres=load.metadata^orig.metadata
+        assert load.metadata==orig.metadata,"Metadata not the same on round tripping to disc"
+    os.remove(path.join(local, "mixedmetatest.txt")) #clear up
+    os.remove(path.join(local, "mixedmetatest2.txt"))
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=Datatest("test_operators")
-    test.setUp()
-    #test.test_properties()
-    #test.test_methods()
-    #test.test_filter()
-    #test.test_constructor()
-    #test.test_deltions()
-    #test.test_dir()
-    #test.test_metadata_save()
-    #test.test_operators()
-    unittest.main()
+    pytest.main(["--pdb",__file__])
