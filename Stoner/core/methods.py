@@ -233,13 +233,10 @@ class DataFileSearchMixin:
         cols = self.setas._get_cols()
         tmp = self.clone
         xcol = cols["xcol"] if cols.has_xcol else None
-        ycol = cols["ycol"][0] if cols.has_ucol else None
+        ycol = cols["ycol"][0] if cols.has_ycol else None
         zcol = cols["zcol"][0] if cols.has_zcol else None
 
-        if "accuracy" in kargs:
-            accuracy = kargs["accuracy"]
-        else:
-            accuracy = 0.0
+        accuracy = kargs.pop("accuracy", 0.0)
 
         if "x" in kargs:
             tmp.data = tmp.search(xcol, kargs.pop("x"), accuracy=accuracy)

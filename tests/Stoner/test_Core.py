@@ -161,44 +161,6 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
     selfd5.del_column(True)
     assert selfd5.column_headers==["C","F"],"Failed to delete columns with col=True"
 
-def test_indexing():
-    global selfd, selfd1, selfd2, selfd3, selfd4
-    #Check all the indexing possibilities
-    data=np.array(selfd.data)
-    colname=selfd.column_headers[0]
-    assert all(selfd.column(colname)==selfd[:,0]),"Failed direct indexing versus column method"
-    assert all(selfd[:,0]==data[:,0]),"Failed direct idnexing versusus direct array index"
-    assert all(selfd[:,[0,1]]==data),"Failed direct list indexing"
-    assert all(selfd[::2,:]==data[::2]),"Failed slice indexing rows"
-    assert all(selfd[colname]==data[:,0]),"Failed direct indexing by column name"
-    assert all(selfd[:,colname]==data[:,0]),"Failed fallback indexing by column name"
-    assert selfd[25,1]==645.0,"Failed direct single cell index"
-    assert selfd[25,"Y-Data"]==645.0,"Failoed single cell index direct"
-    assert selfd["Y-Data",25]==645.0,"Failoed single cell fallback index order"
-    selfd["X-Dat"]=[11,12,13,14,15]
-    assert selfd["X-Dat",2]==13,"Failed indexing of metadata lists with tuple"
-    assert selfd["X-Dat"][2]==13,"Failed indexing of metadata lists with double indices"
-    d=Data(np.ones((10,10)))
-    d[0,0]=5 #Index by tuple into data
-    d["Column_1",0]=6 # Index by column name, row into data
-    d[0,"Column_2"]=7 #Index by row, column name into data
-    d["Column_3"]=[1,2,3,4] # Create a metadata
-    d["Column_3",2]=2 # Index existing metadata via tuple
-    d.metadata[0,5]=10
-    d[0,5]=12 # Even if tuple, index metadata if already existing.
-    assert np.all(d[0]==np.array([5,6,7,1,1,1,1,1,1,1])),f"setitem on Data to index into Data.data failed.\n{d[0]}"
-    assert d.metadata["Column_3"]==[1,2,2,4],"Tuple indexing into metadata Failed."
-    assert d.metadata[0,5]==12,"Indexing of pre-existing metadta keys rather than Data./data failed."
-    assert d.metadata[1]==[1, 2, 2, 4],"Indexing metadata by integer failed."
-
-def test_len():
-    # Check that length of the column is the same as length of the data
-    global selfd, selfd1, selfd2, selfd3, selfd4
-    assert len(Data())==0,"Empty DataFile not length zero"
-    assert len(selfd.column(0))==len(selfd),"Column 0 length not equal to DataFile length"
-    assert len(selfd)==selfd.data.shape[0],"DataFile length not equal to data.shape[0]"
-    # Check that self.column_headers returns the right length
-    assert len(selfd.column_headers)==selfd.data.shape[1],"Length of column_headers not equal to data.shape[1]"
 
 def test_attributes():
     """Test various atribute accesses,"""
@@ -262,21 +224,6 @@ def test_iterators():
         pass
     assert j==k,"Iterating over DataFile not the same as DataFile.rows"
     assert selfd.data.shape==(j+1,i+1),"Iterating over rows and columns not the same as data.shape"
-
-def test_metadata():
-    global selfd, selfd1, selfd2, selfd3, selfd4
-    selfd["Test"]="This is a test"
-    selfd["Int"]=1
-    selfd["Float"]=1.0
-    keys,values=zip(*selfd.items())
-    assert tuple(selfd.keys())==keys,"Keys from items() not equal to keys from keys()"
-    assert tuple(selfd.values())==values,"Values from items() not equal to values from values()"
-    assert selfd["Int"]==1
-    assert selfd["Float"]==1.0
-    assert selfd["Test"]==selfd.metadata["Test"]
-    assert selfd.metadata._typehints["Int"]=="I32"
-    assert len(selfd.dir())==6,f"Failed meta data directory listing ({selfd.dir()})"
-    assert len(selfd3["Temperature"])==7,"Regular experssion metadata search failed"
 
 def test_dir():
     global selfd, selfd1, selfd2, selfd3, selfd4
@@ -445,6 +392,33 @@ def test_methods():
     d2=selfd.clone
     d2.data=d2.data[::-1,:]
     assert d.sort(reverse=True)==d2,"Sorting revserse not the same as manually reversed data."
+    d=selfd.clone
+    d.mask[::2]=True
+    assert d.count()==50
+    assert d.count(9895)==1
+    assert d.count(100,col="X")==1
+    assert selfd.search("X",[98.0,100]).shape==(2,2)
+    assert selfd.search("X",50.1,accuracy=0.2,columns=0)==50.0
+    with pytest.raises(RuntimeError):
+        selfd.search("X","Y")
+    assert selfd.section(x=(48,52),accuracy=0.2).shape==(5,2)
+    assert selfd.section(y=(1000,2000))[0,0]==33.0
+    assert selfd.select({"X-Data__lt":50}).shape==(49,2)
+    assert selfd.select({"X-Data":50})[0,0]==50.
+    dd=selfd.clone
+    dd.add_column(dd.x%2,"Channel")
+    fldr=dd.split("Channel")
+    assert fldr.shape==(2, {})
+    assert dd.split("Channel",lambda d:d.x%3).shape==(0, {0.0: (3, {}), 1.0: (3, {})})
+    dd=selfd.clone
+    assert dd.split(lambda d:d.x%3).shape==(3, {})
+    assert len(dd.split(lambda d:1))==1
+    shp1=dd.split(lambda d:np.sqrt(d.x)==np.round(np.sqrt(d.x))).shape
+    shp2=dd.split(lambda d:np.sqrt(d.x)==int(np.sqrt(d.x))).shape
+    assert shp1==shp2
+
+
+
 
 def test_metadata_save():
     global selfd, selfd1, selfd2, selfd3, selfd4
