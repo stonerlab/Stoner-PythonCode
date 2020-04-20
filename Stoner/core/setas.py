@@ -221,7 +221,7 @@ class setas(MutableMapping):
     @property
     def empty(self):
         """Determine if any columns are set."""
-        return len(self._setas)==0 or np.all(np.array(self._setas)==".")
+        return len(self._setas) == 0 or np.all(np.array(self._setas) == ".")
 
     @property
     def not_set(self):

@@ -20,14 +20,10 @@ from Stoner import Data,__home__
 from Stoner.Core import metadataObject
 import Stoner.compat
 
-def extra_get_filedialog(what="file", **opts):
-    return path.join(path.dirname(__file__),"CoreTest.dat")
-
 def mask_func(r):
     return np.abs(r.q)<0.25*np.pi
 
 
-Stoner.Core.get_filedialog=extra_get_filedialog #Monkey patch to test the file dialog
 datadir=path.join(pth,"sample-data")
 
 def setup_function(function):

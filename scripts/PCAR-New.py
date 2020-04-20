@@ -4,6 +4,7 @@ Gavin Burnell g.burnell@leeds.ac.uk
 """
 # pylint: disable=invalid-name
 import configparser as ConfigParser
+import pathlib
 
 import numpy as np
 from Stoner import Data
@@ -19,6 +20,10 @@ class working(Data):
         """Initialise the fitting code."""
         super(working, self).__init__(*args, **kargs)
         inifile = __file__.replace(".py", ".ini")
+        if not pathlib.Path(inifile).exists():
+            raise RuntimeError(
+                f"Could not find the fitting ini file {inifile}!"
+            )
 
         tmp = cfg_data_from_ini(inifile, filename=False)
         self._setas = tmp.setas.clone

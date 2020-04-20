@@ -5,7 +5,7 @@ Created on Sun Apr 19 12:04:58 2020
 @author: phygbu
 """
 
-
+from warnings import warn
 import pytest
 from pathlib import Path
 from PyQt5.QtCore import QTimer
@@ -42,9 +42,7 @@ def test_filedialog():
 
 def test_loader():
     d=Data(False)
-    assert d.shape==(1676,3) or d.shape==(100,2),"Failed to load data with dialog box"
-    d.filename=None
-    d.save(False)
+    assert d.shape==(1676,3),"Failed to load data with dialog box"
     with pytest.raises(RuntimeError):
         d.save(False)
     fldr=DataFolder(False)

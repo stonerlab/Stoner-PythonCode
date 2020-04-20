@@ -261,7 +261,7 @@ class DataFile(
             for row in arg:
                 self += row
 
-    def _init_datafile(self,arg):
+    def _init_datafile(self, arg):
         """Initialise from datafile."""
         for a in arg.__dict__:
             if not callable(a) and a != "_baseclass":
@@ -270,7 +270,7 @@ class DataFile(
         self.data = DataArray(arg.data, setas=arg.setas.clone)
         self.data.setas = arg.setas.clone
 
-    def _init_dict(self,arg):
+    def _init_dict(self, arg):
         """Initialise from dictionary."""
         if (
             all_type(arg.keys(), string_types)
@@ -282,7 +282,7 @@ class DataFile(
         else:
             self.metadata = arg.copy()
 
-    def _init_imagefile(self,arg):
+    def _init_imagefile(self, arg):
         """Initialise from an ImageFile."""
         x = arg.get("x_vector", np.arange(arg.shape[1]))
         y = arg.get("y_vector", np.arange(arg.shape[0]))
@@ -294,7 +294,7 @@ class DataFile(
         self.column_headers = ["X", "Y", "Image Intensity"]
         self.setas = "xyz"
 
-    def _init_pandas(self,arg):
+    def _init_pandas(self, arg):
         """Initialise from a pandas dataframe."""
         self.data = arg.values
         ch = []
@@ -318,7 +318,6 @@ class DataFile(
                     break
             else:
                 self.setas = list(arg.columns.get_level_values(1))
-
 
     def _init_single(self, *args, **kargs):
         """Handle constructor with 1 arguement - called from __init__."""
@@ -886,7 +885,7 @@ class DataFile(
         args = len(_inspect_.getargs(func.__code__)[0])
         for r in self.rows():
             i += 1
-            r.mask=False
+            r.mask = False
             if args == 2:
                 t = func(r[col], r)
             else:
