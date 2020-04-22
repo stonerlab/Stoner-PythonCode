@@ -6,26 +6,18 @@ Created on Tue Jan 07 22:05:55 2014
 @author: phygbu
 """
 
-import unittest
 import sys
 import os.path as path
 import os
-import numpy as np
-import re
-import tempfile
-from Stoner.compat import *
 
 from Stoner import Data,__home__
+from Stoner.Core import DataFile
 from Stoner.compat import Hyperspy_ok
-from Stoner.Core  import DataFile
-import Stoner.HDF5 as SH
-import Stoner.Zip as SZ
 
 import pytest
 
 from Stoner.formats.attocube import AttocubeScan
 from Stoner.core.utils import subclasses
-import warnings
 from traceback import format_exc
 
 pth=path.join(__home__,"..")
@@ -49,23 +41,20 @@ def list_files():
 
 @pytest.mark.parametrize("filename", list_files(),ids=list_files())
 def test_one_file(tmpdir, filename):
-    try:
-        fname=path.join(datadir,filename)
-        d=Data(fname,debug=False)
-        assert isinstance(d,DataFile),"Failed to load {} correctly.".format(fname)
-        if "save" in subclasses()[d["Loaded as"]].__dict__:
-            print("Checking save routine for {}".format(d["Loaded as"]))
-            pth=os.path.join(tmpdir,filename)
-            name,ext=os.path.splitext(pth)
-            pth2="{}-2.{}".format(name,ext)
-            d.save(pth,as_loaded=True)
-            assert os.path.exists(pth) or os.path.exists(d.filename),"Failed to save as {}".format(pth)
-            os.remove(d.filename)
-            d.save(pth2,as_loaded=d["Loaded as"])
-            assert os.path.exists(pth2) or os.path.exists(d.filename),"Failed to save as {}".format(pth)
-            os.remove(d.filename)
-    except Exception as e:
-         assert False,f"Failed in loading <{fname}>\n{format_exc()}"
+    fname=path.join(datadir,filename)
+    loaded=Data(fname,debug=False)
+    assert isinstance(loaded,DataFile),"Failed to load {} correctly.".format(fname)
+    if "save" in subclasses()[loaded["Loaded as"]].__dict__:
+        pth=os.path.join(tmpdir,filename)
+        name,ext=os.path.splitext(pth)
+        pth2="{}-2.{}".format(name,ext)
+        loaded.save(pth,as_loaded=True)
+        assert os.path.exists(pth) or os.path.exists(loaded.filename),"Failed to save as {}".format(pth)
+        os.remove(loaded.filename)
+        loaded.save(pth2,as_loaded=loaded["Loaded as"])
+        assert os.path.exists(pth2) or os.path.exists(loaded.filename),"Failed to save as {}".format(pth)
+        os.remove(loaded.filename)
+
 
 def test_csvfile():
 

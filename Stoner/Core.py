@@ -702,7 +702,6 @@ class DataFile(
                     usemask=True,
                     delimiter="\t",
                     usecols=range(1, cols),
-                    encoding="bytes",
                     invalid_raise=False,
                     comments="\0",
                 )
@@ -717,7 +716,6 @@ class DataFile(
                     usemask=True,
                     delimiter="\t",
                     comments="\0",
-                    encoding="bytes",
                     usecols=range(1, cols),
                 )
             )
@@ -1654,10 +1652,10 @@ class DataFile(
             mdtext = np.append(mdtext, np.zeros(len(self) - len(mdtext), dtype=str))
         data_out = np.column_stack([mdtext, self.data])
         fmt = ["%s"] * data_out.shape[1]
-        with io.open(filename, "wb") as f:
+        with io.open(filename, "w", errors="replace") as f:
             np.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
             for k in mdremains:
-                f.write(str2bytes(self.metadata.export(k) + "\n"))  # (str2bytes(self.metadata.export(k) + "\n"))
+                f.write(self.metadata.export(k) + "\n")  # (str2bytes(self.metadata.export(k) + "\n"))
 
         self.filename = filename
         return self
