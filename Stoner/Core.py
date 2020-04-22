@@ -702,7 +702,7 @@ class DataFile(
                     usemask=True,
                     delimiter="\t",
                     usecols=range(1, cols),
-                    encoding="ansi",
+                    encoding="bytes",
                     invalid_raise=False,
                     comments="\0",
                 )
@@ -717,7 +717,7 @@ class DataFile(
                     usemask=True,
                     delimiter="\t",
                     comments="\0",
-                    encoding="ansi",
+                    encoding="bytes",
                     usecols=range(1, cols),
                 )
             )
