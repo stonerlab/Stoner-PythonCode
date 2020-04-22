@@ -26,6 +26,9 @@ black:
 
 commit: black
 	$(MAKE) -C doc readme
+	git add tests
+	git add Stoner
+	git add doc/samples
 	git commit -a
 	git push origin $(BRANCH)
 

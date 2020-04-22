@@ -166,6 +166,8 @@ class DataFileOperatorsMixin:
             newdata.__read_iterable(lines)
         elif isIterable(other):
             newdata.__read_iterable(other)
+        else:
+            return NotImplemented
         return self.__class__(newdata)
 
     def __mod__(self, other):
@@ -246,15 +248,13 @@ class DataFileOperatorsMixin:
         """Read a string representation of py:class:`DataFile` in line by line."""
         if isIterable(reader):
             reader = iter(reader)
-        if "next" in dir(reader):  # Python v2 iterator
-            readline = reader.next
-        elif "readline" in dir(reader):  # Filelike iterator
+        if "readline" in dir(reader):  # Filelike iterator
             readline = reader.readline
         elif "__next__" in dir(reader):  # Python v3 iterator
             readline = reader.__next__
 
         else:
-            raise AttributeError(f"No method to read a line in {reader}")
+            return NotImplemented
         row = readline().split("\t")
         if row[0].strip() == "TDI Format 1.5":
             fmt = 1.5

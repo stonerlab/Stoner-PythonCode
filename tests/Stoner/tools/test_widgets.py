@@ -46,7 +46,7 @@ def test_loader():
     with pytest.raises(RuntimeError):
         d.save(False)
     fldr=DataFolder(False)
-    assert fldr.shape==(47, {'attocube_scan': (15, {}), 'NLIV': (11, {}), 'recursivefoldertest': (1, {}), 'working': (4, {})})
+    assert fldr.shape==(48, {'attocube_scan': (15, {}), 'NLIV': (11, {}), 'recursivefoldertest': (1, {}), 'working': (4, {})})
     fldr=DataFolder(False,multifile=True)
     assert fldr.shape==(1, {}), "multifile mode failed!"
 
