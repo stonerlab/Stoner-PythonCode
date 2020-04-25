@@ -82,13 +82,13 @@ class FilteringOpsMixin:
 
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
-            offset = int(points * order ** 2 / 8)
+            offset = int(np.ceil(points * order ** 2 / 8))
             padv = np.mean(ddata[:, offset:-offset], axis=1)
             pad = np.ones((ddata.shape[0], offset))
             for ix, v in enumerate(padv):
                 pad[ix] *= v
         elif isinstance(pad, float):
-            offset = int(points / 2)
+            offset = int(np.ceil(points / 2))
             pad = np.ones((ddata.shape[0], offset)) * pad
 
         if np.all(pad) and offset > 0:
@@ -97,7 +97,7 @@ class FilteringOpsMixin:
         if order >= 1:
             r = ddata[:-1] / ddata[-1]
         else:
-            r = ddata[:, :-1]
+            r = ddata
 
         if result is not None:
             if not isinstance(header, string_types):
@@ -155,10 +155,6 @@ class FilteringOpsMixin:
         See Also:
             User Guide section :ref:`binning_guide`
         """
-        if "yerr" in kargs:
-            yerr = kargs["yerr"]
-        else:
-            yerr = None
 
         if None in (xcol, ycol):
             cols = self.setas._get_cols()
@@ -166,8 +162,7 @@ class FilteringOpsMixin:
                 xcol = cols["xcol"]
             if ycol is None:
                 ycol = cols["ycol"]
-            if "yerr" not in kargs and cols["has_yerr"]:
-                yerr = cols["yerr"]
+        yerr = kargs.pop("yerr", cols["yerr"] if cols["has_yerr"] else None)
 
         bin_left, bin_right, bin_centres = self.make_bins(xcol, bins, mode, **kargs)
 
@@ -186,7 +181,7 @@ class FilteringOpsMixin:
             if len(data) > 1:
                 ok = np.logical_not(np.isnan(data.y))
                 data = data[ok]
-            elif len(data) == 1 and np.isnan(data.y):
+            elif len(data) == 0 or (len(data) == 1 and np.isnan(data.y)):
                 shape = list(data.shape)
                 shape[0] = 0
                 data = np.zeros(shape)
@@ -204,7 +199,7 @@ class FilteringOpsMixin:
                     e = np.std(data[:, ycol], axis=0) / np.sqrt(W)
                 else:
                     e = np.nan
-            if data.shape[0] == 0:
+            if data.shape[0] == 0 and self.debug:
                 warn("Empty bin at {}".format(limits))
             y = np.sum(data[:, ycol] * (w / W), axis=0)
             ybin[i, :] = y
@@ -229,7 +224,7 @@ class FilteringOpsMixin:
             ret = (bin_centres, ybin, ebin, nbins)
         return ret
 
-    def extrapolate(self, new_x, xcol=None, ycol=None, yerr=None, overlap=20, kind="linear"):
+    def extrapolate(self, new_x, xcol=None, ycol=None, yerr=None, overlap=20, kind="linear", errors=None):
         """Extrapolate data based on local fit to x,y data.
 
         Args:
@@ -249,6 +244,8 @@ class FilteringOpsMixin:
             kind (str or callable):
                 Determines local fitting function. If string should be "linear", "quadratic" or "cubic" if
                 callable, then represents a function to be fitted to the data.
+            errors (callable or None):
+                If *kind* is a callable function, then errs must be defined and must also be a callable function.
 
         Returns:
             (array):
@@ -269,17 +266,21 @@ class FilteringOpsMixin:
             "cubic": lambda x, a, b, c, d: a * x ** 3 + b * x ** 2 + c * x + d,
         }
         errs = {
-            "linear": lambda x, me, ce: np.sqrt((me * x) ** 2 + ce ** 2),
-            "quadratic": lambda x, ae, be, ce: np.sqrt((2 * x ** 2 * ae) ** 2 + (x * be) ** 2 + ce ** 2),
-            "cubic": lambda x, ae, be, ce, de: np.sqrt(
+            "linear": lambda x, me, ce, popt: np.sqrt((me * x) ** 2 + ce ** 2),
+            "quadratic": lambda x, ae, be, ce, popt: np.sqrt((2 * x ** 2 * ae) ** 2 + (x * be) ** 2 + ce ** 2),
+            "cubic": lambda x, ae, be, ce, de, popt: np.sqrt(
                 (3 * ae * x ** 3) ** 2 + (2 * x ** 2 * be) ** 2 + (x * ce) ** 2 + de ** 2
             ),
         }
 
         if callable(kind):
-            pass
+            kindf = kind
+            if not callable(errors):
+                raise TypeError("If kind is a callable, then errs must be defined and be callable as well")
+            errsf = errors
         elif kind in kinds:
             kindf = kinds[kind]
+            errsf = errs[kind]
         else:
             raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
         scalar_x = not isIterable(new_x)
@@ -324,7 +325,7 @@ class FilteringOpsMixin:
                 popt, pcov = rt
                 perr = np.sqrt(np.diag(pcov))
                 results[ix, 2 * iy] = kindf(x - mid_x, *popt)
-                results[ix, 2 * iy + 1] = errs[kind](x - mid_x, *perr)
+                results[ix, 2 * iy + 1] = errsf(x - mid_x, *perr, popt)
         if scalar_x:
             results = results[0]
         return results
@@ -424,14 +425,9 @@ class FilteringOpsMixin:
                 bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
                 boundaries and centres for each bin.
         """
-        (xmin, xmax) = self.span(xcol)
-        if mode not in ["lin", "log"]:
-            raise ValueError("Mode should be either  'lin' or 'log' not {}".format(mode))
+        xmin = kargs.pop("bin_start", (self // xcol).min())
+        xmax = kargs.pop("bin_sop", (self // xcol).max())
 
-        if "bin_start" in kargs:
-            xmin = kargs["bin_start"]
-        if "bin_stop" in kargs:
-            xmax = kargs["bin_stop"]
         if isinstance(bins, int):  # Given a number of bins
             if mode.lower().startswith("lin"):
                 bin_width = float(xmax - xmin) / bins
@@ -449,7 +445,7 @@ class FilteringOpsMixin:
                 bin_stop = np.exp(bin_stop)
                 bin_centres = np.exp(bin_centres)
             else:
-                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
+                raise ValueError(f"mode should be either lin(ear) or log(arthimitc) not {mode}")
         elif isinstance(bins, float):  # Given a bin with as a flot
             if mode.lower().startswith("lin"):
                 bin_width = bins
@@ -478,7 +474,7 @@ class FilteringOpsMixin:
         elif isinstance(bins, np.ndarray) and bins.ndim == 1:  # Yser provided manuals bins
             bin_start = bins[:-1]
             bin_stop = bins[1:]
-            if mode.lower().startwith("lin"):
+            if mode.lower().startswith("lin"):
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
                 bin_centres = np.exp(np.log(bin_start) + np.log(bin_stop) / 2.0)
@@ -515,6 +511,11 @@ class FilteringOpsMixin:
                 Number of rows that an outliing spike could occupy. Defaults to 1.
             func (callable):
                 A function that determines if the current row is an outlier.
+            action_args (tuple):
+                if *action* is callable, then action_args can be used to pass extra arguments to the action callable
+            action_kargs (dict):
+                If *action* is callable, then action_kargs can be useed to pass extra keyword arguments to the action
+                callable.
 
         Returns:
             (:py:class:`Stoner.Data`):
@@ -538,11 +539,11 @@ class FilteringOpsMixin:
 
         IF *action* is a callable function then it should take the form of::
 
-            def action(i,column,row):
+            def action(i,column, data, *action_args, **action_kargs):
                 pass
 
         where *i* is the number of the outlier row, *column* the same value as above
-        and *row* is the data for the row.
+        and *data* is the complete set of data.
 
         In all cases the indices of the outlier rows are added to the ;outlier' metadata.
 
@@ -554,32 +555,33 @@ class FilteringOpsMixin:
         if func is None:
             func = _outlier
 
+        if action not in ["delete", "mask", "mask row"] and not callable(action):
+            raise ValueError(f"Do'n know what to do with action={action}")
         _ = self._col_args(scalar=True, ycol=column, **kargs)
+        column = _.ycol
         params = get_func_params(func)
         for p in params:
             if p in _:
                 kargs[p] = _[p]
-
-        if action not in ["delete", "mask", "mask row"] and not callable(action):
-            raise ValueError("Do'n know what to do with action={}".format(action))
-        index = []
+        kargs.setdefault("ycol", column)
+        if not callable(action) and ("action_args" in kargs or "acation_kargs" in kargs):
+            raise SyntaxError("Can only have action_args and action_kargs keywords in action is callable")
+        action_args = kargs.pop("action_args", ())
+        action_kargs = kargs.pop("action_kargs", {})
+        index = np.zeros(len(self), dtype=bool)
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
-            if func(self.data[i], t, metric=certainty, **kargs):
-                index.append(i)
-        self["outliers"] = index  # add outlier indecies to metadata
-        index.reverse()  # Always reverse the index in case we're deleting rows in sucession
+            index[i] = func(self.data[i], t, metric=certainty, **kargs)
+        self["outliers"] = np.arange(len(self))[index]  # add outlier indecies to metadata
         if action == "mask" or action == "mask row":
-            for i in index:
-                if action == "mask":
-                    self.mask[i, column] = True
-                else:
-                    self.mask[i, :] = True
+            if action == "mask":
+                self.mask[index, column] = True
+            else:
+                self.mask[index, :] = True
         elif action == "delete":
-            for i in index:
-                self.del_rows(i)
+            self.data = self.data[~index]
         elif callable(action):  # this will call the action function with each row in turn from back to start
-            for i in index:
-                action(i, column, self.data[i])
+            for i in np.arange(len(self))[index][::-1]:
+                action(i, column, self.data, *action_args, **action_kargs)
         return self
 
     def scale(self, other, xcol=None, ycol=None, **kargs):

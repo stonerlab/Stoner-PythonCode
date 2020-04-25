@@ -1,7 +1,7 @@
 """Extrapolate data example."""
 # pylint: disable=invalid-name
 from Stoner import Data
-from numpy import linspace, ones_like, column_stack
+from numpy import linspace, ones_like, column_stack, exp, sqrt
 from numpy.random import normal
 import matplotlib.pyplot as plt
 from Stoner.plot.utils import errorfill
@@ -16,17 +16,33 @@ d = Data(
         ]
     ),
     setas="xye",
-    column_headers=["x", "y"],
+    column_headers=["x", "y", "errors"],
 )
 
 extra_x = linspace(8, 15, 11)
 
+y4 = d.extrapolate(
+    extra_x,
+    overlap=200,
+    kind=lambda x, A, C: A * exp(x / 10) + C,
+    errors=lambda x, Aerr, Cerr, popt: sqrt(
+        (Aerr * exp(x / popt[1])) ** 2 + Cerr ** 2
+    ),
+)
 y3 = d.extrapolate(extra_x, overlap=80, kind="cubic")
 y2 = d.extrapolate(extra_x, overlap=3.0, kind="quadratic")
 y1 = d.extrapolate(extra_x, overlap=1.0, kind="linear")
 
-d.plot(fmt="k.")
+d.plot(fmt="k.", capsize=2.0)
 d.title = "Extrapolation Demo"
+
+errorfill(
+    extra_x, y4[:, 0], color="orange", yerr=y4[:, 1], label="Arg. Function",
+)
+
+errorfill(
+    extra_x, y3[:, 0], color="red", yerr=y3[:, 1], label="Cubic Extrapolation"
+)
 
 errorfill(
     extra_x,
@@ -34,9 +50,6 @@ errorfill(
     color="green",
     yerr=y2[:, 1],
     label="Quadratic Extrapolation",
-)
-errorfill(
-    extra_x, y3[:, 0], color="red", yerr=y3[:, 1], label="Cubic Extrapolation"
 )
 errorfill(
     extra_x, y1[:, 0], color="blue", yerr=y1[:, 1], label="Linear Extrapolation"
