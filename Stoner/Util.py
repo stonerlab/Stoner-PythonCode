@@ -37,6 +37,68 @@ def _step(x, m, c, h):
     return y
 
 
+def _Hsat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
+    """Determine the saturation field from linear fits to the hysteresis loop.
+
+    This method uses the intercept of the saturated state with zero field portions of the loop.
+    """
+    from Stoner.analysis.fitting.models.generic import Linear
+
+    Ms, Ms_err, _ = Ms_vals
+    Hsat, Hsat_err = Hsat_vals
+
+    # Fit a striaght line to the central fraction of the data
+    if i == 1:
+        bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
+    else:
+        bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
+    popt, pcov = d.lmfit(Linear, bounds=bounds)
+    perr = np.sqrt(np.diag(pcov))
+    popt = popt[:2]
+    pferr = perr / popt
+    # Pick the positive or negative Ms depending on the up or down loop
+    Ms_i = Ms if i == 0 else -Ms
+    # Find the intercept
+    Hsat[1 - i] = fsolve(lambda x: Linear().func(x, *popt) - Ms_i, 0)[0]
+    # Uncertainity is the sum of error in slope * found intercept and error in Ms times slope
+    Hsat_err[1 - i] = np.sqrt((Hsat[1 - i] * pferr[1]) ** 2 + (popt[1] * Ms_err) ** 2)
+
+    return (Hsat, Hsat_err)
+
+
+def _Hsat_susceptibility(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
+    """Determine the saturation field from the change in local sysceptibility in the looop."""
+    Hsat, Hsat_err = Hsat_vals
+    xi = d.SG_Filter(order=1)[0, :]
+    m, h = d.SG_Filter()
+    tmp = np.column_stack((h, m, xi))[4:-4]
+    tmp = make_Data(tmp, setas="x.y")
+    threshold = tmp.mean(bounds=lambda r: not 7 < r.i < len(tmp) - 7) * h_sat_fraction
+    hs = tmp.threshold(threshold, all_vals=True, rising=i != 0, falling=i == 0)  # Get the H_sat value
+    Hsat[1 - i] = mean(hs)  # Get the H_sat value
+    if hs.size > 1:
+        Hsat_err[1 - i] = sem(hs)
+    else:
+        Hsat_err[1 - i] = np.NaN
+    return (Hsat, Hsat_err)
+
+
+def _Hsat_delta_M(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
+    """Determine the saturation field from the change in magnetisation from Ms."""
+    m_sat = Ms_vals[2]
+    Hsat, Hsat_err = Hsat_vals
+    m, h = d.SG_Filter()
+    tmp = np.column_stack((h, m))[4:-4]
+    tmp = make_Data(tmp, setas="xy")
+    threshold = m_sat[i]
+    hs = tmp.threshold(threshold, all_vals=True, rising=True, falling=True).view(np.ndarray)  # Get the H_sat value
+    if hs.size > 1:
+        hs = hs[np.argmin(np.abs(hs))]
+    Hsat[1 - i] = hs  # Get the H_sat value
+    Hsat_err[1 - i] = np.NaN
+    return (Hsat, Hsat_err)
+
+
 def _up_down(data):
     """Split data d into rising and falling sections and then add and sort the two sets.
 
@@ -219,6 +281,11 @@ def hysteresis_correct(data, **kargs):
 
     h_sat_method = kargs.pop("h_sat_method", "linear_intercept")
     h_sat_fraction = kargs.pop("h_sat_fraction", 0.5 if h_sat_method == "linear_intercept" else 2.0)
+    hsat_methods = {"linear_intercept": _Hsat_linear, "susceptibility": _Hsat_susceptibility, "delta_M": _Hsat_delta_M}
+    if callable(h_sat_method) or h_sat_method in hsat_methods:
+        h_sat_method = hsat_methods.get(h_sat_method, h_sat_method)
+    else:
+        raise ValueError("Saturation field method not recognized!")
 
     for k in kargs:
         try:
@@ -286,50 +353,8 @@ def hysteresis_correct(data, **kargs):
         if hc.size > 1:
             Hc_err[i] = sem(hc)
 
-        if h_sat_method == "linear_intercept":
-            from Stoner.analysis.fitting.models.generic import Linear
+        Hsat, Hsat_err = h_sat_method(d, i, (Ms, Ms_err, m_sat), (Hsat, Hsat_err), h_sat_fraction)
 
-            # Fit a striaght line to the central fraction of the data
-            if i == 1:
-                bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
-            else:
-                bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
-            popt, pcov = d.lmfit(Linear, bounds=bounds)
-            perr = np.sqrt(np.diag(pcov))
-            popt = popt[:2]
-            pferr = perr / popt
-            # Pick the positive or negative Ms depending on the up or down loop
-            Ms_i = Ms if i == 0 else -Ms
-            # Find the intercept
-            Hsat[1 - i] = fsolve(lambda x: Linear().func(x, *popt) - Ms_i, 0)[0]
-            # Uncertainity is the sum of error in slope * found intercept and error in Ms times slope
-            Hsat_err[1 - i] = np.sqrt((Hsat[1 - i] * pferr[1]) ** 2 + (popt[1] * Ms_err) ** 2)
-        elif h_sat_method == "susceptibility":
-            xi = d.SG_Filter(order=1)[0, :]
-            m, h = d.SG_Filter()
-            tmp = np.column_stack((h, m, xi))[4:-4]
-            tmp = make_Data(tmp, setas="x.y")
-            threshold = tmp.mean(bounds=lambda r: not 7 < r.i < len(tmp) - 7) * h_sat_fraction
-            hs = tmp.threshold(threshold, all_vals=True, rising=i != 0, falling=i == 0)  # Get the H_sat value
-            Hsat[1 - i] = mean(hs)  # Get the H_sat value
-            if hs.size > 1:
-                Hsat_err[1 - i] = sem(hs)
-            else:
-                Hsat_err[1 - i] = np.NaN
-        elif h_sat_method == "delta_M":  # threshold on m_sat
-            m, h = d.SG_Filter()
-            tmp = np.column_stack((h, m))[4:-4]
-            tmp = make_Data(tmp, setas="xy")
-            threshold = m_sat[i]
-            hs = tmp.threshold(threshold, all_vals=True, rising=True, falling=True).view(
-                np.ndarray
-            )  # Get the H_sat value
-            if hs.size > 1:
-                hs = hs[np.argmin(np.abs(hs))]
-            Hsat[1 - i] = hs  # Get the H_sat value
-            Hsat_err[1 - i] = np.NaN
-        else:
-            raise ValueError("Unrecognized method for calculating H_saturation ! {}".format(h_sat_method))
         mr = d.threshold(0.0, col=_.xcol, xcol=_.ycol, all_vals=True, rising=True, falling=True)
         Mr[i] = mean(mr)
         if mr.size > 1:

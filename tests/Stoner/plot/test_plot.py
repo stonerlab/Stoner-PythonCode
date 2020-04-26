@@ -14,6 +14,8 @@ import re
 from numpy import any,all,sqrt,nan
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../../"))

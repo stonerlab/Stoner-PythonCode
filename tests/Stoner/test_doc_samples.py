@@ -7,6 +7,8 @@ from importlib import import_module
 import matplotlib.pyplot as plt
 from traceback import format_exc
 import pytest
+import warnings
+warnings.filterwarnings("ignore")
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
