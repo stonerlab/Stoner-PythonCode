@@ -13,7 +13,7 @@ __all__ = [
     "interfaces",
     "methods",
     "operators",
-    "properties",
+    "property",
     "setas",
     "string_to_type",
     "exceptions",

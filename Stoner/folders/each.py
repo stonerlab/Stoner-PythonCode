@@ -56,7 +56,7 @@ class SetasWrapper(MutableSequence):
     def __len__(self):
         """Return the shortest length of all the setas elements in the folder."""
         lengths = np.array([len(data.setas) for data in self._folder])
-        return lengths.min()
+        return abs(lengths.min())
 
     def __getitem__(self, index):
         """Get the corresponding item from all the setas items in the folder."""

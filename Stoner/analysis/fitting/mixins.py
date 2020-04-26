@@ -1111,7 +1111,7 @@ class FittingMixin:
             p0 = kargs.pop("p0", None)
         else:
             raise TypeError(
-                "".koin(
+                "".join(
                     [
                         f"curve_fit parameter 1 must be either a Model class from",
                         f" lmfit or scipy.odr, or a callable, not a {type(func)}",

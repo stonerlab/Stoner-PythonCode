@@ -37,7 +37,7 @@ def _step(x, m, c, h):
     return y
 
 
-def _Hsat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
+def _h_sat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
     """Determine the saturation field from linear fits to the hysteresis loop.
 
     This method uses the intercept of the saturated state with zero field portions of the loop.
@@ -66,7 +66,7 @@ def _Hsat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
     return (Hsat, Hsat_err)
 
 
-def _Hsat_susceptibility(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
+def _h_sat_susceptibility(d, i, Ms_vals, Hsat_vals, h_sat_fraction):  # pylint: disable=unused-argument
     """Determine the saturation field from the change in local sysceptibility in the looop."""
     Hsat, Hsat_err = Hsat_vals
     xi = d.SG_Filter(order=1)[0, :]
@@ -83,7 +83,7 @@ def _Hsat_susceptibility(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
     return (Hsat, Hsat_err)
 
 
-def _Hsat_delta_M(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
+def _h_sat_delta_M(d, i, Ms_vals, Hsat_vals, h_sat_fraction):  # pylint: disable=unused-argument
     """Determine the saturation field from the change in magnetisation from Ms."""
     m_sat = Ms_vals[2]
     Hsat, Hsat_err = Hsat_vals
@@ -281,7 +281,11 @@ def hysteresis_correct(data, **kargs):
 
     h_sat_method = kargs.pop("h_sat_method", "linear_intercept")
     h_sat_fraction = kargs.pop("h_sat_fraction", 0.5 if h_sat_method == "linear_intercept" else 2.0)
-    hsat_methods = {"linear_intercept": _Hsat_linear, "susceptibility": _Hsat_susceptibility, "delta_M": _Hsat_delta_M}
+    hsat_methods = {
+        "linear_intercept": _h_sat_linear,
+        "susceptibility": _h_sat_susceptibility,
+        "delta_M": _h_sat_delta_M,
+    }
     if callable(h_sat_method) or h_sat_method in hsat_methods:
         h_sat_method = hsat_methods.get(h_sat_method, h_sat_method)
     else:
