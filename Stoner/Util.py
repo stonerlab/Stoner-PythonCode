@@ -221,12 +221,11 @@ def hysteresis_correct(data, **kargs):
     h_sat_fraction = kargs.pop("h_sat_fraction", 0.5 if h_sat_method == "linear_intercept" else 2.0)
 
     for k in kargs:
-        if hasattr(data, k):
-            try:
-                setattr(data, k, kargs[k])
-            except AttributeError:
-                if data.debug:
-                    print("Error setting attribute from keyword {}={}".format(k, kargs[k]))
+        try:
+            setattr(data, k, kargs[k])
+        except AttributeError:
+            if data.debug:
+                print("Error setting attribute from keyword {}={}".format(k, kargs[k]))
     if "setas" in kargs:  # Allow us to override the setas variable
         data.setas = kargs.pop("setas")
 
@@ -306,7 +305,7 @@ def hysteresis_correct(data, **kargs):
             # Uncertainity is the sum of error in slope * found intercept and error in Ms times slope
             Hsat_err[1 - i] = np.sqrt((Hsat[1 - i] * pferr[1]) ** 2 + (popt[1] * Ms_err) ** 2)
         elif h_sat_method == "susceptibility":
-            xi = d.SG_Filter(order=1)[0, :-1]
+            xi = d.SG_Filter(order=1)[0, :]
             m, h = d.SG_Filter()
             tmp = np.column_stack((h, m, xi))[4:-4]
             tmp = make_Data(tmp, setas="x.y")
