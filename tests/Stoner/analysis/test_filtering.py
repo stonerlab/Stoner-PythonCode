@@ -82,23 +82,23 @@ def test_outlier_detect():
     with pytest.raises(ValueError):
         d1.outlier_detection(action="bad")
 
-    d1.outlier_detection(certainty=10)
+    d1.outlier_detection(certainty=20)
     assert d1.count()==717
     assert not np.any(d1.mask[:,2])
     d1=testd.clone
-    d1.outlier_detection(certainty=10,action="mask row")
+    d1.outlier_detection(certainty=20,action="mask row")
     assert d1.count()==717
     assert np.all(d1.mask[90,:]==[True,True,True])
     d1=testd.clone
-    d1.outlier_detection(certainty=10,action="delete")
+    d1.outlier_detection(certainty=20,action="delete")
     assert len(d1)==717
     with pytest.raises(SyntaxError):
         d1.outlier_detection(action_args=(True,False))
     def action(i,column,data):
         data[i,column]=(data[i-1,column]+data[i+1,column])/2
     d1=testd.clone
-    d1.outlier_detection(certainty=10,action=action)
-    d1.outlier_detection(certainty=10,action="mask row")
+    d1.outlier_detection(certainty=20,action=action)
+    d1.outlier_detection(certainty=20,action="mask row")
     assert not np.any(d1.mask)
 
 
