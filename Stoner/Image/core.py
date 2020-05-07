@@ -191,7 +191,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 if not os.path.exists(arg):
                     raise ValueError("File path does not exist {}".format(arg))
                 ret = ret = np.empty((0, 0), dtype=float).view(cls)
-                ret = ret._load(arg, **array_args)  # pylint disable=no-member
+                ret = ret._load(arg, **array_args)  # pylint: disable=no-member
             elif isinstance(arg, ImageFile):
                 # extract the image
                 ret = arg.image
@@ -257,7 +257,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """Load image data from a numpy file."""
         image = np.load(filename)
         image = np.array(image, **kargs).view(cls)
-        image.metadata["Loaded from"] = os.path.realpath(filename)  # pylint disable=no-member
+        image.metadata["Loaded from"] = os.path.realpath(filename)  # pylint: disable=no-member
         image.filename = os.path.realpath(filename)
         return image
 

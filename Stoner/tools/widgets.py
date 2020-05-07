@@ -4,10 +4,10 @@
 Code based on the PyQt5 Tutorial code,
 """
 __all__ = ["fileDialog"]
-from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
 
 
-class App(QWidget):
+class App(QApplication):
 
     """Placehold PyQT5 Application for producing filedialog boxes."""
 
@@ -34,8 +34,8 @@ class App(QWidget):
         },
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kargs):
+        super().__init__([""], *args, **kargs)
         self.title = "PyQt5 file dialogs - pythonspot.com"
         self.left = 10
         self.top = 10
@@ -44,8 +44,15 @@ class App(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.dialog = QWidget()
+        self.dialog.title = "PyQt5 file dialogs - pythonspot.com"
+        self.dialog.left = 10
+        self.dialog.top = 10
+        self.dialog.width = 640
+        self.dialog.height = 480
+
+        self.dialog.setWindowTitle(self.title)
+        self.dialog.setGeometry(self.left, self.top, self.width, self.height)
 
     def openDialog(self, title=None, start="", patterns=None, mode="OpenFile"):
         """Create a dialog box for selecting filenames or directories.
@@ -84,7 +91,7 @@ class App(QWidget):
         kwargs = {"caption": title, "directory": start, "filter": patterns, "options": options}
         kwargs = {k: kwargs[k] for k in (set(kwargs.keys()) & set(self.modes[mode]["arg"]))}
 
-        ret = method(self, **kwargs)
+        ret = method(self.dialog, **kwargs)
 
         if isinstance(ret, tuple):
             ret = ret[0]

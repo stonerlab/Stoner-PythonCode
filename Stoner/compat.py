@@ -6,6 +6,7 @@ from os.path import join, commonpath
 import fnmatch
 from inspect import signature, getfullargspec
 from shutil import which
+from pathlib import PurePath
 
 import numpy as np
 from matplotlib import __version__ as mpl_version
@@ -24,6 +25,7 @@ __all__ = [
     "get_filedialog",
     "getargspec",
     "string_types",
+    "path_types",
     "int_types",
     "index_types",
     "classproperty",
@@ -73,6 +75,7 @@ def get_func_params(func):
 
 string_types = (str,)
 int_types = (int,)
+path_types = (str, PurePath)
 
 
 def str2bytes(s):

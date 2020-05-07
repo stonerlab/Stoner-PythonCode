@@ -12,7 +12,7 @@ import os.path as path
 from traceback import format_exc
 import fnmatch
 
-from .compat import string_types, bytes2str, str2bytes, get_filedialog, _pattern_type
+from .compat import string_types, bytes2str, str2bytes, get_filedialog, _pattern_type, path_types
 from .Core import DataFile, StonerLoadError
 from .Folders import DiskBasedFolderMixin
 from .folders.core import baseFolder
@@ -36,7 +36,7 @@ def test_is_zip(filename, member=""):
             member within that
         zipfile.
     """
-    if not filename or filename == "":
+    if not filename or str(filename) == "":
         return False
     if zf.is_zipfile(filename):
         return filename, member
@@ -87,7 +87,7 @@ class ZippedFile(DataFile):
                 # Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
                 super(ZippedFile, self).__init__(**kargs)
                 self._extract(other, kargs["filename"])
-            elif isinstance(other, string_types):  # Passed a string - so try as a zipfile
+            elif isinstance(other, path_types):  # Passed a string - so try as a zipfile
                 if zf.is_zipfile(other):
                     other = zf.ZipFile(other, "a")
                     args = args = list(args)
@@ -133,14 +133,14 @@ class ZippedFile(DataFile):
                     close_me = False
                 member = kargs.get("member", other.namelist()[0])
                 solo_file = len(other.namelist()) == 1
-            elif isinstance(self.filename, string_types) and zf.is_zipfile(
+            elif isinstance(self.filename, path_types) and zf.is_zipfile(
                 self.filename
             ):  # filename is a string that is a zip file
                 other = zf.ZipFile(self.filename, "a")
                 member = kargs.get("member", other.namelist()[0])
                 close_me = True
                 solo_file = len(other.namelist()) == 1
-            elif isinstance(self.filename, string_types) and test_is_zip(
+            elif isinstance(self.filename, path_types) and test_is_zip(
                 self.filename
             ):  # Filename is something buried in a zipfile
                 other, member = test_is_zip(other)
@@ -182,7 +182,7 @@ class ZippedFile(DataFile):
             filename = self.__file_dialog("w")
         compression = kargs.pop("compression", zf.ZIP_DEFLATED)
         try:
-            if isinstance(filename, string_types):  # We;ve got a string filename
+            if isinstance(filename, path_types):  # We;ve got a string filename
                 if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename
                     zipfile, member = test_is_zip(filename)
                     zipfile = zf.ZipFile(zipfile, "a")
@@ -319,9 +319,9 @@ class ZipFolderMixin:
             else:
                 self.File = zf.ZipFile(directory, "r")
                 close_me = True
-        elif isinstance(directory, string_types) and path.isdir(directory):  # Fall back to DataFolder
+        elif isinstance(directory, path_types) and path.isdir(directory):  # Fall back to DataFolder
             return super(ZipFolderMixin, self).getlist(recursive, directory, flatten)
-        elif isinstance(directory, string_types) and zf.is_zipfile(directory):
+        elif isinstance(directory, path_types) and zf.is_zipfile(directory):
             self.File = zf.ZipFile(directory, "r")
             close_me = True
         elif isinstance(self.File, zf.ZipFile):

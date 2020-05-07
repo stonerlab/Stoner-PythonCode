@@ -2,6 +2,7 @@
 """Module to work with scan files from an AttocubeSPM running Daisy."""
 __all__ = ["AttocubeScan"]
 from os import path, pathsep
+import pathlib
 from copy import deepcopy
 from glob import glob
 import re
@@ -86,7 +87,10 @@ class AttocubeScanMixin:
     def __init__(self, *args, **kargs):
         """Construct the attocube subclass of ImageStack."""
         args = list(args)
-
+        if len(args) > 0:
+            for ix, arg in enumerate(args):
+                if isinstance(arg, pathlib.PurePath):
+                    args[ix] = str(arg)
         if len(args) > 0 and isinstance(args[0], string_types):
             root_name = args.pop(0)
             scan = SCAN_NO.search(root_name)
@@ -159,6 +163,8 @@ class AttocubeScanMixin:
             filename = self.filename
         else:
             self.filename = filename
+        if isinstance(filename, pathlib.PurePath):
+            filename = str(filename)
         if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
@@ -394,6 +400,8 @@ class AttocubeScanMixin:
         """Save the AttocubeScan to an hdf5 file."""
         if filename is None:
             filename = path.join(self.directory, f"SC_{self.scan_no:03d}.hdf5")
+        if isinstance(filename, pathlib.PurePath):
+            filename = str(filename)
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog("w")
             self.filename = filename
@@ -462,6 +470,8 @@ class AttocubeScanMixin:
             filename = self.filename
         else:
             self.filename = filename
+        if isinstance(filename, pathlib.PurePath):
+            filename = str(filename)
         if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
             close_me = True

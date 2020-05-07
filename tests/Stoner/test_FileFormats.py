@@ -7,10 +7,9 @@ Created on Tue Jan 07 22:05:55 2014
 """
 
 import sys
-import os.path as path
-import os
+import pathlib
 
-from Stoner import Data,__home__
+from Stoner import Data,__homepath__
 from Stoner.Core import DataFile
 from Stoner.compat import Hyperspy_ok
 
@@ -20,16 +19,21 @@ from Stoner.formats.attocube import AttocubeScan
 from Stoner.core.utils import subclasses
 from traceback import format_exc
 
-pth=path.join(__home__,"..")
-datadir=path.join(pth,"sample-data")
+pth=__homepath__/".."
+datadir=pth/"sample-data"
 
-sys.path.insert(0,pth)
+def setup_module():
+    sys.path.insert(0,str(pth))
 
-datadir=path.join(pth,"sample-data")
+
+def teardown_module():
+    sys.path.remove(str(pth))
 
 def list_files():
-    skip_files=[] # HDF5 loader not working Python 3.5
-    incfiles=[x for x in os.listdir(datadir) if os.path.isfile(os.path.join(datadir,x)) and not x.endswith("tdms_index") and not x.lower() in skip_files]
+    skip_files=set([]) # HDF5 loader not working Python 3.5
+    incfiles=list(set(datadir.glob("*"))-skip_files)
+    incfiles=[x for x in incfiles if x.suffix!=".tdms_index"]
+    incfiles=[x for x in incfiles if not x.is_dir()]
 
     if not Hyperspy_ok:
         print("hyperspy too old, skupping emd file for test")
@@ -39,61 +43,61 @@ def list_files():
 
 
 
-@pytest.mark.parametrize("filename", list_files(),ids=list_files())
+@pytest.mark.parametrize("filename", list_files(),ids=[x.name for x in list_files()])
 def test_one_file(tmpdir, filename):
-    fname=path.join(datadir,filename)
-    loaded=Data(fname,debug=False)
-    assert isinstance(loaded,DataFile),"Failed to load {} correctly.".format(fname)
+    loaded=Data(filename,debug=False)
+    assert isinstance(loaded,DataFile),f"Failed to load {filename.name} correctly."
     if "save" in subclasses()[loaded["Loaded as"]].__dict__:
-        pth=os.path.join(tmpdir,filename)
-        name,ext=os.path.splitext(pth)
-        pth2="{}-2.{}".format(name,ext)
+        pth = pathlib.Path(tmpdir)/filename.name
+        parent, name,ext=pth.parent, pth.stem, pth.suffix
+        pth2=pathlib.Path(parent)/f"{name}-2{ext}"
         loaded.save(pth,as_loaded=True)
-        assert os.path.exists(pth) or os.path.exists(loaded.filename),"Failed to save as {}".format(pth)
-        os.remove(loaded.filename)
+        assert pth.exists() or pathlib.Path(loaded.filename).exists(),f"Failed to save as {pth}"
+        pathlib.Path(loaded.filename).unlink()
         loaded.save(pth2,as_loaded=loaded["Loaded as"])
-        assert os.path.exists(pth2) or os.path.exists(loaded.filename),"Failed to save as {}".format(pth)
-        os.remove(loaded.filename)
+        assert pth2.exists() or pathlib.Path(loaded.filename).exists(),"Failed to save as {}".format(pth)
+        pathlib.Path(loaded.filename).unlink()
 
 
 def test_csvfile():
 
-    csv=Data(path.join(datadir,"working","CSVFile_test.dat"),filetype="JustNumbers",column_headers=["Q","I","dI"],setas="xye")
+    csv=Data(datadir/"working"/"CSVFile_test.dat",filetype="JustNumbers",column_headers=["Q","I","dI"],setas="xye")
     assert csv.shape==(167,3),"Failed to load CSVFile from text"
 
 def test_attocube_scan(tmpdir):
-    scandir=path.join(datadir,"attocube_scan")
+    tmpdir=pathlib.Path(tmpdir)
+    scandir=datadir/"attocube_scan"
     scan1=AttocubeScan("SC_085",scandir,regrid=False)
     scan2=AttocubeScan(85,scandir,regrid=False)
     assert scan1==scan2,"Loading scans by number and string not equal"
 
     #self.assertEqual(scan1,scan2,"Loading Attocube Scans by root name and number didn't match")
 
-    pth=os.path.join(tmpdir,f"SC_{scan1.scan_no:03d}.hdf5")
+    pth=tmpdir/f"SC_{scan1.scan_no:03d}.hdf5"
     scan1.to_HDF5(pth)
 
     scan3=AttocubeScan.read_HDF(pth)
 
-    assert os.path.exists(pth),f"Failed to save scan as {pth}"
+    assert pth.exists(),f"Failed to save scan as {pth}"
     if scan1!=scan3:
         print("A"*80)
         print(scan1.layout,scan3.layout)
         for grp in scan1.groups:
             print(scan1[grp].metadata.all_by_keys^scan3[grp].metadata.all_by_keys)
     assert scan1==scan3,"Roundtripping scan through hdf5 failed"
-    os.remove(pth)
+    pth.unlink()
 
-    pth=os.path.join(tmpdir,f"SC_{scan1.scan_no:03d}.tiff")
+    pth=tmpdir/f"SC_{scan1.scan_no:03d}.tiff"
     scan1.to_tiff(pth)
     scan3=AttocubeScan.from_tiff(pth)
-    assert os.path.exists(pth),f"Failed to save scan as {pth}"
+    assert pth.exists(),f"Failed to save scan as {pth}"
     if scan1!=scan3:
         print("B"*80)
         print(scan1.layout,scan3.layout)
         for grp in scan1.groups:
             print(scan1[grp].metadata.all_by_keys^scan3[grp].metadata.all_by_keys)
     assert scan1.layout==scan3.layout,"Roundtripping scan through tiff failed"
-    os.remove(pth)
+    pth.unlink()
 
     scan3=AttocubeScan()
     scan3._marshall(layout=scan1.layout,data=scan1._marshall())

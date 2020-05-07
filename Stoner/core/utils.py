@@ -290,18 +290,19 @@ def subclasses(cls=None):  # pylint: disable=no-self-argument
         cls = DataFile
 
     tmp = itersubclasses(cls)
-    if _subclasses is None or _subclasses[0] != len(tmp):  # pylint: disable=E1136
+    if _subclasses is None or _subclasses[cls][0] != len(tmp):  # pylint: disable=E1136
         tmp = {
-            x: (x.priority, x.__name__)
+            x: (getattr(x, "priority", 256), x.__name__)
             for x in sorted(tmp, key=lambda c: (getattr(c, "priority", 256), getattr(c, "__name__", "None")))
         }
         tmp = {v[1]: k for k, v in tmp.items()}
         ret = dict()
         ret[cls.__name__] = cls
         ret.update(tmp)
-        _subclasses = (len(tmp), ret)
+        _subclasses = dict()
+        _subclasses[cls] = (len(tmp), ret)
     else:
-        ret = dict(_subclasses[1])
+        ret = dict(_subclasses[cls][1])
     return ret
 
 

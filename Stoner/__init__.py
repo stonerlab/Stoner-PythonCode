@@ -22,6 +22,7 @@ __all__ = [
 
 # These fake the old namespace if you do an import Stoner
 from os import path as _path_
+import pathlib
 
 from . import core, analysis, formats, plot, tools, Image
 from .core.data import Data
@@ -36,4 +37,5 @@ Options = _Options()
 __version_info__ = ("0", "10", "0dev")
 __version__ = ".".join(__version_info__)
 
-__home__ = _path_.realpath(_path_.dirname(__file__))
+__homepath__ = pathlib.Path(__file__).parent.resolve()
+__home__ = str(__homepath__)

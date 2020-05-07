@@ -17,7 +17,7 @@ import os
 import h5py
 import numpy as _np_
 
-from .compat import string_types, bytes2str, get_filedialog
+from .compat import string_types, bytes2str, get_filedialog, path_types
 from .tools import make_Data
 from .Core import StonerLoadError, metadataObject, DataFile
 from .folders import DataFolder
@@ -170,7 +170,7 @@ class HDF5File(DataFile):
             filename = self.filename
         else:
             self.filename = filename
-        if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
+        if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
@@ -204,7 +204,7 @@ class HDF5File(DataFile):
         if filename is None or not filename:
             self.get_filename("r")
             filename = self.filename
-        if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
+        if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
             self.filename = filename
         elif isinstance(filename, h5py.File):
@@ -248,7 +248,7 @@ class HDF5File(DataFile):
                 self.filename = os.path.realpath(f.file.filename)
         else:
             self.filename = os.path.realpath(f.filename)
-        if isinstance(filename, string_types):
+        if isinstance(filename, path_types):
             f.file.close()
         return self
 
@@ -285,7 +285,7 @@ class HDF5File(DataFile):
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog("w")
             self.filename = filename
-        if isinstance(filename, string_types):
+        if isinstance(filename, path_types):
             mode = "r+" if os.path.exists(filename) else "w"
             f = h5py.File(filename, mode)
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
@@ -546,7 +546,7 @@ class HDF5FolderMixin:
                 break
         if directory is None:
             return None
-        if isinstance(directory, string_types):
+        if isinstance(directory, path_types):
             try:
                 self.directory = directory
                 directory = h5py.File(directory, "r+")
@@ -590,7 +590,7 @@ class HDF5FolderMixin:
             root = h5py.File(root, mode="a")
             self.File = root
             closeme = True
-        if isinstance(root, string_types):
+        if isinstance(root, path_types):
             mode = "r+" if path.exists(root) else "w"
             root = h5py.File(root, mode)
             self.File = root
@@ -651,7 +651,7 @@ class SLS_STXMFile(DataFile):
             filename = self.filename
         else:
             self.filename = filename
-        if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
+        if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
             try:
                 f = h5py.File(filename, "r+")
             except IOError:
@@ -683,7 +683,7 @@ class SLS_STXMFile(DataFile):
         else:
             self["original filename"] = f.file.filename
 
-        if isinstance(filename, string_types):
+        if isinstance(filename, path_types):
             f.file.close()
         self["Loaded from"] = self.filename
 
@@ -730,7 +730,7 @@ class STXMImage(ImageFile):
                 If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates.
         """
         regrid = kargs.pop("regrid", False)
-        if len(args) > 0 and isinstance(args[0], string_types):
+        if len(args) > 0 and isinstance(args[0], path_types):
             d = SLS_STXMFile(args[0])
             args = args[1:]
         else:
