@@ -4,10 +4,11 @@
 # pylint: disable-all
 import typing
 
-from Stoner.core.setas import setas
+from ..compat import string_types, int_types, path_types, _pattern_type
+from .setas import setas
 
 # Column Indices
-Single_Column_Index = typing.Union[str, int]
+Single_Column_Index = typing.Union[string_types, int_types, _pattern_type]
 Column_Index = typing.Union[typing.Sequence[Single_Column_Index], Single_Column_Index]
 
 # Setas

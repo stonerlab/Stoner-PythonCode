@@ -171,7 +171,9 @@ features at this time. Better integration with pandas and xarray are under consi
 
 New Features in 0.10-dev include:
 
-    *   Continued refactoring of code to break large monolithic classes and modules into smaller parts
+    *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
+    *   Support pathlib for paths
+    *   Switch from Tk based dialogs to Qt5 ones
     *   Refactoring the **baseFolder** class so that sub-groups are stored in an attribute that is an instance of a custom
         dictionary with methods to prune and filter in the virtual tree of sub-folders.
 

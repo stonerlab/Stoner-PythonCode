@@ -4,11 +4,12 @@ from importlib import import_module
 import io
 import pathlib
 from traceback import format_exc
+from typing import Union
 
 from ..compat import string_types
 from .widgets import fileDialog
 from .classes import subclasses
-from ..core.exceptions import StonerLoadError
+from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..core.base import regexpDict
 
 __all__ = ["file_dialog", "get_file_name_type", "auto_load_classes", "get_mime_type"]
@@ -19,15 +20,21 @@ except ImportError:
     filemagic = None
 
 
-def file_dialog(mode, filename, filetype, baseclass):
+def file_dialog(mode: str, filename, filetype: Union[type, str], baseclass: type) -> Union[str, None]:
     """Create a file dialog box for loading or saving ~b DataFile objects.
 
     Args:
         mode (string):
             The mode of the file operation  'r' or 'w'
+        filename (str, Path, bool):
+            Tje starting filename
+        filetype (submclass of metadataObject, string):
+            The filetype to open with - used to selectr file patterns
+        basclass (subclass of metadataObject):
+            Type of object we're looking to create'
 
     Returns:
-        (str):
+        (pathlib.PurePath or None):
             A filename to be used for the file operation.
     """
     # Wildcard pattern to be used in file dialogs.
@@ -123,8 +130,6 @@ def auto_load_classes(filename, baseclass, debug=False, args=(), kargs={}):
             test["Loaded as"] = cls.__name__
             if debug:
                 print(f"Test matadata: {test.metadata}")
-            if debug:
-                print(f"Self matadata: {self.metadata}")
 
             break
         except StonerLoadError as e:
@@ -137,7 +142,7 @@ def auto_load_classes(filename, baseclass, debug=False, args=(), kargs={}):
     else:
         raise StonerUnrecognisedFormat(
             f"Ran out of subclasses to try and load {filename} as."
-            + f" Recognised filetype are:{list(subclasses(DataFile).keys())}"  # pylint: disable=E1101
+            + f" Recognised filetype are:{list(subclasses(baseclass).keys())}"  # pylint: disable=E1101
         )
     return test
 
@@ -146,7 +151,7 @@ def get_mime_type(filename, debug=False):
     """Get the mime type of the file if filemagic is available."""
     if filemagic is not None:
         with filemagic(flags=MAGIC_MIME_TYPE) as m:
-            mimetype = m.id_filename(filename)
+            mimetype = m.id_filename(str(filename))
         if debug:
             print(f"Mimetype:{mimetype}")
     else:
