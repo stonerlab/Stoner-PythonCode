@@ -121,16 +121,16 @@ include-naming-hint=yes
 property-classes=abc.abstractproperty
 
 # Regular expression matching correct function names
-function-rgx=[a-z_][a-z0-9_]{2,15}$
+function-rgx=[a-z_][a-z0-9_]{2,25}$
 
 # Naming hint for function names
-function-name-hint=[a-z_][a-z0-9_]{2,15}$
+function-name-hint=[a-z_][a-z0-9_]{2,25}$
 
 # Regular expression matching correct variable names
 variable-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
 
 # Naming hint for variable names
-variable-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
+variable-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,25})?$
 
 # Regular expression matching correct constant names
 const-rgx=(([A-Z_][A-Za-z0-9_]*)|(__.*__))$
@@ -139,22 +139,22 @@ const-rgx=(([A-Z_][A-Za-z0-9_]*)|(__.*__))$
 const-name-hint=(([A-Z_][A-Za-z0-9_]*)|(__.*__))$
 
 # Regular expression matching correct attribute names
-attr-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
+attr-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,25})?$
 
 # Naming hint for attribute names
 attr-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
 
 # Regular expression matching correct argument names
-argument-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
+argument-rgx=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,25})?$
 
 # Naming hint for argument names
-argument-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,15})?$
+argument-name-hint=[A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,25})?$
 
 # Regular expression matching correct class attribute names
-class-attribute-rgx=([A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,20})?|(__.*__))$
+class-attribute-rgx=([A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,25})?|(__.*__))$
 
 # Naming hint for class attribute names
-class-attribute-name-hint=([A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,20})?|(__.*__))$
+class-attribute-name-hint=([A-Za-z_]([a-z0-9_][A-Za-z0-9_]{0,25})?|(__.*__))$
 
 # Regular expression matching correct inline iteration names
 inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
@@ -175,10 +175,10 @@ module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
 module-name-hint=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
 
 # Regular expression matching correct method names
-method-rgx=[a-z_][a-z0-9_]{2,20}$
+method-rgx=[a-z_][a-z0-9_]{2,25}$
 
 # Naming hint for method names
-method-name-hint=[a-z_][a-z0-9_]{2,20}$
+method-name-hint=[a-z_][a-z0-9_]{2,25}$
 
 # Regular expression which should only match function or class names that do
 # not require a docstring.

@@ -100,9 +100,11 @@ def get_file_name_type(filename, filetype, parent):
     return filename, filetype
 
 
-def auto_load_classes(filename, baseclass, debug=False, args=(), kargs={}):
+def auto_load_classes(filename, baseclass, debug=False, args=None, kargs=None):
     """Work through subclasses of parent to find one that will load this file."""
     mimetype = get_mime_type(filename, debug=debug)
+    args = args if args is not None else ()
+    kargs = kargs if kargs is not None else {}
     for cls in subclasses(baseclass).values():  # pylint: disable=E1136, E1101
         if debug:
             print(cls.__name__)
@@ -126,7 +128,6 @@ def auto_load_classes(filename, baseclass, debug=False, args=(), kargs={}):
 
             if debug:
                 print("Passed Load")
-            failed = False
             test["Loaded as"] = cls.__name__
             if debug:
                 print(f"Test matadata: {test.metadata}")
