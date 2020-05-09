@@ -8,7 +8,7 @@ from ..compat import string_types, int_types, path_types, _pattern_type
 from .setas import setas
 
 # Column Indices
-Single_Column_Index = typing.Union[string_types, int_types, _pattern_type]
+Single_Column_Index = typing.Union[str, bytes, int, _pattern_type]
 Column_Index = typing.Union[typing.Sequence[Single_Column_Index], Single_Column_Index]
 
 # Setas

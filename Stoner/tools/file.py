@@ -4,13 +4,13 @@ from importlib import import_module
 import io
 import pathlib
 from traceback import format_exc
-from typing import Union
+from typing import Union, Sequence, Dict, Type
 
 from ..compat import string_types
 from .widgets import fileDialog
 from .classes import subclasses
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..core.base import regexpDict
+from ..core.base import regexpDict, metadataObject
 
 __all__ = ["file_dialog", "get_file_name_type", "auto_load_classes", "get_mime_type"]
 
@@ -20,7 +20,12 @@ except ImportError:
     filemagic = None
 
 
-def file_dialog(mode: str, filename, filetype: Union[type, str], baseclass: type) -> Union[str, None]:
+def file_dialog(
+    mode: str,
+    filename: Union[pathlib.Path, str, bool],
+    filetype: Union[Type[metadataObject], str],
+    baseclass: Type[metadataObject],
+) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
     """Create a file dialog box for loading or saving ~b DataFile objects.
 
     Args:
@@ -39,7 +44,7 @@ def file_dialog(mode: str, filename, filetype: Union[type, str], baseclass: type
     """
     # Wildcard pattern to be used in file dialogs.
 
-    descs = {"*.*": "All Files"}
+    descs: Dict = {"*.*": "All Files"}
     for p in filetype.patterns:  # pylint: disable=not-an-iterable
         descs[p] = filetype.__name__ + " file"
     for c in subclasses(baseclass):  # pylint: disable=E1136, E1133
