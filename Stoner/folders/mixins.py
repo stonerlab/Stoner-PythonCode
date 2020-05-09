@@ -14,13 +14,13 @@ from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 
-from Stoner.compat import string_types, get_filedialog, _pattern_type, makedirs
+from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
 from Stoner.tools import isIterable, make_Data
-from Stoner.core.base import metadataObject, string_to_type
-from Stoner.core.exceptions import StonerUnrecognisedFormat
+from ..core.base import metadataObject, string_to_type
+from ..core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
 from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
-from Stoner.core.exceptions import assertion
+from ..core.exceptions import assertion
 
 
 regexp_type = (_pattern_type,)
@@ -28,7 +28,7 @@ regexp_type = (_pattern_type,)
 
 def __add_core__(result, other):
     """Additional logic for the add operator."""
-    if isinstance(other, string_types):
+    if isinstance(other, path_types):
         othername = path.join(result.directory, other)
         if path.exists(othername) and othername not in result:
             result.append(othername)
@@ -41,8 +41,8 @@ def __add_core__(result, other):
 
 def __sub_core__(result, other):
     """Additional logic to check for match to basenames."""
-    if isinstance(other, string_types):
-        if other in list(result.basenames) and path.join(result.directory, other) in list(result.ls):
+    if isinstance(other, path_types):
+        if str(other) in list(result.basenames) and path.join(result.directory, other) in list(result.ls):
             other = path.join(result.directory, other)
             result.__deleter__(other)
             return result
@@ -121,7 +121,7 @@ class DiskBasedFolderMixin:
         flat = kargs.pop("flat", self._default_store.get("flat", False))
         prefetch = kargs.pop("prefetch", self._default_store.get("prefetch", False))
         super(DiskBasedFolderMixin, self).__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
-        if self.readlist and len(args) > 0 and isinstance(args[0], string_types):
+        if self.readlist and len(args) > 0 and isinstance(args[0], path_types):
             self.getlist(directory=args[0])
         if len(args) > 0 and isinstance(args[0], bool) and not args[0]:
             self.getlist(directory=args[0])
@@ -159,7 +159,7 @@ class DiskBasedFolderMixin:
         else:
             mode = "files"
         dlg = get_filedialog(what=mode, title=message)
-        if not dlg or len(dlg) == 0:
+        if not dlg or len(str(dlg)) == 0:
             raise RuntimeError("No directory or files selected!")
         if self.multifile:
             self.pattern = [path.basename(name) for name in dlg]
@@ -354,7 +354,7 @@ class DiskBasedFolderMixin:
             self._dialog()
         elif directory is None:
             self.directory = os.getcwd()
-        elif isinstance(directory, string_types):
+        elif isinstance(directory, path_types):
             self.directory = directory
         root = self.directory
         dirs, files = scan_dir(root)

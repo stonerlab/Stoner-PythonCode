@@ -25,6 +25,7 @@ __all__ = [
     "get_option",
     "set_option",
     "ordinal",
+    "file",
 ]
 from collections.abc import Iterable, MutableSequence
 import inspect

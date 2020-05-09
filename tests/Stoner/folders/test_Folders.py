@@ -18,7 +18,7 @@ from numpy import ceil
 from copy import copy
 from Stoner.compat import Hyperspy_ok
 import pytest
-from Stoner import DataFolder
+from Stoner import DataFolder, __homepath__
 from Stoner.folders import PlotFolder
 
 from Stoner import Data
@@ -28,12 +28,11 @@ import matplotlib.pyplot as plt
 
 import tempfile
 
-pth=path.dirname(__file__)
-pth=path.realpath(path.join(pth,"../../../"))
+pth=__homepath__/".."
 sys.path.insert(0,pth)
 
 """Path to sample Data File"""
-datadir=path.join(pth,"sample-data")
+datadir=pth/"sample-data"
 
 def test_Folders():
     fldr=DataFolder(datadir,debug=False,recursive=False)

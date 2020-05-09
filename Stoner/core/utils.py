@@ -8,7 +8,6 @@ __all__ = [
     "sub_core",
     "mod_core",
     "copy_into",
-    "itersubclasses",
     "tab_delimited",
     "decode_string",
 ]
@@ -20,8 +19,6 @@ from collections.abc import Mapping
 import numpy as np
 from Stoner.compat import index_types, int_types
 from Stoner.tools import all_type
-
-_subclasses = None  # Cache for DataFile Subclasses
 
 
 def add_core(other, newdata):
@@ -241,69 +238,6 @@ class tab_delimited(csv.Dialect):
     quoting = csv.QUOTE_NONE
     doublequote = False
     lineterminator = "\r\n"
-
-
-def itersubclasses(cls, _seen=None):
-    """Iterate over subclasses of a given class.
-
-    Generator over all subclasses of a given class, in depth first order.
-
-    >>> list(itersubclasses(int)) == [bool]
-    True
-    >>> class A(object): pass
-    >>> class B(A): pass
-    >>> class C(A): pass
-    >>> class D(B,C): pass
-    >>> class E(D): pass
-    >>>
-    >>> for cls in itersubclasses(A):
-    ...     print(cls.__name__)
-    B
-    D
-    E
-    C
-    >>> # get ALL (new-style) classes currently defined
-    >>> [cls.__name__ for cls in itersubclasses(object)] #doctest: +ELLIPSIS
-    ['type', ...'tuple', ...]
-    """
-    if not isinstance(cls, type):
-        raise TypeError("itersubclasses must be called with " "new-style classes, not %.100r" % cls)
-    if _seen is None:
-        _seen = set()
-    try:
-        subs = cls.__subclasses__()
-    except TypeError:  # fails only when cls is type
-        subs = cls.__subclasses__(cls)
-    for sub in subs:
-        if sub not in _seen:
-            _seen.add(sub)
-            itersubclasses(sub, _seen)
-    return list(_seen)
-
-
-def subclasses(cls=None):  # pylint: disable=no-self-argument
-    """Return a list of all in memory subclasses of this DataFile."""
-    global _subclasses
-    if cls is None:
-        from ..Core import DataFile  # pylint: disable=import-outside-toplevel
-
-        cls = DataFile
-
-    tmp = itersubclasses(cls)
-    if _subclasses is None or _subclasses[cls][0] != len(tmp):  # pylint: disable=E1136
-        tmp = {
-            x: (getattr(x, "priority", 256), x.__name__)
-            for x in sorted(tmp, key=lambda c: (getattr(c, "priority", 256), getattr(c, "__name__", "None")))
-        }
-        tmp = {v[1]: k for k, v in tmp.items()}
-        ret = dict()
-        ret[cls.__name__] = cls
-        ret.update(tmp)
-        _subclasses = dict()
-        _subclasses[cls] = (len(tmp), ret)
-    else:
-        ret = dict(_subclasses[cls][1])
-    return ret
 
 
 def decode_string(value):

@@ -91,7 +91,7 @@ def _open_filename(filename):
     Raises:
         StonerLoadError if not a valid file.
     """
-    parts = filename.split(os.pathsep)
+    parts = str(filename).split(os.pathsep)
     filename = parts.pop(0)
     group = ""
     while len(parts) > 0:

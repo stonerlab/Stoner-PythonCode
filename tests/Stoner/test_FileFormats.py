@@ -16,7 +16,7 @@ from Stoner.compat import Hyperspy_ok
 import pytest
 
 from Stoner.formats.attocube import AttocubeScan
-from Stoner.core.utils import subclasses
+from Stoner.tools.classes import subclasses
 from traceback import format_exc
 
 pth=__homepath__/".."

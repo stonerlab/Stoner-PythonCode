@@ -19,6 +19,7 @@ from ..compat import (
     string_types,
     get_filedialog,
     int_types,
+    path_types,
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
 from .util import build_funcs_proxy, changes_size
@@ -186,7 +187,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 if len(arg) == 0:
                     raise ValueError("No file given")
                 loadfromfile = True
-            elif isinstance(arg, string_types) or loadfromfile:
+            elif isinstance(arg, path_types) or loadfromfile:
                 # Filename- load datafile
                 if not os.path.exists(arg):
                     raise ValueError("File path does not exist {}".format(arg))
@@ -953,7 +954,7 @@ class ImageFile(metadataObject):
         super(ImageFile, self).__init__(*args, **kargs)
         if len(args) == 0:
             self._image = ImageArray()
-        elif len(args) > 0 and isinstance(args[0], string_types):
+        elif len(args) > 0 and isinstance(args[0], path_types):
             self._image = ImageArray(*args, **kargs)
         elif len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
             self._image = args[0].image

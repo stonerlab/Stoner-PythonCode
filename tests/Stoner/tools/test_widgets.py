@@ -5,25 +5,15 @@ Created on Sun Apr 19 12:04:58 2020
 @author: phygbu
 """
 
+import sys
 from warnings import warn
 import pytest
 from pathlib import Path
-from PyQt5.QtCore import QTimer
-from Stoner import __home__
-ret_pth = Path(__home__)/".."/"sample-data"/"TDI_Format_RT.txt"
+
+import Stoner
+ret_pth = Path(__file__)/".."/".."/".."/".."/"sample-data"/"TDI_Format_RT.txt"
 
 #Horrible hack to patch QFileDialog  for testing
-
-def dummy(mode="getOpenFileName"):
-    modes={"getOpenFileName":str(ret_pth),
-           "getOpenFileNames":[str(ret_pth)],
-           "getSaveFileName":None,
-           "getExistingDirectory":str(ret_pth.parent)}
-    return lambda *args,**kargs:(modes[mode],None)
-
-from PyQt5.QtWidgets import QFileDialog
-for mode in ["getOpenFileName","getOpenFileNames","getSaveFileName","getExistingDirectory"]:
-    setattr(QFileDialog,mode,dummy(mode))
 
 import Stoner.tools.widgets as widgets
 from Stoner import Data, DataFolder
@@ -31,12 +21,47 @@ from Stoner import Data, DataFolder
 
 def test_filedialog():
 
-    assert widgets.fileDialog.openDialog()== str(ret_pth)
-    assert widgets.fileDialog.openDialog(title="Test",start=".")== str(ret_pth)
-    assert widgets.fileDialog.openDialog(patterns={"*.bad":"Very bad files"})== str(ret_pth)
-    assert widgets.fileDialog.openDialog(mode="OpenFiles")== [str(ret_pth)]
+    def dummy(mode="getOpenFileName"):
+        modes={"getOpenFileName":ret_pth,
+               "getOpenFileNames":[ret_pth],
+               "getSaveFileName":None,
+               "getExistingDirectory":ret_pth.parent}
+        return lambda *args,**kargs:(modes[mode],None)
+
+    modes = {
+        "OpenFile": {
+            "method": dummy("getOpenFileName"),
+            "caption": "Select file to open...",
+            "arg": ["parent", "caption", "directory", "filter", "options"],
+        },
+        "OpenFiles": {
+            "method": dummy("getOpenFileNames"),
+            "caption": "Select file(s_ to open...",
+            "arg": ["parent", "caption", "directory", "filter", "options"],
+        },
+        "SaveFile": {
+            "method": dummy("getSaveFileName"),
+            "caption": "Save file as...",
+            "arg": ["parent", "caption", "directory", "filter", "options"],
+        },
+        "SelectDirectory": {
+            "method": dummy("getExistingDirectory"),
+            "caption": "Select folder...",
+            "arg": ["parent", "caption", "directory", "options"],
+        },
+    }
+
+
+    widgets=sys.modules["Stoner.tools.widgets"]
+    app=getattr(widgets,"App")
+    setattr(app,"modes",modes)
+
+    assert widgets.fileDialog.openDialog()== ret_pth
+    assert widgets.fileDialog.openDialog(title="Test",start=".")== ret_pth
+    assert widgets.fileDialog.openDialog(patterns={"*.bad":"Very bad files"})== ret_pth
+    assert widgets.fileDialog.openDialog(mode="OpenFiles")== [ret_pth]
     assert widgets.fileDialog.openDialog(mode="SaveFile")== None
-    assert widgets.fileDialog.openDialog(mode="SelectDirectory")== str(ret_pth.parent)
+    assert widgets.fileDialog.openDialog(mode="SelectDirectory")== ret_pth.parent
     with pytest.raises(ValueError):
         widgets.fileDialog.openDialog(mode="Whateve")
 

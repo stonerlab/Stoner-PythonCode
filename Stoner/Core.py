@@ -31,6 +31,7 @@ from numpy import ma
 
 from .compat import string_types, int_types, index_types, get_filedialog, str2bytes, _pattern_type
 from .tools import all_type, isIterable, isLikeList, get_option
+from .tools.file import get_file_name_type, auto_load_classes
 
 from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
@@ -39,7 +40,9 @@ from .core.operators import DataFileOperatorsMixin
 from .core.property import DataFilePropertyMixin
 from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
-from .core.utils import copy_into, tab_delimited, subclasses
+from .core.utils import copy_into, tab_delimited
+from .tools.classes import subclasses
+from .tools.file import file_dialog
 
 try:
     from tabulate import tabulate
@@ -305,7 +308,7 @@ class DataFile(
         else:
             self.data = np.column_stack(args)
 
-    def _init_array(self, arg, **kargs):
+    def _init_array(self, arg, **kargs):  # pylint: disable=unused-argument
         """Initialise from a single numpy array."""
         # numpy.array - set data
         if np.issubdtype(arg.dtype, np.number):
@@ -315,7 +318,7 @@ class DataFile(
             for row in arg:
                 self += row
 
-    def _init_datafile(self, arg, **kargs):
+    def _init_datafile(self, arg, **kargs):  # pylint: disable=unused-argument
         """Initialise from datafile."""
         for a in arg.__dict__:
             if not callable(a) and a != "_baseclass":
@@ -324,7 +327,7 @@ class DataFile(
         self.data = DataArray(arg.data, setas=arg.setas.clone)
         self.data.setas = arg.setas.clone
 
-    def _init_dict(self, arg, **kargs):
+    def _init_dict(self, arg, **kargs):  # pylint: disable=unused-argument
         """Initialise from dictionary."""
         if (
             all_type(arg.keys(), string_types)
@@ -336,7 +339,7 @@ class DataFile(
         else:
             self.metadata = arg.copy()
 
-    def _init_imagefile(self, arg, **kargs):
+    def _init_imagefile(self, arg, **kargs):  # pylint: disable=unused-argument
         """Initialise from an ImageFile."""
         x = arg.get("x_vector", np.arange(arg.shape[1]))
         y = arg.get("y_vector", np.arange(arg.shape[0]))
@@ -348,7 +351,7 @@ class DataFile(
         self.column_headers = ["X", "Y", "Image Intensity"]
         self.setas = "xyz"
 
-    def _init_pandas(self, arg, **kargs):
+    def _init_pandas(self, arg, **kargs):  # pylint: disable=unused-argument
         """Initialise from a pandas dataframe."""
         self.data = arg.values
         ch = []
@@ -563,52 +566,6 @@ class DataFile(
     def _col_args(self, *args, **kargs):
         """Create an object which has keys  based either on arguments or setas attribute."""
         return self.data._col_args(*args, **kargs)  # Now just pass through to DataArray
-
-    def __file_dialog(self, mode):
-        """Create a file dialog box for loading or saving ~b DataFile objects.
-
-        Args:
-            mode (string):
-                The mode of the file operation  'r' or 'w'
-
-        Returns:
-            (str):
-                A filename to be used for the file operation.
-        """
-        # Wildcard pattern to be used in file dialogs.
-
-        descs = {"*.*": "All Files"}
-        patterns = self.patterns
-        for p in patterns:  # pylint: disable=not-an-iterable
-            descs[p] = self.__class__.__name__ + " file"
-        for c in subclasses(DataFile):  # pylint: disable=E1136, E1133
-            for p in subclasses(DataFile)[c].patterns:  # pylint: disable=unsubscriptable-object
-                if p in descs:
-                    descs[p] += (
-                        ", " + subclasses(DataFile)[c].__name__ + " file"  # pylint: disable=E1136
-                    )  # pylint: disable=unsubscriptable-object
-                else:
-                    descs[p] = subclasses(DataFile)[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
-
-        patterns = descs
-
-        if self.filename is not None:
-            filename = os.path.basename(self.filename)
-            dirname = os.path.dirname(self.filename)
-        else:
-            filename = ""
-            dirname = ""
-        if "r" in mode:
-            mode = "file"
-        elif "w" in mode:
-            mode = "save"
-        else:
-            mode = "directory"
-        dlg = get_filedialog(what=mode, start=dirname, patterns=patterns)
-        if dlg:
-            self.filename = dlg
-            return self.filename
-        return None
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
@@ -1433,114 +1390,28 @@ class DataFile(
 
             If not class can load a file successfully then a RunttimeError exception is raised.
         """
-        filename = args[0] if len(args) > 0 else None
-        filename = kargs.pop("filename", filename)
+        filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
 
-        if isinstance(filetype, string_types):  # We can specify filetype as part of name
-            try:
-                filetype = subclasses(DataFile)[filetype]  # pylint: disable=E1136
-            except KeyError:
-                for k, cls in subclasses(DataFile).items():  # pylint: disable=E1136, E1101
-                    if filetype in k:
-                        filetype = cls
-                        break
-                else:
-                    raise ValueError(f"Unrecognised class name for file type: {filetype}")
-
-        if filename is None or (isinstance(filename, bool) and not filename):
-            filename = self.__file_dialog("r")
-        elif isinstance(filename, io.IOBase):  # Opened file
-            self.filename = filename.name
-        else:
-            self.filename = filename
-        if not path.exists(self.filename):
-            raise IOError(f"Cannot find {self.filename} to load")
-        if filemagic is not None:
-            with filemagic(flags=MAGIC_MIME_TYPE) as m:
-                mimetype = m.id_filename(filename)
-            if self.debug:
-                print(f"Mimetype:{mimetype}")
+        filename, filetype = get_file_name_type(filename, filetype, DataFile)
         cls = self.__class__
-        failed = True
         if auto_load:  # We're going to try every subclass we canA
-            for cls in subclasses(DataFile).values():  # pylint: disable=E1136, E1101
-                if self.debug:
-                    print(cls.__name__)
-                try:
-                    if (
-                        filemagic is not None and mimetype not in cls.mime_type
-                    ):  # short circuit for non-=matching mime-types
-                        if self.debug:
-                            print(f"Skipping {cls.__name__} due to mismatcb mime type {cls.mime_type}")
-                        continue
-                    test = cls()
-                    if self.debug and filemagic is not None:
-                        print(f"Trying: {cls.__name__} =mimetype {test.mime_type}")
-
-                    test = test._load(self.filename, auto_load=False, *args, **kargs)
-                    if test is None:
-                        raise SyntaxError(f"Class {cls.__name__}'s _load returned None !!")
-                    try:
-                        kargs = test._kargs
-                        delattr(test, "_kargs")
-                    except AttributeError:
-                        pass
-
-                    if self.debug:
-                        print("Passed Load")
-                    failed = False
-                    test["Loaded as"] = cls.__name__
-                    if self.debug:
-                        print(f"Test matadata: {test.metadata}")
-                    copy_into(test, self)
-                    if self.debug:
-                        print(f"Self matadata: {self.metadata}")
-
-                    break
-                except StonerLoadError as e:
-                    if self.debug:
-                        print(f"Failed Load: {e}")
-                    continue
-                except UnicodeDecodeError:
-                    print(f"{cls, filename} Failed with a uncicode decode error for { format_exc()}\n")
-                    continue
-            else:
-                raise StonerUnrecognisedFormat(
-                    f"Ran out of subclasses to try and load {filename} as."
-                    + f" Recognised filetype are:{list(subclasses(DataFile).keys())}"  # pylint: disable=E1101
-                )
+            copy_into(auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs), self)
         else:
-            if filetype is None:
-                test = cls()
-                test = test._load(self.filename, *args, **kargs)
-                kargs = getattr(test, "_kargs", kargs)
-                self["Loaded as"] = cls.__name__
-                self.data = test.data
-                self.metadata.update(test.metadata)
-                failed = False
-            elif issubclass(filetype, DataFile):
+            if issubclass(filetype, DataFile):
                 test = filetype()
-                test = test._load(self.filename, *args, **kargs)
-                kargs = getattr(test, "_kargs", kargs)
+                test = test._load(filename, *args, **kargs)
+                copy_into(test, self)
                 self["Loaded as"] = filetype.__name__
-                self.data = test.data
-                self.metadata.update(test.metadata)
-                self.column_headers = test.column_headers
-                failed = False
-            elif isinstance(filetype, DataFile):
-                test = filetype.clone
-                test = test._load(self.filename, *args, **kargs)
-                kargs = getattr(test, "_kargs", kargs)
-                self["Loaded as"] = filetype.__name__
-                self.data = test.data
-                self.metadata.update(test.metadata)
-                self.column_headers = test.column_headers
-                failed = False
+            elif filetype is None or isinstance(filetype, DataFile):
+                test = DataFile()
+                test = test._load(filename, *args, **kargs)
+                copy_into(test, self)
+                self["Loaded as"] = DataFile.__name__
+            else:
+                raise ValueError(f"Unable to load {filename}")
 
-        if failed:
-            raise SyntaxError("Failed to load file")
         for k, i in kargs.items():
             if not callable(getattr(self, k, lambda x: False)):
                 setattr(self, k, i)
@@ -1641,7 +1512,7 @@ class DataFile(
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
-            filename = self.__file_dialog("w")
+            filename = file_dialog("w", self.filename, self.__class__, DataFile)
             if not filename:
                 raise RuntimeError("Cannot get filename to save")
         if as_loaded:

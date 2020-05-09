@@ -5,15 +5,17 @@ __all__ = ["DataFilePropertyMixin"]
 
 import os
 import copy
+import pathlib
 
 import numpy as np
 from numpy import ma
 
 from ..tools import get_option
-from ..compat import classproperty
+from ..compat import classproperty, path_types
 
 from .array import DataArray
-from .utils import copy_into, subclasses
+from .utils import copy_into
+from ..tools.classes import subclasses
 
 try:
     from tabulate import tabulate
@@ -127,12 +129,30 @@ class DataFilePropertyMixin:
         """Return DataFile filename, or make one up."""
         if self._filename is None:
             self.filename = "Untitled"
-        return self._filename
+        if isinstance(self._filename, path_types):
+            return str(self._filename)
+        else:
+            return self._filename
 
     @filename.setter
     def filename(self, filename):
         """Store the DataFile filename."""
-        self._filename = filename
+        if isinstance(filename, path_types):
+            self._filename = pathlib.Path(filename)
+        else:
+            self._filename = filename
+
+    @property
+    def filepath(self):
+        """Return DataFile filename, or make one up, returning as a pathlib.Path."""
+        if self._filename is None:
+            self.filename = "Untitled"
+        return pathlib.Path(self._filename)
+
+    @filepath.setter
+    def filepath(self, filename):
+        """Store the DataFile filename."""
+        self._filename = pathlib.Path(filename)
 
     @property
     def header(self):

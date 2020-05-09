@@ -4,6 +4,7 @@
 Code based on the PyQt5 Tutorial code,
 """
 __all__ = ["fileDialog"]
+import pathlib
 from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
 
 
@@ -95,8 +96,14 @@ class App(QApplication):
 
         if isinstance(ret, tuple):
             ret = ret[0]
-        if not ret:
+        if isinstance(ret, (str, pathlib.PurePath)):
+            ret = pathlib.Path(ret)
+        elif isinstance(ret, list):
+            ret = [pathlib.Path(x) for x in ret]
+        elif not ret:
             ret = None
+        else:
+            raise TypeError(f"Something when wrong here - can't handle {ret} as a {type(ret)}")
         return ret
 
 

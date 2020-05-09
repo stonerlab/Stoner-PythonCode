@@ -10,10 +10,10 @@ __all__ = [
     "removeDisallowedFilenameChars",
 ]
 import os.path as path
-import os
 import re
 import string
 import fnmatch
+import pathlib
 
 from numpy import array
 from multiprocessing.pool import ThreadPool
@@ -25,12 +25,11 @@ from Stoner.tools import get_option
 
 def pathsplit(pth):
     """Split pth into a sequence of individual parts with path.split."""
-    dpart, fpart = path.split(pth)
-    if dpart == "":
-        return [fpart]
-    rest = pathsplit(dpart)
-    rest.append(fpart)
-    return rest
+    pth = pathlib.Path(pth)
+    ret = [pth.name]
+    ret.extend([x.name for x in pth.parents])
+    ret.reverse()
+    return [str(x) for x in ret if x != ""]
 
 
 def pathjoin(*args):
@@ -44,11 +43,12 @@ def scan_dir(root):
     """Gather a list of files and directories."""
     dirs = []
     files = []
-    for f in os.listdir(root):
-        if path.isdir(path.join(root, f)):
-            dirs.append(f)
-        elif path.isfile(path.join(root, f)):
-            files.append(f)
+    root = pathlib.Path(root)
+    for f in root.glob("*"):
+        if f.is_dir():
+            dirs.append(f.name)
+        elif f.is_file():
+            files.append(f.name)
     return dirs, files
 
 
