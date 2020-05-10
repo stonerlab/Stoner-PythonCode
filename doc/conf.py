@@ -300,6 +300,7 @@ napoleon_use_rtype = False
 
 automodapi_toctreedirnm='classes'
 autodoc_mock_imports = ['sip', 'PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets']
+autosummary_mock_imports = autodoc_mock_imports
 
 plot_html_show_formats = True
 plot_include_source = True
