@@ -16,12 +16,14 @@ import copy
 import csv
 import re
 from collections.abc import Mapping
+from typing import Union, List, Mapping as MappingType, Callable
 import numpy as np
-from Stoner.compat import index_types, int_types
-from Stoner.tools import all_type
+from ..compat import index_types, int_types
+from ..tools import all_type
+from .Typing import Numeric, Column_Index, Int_Types
 
 
-def add_core(other, newdata):
+def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], newdata: "DataFile") -> "DataFile":
     """Implement the core work of adding other to self and modifying newdata.
 
     Args:
@@ -109,7 +111,7 @@ def add_core(other, newdata):
     return ret
 
 
-def and_core(other, newdata):
+def and_core(other: Union["DataFile", np.ndarray], newdata: "DataFile") -> "DataFile":
     """Implement the core of the & operator, returning data in newdata.
 
     Args:
@@ -183,7 +185,7 @@ def and_core(other, newdata):
     return newdata
 
 
-def mod_core(other, newdata):
+def mod_core(other: Column_Index, newdata: "DataFile") -> "DataFile":
     """Implement the column deletion method."""
     if isinstance(other, index_types):
         newdata.del_column(other)
@@ -193,7 +195,7 @@ def mod_core(other, newdata):
     return newdata
 
 
-def sub_core(other, newdata):
+def sub_core(other: Union[Int_Types, slice, Callable], newdata: "DataFile") -> "DataFile":
     """Worker for the subtraction."""
     if isinstance(other, (slice, int_types)) or callable(other):
         newdata.del_rows(other)
@@ -205,7 +207,7 @@ def sub_core(other, newdata):
     return newdata
 
 
-def copy_into(source, dest):
+def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
     """Copy the data associated with source to dest.
 
     Args:
@@ -240,7 +242,7 @@ class tab_delimited(csv.Dialect):
     lineterminator = "\r\n"
 
 
-def decode_string(value):
+def decode_string(value: str) -> str:
     """Expand a string of column assignments, replacing numbers with repeated characters."""
     pattern = re.compile(r"(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))")
     while True:

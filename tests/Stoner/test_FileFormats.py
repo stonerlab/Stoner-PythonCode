@@ -17,6 +17,7 @@ import pytest
 
 from Stoner.formats.attocube import AttocubeScan
 from Stoner.tools.classes import subclasses
+from Stoner.core.exceptions import StonerUnrecognisedFormat
 from traceback import format_exc
 
 pth=__homepath__/".."
@@ -105,6 +106,14 @@ def test_attocube_scan(tmpdir):
 
     scan1["fwd"].level_image(method="parabola",signal="Amp")
     scan1["bwd"].regrid()
+
+def test_fail_to_load():
+    with pytest.raises(StonerUnrecognisedFormat):
+        d=Data(datadir/"TDMS_File.tdms_index")
+
+def test_arb_class_load():
+    d=Data(datadir/"TDI_Format_RT.txt", filetype="dummy.ArbClass")
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb", __file__])

@@ -9,12 +9,13 @@ from numpy import ndarray
 from ..compat import _pattern_type
 
 # Types used in compat code
+RegExp = _pattern_type
 String_Types = typing.Union[str, bytes]
 Int_Types = int
 Path_Types = typing.Union[String_Types, PurePath]
 
 # Column Indices
-Single_Column_Index = typing.Union[str, bytes, int, _pattern_type]
+Single_Column_Index = typing.Union[str, bytes, int, RegExp]
 Column_Index = typing.Union[typing.Sequence[Single_Column_Index], Single_Column_Index]
 
 # Setas

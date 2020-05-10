@@ -12,12 +12,12 @@ from collections.abc import Mapping
 import PIL
 import numpy as np
 
-import Stoner.Core as Core
-from Stoner.compat import str2bytes, Hyperspy_ok
-from Stoner.core.base import string_to_type
+from ..Core import DataFile
+from ..compat import str2bytes, Hyperspy_ok
+from ..core.exceptions import StonerLoadError
 
 
-class CSVFile(Core.DataFile):
+class CSVFile(DataFile):
 
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
@@ -68,20 +68,23 @@ class CSVFile(Core.DataFile):
                 header_string.index(header_delim)
             except (ValueError, SyntaxError):
                 linecache.clearcache()
-                raise Core.StonerLoadError("No Delimiters in header line")
+                raise StonerLoadError("No Delimiters in header line")
             column_headers = [x.strip() for x in header_string.split(header_delim)]
         else:
             column_headers = ["Column" + str(x) for x in range(np.shape(self.data)[1])]
-            data_test = linecache.getline(self.filename, data_line + 1)
+            try:
+                data_test = linecache.getline(self.filename, data_line + 1)
+            except SyntaxError:
+                raise StonerLoadError("linecache fell over - not a text file?")
             if data_delim is None:
                 for data_delim in ["\t", ",", ";", " "]:
                     if data_delim in data_test:
                         break
                 else:
-                    raise Core.StonerLoadError("No delimiters in data lines")
+                    raise StonerLoadError("No delimiters in data lines")
             elif data_delim not in data_test:
                 linecache.clearcache()
-                raise Core.StonerLoadError("No delimiters in data lines")
+                raise StonerLoadError("No delimiters in data lines")
 
         self.data = np.genfromtxt(self.filename, dtype="float", delimiter=data_delim, skip_header=data_line)
         self.column_headers = column_headers
@@ -129,7 +132,7 @@ class JustNumbersFile(CSVFile):
     _defaults = {"header_line": None, "data_line": 0, "header_delim": None, "data_delim": None}
 
 
-class KermitPNGFile(Core.DataFile):
+class KermitPNGFile(DataFile):
 
     """Loads PNG files with additional metadata embedded in them and extracts as metadata."""
 
@@ -145,7 +148,7 @@ class KermitPNGFile(Core.DataFile):
     mime_type = "image/png"
 
     def _check_signature(self, filename):
-        """Check that this is a PNG file and raie a Core.StonerLoadError if not."""
+        """Check that this is a PNG file and raie a StonerLoadError if not."""
         try:
             with io.open(filename, "rb") as test:
                 sig = test.read(8)
@@ -153,11 +156,11 @@ class KermitPNGFile(Core.DataFile):
             if self.debug:
                 print(sig)
             if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
-                raise Core.StonerLoadError("Signature mismatrch")
+                raise StonerLoadError("Signature mismatrch")
         except Exception:
             from traceback import format_exc
 
-            raise Core.StonerLoadError("Not a PNG file!>\n{}".format(format_exc()))
+            raise StonerLoadError("Not a PNG file!>\n{}".format(format_exc()))
         return True
 
     def _load(self, filename=None, *args, **kargs):
@@ -181,7 +184,7 @@ class KermitPNGFile(Core.DataFile):
                     self.metadata[k] = img.info[k]
                 self.data = np.asarray(img)
         except IOError:
-            raise Core.StonerLoadError("Unable to read as a PNG file.")
+            raise StonerLoadError("Unable to read as a PNG file.")
 
         return self
 
@@ -217,7 +220,7 @@ class KermitPNGFile(Core.DataFile):
 try:  # Optional tdms support
     from nptdms import TdmsFile
 
-    class TDMSFile(Core.DataFile):
+    class TDMSFile(DataFile):
 
         """First stab at writing a file that will import TDMS files."""
 
@@ -249,37 +252,33 @@ try:  # Optional tdms support
             # Open the file and read the main file header and unpack into a dict
             try:
                 f = TdmsFile(self.filename)
-
-                column_headers = []
-                data = np.array([])
-
                 for grp in f.groups():
                     if grp.path == "/":
                         pass  # skip the rooot group
                     elif grp.path == "/'TDI Format 1.5'":
-                        tmp = Core.DataFile(grp.as_dataframe())
+                        tmp = DataFile(grp.as_dataframe())
                         self.data = tmp.data
                         self.column_headers = tmp.column_headers
                         self.metadata.update(grp.properties)
                     else:
-                        tmp = Core.DataFile(grp.as_dataframe())
+                        tmp = DataFile(grp.as_dataframe())
                         self.data = tmp.data
                         self.column_headers = tmp.column_headers
             except Exception:
                 from traceback import format_exc
 
-                raise Core.StonerLoadError("Not a TDMS File \n{}".format(format_exc()))
+                raise StonerLoadError("Not a TDMS File \n{}".format(format_exc()))
 
             return self
 
 
 except ImportError:
-    TDMSFile = Core.DataFile
+    TDMSFile = DataFile
 
 if Hyperspy_ok:
     import hyperspy.api as hs
 
-    class HyperSpyFile(Core.DataFile):
+    class HyperSpyFile(DataFile):
 
         """Wrap the HyperSpy file to map to DataFile."""
 
@@ -326,9 +325,9 @@ if Hyperspy_ok:
             try:
                 signal = hs.load(self.filename)
                 if not isinstance(signal, hs.signals.Signal2D):
-                    raise Core.StonerLoadError("Not a 2D signal object - aborting!")
+                    raise StonerLoadError("Not a 2D signal object - aborting!")
             except Exception as e:  # Pretty generic error catcher
-                raise Core.StonerLoadError("Not readable by HyperSpy error was {}".format(e))
+                raise StonerLoadError("Not readable by HyperSpy error was {}".format(e))
             self.data = signal.data
             self._unpack_meta("", signal.metadata.as_dictionary())
             self._unpack_axes(signal.axes_manager)
@@ -337,4 +336,4 @@ if Hyperspy_ok:
 
 
 else:
-    HyperSpyFile = Core.DataFile
+    HyperSpyFile = DataFile

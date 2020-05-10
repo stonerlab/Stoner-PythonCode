@@ -11,6 +11,18 @@ from dateutil import parser
 import numpy as np
 from numpy import NaN
 import asteval
+from typing import (
+    Union,
+    Any,
+    Dict,
+    Mapping as MappingType,
+    Tuple,
+    List,
+    Callable,
+    Sequence,
+    Iterable as IterableType,
+    Generator,
+)
 
 try:
     import pandas as pd
@@ -20,6 +32,7 @@ except ImportError:
 from ..compat import string_types, int_types, _pattern_type
 from ..tools import isIterable, isComparable
 from .exceptions import StonerAssertionError
+from .Typing import String_Types, RegExp, Filename
 
 try:
     from blist import sorteddict
@@ -31,7 +44,7 @@ except (StonerAssertionError, ImportError):  # Fail if blist not present or Pyth
 _asteval_interp = None
 
 
-def literal_eval(string):
+def literal_eval(string: str) -> Any:
     """Use the asteval module to interpret arbitary strings slightly safely.
 
     Args:
@@ -56,7 +69,7 @@ def literal_eval(string):
         raise ValueError("Cannot interpret {} as valid Python".format(string))
 
 
-def string_to_type(value):
+def string_to_type(value: String_Types) -> Any:
     """Given a string value try to work out if there is a better python type dor the value.
 
     First of all the first character is checked to see if it is a [ or { which would
@@ -107,9 +120,9 @@ class regexpDict(sorteddict):
 
     """An ordered dictionary that permits looks up by regular expression."""
 
-    allowed_keys = (object,)
+    allowed_keys: Tuple = (object,)
 
-    def __lookup__(self, name, multiple=False, exact=False):
+    def __lookup__(self, name: Union[str, RegExp], multiple: bool = False, exact: bool = False) -> str:
         """Lookup name and find a matching key or raise KeyError.
 
         Parameters:
@@ -119,6 +132,8 @@ class regexpDict(sorteddict):
         Keyword Arguments:
             multiple (bool):
                 Return a singl entry ()default, False) or multiple entries
+            exact(bool):
+                Do not do a regular expression search, match the exact string only.
 
         Returns:
             Canonical key matching the specified name.
@@ -163,11 +178,11 @@ class regexpDict(sorteddict):
                 ret = ret[0]
         return ret
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: Any) -> Any:
         """Add a lookup via regular expression when retrieving items."""
         return super(regexpDict, self).__getitem__(self.__lookup__(name))
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name: Any, value: Any) -> None:
         """Overwrite any matching key, or if not found adds a new key."""
         try:
             key = self.__lookup__(name, exact=True)
@@ -177,11 +192,11 @@ class regexpDict(sorteddict):
             key = name
         super(regexpDict, self).__setitem__(key, value)
 
-    def __delitem__(self, name):
+    def __delitem__(self, name: Any) -> None:
         """Delete keys that match by regular expression as well as exact matches."""
         super(regexpDict, self).__delitem__(self.__lookup__(name))
 
-    def __contains__(self, name):
+    def __contains__(self, name: Any) -> bool:
         """Return True if name either is an exact key or matches when interpreted as a regular experssion."""
         try:
             name = self.__lookup__(name)
@@ -189,11 +204,11 @@ class regexpDict(sorteddict):
         except (KeyError, TypeError):
             return False
 
-    def __eq__(self, other):
+    def __eq__(self, other: MappingType) -> bool:
         """Define equals operation in terms of xor operation."""
         return len(self ^ other) == 0 and len(other ^ self) == 0
 
-    def __sub__(self, other):
+    def __sub__(self, other: MappingType) -> "regexpDict":
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -202,7 +217,7 @@ class regexpDict(sorteddict):
         ret = self.__class__({k: self[k] for k in (mk - ok)})
         return ret
 
-    def __xor__(self, other):
+    def __xor__(self, other: MappingType) -> "regexpDict":
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -217,7 +232,7 @@ class regexpDict(sorteddict):
                 ret[mk] = (mv, ov)
         return ret
 
-    def has_key(self, name):
+    def has_key(self, name: Any) -> bool:
         """Key is definitely in dictionary as literal."""
         return super(regexpDict, self).__contains__(name)
 
@@ -263,23 +278,23 @@ class typeHintedDict(regexpDict):
         always returned in alphabetical order.
     """
 
-    allowed_keys = string_types
+    allowed_keys: Tuple = string_types
     # Force metadata keys to be strings
 
-    __regexGetType = re.compile(r"([^\{]*)\{([^\}]*)\}")
+    __regexGetType: RegExp = re.compile(r"([^\{]*)\{([^\}]*)\}")
     # Match the contents of the inner most{}
-    __regexSignedInt = re.compile(r"^I\d+")
+    __regexSignedInt: RegExp = re.compile(r"^I\d+")
     # Matches all signed integers
-    __regexUnsignedInt = re.compile(r"^U / d+")
+    __regexUnsignedInt: RegExp = re.compile(r"^U / d+")
     # Match unsigned integers
-    __regexFloat = re.compile(r"^(Extended|Double|Single)\sFloat")
+    __regexFloat: RegExp = re.compile(r"^(Extended|Double|Single)\sFloat")
     # Match floating point types
-    __regexBoolean = re.compile(r"^Boolean")
+    __regexBoolean: RegExp = re.compile(r"^Boolean")
     __regexString = re.compile(r"^(String|Path|Enum)")
-    __regexTimestamp = re.compile(r"Timestamp")
-    __regexEvaluatable = re.compile(r"^(Cluster||\d+D Array|List)")
+    __regexTimestamp: RegExp = re.compile(r"Timestamp")
+    __regexEvaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
 
-    __types = dict(
+    __types: Dict[str, type] = dict(
         [  # Key order does matter here!
             ("Boolean", bool),
             ("I32", int),
@@ -295,7 +310,7 @@ class typeHintedDict(regexpDict):
     # This is the inverse of the __tests below - this gives
     # the string type for standard Python classes
 
-    __tests = [
+    __tests: List[Tuple] = [
         (__regexSignedInt, int),
         (__regexUnsignedInt, int),
         (__regexFloat, float),
@@ -308,7 +323,7 @@ class typeHintedDict(regexpDict):
     # This is used to work out the correct python class for
     # some string types
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args: Any, **kargs: Any) -> None:
         """Construct the typeHintedDict.
 
         Args:
@@ -332,11 +347,11 @@ class typeHintedDict(regexpDict):
             self[key] = value  # __Setitem__ has the logic to handle embedded type hints correctly
 
     @property
-    def types(self):
+    def types(self) -> Dict:
         """Return the dictrionary of value types."""
         return self._typehints
 
-    def findtype(self, value):
+    def findtype(self, value: Any) -> str:
         """Determine the correct string type to return for common python classes.
 
         Args:
@@ -374,11 +389,11 @@ class typeHintedDict(regexpDict):
                 break
         return typ
 
-    def __mungevalue(self, t, value):
+    def __mungevalue(self, typ: str, value: Any) -> Any:
         """Based on a string type t, return value cast to an appropriate python class.
 
         Args:
-            t (string):
+            typ (string):
                 is a string representing the type
             value (any):
                 is the data value to be munged into the correct class
@@ -393,11 +408,11 @@ class typeHintedDict(regexpDict):
             the associated python class is called with value as its argument.
         """
         ret = None
-        if t == "Invalid Type":  # Short circuit here
+        if typ == "Invalid Type":  # Short circuit here
             return repr(value)
         for (regexp, valuetype) in self.__tests:
-            m = regexp.search(t)
-            if m is not None:
+            matched = regexp.search(typ)
+            if matched is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
                         if isinstance(value, string_types):  # we've got a string already don't need repr
@@ -428,7 +443,7 @@ class typeHintedDict(regexpDict):
                 pass
         return ret
 
-    def _get_name_(self, name):
+    def _get_name_(self, name: Union[str, RegExp]) -> Tuple[str, str]:
         """Check a string name for an embedded type hint and strips it out.
 
         Args:
@@ -447,7 +462,7 @@ class typeHintedDict(regexpDict):
             return search, None
         return name, None
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: Union[str, RegExp]) -> Any:
         """Check whether its been given a typehint in the item name and deals with it appropriately.
 
         Args:
@@ -469,7 +484,7 @@ class typeHintedDict(regexpDict):
             return value[0]
         return {k: v for k, v in zip(name, value)}
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name: Union[str, RegExp], value: Any) -> None:
         """Set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
 
         Arguments:
@@ -501,7 +516,7 @@ class typeHintedDict(regexpDict):
             self._typehints[name] = self.findtype(value)
             super(typeHintedDict, self).__setitem__(name, value)
 
-    def __delitem__(self, name):
+    def __delitem__(self, name: Union[str, RegExp]) -> None:
         """Delete the specified key.
 
         Args:
@@ -513,12 +528,12 @@ class typeHintedDict(regexpDict):
         del self._typehints[name]
         super(typeHintedDict, self).__delitem__(name)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Create a text representation of the dictionary with type data."""
         ret = ["{}:{}:{}".format(repr(key), self.type(key), repr(self[key])) for key in sorted(self)]
         return "\n".join(ret)
 
-    def copy(self):
+    def copy(self) -> "typeHintedDict":
         """Provide a copy method that is aware of the type hinting strings.
 
         This produces a flat dictionary with the type hint embedded in the key name.
@@ -534,7 +549,7 @@ class typeHintedDict(regexpDict):
             super(typeHintedDict, ret).__setitem__(k, copy.copy(self[k]))
         return ret
 
-    def filter(self, name):
+    def filter(self, name: Union[str, RegExp, Callable]) -> None:
         """Filter the dictionary keys by name.
 
         Reduce the metadata dictionary leaving only keys satisfied by name.
@@ -557,7 +572,7 @@ class typeHintedDict(regexpDict):
         for k in rem:
             del self[k]
 
-    def type(self, key):
+    def type(self, key: Union[str, RegExp, Sequence[Union[str, RegExp]]]) -> Union[str, List[str]]:
         """Return the typehint for the given k(s).
 
         This simply looks up the type hinting dictionary for each key it is given.
@@ -576,7 +591,7 @@ class typeHintedDict(regexpDict):
         except TypeError:
             return self._typehints[key]
 
-    def export(self, key):
+    def export(self, key: Union[str, RegExp]) -> str:
         """Export a single metadata value to a string representation with type hint.
 
         In the ASCII based file format, the type hinted metadata is represented
@@ -596,7 +611,7 @@ class typeHintedDict(regexpDict):
             ret = "{}{{{}}}={}".format(key, self.type(key), repr(self[key]))
         return ret
 
-    def export_all(self):
+    def export_all(self) -> List[str]:
         """Return all the entries in the typeHintedDict as a list of exported lines.
 
         Returns:
@@ -607,7 +622,7 @@ class typeHintedDict(regexpDict):
         """
         return [self.export(x) for x in self]
 
-    def import_all(self, lines):
+    def import_all(self, lines: List[str]) -> None:
         """Read multiple lines of strings and tries to import keys from them.
 
         Args:
@@ -617,7 +632,7 @@ class typeHintedDict(regexpDict):
         for line in lines:
             self.import_key(line)
 
-    def import_key(self, line):
+    def import_key(self, line: str) -> None:
         """Import a single key from a string like key{type hint} = value.
 
         This is the inverse of the :py:meth:`typeHintedDict.export` method.
@@ -642,7 +657,7 @@ class metadataObject(MutableMapping):
             so as to aid import and export from CM group LabVIEW code.
     """
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args: Any, **kargs: Any) -> None:
         """Initialise the current metadata attribute."""
         metadata = kargs.pop("metadata", None)
         if metadata is not None:
@@ -650,7 +665,7 @@ class metadataObject(MutableMapping):
         super(metadataObject, self).__init__()
 
     @property
-    def metadata(self):
+    def metadata(self) -> Dict:
         """Read the metadata dictionary."""
         try:
             return self._metadata
@@ -659,7 +674,7 @@ class metadataObject(MutableMapping):
             return self._metadata
 
     @metadata.setter
-    def metadata(self, value):
+    def metadata(self, value: IterableType) -> None:
         """Update the metadata object with type checking."""
         if not isinstance(value, typeHintedDict) and isIterable(value):
             self._metadata = typeHintedDict(value)
@@ -670,19 +685,19 @@ class metadataObject(MutableMapping):
                 "metadata must be something that can be turned into a dictionary, not a {}".format(type(value))
             )
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: Union[str, RegExp]) -> Any:
         """Pass through to metadata dictionary."""
         return self.metadata[name]
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name: Union[str, RegExp], value: Any) -> None:
         """Pass through to metadata dictionary."""
         self.metadata[name] = value
 
-    def __delitem__(self, name):
+    def __delitem__(self, name: Union[str, RegExp]) -> None:
         """Pass through to metadata dictionary."""
         del self.metadata[name]
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """Implement am equality test for metadataObjects."""
         if not isinstance(other, metadataObject):
             return False
@@ -691,34 +706,34 @@ class metadataObject(MutableMapping):
         ret = self.metadata ^ other.metadata
         return len(ret) == 0
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Pass through to metadata dictionary."""
         return len(self.metadata)
 
-    def __iter__(self):
+    def __iter__(self) -> Generator:
         """Pass through to metadata dictionary."""
         return self.metadata.__iter__()
 
-    def keys(self):
+    def keys(self) -> str:
         """Return the keys of the metadata dictionary."""
         for k in self.metadata.keys():
             yield k
 
-    def items(self):
+    def items(self) -> Tuple[str, Any]:
         """Make sure we implement an items that doesn't just iterate over self."""
         for k, v in self.metadata.items():
             yield k, v
 
-    def values(self):
+    def values(self) -> Any:
         """Return the values of the metadata dictionary."""
         for v in self.metadata.values():
             yield v
 
-    def save(self, filename=None, **kargs):
+    def save(self, filename: Filename = None, **kargs: Any):
         """Stub method for a save function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 

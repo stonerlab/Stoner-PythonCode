@@ -89,7 +89,7 @@ def get_file_name_type(
             parts = filetype.split(".")
             mod = ".".join(parts[:-1])
             try:
-                import_module(mod)
+                mod = import_module(mod)
                 filetype = getattr(mod, parts[-1])
             except (ImportError, AttributeError):
                 raise ValueError(f"Unable to import {filetype}")
