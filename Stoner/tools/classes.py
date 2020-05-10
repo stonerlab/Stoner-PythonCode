@@ -4,6 +4,7 @@
 __all__ = ["attributeStore", "typedList", "Options", "get_option", "set_option", "itersubclasses", "subclasses"]
 
 import copy
+from typing import Optional, Dict, Any, List, Iterable as IterableType, Union
 from collections.abc import MutableSequence
 
 from .tests import all_type, isIterable
@@ -18,7 +19,7 @@ _options = {
     "threading": False,
 }
 
-_subclasses = None  # Cache for DataFile Subclasses
+_subclasses: Optional[Dict] = None  # Cache for DataFile Subclasses
 
 
 class attributeStore(dict):
@@ -28,18 +29,18 @@ class attributeStore(dict):
     Used to implement the mapping of column types to indices in the setas attriobutes.
     """
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args: Any, **kargs: Any) -> None:
         """Initialise from a dictionary."""
         if len(args) == 1 and isinstance(args[0], dict):
             self.update(args[0])
         else:
             super(attributeStore, self).__init__(*args, **kargs)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: Any) -> None:
         """Set an attribute (equivalent to setting an item)."""
         self[name] = value
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         """Get an attrbute (equivalent to getting an item)."""
         try:
             return self[name]
@@ -47,7 +48,7 @@ class attributeStore(dict):
             raise AttributeError
 
 
-def itersubclasses(cls, _seen=None):
+def itersubclasses(cls: type, _seen: Optional[set] = None) -> List[type]:
     """Iterate over subclasses of a given class.
 
     Generator over all subclasses of a given class, in depth first order.
@@ -85,7 +86,7 @@ def itersubclasses(cls, _seen=None):
     return list(_seen)
 
 
-def subclasses(cls=None):  # pylint: disable=no-self-argument
+def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-argument
     """Return a list of all in memory subclasses of this DataFile."""
     global _subclasses
     if cls is None:
@@ -114,7 +115,7 @@ class typedList(MutableSequence):
 
     """Subclass list to make setitem enforce  strict typing of members of the list."""
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args: Any, **kargs: Any) -> None:
         """Construct the typedList."""
         self._store = []
         if (not args) or not (isinstance(args[0], type) or (isinstance(args[0], tuple) and all_type(args[0], type))):
@@ -131,7 +132,7 @@ class typedList(MutableSequence):
                 raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
             raise TypeError(f"List should be initialised with elements that are all of type {self._type}")
 
-    def __add__(self, other):
+    def __add__(self, other: IterableType) -> "typedList":
         """Add operator works like ordinary lists."""
         if isIterable(other):
             new = copy.deepcopy(self)
@@ -139,40 +140,40 @@ class typedList(MutableSequence):
             return new
         return NotImplemented
 
-    def __iadd__(self, other):
+    def __iadd__(self, other: IterableType) -> "typedList":
         """Inplace-add works like a list."""
         if isIterable(other):
             self.extend(other)
             return self
         return NotImplemented
 
-    def __radd__(self, other):
+    def __radd__(self, other: IterableType) -> "typedList":
         """Support add on the right like a list."""
         if isinstance(other, list):
             return other + self._store
         return NotImplemented
 
-    def __eq__(self, other):
+    def __eq__(self, other: List) -> bool:
         """Equality test."""
         return self._store == other
 
-    def __delitem__(self, index):
+    def __delitem__(self, index: int) -> None:
         """Remove an item like in a list."""
         del self._store[index]
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> Any:
         """Get an item like in a list."""
         return self._store[index]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Implement the len function like a list."""
         return len(self._store)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Textual representation like a list."""
         return repr(self._store)
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name: Union[int, IterableType, slice], value: Any) -> None:
         """Sett an item and do some type checks."""
         if isIterable(name) or isinstance(name, slice):
             if not isIterable(value) or not all_type(value, self._type):
@@ -185,33 +186,35 @@ class typedList(MutableSequence):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store[name] = value
 
-    def extend(self, other):  # pylint:  disable=arguments-differ
+    def extend(self, other: IterableType) -> None:  # pylint:  disable=arguments-differ
         """Extend the list and do some type checking."""
         if not isIterable(other) or not all_type(other, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store.extend(other)
 
-    def index(self, search, start=0, end=None):  # pylint:  disable=arguments-differ
+    def index(
+        self, search: Any, start: int = 0, end: Optional[int] = None
+    ) -> int:  # pylint:  disable=arguments-differ
         """Index works like a list except we support Python 3 optional parameters everywhere."""
         if end is None:
             end = len(self._store)
         return self._store[start:end].index(search) + start
 
-    def insert(self, index, obj):  # pylint:  disable=arguments-differ
+    def insert(self, index: int, obj: Any) -> None:  # pylint:  disable=arguments-differ
         """Insert an element and do some type checking."""
         if not isinstance(obj, self._type):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store.insert(index, obj)
 
 
-def get_option(name):
+def get_option(name: str) -> bool:
     """Return the option value."""
     if name not in _options.keys():
         raise IndexError("{} is not a valid package option".format(name))
     return _options[name]
 
 
-def set_option(name, value):
+def set_option(name: str, value: bool) -> None:
     """Set a global package option.
 
     Args:
@@ -243,7 +246,7 @@ class Options:
         """Options class wraps the get/set_option calls into an object orientated interface."""
         self._defaults = copy.copy(_options)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: bool) -> None:
         """Set an option value."""
         if name.startswith("_"):
             return super(Options, self).__setattr__(name, value)
@@ -253,23 +256,23 @@ class Options:
             raise ValueError("{} takes a {} not a {}".format(name, type(_options[name]), type(value)))
         set_option(name, value)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> bool:
         """Lookup an option value."""
         if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
         return get_option(name)
 
-    def __delattr__(self, name):
+    def __delattr__(self, name: str) -> None:
         """Clear and Option value back to defaults."""
         if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
         set_option(name, self._defaults[name])
 
-    def __dir__(self):
+    def __dir__(self) -> List[str]:
         """Return a list of the aviailable options."""
         return list(_options.keys())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Make a standard text representation of Options class."""
         s = "Stoner Package Options\n"
         s += "~~~~~~~~~~~~~~~~~~~~~~\n"

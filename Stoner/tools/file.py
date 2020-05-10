@@ -4,13 +4,15 @@ from importlib import import_module
 import io
 import pathlib
 from traceback import format_exc
-from typing import Union, Sequence, Dict, Type
+from typing import Union, Sequence, Dict, Type, Tuple, Optional
 
 from ..compat import string_types
 from .widgets import fileDialog
 from .classes import subclasses
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..core.base import regexpDict, metadataObject
+
+from ..core.Typing import Filename
 
 __all__ = ["file_dialog", "get_file_name_type", "auto_load_classes", "get_mime_type"]
 
@@ -21,10 +23,7 @@ except ImportError:
 
 
 def file_dialog(
-    mode: str,
-    filename: Union[pathlib.Path, str, bool],
-    filetype: Union[Type[metadataObject], str],
-    baseclass: Type[metadataObject],
+    mode: str, filename: Filename, filetype: Union[Type[metadataObject], str], baseclass: Type[metadataObject],
 ) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
     """Create a file dialog box for loading or saving ~b DataFile objects.
 
@@ -77,7 +76,9 @@ def file_dialog(
     return filename if filename else None
 
 
-def get_file_name_type(filename, filetype, parent):
+def get_file_name_type(
+    filename: Filename, filetype: Union[Type[metadataObject], str], parent: Type[metadataObject]
+) -> Tuple[pathlib.PurePath, Type[metadataObject]]:
     """Rationalise a filename and filetype."""
     if isinstance(filename, string_types):
         filename = pathlib.Path(filename)
@@ -105,7 +106,13 @@ def get_file_name_type(filename, filetype, parent):
     return filename, filetype
 
 
-def auto_load_classes(filename, baseclass, debug=False, args=None, kargs=None):
+def auto_load_classes(
+    filename: Filename,
+    baseclass: Type[metadataObject],
+    debug: bool = False,
+    args: Optional[Tuple] = None,
+    kargs: Optional[Dict] = None,
+) -> Type[metadataObject]:
     """Work through subclasses of parent to find one that will load this file."""
     mimetype = get_mime_type(filename, debug=debug)
     args = args if args is not None else ()
@@ -153,7 +160,7 @@ def auto_load_classes(filename, baseclass, debug=False, args=None, kargs=None):
     return test
 
 
-def get_mime_type(filename, debug=False):
+def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Optional[str]:
     """Get the mime type of the file if filemagic is available."""
     if filemagic is not None:
         with filemagic(flags=MAGIC_MIME_TYPE) as m:

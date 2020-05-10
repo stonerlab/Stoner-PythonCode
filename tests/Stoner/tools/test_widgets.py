@@ -11,7 +11,7 @@ import pytest
 from pathlib import Path
 
 import Stoner
-ret_pth = Path(__file__)/".."/".."/".."/".."/"sample-data"/"TDI_Format_RT.txt"
+ret_pth = Stoner.__homepath__/".."/"sample-data"/"TDI_Format_RT.txt"
 
 #Horrible hack to patch QFileDialog  for testing
 

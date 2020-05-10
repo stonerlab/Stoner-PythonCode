@@ -5,6 +5,7 @@ Code based on the PyQt5 Tutorial code,
 """
 __all__ = ["fileDialog"]
 import pathlib
+from typing import Any, Union, Optional, Dict, Type
 from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
 
 
@@ -35,7 +36,7 @@ class App(QApplication):
         },
     }
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args: Any, **kargs: Any) -> None:
         super().__init__([""], *args, **kargs)
         self.title = "PyQt5 file dialogs - pythonspot.com"
         self.left = 10
@@ -44,7 +45,7 @@ class App(QApplication):
         self.height = 480
         self.initUI()
 
-    def initUI(self):
+    def initUI(self) -> None:
         self.dialog = QWidget()
         self.dialog.title = "PyQt5 file dialogs - pythonspot.com"
         self.dialog.left = 10
@@ -55,7 +56,13 @@ class App(QApplication):
         self.dialog.setWindowTitle(self.title)
         self.dialog.setGeometry(self.left, self.top, self.width, self.height)
 
-    def openDialog(self, title=None, start="", patterns=None, mode="OpenFile"):
+    def openDialog(
+        self,
+        title: Optional[str] = None,
+        start: Union[str, pathlib.Path] = "",
+        patterns: Optional[Dict] = None,
+        mode: str = "OpenFile",
+    ) -> Optional[pathlib.Path]:
         """Create a dialog box for selecting filenames or directories.
 
         Keyword Arguments:
@@ -107,4 +114,4 @@ class App(QApplication):
         return ret
 
 
-fileDialog = App()
+fileDialog: Type[App] = App()

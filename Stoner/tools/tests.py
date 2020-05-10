@@ -12,14 +12,16 @@ __all__ = [
     "isProperty",
     "isTuple",
 ]
+from typing import Optional, Iterable as IterableType, Tuple, Union, Any
 
 from collections.abc import Iterable
 from numpy import ndarray, dtype, isnan, logical_and  # pylint: disable=redefined-builtin
 
 from ..compat import string_types
+from ..core.Typing import Numeric, NumericArray
 
 
-def all_size(iterator, size=None):
+def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -> bool:
     """Check whether each element of *iterator* is the same length/shape.
 
     Arguments:
@@ -47,7 +49,7 @@ def all_size(iterator, size=None):
     return ret
 
 
-def all_type(iterator, typ):
+def all_type(iterator: IterableType, typ: type) -> bool:
     """Determine if an interable omnly contains a common type.
 
     Arguments:
@@ -78,7 +80,7 @@ def all_type(iterator, typ):
     return ret
 
 
-def isAnyNone(*args):
+def isAnyNone(*args: Any) -> bool:
     """Intelligently check whether any of the inputs are None."""
     for arg in args:
         if arg is None:
@@ -86,7 +88,7 @@ def isAnyNone(*args):
     return False
 
 
-def isComparable(v1, v2):
+def isComparable(v1: NumericArray, v2: NumericArray) -> bool:
     """Return true if v1 and v2 can be compared sensibly.
 
     Args:
@@ -107,7 +109,7 @@ def isComparable(v1, v2):
             return False
 
 
-def isIterable(value):
+def isIterable(value: Any) -> bool:
     """Chack to see if a value is iterable.
 
     Args:
@@ -121,12 +123,12 @@ def isIterable(value):
     return isinstance(value, Iterable)
 
 
-def isLikeList(value):
+def isLikeList(value: Any) -> bool:
     """Return True if value is an iterable but not a string."""
     return isIterable(value) and not isinstance(value, string_types)
 
 
-def isNone(iterator):
+def isNone(iterator: Optional[IterableType]) -> bool:
     """Return True if input is None or an empty iterator, or an iterator of None.
 
     Args:
@@ -156,7 +158,7 @@ def isNone(iterator):
     return ret
 
 
-def isProperty(obj, name):
+def isProperty(obj: Any, name: str) -> bool:
     """Check whether an attribute of an object or class is a property.
 
     Args:
@@ -178,7 +180,7 @@ def isProperty(obj, name):
     return hasattr(obj, name) and isinstance(getattr(obj, name), property)
 
 
-def isTuple(obj, *args, **kargs):
+def isTuple(obj: Any, *args: type, strict: bool = True) -> bool:
     """Determine if obj is a tuple of a certain signature.
 
     Args:
@@ -195,7 +197,6 @@ def isTuple(obj, *args, **kargs):
         (bool):
             True if obj is a matching tuple.
     """
-    strict = kargs.pop("strict", True)
     if not isinstance(obj, tuple):
         return False
     if args and len(obj) != len(args):

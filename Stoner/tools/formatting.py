@@ -4,9 +4,11 @@
 __all__ = ["format_error", "format_val", "quantize", "tex_escape", "ordinal"]
 
 import re
+from typing import Optional, Any
 from html import escape as html_escape
 from numpy import log10, floor, abs, isnan, round  # pylint: disable=redefined-builtin
 from ..compat import bytes2str
+from ..core.Typing import Numeric, NumericArray
 
 prefs = {
     "text": {
@@ -66,7 +68,7 @@ prefs = {
 }
 
 
-def format_error(value, error=None, **kargs):
+def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) -> str:
     r"""Format answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
 
     Args:
@@ -180,7 +182,7 @@ def format_error(value, error=None, **kargs):
     return fmt_str.format(value, error)
 
 
-def format_val(value, **kargs):
+def format_val(value: Numeric, **kargs: Any) -> str:
     r"""Format a number as an SI quantity.
 
     Args:
@@ -272,7 +274,7 @@ def format_val(value, **kargs):
     return ret
 
 
-def quantize(number, quantum):
+def quantize(number: NumericArray, quantum: Numeric) -> NumericArray:
     """Round a number to the nearest multiple of a quantum.
 
     Args:
@@ -286,7 +288,7 @@ def quantize(number, quantum):
     return round(number / quantum) * quantum
 
 
-def tex_escape(text):
+def tex_escape(text: str) -> str:
     """Escapes spacecial text charcters in a string.
 
     Parameters:
@@ -317,7 +319,7 @@ def tex_escape(text):
     return regex.sub(lambda match: conv[match.group()], text)
 
 
-def ordinal(value):
+def ordinal(value: int) -> str:
     """Format an integer into an ordinal string.
 
     Args:
