@@ -18,6 +18,7 @@
    Working with Lots of Data Files <datafolder>
    Working with images <image>
    Cookbook <cookbook>
+   Converting Scripts from older versions <upgrade>
    Developing and Extending <developer>
    Credits <credits>
 

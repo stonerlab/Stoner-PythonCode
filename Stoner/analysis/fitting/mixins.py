@@ -782,20 +782,32 @@ class FittingMixin:
         """Annotate the DataFile object with the curve_fit result."""
         if isinstance(func, (lmfit.Model)):
             f_name = func.__class__.__name__
+            labels = getattr(func.__class__, "labels", None)
+            units = getattr(func.__class__, "units", None)
             func = func.func
         elif isclass(func) and issubclass(func, lmfit.Model):
             f_name = func.__name__
+            labels = getattr(func, "labels", None)
+            units = getattr(func, "units", None)
             func = func.func
         elif isinstance(func, (sp.odr.Model)):
             f_name = func.meta["name"]
+            labels = getattr(func, "labels", None)
+            units = getattr(func, "units", None)
             func = func.func
         else:
             f_name = func.__name__
+            labels = getattr(func, "labels", None)
+            units = getattr(func, "units", None)
         if prefix is not None:
             f_name = prefix
 
         args = getfullargspec(func)[0]  # pylint: disable=W1505
         del args[0]
+        if labels is None:
+            labels = args
+        if units is None:
+            units = [""] * len(args)
         if isinstance(fit, _curve_fit_result):  # Come from curve_fit
             popt = fit.popt
             perr = fit.perr
@@ -824,10 +836,11 @@ class FittingMixin:
         else:
             raise RuntimeError("Unable to understand {} as a fitting result".format(type(fit)))
 
-        for val, err, name in zip(popt, perr, args):
+        for val, err, name, label, unit in zip(popt, perr, args, labels, units):
             self["{}:{}".format(f_name, name)] = val
             self["{}:{} err".format(f_name, name)] = err
-            self["{}:{} label".format(f_name, name)] = self.metadata.get("{}:{} label".format(f_name, name), name)
+            self["{}:{} label".format(f_name, name)] = self.metadata.get("{}:{} label".format(f_name, name), label)
+            self["{}:{} unit".format(f_name, name)] = self.metadata.get("{}:{} unit".format(f_name, name), unit)
 
         if not isinstance(header, string_types):
             header = "Fitted with " + func.__name__

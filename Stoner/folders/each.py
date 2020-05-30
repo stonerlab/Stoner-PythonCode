@@ -178,6 +178,24 @@ class Item:
                 res &= set(dir(d))
         return list(res)
 
+    def __delattr__(self, name):
+        """Handle removing an attribute from the folder, including proxied attributes."""
+        if name in dir(self._folder.instance) or (
+            len(self._folder) and hasattr(self._folder[0], name)
+        ):  # This is an instance attribute
+            # If we're tracking the object attributes and have a type set, then we can store this for adding to all
+            # loaded objects on read.
+            del self._folder._object_attrs[name]
+            for _, this in self._folder.loaded:
+                try:
+                    delattr(this, name)
+                except AttributeError:
+                    pass
+        elif name in self._folder._instance_attrs:
+            del self._folder._instance_attrs[name]
+        else:
+            raise AttributeError("Unrecognised attribute {}".format(name))
+
     def __getattr__(self, name):
         """Handle some special case attributes that provide alternative views of the objectFolder.
 

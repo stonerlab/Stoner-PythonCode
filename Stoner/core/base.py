@@ -13,11 +13,13 @@ from numpy import NaN
 import asteval
 from typing import (
     Union,
+    Optional,
     Any,
     Dict,
     Mapping as MappingType,
     Tuple,
     List,
+    Set,
     Callable,
     Sequence,
     Iterable as IterableType,
@@ -100,7 +102,7 @@ def string_to_type(value: String_Types) -> Any:
                     try:
                         ret = trial(value)
                         break
-                    except (ValueError, OverflowError):
+                    except (ValueError, OverflowError, TypeError):
                         continue
                 else:
                     ret = None
@@ -122,7 +124,9 @@ class regexpDict(sorteddict):
 
     allowed_keys: Tuple = (object,)
 
-    def __lookup__(self, name: Union[str, RegExp], multiple: bool = False, exact: bool = False) -> str:
+    def __lookup__(
+        self, name: Union[str, RegExp], multiple: bool = False, exact: bool = False
+    ) -> Union[Any, List[Any]]:
         """Lookup name and find a matching key or raise KeyError.
 
         Parameters:
@@ -204,8 +208,10 @@ class regexpDict(sorteddict):
         except (KeyError, TypeError):
             return False
 
-    def __eq__(self, other: MappingType) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Define equals operation in terms of xor operation."""
+        if not isinstance(other, Mapping):
+            return NotImplemented
         return len(self ^ other) == 0 and len(other ^ self) == 0
 
     def __sub__(self, other: MappingType) -> "regexpDict":
@@ -217,7 +223,7 @@ class regexpDict(sorteddict):
         ret = self.__class__({k: self[k] for k in (mk - ok)})
         return ret
 
-    def __xor__(self, other: MappingType) -> "regexpDict":
+    def __xor__(self, other: MappingType) -> Union["regexpDict", Set[Any]]:
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -226,7 +232,7 @@ class regexpDict(sorteddict):
         if mk != ok:  # Keys differ
             return mk ^ ok
         # Do values differ?
-        ret = dict()
+        ret = self.__class__()
         for (mk, mv), (ok, ov) in zip(sorted(self.items()), sorted(other.items())):
             if np.any(mv != ov) and isComparable(mv, ov):
                 ret[mk] = (mv, ov)
@@ -443,7 +449,7 @@ class typeHintedDict(regexpDict):
                 pass
         return ret
 
-    def _get_name_(self, name: Union[str, RegExp]) -> Tuple[str, str]:
+    def _get_name_(self, name: Union[str, RegExp]) -> Tuple[str, Optional[str]]:
         """Check a string name for an embedded type hint and strips it out.
 
         Args:

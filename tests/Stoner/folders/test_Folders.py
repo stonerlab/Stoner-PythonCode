@@ -76,6 +76,24 @@ def test_discard_earlier():
     fldr3.keep_latest()
     assert list(fldr2.ls)==list(fldr3.ls),"Folder.keep_latest didn't do the same as discard_earliest in constructor."
 
+
+def test_clear_and_attrs():
+    fldr=DataFolder(datadir,debug=False,recursive=False)
+    fldr2=fldr.clone
+    fldr2.clear()
+    assert fldr2.shape==(0, {}), "Failed to clear"
+    fldr2.files=fldr.files
+    fldr2.groups=fldr.groups
+    assert fldr2.shape==fldr.shape,"Failed to write to files and groups attri"
+    fldr.each.debug=True
+    assert fldr[0].debug, "Setting an attribute on fldr didn't propagate to the contents"
+    del fldr.each.debug
+    assert not hasattr(fldr[0],"hello"),"Failed to delete attribute from DataFolder"
+    with pytest.raises(AttributeError):
+        del fldr.debug
+
+
+
 def test_Operators():
     fldr=DataFolder(datadir,debug=False,recursive=False)
     fl=len(fldr)

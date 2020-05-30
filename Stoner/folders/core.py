@@ -861,14 +861,6 @@ class baseFolder(MutableSequence):
                 continue
             yield member
 
-    def next(self):
-        """Python 2.7 style iterator function."""
-        for n in self.__names__():
-            member = self.__getter__(n, instantiate=True)
-            if member is None:
-                continue
-            yield member
-
     def __rmatmul__(self, other):
         """Implement callable@DataFolder as a generic iterate a function over DataFolder members.
 
@@ -944,19 +936,7 @@ class baseFolder(MutableSequence):
             "key",
         ]:  # pass ddirectly through for private attributes
             raise AttributeError("{} is a protected attribute and may not be deleted!".format(name))
-        if (
-            hasattr(self, "_object_attrs")
-            and hasattr(self, "_type")
-            and name in dir(self._type() and not callable(getattr(self._type, name)))
-        ):
-            # If we're tracking the object attributes and have a type set, then we can store this for adding to all
-            # loaded objects on read.
-            del self._object_attrs[name]
-        elif name in self._instance_attrs:
-            del self._instance_attrs[name]
-            super(baseFolder, self).__delattr__(name)
-        else:
-            raise AttributeError("Unrecognised attribute {}".format(name))
+        super(baseFolder, self).__delattr__(name)
 
     ###########################################################################
     ###################### Private Methods ####################################
