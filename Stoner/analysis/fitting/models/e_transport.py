@@ -15,7 +15,29 @@ except ImportError:
     Model = object
     update_param_vals = None
 
+try:  # numba is an optional dependency
+    from numba import jit, float64, int64
+except ImportError:
 
+    def jit(func, *_):
+        """Null decorator function."""
+        return func
+
+    class _dummy:
+
+        """A class that does nothing so that float64 can be an instance of it safely."""
+
+        def __call__(self, *args):
+            return self
+
+        def __getitem__(self, *args):
+            return self
+
+    float64 = _dummy()
+    int64 = _dummy()
+
+
+@jit(float64(float64, int64))
 def _bgintegrand(x, n):
     """Calculate the integrand for the Bloch Grueneisen model."""
     return x ** n / ((np.exp(x) - 1) * (1 - np.exp(-x)))

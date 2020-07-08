@@ -433,13 +433,16 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
     """
     single_fit = True
     if p0 is None:  # First guess the p0 values using the model
+        for p_name in model.param_names:
+            if p_name in kargs:
+                model.set_param_hint(p_name, value=kargs.get(p_name))
         try:
             p0 = model.guess(ydata, x=xdata)
         except Exception:  # Don't be fussy here
             p0 = lmfit.Parameters()
-        for p_name in model.param_names:
-            if p_name in kargs:
-                p0[p_name] = lmfit.Parameter(name=p_name, value=kargs.pop(p_name))
+            for p_name in model.param_names:
+                if p_name in kargs:
+                    p0[p_name] = lmfit.Parameter(name=p_name, value=kargs.get(p_name))
         single_fit = True
 
     if callable(p0):
@@ -803,7 +806,10 @@ class FittingMixin:
             f_name = prefix
 
         args = getfullargspec(func)[0]  # pylint: disable=W1505
-        del args[0]
+        if args[0] == "self":
+            del args[0]
+        if len(args) > 0:
+            del args[0]
         if labels is None:
             labels = args
         if units is None:

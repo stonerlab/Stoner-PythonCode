@@ -78,14 +78,14 @@ def guess(self, data, **kwargs):
     for k, p in zip(
         params,
         [
-            0.25,
-            x[i1],
             data[i1] / np.sqrt(2),
+            x[i1],
+            0.25,
             0.5,
             data[i1],
-            0.25,
-            x[i2],
             data[i2] / np.sqrt(2),
+            x[i2],
+            0.25,
             0.5,
             data[i2],
         ],
@@ -98,7 +98,6 @@ def guess(self, data, **kwargs):
 double_peak.guess = MethodType(guess, double_peak)
 
 # Set the initial values with sensible starting points guessed from the data
-
 # Fit the intensity values and add to thedata file
 res = hist.lmfit(double_peak, output="report")
 hist.add_column(res.init_fit, header="Initial Fit")

@@ -17,8 +17,8 @@
    :target: http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg
-   :target: https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode
+.. image:: https://zenodo.org/badge/10057055.svg
+   :target: https://zenodo.org/badge/latestdoi/10057055
 
 
 Introduction

@@ -7,16 +7,9 @@
 import re
 
 import numpy as np
-from matplotlib.pyplot import text
 
 from Stoner import Data
-from Stoner.Util import format_error
-from Stoner.analysis.fitting.models.e_transport import blochGrueneisen
-
-
-def bg_wrapper(T, tD, r0, A):
-    """Fit wrapper to reduce number of unknowns."""
-    return blochGrueneisen(T, tD, r0, A, 5)
+from Stoner.analysis.fitting.models.e_transport import BlochGrueneisen
 
 
 def select_col(data, message):
@@ -35,9 +28,11 @@ def select_col(data, message):
 # Load a datafile
 d = Data(False)
 
+# These regular expressions are intended to match a tempeerature and resistance coluimns
 t_pat = [re.compile(r"^[Tt][\s\(]"), re.compile(r"[Tt]emp")]
 r_pat = [re.compile(r"[Rr]ho"), re.compile(r"[Rr]es")]
 
+# Search for each column
 for pat in t_pat:
     t_col = d.find_col(pat, force_list=True)
     if len(t_col) == 1:
@@ -54,37 +49,24 @@ for pat in r_pat:
 else:
     r_col = select_col(d, "Select column for resistance data :")
 
-rho0 = d.min(r_col)[0]
-A = rho0 * 40
-thetaD = 300.0
-p0 = [thetaD, rho0, A]
-print("Initial guesses: {}".format(p0))
+# Configure the columns in the setas attribute
+d.mask = np.isnan(d.data)
+d.del_rows()
+d.setas(x=t_col, y=r_col)
+# Initialise the model, set the n parmeter to be fixed and show our guesses
+model = BlochGrueneisen()
+model.param_hints["n"] = {"vary": False, "value": 5}
+print("Initial guesses: {}".format(model.guess(d.y, x=d.x)))
 
-d.del_rows(0, lambda x, r: np.any(np.isnan(r)))
+# Do the fit
+popt, pcov = d.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
 
-popt, pcov = d.curve_fit(
-    bg_wrapper, xcol=t_col, ycol=r_col, p0=p0, absolute_sigma=False
-)
-perr = np.sqrt(np.diag(pcov))
-
-labels = [r"\theta_D", r"\rho_0", r"A"]
-units = ["K", r"\Omega m", r"\Omega m"]
-
-annotation = [
-    "${}$: {}\n".format(l, format_error(v, e, latex=True, mode="eng", units=u))
-    for l, v, e, u in zip(labels, popt, perr, units)
-]
-annotation = "\n".join(annotation)
-popt = np.append(popt, 5)
-T = d.column(t_col)
-d.add_column(blochGrueneisen(T, *popt), header=r"Bloch")
-
-d.plot_xy(
-    t_col,
-    [r_col, "Bloch"],
-    ["ro", "b-"],
-    label=["Data", r"$Bloch-Gr\"ueisen Fit$"],
+# Add the Bloch column to the setas
+d.setas(Bloch="y", reset=False)
+# Make a plot
+d.plot(
+    fmt=["r.", "b-"], label=["Data", r"$Bloch-Gr\"ueisen Fit$"], markersize=1,
 )
 d.xlabel = "Temperature (K)"
 d.ylabel = "Resistance ($\Omega$)"
-text(0.05, 0.65, annotation, transform=d.axes[0].transAxes)
+d.annotate_fit(model, x=0.05, y=0.35, mode="eng")

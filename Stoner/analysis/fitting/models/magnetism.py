@@ -17,8 +17,11 @@ __all__ = [
 
 import numpy as np
 import scipy.constants as cnst
+from scipy.special import zeta, gamma
 from scipy.constants import k, mu_0, e, electron_mass, hbar
 from scipy.signal import savgol_filter
+
+mu_B = cnst.physical_constants["Bohr magneton"][0]
 
 try:
     from lmfit import Model
@@ -161,42 +164,84 @@ class BlochLaw(Model):
 
     Args:
         T (array like):
-            Temperatures at which M has been measured (Probably in K)
-        Ms (float):
-            The magnetisation at 0K (in whtaever units M is being measured in)
-        Tc (float):
-            Curie temperature in K
+            Temperature (K)
+        g (float):
+            Lande g-factor
+        A(float):
+            The echange stiffness (Jm^{-1})
+        Ms(float):
+            Saturation moment (Am^{-1})
+
 
     Returns:
         (array like):
-            Calculated values of M
+            Magnetisation values corresponding to the given temperatures.
 
     Notes:
-        This fits the Bloch Law as given by:
+        Calculates :math:`1 - \frac{\left((\Gamma(3/2) \zeta(3/2)\right)}
+                                          {(4\pi^2)}  (v_{ws} / S) (k_B T / D)^{3/2}`
 
-            :math:`M(T) = M_s\left[1 - \left(\frac{T}{T_C}\right)^\frac{3}{2}\right]`
-
-        This expression is only really valid in the low temperature regime.
+        This is the bulk version of Bloch's law which is not fully correct for thin films. Model adapted from code
+        by Dr Joseph Barker <j.barker@leeds.ac.uk>
     """
 
-    display_names = ["M_s", "T_C"]
-    units = ["emu/cc", "K"]
+    display_names = ["g", "A", "M_s"]
+    units = ["", "Jm^{-1}", "Am^{-1}"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(BlochLaw, self).__init__(blochLaw, *args, **kwargs)
+        super(BlochLaw, self).__init__(self.blochs_law_bulk, *args, **kwargs)
+        self.set_param_hint("g", vary=False, value=2.0)
+        self.set_param_hint("A", vary=True, min=0)
+        self.set_param_hint("Ms", vary=True, min=0)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+
+    def blochs_law_bulk(self, T, g, A, Ms):
+        r"""Bloch's Law in bulk systems.
+
+        Args:
+            T (array like):
+                Temperature (K)
+            g (float):
+                Lande g-factor
+            A(float):
+                The echange stiffness (Jm^{-1})
+            Ms(float):
+                Saturation moment (Am^{-1})
+
+        Returns:
+            (array like):
+                Magnetisation values corresponding to the given temperatures.
+
+        Notes:
+            Calculates :math:`1 - \frac{\left((\Gamma(3/2) \zeta(3/2)\right)}
+                                              {(4\pi^2)}  (v_{ws} / S) (k_B T / D)^{3/2}`
+        """
+        Tp = (k * Ms * T / (2 * g * mu_B * A)) ** 1.5
+        prefactor = self.prefactor * g * mu_B
+        ret = Ms - (prefactor * Tp)
+        return ret
 
     def guess(self, data, x=None, **kwargs):
         """Guess some starting values."""
         Ms = data.max() * 1.001
         if x is not None:
-            y = np.log(1 - data / Ms)
-            X = np.log(x)
-            d2 = np.polyfit(X, y, 1)[1]
-            x0 = np.exp(d2 * 2 / 3)
+            Mx_max = data[x.argmax()]
+            y = ((Ms - Mx_max) / (self.prefactor * 2 * mu_B)) ** (2.0 / 3)
+            Ag = Ms * k * x.max() / (y * 2 * mu_B)
         else:
-            x0 = len(data)
-        pars = self.make_params(Ms=Ms, Tc=x0)
+            Ag = 1.0
+
+        guesses = {}
+        guesses["Ms"] = Ms
+        if self.param_hints["A"]["vary"]:
+            A = Ag / self.param_hints["g"]["value"]
+            guesses["A"] = A
+        elif self.param_hints["g"]["vary"]:
+            g = Ag / self.param_hints["A"]["value"]
+            guesses["g"] = g
+
+        pars = self.make_params(**guesses)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 

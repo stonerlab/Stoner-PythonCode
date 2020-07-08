@@ -27,12 +27,16 @@ d.curve_fit(
     bounds=lambda x, r: not isnan(r.y),
 )
 
-d.lmfit(
-    BlochLaw,
+model = BlochLaw()
+
+fit = d.lmfit(
+    model,
     result=True,
     header="lmfit",
     prefix="lmfit",
+    output="report",
     bounds=lambda x, r: not isnan(r.y),
+    g=2.01,
 )
 
 
