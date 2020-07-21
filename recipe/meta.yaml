@@ -4,10 +4,17 @@
 
 package:
   name: '{{ name|lower }}'
+<<<<<<< HEAD
   version: '0.10.0dev'
 
 source:
   git_tag: master
+=======
+  version: '0.9.7'
+
+source:
+  git_tag: v0.9.7
+>>>>>>> a57b1454... Fix STXMImage load in ImageFolder
   git_url: https://github.com/stonerlab/Stoner-PythonCode.git
 build:
   number: 0
