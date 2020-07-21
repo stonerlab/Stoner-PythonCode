@@ -15,7 +15,7 @@ import h5py
 import numpy as _np_
 from .Core import StonerLoadError, metadataObject, DataFile
 from . import Data, DataFolder
-from .Image.core import ImageFile
+from .Image.core import ImageFile, ImageArray
 import os.path as path
 import os
 
@@ -639,12 +639,20 @@ class STXMImage(ImageFile):
         if len(args) > 0 and isinstance(args[0], string_types):
             d = SLS_STXMFile(args[0])
             args = args[1:]
+            super(STXMImage, self).__init__(*args, **kargs)
+            self.image = d.data
+            self.metadata.update(d.metadata)
+            self.filename = d.filename
+        elif len(args) > 0 and isinstance(args[0], ImageFile):
+            src = args[0]
+            args = args[1:]
+            super(STXMImage, self).__init__(src.image, *args, **kargs)
+        elif len(args) > 0 and isinstance(args[0], ImageArray):
+            src = args[0]
+            args = args[1:]
+            super(STXMImage, self).__init__(src, *args, **kargs)
         else:
-            d = Data()
-        super(STXMImage, self).__init__(*args[1:], **kargs)
-        self.image = d.data
-        self.metadata.update(d.metadata)
-        self.filename = d.filename
+            super(STXMImage, self).__init__(*args, **kargs)
         if isinstance(regrid, tuple):
             self.gridimage(*regrid)
         elif isinstance(regrid, dict):
@@ -665,3 +673,8 @@ class STXMImage(ImageFile):
             return ret
         else:
             raise TypeError("Can only do XMCD calculation with another STXMFile")
+
+    def _load(self, filename, *args, **kargs):
+        """Pass through to SLS_STXMFile._load."""
+        self.__init__(*args, **kargs)
+        return self
