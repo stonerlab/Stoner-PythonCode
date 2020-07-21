@@ -18,17 +18,9 @@ import h5py
 import numpy as _np_
 
 from .compat import string_types, bytes2str, get_filedialog, path_types
-from .tools import make_Data
 from .Core import StonerLoadError, metadataObject, DataFile
-<<<<<<< HEAD
 from .folders import DataFolder
-from .Image.core import ImageFile
-=======
-from . import Data, DataFolder
 from .Image.core import ImageFile, ImageArray
-import os.path as path
-import os
->>>>>>> a57b1454... Fix STXMImage load in ImageFolder
 
 
 def _raise_error(f, message="Not a valid hdf5 file."):
