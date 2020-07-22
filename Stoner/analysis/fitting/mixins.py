@@ -170,7 +170,7 @@ class MimizerAdaptor(object):
             upper.append(u if not _np_.isinf(u) else max(limits))
             lower.append(l if not _np_.isinf(l) else min(limits))
         self.p0 = p0
-        self.bounds = [ix for ix in zip(upper, lower)]
+        self.bounds = [ix for ix in zip(lower, upper)]
 
         def wrapper(beta, x, y, sigma, *args):
             """Function that calculates a least-squares goodness from the model functiuon."""
