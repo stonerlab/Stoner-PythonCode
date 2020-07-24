@@ -543,8 +543,6 @@ class baseFolder(MutableSequence):
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
-
-
         """
         name = self.__lookup__(name)
         if instantiate is None:

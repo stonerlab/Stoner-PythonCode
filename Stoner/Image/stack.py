@@ -32,6 +32,7 @@ class ImageStackMixin:
         """Initialise an ImageStack's pricate data and provide a type argument."""
         self._stack = np.atleast_3d(np.ma.MaskedArray([]))
         self._metadata = regexpDict()
+        self._public_attrs_store = regexpDict()
         self._names = list()
         self._sizes = np.array([], dtype=int).reshape(0, 2)
 
@@ -163,6 +164,12 @@ class ImageStackMixin:
         value = self.type(value)  # ensure type if a bare numpy array was given
         self._sizes[idx] = value.shape
         self._metadata[name] = value.metadata
+        _public_attrs = {}
+        for attr in value._public_attrs.keys():
+            if attr in ["data", "image", "metadata"]:
+                continue  # skip attrs I already handle
+            _public_attrs[attr] = getattr(value, attr, None)
+        self._public_attrs_store[name] = _public_attrs
         if hasattr(value, "image"):
             value = value.image
         row, col = value.shape
@@ -194,6 +201,12 @@ class ImageStackMixin:
         self._stack = np.insert(self._stack, ix, np.zeros(self.max_size), axis=2)
         row, col = value.shape
         self._stack[:row, :col, ix] = value.data
+        _public_attrs = {}
+        for attr in value._public_attrs.keys():
+            if attr in ["data", "image", "metadata"]:
+                continue  # skip attrs I already handle
+            _public_attrs[attr] = getattr(value, attr, None)
+        self._public_attrs_store[name] = _public_attrs
 
     def __deleter__(self, ix):
         """Delete an object from the baseFolder.
@@ -256,8 +269,12 @@ class ImageStackMixin:
         else:  # Otherwise it must be something with a data attribute
             tmp = self.type()
             tmp.data = self._stack[:r, :c, idx]
-        tmp.metadata = self._metadata[self.__names__()[idx]]
+        name = self.__names__()[idx]
+        tmp.metadata = self._metadata[name]
         tmp._fromstack = True
+        if name in self._public_attrs_store:
+            for attr, value in self._public_attrs_store[name].items():
+                setattr(tmp, attr, value)
         return tmp
 
     def _resize_stack(self, new_size, dtype=None):

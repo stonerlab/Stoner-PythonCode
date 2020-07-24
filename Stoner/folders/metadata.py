@@ -165,7 +165,7 @@ class MetadataProxy(MutableMapping):
         """Return a dictionary of the common_keys that have common values."""
         output = typeHintedDict()
         for key, val in self.all_by_keys.items():
-            if np.all(val == val[0]):
+            if np.all(val == np.array([val[0] for x in val])):
                 output[key] = val
         return output
 

@@ -32,16 +32,6 @@ class DataFilePropertyMixin:
     _subclasses = None
 
     @property
-    def _public_attrs(self):
-        """Return a dictionary of attributes setable by keyword argument with thier types."""
-        return self._public_attrs_real
-
-    @_public_attrs.setter
-    def _public_attrs(self, value):
-        """Privaye property to update the list of public attributes."""
-        self._public_attrs_real.update(dict(value))
-
-    @property
     def _repr_html_(self):
         """Generate an html representation of the DataFile.
 

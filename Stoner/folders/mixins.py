@@ -9,6 +9,7 @@ import os
 import os.path as path
 from functools import partial
 from copy import deepcopy
+from importlib import import_module
 
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
@@ -120,6 +121,18 @@ class DiskBasedFolderMixin:
             self._default_store.pop("type")
         flat = kargs.pop("flat", self._default_store.get("flat", False))
         prefetch = kargs.pop("prefetch", self._default_store.get("prefetch", False))
+        if "type" in kargs and isinstance(kargs["type"], str):
+            if "." in kargs["type"]:
+                mod = ".".join(kargs["type"].split(".")[:-1])
+                cls = kargs["type"].split(".")[-1]
+                mod = import_module(mod)
+                kargs["type"] = getattr(mod, cls)
+            else:
+                kargs["type"] = globals()[kargs["type"]]
+
+        # Adjust the default pattern depending on the specified type
+        if "type" in kargs and "pattern" not in kargs:
+            kargs["pattern"] = kargs["type"]._patterns
         super(DiskBasedFolderMixin, self).__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
         if self.readlist and len(args) > 0 and isinstance(args[0], path_types):
             self.getlist(directory=args[0])

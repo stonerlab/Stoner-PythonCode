@@ -564,7 +564,9 @@ def imshow(im, **kwargs):
     Any masked areas are set to NaN which stops them being plotted at all.
     """
     figure = kwargs.pop("figure", "new")
-    title = kwargs.pop("title", False)
+    # Get a title - from keyword argument, from title attr or filename attr
+    title = getattr(im, "title", getattr(im, "filename", False))
+    title = kwargs.pop("title", title)
     cmap = kwargs.pop("cmap", "gray")
     if isinstance(cmap, string_types):
         cmap = getattr(cm, cmap)

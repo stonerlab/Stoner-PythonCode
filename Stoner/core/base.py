@@ -663,12 +663,28 @@ class metadataObject(MutableMapping):
             so as to aid import and export from CM group LabVIEW code.
     """
 
+    def __new__(cls, *args, **kargs):
+        """Pre initialisation routines."""
+        self = super().__new__(cls)
+        object.__setattr__(self, "_public_attrs_real", {})
+        return self
+
     def __init__(self, *args: Any, **kargs: Any) -> None:
         """Initialise the current metadata attribute."""
         metadata = kargs.pop("metadata", None)
         if metadata is not None:
             self.metadata.update(metadata)
         super(metadataObject, self).__init__()
+
+    @property
+    def _public_attrs(self):
+        """Return a dictionary of attributes setable by keyword argument with thier types."""
+        return self._public_attrs_real
+
+    @_public_attrs.setter
+    def _public_attrs(self, value):
+        """Privaye property to update the list of public attributes."""
+        self._public_attrs_real.update(dict(value))
 
     @property
     def metadata(self) -> Dict:

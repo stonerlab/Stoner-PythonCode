@@ -160,10 +160,17 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             "convert_float", False
         )  # convert_float for back compatability
         _debug = kargs.pop("debug", False)
+        _title = kargs.pop("title", None)
 
         # 0 args initialisation
         if len(args) == 0:
             ret = np.empty((0, 0), dtype=float).view(cls)
+            # merge the results of __new__ from emtadataObject
+            tmp = metadataObject.__new__(metadataObject, *args, **kargs)
+            for k, v in tmp.__dict__.items():
+                if k not in ret.__dict__:
+                    ret.__dict__[k] = v
+
         else:
 
             # 1 args initialisation
@@ -203,10 +210,17 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                         raise ValueError
                 except ValueError:  # ok couldn't load from iterable, we're done
                     raise ValueError("No constructor for {}".format(type(arg)))
+
             if asfloat and ret.dtype.kind != "f":  # convert to float type in place
                 meta = ret.metadata  # preserve any metadata we may already have
                 ret = ret.convert(np.float64)
                 ret.metadata.update(meta)
+
+            # merge the results of __new__ from emtadataObject
+            tmp = metadataObject.__new__(metadataObject, *args, **kargs)
+            for k, v in tmp.__dict__.items():
+                if k not in ret.__dict__:
+                    ret.__dict__[k] = v
 
         # all constructors call array_finalise so metadata is now initialised
         if "Loaded from" not in ret.metadata.keys():
@@ -214,6 +228,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         ret.filename = ret.metadata["Loaded from"]
         ret.metadata.update(user_metadata)
         ret.debug = _debug
+        ret._title = _title
+        ret._public_attrs = {"title": str, "filename": str}
         return ret
 
     def __array_finalize__(self, obj):
@@ -438,6 +454,20 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """Return the coordinate extent (xmin,xmax,ymin,ymax)."""
         box = (0, self.shape[1], 0, self.shape[0])
         return box
+
+    @property
+    def title(self):
+        """Get a title for this image."""
+        if self._title is None:
+            return self.filename
+        return self._title
+
+    @title.setter
+    def title(self, title):
+        """Set the title of the current image."""
+        if not isinstance(title, str):
+            title = repr(title)
+        self._title = title
 
     #    @property
     #    def data(self):
@@ -723,6 +753,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             ret = self
         else:
             ret = self.convert(dtype=np.float64, normalise=normalise).view(self.__class__)  # preserve metadata
+            tmp = metadataObject.__new__(metadataObject)
+            for k, v in tmp.__dict__.items():
+                if k not in ret.__dict__:
+                    ret.__dict__[k] = v
             c = self.clone  # copy formatting and apply to new array
             for k, v in c._optinfo.items():
                 setattr(ret, k, v)
@@ -758,6 +792,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             self = self.normalise()
         ret = self.convert(dtype)
         ret = ret.view(self.__class__)
+        tmp = metadataObject.__new__(metadataObject)
+        for k, v in tmp.__dict__.items():
+            if k not in ret.__dict__:
+                ret.__dict__[k] = v
+
         for k, v in self._optinfo.items():
             setattr(ret, k, v)
         return ret
@@ -936,6 +975,7 @@ class ImageFile(metadataObject):
 
     _image = None
     _protected_attrs = ["_fromstack"]  # these won't be passed through to self.image attrs
+    _patterns = ["*.png", "*.tif", "*.jpeg", "*.jpg"]
 
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
@@ -958,12 +998,18 @@ class ImageFile(metadataObject):
             self._image = ImageArray(*args, **kargs)
         elif len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
             self._image = args[0].image
+            for k in args[0]._public_attrs:
+                setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(args[0], np.ndarray):  # Fixing type
             self._image = ImageArray(*args, **kargs)
+            if isinstance(args[0], ImageArray):
+                for k in args[0]._public_attrs:
+                    setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(
             args[0], DataFile
         ):  # Support initing from a DataFile that defines x,y,z coordinates
             self._init_from_datafile(*args, **kargs)
+        self._public_attrs = {"title": str, "filename": str}
         self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
 
     ###################################################################################################################

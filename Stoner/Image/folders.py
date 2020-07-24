@@ -77,6 +77,37 @@ class ImageFolderMixin:
                     raise TypeError(f"Cannot represent {type(im)} as an ImageArray.")
             yield im
 
+    #########################################################################################################
+    ##### Folder interface methods
+    #########################################################################################################
+
+    def __getter__(self, name, instantiate=True):
+        """Ensure we set the title on the image.
+
+        Parameters:
+           name (key type):
+               The canonical mapping key to get the dataObject. By default
+               the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+
+        Keyword Arguments:
+            instantiate (bool):
+                If True (default) then always return a metadataObject. If False, the __getter__ method may return a
+                key that can be used by it later to actually get the metadataObject. If None, then will return
+                whatever is held in the object cache, either instance
+                or name.
+
+        Returns:
+            (metadataObject):
+                The metadataObject
+
+        Note:
+            Mainly we call the parent method and then set the title if it's not already set.'
+        """
+        ret = super(ImageFolderMixin, self).__getter__(name, instantiate)
+        if hasattr(ret, "_title") and ret._title is None:
+            ret._title = name
+        return ret
+
     # def _getattr_proxy(self, item):
     #     """Override baseFolder proxy call to access a method of the ImageFile.
 
