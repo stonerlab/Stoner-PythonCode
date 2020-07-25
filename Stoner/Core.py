@@ -446,7 +446,7 @@ class DataFile(
         for k, v in self.__dict__.items():
             try:
                 setattr(result, k, copy.deepcopy(v, memo))
-            except Exception:
+            except (TypeError, ValueError, RecursionError):
                 setattr(result, k, copy.copy(v))
         return result
 
@@ -533,7 +533,7 @@ class DataFile(
             return self._repr_short_()
         try:
             return self._repr_table_()
-        except Exception:
+        except (ImportError, ValueError, TypeError):
             return self.__repr_core__(256)
 
     def __setattr__(self, name, value):
@@ -659,7 +659,7 @@ class DataFile(
                     fmt = 1.0
                 else:
                     raise StonerLoadError("Not a TDI File")
-            except Exception:
+            except Exception:  # pylint: disable=W0703 # Ok to be broard here
                 raise StonerLoadError("Not a TDI File")
             col_headers_tmp = [x.strip() for x in row[1:]]
             data_array = 0

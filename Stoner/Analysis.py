@@ -87,7 +87,7 @@ class AnalysisMixin:
         if nc.ndim == 1:
             if header is None:
                 header = func.__name__
-            self = self.add_column(nc, header=header, index=col, replace=replace, setas=self.setas[col])
+            self.add_column(nc, header=header, index=col, replace=replace, setas=self.setas[col])
             ret = self
         else:
             if not replace:

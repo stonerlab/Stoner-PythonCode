@@ -267,7 +267,7 @@ class baseFolder(MutableSequence):
     @property
     def defaults(self):
         """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
-        if self._default_store is None:
+        if getattr(self, "_default_store", None) is None:
             self._default_store = dict()
             for cls in reversed(self.__class__.__mro__):
                 if hasattr(cls, "_defaults"):
@@ -889,7 +889,7 @@ class baseFolder(MutableSequence):
         for k, v in self.__dict__.items():
             try:
                 setattr(result, k, deepcopy(v, memo))
-            except Exception:
+            except (TypeError, ValueError, RecursionError):
                 setattr(result, k, copy(v))
         return result
 

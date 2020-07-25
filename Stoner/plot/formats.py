@@ -710,12 +710,9 @@ if SEABORN:  # extra classes if we have seaborn available
         @palette.setter
         def palette(self, name):
             """Force palette to take allowed values."""
-            try:
-                with sns.color_palette(name):
-                    pass
-                self._palette = name
-            except Exception as e:
-                raise e
+            with sns.color_palette(name):
+                pass
+            self._palette = name
 
         @property
         def stylename(self):

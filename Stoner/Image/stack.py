@@ -60,7 +60,7 @@ class ImageStackMixin:
         elif isinstance(other, list):
             try:
                 other = [ImageFile(i) for i in other]
-            except Exception:
+            except (TypeError, ValueError, RuntimeError):
                 raise ValueError("Failed to initialise ImageStack with list input")
             super(ImageStackMixin, self).__init__(*args[1:], **kargs)
             for ot in other:

@@ -281,7 +281,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     if model is None:  # Check to see if config file specified a model
         try:
             model = config.get("Options", "model")
-        except Exception:
+        except (IOError, ValueError, TypeError):
             raise RuntimeError("Model is notspecifed either as keyword argument or in inifile")
     model = _get_model_(model)
     if config.has_option("option", "prefix"):

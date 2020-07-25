@@ -476,7 +476,7 @@ class setas(MutableMapping):
                 tmp = self.clone
                 tmp(other)
                 other = tmp.to_dict()
-            except Exception:
+            except (TypeError, SyntaxError):
                 return NotImplemented
         for k, v in other.items():
             if isinstance(k, string_types) and len(k) == 1 and k in "xyzuvwdef":  # of the form x:column_name

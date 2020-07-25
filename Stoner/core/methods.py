@@ -447,10 +447,12 @@ class DataFileSearchMixin:
         elif callable(xcol):
             try:  # Try to call function with all data in one go
                 keys = xcol(self.data)
-                if not isIterable(keys) or len(keys) != len(self):
-                    raise RuntimeError("Not returning an index of keys")
-            except Exception:  # Ok try instead to do it row by row
+                if not isIterable(keys):
+                    keys = [keys] * len(self)
+            except Exception:  # pylint: disable=W0703  # Ok try instead to do it row by row
                 keys = [xcol(r) for r in self]
+            if not isIterable(keys) or len(keys) != len(self):
+                raise RuntimeError("Not returning an index of keys")
             keys = np.array(keys)
             for key in np.unique(keys):
                 data[key] = self.clone

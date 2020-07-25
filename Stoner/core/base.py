@@ -666,7 +666,7 @@ class metadataObject(MutableMapping):
     def __new__(cls, *args, **kargs):
         """Pre initialisation routines."""
         self = super().__new__(cls)
-        object.__setattr__(self, "_public_attrs_real", {})
+        self._public_attrs_real = dict()
         return self
 
     def __init__(self, *args: Any, **kargs: Any) -> None:

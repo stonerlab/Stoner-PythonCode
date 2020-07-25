@@ -24,12 +24,12 @@ from .Image.core import ImageFile, ImageArray
 
 
 def _raise_error(f, message="Not a valid hdf5 file."):
-    """Try to clsoe the filehandle f and raise a StonerLoadError."""
+    """Try to close the filehandle f and raise a StonerLoadError."""
     try:
         f.file.close()
-        raise StonerLoadError(message)
-    except Exception:
-        raise StonerLoadError(message)
+    except Exception:  # pylint:disable=W0703
+        pass
+    raise StonerLoadError(message)
 
 
 def close_file(f, filename):
@@ -312,10 +312,9 @@ class HDF5File(DataFile):
             f.attrs["filename"] = self.filename
             f.attrs["type"] = self.__class__.__name__
             f.attrs["module"] = self.__class__.__module__
-        except Exception as e:
+        finally:
             if isinstance(filename, str):
                 f.file.close()
-            raise e
         self.filename = close_file(f, filename)
         return self
 

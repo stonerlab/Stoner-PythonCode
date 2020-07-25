@@ -157,7 +157,7 @@ class KermitPNGFile(DataFile):
                 print(sig)
             if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
                 raise StonerLoadError("Signature mismatrch")
-        except Exception:
+        except (StonerLoadError, IOError):
             from traceback import format_exc
 
             raise StonerLoadError("Not a PNG file!>\n{}".format(format_exc()))
@@ -264,7 +264,7 @@ try:  # Optional tdms support
                         tmp = DataFile(grp.as_dataframe())
                         self.data = tmp.data
                         self.column_headers = tmp.column_headers
-            except Exception:
+            except (IOError, ValueError, TypeError, StonerLoadError):
                 from traceback import format_exc
 
                 raise StonerLoadError("Not a TDMS File \n{}".format(format_exc()))
@@ -326,7 +326,7 @@ if Hyperspy_ok:
                 signal = hs.load(self.filename)
                 if not isinstance(signal, hs.signals.Signal2D):
                     raise StonerLoadError("Not a 2D signal object - aborting!")
-            except Exception as e:  # Pretty generic error catcher
+            except Exception as e:  # pylint: disable=W0703 Pretty generic error catcher
                 raise StonerLoadError("Not readable by HyperSpy error was {}".format(e))
             self.data = signal.data
             self._unpack_meta("", signal.metadata.as_dictionary())

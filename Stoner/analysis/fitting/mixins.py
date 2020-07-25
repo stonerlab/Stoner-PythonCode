@@ -438,7 +438,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
                 model.set_param_hint(p_name, value=kargs.get(p_name))
         try:
             p0 = model.guess(ydata, x=xdata)
-        except Exception:  # Don't be fussy here
+        except Exception:  # pylint: disable=W0703  Don't be fussy here
             p0 = lmfit.Parameters()
             for p_name in model.param_names:
                 if p_name in kargs:

@@ -194,7 +194,7 @@ class ImageFolderMixin:
                 ref_data = np.array(ref).view(ImageArray)
                 if ref_data.ndim != 2:
                     raise TypeError()
-            except Exception:
+            except (TypeError, ValueError):
                 raise TypeError(f"Cannot interpret {type(ref)} as reference image data.")
         # Call align on each object
         self.each.align(ref_data, **kargs)
@@ -268,7 +268,7 @@ class ImageFolderMixin:
                             f"Bad type in Tiff file {typ.__name__} is not a subclass of Stoner.ImageFolder"
                         )
                     metadata = userdata.get("metadata", [])
-                except Exception:
+                except (TypeError, ValueError, IOError):
                     metadata = []
             else:
                 raise TypeError(f"Cannot load as an ImageFolder due to lack of description tag")

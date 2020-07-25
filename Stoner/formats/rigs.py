@@ -186,7 +186,7 @@ class FmokeFile(Core.DataFile):
         with io.open(self.filename, mode="rb") as f:
             try:
                 value = [float(x.strip()) for x in bytes2str(f.readline()).split("\t")]
-            except Exception:
+            except (TypeError, ValueError):
                 f.close()
                 raise Core.StonerLoadError("Not an FMOKE file?")
             label = [x.strip() for x in bytes2str(f.readline()).split("\t")]

@@ -304,7 +304,7 @@ class RigakuFile(Core.DataFile):
                 value = header[key].strip()
                 try:
                     newvalue = literal_eval(value.strip('"'))
-                except Exception:
+                except (TypeError, ValueError, SyntaxError):
                     newvalue = literal_eval(value)
                 if newvalue == "-":
                     newvalue = np.nan  # trap for missing float value

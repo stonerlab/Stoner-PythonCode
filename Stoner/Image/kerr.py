@@ -379,6 +379,11 @@ class KerrImageFile(ImageFile):
 
     """Subclass of ImageFile that keeps the data as a KerrArray so that extra functions are available."""
 
+    def __init__(self, *args, **kargs):
+        """Ensure that the image is a KerrImage."""
+        super(KerrImageFile, self).__init__(*args, **kargs)
+        self._image = self._image.view(KerrArray)
+
     @property
     def image(self):
         """Access the image data."""
@@ -388,6 +393,7 @@ class KerrImageFile(ImageFile):
     def image(self, v):
         """Ensure stored image is always an ImageArray."""
         filename = self.filename
+        v = KerrArray(v)
         # ensure setting image goes into the same memory block if from stack
         if (
             hasattr(self, "_fromstack")
@@ -396,6 +402,7 @@ class KerrImageFile(ImageFile):
             and self._image.dtype == v.dtype
         ):
             self._image[:] = v
+            self._image = self._image.view(KerrArray)
         else:
             self._image = KerrArray(v)
         self.filename = filename

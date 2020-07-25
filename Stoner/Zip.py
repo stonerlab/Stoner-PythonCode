@@ -151,7 +151,7 @@ class ZippedFile(DataFile):
                 raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
         except StonerLoadError as e:
             raise e
-        except Exception:
+        except Exception:  # pylint: disable=W0703 # Catching everything else here
             try:
                 exc = format_exc()
                 other.close()
@@ -221,13 +221,12 @@ class ZippedFile(DataFile):
             zipfile.writestr(member, str2bytes(str(self)))
             if close_me:
                 zipfile.close()
-        except Exception:
+        except (zipfile.BadZipFile, IOError, TypeError, ValueError):
             error = format_exc()
             try:
                 zipfile.close()
-            except Exception:
+            finally:
                 raise IOError("Error saving zipfile\n{}".format(error))
-            raise IOError("Error saving zipfile\n{}".format(error))
         return self
 
 

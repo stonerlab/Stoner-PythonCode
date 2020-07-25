@@ -328,7 +328,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     if not issubclass(typ, ImageArray):
                         raise TypeError(f"Bad type in Tiff file {typ.__name__} is not a subclass of Stoner.ImageArray")
                     metadata = userdata.get("metadata", [])
-                except Exception:
+                except (ValueError, TypeError, IOError):
                     metadata = []
             else:
                 metadata = []
@@ -440,7 +440,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         for k, v in self._optinfo.items():
             try:
                 setattr(ret, k, deepcopy(v))
-            except Exception:
+            except (TypeError, ValueError, RecursionError):
                 setattr(ret, k, copy(v))
         return ret
 
@@ -992,11 +992,12 @@ class ImageFile(metadataObject):
 
         """
         super(ImageFile, self).__init__(*args, **kargs)
+        args = list(args)
         if len(args) == 0:
             self._image = ImageArray()
         elif len(args) > 0 and isinstance(args[0], path_types):
-            self._image = ImageArray(*args, **kargs)
-        elif len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
+            args[0] = ImageArray(*args, **kargs)
+        if len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
             self._image = args[0].image
             for k in args[0]._public_attrs:
                 setattr(self, k, getattr(args[0], k, None))
@@ -1162,20 +1163,27 @@ class ImageFile(metadataObject):
 
     def __getattr__(self, n):
         """Handle attriobute access."""
-        try:
-            ret = getattr(super(ImageFile, self), n)
-        except AttributeError:
-            ret = getattr(self.image, n)
-            if callable(ret):  # we have a method
-                ret = self._func_generator(ret)  # modiy so that we can change image in place
+        obj = self._where_attr(n)
+        if obj is None:
+            raise AttributeError(f"{n} is not an attribute of {self.__class__}")
+        if obj is self:
+            return getattr(super(ImageFile, self), n)
+        ret = getattr(self._image, n)
+        if callable(ret):  # we have a method
+            ret = self._func_generator(ret)  # modiy so that we can change image in place
         return ret
 
     def __setattr__(self, n, v):
         """Handle setting attributes."""
-        if not hasattr(self, n) and n not in getattr(self.image.__class__, "_protected_attrs", []):
-            setattr(self._image, n, v)
-        else:
+        obj = self._where_attr(n)
+        if obj is None:  # This is a new attribute so note it for preserving
+            obj = self
+            if self._where_attr("_public_attrs_real") is self:
+                self._public_attrs = {n: type(v)}
+        if obj is self:
             super(ImageFile, self).__setattr__(n, v)
+        else:
+            setattr(obj, n, v)
 
     def __add__(self, other):
         """Implement the subtract operator."""
@@ -1258,6 +1266,12 @@ class ImageFile(metadataObject):
         else:
             ret = self.metadata == other.metadata and np.all(self.image == other.image)
         return ret
+
+    def __repr__(self):
+        """Implement standard representation for text based consoles."""
+        return "{}({}) of shape {} ({}) and {} items of metadata".format(
+            self.filename, type(self), self.shape, self.image.dtype, len(self.metadata)
+        )
 
     ###################################################################################################################
     ############################# Private methods #####################################################################
@@ -1358,11 +1372,12 @@ class ImageFile(metadataObject):
 
         return fix_signature(gen_func, workingfunc)
 
-    def __repr__(self):
-        """Implement standard representation for text based consoles."""
-        return "{}({}) of shape {} ({}) and {} items of metadata".format(
-            self.filename, type(self), self.shape, self.image.dtype, len(self.metadata)
-        )
+    def _load(self, filename, *args, **kargs):
+        """Load an ImageFile by calling the ImageArray method instead."""
+        self._image = ImageArray(filename, *args, **kargs)
+        for k in self._image._public_attrs:
+            setattr(self, k, getattr(self._image, k, None))
+        return self
 
     def _repr_png_private_(self):
         """Provide a display function for iPython/Jupyter."""
@@ -1375,6 +1390,21 @@ class ImageFile(metadataObject):
         ret = data.read()
         data.close()
         return ret
+
+    def _where_attr(self, n):
+        """Get the object that has the named attribute."""
+        try:
+            _ = super(ImageFile, self).__getattribute__(n)
+            return self
+        except AttributeError:
+            try:
+                _ = getattr(self._image, n)
+                return self._image
+            except AttributeError:
+                return None
+
+    ###################################################################################################################
+    #############################  Public methods #####################################################################
 
     def save(self, filename=None, **kargs):
         """Save the image into the file 'filename'.

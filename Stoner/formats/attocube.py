@@ -27,8 +27,7 @@ def _raise_error(f, message="Not a valid hdf5 file."):
     """Try to clsoe the filehandle f and raise a StonerLoadError."""
     try:
         f.file.close()
-        raise StonerLoadError(message)
-    except Exception:
+    finally:
         raise StonerLoadError(message)
 
 

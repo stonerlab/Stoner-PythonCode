@@ -30,7 +30,7 @@ def _worker(d, **kwargs):
             ret = func(*args, **kargs)
         else:  # It's an arbitary function
             ret = func(d, *args, **kargs)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=W0703 # Ok to be broad as user func could do anything
         ret = e, format_exc()
     return (d, ret)
 

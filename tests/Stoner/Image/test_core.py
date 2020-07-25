@@ -293,10 +293,13 @@ def test_properties():
     assert selfifi.image[0,1]==10.1
 
 def test_attrs2():
+    """Check that creating new attributes puts them on ImageFile and not ImageArray and updates public_attrs."""
     assert selfifi['Loaded from'] == ''
     selfifi.abc = 123
-    assert selfifi.image.abc == 123
     assert selfifi.abc == 123
+    assert "abc" in selfifi.__dict__
+    assert "abc" not in selfifi._image.__dict__
+    assert "abc" in selfifi._public_attrs
 
 def test_methods():
     b=np.arange(12).reshape(3,4)
