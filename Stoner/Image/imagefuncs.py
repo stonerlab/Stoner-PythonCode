@@ -541,7 +541,11 @@ def gridimage(im, points=None, xi=None, method="linear", fill_value=1.0, rescale
 
 def hist(im, *args, **kargs):
     """Pass through to :py:func:`matplotlib.pyplot.hist` function."""
-    counts, edges = np.histogram(im.ravel(), *args, **kargs)
+    if isinstance(im, np.ma.MaskedArray):
+        im_data = im[~im.mask]
+    else:
+        im_data = im.ravel()
+    counts, edges = np.histogram(im_data, *args, **kargs)
     centres = (edges[1:] + edges[:-1]) / 2
     new = make_Data(np.column_stack((centres, counts)))
     new.column_headers = ["Intensity", "Frequency"]

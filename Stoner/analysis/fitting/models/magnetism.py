@@ -245,6 +245,84 @@ class BlochLaw(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
+class BlochLawThin(Model):
+
+    r"""Bloch's law for spontaneous magnetism at low temperatures - thin film version.
+
+    Args:
+        T (array like):
+            Temperature (K)
+        g (float):
+            Lande g-factor
+        A(float):
+            The echange stiffness (Jm^{-1})
+        Ms(float):
+            Saturation moment (Am^{-1})
+
+
+    Returns:
+        (array like):
+            Magnetisation values corresponding to the given temperatures.
+
+    Notes:
+        Calculates :math:`1 - \frac{\left((\Gamma(3/2) \zeta(3/2)\right)}
+                                          {(4\pi^2)}  (v_{ws} / S) (k_B T / D)^{3/2}`
+
+        This is the bulk version of Bloch's law which is not fully correct for thin films. Model adapted from code
+        by Dr Joseph Barker <j.barker@leeds.ac.uk>
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Setup the model."""
+        super(BlochLawThin, self).__init__(self.blochs_law_thinfilm, *args, **kwargs)
+        self.set_param_hint("g", vary=False, value=2.0)
+        self.set_param_hint("A", vary=True, min=0)
+        self.set_param_hint("Ms", vary=True, min=0)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+
+    def blochs_law_thinfilm(self, T, D, Bz, S, v_ws, a, nz):
+        """Thin film version of Blopch's Law.
+
+        Parameters:
+            T (array):
+                Temperature (K)
+            D (float):
+                Spin wave stiffness
+            Bz (float):
+                Applied magnetic field data measured in.
+            S (float):
+                Spin number
+            v_ws (float):
+                Wigner-Seitz volume (volume per atom)
+            a (float):
+                Lattice parameter
+            nz (int):
+                Number of atomic layers in the thin film.
+
+        Returns:
+            (array):
+                normalised M_s values.
+
+        Notes:
+            Bloch's Law is derived from integrating the magnon spectrum over the k-space of the sample. In a thin film
+            one can only integrate over the x-y plane, in the z direction one needs to do an explicit sum over the
+            atomic layers in the z direction.
+
+            This model was derived by Dr Joseph Barker <j.barker@leeds.ac.uk>
+
+            This is solving:
+
+                :math:`1 + \frac{v_{ws}}{S}\frac{a}{4 \pi n_z}\frac{k_B T}{D}\sum^{n_z-1}_{m=0}
+                        ln\left[1-\exp\left( -\frac{1}{k_B T}\left(g\mu_B B_z+D\left(\frac{m \pi}{a(n_z-1)}\right)^2
+                                                                   \right)\right) \right]`
+        """
+
+        kz_sum = sum(
+            np.log(1.0 - np.exp(-(D * (m * np.pi / ((nz - 1) * a)) ** 2 + Bz) / (k * T))) for m in range(0, nz - 1)
+        )
+        return 1.0 + (v_ws / (4 * np.pi * S * (nz - 1) * a)) * (k * T / D) * kz_sum
+
+
 class Langevin(Model):
 
     r"""The Langevin function for paramagnetic M-H loops.

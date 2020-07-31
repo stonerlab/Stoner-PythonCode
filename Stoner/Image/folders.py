@@ -203,6 +203,9 @@ class ImageFolderMixin:
         stack_limits[::2] = limits.max(axis=0)[::2]
         stack_limits[1::2] = limits.min(axis=0)[1::2]
         self.metadata["translation_limits"] = tuple(stack_limits)
+        stack_limits[::2] = np.ceil(stack_limits)[::2]
+        stack_limits[1::2] = np.floor(stack_limits)[1::2]
+        self.metadata["align_box"] = tuple(stack_limits.astype(int))
         return self
 
     def apply_all(self, func, *args, **kargs):
@@ -371,7 +374,7 @@ class ImageFolderMixin:
 
     def view(self):
         """Create a matplotlib animated view of the contents."""
-        cv = CollectionViewer(self.images)
+        cv = CollectionViewer(list(self.images))
         cv.show()
         return cv
 
