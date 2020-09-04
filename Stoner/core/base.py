@@ -238,6 +238,17 @@ class regexpDict(sorteddict):
                 ret[mk] = (mv, ov)
         return ret
 
+    def __or__(self, other):
+        """Implement Python 3.9 style or operator to do a merge."""
+        ret = self.copy()
+        ret.update(other)
+        return ret
+
+    def __ior__(self, other):
+        """Implement Python 3.9 style inplace or operator to do an update."""
+        self.update(other)
+        return self
+
     def has_key(self, name: Any) -> bool:
         """Key is definitely in dictionary as literal."""
         return super(regexpDict, self).__contains__(name)
