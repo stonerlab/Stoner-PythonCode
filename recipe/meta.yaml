@@ -10,7 +10,7 @@ source:
   git_tag: v0.9.7
   git_url: https://github.com/stonerlab/Stoner-PythonCode.git
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} setup.py install --single-version-externally-managed --record=record.txt
 
 requirements:
@@ -37,6 +37,7 @@ requirements:
     - multiprocess>=0.70
     - dill>=0.2.8
   run:
+    - python
     - cycler>=0.10.0
     - filemagic>=1.6
     - h5py>=2.7.0
