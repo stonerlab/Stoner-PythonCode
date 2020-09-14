@@ -50,7 +50,7 @@ install:
   - conda activate test-environment
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   # Hyperspy is now an optional dependency for 3.6 onwards
-  - conda install hyperspy
+  - conda install hyperspy==1.6.0
   - conda install pytest pytest-runner pytest-cov
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
