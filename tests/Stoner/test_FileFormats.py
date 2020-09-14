@@ -38,7 +38,8 @@ def list_files():
 
     if not Hyperspy_ok:
         print("hyperspy too old, skupping emd file for test")
-        incfiles=[x for x in incfiles if x.suffix!=".emd"]
+        incfiles=[x for x in incfiles if not x.name.strip().lower().endswith(".emd")]
+
 
     return incfiles
 
