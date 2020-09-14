@@ -40,7 +40,7 @@ __all__ = [
 ]
 
 try:
-    import hyperspy as hs
+    import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
 
     HuperSpyVersion = [int(x) for x in hs.__version__.split(".")]
     if HuperSpyVersion[0] <= 1 and HuperSpyVersion[1] <= 3:

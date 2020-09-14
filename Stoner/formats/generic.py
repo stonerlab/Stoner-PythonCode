@@ -322,7 +322,16 @@ if Hyperspy_ok:
                 self.filename = filename
             # Open the file and read the main file header and unpack into a dict
             try:
-                signal = hs.load(self.filename)
+                load = hs.load
+            except AttributeError:
+                try:
+                    from hyperspy import api
+
+                    load = api.load
+                except (ImportError, AttributeError):
+                    raise ImportError("Panic over hyperspy")
+            try:
+                signal = load(self.filename)
                 if not isinstance(signal, hs.signals.Signal2D):
                     raise StonerLoadError("Not a 2D signal object - aborting!")
             except Exception as e:  # pylint: disable=W0703 Pretty generic error catcher
