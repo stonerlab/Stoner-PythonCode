@@ -259,8 +259,8 @@ class ZipFolderMixin:
     @property
     def full_key(self):
         """Generate a full canonical path through the zip archive to this file."""
-        filename = path.splitdirve(self.File.filepath)[1]
-        name = path.splitdirve(self.path)[1]
+        filename = path.splitdrive(self.File.filepath)[1]
+        name = path.splitdrive(self.path)[1]
         return path.relpath(name, filename).replace(path.sep, "/")
 
     @property
