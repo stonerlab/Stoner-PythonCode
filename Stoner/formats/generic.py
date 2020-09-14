@@ -13,7 +13,7 @@ import PIL
 import numpy as np
 
 from ..Core import DataFile
-from ..compat import str2bytes, Hyperspy_ok
+from ..compat import str2bytes, Hyperspy_ok, hs
 from ..core.exceptions import StonerLoadError
 
 
@@ -276,7 +276,6 @@ except ImportError:
     TDMSFile = DataFile
 
 if Hyperspy_ok:
-    import hyperspy.api as hs
 
     class HyperSpyFile(DataFile):
 

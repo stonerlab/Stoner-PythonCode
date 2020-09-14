@@ -65,7 +65,7 @@ popt, pcov = d.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
 d.setas(Bloch="y", reset=False)
 # Make a plot
 d.plot(
-    fmt=["r.", "b-"], label=["Data", r"$Bloch-Gr\"ueisen Fit$"], markersize=1,
+    fmt=["r.", "b-"], label=["Data", r"$Bloch-Gr\"ueisen Fit$"], markersize=1
 )
 d.xlabel = "Temperature (K)"
 d.ylabel = "Resistance ($\Omega$)"

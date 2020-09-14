@@ -37,7 +37,7 @@ d.plot(fmt="k.", capsize=2.0)
 d.title = "Extrapolation Demo"
 
 errorfill(
-    extra_x, y4[:, 0], color="orange", yerr=y4[:, 1], label="Arg. Function",
+    extra_x, y4[:, 0], color="orange", yerr=y4[:, 1], label="Arg. Function"
 )
 
 errorfill(

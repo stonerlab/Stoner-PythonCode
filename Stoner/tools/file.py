@@ -23,7 +23,7 @@ except ImportError:
 
 
 def file_dialog(
-    mode: str, filename: Filename, filetype: Union[Type[metadataObject], str], baseclass: Type[metadataObject],
+    mode: str, filename: Filename, filetype: Union[Type[metadataObject], str], baseclass: Type[metadataObject]
 ) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
     """Create a file dialog box for loading or saving ~b DataFile objects.
 

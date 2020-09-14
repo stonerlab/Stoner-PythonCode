@@ -34,6 +34,7 @@ __all__ = [
     "makedirs",
     "cmp",
     "Hyperspy_ok",
+    "hs",
     "which",
     "commonpath",
 ]
@@ -47,6 +48,7 @@ try:
     Hyperspy_ok = True
 except ImportError:
     Hyperspy_ok = False
+    hs = None
 
 
 if __vi__[1] < 7:

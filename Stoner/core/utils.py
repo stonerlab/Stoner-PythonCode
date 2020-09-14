@@ -2,15 +2,7 @@
 # -*- coding: utf-8 -*-
 """Utility functions to support :py:mod:`Stoner.Core`."""
 
-__all__ = [
-    "add_core",
-    "and_core",
-    "sub_core",
-    "mod_core",
-    "copy_into",
-    "tab_delimited",
-    "decode_string",
-]
+__all__ = ["add_core", "and_core", "sub_core", "mod_core", "copy_into", "tab_delimited", "decode_string"]
 
 import copy
 import csv
