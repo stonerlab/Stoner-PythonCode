@@ -42,6 +42,16 @@ __all__ = [
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
 
+    try:
+        load = hs.load
+    except AttributeError:
+        try:
+            from hyperspy import api
+
+            load = api.load
+        except (ImportError, AttributeError):
+            raise ImportError("Panic over hyperspy")
+
     HuperSpyVersion = [int(x) for x in hs.__version__.split(".")]
     if HuperSpyVersion[0] <= 1 and HuperSpyVersion[1] <= 3:
         raise ImportError("Hyperspy should be version 1.4 or above. Actual version is {}".format(hs.__version__))
