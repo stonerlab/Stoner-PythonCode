@@ -236,7 +236,7 @@ class DefaultPlotStyle(MutableMapping):
             if k.startswith("template_"):
                 nk = _add_dots(k[:9])
                 if nk in plt.rcParams:
-                    super(DefaultPlotStyle, self).__setattr__(nk, v)
+                    super().__setattr__(nk, v)
                     self[nk] = v
             else:
                 self.update({_add_dots(k): v})
@@ -251,7 +251,7 @@ class DefaultPlotStyle(MutableMapping):
             del params[name]
             plt.rcdefaults()
             plt.rcParams.update(params)
-            super(DefaultPlotStyle, self).__delattr__(_remove_dots("template_{}".format(name)))
+            super().__delattr__(_remove_dots("template_{}".format(name)))
         else:
             raise KeyError("{} is not recognised as part of the template".format(name))
 
@@ -264,7 +264,7 @@ class DefaultPlotStyle(MutableMapping):
             raise AttributeError("template attribute not in rcParams")
         if name == "showlegend":
             return self.show_legend and len(plt.gca().get_legend_handles_labels()[1]) > 1
-        return super(DefaultPlotStyle, self).__getattribute__(name)
+        return super().__getattribute__(name)
 
     def __getitem__(self, name):
         """Try to match *name* to a style setting."""
@@ -295,9 +295,9 @@ class DefaultPlotStyle(MutableMapping):
         if name.startswith("template_"):
             attrname = _add_dots(name[9:])
             plt.rcParams[attrname] = value
-            super(DefaultPlotStyle, self).__setattr__(name, value)
+            super().__setattr__(name, value)
         else:
-            super(DefaultPlotStyle, self).__setattr__(name, value)
+            super().__setattr__(name, value)
 
     def __setitem__(self, name, value):
         """Set a stylesheet setting by *name*."""
@@ -307,7 +307,7 @@ class DefaultPlotStyle(MutableMapping):
             if name in plt.rcParams:
                 plt.rcParams[name] = value
                 name = _remove_dots("template_{}".format(name))
-                super(DefaultPlotStyle, self).__setattr__(name, value)
+                super().__setattr__(name, value)
             else:
                 raise KeyError("{} is not recognised as part of the template".format(name))
 
@@ -385,7 +385,7 @@ class DefaultPlotStyle(MutableMapping):
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
         if len(args) == 1 and isinstance(args[0], Mapping):
-            super(DefaultPlotStyle, self).update(args[0])
+            super().update(args[0])
         elif len(args) > 0:
             raise SyntaxError(
                 "Only one posotional argument which should be a Mapping subclass can be supplied toi update."
@@ -558,7 +558,7 @@ class GBPlotStyle(DefaultPlotStyle):
 
     def customise_axes(self, ax, plot):
         """Override the default axis configuration."""
-        super(GBPlotStyle, self).customise_axes(ax, plot)
+        super().customise_axes(ax, plot)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.xaxis.set_ticks_position("bottom")
@@ -645,7 +645,7 @@ class SketchPlot(DefaultPlotStyle):
 
     def customise_axes(self, ax, plot):
         """Override the default axis configuration."""
-        super(SketchPlot, self).customise_axes(ax, plot)
+        super().customise_axes(ax, plot)
         ax.spines["top"].set_visible(False)
         if len(plot.axes) > 1 and plot.multiple == "y2":
             pass

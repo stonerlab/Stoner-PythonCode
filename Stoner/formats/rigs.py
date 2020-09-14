@@ -43,9 +43,7 @@ class BigBlueFile(CSVFile):
         else:
             self.filename = filename
 
-        super(BigBlueFile, self)._load(
-            self.filename, *args, header_line=3, data_line=7, data_delim=" ", header_delim=","
-        )
+        super()._load(self.filename, *args, header_line=3, data_line=7, data_delim=" ", header_delim=",")
         if np.all(np.isnan(self.data)):
             raise Core.StonerLoadError("All data was NaN in Big Blue format")
         return self

@@ -132,7 +132,7 @@ class DataFileOperatorsMixin:
             [c1 != c2 for c1, c2 in zip(self.column_headers, other.column_headers)]
         ):  # And the same headers
             return False
-        if not super(DataFileOperatorsMixin, self).__eq__(other):  # Check metadata
+        if not super().__eq__(other):  # Check metadata
             return False
         # Ok give up, we are the same!
         return True

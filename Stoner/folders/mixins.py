@@ -133,7 +133,7 @@ class DiskBasedFolderMixin:
         # Adjust the default pattern depending on the specified type
         if "type" in kargs and "pattern" not in kargs:
             kargs["pattern"] = kargs["type"]._patterns
-        super(DiskBasedFolderMixin, self).__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
+        super().__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
         if self.readlist and len(args) > 0 and isinstance(args[0], path_types):
             self.getlist(directory=args[0])
         if len(args) > 0 and isinstance(args[0], bool) and not args[0]:
@@ -148,7 +148,7 @@ class DiskBasedFolderMixin:
     @baseFolder.key.getter  # pylint: disable=no-member
     def key(self):
         """Override the parent class *key* to use the *directory* attribute."""
-        k = getattr(super(DiskBasedFolderMixin, self), "key", None)
+        k = getattr(super(), "key", None)
         if k is None:
             self.key = self.directory
             return self._key
@@ -214,7 +214,7 @@ class DiskBasedFolderMixin:
             if list(self.basenames).count(name) == 1:
                 return self.__names__()[list(self.basenames).index(name)]
 
-        return super(DiskBasedFolderMixin, self).__lookup__(name)
+        return super().__lookup__(name)
 
     def __getter__(self, name, instantiate=True):
         """Load the specified name from a file on disk.
@@ -235,7 +235,7 @@ class DiskBasedFolderMixin:
         """
         assertion(name is not None, "Cannot get an anonympus entry!")
         try:  # Try the parent methods first
-            return super(DiskBasedFolderMixin, self).__getter__(name, instantiate=instantiate)
+            return super().__getter__(name, instantiate=instantiate)
         except (AttributeError, IndexError, KeyError):
             pass
         # Find a filename and load
@@ -758,7 +758,7 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
     def __init__(self, *args, **kargs):
 
         self.type = kargs.pop("type", make_Data(None))
-        super(DataFolder, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
 
 
 class PlotFolder(PlotMethodsMixin, DataFolder):

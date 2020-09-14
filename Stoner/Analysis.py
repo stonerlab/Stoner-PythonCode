@@ -23,7 +23,7 @@ class AnalysisMixin:
     def __dir__(self):
         """Handle the local attributes as well as the inherited ones."""
         attr = dir(type(self))
-        attr.extend(super(AnalysisMixin, self).__dir__())
+        attr.extend(super().__dir__())
         attr.extend(list(self.__dict__.keys()))
         attr = list(set(attr))
         return sorted(attr)

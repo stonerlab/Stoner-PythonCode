@@ -349,7 +349,7 @@ class Strijkers(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(Strijkers, self).__init__(strijkers, *args, **kwargs)
+        super().__init__(strijkers, *args, **kwargs)
 
     def guess(self, data, **kwargs):  # pylint: disable=unused-argument
         """Guess starting values for a good Nb contact to a ferromagnet at 4.2K."""
@@ -386,7 +386,7 @@ class RSJ_Noiseless(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(RSJ_Noiseless, self).__init__(rsj_noiseless, *args, **kwargs)
+        super().__init__(rsj_noiseless, *args, **kwargs)
 
     def guess(self, data, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
@@ -440,7 +440,7 @@ class RSJ_Simple(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(RSJ_Simple, self).__init__(rsj_simple, *args, **kwargs)
+        super().__init__(rsj_simple, *args, **kwargs)
 
     def guess(self, data, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
@@ -499,7 +499,7 @@ class Ic_B_Airy(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(Ic_B_Airy, self).__init__(ic_B_airy, *args, **kwargs)
+        super().__init__(ic_B_airy, *args, **kwargs)
 
     def guess(self, data, **kwargs):
         """Guess parameters as max(data), x[argmax(data)] and from FWHM of peak."""

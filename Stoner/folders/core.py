@@ -254,7 +254,7 @@ class baseFolder(MutableSequence):
                     self.__setattr__(k, value)
                     if self.debug:
                         print("Setting self.{} to {}".format(k, value))
-        super(baseFolder, self).__init__()
+        super().__init__()
 
     ###########################################################################
     ################### Properties of baseFolder ##############################
@@ -934,7 +934,7 @@ class baseFolder(MutableSequence):
             "key",
         ]:  # pass ddirectly through for private attributes
             raise AttributeError("{} is a protected attribute and may not be deleted!".format(name))
-        super(baseFolder, self).__delattr__(name)
+        super().__delattr__(name)
 
     ###########################################################################
     ###################### Private Methods ####################################

@@ -107,7 +107,7 @@ class odr_Model(odrModel):
 
         kargs["meta"] = meta
 
-        super(odr_Model, self).__init__(model, *args, **kargs)
+        super().__init__(model, *args, **kargs)
 
     @property
     def p0(self):

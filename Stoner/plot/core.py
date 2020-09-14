@@ -118,7 +118,7 @@ class PlotMixin:
             "ylabel": string_types,
             "_showfig": bool,
         }
-        super(PlotMixin, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         self._labels = typedList(string_types, [])
         if self.debug:
             print("Done PlotMixin init")
@@ -397,7 +397,7 @@ class PlotMixin:
     def __dir__(self):
         """Handle the local attributes as well as the inherited ones."""
         attr = dir(type(self))
-        attr.extend(super(PlotMixin, self).__dir__())
+        attr.extend(super().__dir__())
         attr.extend(list(self.__dict__.keys()))
         attr.extend(["fig", "axes", "labels", "subplots", "template"])
         attr.extend(("xlabel", "ylabel", "title", "xlim", "ylim"))
@@ -550,7 +550,7 @@ class PlotMixin:
             func = fig.__getattribute__(f"get_{name}")
 
         if func is None:  # Ok Fallback to lookinf again at parent class
-            return super(PlotMixin, self).__getattr__(o_name)
+            return super().__getattr__(o_name)
 
         # If we're still here then we're calling a proxy from that figure or axes
         ret = func()
@@ -629,7 +629,7 @@ class PlotMixin:
 
         if o_name in dir(type(self)) or func is None:
             try:
-                return super(PlotMixin, self).__setattr__(o_name, value)
+                return super().__setattr__(o_name, value)
             except AttributeError:
                 pass
 
@@ -677,7 +677,7 @@ class PlotMixin:
             the original DataFile Instance as well as returning it.
         """
         # Call the parent method and then update this label
-        super(PlotMixin, self).add_column(column_data, header=header, index=index, **kargs)
+        super().add_column(column_data, header=header, index=index, **kargs)
         # Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers) - 1

@@ -190,7 +190,7 @@ class BlochLaw(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(BlochLaw, self).__init__(self.blochs_law_bulk, *args, **kwargs)
+        super().__init__(self.blochs_law_bulk, *args, **kwargs)
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
@@ -274,7 +274,7 @@ class BlochLawThin(Model):
 
     def __init__(self, *args, **kwargs):
         """Setup the model."""
-        super(BlochLawThin, self).__init__(self.blochs_law_thinfilm, *args, **kwargs)
+        super().__init__(self.blochs_law_thinfilm, *args, **kwargs)
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
@@ -347,7 +347,7 @@ class Langevin(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(Langevin, self).__init__(langevin, *args, **kwargs)
+        super().__init__(langevin, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         r"""Guess some starting values.
@@ -395,7 +395,7 @@ class KittelEquation(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(KittelEquation, self).__init__(kittelEquation, *args, **kwargs)
+        super().__init__(kittelEquation, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
@@ -436,7 +436,7 @@ class Inverse_Kittel(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(Inverse_Kittel, self).__init__(inverse_kittel, *args, **kwargs)
+        super().__init__(inverse_kittel, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
@@ -478,7 +478,7 @@ class FMR_Power(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(FMR_Power, self).__init__(fmr_power, *args, **kwargs)
+        super().__init__(fmr_power, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         r"""Guess parameters as :math:`\gamma=2, H_k=0, M_s~(\pi f)^2/\mu_0^2.H)-H`."""

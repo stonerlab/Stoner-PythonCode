@@ -211,7 +211,7 @@ class Item:
             Lpy:attr:`Stoner.Data.setas` attribute (such as *.x*, *.y* or *.e* etc) can be accessed.
         """
         try:
-            return super(Item, self).__getattr__(name)
+            return super().__getattr__(name)
         except AttributeError:
             pass
         try:
@@ -261,7 +261,7 @@ class Item:
             the corresponding element of *value* is assigned to the attribute of the member.
         """
         if hasattr(self.__class__, name) or name.startswith("_"):  # Handle setting our own attributes
-            super(Item, self).__setattr__(name, value)
+            super().__setattr__(name, value)
         elif name in dir(self._folder.instance) or (
             len(self._folder) and hasattr(self._folder[0], name)
         ):  # This is an instance attribute

@@ -147,7 +147,7 @@ class regexpDict(sorteddict):
         """
         ret = None
         try:  # name directly as key
-            super(regexpDict, self).__getitem__(name)
+            super().__getitem__(name)
             ret = name
         except (KeyError, TypeError):  # Fall back to regular expression lookup
             if not exact and not isinstance(name, string_types + int_types):
@@ -184,7 +184,7 @@ class regexpDict(sorteddict):
 
     def __getitem__(self, name: Any) -> Any:
         """Add a lookup via regular expression when retrieving items."""
-        return super(regexpDict, self).__getitem__(self.__lookup__(name))
+        return super().__getitem__(self.__lookup__(name))
 
     def __setitem__(self, name: Any, value: Any) -> None:
         """Overwrite any matching key, or if not found adds a new key."""
@@ -194,11 +194,11 @@ class regexpDict(sorteddict):
             if not isinstance(name, self.allowed_keys):
                 raise KeyError("{} is not a match to any key.".format(name))
             key = name
-        super(regexpDict, self).__setitem__(key, value)
+        super().__setitem__(key, value)
 
     def __delitem__(self, name: Any) -> None:
         """Delete keys that match by regular expression as well as exact matches."""
-        super(regexpDict, self).__delitem__(self.__lookup__(name))
+        super().__delitem__(self.__lookup__(name))
 
     def __contains__(self, name: Any) -> bool:
         """Return True if name either is an exact key or matches when interpreted as a regular experssion."""
@@ -251,7 +251,7 @@ class regexpDict(sorteddict):
 
     def has_key(self, name: Any) -> bool:
         """Key is definitely in dictionary as literal."""
-        return super(regexpDict, self).__contains__(name)
+        return super().__contains__(name)
 
 
 class typeHintedDict(regexpDict):
@@ -355,12 +355,12 @@ class typeHintedDict(regexpDict):
         type hint from the value of the dict element.
         """
         self._typehints = sorteddict()
-        super(typeHintedDict, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         for key in list(self.keys()):  # Chekc through all the keys and see if they contain
             # type hints. If they do, move them to the
             # _typehint dict
-            value = super(typeHintedDict, self).__getitem__(key)
-            super(typeHintedDict, self).__delitem__(key)
+            value = super().__getitem__(key)
+            super().__delitem__(key)
             self[key] = value  # __Setitem__ has the logic to handle embedded type hints correctly
 
     @property
@@ -520,18 +520,18 @@ class typeHintedDict(regexpDict):
         if typehint is not None:
             self._typehints[name] = typehint
             if value is None:  # Empty data so reset to string and set empty #RCT changed the test here
-                super(typeHintedDict, self).__setitem__(name, "")
+                super().__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
                 try:
-                    super(typeHintedDict, self).__setitem__(name, self.__mungevalue(typehint, value))
+                    super().__setitem__(name, self.__mungevalue(typehint, value))
                 except ValueError:
                     pass  # Silently fail
         else:
             if isinstance(value, string_types):
                 value = string_to_type(value)
             self._typehints[name] = self.findtype(value)
-            super(typeHintedDict, self).__setitem__(name, value)
+            super().__setitem__(name, value)
 
     def __delitem__(self, name: Union[str, RegExp]) -> None:
         """Delete the specified key.
@@ -543,7 +543,7 @@ class typeHintedDict(regexpDict):
         name = self.__lookup__(name)
 
         del self._typehints[name]
-        super(typeHintedDict, self).__delitem__(name)
+        super().__delitem__(name)
 
     def __repr__(self) -> str:
         """Create a text representation of the dictionary with type data."""
@@ -685,7 +685,7 @@ class metadataObject(MutableMapping):
         metadata = kargs.pop("metadata", None)
         if metadata is not None:
             self.metadata.update(metadata)
-        super(metadataObject, self).__init__()
+        super().__init__()
 
     @property
     def _public_attrs(self):
@@ -779,5 +779,5 @@ if pd is not None:
         """Add a typehintedDict to PandasDataFrames."""
 
         def __init__(self, pandas_obj):
-            super(PandasMetadata, self).__init__()
+            super().__init__()
             self._obj = pandas_obj

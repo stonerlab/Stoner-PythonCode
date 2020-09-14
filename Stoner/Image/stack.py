@@ -37,21 +37,21 @@ class ImageStackMixin:
         self._sizes = np.array([], dtype=int).reshape(0, 2)
 
         if not len(args):
-            super(ImageStackMixin, self).__init__(**kargs)
+            super().__init__(**kargs)
             return None  # No further initialisation
         other = args[0]
         if isinstance(other, ImageStackMixin):
-            super(ImageStackMixin, self).__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kargs)
             self._stack = other._stack
             self._metadata = other._metadata
             self._names = other._names
             self._sizes = other._sizes
         elif isinstance(other, ImageFolder):  # ImageFolder can already init from itself
-            super(ImageStackMixin, self).__init__(*args, **kargs)
+            super().__init__(*args, **kargs)
         elif (
             isinstance(other, np.ndarray) and len(other.shape) == 3
         ):  # Initialise with 3D numpy array, first coordinate is number of images
-            super(ImageStackMixin, self).__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kargs)
             self.imarray = other
             self._sizes = np.ones((other.shape[0], 2), dtype=int) * other.shape[1:]
             self._names = ["Untitled-{}".format(d) for d in range(other.shape[0])]
@@ -62,13 +62,13 @@ class ImageStackMixin:
                 other = [ImageFile(i) for i in other]
             except (TypeError, ValueError, RuntimeError):
                 raise ValueError("Failed to initialise ImageStack with list input")
-            super(ImageStackMixin, self).__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kargs)
             for ot in other:
                 self.append(ot)
             del self[-1]  # Bit of a hack to get rid of initialised zeros data -
             # this poss needs changing in the append method
         else:
-            super(ImageStackMixin, self).__init__(*args, **kargs)
+            super().__init__(*args, **kargs)
 
     def __lookup__(self, name):
         """Stub for other classes to implement.
@@ -126,7 +126,7 @@ class ImageStackMixin:
         except KeyError:
             # If we don't seem to have the name then see if we can fall back to something else like a
             #  DiskBasedFolderMixin
-            return super(ImageStackMixin, self).__getter__(name, instantiate)
+            return super().__getter__(name, instantiate)
         if isinstance(instantiate, bool) and not instantiate:
             return self.__names__()[idx]
         instance = self._instantiate(idx)

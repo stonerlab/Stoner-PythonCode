@@ -85,7 +85,7 @@ class ZippedFile(DataFile):
                 if kargs["filename"] not in other.namelist():  # New file not in the zip file yet
                     raise StonerLoadError("File {} not found in zip file {}".format(kargs["filename"], other.filename))
                 # Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
-                super(ZippedFile, self).__init__(**kargs)
+                super().__init__(**kargs)
                 self._extract(other, kargs["filename"])
             elif isinstance(other, path_types):  # Passed a string - so try as a zipfile
                 if zf.is_zipfile(other):
@@ -96,7 +96,7 @@ class ZippedFile(DataFile):
                     args = test_is_zip(other)
                 self.__init__(*args, **kargs)
             else:
-                super(ZippedFile, self).__init__(*args, **kargs)
+                super().__init__(*args, **kargs)
 
     def _extract(self, archive, member):
         """Responsible for actually reading the zip file archive.
@@ -254,7 +254,7 @@ class ZipFolderMixin:
     def __init__(self, *args, **kargs):
         """Initialise the file attribute."""
         self.File = None
-        super(ZipFolderMixin, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
 
     @property
     def full_key(self):
@@ -321,7 +321,7 @@ class ZipFolderMixin:
                 self.File = zf.ZipFile(directory, "r")
                 close_me = True
         elif isinstance(directory, path_types) and path.isdir(directory):  # Fall back to DataFolder
-            return super(ZipFolderMixin, self).getlist(recursive, directory, flatten)
+            return super().getlist(recursive, directory, flatten)
         elif isinstance(directory, path_types) and zf.is_zipfile(directory):
             self.File = zf.ZipFile(directory, "r")
             close_me = True
@@ -387,7 +387,7 @@ class ZipFolderMixin:
         for arg in self._defaults:
             if hasattr(self, arg):
                 setattr(other, arg, getattr(self, arg))
-        return super(ZipFolderMixin, self).__clone__(other=other, attrs_only=attrs_only)
+        return super().__clone__(other=other, attrs_only=attrs_only)
 
     def __getter__(self, name, instantiate=True):
         """Load the specified name from a compressed archive.
@@ -407,7 +407,7 @@ class ZipFolderMixin:
                 The metadataObject
         """
         try:
-            return super(ZipFolderMixin, self).__getter__(name, instantiate=instantiate)
+            return super().__getter__(name, instantiate=instantiate)
         except (AttributeError, IndexError, KeyError, OSError, IOError) as err:
             if self.debug:
                 print(err)
@@ -454,7 +454,7 @@ class ZipFolderMixin:
                     return pth
         except AttributeError:
             pass
-        return super(ZipFolderMixin, self).__lookup__(name)
+        return super().__lookup__(name)
 
     def save(self, root=None):
         """Save a load of files to a single Zip file, creating members as it goes.

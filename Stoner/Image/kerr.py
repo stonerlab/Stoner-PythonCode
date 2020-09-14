@@ -119,7 +119,7 @@ class KerrArray(ImageArray):
             "crop_text": True,
         }
         kerrdefaults.update(kargs)
-        super(KerrArray, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         self._tesseractable = None
         if kerrdefaults["reduce_metadata"]:
             self.reduce_metadata()
@@ -381,7 +381,7 @@ class KerrImageFile(ImageFile):
 
     def __init__(self, *args, **kargs):
         """Ensure that the image is a KerrImage."""
-        super(KerrImageFile, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         self._image = self._image.view(KerrArray)
 
     @property
@@ -601,7 +601,7 @@ class MaskStackMixin:
 
     def __init__(self, *args, **kargs):
         """Ensure the data is boolean."""
-        super(MaskStackMixin, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         self._stack = self._stack.astype(bool)
 
     def switch_index(self, saturation_end=True, saturation_value=True):

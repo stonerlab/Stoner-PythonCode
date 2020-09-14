@@ -151,7 +151,7 @@ class Arrhenius(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure default function to fit."""
-        super(Arrhenius, self).__init__(arrhenius, *args, **kwargs)
+        super().__init__(arrhenius, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Estimate fitting parameters from data."""
@@ -190,7 +190,7 @@ class NDimArrhenius(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(NDimArrhenius, self).__init__(nDimArrhenius, *args, **kwargs)
+        super().__init__(nDimArrhenius, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess paramneters from a set of data."""
@@ -229,7 +229,7 @@ class ModArrhenius(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(ModArrhenius, self).__init__(modArrhenius, *args, **kwargs)
+        super().__init__(modArrhenius, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess paramneters from a set of data."""
@@ -272,7 +272,7 @@ class VFTEquation(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(VFTEquation, self).__init__(vftEquation, *args, **kwargs)
+        super().__init__(vftEquation, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess paramneters from a set of data."""

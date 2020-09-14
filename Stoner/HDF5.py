@@ -149,7 +149,7 @@ class HDF5File(DataFile):
             grp = args.pop(0)
         else:
             grp = None
-        super(HDF5File, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         if grp is not None:
             self._load(grp, **kargs)
 
@@ -431,7 +431,7 @@ class HDF5FolderMixin:
     def __init__(self, *args, **kargs):
         """Initialise the File aatribute."""
         self.File = None
-        super(HDF5FolderMixin, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
 
     def __getter__(self, name, instantiate=True):
         """Load the specified name from a file on disk.
@@ -452,7 +452,7 @@ class HDF5FolderMixin:
                 The metadataObject
         """
         try:
-            return super(HDF5FolderMixin, self).__getter__(name, instantiate=instantiate)
+            return super().__getter__(name, instantiate=instantiate)
         except (AttributeError, IndexError, KeyError, OSError, IOError) as err:
             if self.debug:
                 print(err)
@@ -551,7 +551,7 @@ class HDF5FolderMixin:
                 self.File = directory
                 closeme = True
             except OSError:
-                return super(HDF5FolderMixin, self).getlist(recursive, directory, flatten)
+                return super().getlist(recursive, directory, flatten)
         elif isinstance(directory, h5py.File) or isinstance(directory, h5py.Group):  # Bug out here
             self.File = directory.file
             self.directory = self.File.filename
@@ -621,7 +621,7 @@ class HDF5Folder(HDF5FolderMixin, DataFolder):
     def __init__(self, *args, **kargs):
         """Ensure the loader routine is set for HDF5Files."""
         self.loader = HDF5File
-        super(HDF5Folder, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
 
 
 class SLS_STXMFile(DataFile):
@@ -733,20 +733,20 @@ class STXMImage(ImageFile):
         if len(args) > 0 and isinstance(args[0], path_types):
             d = SLS_STXMFile(args[0])
             args = args[1:]
-            super(STXMImage, self).__init__(*args, **kargs)
+            super().__init__(*args, **kargs)
             self.image = d.data
             self.metadata.update(d.metadata)
             self.filename = d.filename
         elif len(args) > 0 and isinstance(args[0], ImageFile):
             src = args[0]
             args = args[1:]
-            super(STXMImage, self).__init__(src.image, *args, **kargs)
+            super().__init__(src.image, *args, **kargs)
         elif len(args) > 0 and isinstance(args[0], ImageArray):
             src = args[0]
             args = args[1:]
-            super(STXMImage, self).__init__(src, *args, **kargs)
+            super().__init__(src, *args, **kargs)
         else:
-            super(STXMImage, self).__init__(*args, **kargs)
+            super().__init__(*args, **kargs)
         if isinstance(regrid, tuple):
             self.gridimage(*regrid)
         elif isinstance(regrid, dict):

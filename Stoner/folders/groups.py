@@ -17,7 +17,7 @@ class GroupsDict(regexpDict):
     def __init__(self, *args, **kargs):
         """Capture a *base* keyuword that sets the parent :py:class:`Stoner.DataFolder` instance."""
         self.base = kargs.pop("base", None)
-        super(GroupsDict, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
 
     def __setitem__(self, name, value):
         """Enforce type checking on values."""
@@ -25,7 +25,7 @@ class GroupsDict(regexpDict):
             raise ValueError(
                 f"groups attribute can only contain {type(self.base.__class__)} objects not {type(value)}"
             )
-        super(GroupsDict, self).__setitem__(name, value)
+        super().__setitem__(name, value)
 
     def compress(self, base=None, key=".", keep_terminal=False):
         """Compresses all empty groups from the root up until the first non-empty group is located.

@@ -42,7 +42,7 @@ class BNLFile(Core.DataFile):
         line_numbers is a list of important line numbers in the file.
         I've left it open for someone to add options for more args if they wish.
         """
-        super(BNLFile, self).__init__(*params)
+        super().__init__(*params)
         self.line_numbers = []
 
     def __find_lines(self):

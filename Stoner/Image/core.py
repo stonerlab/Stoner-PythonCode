@@ -253,11 +253,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 setattr(self, k, getattr(obj, k, v))
             except AttributeError:  # Some versions of  python don't like this
                 pass
-        super(ImageArray, self).__array_finalize__(obj)
+        super().__array_finalize__(obj)
 
     def __array_prepare__(self, arr, context=None):
         """Support the numpy machinery for subclassing ndarray."""
-        return super(ImageArray, self).__array_prepare__(arr, context)
+        return super().__array_prepare__(arr, context)
 
     def _load(self, filename, *args, **kargs):
         """Load an image from a file and return as a ImageArray."""
@@ -501,7 +501,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     def __dir__(self):
         """Implement code for dir() to include proxy functions."""
         proxy = set(list(self._funcs.keys()))
-        parent = set(dir(super(ImageArray, self)))
+        parent = set(dir(super()))
         return sorted(list(proxy | parent))
 
     def __getattr__(self, name):
@@ -524,7 +524,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """
         ret = None
         try:
-            ret = getattr(super(ImageArray, self), name)
+            ret = getattr(super(), name)
         except AttributeError:
             # first check kermit funcs
             if name.startswith("_") or name in ["debug"]:
@@ -604,7 +604,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     def __getstate__(self):
         """Help with pickling ImageArrays."""
-        ret = super(ImageArray, self).__getstate__()
+        ret = super().__getstate__()
 
         return {"numpy": ret, "ImageArray": {"metadata": self.metadata}}
 
@@ -613,12 +613,12 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         original = state.pop("numpy", tuple())
         local = state.pop("ImageArray", {})
         metadata = local.pop("metadata", {})
-        super(ImageArray, self).__setstate__(original)
+        super().__setstate__(original)
         self.metadata.update(metadata)
 
     def __setattr__(self, name, value):
         """Set an attribute on the object."""
-        super(ImageArray, self).__setattr__(name, value)
+        super().__setattr__(name, value)
         # add attribute to those for copying in array_finalize. use value as
         # defualt.
         circ = ["_optinfo"]  # circular references
@@ -639,7 +639,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             index = index.image
         if isinstance(index, string_types):
             return self.metadata[index]
-        return super(ImageArray, self).__getitem__(index)
+        return super().__getitem__(index)
 
     def __setitem__(self, index, value):
         """Patch string index through to metadata."""
@@ -648,14 +648,14 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if isinstance(index, string_types):
             self.metadata[index] = value
         else:
-            super(ImageArray, self).__setitem__(index, value)
+            super().__setitem__(index, value)
 
     def __delitem__(self, index):
         """Patch indexing of strings to metadata."""
         if isinstance(index, string_types):
             del self.metadata[index]
         else:
-            super(ImageArray, self).__delitem__(index)
+            super().__delitem__(index)
 
     ############################################################################################################
     ############### Custom Methods for ImageArray###############################################################
@@ -991,7 +991,7 @@ class ImageFile(metadataObject):
         x and y or if omitted asquare grid will be interpolated.
 
         """
-        super(ImageFile, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         args = list(args)
         if len(args) == 0:
             self._image = ImageArray()
@@ -1138,7 +1138,7 @@ class ImageFile(metadataObject):
     def __dir__(self):
         """Merge both the ImageFile and ImageArray dirs."""
         parent = set(dir(metadataObject()))
-        this = set(dir(super(ImageFile, self)))
+        this = set(dir(super()))
         image = set(dir(self.image))
         return list(parent | this | image)
 
@@ -1167,7 +1167,7 @@ class ImageFile(metadataObject):
         if obj is None:
             raise AttributeError(f"{n} is not an attribute of {self.__class__}")
         if obj is self:
-            return getattr(super(ImageFile, self), n)
+            return getattr(super(), n)
         ret = getattr(self._image, n)
         if callable(ret):  # we have a method
             ret = self._func_generator(ret)  # modiy so that we can change image in place
@@ -1181,7 +1181,7 @@ class ImageFile(metadataObject):
             if self._where_attr("_public_attrs_real") is self:
                 self._public_attrs = {n: type(v)}
         if obj is self:
-            super(ImageFile, self).__setattr__(n, v)
+            super().__setattr__(n, v)
         else:
             setattr(obj, n, v)
 
@@ -1394,7 +1394,7 @@ class ImageFile(metadataObject):
     def _where_attr(self, n):
         """Get the object that has the named attribute."""
         try:
-            _ = super(ImageFile, self).__getattribute__(n)
+            _ = super().__getattribute__(n)
             return self
         except AttributeError:
             try:

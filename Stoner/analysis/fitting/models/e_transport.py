@@ -173,7 +173,7 @@ class WLfit(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(WLfit, self).__init__(wlfit, *args, **kwargs)
+        super().__init__(wlfit, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters for weak localisation fit."""
@@ -217,7 +217,7 @@ class FluchsSondheimer(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(FluchsSondheimer, self).__init__(fluchsSondheimer, *args, **kwargs)
+        super().__init__(fluchsSondheimer, *args, **kwargs)
 
     def guess(self, data, t=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever."""
@@ -249,7 +249,7 @@ class BlochGrueneisen(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(BlochGrueneisen, self).__init__(blochGrueneisen, *args, **kwargs)
+        super().__init__(blochGrueneisen, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever."""

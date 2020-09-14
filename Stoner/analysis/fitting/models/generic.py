@@ -192,7 +192,7 @@ class StretchedExp(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(StretchedExp, self).__init__(stretchedExp, *args, **kwargs)
+        super().__init__(stretchedExp, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters for the stretched exponential from data."""
@@ -235,7 +235,7 @@ class Lorentzian_diff(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(Lorentzian_diff, self).__init__(lorentzian_diff, *args, **kwargs)
+        super().__init__(lorentzian_diff, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""

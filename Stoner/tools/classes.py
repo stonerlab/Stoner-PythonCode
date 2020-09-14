@@ -34,7 +34,7 @@ class attributeStore(dict):
         if len(args) == 1 and isinstance(args[0], dict):
             self.update(args[0])
         else:
-            super(attributeStore, self).__init__(*args, **kargs)
+            super().__init__(*args, **kargs)
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Set an attribute (equivalent to setting an item)."""
@@ -249,7 +249,7 @@ class Options:
     def __setattr__(self, name: str, value: bool) -> None:
         """Set an option value."""
         if name.startswith("_"):
-            return super(Options, self).__setattr__(name, value)
+            return super().__setattr__(name, value)
         if name not in _options:
             raise AttributeError("{} is not a recognised option.".format(name))
         if not isinstance(value, type(_options[name])):

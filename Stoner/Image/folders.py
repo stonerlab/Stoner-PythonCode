@@ -103,7 +103,7 @@ class ImageFolderMixin:
         Note:
             Mainly we call the parent method and then set the title if it's not already set.'
         """
-        ret = super(ImageFolderMixin, self).__getter__(name, instantiate)
+        ret = super().__getter__(name, instantiate)
         if hasattr(ret, "_title") and ret._title is None:
             ret._title = name
         return ret

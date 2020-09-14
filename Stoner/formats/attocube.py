@@ -106,7 +106,7 @@ class AttocubeScanMixin:
 
         regrid = kargs.pop("regrid", False)
 
-        super(AttocubeScanMixin, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
 
         self._common_metadata = typeHintedDict()
 
@@ -128,7 +128,7 @@ class AttocubeScanMixin:
 
 
         """
-        other = super(AttocubeScanMixin, self).__clone__(other, attrs_only)
+        other = super().__clone__(other, attrs_only)
         other._common_metadata = deepcopy(self._common_metadata)
         return other
 
@@ -138,7 +138,7 @@ class AttocubeScanMixin:
             for ix, ch in enumerate(self.channels):
                 if name in ch:
                     return self[ix]
-        return super(AttocubeScanMixin, self).__getitem__(name)
+        return super().__getitem__(name)
 
     @property
     def channels(self):

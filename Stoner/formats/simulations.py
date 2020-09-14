@@ -93,7 +93,7 @@ class OVFFile(DataFile):
 
     def __init__(self, *args, **kargs):
         """Set some instance attributes."""
-        super(OVFFile, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         self._ptr = None
 
     def _read_uvwdata(self, filename, fmt, lineno):

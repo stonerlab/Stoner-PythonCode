@@ -24,7 +24,7 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
     def __init__(self, *args, **kargs):
         """Set the default type before creating the DataFolder."""
         self.type = kargs.pop("type", make_Data(None))
-        super(DataFolder, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
 
 
 class PlotFolder(PlotMethodsMixin, DataFolder):

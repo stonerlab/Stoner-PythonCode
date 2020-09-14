@@ -99,7 +99,7 @@ def make_model(model_func):
         __doc__ = model_func.__doc__
 
         def __init__(self, *args, **kargs):
-            super(_ModelDecorator, self).__init__(model_func, *args, **kargs)
+            super().__init__(model_func, *args, **kargs)
             if hasattr(self, "_limits"):
                 for param, limit in self._limits().items():
                     self.set_param_hint(param, **limit)

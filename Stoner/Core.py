@@ -216,7 +216,7 @@ class DataFile(
                 All keyword arguments that match public attributes are used to set those public attributes.
         """
         # init instance attributes
-        super(DataFile, self).__init__(*args, **kargs)  # initialise self.metadata)
+        super().__init__(*args, **kargs)  # initialise self.metadata)
         self._public_attrs = {
             "data": np.ndarray,
             "setas": (string_types, list, dict),
@@ -321,7 +321,7 @@ class DataFile(
         """Initialise from datafile."""
         for a in arg.__dict__:
             if not callable(a) and a != "_baseclass":
-                super(DataFile, self).__setattr__(a, copy.copy(arg.__getattribute__(a)))
+                super().__setattr__(a, copy.copy(arg.__getattribute__(a)))
         self.metadata = arg.metadata.copy()
         self.data = DataArray(arg.data, setas=arg.setas.clone)
         self.data.setas = arg.setas.clone
@@ -491,7 +491,7 @@ class DataFile(
         if name != "debug" and self.debug:
             print(name)
         try:
-            return super(DataFile, self).__getattr__(name)
+            return super().__getattr__(name)
         except AttributeError:
             ret = self.__dict__.get(name, self.__class__.__dict__.get(name, None))
             if ret is not None:
@@ -548,11 +548,11 @@ class DataFile(
                 -   data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
         if hasattr(type(self), name) and isinstance(getattr(type(self), name), property):
-            super(DataFile, self).__setattr__(name, value)
+            super().__setattr__(name, value)
         elif len(name) == 1 and name in "xyzuvwdef" and self.setas[name]:
             self._setattr_col(name, value)
         else:
-            super(DataFile, self).__setattr__(name, value)
+            super().__setattr__(name, value)
 
     def __str__(self):
         """Provide an implementation for str(DataFile) that does not shorten the output."""

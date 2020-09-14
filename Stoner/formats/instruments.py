@@ -399,7 +399,7 @@ class SPCFile(Core.DataFile):
 
     def __init__(self, *args, **kargs):
         """Create a few local attributes."""
-        super(SPCFile, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         self._pts = None
         self._header = None
         self._filesize = None
@@ -757,7 +757,7 @@ class XRDFile(Core.DataFile):
 
     def __init__(self, *args, **kargs):
         """Add a public attribute to XRD File."""
-        super(XRDFile, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         self._public_attrs = {"four_bounce": bool}
 
     def _load(self, filename=None, *args, **kargs):

@@ -95,7 +95,7 @@ class DataArray(ma.MaskedArray):
     def __array_finalize__(self, obj):
         """Numpy ndarray magic method."""
         # see InfoArray.__array_finalize__ for comments
-        super(DataArray, self).__array_finalize__(obj)
+        super().__array_finalize__(obj)
         if obj is None:
             self._setas = _setas()
             self.i = 0
@@ -272,7 +272,7 @@ class DataArray(ma.MaskedArray):
     def __reduce__(self):
         """Implement hooks for pickling."""
         # Get the parent's __reduce__ tuple
-        pickled_state = super(DataArray, self).__reduce__()
+        pickled_state = super().__reduce__()
         # Create our own tuple to pass to __setstate__
         new_state = pickled_state[2] + (self._setas, self.i)
         # Return a tuple that replaces the parent's __setstate__ tuple with our own
@@ -282,7 +282,7 @@ class DataArray(ma.MaskedArray):
         """Implement hooks for unpickling."""
         self._setas = state[-2]  # Set the info attribute
         # Call the parent's __setstate__ with the other tuple elements.
-        super(DataArray, self).__setstate__(state[0:-2])
+        super().__setstate__(state[0:-2])
         self.i = state[-1]
 
     def __getattr__(self, name):
@@ -302,7 +302,7 @@ class DataArray(ma.MaskedArray):
         if name in self.setas.cols:
             return self.setas.__getattr__(name)
         if name not in col_check:
-            return super(DataArray, self).__getattribute__(name)
+            return super().__getattribute__(name)
         indexer = [slice(0, dim, 1) for ix, dim in enumerate(self.shape)]
         col = col_check[name]
         if col.startswith("x"):
@@ -380,7 +380,7 @@ class DataArray(ma.MaskedArray):
             ix.append(self._setas.find_col(c))
             ix = tuple(ix)
             # Now can index with our constructed multidimesnional indexer
-        ret = super(DataArray, self).__getitem__(ix)
+        ret = super().__getitem__(ix)
         if ret.ndim == 0 or isinstance(ret, np.ndarray) and ret.size == 1:
             if isinstance(ret, ma.core.MaskedConstant):
                 if ret.mask:
@@ -446,7 +446,7 @@ class DataArray(ma.MaskedArray):
         if self.sharedmask:  # We do not want to share a mask when we're about to change soimething here...
             self.unshare_mask()
 
-        super(DataArray, self).__setitem__(ix, val)
+        super().__setitem__(ix, val)
 
     # ==============================================================================================================
     ############################              Private Methods                #######################################

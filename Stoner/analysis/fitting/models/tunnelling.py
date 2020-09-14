@@ -155,7 +155,7 @@ class Simmons(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(Simmons, self).__init__(simmons, *args, **kwargs)
+        super().__init__(simmons, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Set the A, phi and d values to typical answers for a small tunnel junction."""
@@ -190,7 +190,7 @@ class BDR(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(BDR, self).__init__(bdr, *args, **kwargs)
+        super().__init__(bdr, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction."""
@@ -219,7 +219,7 @@ class FowlerNordheim(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(FowlerNordheim, self).__init__(fowlerNordheim, *args, **kwargs)
+        super().__init__(fowlerNordheim, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Set the A, phi and d values to typical answers for a small tunnel junction."""
@@ -241,7 +241,7 @@ class TersoffHammann(Model):
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
-        super(TersoffHammann, self).__init__(tersoffHammann, *args, **kwargs)
+        super().__init__(tersoffHammann, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):
         """Set the parameter values from an apporximate line."""
