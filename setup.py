@@ -2,6 +2,7 @@ import os
 from setuptools import setup, find_packages
 import re
 import sys, io
+from os import environ as env
 
 
 def get_version():
@@ -81,6 +82,11 @@ def requires(fname):
         entries=[entry for entry in entries if entry[0] not in " #\n\t"]
         return entries
 
+if "READTHEDOCS" in env:
+    requyirements="doc/requirements.txt"
+else:
+    requyirements="requirements.txt"
+
 setup(
     name = "Stoner",
     version = str(get_version()),
@@ -96,7 +102,7 @@ setup(
     test_suite="tests",
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
-    install_requires=requires("requirements.txt"),
+    install_requires=requires(requyirements),
     extras_require = { "PrettyPrint":["tabulate>=0.7.5"],
                        "mimetype_detection":["magic"],
                        "TDMS":["nptdms"],
