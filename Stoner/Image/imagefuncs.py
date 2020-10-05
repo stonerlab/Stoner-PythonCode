@@ -796,8 +796,13 @@ def quantize(im, output, levels=None):
         levels (list, array or None): The input band markers. If None is constructed from the data.
 
     The number of levels should be one less than the number of output levels given.
+
+    Notes:
+        The routine will ignore all masked pixels and will preserve the mask.
     """
-    lmin, lmax = im.min(), im.max()  # Dudge to ensure that the bottom and top elements are included.
+    section = im[~im.mask]
+    mask = im.mask
+    lmin, lmax = section.min(), section.max()  # Dudge to ensure that the bottom and top elements are included.
     delta = (lmax - lmin) / 100
 
     if levels is None:
@@ -807,16 +812,19 @@ def quantize(im, output, levels=None):
     elif len(levels) == len(output) - 1:
         lvl = np.zeros(len(output) + 1)
         lvl[1:-1] = levels
-        lvl[0] = im.min() - delta
-        lvl[-1] = im.max() + delta
+        lvl[0] = section.min() - delta
+        lvl[-1] = section.max() + delta
         levels = lvl
     else:
         raise RuntimeError("{} output levels and {} input levels".format(len(output), len(levels)))
 
     ret = im.clone
+    ret.mask = False
     for lvl, lvh, val in zip(levels[:-1], levels[1:], output):
         select = np.logical_and(np.less_equal(im, lvh), np.greater(im, lvl))
         ret[select] = val
+    ret[mask] = im.view(np.ndarray)[mask]  # Put back the original image values where they are masked.
+    ret.mask = mask  # restore mask
     return ret
 
 
