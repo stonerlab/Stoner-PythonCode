@@ -10,6 +10,7 @@ from scipy.special import jv
 from scipy.constants import physical_constants
 from scipy.integrate import quad
 
+
 __all__ = [
     "RSJ_Noiseless",
     "RSJ_Simple",
@@ -53,7 +54,7 @@ except ImportError:
     float64 = _dummy()
 
 
-@jit(float64[:](float64[:], float64, float64, float64, float64))
+@jit(float64[:](float64[:], float64, float64, float64, float64), nopython=True, parallel=True, nogil=True)
 def _strijkers_core(V, omega, delta, P, Z):
     """Implement strijkers Model for point-contact Andreev Reflection Spectroscopy.
 
@@ -76,7 +77,7 @@ def _strijkers_core(V, omega, delta, P, Z):
 
     mv = np.max(np.abs(V))  # Limit for evaluating the integrals
     E = np.linspace(-2 * mv, 2 * mv, V.size * 20)  # Energy range in meV - we use a mesh 20x denser than data points
-    gauss = (1.0 / np.sqrt(2 * np.pi * omega ** 2)) * np.exp(-(E ** 2 / (2 * omega ** 2)))
+    gauss = np.exp(-(E ** 2 / (2 * omega ** 2)))
     gauss /= gauss.sum()  # Normalised gaussian for the convolution
 
     # Conductance calculation

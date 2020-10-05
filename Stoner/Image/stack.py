@@ -161,7 +161,8 @@ class ImageStackMixin:
                 return None
             idx = len(self)
             return self.__inserter__(idx, name, value)
-        value = self.type(value)  # ensure type if a bare numpy array was given
+        if not isinstance(value, self.type):
+            value = self.type(value)
         self._sizes[idx] = value.shape
         self._metadata[name] = value.metadata
         _public_attrs = {}
@@ -170,8 +171,8 @@ class ImageStackMixin:
                 continue  # skip attrs I already handle
             _public_attrs[attr] = getattr(value, attr, None)
         self._public_attrs_store[name] = _public_attrs
-        if hasattr(value, "image"):
-            value = value.image
+        value = getattr(value, "image", value)
+        mask = getattr(value, "mask", np.zeros_like(value, dtype=bool))
         row, col = value.shape
         pag = len(self._sizes)
         new_size = self.max_size + (pag,)
@@ -181,6 +182,8 @@ class ImageStackMixin:
             dtype = None
         self._resize_stack(new_size, dtype=dtype)
         self._stack[:row, :col, idx] = value
+        self._stack.mask = np.ma.getmaskarray(self._stack)
+        self._stack.mask[:row, :col, idx] = mask
 
     def __inserter__(self, ix, name, value):
         """Provide an efficient insert into the stack.
@@ -198,9 +201,13 @@ class ImageStackMixin:
         else:
             dtype = None
         self._resize_stack(new_size, dtype=dtype)
+        stack_mask = np.insert(np.ma.getmaskarray(self._stack), ix, np.zeros(self.max_size, dtype=bool), axis=2)
         self._stack = np.insert(self._stack, ix, np.zeros(self.max_size), axis=2)
+        self._stack.mask = stack_mask
+        value = value.data
         row, col = value.shape
-        self._stack[:row, :col, ix] = value.data
+        self._stack[:row, :col, ix] = value
+        self._stack.mask[:row, :col, ix] = np.ma.getmaskarray(value)
         _public_attrs = {}
         for attr in value._public_attrs.keys():
             if attr in ["data", "image", "metadata"]:
@@ -280,6 +287,7 @@ class ImageStackMixin:
     def _resize_stack(self, new_size, dtype=None):
         """Create a new stack with a new size."""
         old_size = self._stack.shape
+        assert isinstance(self._stack, np.ma.MaskedArray)
         if old_size == new_size:
             return new_size
         if dtype is None:
@@ -288,6 +296,7 @@ class ImageStackMixin:
 
         new = np.ma.zeros(new_size, dtype=dtype)
         new[:row, :col, :pag] = self._stack[:row, :col, :pag]
+        new.mask = np.ma.getmaskarray(self._stack)[:row, :col, :pag]
         self._stack = new
         return row, col, pag
 
@@ -303,7 +312,7 @@ class ImageStackMixin:
     def imarray(self, value):
         """Set the 3D stack of images - as [image,x,y]."""
         value = np.ma.MaskedArray(np.atleast_3d(value))
-        self._stack = np.transpose(value, (1, 2, 0))
+        self._stack = np.transpose(value, (1, 2, 0)).view(np.ma.MaskedArray)
 
     @property
     def max_size(self):
@@ -364,7 +373,11 @@ class ImageStackMixin:
         from .imagefuncs import convert
 
         # Aactually this is just a pass through for the imagefuncs.convert routine
-        self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise)
+        mask = self._stack.mask
+        self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise).view(
+            np.ma.MaskedArray
+        )
+        self._stack.mask = mask
         return self
 
     def asfloat(self, normalise=True, clip=False, clip_negative=False, **kargs):

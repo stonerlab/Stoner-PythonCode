@@ -184,7 +184,7 @@ class AttocubeScanMixin:
         else:
             mod = importlib.import_module(bytes2str(f.attrs["module"]))
             cls = getattr(mod, typ)
-            loader = getattr(cls, "read_JDF")
+            loader = getattr(cls, "read_HDF")
         if loader is None:
             _raise_error(f, message="Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
 
