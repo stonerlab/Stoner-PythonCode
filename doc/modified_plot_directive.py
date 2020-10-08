@@ -1,44 +1,45 @@
 """
-A directive for including a matplotlib plot in a Sphinx document.
+A directive for including a Matplotlib plot in a Sphinx document
+================================================================
 
-By default, in HTML output, `plot` will include a .png file with a
-link to a high-res .png and .pdf.  In LaTeX output, it will include a
-.pdf.
+By default, in HTML output, `plot` will include a .png file with a link to a
+high-res .png and .pdf.  In LaTeX output, it will include a .pdf.
 
 The source code for the plot may be included in one of three ways:
 
-  1. **A path to a source file** as the argument to the directive::
+1. **A path to a source file** as the argument to the directive::
 
-       .. plot:: path/to/plot.py
+     .. plot:: path/to/plot.py
 
-     When a path to a source file is given, the content of the
-     directive may optionally contain a caption for the plot::
+   When a path to a source file is given, the content of the
+   directive may optionally contain a caption for the plot::
 
-       .. plot:: path/to/plot.py
+     .. plot:: path/to/plot.py
 
-          This is the caption for the plot
+        The plot's caption.
 
-     Additionally, one may specify the name of a function to call (with
-     no arguments) immediately after importing the module::
+   Additionally, one may specify the name of a function to call (with
+   no arguments) immediately after importing the module::
 
-       .. plot:: path/to/plot.py plot_function1
+     .. plot:: path/to/plot.py plot_function1
 
-  2. Included as **inline content** to the directive::
+2. Included as **inline content** to the directive::
 
-       .. plot::
+     .. plot::
 
-          import matplotlib.pyplot as plt
-          import matplotlib.image as mpimg
-          import numpy as np
-          img = mpimg.imread('_static/stinkbug.png')
-          imgplot = plt.imshow(img)
+        import matplotlib.pyplot as plt
+        import matplotlib.image as mpimg
+        import numpy as np
+        img = mpimg.imread('_static/stinkbug.png')
+        imgplot = plt.imshow(img)
 
-  3. Using **doctest** syntax::
+3. Using **doctest** syntax::
 
-       .. plot::
-          A plotting example:
-          >>> import matplotlib.pyplot as plt
-          >>> plt.plot([1,2,3], [4,5,6])
+     .. plot::
+
+        A plotting example:
+        >>> import matplotlib.pyplot as plt
+        >>> plt.plot([1, 2, 3], [4, 5, 6])
 
 Options
 -------
@@ -46,43 +47,38 @@ Options
 The ``plot`` directive supports the following options:
 
     format : {'python', 'doctest'}
-        Specify the format of the input
+        The format of the input.
 
     include-source : bool
         Whether to display the source code. The default can be changed
-        using the `plot_include_source` variable in conf.py
+        using the `plot_include_source` variable in :file:`conf.py`.
 
     encoding : str
-        If this source file is in a non-UTF8 or non-ASCII encoding,
-        the encoding must be specified using the `:encoding:` option.
-        The encoding will not be inferred using the ``-*- coding -*-``
-        metacomment.
+        If this source file is in a non-UTF8 or non-ASCII encoding, the
+        encoding must be specified using the ``:encoding:`` option.  The
+        encoding will not be inferred using the ``-*- coding -*-`` metacomment.
 
     context : bool or str
-        If provided, the code will be run in the context of all
-        previous plot directives for which the `:context:` option was
-        specified.  This only applies to inline code plot directives,
-        not those run from files. If the ``:context: reset`` option is
-        specified, the context is reset for this and future plots, and
-        previous figures are closed prior to running the code.
-        ``:context:close-figs`` keeps the context but closes previous figures
-        before running the code.
+        If provided, the code will be run in the context of all previous plot
+        directives for which the ``:context:`` option was specified.  This only
+        applies to inline code plot directives, not those run from files. If
+        the ``:context: reset`` option is specified, the context is reset
+        for this and future plots, and previous figures are closed prior to
+        running the code. ``:context: close-figs`` keeps the context but closes
+        previous figures before running the code.
 
     nofigs : bool
-        If specified, the code block will be run, but no figures will
-        be inserted.  This is usually useful with the ``:context:``
-        option.
+        If specified, the code block will be run, but no figures will be
+        inserted.  This is usually useful with the ``:context:`` option.
 
-    outname : str
-        If specified, the names of the generated plots will start with the value
-        of `:outname:`. This is handy for preserving output results if code is
-        reordered between runs. The value of `:outname:` must be unique across
-        the generated documentation.
+    caption : str
+        If specified, the option's argument will be used as a caption for the
+        figure. This overwrites the caption given in the content, when the plot
+        is generated from a file.
 
-Additionally, this directive supports all of the options of the
-`image` directive, except for `target` (since plot will add its own
-target).  These include `alt`, `height`, `width`, `scale`, `align` and
-`class`.
+Additionally, this directive supports all of the options of the `image`
+directive, except for *target* (since plot will add its own target).  These
+include *alt*, *height*, *width*, *scale*, *align* and *class*.
 
 Configuration options
 ---------------------
@@ -115,7 +111,7 @@ The plot directive has the following configuration options:
         that determine the file format and the DPI. For entries whose
         DPI was omitted, sensible defaults are chosen. When passing from
         the command line through sphinx_build the list should be passed as
-        suffix:dpi,suffix:dpi, ....
+        suffix:dpi,suffix:dpi, ...
 
     plot_html_show_formats
         Whether to show links to the files in HTML.
@@ -125,8 +121,8 @@ The plot directive has the following configuration options:
         be applied before each plot.
 
     plot_apply_rcparams
-        By default, rcParams are applied when `context` option is not used in
-        a plot directive.  This configuration option overrides this behavior
+        By default, rcParams are applied when ``:context:`` option is not used
+        in a plot directive.  This configuration option overrides this behavior
         and applies rcParams before each plot.
 
     plot_working_directory
@@ -139,171 +135,157 @@ The plot directive has the following configuration options:
 
     plot_template
         Provide a customized template for preparing restructured text.
-
-    plot_preserve_dir
-        Files with outnames are copied to this directory and files in this
-        directory are copied back from into the build directory prior to the
-        build beginning.
 """
-# pylint: disable-all
-from __future__ import absolute_import, division, print_function, unicode_literals
 
-import sys
+import contextlib
+from io import StringIO
+import itertools
 import os
-import shutil
-import io
-import re
-import textwrap
-from os.path import relpath
-import traceback
-import warnings
 import glob
-import matplotlib
-import matplotlib.cbook as cbook
-from matplotlib import _pylab_helpers
-import six
-import sphinx
+import io
+from os.path import relpath
+from pathlib import Path
+import re
+import shutil
+import sys
+import textwrap
+import traceback
+
+from docutils.parsers.rst import directives, Directive
+from docutils.parsers.rst.directives.images import Image
 import jinja2  # Sphinx dependency.
 
-from docutils.parsers.rst import directives
-from docutils.parsers.rst.directives.images import Image
-from six.moves import xrange
-
-if not six.PY3:
-    import cStringIO
-
-align = Image.align
-
-sphinx_version = sphinx.__version__.split(".")
-# The split is necessary for sphinx beta versions where the string is
-# '6b1'
-sphinx_version = tuple([int(re.split("[^0-9]", x)[0]) for x in sphinx_version[:2]])
-
-try:
-    with warnings.catch_warnings(record=True):
-        warnings.simplefilter("error", UserWarning)
-        matplotlib.use("Agg")
-except UserWarning:
-    import matplotlib.pyplot as plt
-
-    plt.switch_backend("Agg")
-else:
-    import matplotlib.pyplot as plt
-
-__version__ = 2
+import matplotlib
+from matplotlib.backend_bases import FigureManagerBase
+import matplotlib.pyplot as plt
+from matplotlib import _pylab_helpers, cbook
 
 outname_list = set()
 
-# ------------------------------------------------------------------------------
-#  Registration hook
-# ------------------------------------------------------------------------------
+matplotlib.use("agg")
+align = cbook.deprecated(
+    "3.4", alternative="docutils.parsers.rst.directives.images.Image.align")(
+        Image.align)
+
+__version__ = 2
 
 
-def plot_directive(name, arguments, options, content, lineno, content_offset, block_text, state, state_machine):
-    """Implementation of the ``.. plot::`` directive.
-
-    See the module docstring for details.
-    """
-    return run(arguments, content, options, state_machine, state, lineno)
+# -----------------------------------------------------------------------------
+# Registration hook
+# -----------------------------------------------------------------------------
 
 
 def _option_boolean(arg):
     if not arg or not arg.strip():
         # no argument given, assume used as a flag
         return True
-    if arg.strip().lower() in ("no", "0", "false"):
+    elif arg.strip().lower() in ('no', '0', 'false'):
         return False
-    if arg.strip().lower() in ("yes", "1", "true"):
+    elif arg.strip().lower() in ('yes', '1', 'true'):
         return True
-    raise ValueError('"%s" unknown boolean' % arg)
+    else:
+        raise ValueError('"%s" unknown boolean' % arg)
 
 
 def _option_context(arg):
-    if arg in [None, "reset", "close-figs"]:
+    if arg in [None, 'reset', 'close-figs']:
         return arg
-    raise ValueError("argument should be None or 'reset' or 'close-figs'")
+    raise ValueError("Argument should be None or 'reset' or 'close-figs'")
 
 
 def _option_format(arg):
-    return directives.choice(arg, ("python", "doctest"))
-
-
-def _option_align(arg):
-    return directives.choice(arg, ("top", "middle", "bottom", "left", "center", "right"))
+    return directives.choice(arg, ('python', 'doctest'))
 
 
 def mark_plot_labels(app, document):
     """
-    To make plots referenceable, we need to move the reference from
-    the "htmlonly" (or "latexonly") node to the actual figure node
-    itself.
+    To make plots referenceable, we need to move the reference from the
+    "htmlonly" (or "latexonly") node to the actual figure node itself.
     """
-    for name, explicit in six.iteritems(document.nametypes):
+    for name, explicit in document.nametypes.items():
         if not explicit:
             continue
         labelid = document.nameids[name]
         if labelid is None:
             continue
         node = document.ids[labelid]
-        if node.tagname in ("html_only", "latex_only"):
+        if node.tagname in ('html_only', 'latex_only'):
             for n in node:
-                if n.tagname == "figure":
+                if n.tagname == 'figure':
                     sectname = name
                     for c in n:
-                        if c.tagname == "caption":
+                        if c.tagname == 'caption':
                             sectname = c.astext()
                             break
 
-                    node["ids"].remove(labelid)
-                    node["names"].remove(name)
-                    n["ids"].append(labelid)
-                    n["names"].append(name)
-                    document.settings.env.labels[name] = document.settings.env.docname, labelid, sectname
+                    node['ids'].remove(labelid)
+                    node['names'].remove(name)
+                    n['ids'].append(labelid)
+                    n['names'].append(name)
+                    document.settings.env.labels[name] = \
+                        document.settings.env.docname, labelid, sectname
                     break
+
+
+class PlotDirective(Directive):
+    """The ``.. plot::`` directive, as documented in the module's docstring."""
+
+    has_content = True
+    required_arguments = 0
+    optional_arguments = 2
+    final_argument_whitespace = False
+    option_spec = {
+        'alt': directives.unchanged,
+        'height': directives.length_or_unitless,
+        'width': directives.length_or_percentage_or_unitless,
+        'scale': directives.nonnegative_int,
+        'align': Image.align,
+        'class': directives.class_option,
+        'include-source': _option_boolean,
+        'format': _option_format,
+        'context': _option_context,
+        'nofigs': directives.flag,
+        'encoding': directives.encoding,
+        'caption': directives.unchanged,
+        'outname': directives.unchanged,
+        }
+
+    def run(self):
+        """Run the plot directive."""
+        try:
+            return run(self.arguments, self.content, self.options,
+                       self.state_machine, self.state, self.lineno)
+        except Exception as e:
+            raise self.error(str(e))
 
 
 def setup(app):
     setup.app = app
     setup.config = app.config
     setup.confdir = app.confdir
-
-    options = {
-        "alt": directives.unchanged,
-        "height": directives.length_or_unitless,
-        "width": directives.length_or_percentage_or_unitless,
-        "scale": directives.nonnegative_int,
-        "align": _option_align,
-        "class": directives.class_option,
-        "include-source": _option_boolean,
-        "format": _option_format,
-        "context": _option_context,
-        "nofigs": directives.flag,
-        "encoding": directives.encoding,
-        "outname": str,
-    }
-
-    app.add_directive("plot", plot_directive, True, (0, 2, False), **options)
-    app.add_config_value("plot_pre_code", None, True)
-    app.add_config_value("plot_include_source", False, True)
-    app.add_config_value("plot_html_show_source_link", True, True)
-    app.add_config_value("plot_formats", ["png", "hires.png", "pdf"], True)
-    app.add_config_value("plot_basedir", None, True)
-    app.add_config_value("plot_html_show_formats", True, True)
-    app.add_config_value("plot_rcparams", {}, True)
-    app.add_config_value("plot_apply_rcparams", False, True)
-    app.add_config_value("plot_working_directory", None, True)
-    app.add_config_value("plot_template", None, True)
+    app.add_directive('plot', PlotDirective)
+    app.add_config_value('plot_pre_code', None, True)
+    app.add_config_value('plot_include_source', False, True)
+    app.add_config_value('plot_html_show_source_link', True, True)
+    app.add_config_value('plot_formats', ['png', 'hires.png', 'pdf'], True)
+    app.add_config_value('plot_basedir', None, True)
+    app.add_config_value('plot_html_show_formats', True, True)
+    app.add_config_value('plot_rcparams', {}, True)
+    app.add_config_value('plot_apply_rcparams', False, True)
+    app.add_config_value('plot_working_directory', None, True)
+    app.add_config_value('plot_template', None, True)
     app.add_config_value("plot_preserve_dir", "", True)
 
-    app.connect(str("doctree-read"), mark_plot_labels)
+    app.connect('doctree-read', mark_plot_labels)
 
-    metadata = {"parallel_read_safe": True, "parallel_write_safe": True}
+    metadata = {'parallel_read_safe': True, 'parallel_write_safe': True,
+                'version': matplotlib.__version__}
     return metadata
 
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Doctest handling
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 def contains_doctest(text):
@@ -493,10 +475,8 @@ def run_code(code, code_path, ns=None, function_name=None):
     # Change the working directory to the directory of the example, so
     # it can get at its data files, if any.  Add its path to sys.path
     # so it can import any helper modules sitting beside it.
-    if six.PY2:
-        pwd = os.getcwdu()
-    else:
-        pwd = os.getcwd()
+
+    pwd = os.getcwd()
     old_sys_path = list(sys.path)
     if setup.config.plot_working_directory is not None:
         try:
@@ -525,10 +505,7 @@ def run_code(code, code_path, ns=None, function_name=None):
 
     # Redirect stdout
     stdout = sys.stdout
-    if six.PY3:
-        sys.stdout = io.StringIO()
-    else:
-        sys.stdout = cStringIO.StringIO()
+    sys.stdout = io.StringIO()
 
     # Assign a do-nothing print function to the namespace.  There
     # doesn't seem to be any other way to provide a way to (not) print
@@ -543,16 +520,16 @@ def run_code(code, code_path, ns=None, function_name=None):
                 ns = {}
             if not ns:
                 if setup.config.plot_pre_code is None:
-                    six.exec_(six.text_type("import numpy as np\n" + "from matplotlib import pyplot as plt\n"), ns)
+                    exec("import numpy as np\n" + "from matplotlib import pyplot as plt\n", ns)
                 else:
-                    six.exec_(six.text_type(setup.config.plot_pre_code), ns)
+                    exec(setup.config.plot_pre_code, ns)
             ns["print"] = _dummy_print
             if "__main__" in code:
-                six.exec_("__name__ = '__main__'", ns)
+                exec("__name__ = '__main__'", ns)
             code = remove_coding(code)
-            six.exec_(code, ns)
+            exec(code, ns)
             if function_name is not None:
-                six.exec_(function_name + "()", ns)
+                exec(function_name + "()", ns)
         except (Exception, SystemExit) as err:
             raise PlotError(traceback.format_exc())
     finally:
@@ -574,13 +551,13 @@ def get_plot_formats(config):
     default_dpi = {"png": 80, "hires.png": 200, "pdf": 200}
     formats = []
     plot_formats = config.plot_formats
-    if isinstance(plot_formats, six.string_types):
+    if isinstance(plot_formats, str):
         # String Sphinx < 1.3, Split on , to mimic
         # Sphinx 1.3 and later. Sphinx 1.3 always
         # returns a list.
         plot_formats = plot_formats.split(",")
     for fmt in plot_formats:
-        if isinstance(fmt, six.string_types):
+        if isinstance(fmt, str):
             if ":" in fmt:
                 suffix, dpi = fmt.split(":")
                 formats.append((str(suffix), int(dpi)))
@@ -633,7 +610,7 @@ def render_figures(
     all_exists = True
     for i, code_piece in enumerate(code_pieces):
         images = []
-        for j in xrange(1000):
+        for j in range(1000):
             if len(code_pieces) > 1:
                 img = ImageFile(basename="%s_%02d_%02d" % (output_base, i, j), dirname=output_dir)
             else:
@@ -754,7 +731,7 @@ def run(arguments, content, options, state_machine, state, lineno):
         output_base = os.path.basename(source_file_name)
     else:
         source_file_name = rst_file
-        code = textwrap.dedent("\n".join(map(six.text_type, content)))
+        code = textwrap.dedent("\n".join(map(str, content)))
         counter = document.attributes.get("_plot_counter", 0) + 1
         document.attributes["_plot_counter"] = counter
         base, ext = os.path.splitext(os.path.basename(source_file_name))
@@ -863,7 +840,7 @@ def run(arguments, content, options, state_machine, state, lineno):
 
         opts = [
             ":%s: %s" % (key, val)
-            for key, val in six.iteritems(options)
+            for key, val in options.items()
             if key in ("alt", "height", "width", "scale", "align", "class")
         ]
 
