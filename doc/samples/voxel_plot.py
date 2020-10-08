@@ -4,13 +4,15 @@ from Stoner import Data
 import numpy as np
 import matplotlib.cm
 
-x, y,z = np.meshgrid(np.linspace(-2, 2, 21), np.linspace(-2, 2, 21),np.linspace(-2, 2, 21))
+x, y, z = np.meshgrid(
+    np.linspace(-2, 2, 21), np.linspace(-2, 2, 21), np.linspace(-2, 2, 21)
+)
 x = x.ravel()
 y = y.ravel()
 z = z.ravel()
-u = np.sin(x*y*z)
+u = np.sin(x * y * z)
 
-p = Data(x,y,z,u,setas="xyzu", column_headers=["X","Y","Z"])
+p = Data(x, y, z, u, setas="xyzu", column_headers=["X", "Y", "Z"])
 
-p.plot_voxels(cmap=matplotlib.cm.jet,visible=lambda x,y,z: x-y+z<2.0)
+p.plot_voxels(cmap=matplotlib.cm.jet, visible=lambda x, y, z: x - y + z < 2.0)
 p.title = "Voxel plot"
