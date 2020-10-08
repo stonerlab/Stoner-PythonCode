@@ -41,7 +41,7 @@ def list_files():
         incfiles=[x for x in incfiles if not x.name.strip().lower().endswith(".emd")]
 
 
-    return incfiles
+    return sorted(incfiles)
 
 
 
