@@ -18,7 +18,7 @@ from scipy.interpolate import griddata
 
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
-from matplotlib import cm
+from matplotlib import cm, colors
 
 from Stoner.compat import string_types, index_types, int_types, getargspec
 from Stoner.tools import AttributeStore, isNone, isAnyNone, all_type, isIterable, typedList, get_option, fix_signature
@@ -692,7 +692,7 @@ class PlotMixin:
         return self
 
     def colormap_xyz(self, xcol=None, ycol=None, zcol=None, **kargs):
-        """Make a xyz plot that forces the use of plt.contour.
+        """Make a xyz plot that forces the use of plt.colormap.
 
         Args:
             xcol (index):
@@ -795,7 +795,7 @@ class PlotMixin:
         self.__figure = figure
         return self
 
-    def griddata(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, method="linear", **kargs):
+    def griddata(self, xcol=None, ycol=None, zcol=None, ucol=None, shape=None, xlim=None, ylim=None, zlim=None, method="linear", **kargs):
         """Convert xyz data onto a regular grid.
 
         Args:
@@ -807,22 +807,32 @@ class PlotMixin:
                 Z column index or label
 
         Keyword Arguments:
-            shape (two-tuple):
+            ucol (index):
+                U (magnitude) column index or label
+            shape (two-tuple, three-ruple):
                 Number of points along x and y in the grid - defaults to a square of sidelength = square root of
                 the length of the data.
             xlim (tuple):
                 The xlimits
             ylim (tuple):
                 The ylimits
+            zlim (tuple):
+                The ylimits
             method (string):
                 Type of interploation to use, default is linear
 
             ReturnsL
-                X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
+                (X,Y,Z) or (X,Y,Z,M):
+                    three two dimensional arrays of the co-ordinates of the interpolated data or 4 three diemensional
+                    arrays of the interpolated data
+
+        Notes:
+            Depending on whether 3 or 4 columns of data can be identified, this method will produce data for a
+            :math:`Z(X,Y)` plot or a :math:`M(X,Y,Z)` volumetric plot.
         """
+        startx = kargs.pop("startx", 0)
+        cols = self.setas._get_cols(startx=startx)
         if isAnyNone(xcol, ycol, zcol):
-            startx = kargs.pop("startx", 0)
-            cols = self.setas._get_cols(startx=startx)
             if xcol is None:
                 xcol = cols["xcol"]
             if ycol is None:
@@ -830,46 +840,71 @@ class PlotMixin:
             if zcol is None:
                 if len(cols["zcol"]) > 0:
                     zcol = cols["zcol"][0]
-        if shape is None or not (isinstance(shape, tuple) and len(shape) == 2):
-            shape = (int(np.floor(np.sqrt(len(self)))), int(np.floor(np.sqrt(len(self)))))
-        if xlim is None:
-            xlim = self._span_slice(xcol, shape[0])
-        elif isinstance(xlim, tuple) and len(xlim) == 2:
-            xlim = (xlim[0], xlim[1], (xlim[1] - xlim[0]) / shape[0])
-            xlim = slice(*xlim)
-        elif isinstance(xlim, tuple) and len(xlim) == 3:
-            xlim = (xlim[0], xlim[1], (xlim[1] - xlim[0]) / xlim[2])
-            xlim = slice(*xlim)
-        else:
-            raise RuntimeError("X limit specification not good.")
-        if ylim is None:
-            ylim = self._span_slice(ycol, shape[1])
-        elif isinstance(ylim, tuple) and len(ylim) == 2:
-            ylim = (ylim[0], ylim[1], (ylim[1] - ylim[0]) / shape[1])
-            ylim = slice(*ylim)
-        elif isinstance(ylim, tuple) and len(ylim) == 3:
-            ylim = (ylim[0], ylim[1], (ylim[1] - ylim[0]) / ylim[2])
-            ylim = slice(*ylim)
-        else:
-            raise RuntimeError("Y limit specification not good.")
+        if ucol is None and len(cols["ucol"])>0:
+            ucol = cols["ucol"][0]
 
-        pts = np.mgrid[xlim, ylim].T
+        dims=3 if cols["axes"]==3 and cols["has_ucol"] else 2
+        edge=int(np.floor(len(self)**(1/dims)))
+        if dims==2 and (shape is None or not (isinstance(shape, tuple) and len(shape) == 2)):
+            shape = (edge,edge)
+        elif dims==3 and (shape is None or not (isinstance(shape, tuple) and len(shape) == 3)):
+            shape = (edge,edge,edge)
 
-        points = np.array([self.column(xcol), self.column(ycol)]).T
-        if zcol is None:
-            zdata = np.zeros(len(self))
-        elif isinstance(zcol, np.ndarray) and zcol.shape[0] == len(self):  # zcol is some data
-            zdata = zcol
-        else:
-            zdata = self.column(zcol)
-        if len(zdata.shape) == 1:
-            Z = griddata(points, zdata, pts, method=method)
-        elif len(zdata.shape) == 2:
-            Z = np.zeros((pts.shape[0], pts.shape[1], zdata.shape[1]))
-            for i in range(zdata.shape[1]):
-                Z[:, :, i] = griddata(points, zdata[:, i], pts, method=method)
+        lims=[xlim,ylim,zlim]
+        extents=[xlim,ylim,zlim]
+        for dim,(lim,col) in enumerate(zip(lims,[xcol,ycol,zcol])):
+            if dim>=dims: # Don;t bother analysing more dimensions than we have
+                break
+            if lim is None :
+                lim = self._span_slice(col, shape[dim])
+            elif isinstance(lim, tuple) and len(lim)>1:
+                lim=lim+((lim[1]-lim[0])/shape[dim],)
+                lim=slice(lim[0],lim[1],lim[2])
+            else:
+                raise RuntimeError(f"{'xyz'[dim]} limit speciifcation not understood")
+            lims[dim]=lim
+            extents[dim]=slice(lim.start-lim.step/2,lim.stop+lim.step/2,lim.step)
 
-        return pts[:, :, 0], pts[:, :, 1], Z
+        xlim=lims[0]; ylim=lims[1]; zlim=lims[2]
+
+
+        if dims==2:
+            pts = np.mgrid[xlim, ylim].T
+            points = np.array([self.column(xcol), self.column(ycol)]).T
+            if zcol is None:
+                zdata = np.zeros(len(self))
+            elif isinstance(zcol, np.ndarray) and zcol.shape[0] == len(self):  # zcol is some data
+                zdata = zcol
+            else:
+                zdata = self.column(zcol)
+            if len(zdata.shape) == 1:
+                Z = griddata(points, zdata, pts, method=method)
+            elif len(zdata.shape) == 2:
+                Z = np.zeros((pts.shape[0], pts.shape[1], zdata.shape[1]))
+                for i in range(zdata.shape[1]):
+                    Z[:, :, i] = griddata(points, zdata[:, i], pts, method=method)
+
+            return pts[:, :, 0], pts[:, :, 1], Z
+        elif dims==3:
+            pts = np.mgrid[xlim, ylim,zlim].T
+            vpts = np.mgrid[extents[0],extents[1],extents[2]].T
+
+            points = np.array([self.column(xcol), self.column(ycol), self.column(zcol)]).T
+            if ucol is None:
+                udata = np.zeros(len(self))
+            elif isinstance(ucol, np.ndarray) and ucol.shape[0] == len(self):  # zcol is some data
+                udata = ucol
+            else:
+                udata = self.column(ucol)
+            if len(udata.shape) == 1:
+                U = griddata(points, udata, pts, method=method)
+            elif len(udata.shape) == 2:
+                U = np.zeros((pts.shape[0], pts.shape[1], udata.shape[1]))
+                for i in range(udata.shape[1]):
+                    U[:, :, i] = griddata(points, udata[:, i], pts, method=method)
+
+            return vpts[:, :, :, 0], vpts[:, :, :, 1], vpts[:, : ,:, 2],U
+
 
     def image_plot(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, **kargs):
         """Grid up the three columns of data and plot.
@@ -1030,7 +1065,10 @@ class PlotMixin:
         if "template" in kargs:
             self.template = kargs.pop("template")
 
-        plotters = {2: self.plot_xy, 3: self.plot_xyz, 4: self.plot_xyuv, 5: self.plot_xyuv, 6: self.plot_xyzuvw}
+        if axes==3 and ("ucol" in args or _.has_ucol):
+            axes=7 # trick to allow voxel plot for xyzu
+
+        plotters = {2: self.plot_xy, 3: self.plot_xyz, 4: self.plot_xyuv, 5: self.plot_xyuv, 6: self.plot_xyzuvw, 7:self.plot_voxels}
         try:
             plotter = plotters.get(axes, None)
             ret = plotter(*args, **kargs)
@@ -1765,6 +1803,85 @@ class PlotMixin:
                 mlab.show()
             else:
                 plt.show()
+        return self.showfig
+
+    def plot_voxels(self,xcol=None, ycol=None, zcol=None, ucol=None, cmap=None, **kargs):
+        """Make a volumetric plot of data arranged as x,y,z,u.
+
+        Args:
+            xcol (index):
+                Xcolumn index or label
+            ycol (index):
+                Y column index or label
+            zcol (index):
+                Z column index or label
+            ucol (index):
+                U column index or label
+
+        Keyword Arguments:
+            visible (callable):
+                A function f(x,y,z) that returns True if a voxcel is to be visible
+            cmap (colourmap):
+                A Matplotlib colour map to apply for the magnitude (u column) data.
+
+        Returns:
+            (matplotlib.Figure):
+                The figure window contacting the plot
+
+        Example:
+            .. plot:: samples/voxel_plot.py
+                :include-source:
+                :outname: contour
+
+
+        """
+        _ = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, **kargs)
+        defaults = {
+            "plotter": self.plot_voxels,
+            "show_plot": True,
+            "figure": self.__figure,
+            "title": os.path.basename(self.filename),
+            "xlabel": self._col_label(self.find_col(_.xcol)),
+            "ylabel": self._col_label(self.find_col(_.ycol)),
+            "zlabel": self._col_label(self.find_col(_.zcol)),
+            "save_filename": None,
+            "cmap": cm.viridis,
+            "f_alpha":0.5,
+            "e_alpha":0.9,
+            "filled":None,
+        }
+        otherkargs={}
+        shape=kargs.pop("shape",None)
+        xlim=kargs.pop("xlim",None)
+        ylim=kargs.pop("ylim",None)
+        zlim=kargs.pop("zlim",None)
+        X,Y,Z,U = self.griddata(_.xcol,_.ycol,_.zcol,_.ucol,shape=shape,xlim=xlim,ylim=ylim,zlim=zlim)
+
+        if callable(kargs.get("visible",False)):
+            visible=kargs.pop("visible")
+            try:
+                filled=visible(self//_,xcol,self//_.ycol,self//_.zcol)
+            except (ValueError,TypeError,RuntimeError):
+                filled=np.array([visible(*pt) for pt in zip(self//_.xcol,self//_.ycol,self//_.zcol)])
+            filled=np.where(filled,np.ones_like(filled),np.zeros_like(filled))
+            filled = self.griddata(_.xcol,_.ycol,_.zcol,filled,shape=shape,xlim=xlim,ylim=ylim,zlim=zlim)[3]>=0.5
+        else:
+            filled=kargs.pop("filled",np.ones_like(U,dtype=bool))
+
+        if "template" in kargs:  # Catch template in kargs
+            self.template = kargs.pop("template")
+        kargs, nonkargs, _ = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
+        self.__figure, ax = self._fix_fig(nonkargs["figure"], projection="3d")
+
+        norm = colors.Normalize(vmin=U.min(),vmax=U.max(),clip=True)
+        mapper = cm.ScalarMappable(norm=norm,cmap=kargs["cmap"])
+        cshape=U.shape+(4,)
+        facecolors = mapper.to_rgba(U.ravel(),alpha=nonkargs["f_alpha"]).reshape(cshape)
+        edgecolors = mapper.to_rgba(U.ravel(),alpha=nonkargs["e_alpha"]).reshape(cshape)
+
+        ax.voxels(X,Y,Z,filled=filled,edgecolors=edgecolors,facecolors=facecolors)
+
+        self._fix_titles(0, "none", **nonkargs)
         return self.showfig
 
     def quiver_plot(self, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
