@@ -160,7 +160,7 @@ allow a cross section of the 3D co-ordinate space to be show.
 
 .. plot:: samples/contour_plot.py
     :include-source:
-    :outname: contour
+    :outname: voxel2
 
 Plotting Vector Fields
 ----------------------
