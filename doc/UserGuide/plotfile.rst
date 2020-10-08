@@ -158,7 +158,7 @@ attribute) and a fourth, *u* column index (or the column defined as holding the 
 attribute). Keyword arguments *visible* or $filled$ indicate whether a particular voxel will be plotted or not to
 allow a cross section of the 3D co-ordinate space to be show.
 
-.. plot:: samples/contour_plot.py
+.. plot:: samples/voxels_plot.py
     :include-source:
     :outname: voxel2
 
