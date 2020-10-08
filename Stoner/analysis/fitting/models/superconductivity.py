@@ -37,7 +37,7 @@ try:  # numba is an optional dependency
     from numba import jit, float64
 except ImportError:
 
-    def jit(func, *_):
+    def jit(func, *_, **__):
         """Null decorator function."""
         return func
 
