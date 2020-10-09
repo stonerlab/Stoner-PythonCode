@@ -30,7 +30,7 @@ class ImageStackMixin:
 
     def __init__(self, *args, **kargs):
         """Initialise an ImageStack's pricate data and provide a type argument."""
-        self._stack = np.atleast_3d(np.ma.MaskedArray([]))
+        self._stack = np.atleast_3d(ImageArray([])).reshape((0, 0, 0))
         self._metadata = regexpDict()
         self._public_attrs_store = regexpDict()
         self._names = list()
@@ -202,7 +202,7 @@ class ImageStackMixin:
             dtype = None
         self._resize_stack(new_size, dtype=dtype)
         stack_mask = np.insert(np.ma.getmaskarray(self._stack), ix, np.zeros(self.max_size, dtype=bool), axis=2)
-        self._stack = np.insert(self._stack, ix, np.zeros(self.max_size), axis=2)
+        self._stack = np.insert(self._stack, ix, np.zeros(self.max_size), axis=2).view(ImageArray)
         self._stack.mask = stack_mask
         value = value.data
         row, col = value.shape
@@ -240,7 +240,7 @@ class ImageStackMixin:
 
         """
         self._metadata = regexpDict()
-        self._stack = np.atleast_3d(np.ma.MaskedArray([]))
+        self._stack = np.atleast_3d(ImageArray([])).reshape((0, 0, 0))
 
     ###########################################################################
     ###################      Special methods     ##############################
@@ -287,14 +287,14 @@ class ImageStackMixin:
     def _resize_stack(self, new_size, dtype=None):
         """Create a new stack with a new size."""
         old_size = self._stack.shape
-        assert isinstance(self._stack, np.ma.MaskedArray)
+        assert isinstance(self._stack, ImageArray)
         if old_size == new_size:
             return new_size
         if dtype is None:
             dtype = self._stack.dtype
         row, col, pag = tuple([min(o, n) for o, n in zip(old_size, new_size)])
 
-        new = np.ma.zeros(new_size, dtype=dtype)
+        new = np.ma.zeros(new_size, dtype=dtype).view(ImageArray)
         new[:row, :col, :pag] = self._stack[:row, :col, :pag]
         new.mask = np.ma.getmaskarray(self._stack)[:row, :col, :pag]
         self._stack = new
@@ -311,8 +311,8 @@ class ImageStackMixin:
     @imarray.setter
     def imarray(self, value):
         """Set the 3D stack of images - as [image,x,y]."""
-        value = np.ma.MaskedArray(np.atleast_3d(value))
-        self._stack = np.transpose(value, (1, 2, 0)).view(np.ma.MaskedArray)
+        value = ImageArray(np.atleast_3d(value))
+        self._stack = np.transpose(value, (1, 2, 0)).view(ImageArray)
 
     @property
     def max_size(self):
@@ -375,7 +375,7 @@ class ImageStackMixin:
         # Aactually this is just a pass through for the imagefuncs.convert routine
         mask = self._stack.mask
         self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise).view(
-            np.ma.MaskedArray
+            ImageArray
         )
         self._stack.mask = mask
         return self

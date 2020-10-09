@@ -86,6 +86,7 @@ def test_attocube_scan(tmpdir):
         print(scan1.layout,scan3.layout)
         for grp in scan1.groups:
             print(scan1[grp].metadata.all_by_keys^scan3[grp].metadata.all_by_keys)
+    print(scan1.shape)
     assert scan1==scan3,"Roundtripping scan through hdf5 failed"
     pth.unlink()
 

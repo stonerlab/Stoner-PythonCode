@@ -119,9 +119,7 @@ def test_load_bad_data():
     #dictionary
     with pytest.raises(ValueError):
         testload({'a':1})
-    #3d numpy array
-    with pytest.raises(ValueError):
-        testload(np.arange(27).reshape(3,3,3))
+
     #bad filename
     with pytest.raises(ValueError):
         testload('sillyfile.xyz')

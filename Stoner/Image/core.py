@@ -180,13 +180,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 ret = arg
             elif isinstance(arg, np.ndarray):
                 # numpy array or ImageArray)
-                if len(arg.shape) == 2:
-                    ret = arg.view(ImageArray)
-                elif len(arg.shape) == 1:
-                    arg = np.array([arg])  # force 2d array
-                    ret = arg.view(ImageArray)
+                if arg.ndim < 2:
+                    ret = np.atleast_2d(arg).view(ImageArray)
                 else:
-                    raise ValueError("Array dimension 0 must be at most 2. Got {}".format(len(arg.shape)))
+                    ret = arg.view(ImageArray)
                 ret.metadata = getattr(arg, "metadata", typeHintedDict())
             elif isinstance(arg, bool) and not arg:
                 patterns = (("png", "*.png"), ("npy", "*.npy"))
@@ -621,7 +618,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         super().__setattr__(name, value)
         # add attribute to those for copying in array_finalize. use value as
         # defualt.
-        circ = ["_optinfo"]  # circular references
+        circ = ["_optinfo", "mask"]  # circular references
         proxy = ["_funcs"]  # can be reloaded for cloned arrays
         if name in circ + proxy:
             # Ignore these in clone
