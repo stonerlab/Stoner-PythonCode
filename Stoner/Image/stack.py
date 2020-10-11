@@ -259,6 +259,11 @@ class ImageStackMixin:
             other = other.clone.convert(float)
         else:
             ret = self.clone
+        if other._stack.shape != ret._stack.shape:
+            raise ValueError(
+                f"Only image stacks that are the same shape can be used to calaculate XMCD data"
+                + f" - passed {ret._stack.shape} and {other._stack.shape}"
+            )
         ret._stack = (ret._stack - other._stack) / (ret._stack + other._stack)
 
         return ret
@@ -476,34 +481,35 @@ class StackAnalysisMixin:
     stack of images.
     """
 
-    def subtract(self, background, contrast=16, clip_intensity=True):
+    def subtract(self, background):
         """Subtract a background image (or index) from all images in the stack.
 
-        The formula used is new = (ImageArray - background) * contrast + 0.5
-        If clip_intensity then clip negative intensities to 0. Array is always
-        converted to float for this method.
+        Arguments:
+            background (int, str or 2D array):
+                Background image to index
 
-        Arg:
-            background(int or np.ndarray or ImageFile):
-                the background image to subtract. If int is given this is used
-                as an index on the stack.
+        Returns:
+            (ImageStack):
+                The modified image stack.
 
-        Keyword Arguments:
-            contrast(float):
-                Determines contrast of resulting image
-            clip_intensity(bool):
-                whether to clip the image intensities in range (0,1) after subtraction
+        Notes:
+            Method cahnged for v0.10 to not normalise or clip the data.
+            The background image is scaled by the ratio of the mean pixel values of the unmasked
+            region in the background image.
         """
-        self.asfloat(normalise=True, clip_negative=False)
-        if isinstance(background, int):
-            bg = self[background]
-        if isinstance(bg.ImageFile):
+        if isinstance(background, (str, int)):
+            bg = self[self.__lookup__(background)]
+        else:
+            bg = background
+        if isinstance(bg, ImageFile):
             bg = bg.image
-        bg = bg.view(ImageArray).asfloat(normalise=True, clip_negative=False)
-        bg = np.tile(bg, (1, 1, len(self)))
-        self._stack = contrast * (self._stack - bg) + 0.5
-        if clip_intensity:
-            self.clip_intensity()
+        bg = bg.view(ImageArray)
+        bgmask = ~bg.mask
+        bgmean = bg[bgmask].mean()
+        for i in range(len(self)):
+            im_mean = self._stack[:, :, i][bgmask].mean()
+            self._stack[:, :, i] -= bg * im_mean / bgmean
+        return self
 
 
 class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, baseFolder):

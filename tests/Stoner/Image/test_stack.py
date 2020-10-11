@@ -179,6 +179,18 @@ def test_methods():
     assert np.allclose(ist3[0],ist2[0])
     ist3.insert(1, np.arange(18).reshape(3,6))
     assert ist3[1].shape==(3,6), 'inserting an image of different size to stack'
+    im1=ImageFile(np.zeros((100,100)))
+    im1.draw.circle(50,50,25)
+    im2=im1.clone
+    pi=np.pi
+    X,Y=np.mgrid[-pi:pi:pi/50,-pi:pi:pi/50]
+    bground=ImageFile(np.sin(X)+np.cos(Y))
+    im2.image+=bground.image
+    bground.mask=im1.image==1.0
+    ist=ImageStack()+im2
+    ist.subtract(bground)
+    assert np.all(np.isclose(ist[0].image,im1.image))
+
 
 def test_clone():
     ist2 = ImageStack(np.arange(60).reshape(4,3,5))
@@ -189,6 +201,23 @@ def test_clone():
     assert np.allclose(ist3[0],ist2[0]) #Check values are the same
     ist3.insert(1, np.arange(18).reshape(3,6)) #Insert a larger image
     assert ist3[1].shape==(3,6), 'inserting an image of different size to stack'
+
+def test_operators():
+    im1=ImageFile(np.zeros((100,100))+0.75)
+    im2=ImageFile(np.zeros((100,100))+0.25)
+    ist1=ImageStack()+im1
+    ist2=ImageStack()+im2
+    ist3=ist1//ist2
+    assert np.all(np.isclose(ist3[0].image,np.ones((100,100))*0.5))
+    im1a=ImageFile(np.ones((100,100),dtype=int))
+    with pytest.raises(ValueError):
+        ist1a=ImageStack()+im1a
+        ist3a=ist1a//ist2
+    im1b=im1.clone
+    im1b.image=im1b.image[1:-1,1:-1]
+    ist1b=ImageStack()+im1b
+    with pytest.raises(ValueError):
+        ist3b=ist1b//ist2
 
 def test_mask():
     im = ImageFile(np.arange(12).reshape(3,4))
