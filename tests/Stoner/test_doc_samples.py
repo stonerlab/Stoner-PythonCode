@@ -32,6 +32,7 @@ def get_scripts():
 
 
 @pytest.mark.parametrize("script", get_scripts(),ids=get_scripts())
+@pytest.mark.filterwarnings("ignore:.*:RuntimeWarning")
 def test_scripts(script):
     """Import each of the sample scripts in turn and see if they ran without error"""
     print(f"Trying script {script}")

@@ -9,6 +9,7 @@ from typing import Any, Union, Optional, Dict, Type
 
 try:
     from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
+    from PyQt5 import QtCore
 except ImportError:
 
     class App:
@@ -117,7 +118,7 @@ else:
             patterns = ";;".join([f"{v} ({k})" for k, v in patterns.items()])
             options = QFileDialog.Options()
 
-            kwargs = {"caption": title, "directory": start, "filter": patterns, "options": options}
+            kwargs = {"caption": title, "directory": start, "filter": patterns, "options": options, "modal": True}
             kwargs = {k: kwargs[k] for k in (set(kwargs.keys()) & set(self.modes[mode]["arg"]))}
 
             ret = method(self.dialog, **kwargs)

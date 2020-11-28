@@ -391,8 +391,8 @@ def test_metadata_save():
         assert orig.column_headers==load.column_headers
         selfres=load.metadata^orig.metadata
         assert load.metadata==orig.metadata,"Metadata not the same on round tripping to disc"
-    os.remove(path.join(local, "mixedmetatest.txt")) #clear up
-    os.remove(path.join(local, "mixedmetatest2.txt"))
+    #os.remove(path.join(local, "mixedmetatest.txt")) #clear up
+    #os.remove(path.join(local, "mixedmetatest2.txt"))
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb",__file__])

@@ -14,7 +14,7 @@ clean:
 	- find -name '__pycache__' -exec rm -rf {} \;
 
 test:
-	pytest -n 4
+	pytest -n 8
 
 check:
 	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt

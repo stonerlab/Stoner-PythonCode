@@ -354,7 +354,14 @@ class Strijkers(Model):
 
     def guess(self, data, **kwargs):  # pylint: disable=unused-argument
         """Guess starting values for a good Nb contact to a ferromagnet at 4.2K."""
-        pars = self.make_params(omega=0.36, delta=1.50, P=0.42, Z=0.15)
+        pars = self.make_params(omega=0.5, delta=1.50, P=0.42, Z=0.15)
+        pars["omega"].min = 0.36
+        pars["omega"].max = 5.0
+        pars["delta"].min = 0.5
+        pars["delta"].max = 2.0
+        pars["Z"].min = 0.1
+        pars["P"].min = 0.0
+        pars["P"].max = 1.0
         return update_param_vals(pars, self.prefix, **kwargs)
 
 

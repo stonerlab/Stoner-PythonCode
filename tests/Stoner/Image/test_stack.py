@@ -70,7 +70,7 @@ def test_ImageStack_align():
     assert data.shape==(16,4),"Slice metadata went a bit funny"
     assert sorted(data.column_headers)==['angle','scale','tvec[0]', 'tvec[1]'],"slice metadata column headers wrong at {}".format(data.column_headers)
 
-
+@pytest.mark.filterwarnings("ignore:.*:UserWarning")
 def test_ImageStack_methods():
 
     istack2=selfistack2.clone
