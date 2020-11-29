@@ -216,7 +216,7 @@ class DataFile(
                 All keyword arguments that match public attributes are used to set those public attributes.
         """
         # init instance attributes
-        super().__init__(*args, **kargs)  # initialise self.metadata)
+        super().__init__(**kargs)  # initialise self.metadata)
         self._public_attrs = {
             "data": np.ndarray,
             "setas": (string_types, list, dict),
@@ -674,7 +674,6 @@ class DataFile(
                 if "=" in metadata[0]:
                     self.metadata.import_key(metadata[0])
         col_headers_tmp = [x.strip() for x in row[1:]]
-        skip_foot = ix - max_rows + 1
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", "Some errors were detected !")
             data = np.genfromtxt(

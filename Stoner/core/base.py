@@ -680,7 +680,7 @@ class metadataObject(MutableMapping):
         self._public_attrs_real = dict()
         return self
 
-    def __init__(self, *args: Any, **kargs: Any) -> None:
+    def __init__(self, *args: Any, **kargs: Any) -> None:  # pylint: disable=unused-argument
         """Initialise the current metadata attribute."""
         metadata = kargs.pop("metadata", None)
         if metadata is not None:

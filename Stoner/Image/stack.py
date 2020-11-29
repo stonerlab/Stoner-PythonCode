@@ -426,11 +426,15 @@ class ImageStackMixin:
             clip_negative(bool):
                 If True, clip the negative range (i.e. return 0 for min intensity)
                 even if the image dtype allows negative values.
+
         Returns:
             (imin,imax) (tuple):
                 Lower and upper intensity limits.
         """
-        return self[0].dtype_limits
+        ret = self[0].dtype_limits
+        if clip_negative:
+            ret = [max(0, x) for x in ret]
+        return ret
 
     ###########################################################################
     ################### Depricated Compaibility methods #######################

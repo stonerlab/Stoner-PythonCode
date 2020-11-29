@@ -465,7 +465,7 @@ class DataArray(ma.MaskedArray):
         yerr=None,
         zerr=None,
         **kargs,
-    ):
+    ):  # pylint: disable=unused-argument
         """Create an object which has keys  based either on arguments or setas attribute."""
         cols = {
             "xcol": xcol,

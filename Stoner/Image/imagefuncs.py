@@ -154,7 +154,7 @@ def _align_imreg_dft(im, ref, **kargs):
     return np.array(tvec), result
 
 
-def _align_cv2(im, ref, **kargs):
+def _align_cv2(im, ref, **kargs):  # pylint: disable=unused-argument
     """Return the translation vector to shirt im to align to ref using the cv2 method."""
     im1_gray = ref.convert("uint8", force_copy=True)
     im2_gray = im.convert("uint8", force_copy=True)

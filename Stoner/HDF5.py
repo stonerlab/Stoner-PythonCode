@@ -27,7 +27,7 @@ def _raise_error(f, message="Not a valid hdf5 file."):
     """Try to close the filehandle f and raise a StonerLoadError."""
     try:
         f.file.close()
-    except Exception:  # pylint:disable=W0703
+    except Exception:  # pylint:disable=W0703 # nose
         pass
     raise StonerLoadError(message)
 
@@ -266,7 +266,7 @@ class HDF5File(DataFile):
         """
         return self.to_HDF(filename, **kargs)  # Just a pass through to our own to_HDF method
 
-    def to_HDF(self, filename=None, **kargs):
+    def to_HDF(self, filename=None, **kargs):  # pylint: disable=unused-argument
         """Write the current object into  an hdf5 file or group within a file.
 
         Writes the data in afashion that is compatible with being loaded in again.

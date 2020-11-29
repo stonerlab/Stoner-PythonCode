@@ -276,7 +276,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return image
 
     @classmethod
-    def _load_png(cls, filename, **kargs):
+    def _load_png(cls, filename, **kargs):  # pylint: disable=unused-argument
         """Create a new ImageArray from a png file."""
         with Image.open(filename, "r") as img:
             image = np.asarray(img).view(cls)
@@ -302,7 +302,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return image
 
     @classmethod
-    def _load_tiff(cls, filename, **kargs):
+    def _load_tiff(cls, filename, **kargs):  # pylint: disable=unused-argument
         """Create a new ImageArray from a tiff file."""
         metadict = typeHintedDict({})
         with Image.open(filename, "r") as img:

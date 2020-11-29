@@ -9,7 +9,6 @@ from typing import Any, Union, Optional, Dict, Type
 
 try:
     from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
-    from PyQt5 import QtCore
 except ImportError:
 
     class App:

@@ -470,7 +470,7 @@ class KerrStackMixin:
                 else return True for values between thresh and 1
         """
         masks = self.clone
-        masks.apply_all("denoise", weight=0.1)
+        masks.apply_all("denoise", weight=denoise_weight)
         masks.apply_all("threshold_minmax", threshmin=thresh, threshmax=np.max(masks.imarray))
         masks = MaskStack(masks)
         if invert:
@@ -494,15 +494,16 @@ class KerrStackMixin:
             med = np.median(np.ravel(testim[np.invert(mask)]))
         return med
 
-    def stable_mask(self, tolerance=1e-2, comparison=None):
+    def stable_mask(self, tolerance=1e-2, comparison=(0, -1)):
         """Produce a mask of areas of the image that are changing little over the stack.
 
         comparison is an optional tuple that gives the index of two images
         to compare, otherwise first and last used. tolerance is the difference
         tolerance
         """
+        first, last = comparison
         mask = np.zeros(self[0].shape, dtype=bool)
-        mask[abs(self[-1] - self[0]) < tolerance] = True
+        mask[abs(self[last] - self[first]) < tolerance] = True
         return mask
 
     def crop_text(self, copy=False):
@@ -516,7 +517,8 @@ class KerrStackMixin:
             (self[0].shape == AN_IM_SIZE or self[0].shape == IM_SIZE), "Need a full sized Kerr image to crop"
         )  # check it's a normal image
         crop = (0, IM_SIZE[1], 0, IM_SIZE[0])
-        self.crop_stack(box=crop)
+        tmp = self.clone if copy else self
+        tmp.crop_stack(box=crop)
 
     def HcMap(
         self,
