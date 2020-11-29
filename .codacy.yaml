@@ -21,4 +21,5 @@ exclude_paths:
     - 'tests/**'
     - 'setup.py'
     - '**/conf.py'
+    - 'doc/modified_plot_directive.py'
 

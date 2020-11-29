@@ -6,6 +6,8 @@ import warnings
 import numpy as np
 
 from ..compat import string_types, int_types
+from ..core.exceptions import assertion
+
 from ..Core import regexpDict, typeHintedDict
 from ..Folders import DiskBasedFolderMixin, baseFolder
 
@@ -292,7 +294,7 @@ class ImageStackMixin:
     def _resize_stack(self, new_size, dtype=None):
         """Create a new stack with a new size."""
         old_size = self._stack.shape
-        assert isinstance(self._stack, ImageArray)
+        assertion(isinstance(self._stack, ImageArray), "Trying to resize a non-image aray")
         if old_size == new_size:
             return new_size
         if dtype is None:
