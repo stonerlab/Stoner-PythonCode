@@ -264,7 +264,7 @@ def test_other_funcs():
 
 def test_attrs():
     attrs=[x for x in dir(selfimarr) if not x.startswith("_")]
-    expected=883
+    expected=894
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
@@ -334,7 +334,7 @@ def test_methods():
     else:
         assert False,"Subtraction of string didn't raise not implemented"
     attrs=[x for x in dir(image) if not x.startswith("_")]
-    expected=891
+    expected=902
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 
@@ -391,7 +391,7 @@ def test_mask():
 def test_draw():
     i=ImageFile(np.zeros((200,200)))
     attrs=[x for x in dir(i.draw) if not x.startswith("_")]
-    expected = 21
+    expected = 22
     assert len(attrs)==expected,"Directory of DrawProxy failed"
 
 def test_operators():
