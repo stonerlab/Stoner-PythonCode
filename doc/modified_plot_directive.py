@@ -150,6 +150,7 @@ import shutil
 import sys
 import textwrap
 import traceback
+import warnings
 
 from docutils.parsers.rst import directives, Directive
 from docutils.parsers.rst.directives.images import Image
@@ -515,21 +516,23 @@ def run_code(code, code_path, ns=None, function_name=None):
 
     try:
         try:
-            code = unescape_doctest(code)
-            if ns is None:
-                ns = {}
-            if not ns:
-                if setup.config.plot_pre_code is None:
-                    exec("import numpy as np\n" + "from matplotlib import pyplot as plt\n", ns)
-                else:
-                    exec(setup.config.plot_pre_code, ns)
-            ns["print"] = _dummy_print
-            if "__main__" in code:
-                exec("__name__ = '__main__'", ns)
-            code = remove_coding(code)
-            exec(code, ns)
-            if function_name is not None:
-                exec(function_name + "()", ns)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                code = unescape_doctest(code)
+                if ns is None:
+                    ns = {}
+                if not ns:
+                    if setup.config.plot_pre_code is None:
+                        exec("import numpy as np\n" + "from matplotlib import pyplot as plt\n", ns)
+                    else:
+                        exec(setup.config.plot_pre_code, ns)
+                ns["print"] = _dummy_print
+                if "__main__" in code:
+                    exec("__name__ = '__main__'", ns)
+                code = remove_coding(code)
+                exec(code, ns)
+                if function_name is not None:
+                    exec(function_name + "()", ns)
         except (Exception, SystemExit) as err:
             raise PlotError(traceback.format_exc())
     finally:
@@ -823,6 +826,7 @@ def run(arguments, content, options, state_machine, state, lineno):
 
     # generate output restructuredtext
     total_lines = []
+    pylint=r"#\s+pylint\:\s+disable\=.*$"
     for j, (code_piece, images) in enumerate(results):
         if options["include-source"]:
             if is_doctest:
@@ -830,7 +834,9 @@ def run(arguments, content, options, state_machine, state, lineno):
                 lines += [row.rstrip() for row in code_piece.split("\n")]
             else:
                 lines = [".. code-block:: python", ""]
-                lines += ["    %s" % row.rstrip() for row in code_piece.split("\n")]
+                for code_line in ["    %s" % row.rstrip() for row in code_piece.split("\n")]:
+                    #code_line=re.sib(pylint,"",code_line)
+                    lines.append(code_line)
             source_code = "\n".join(lines)
         else:
             source_code = ""
