@@ -1,5 +1,5 @@
 """Detect peaks in a dataset."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,unsubscriptable-object
 from Stoner import Data
 
 from matplotlib.cm import jet
@@ -18,8 +18,6 @@ d.title = "Finding peaks with peaks() and find_peaks()"
 
 # Use the metadata that find_peaks produces
 colors = jet(linspace(0, 1, len(e)), alpha=0.5)
-for l, r, c in zip(
-    e["left_ips"], e["right_ips"], colors
-):  # pylint:disable=unsubscriptable-object
+for l, r, c in zip(e["left_ips"], e["right_ips"], colors):
     ax = d.axes[d.ax]
     ax.axvspan(l, r, facecolor=c)
