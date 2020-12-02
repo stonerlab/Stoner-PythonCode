@@ -105,7 +105,7 @@ def make_model(model_func):
                     self.set_param_hint(param, **limit)
             self.__name__ = self.func.__name__
 
-        def guess(self, y, x=None):
+        def guess(self, y, x=None):  # pylint: disable=unused-argument
             """A default parameter guess method.
 
             Just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does."""

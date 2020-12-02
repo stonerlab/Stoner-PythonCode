@@ -49,8 +49,8 @@ try:
             from hyperspy import api
 
             load = api.load
-        except (ImportError, AttributeError):
-            raise ImportError("Panic over hyperspy")
+        except (ImportError, AttributeError) as err:
+            raise ImportError("Panic over hyperspy") from err
 
     HuperSpyVersion = [int(x) for x in hs.__version__.split(".")]
     if HuperSpyVersion[0] <= 1 and HuperSpyVersion[1] <= 3:

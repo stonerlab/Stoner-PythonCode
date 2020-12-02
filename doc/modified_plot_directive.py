@@ -826,7 +826,6 @@ def run(arguments, content, options, state_machine, state, lineno):
 
     # generate output restructuredtext
     total_lines = []
-    pylint=r"#\s+pylint\:\s+disable\=.*$"
     for j, (code_piece, images) in enumerate(results):
         if options["include-source"]:
             if is_doctest:
@@ -835,8 +834,11 @@ def run(arguments, content, options, state_machine, state, lineno):
             else:
                 lines = [".. code-block:: python", ""]
                 for code_line in ["    %s" % row.rstrip() for row in code_piece.split("\n")]:
+                    if code_line.strip()=="": # Keep empty lines here
+                        lines.append(code_line)
+                        continue
                     code_line=re.sub(r"\s*#\s+pylint\:.*","",code_line)
-                    if code_line.strip()=="":
+                    if code_line.strip()=="": # Empty lines are now were we removed a pylint comment
                         continue
                     lines.append(code_line)
             source_code = "\n".join(lines)

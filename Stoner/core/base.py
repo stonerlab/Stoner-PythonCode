@@ -690,12 +690,12 @@ class metadataObject(MutableMapping):
     @property
     def _public_attrs(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
-        return self._public_attrs_real
+        return self._public_attrs_real  # pylint: disable=no-member
 
     @_public_attrs.setter
     def _public_attrs(self, value):
         """Privaye property to update the list of public attributes."""
-        self._public_attrs_real.update(dict(value))
+        self._public_attrs_real.update(dict(value))  # pylint: disable=no-member
 
     @property
     def metadata(self) -> Dict:

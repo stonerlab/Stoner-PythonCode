@@ -328,8 +328,8 @@ if Hyperspy_ok:
                     from hyperspy import api
 
                     load = api.load
-                except (ImportError, AttributeError):
-                    raise ImportError("Panic over hyperspy")
+                except (ImportError, AttributeError) as err:
+                    raise ImportError("Panic over hyperspy") from err
             try:
                 signal = load(self.filename)
                 if not isinstance(signal, hs.signals.Signal2D):

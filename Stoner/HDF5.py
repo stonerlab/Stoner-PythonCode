@@ -197,7 +197,7 @@ class HDF5File(DataFile):
         return self
 
     @classmethod
-    def read_HDF(cls, filename, *args, **kargs):
+    def read_HDF(cls, filename, *args, **kargs):  # pylint: disable=unused-argument
         """Create a new HDF5File from an actual HDF file."""
         self = kargs.pop("instance", cls())
         if filename is None or not filename:
@@ -510,7 +510,7 @@ class HDF5FolderMixin:
             return self.directory
         return None
 
-    def _visit_func(self, name, obj):
+    def _visit_func(self, name, obj):  # pylint: disable=unused-argument
         """Walker of the HDF5 tree."""
         if isinstance(obj, h5py.Group) and "type" in obj.attrs:
             cls = globals()[obj.attrs["type"]]

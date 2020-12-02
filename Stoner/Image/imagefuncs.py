@@ -135,7 +135,7 @@ def _align_scharr(im, ref, **kargs):
     scale = np.ceil(np.max(im.shape) / 500.0)
     ref1 = filters.edges.scharr(gaussian_filter(ref, sigma=scale, mode="wrap"))
     im1 = filters.edges.scharr(gaussian_filter(im, sigma=scale, mode="wrap"))
-    return _align_imreg_dft(im1, ref1)
+    return _align_imreg_dft(im1, ref1, **kargs)
 
 
 def _align_chi2_shift(im, ref, **kargs):

@@ -18,7 +18,7 @@ class DrawProxy:
 
     """Provides a wrapper around scikit-image.draw to allow easy drawing of objects onto images."""
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kargs):  # pylint: disable=unused-argument
         """Grab the parent image from the constructor."""
         self.img = args[0]
 

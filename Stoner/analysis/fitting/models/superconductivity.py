@@ -21,7 +21,8 @@ __all__ = [
     "strijkers",
     "ic_B_airy",
 ]
-
+hbar = physical_constants["Planck constant over 2 pi"]
+kb = physical_constants["Boltzmann constant"]
 Phi_0 = physical_constants["mag. flux quantum"][0]
 
 J1 = partial(jv, 1)
@@ -309,8 +310,6 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
         Implements Eq 18 from F.S. Bergeret, A.F. Volkov, and K.B. Efetov, Phys. Rev. B 64, 134506 (2001).
     """
     L = v_f * tau * 1e-9
-    hbar = physical_constants["Planck constant over 2 pi"]
-    kb = physical_constants["Boltzmann constant"]
     t = tau / hbar
     w_m = lambda m: (2 * m + 1) * T * np.pi * kb
     k_m = lambda m: (1 + 2 * np.abs(w_m(m)) * t) + (0 - 2j) * E_x * t

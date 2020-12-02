@@ -273,12 +273,12 @@ class ZipFolderMixin:
         """Set the immediate filename that will be used when the file is saved."""
         self.path = pathjoin(self.directory, value)
 
-    def _dialog(self, message="Select Folder", mode="r"):
+    def _dialog(self, mode="r"):
         """Create a file dialog box for working with.
 
         Args:
-            message (string):
-                Message to display in dialog
+            mode (string):
+                Where the dialog is for opening or saving the file.
 
         Returns:
             A directory to be used for the file operation.

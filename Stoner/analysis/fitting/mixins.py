@@ -129,7 +129,7 @@ class MimizerAdaptor:
     variables from information int he lmfit.Model.
     """
 
-    def __init__(self, model, *args, **kargs):
+    def __init__(self, model, *args, **kargs):  # pylint: disable=unused-argument
         """Prepare the wrapper from the minimuzer.
 
         Args:
