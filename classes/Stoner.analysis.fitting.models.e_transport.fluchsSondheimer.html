@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FluchsSondheimer &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="WLfit" href="Stoner.analysis.fitting.models.e_transport.WLfit.html" />
@@ -57,10 +58,10 @@
             
   <div class="section" id="fluchssondheimer">
 <h1>FluchsSondheimer<a class="headerlink" href="#fluchssondheimer" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">FluchsSondheimer</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#FluchsSondheimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.e_transport.</code><code class="sig-name descname">FluchsSondheimer</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#FluchsSondheimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
 <p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -81,7 +82,6 @@
 </div>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Test Weak-localisation fitting.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.e_transport</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">fluchsSondheimer</span><span class="p">,</span>
@@ -89,7 +89,6 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">logspace</span><span class="p">,</span> <span class="n">ones_like</span><span class="p">,</span> <span class="n">log10</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-
 <span class="n">B</span> <span class="o">=</span> <span class="n">logspace</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">26</span><span class="p">)</span>
 <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">12.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">]</span>
 <span class="n">G</span> <span class="o">=</span> <span class="n">fluchsSondheimer</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">5e-5</span><span class="p">)</span>
@@ -101,15 +100,11 @@
     <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span>
     <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Thickness (nm)&quot;</span><span class="p">,</span> <span class="s2">&quot;Conductance&quot;</span><span class="p">,</span> <span class="s2">&quot;dConductance&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">fluchsSondheimer</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span><span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">FluchsSondheimer</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyeyy&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">])</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
     <span class="n">fluchsSondheimer</span><span class="p">,</span>
     <span class="n">x</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
@@ -159,20 +154,20 @@
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.display_names">
 <code class="sig-name descname">display_names</code><em class="property"> = ['\\lambda_{mfp}', 'p_{refl}', '\\sigma_0']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.display_names" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.units">
 <code class="sig-name descname">units</code><em class="property"> = ['nm', '', '\\Omega^{-1}m^{-1}']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.units" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess">
-<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">t=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#FluchsSondheimer.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/e_transport.html#FluchsSondheimer.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.guess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Guess some starting values - not very clever.</p>
 </dd></dl>
 
@@ -181,6 +176,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -238,9 +234,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

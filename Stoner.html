@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner Package &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="_static/better.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Stoner.Data" href="classes/Stoner.Data.html" />
@@ -75,134 +76,6 @@
 </table>
 <div class="section" id="inheritance-diagrams">
 <h3>Inheritance Diagrams<a class="headerlink" href="#inheritance-diagrams" title="Permalink to this headline">¶</a></h3>
-digraph inheritance88a7ff70f4 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Stoner.Analysis.AnalysisMixin&quot; [URL=&quot;classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods.&quot;];
-  &quot;Stoner.Core.DataFile&quot; [URL=&quot;classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Base class object that represents a matrix of data, associated metadata and column headers.&quot;];
-  &quot;Stoner.core.methods.DataFileSearchMixin&quot; -&gt; &quot;Stoner.Core.DataFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.core.interfaces.DataFileInterfacesMixin&quot; -&gt; &quot;Stoner.Core.DataFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.core.operators.DataFileOperatorsMixin&quot; -&gt; &quot;Stoner.Core.DataFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.core.property.DataFilePropertyMixin&quot; -&gt; &quot;Stoner.Core.DataFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.core.base.metadataObject&quot; -&gt; &quot;Stoner.Core.DataFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableSequence&quot; -&gt; &quot;Stoner.Core.DataFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.analysis.columns.ColumnOpsMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods.&quot;];
-  &quot;Stoner.analysis.features.FeatureOpsMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Mixin to provide additional functions to support finding features in a dataset.&quot;];
-  &quot;Stoner.analysis.filtering.FilteringOpsMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Provide additional filtering sndsmoothing methods to :py:class:`Stoner.Data`.&quot;];
-  &quot;Stoner.analysis.fitting.mixins.FittingMixin&quot; [URL=&quot;classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin calss for :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting methods.&quot;];
-  &quot;Stoner.core.base.metadataObject&quot; [URL=&quot;classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.&quot;];
-  &quot;collections.abc.MutableMapping&quot; -&gt; &quot;Stoner.core.base.metadataObject&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.core.data.Data&quot; [URL=&quot;classes/Stoner.Data.html#Stoner.Data&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;The principal class for representing a data file.&quot;];
-  &quot;Stoner.Analysis.AnalysisMixin&quot; -&gt; &quot;Stoner.core.data.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.analysis.fitting.mixins.FittingMixin&quot; -&gt; &quot;Stoner.core.data.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.analysis.columns.ColumnOpsMixin&quot; -&gt; &quot;Stoner.core.data.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.analysis.filtering.FilteringOpsMixin&quot; -&gt; &quot;Stoner.core.data.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.analysis.features.FeatureOpsMixin&quot; -&gt; &quot;Stoner.core.data.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.plot.core.PlotMixin&quot; -&gt; &quot;Stoner.core.data.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.Core.DataFile&quot; -&gt; &quot;Stoner.core.data.Data&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.core.interfaces.DataFileInterfacesMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Implement the required methods for a sequence and mapping type object.&quot;];
-  &quot;Stoner.core.methods.DataFileSearchMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Mixin class that provides the search, selecting and sorting methods for a DataFile.&quot;];
-  &quot;Stoner.core.operators.DataFileOperatorsMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Provides the operator mixins for DataFile like objects.&quot;];
-  &quot;Stoner.core.property.DataFilePropertyMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Provide the proerties for DataFile Like Objects.&quot;];
-  &quot;Stoner.plot.core.PlotMixin&quot; [URL=&quot;classes/Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.&quot;];
-  &quot;collections.abc.Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Mapping&quot; -&gt; &quot;collections.abc.MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; -&gt; &quot;collections.abc.MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;collections.abc.Reversible&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
-digraph inheritancebd3fb28729 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Stoner.Folders.DataFolder&quot; [URL=&quot;classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provide an interface to manipulating lots of data files stored within a directory structure on disc.&quot;];
-  &quot;Stoner.folders.mixins.DataMethodsMixin&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.mixins.DiskBasedFolderMixin&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.core.baseFolder&quot; -&gt; &quot;Stoner.Folders.DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.core.baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;collections.abc.MutableSequence&quot; -&gt; &quot;Stoner.folders.core.baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.mixins.DataMethodsMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Methods for wokring with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s.&quot;];
-  &quot;Stoner.folders.mixins.DiskBasedFolderMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;collections.abc.Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; -&gt; &quot;collections.abc.MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;collections.abc.Reversible&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
-digraph inheritance739ef5034c {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Stoner.Image.core.ImageFile&quot; [URL=&quot;classes/Stoner.Image.ImageFile.html#Stoner.Image.ImageFile&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An Image file type that is analagous to DataFile.&quot;];
-  &quot;Stoner.core.base.metadataObject&quot; -&gt; &quot;Stoner.Image.core.ImageFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.core.base.metadataObject&quot; [URL=&quot;classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.&quot;];
-  &quot;collections.abc.MutableMapping&quot; -&gt; &quot;Stoner.core.base.metadataObject&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Mapping&quot; -&gt; &quot;collections.abc.MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
-digraph inheritance3eb8b4e850 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Stoner.Image.folders.ImageFolder&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Folder object for images.&quot;];
-  &quot;Stoner.Image.folders.ImageFolderMixin&quot; -&gt; &quot;Stoner.Image.folders.ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.mixins.DiskBasedFolderMixin&quot; -&gt; &quot;Stoner.Image.folders.ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.core.baseFolder&quot; -&gt; &quot;Stoner.Image.folders.ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.Image.folders.ImageFolderMixin&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Mixin to provide a folder object for images.&quot;];
-  &quot;Stoner.folders.core.baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;collections.abc.MutableSequence&quot; -&gt; &quot;Stoner.folders.core.baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Stoner.folders.mixins.DiskBasedFolderMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;collections.abc.Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; -&gt; &quot;collections.abc.Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; -&gt; &quot;collections.abc.MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Iterable&quot; -&gt; &quot;collections.abc.Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;collections.abc.Reversible&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Collection&quot; -&gt; &quot;collections.abc.Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;collections.abc.Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
 </div>
 </div>
 <div class="section" id="numerical-data-objects">
@@ -234,7 +107,7 @@ size=&quot;6.0, 8.0&quot;;
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.base._evaluatable.html#Stoner.core.base._evaluatable" title="Stoner.core.base._evaluatable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_evaluatable</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.base._evaluatable.html#Stoner.core.base._evaluatable" title="Stoner.core.base._evaluatable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_evaluatable</span></code></a>()</p></td>
 <td><p>Placeholder to indicate that special action needed to convert a string representation to valid Python type.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.core.base.regexpDict.html#Stoner.core.base.regexpDict" title="Stoner.core.base.regexpDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regexpDict</span></code></a></p></td>
@@ -253,7 +126,7 @@ size=&quot;6.0, 8.0&quot;;
 <div class="section" id="module-Stoner.core.array">
 <span id="stoner-core-array-module"></span><h4>Stoner.core.array Module<a class="headerlink" href="#module-Stoner.core.array" title="Permalink to this headline">¶</a></h4>
 <p>Provides the DataArray class.</p>
-<p>A subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> that knows that columns have  names.</p>
+<p>A subclass of <a class="reference external" href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> that knows that columns have  names.</p>
 <div class="section" id="id1">
 <h5>Classes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
@@ -262,8 +135,8 @@ size=&quot;6.0, 8.0&quot;;
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.array.DataArray.html#Stoner.core.array.DataArray" title="Stoner.core.array.DataArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataArray</span></code></a></p></td>
-<td><p>A sub class of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.array.DataArray.html#Stoner.core.array.DataArray" title="Stoner.core.array.DataArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataArray</span></code></a>(input_array, *args, **kargs)</p></td>
+<td><p>A sub class of <a class="reference external" href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p></td>
 </tr>
 </tbody>
 </table>
@@ -339,25 +212,22 @@ size=&quot;6.0, 8.0&quot;;
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.utils.add_core.html#Stoner.core.utils.add_core" title="Stoner.core.utils.add_core"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_core</span></code></a>(other, newdata)</p></td>
-<td><p>Implements the core work of adding other to self and modifying newdata.</p></td>
+<td><p>Implement the core work of adding other to self and modifying newdata.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.core.utils.and_core.html#Stoner.core.utils.and_core" title="Stoner.core.utils.and_core"><code class="xref py py-obj docutils literal notranslate"><span class="pre">and_core</span></code></a>(other, newdata)</p></td>
-<td><p>Implements the core of the &amp; operator, returning data in newdata</p></td>
+<td><p>Implement the core of the &amp; operator, returning data in newdata.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.utils.sub_core.html#Stoner.core.utils.sub_core" title="Stoner.core.utils.sub_core"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub_core</span></code></a>(other, newdata)</p></td>
-<td><p>Actually do the subtraction.</p></td>
+<td><p>Worker for the subtraction.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.core.utils.mod_core.html#Stoner.core.utils.mod_core" title="Stoner.core.utils.mod_core"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mod_core</span></code></a>(other, newdata)</p></td>
-<td><p>Implements the column deletion method.</p></td>
+<td><p>Implement the column deletion method.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.utils.copy_into.html#Stoner.core.utils.copy_into" title="Stoner.core.utils.copy_into"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_into</span></code></a>(source, dest)</p></td>
-<td><p>Copies the data associated with source to dest.</p></td>
+<td><p>Copy the data associated with source to dest.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.core.utils.itersubclasses.html#Stoner.core.utils.itersubclasses" title="Stoner.core.utils.itersubclasses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itersubclasses</span></code></a>(cls[, _seen])</p></td>
-<td><p>Iterate over subclasses of a given class.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.core.utils.decode_string.html#Stoner.core.utils.decode_string" title="Stoner.core.utils.decode_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_string</span></code></a>(value)</p></td>
-<td><p>Expands a string of column assignments, replacing numbers with repeated characters.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.core.utils.decode_string.html#Stoner.core.utils.decode_string" title="Stoner.core.utils.decode_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decode_string</span></code></a>(value)</p></td>
+<td><p>Expand a string of column assignments, replacing numbers with repeated characters.</p></td>
 </tr>
 </tbody>
 </table>
@@ -405,7 +275,7 @@ size=&quot;6.0, 8.0&quot;;
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a>()</p></td>
 <td><p>A mixin calss designed to work with <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to provide additional analysis methods.</p></td>
 </tr>
 </tbody>
@@ -426,7 +296,7 @@ size=&quot;6.0, 8.0&quot;;
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.odr_Model.html#Stoner.analysis.fitting.odr_Model" title="Stoner.analysis.fitting.odr_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr_Model</span></code></a>(*args, **kargs)</p></td>
 <td><p>A wrapper for converting lmfit models to odr models.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin" title="Stoner.analysis.fitting.FittingMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FittingMixin</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin" title="Stoner.analysis.fitting.FittingMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FittingMixin</span></code></a>()</p></td>
 <td><p>A mixin calss for <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to provide additional curve_fiotting methods.</p></td>
 </tr>
 </tbody>
@@ -486,7 +356,7 @@ some handy utility functions.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter" title="Stoner.plot.formats.TexFormatter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TexFormatter</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter" title="Stoner.plot.formats.TexFormatter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TexFormatter</span></code></a>()</p></td>
 <td><p>An axis tick label formatter that emits Tex formula mode code.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.plot.formats.TexEngFormatter.html#Stoner.plot.formats.TexEngFormatter" title="Stoner.plot.formats.TexEngFormatter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TexEngFormatter</span></code></a>([unit, places, sep, usetex, …])</p></td>
@@ -518,46 +388,6 @@ some handy utility functions.</p>
 </div>
 <div class="section" id="class-inheritance-diagram">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this headline">¶</a></h5>
-digraph inheritance1b9730fac1 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DefaultPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Produces a default plot style.&quot;];
-  &quot;MutableMapping&quot; -&gt; &quot;DefaultPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;EngFormatter&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Formats axis values using engineering prefixes to represent powers&quot;];
-  &quot;Formatter&quot; -&gt; &quot;EngFormatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Formatter&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Create a string based on a tick value and location.&quot;];
-  &quot;TickHelper&quot; -&gt; &quot;Formatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;GBPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.GBPlotStyle.html#Stoner.plot.formats.GBPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Template developed for Gavin's plotting.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;GBPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;JTBPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.JTBPlotStyle.html#Stoner.plot.formats.JTBPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Template class for Joe's Plot settings.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;JTBPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;JTBinsetStyle&quot; [URL=&quot;classes/Stoner.plot.formats.JTBinsetStyle.html#Stoner.plot.formats.JTBinsetStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Template class for Joe's Plot settings.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;JTBinsetStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; -&gt; &quot;MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;PRBPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.PRBPlotStyle.html#Stoner.plot.formats.PRBPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A figure Style for making figures for Phys Rev * Jounrals.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;PRBPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;SeabornPlotStyle&quot; [URL=&quot;classes/Stoner.plot.formats.SeabornPlotStyle.html#Stoner.plot.formats.SeabornPlotStyle&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;SeabornPlotStyle&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;SketchPlot&quot; [URL=&quot;classes/Stoner.plot.formats.SketchPlot.html#Stoner.plot.formats.SketchPlot&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Turn on xkcd plot style.&quot;];
-  &quot;DefaultPlotStyle&quot; -&gt; &quot;SketchPlot&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;TexEngFormatter&quot; [URL=&quot;classes/Stoner.plot.formats.TexEngFormatter.html#Stoner.plot.formats.TexEngFormatter&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An axis tick label formatter that emits Tex formula mode code.&quot;];
-  &quot;EngFormatter&quot; -&gt; &quot;TexEngFormatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;TexFormatter&quot; [URL=&quot;classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An axis tick label formatter that emits Tex formula mode code.&quot;];
-  &quot;Formatter&quot; -&gt; &quot;TexFormatter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;TickHelper&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-}
 </div>
 </div>
 <div class="section" id="stoner-plot-utils-module">
@@ -634,7 +464,7 @@ size=&quot;6.0, 8.0&quot;;
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.formats.facilities.BNLFile.html#Stoner.formats.facilities.BNLFile" title="Stoner.formats.facilities.BNLFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BNLFile</span></code></a>(*params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.formats.facilities.BNLFile.html#Stoner.formats.facilities.BNLFile" title="Stoner.formats.facilities.BNLFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BNLFile</span></code></a>(*args, **kargs)</p></td>
 <td><p>Reader of files in the SPEC format given by BNL (specifically u4b beamline but hopefully generalisable).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.formats.facilities.MDAASCIIFile.html#Stoner.formats.facilities.MDAASCIIFile" title="Stoner.formats.facilities.MDAASCIIFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MDAASCIIFile</span></code></a>(*args, **kargs)</p></td>
@@ -700,7 +530,7 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="id12">
 <h4>Stoner.analysis.fitting Package<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
-<span class="target" id="module-Stoner.analysis.fitting"></span><p>Provides additional functionality for doing curve fitting to data.</p>
+<span class="target" id="module-0"></span><p>Provides additional functionality for doing curve fitting to data.</p>
 </div>
 </div>
 <div class="section" id="id13">
@@ -714,7 +544,7 @@ size=&quot;6.0, 8.0&quot;;
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.odr_Model.html#Stoner.analysis.fitting.odr_Model" title="Stoner.analysis.fitting.odr_Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">odr_Model</span></code></a>(*args, **kargs)</p></td>
 <td><p>A wrapper for converting lmfit models to odr models.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin" title="Stoner.analysis.fitting.FittingMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FittingMixin</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.FittingMixin.html#Stoner.analysis.fitting.FittingMixin" title="Stoner.analysis.fitting.FittingMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FittingMixin</span></code></a>()</p></td>
 <td><p>A mixin calss for <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to provide additional curve_fiotting methods.</p></td>
 </tr>
 </tbody>
@@ -834,13 +664,13 @@ size=&quot;6.0, 8.0&quot;;
 <td><p>Check whether each element of <em>iterator</em> is the same length/shape.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.tools.all_type.html#Stoner.tools.all_type" title="Stoner.tools.all_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_type</span></code></a>(iterator, typ)</p></td>
-<td><p>Determines if an interable omnly contains a common type.</p></td>
+<td><p>Determine if an interable omnly contains a common type.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.tools.fix_signature.html#Stoner.tools.fix_signature" title="Stoner.tools.fix_signature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fix_signature</span></code></a>(proxy_func, wrapped_func)</p></td>
 <td><p>Tries to update proxy_func to have a signature that matches the wrapped func.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.tools.format_error.html#Stoner.tools.format_error" title="Stoner.tools.format_error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_error</span></code></a>(value[, error])</p></td>
-<td><p>Formats answer with the uncertaintly to 1sf and the value to no more sf’s than the uncertainty.</p></td>
+<td><p>Format answer with the uncertaintly to 1sf and the value to no more sf’s than the uncertainty.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.tools.format_val.html#Stoner.tools.format_val" title="Stoner.tools.format_val"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_val</span></code></a>(value, **kargs)</p></td>
 <td><p>Format a number as an SI quantity.</p></td>
@@ -852,21 +682,21 @@ size=&quot;6.0, 8.0&quot;;
 <td><p>Intelligently check whether any of the inputs are None.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.tools.isComparable.html#Stoner.tools.isComparable" title="Stoner.tools.isComparable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isComparable</span></code></a>(v1, v2)</p></td>
-<td><p>Returns true if v1 and v2 can be compared sensibly</p></td>
+<td><p>Return true if v1 and v2 can be compared sensibly.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.tools.isNone.html#Stoner.tools.isNone" title="Stoner.tools.isNone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isNone</span></code></a>(iterator)</p></td>
-<td><p>Returns True if input is None or an empty iterator, or an iterator of None.</p></td>
+<td><p>Return True if input is None or an empty iterator, or an iterator of None.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.tools.isIterable.html#Stoner.tools.isIterable" title="Stoner.tools.isIterable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isIterable</span></code></a>(value)</p></td>
 <td><p>Chack to see if a value is iterable.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.tools.isLikeList.html#Stoner.tools.isLikeList" title="Stoner.tools.isLikeList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isLikeList</span></code></a>(value)</p></td>
-<td><p>Returns True if value is an iterable but not a string.</p></td>
+<td><p>Return True if value is an iterable but not a string.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.tools.isProperty.html#Stoner.tools.isProperty" title="Stoner.tools.isProperty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isProperty</span></code></a>(obj, name)</p></td>
 <td><p>Check whether an attribute of an object or class is a property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.tools.isTuple.html#Stoner.tools.isTuple" title="Stoner.tools.isTuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isTuple</span></code></a>(obj, *args, **kargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.tools.isTuple.html#Stoner.tools.isTuple" title="Stoner.tools.isTuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isTuple</span></code></a>(obj, *args[, strict])</p></td>
 <td><p>Determine if obj is a tuple of a certain signature.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.tools.quantize.html#Stoner.tools.quantize" title="Stoner.tools.quantize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantize</span></code></a>(number, quantum)</p></td>
@@ -934,38 +764,6 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="id21">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h5>
-digraph inheritance4d7d1f0691 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DataFolder&quot; [URL=&quot;classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provide an interface to manipulating lots of data files stored within a directory structure on disc.&quot;];
-  &quot;DataMethodsMixin&quot; -&gt; &quot;DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; -&gt; &quot;DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;DataFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DataMethodsMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Methods for wokring with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s.&quot;];
-  &quot;DiskBasedFolderMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;PlotFolder&quot; [URL=&quot;classes/Stoner.Folders.PlotFolder.html#Stoner.Folders.PlotFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files.&quot;];
-  &quot;PlotMethodsMixin&quot; -&gt; &quot;PlotFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DataFolder&quot; -&gt; &quot;PlotFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;PlotMethodsMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.PlotMethodsMixin.html#Stoner.folders.mixins.PlotMethodsMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files.&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
 </div>
 </div>
 </div>
@@ -994,7 +792,7 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="module-Stoner.folders.core">
 <span id="stoner-folders-core-module"></span><h4>Stoner.folders.core Module<a class="headerlink" href="#module-Stoner.folders.core" title="Permalink to this headline">¶</a></h4>
-<p><a class="reference internal" href="#module-Stoner.folders.core" title="Stoner.folders.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.folders.core</span></code></a> provides the base class and functions for the <a class="reference internal" href="classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> class.</p>
+<p>Provide the base classes and functions for the <a class="reference internal" href="classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> class.</p>
 <div class="section" id="id23">
 <h5>Classes<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h5>
 <table class="longtable docutils align-default">
@@ -1024,10 +822,10 @@ size=&quot;6.0, 8.0&quot;;
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin" title="Stoner.folders.mixins.DiskBasedFolderMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DiskBasedFolderMixin</span></code></a>(*args, **kargs)</p></td>
 <td><p>A Mixin class that implmenets reading metadataObjects from disc.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" title="Stoner.folders.mixins.DataMethodsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataMethodsMixin</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.folders.mixins.DataMethodsMixin.html#Stoner.folders.mixins.DataMethodsMixin" title="Stoner.folders.mixins.DataMethodsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataMethodsMixin</span></code></a>()</p></td>
 <td><p>Methods for wokring with <code class="xref py py-class docutils literal notranslate"><span class="pre">Stner.Data</span></code> in py:class:<a href="#id25"><span class="problematic" id="id26">`</span></a>Stoner.DataFolder`s.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.folders.mixins.PlotMethodsMixin.html#Stoner.folders.mixins.PlotMethodsMixin" title="Stoner.folders.mixins.PlotMethodsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotMethodsMixin</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.folders.mixins.PlotMethodsMixin.html#Stoner.folders.mixins.PlotMethodsMixin" title="Stoner.folders.mixins.PlotMethodsMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlotMethodsMixin</span></code></a>()</p></td>
 <td><p>A Mixin for <a class="reference internal" href="classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFolder</span></code></a> with extra methods for plotting lots of files.</p></td>
 </tr>
 </tbody>
@@ -1045,7 +843,7 @@ size=&quot;6.0, 8.0&quot;;
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.folders.each.item.html#Stoner.folders.each.item" title="Stoner.folders.each.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a>(folder)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.folders.each.Item.html#Stoner.folders.each.Item" title="Stoner.folders.each.Item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Item</span></code></a>(folder)</p></td>
 <td><p>Provides a proxy object for accessing methods on the inividual members of a Folder.</p></td>
 </tr>
 </tbody>
@@ -1053,13 +851,6 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="id28">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h5>
-digraph inheritance79fa03a85f {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;item&quot; [URL=&quot;classes/Stoner.folders.each.item.html#Stoner.folders.each.item&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provides a proxy object for accessing methods on the inividual members of a Folder.&quot;];
-}
 </div>
 </div>
 <div class="section" id="module-Stoner.folders.metadata">
@@ -1073,7 +864,7 @@ size=&quot;6.0, 8.0&quot;;
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy" title="Stoner.folders.metadata.proxy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proxy</span></code></a>(folder)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy" title="Stoner.folders.metadata.MetadataProxy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MetadataProxy</span></code></a>(folder)</p></td>
 <td><p>Provide methods to interact with a whole collection of metadataObjects’ metadata.</p></td>
 </tr>
 </tbody>
@@ -1081,25 +872,6 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="id30">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h5>
-digraph inheritance2d431350a9 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; -&gt; &quot;MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;proxy&quot; [URL=&quot;classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Provide methods to interact with a whole collection of metadataObjects' metadata.&quot;];
-  &quot;MutableMapping&quot; -&gt; &quot;proxy&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
 </div>
 </div>
 </div>
@@ -1147,67 +919,6 @@ contains the key classes for achieving this.</p>
 </div>
 <div class="section" id="id32">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h5>
-digraph inheritance7eb37f3103 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;ImageArray&quot; [URL=&quot;classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A numpy array like class with a metadata parameter and pass through to skimage methods.&quot;];
-  &quot;MaskedArray&quot; -&gt; &quot;ImageArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;metadataObject&quot; -&gt; &quot;ImageArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFile&quot; [URL=&quot;classes/Stoner.Image.ImageFile.html#Stoner.Image.ImageFile&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An Image file type that is analagous to DataFile.&quot;];
-  &quot;metadataObject&quot; -&gt; &quot;ImageFile&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolder&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Folder object for images.&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Mixin to provide a folder object for images.&quot;];
-  &quot;ImageStack&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An alternative implementation of an image stack based on baseFolder.&quot;];
-  &quot;StackAnalysisMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Implement an interface for a baseFolder to store images in a 3D numpy array for faster access.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrArray&quot; [URL=&quot;classes/Stoner.Image.kerr.KerrArray.html#Stoner.Image.kerr.KerrArray&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A subclass for Kerr microscopy specific image functions.&quot;];
-  &quot;ImageArray&quot; -&gt; &quot;KerrArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrStack&quot; [URL=&quot;classes/Stoner.Image.kerr.KerrStack.html#Stoner.Image.kerr.KerrStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Represent a stack of Kerr images.&quot;];
-  &quot;KerrStackMixin&quot; -&gt; &quot;KerrStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStack&quot; -&gt; &quot;KerrStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrStackMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;A mixin for :py:class:`ImageStack` that adds some functionality particular to Kerr images.&quot;];
-  &quot;Mapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Mapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MaskStack&quot; [URL=&quot;classes/Stoner.Image.kerr.MaskStack.html#Stoner.Image.kerr.MaskStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Represent a set of masks for Kerr images.&quot;];
-  &quot;MaskStackMixin&quot; -&gt; &quot;MaskStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;KerrStackMixin&quot; -&gt; &quot;MaskStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStack&quot; -&gt; &quot;MaskStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MaskStackMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images.&quot;];
-  &quot;MaskedArray&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;An array class with possibly masked values.&quot;];
-  &quot;ndarray&quot; -&gt; &quot;MaskedArray&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableMapping&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Mapping&quot; -&gt; &quot;MutableMapping&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;StackAnalysisMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Add some analysis capability to ImageStack.&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;metadataObject&quot; [URL=&quot;classes/Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.&quot;];
-  &quot;MutableMapping&quot; -&gt; &quot;metadataObject&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ndarray&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;ndarray(shape, dtype=float, buffer=None, offset=0,&quot;];
-}
 </div>
 </div>
 <div class="section" id="stoner-image-folders-module">
@@ -1220,13 +931,10 @@ size=&quot;6.0, 8.0&quot;;
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.folders._generator.html#Stoner.Image.folders._generator" title="Stoner.Image.folders._generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_generator</span></code></a>(fldr)</p></td>
-<td><p>A helper class to iterator over ImageFolder yet remember it’s own length.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" title="Stoner.Image.folders.ImageFolderMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageFolderMixin</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin" title="Stoner.Image.folders.ImageFolderMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageFolderMixin</span></code></a>()</p></td>
 <td><p>Mixin to provide a folder object for images.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder" title="Stoner.Image.folders.ImageFolder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageFolder</span></code></a>(*args, **kargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder" title="Stoner.Image.folders.ImageFolder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageFolder</span></code></a>(*args, **kargs)</p></td>
 <td><p>Folder object for images.</p></td>
 </tr>
 </tbody>
@@ -1234,35 +942,6 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="id34">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h5>
-digraph inheritance504182e052 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;ImageFolder&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Folder object for images.&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Mixin to provide a folder object for images.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;_generator&quot; [URL=&quot;classes/Stoner.Image.folders._generator.html#Stoner.Image.folders._generator&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A helper class to iterator over ImageFolder yet remember it's own length.&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
 </div>
 </div>
 <div class="section" id="stoner-image-stack-module">
@@ -1289,39 +968,7 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 <div class="section" id="id36">
 <h5>Class Inheritance Diagram<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h5>
-digraph inheritance14c469e509 {
-fontsize=14;
-rankdir=TB;
-ratio=compress;
-size=&quot;6.0, 8.0&quot;;
-  &quot;Collection&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; -&gt; &quot;Collection&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Container&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; [URL=&quot;classes/Stoner.folders.mixins.DiskBasedFolderMixin.html#Stoner.folders.mixins.DiskBasedFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Mixin class that implmenets reading metadataObjects from disc.&quot;];
-  &quot;ImageFolderMixin&quot; [URL=&quot;classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.folders.ImageFolderMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Mixin to provide a folder object for images.&quot;];
-  &quot;ImageStack&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;An alternative implementation of an image stack based on baseFolder.&quot;];
-  &quot;StackAnalysisMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageFolderMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;DiskBasedFolderMixin&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;baseFolder&quot; -&gt; &quot;ImageStack&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ImageStackMixin&quot; [URL=&quot;classes/Stoner.Image.stack.ImageStackMixin.html#Stoner.Image.stack.ImageStackMixin&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;Implement an interface for a baseFolder to store images in a 3D numpy array for faster access.&quot;];
-  &quot;Iterable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;MutableSequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; -&gt; &quot;MutableSequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Reversible&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Iterable&quot; -&gt; &quot;Reversible&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sequence&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;All the operations on a read-only sequence.&quot;];
-  &quot;Reversible&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Collection&quot; -&gt; &quot;Sequence&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Sized&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;StackAnalysisMixin&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Add some analysis capability to ImageStack.&quot;];
-  &quot;baseFolder&quot; [URL=&quot;classes/Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.&quot;];
-  &quot;MutableSequence&quot; -&gt; &quot;baseFolder&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
-<span class="target" id="module-Stoner.formats.generic"></span></div>
+<span class="target" id="module-1"></span></div>
 </div>
 <div class="section" id="id37">
 <h4>Generic Fomats<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h4>
@@ -1386,10 +1033,10 @@ size=&quot;6.0, 8.0&quot;;
 <td><p>Alias for skimage.filters.gaussian.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.gridimage.html#Stoner.Image.imagefuncs.gridimage" title="Stoner.Image.imagefuncs.gridimage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gridimage</span></code></a>(im[, points, xi, method, …])</p></td>
-<td><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p></td>
+<td><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.5.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.hist.html#Stoner.Image.imagefuncs.hist" title="Stoner.Image.imagefuncs.hist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hist</span></code></a>(im, *args, **kargs)</p></td>
-<td><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.hist.html#matplotlib.pyplot.hist" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.hist()</span></code></a> function.</p></td>
+<td><p>Pass through to <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.hist.html#matplotlib.pyplot.hist" title="(in Matplotlib v3.3.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.hist()</span></code></a> function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.imshow.html#Stoner.Image.imagefuncs.imshow" title="Stoner.Image.imagefuncs.imshow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">imshow</span></code></a>(im, **kwargs)</p></td>
 <td><p>Quickly plot of image.</p></td>
@@ -1498,6 +1145,7 @@ size=&quot;6.0, 8.0&quot;;
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -1732,9 +1380,9 @@ size=&quot;6.0, 8.0&quot;;
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AttocubeScan.convert &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="AttocubeScan.correct_drifts" href="Stoner.formats.attocube.AttocubeScan.correct_drifts.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="attocubescan-convert">
 <h1>AttocubeScan.convert<a class="headerlink" href="#attocubescan-convert" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.formats.attocube.AttocubeScan.convert">
-<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param">dtype</em>, <em class="sig-param">force_copy=False</em>, <em class="sig-param">uniform=False</em>, <em class="sig-param">normalise=True</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.convert" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dtype</span></em>, <em class="sig-param"><span class="n">force_copy</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">uniform</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">normalise</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert an image to the requested data-type.</p>
 <p>Warnings are issued in case of precision loss, or when negative values
 are clipped during conversion to unsigned integer types (sign loss).</p>
@@ -102,6 +103,7 @@ by the maximum allowed value of the int type.</p></li>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -159,9 +161,9 @@ by the maximum allowed value of the int type.</p></li>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

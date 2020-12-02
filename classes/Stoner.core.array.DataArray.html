@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DataArray &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="setas" href="Stoner.core.setas.setas.html" />
@@ -54,23 +55,23 @@
             
   <div class="section" id="dataarray">
 <h1>DataArray<a class="headerlink" href="#dataarray" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.core.array.DataArray">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.core.array.</code><code class="sig-name descname">DataArray</code><a class="reference internal" href="../_modules/Stoner/core/array.html#DataArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.array.DataArray" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><code class="docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a></p>
-<p>A sub class of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p>
-<dl class="attribute">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.core.array.</code><code class="sig-name descname">DataArray</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_array</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/array.html#DataArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.array.DataArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><code class="docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a></p>
+<p>A sub class of <a class="reference external" href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p>
+<dl class="py attribute">
 <dt id="Stoner.core.array.DataArray.column_headers">
 <code class="sig-name descname">column_headers</code><a class="headerlink" href="#Stoner.core.array.DataArray.column_headers" title="Permalink to this definition">¶</a></dt>
 <dd><p>of strings of the column names of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.array.DataArray.i">
 <code class="sig-name descname">i</code><a class="headerlink" href="#Stoner.core.array.DataArray.i" title="Permalink to this definition">¶</a></dt>
 <dd><p>When read, returns the row  umbers of the data. When written to, sets the base row index. The base row
@@ -82,7 +83,7 @@ index is preserved when a DataArray is indexed.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt>
 <code class="sig-name descname">x,y,z</code></dt>
 <dd><p>When a column is declared to contain <em>x</em>, <em>y</em>, or <em>z</em> data, then these attributes access the corresponding
@@ -94,7 +95,7 @@ columns. When written to, the attributes overwrite the existing column’s data.
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt>
 <code class="sig-name descname">d,e,f</code></dt>
 <dd><p>Where a column is identified as containing uncertainities for <em>x</em>, <em>y</em> or <em>z</em> data, then these attributes
@@ -106,7 +107,7 @@ provide a quick access to them. When written to, the attributes overwrite the ex
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt>
 <code class="sig-name descname">u,v,w</code></dt>
 <dd><p>Columns may be identieid as containing vectgor field information. These attributes provide quick
@@ -119,7 +120,7 @@ overwrite the existing column’s data.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt>
 <code class="sig-name descname">p,q,r</code></dt>
 <dd><p>These attributes access calculated columns that convert <span class="math notranslate nohighlight">\((x,y,z)\)</span> data or <span class="math notranslate nohighlight">\((u,v,w)\)</span>
@@ -132,14 +133,14 @@ co-ordinates are returned for <em>q</em> and <em>r</em>.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.array.DataArray.setas">
 <code class="sig-name descname">setas</code><a class="headerlink" href="#Stoner.core.array.DataArray.setas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Actually a proxy to a magic class that handles the assignment of columns to different axes and
 also tracks the names of columns (so that columns may be accessed as named items).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a> or string</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a> or string</p>
 </dd>
 </dl>
 </dd></dl>
@@ -157,10 +158,10 @@ more attractive.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.column_headers" title="Stoner.core.array.DataArray.column_headers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="Stoner.core.array.DataArray.column_headers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></a></p></td>
 <td><p>Pass through to the setas attribute.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.i" title="Stoner.core.array.DataArray.i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">i</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id1" title="Stoner.core.array.DataArray.i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">i</span></code></a></p></td>
 <td><p>Return the row indices of the DataArray or sets the base index - the row number of the first row.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.isrow" title="Stoner.core.array.DataArray.isrow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isrow</span></code></a></p></td>
@@ -175,7 +176,7 @@ more attractive.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.r" title="Stoner.core.array.DataArray.r"><code class="xref py py-obj docutils literal notranslate"><span class="pre">r</span></code></a></p></td>
 <td><p>Calculate the radius <span class="math notranslate nohighlight">\(\rho\)</span> co-ordinate if using spherical or polar co-ordinate systems.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.array.DataArray.setas" title="Stoner.core.array.DataArray.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="Stoner.core.array.DataArray.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
 <td><p>Return an object for setting column assignments.</p></td>
 </tr>
 </tbody>
@@ -196,58 +197,58 @@ more attractive.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">column_headers</code></dt>
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">column_headers</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pass through to the setas attribute.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">i</code></dt>
+<dl class="py attribute">
+<dt id="id1">
+<code class="sig-name descname">i</code><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the row indices of the DataArray or sets the base index - the row number of the first row.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.array.DataArray.isrow">
 <code class="sig-name descname">isrow</code><a class="headerlink" href="#Stoner.core.array.DataArray.isrow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define whether this is a single row or a column if 1D.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.array.DataArray.p">
 <code class="sig-name descname">p</code><a class="headerlink" href="#Stoner.core.array.DataArray.p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the inclination <span class="math notranslate nohighlight">\(\phi\)</span> co-ordinate for spherical co-ordinate systems.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.array.DataArray.q">
 <code class="sig-name descname">q</code><a class="headerlink" href="#Stoner.core.array.DataArray.q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the azimuthal <span class="math notranslate nohighlight">\(\theta\)</span> co-ordinate if using spherical or polar co-ordinates.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.array.DataArray.r">
 <code class="sig-name descname">r</code><a class="headerlink" href="#Stoner.core.array.DataArray.r" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the radius <span class="math notranslate nohighlight">\(\rho\)</span> co-ordinate if using spherical or polar co-ordinate systems.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">setas</code></dt>
+<dl class="py attribute">
+<dt id="id2">
+<code class="sig-name descname">setas</code><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an object for setting column assignments.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.array.DataArray.keys">
 <code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/array.html#DataArray.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.array.DataArray.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of column headers.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.array.DataArray.swap_column">
-<code class="sig-name descname">swap_column</code><span class="sig-paren">(</span><em class="sig-param">*swp</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/array.html#DataArray.swap_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.array.DataArray.swap_column" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">swap_column</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">swp</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/array.html#DataArray.swap_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.array.DataArray.swap_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Swap pairs of columns in the data.</p>
 <p>Useful for reordering data for idiot programs that expect columns in a fixed order.</p>
 <dl class="field-list simple">
@@ -276,6 +277,7 @@ lists of lists of tuples</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -330,9 +332,9 @@ lists of lists of tuples</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Analysing Data Files &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Working with Lots of Files" href="datafolder.html" />
@@ -104,12 +105,10 @@ This is typically used to calculate asymmetry parameters.:</p>
 second channel of uncertainities. The uncertainity calculation is then propagated correctly for the maths operations. This is particularly useful for the
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.diffsum()</span></code> method where the error propagation is not entirely trivial.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demonstrate Channel math operations.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ones_like</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">pi</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.utils</span> <span class="kn">import</span> <span class="n">errorfill</span>
-
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">pi</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
 <span class="n">e</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span>
@@ -124,10 +123,8 @@ second channel of uncertainities. The uncertainity calculation is then propagate
     <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;$X$&quot;</span><span class="p">,</span> <span class="s2">&quot;$Y_+$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\delta Y_+$&quot;</span><span class="p">,</span> <span class="s2">&quot;$Y_-$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\delta Y_-$&quot;</span><span class="p">],</span>
     <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyeye&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-
 <span class="n">a</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
 <span class="n">b</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -234,32 +231,28 @@ is also taken from this attribute if not specified spearately.</p>
 points averaged into each bin.. If <em>clone</em> is True or not provided, <code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.bin()</span></code> returns a clone of the current data file with its data
 (and column headers) replaced with the newly binned data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Re-binning data example.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.utils</span> <span class="kn">import</span> <span class="n">errorfill</span>
-
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span> <span class="o">=</span> <span class="mi">6</span>
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 <span class="n">d</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">411</span><span class="p">)</span>
-
 <span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye&quot;</span>
 <span class="n">g</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
 <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">binned</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
     <span class="nb">zip</span><span class="p">([</span><span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">h</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;0.05 Linear&quot;</span><span class="p">,</span> <span class="s2">&quot;0.25 Linear&quot;</span><span class="p">,</span> <span class="s2">&quot;0.05 Log&quot;</span><span class="p">,</span> <span class="s2">&quot;50 log&quot;</span><span class="p">])</span>
 <span class="p">):</span>
     <span class="n">binned</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">411</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;k,&quot;</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
     <span class="n">binned</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">fig</span>
-    <span class="n">binned</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
-
+    <span class="n">binned</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">xlim</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>  <span class="c1"># pylint: disable=E1102</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">100.0</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Bin demo&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
@@ -285,7 +278,7 @@ defined by the window function. This is handled by the <code class="xref py py-m
 </pre></div>
 </div>
 <p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
-The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
+The first argument is passed to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v1.5.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
 can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
 terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
 and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
@@ -325,36 +318,26 @@ and effective, but does reduce the length of the data !</p>
 </div></blockquote>
 <p>All three approaches are illustrated in the excample below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Smoothing Data methods example.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name, no-member, not-callable</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">)</span>
 <span class="c1"># Filter with Savitsky-Golay filter, linear over 7 ppoints</span>
 <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;S-G Filtered&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x.y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SG Filter&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
 <span class="c1"># Filter with cubic splines</span>
-<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="n">replace</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">smoothing</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Spline&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x.y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Spline&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">smoothing</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Spline&quot;</span><span class="p">)</span>
 <span class="c1"># Rebin data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s2">&quot;hamming&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Smoothed&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x...y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Smoooth&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s2">&quot;hamming&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Smoothed&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;S-G Filtered&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SG Filter&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Spline&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Spline&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Smooth&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Smoooth&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
 <span class="n">d2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">fig</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Re-binned&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">)</span>
-<span class="n">d2</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+<span class="n">d2</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">200.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/smooth.png">png</a>, <a class="reference external" href="../samples/smooth.hires.png">hires.png</a>, <a class="reference external" href="../samples/smooth.pdf">pdf</a>)</p>
@@ -372,12 +355,9 @@ between individual scans. The task of stitching data sets together then becomes 
 best mapping between two sets of (x,y) points that are nominally the same. <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AnalysisMixin</span></code></a> provides
 a <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.stitch" title="Stoner.Analysis.AnalysisMixin.stitch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.stitch()</span></code></a> method to facilitate this.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Scale data to stitch it together.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-
 <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">format_error</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
 <span class="c1"># Load and plot two sets of data</span>
 <span class="n">s1</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Stitch-scan1.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">s2</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Stitch-scan2.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
@@ -386,10 +366,8 @@ a <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.h
 <span class="n">s2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Set 2&quot;</span><span class="p">)</span>
 <span class="c1"># Stitch scan 2 onto scan 1</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
-
 <span class="n">s2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stictched&quot;</span><span class="p">)</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Stictching Example&quot;</span>
-
 <span class="c1"># Tidy up the plot by adding annotation fo the stirching co-efficients</span>
 <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">]</span>
 <span class="n">txt</span> <span class="o">=</span> <span class="p">[]</span>
@@ -475,13 +453,11 @@ the new x-data point  approaches and passes the limits of the exisiting data, th
 runs up to and stops at the limit of the supplied data. Thus when extrapolating, the new values of data are increasingly less certain
 as one moves further from the end of the data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Extrapolate data example.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ones_like</span><span class="p">,</span> <span class="n">column_stack</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ones_like</span><span class="p">,</span> <span class="n">column_stack</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">sqrt</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.utils</span> <span class="kn">import</span> <span class="n">errorfill</span>
-
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span>
     <span class="n">column_stack</span><span class="p">(</span>
@@ -492,27 +468,34 @@ as one moves further from the end of the data.</p>
         <span class="p">]</span>
     <span class="p">),</span>
     <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span>
-    <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">],</span>
+    <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;errors&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-
 <span class="n">extra_x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
-
+<span class="n">y4</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span>
+    <span class="n">extra_x</span><span class="p">,</span>
+    <span class="n">overlap</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">A</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="n">C</span><span class="p">,</span>
+    <span class="n">errors</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">Aerr</span><span class="p">,</span> <span class="n">Cerr</span><span class="p">,</span> <span class="n">popt</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">Aerr</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">Cerr</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="p">),</span>
+<span class="p">)</span>
 <span class="n">y3</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
 <span class="n">y2</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;quadratic&quot;</span><span class="p">)</span>
 <span class="n">y1</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
-
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;k.&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;k.&quot;</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Extrapolation Demo&quot;</span>
-
+<span class="n">errorfill</span><span class="p">(</span>
+    <span class="n">extra_x</span><span class="p">,</span> <span class="n">y4</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y4</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Arg. Function&quot;</span>
+<span class="p">)</span>
+<span class="n">errorfill</span><span class="p">(</span>
+    <span class="n">extra_x</span><span class="p">,</span> <span class="n">y3</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y3</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cubic Extrapolation&quot;</span>
+<span class="p">)</span>
 <span class="n">errorfill</span><span class="p">(</span>
     <span class="n">extra_x</span><span class="p">,</span>
     <span class="n">y2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
     <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
     <span class="n">yerr</span><span class="o">=</span><span class="n">y2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
     <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Quadratic Extrapolation&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">errorfill</span><span class="p">(</span>
-    <span class="n">extra_x</span><span class="p">,</span> <span class="n">y3</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y3</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cubic Extrapolation&quot;</span>
 <span class="p">)</span>
 <span class="n">errorfill</span><span class="p">(</span>
     <span class="n">extra_x</span><span class="p">,</span> <span class="n">y1</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">y1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Linear Extrapolation&quot;</span>
@@ -566,12 +549,9 @@ Finally, if <em>sort</em> is True, the peaks are returned in order of their sign
 less equal significance. By default, only peaks are returned in order of x position.</p>
 <p>The example below shows how to use <code class="xref py py-meth docutils literal notranslate"><span class="pre">AnalysisMixin.peaks()</span></code> to filter out just the peak positions in a set of data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Detect peaks in a dataset.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-
 <span class="kn">from</span> <span class="nn">matplotlib.cm</span> <span class="kn">import</span> <span class="n">jet</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
-
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;../../sample-data/New-XRay-Data.dql&quot;</span><span class="p">)</span>
 <span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">clone</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -582,7 +562,6 @@ less equal significance. By default, only peaks are returned in order of x posit
 <span class="n">e</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Find_Peaks&quot;</span>
 <span class="n">e</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;bx&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Finding peaks with peaks() and find_peaks()&quot;</span>
-
 <span class="c1"># Use the metadata that find_peaks produces</span>
 <span class="n">colors</span> <span class="o">=</span> <span class="n">jet</span><span class="p">(</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;left_ips&quot;</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;right_ips&quot;</span><span class="p">],</span> <span class="n">colors</span><span class="p">):</span>
@@ -599,6 +578,7 @@ less equal significance. By default, only peaks are returned in order of x posit
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -676,9 +656,9 @@ less equal significance. By default, only peaks are returned in order of x posit
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

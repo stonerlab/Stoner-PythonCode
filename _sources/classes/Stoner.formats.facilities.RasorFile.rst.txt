@@ -1,4 +1,4 @@
-Stoner.formats.facilities.RasorFile
+﻿Stoner.formats.facilities.RasorFile
 ===================================
 
 .. currentmodule:: Stoner.formats.facilities
@@ -75,6 +75,7 @@ Stoner.formats.facilities.RasorFile
       ~Stoner.formats.facilities.RasorFile.dims
       ~Stoner.formats.facilities.RasorFile.dtype
       ~Stoner.formats.facilities.RasorFile.filename
+      ~Stoner.formats.facilities.RasorFile.filepath
       ~Stoner.formats.facilities.RasorFile.header
       ~Stoner.formats.facilities.RasorFile.mask
       ~Stoner.formats.facilities.RasorFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.facilities.RasorFile
       ~Stoner.formats.facilities.RasorFile.records
       ~Stoner.formats.facilities.RasorFile.setas
       ~Stoner.formats.facilities.RasorFile.shape
-      ~Stoner.formats.facilities.RasorFile.subclasses
    
    

@@ -1,4 +1,4 @@
-Stoner.formats.rigs.EasyPlotFile
+﻿Stoner.formats.rigs.EasyPlotFile
 ================================
 
 .. currentmodule:: Stoner.formats.rigs
@@ -75,6 +75,7 @@ Stoner.formats.rigs.EasyPlotFile
       ~Stoner.formats.rigs.EasyPlotFile.dims
       ~Stoner.formats.rigs.EasyPlotFile.dtype
       ~Stoner.formats.rigs.EasyPlotFile.filename
+      ~Stoner.formats.rigs.EasyPlotFile.filepath
       ~Stoner.formats.rigs.EasyPlotFile.header
       ~Stoner.formats.rigs.EasyPlotFile.mask
       ~Stoner.formats.rigs.EasyPlotFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.rigs.EasyPlotFile
       ~Stoner.formats.rigs.EasyPlotFile.records
       ~Stoner.formats.rigs.EasyPlotFile.setas
       ~Stoner.formats.rigs.EasyPlotFile.shape
-      ~Stoner.formats.rigs.EasyPlotFile.subclasses
    
    

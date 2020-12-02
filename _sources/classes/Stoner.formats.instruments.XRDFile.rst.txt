@@ -1,4 +1,4 @@
-Stoner.formats.instruments.XRDFile
+﻿Stoner.formats.instruments.XRDFile
 ==================================
 
 .. currentmodule:: Stoner.formats.instruments
@@ -76,6 +76,7 @@ Stoner.formats.instruments.XRDFile
       ~Stoner.formats.instruments.XRDFile.dims
       ~Stoner.formats.instruments.XRDFile.dtype
       ~Stoner.formats.instruments.XRDFile.filename
+      ~Stoner.formats.instruments.XRDFile.filepath
       ~Stoner.formats.instruments.XRDFile.header
       ~Stoner.formats.instruments.XRDFile.mask
       ~Stoner.formats.instruments.XRDFile.metadata
@@ -85,6 +86,5 @@ Stoner.formats.instruments.XRDFile
       ~Stoner.formats.instruments.XRDFile.records
       ~Stoner.formats.instruments.XRDFile.setas
       ~Stoner.formats.instruments.XRDFile.shape
-      ~Stoner.formats.instruments.XRDFile.subclasses
    
    

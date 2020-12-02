@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.formats.generic &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -57,12 +58,12 @@
 <span class="kn">import</span> <span class="nn">PIL</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">Stoner.Core</span> <span class="k">as</span> <span class="nn">Core</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">Hyperspy_ok</span>
-<span class="kn">from</span> <span class="nn">Stoner.core.base</span> <span class="kn">import</span> <span class="n">string_to_type</span>
+<span class="kn">from</span> <span class="nn">..Core</span> <span class="kn">import</span> <span class="n">DataFile</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">Hyperspy_ok</span><span class="p">,</span> <span class="n">hs</span>
+<span class="kn">from</span> <span class="nn">..core.exceptions</span> <span class="kn">import</span> <span class="n">StonerLoadError</span>
 
 
-<div class="viewcode-block" id="CSVFile"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.CSVFile.html#Stoner.formats.generic.CSVFile">[docs]</a><span class="k">class</span> <span class="nc">CSVFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+<div class="viewcode-block" id="CSVFile"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.CSVFile.html#Stoner.formats.generic.CSVFile">[docs]</a><span class="k">class</span> <span class="nc">CSVFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;A subclass of DataFiule for loading generic deliminated text fiules without metadata.&quot;&quot;&quot;</span>
 
@@ -113,20 +114,23 @@
                 <span class="n">header_string</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">header_delim</span><span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">):</span>
                 <span class="n">linecache</span><span class="o">.</span><span class="n">clearcache</span><span class="p">()</span>
-                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No Delimiters in header line&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No Delimiters in header line&quot;</span><span class="p">)</span>
             <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">header_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">header_delim</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Column&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">1</span><span class="p">])]</span>
-            <span class="n">data_test</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">data_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">data_test</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">data_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;linecache fell over - not a text file?&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">data_delim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">data_delim</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">data_delim</span> <span class="ow">in</span> <span class="n">data_test</span><span class="p">:</span>
                         <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No delimiters in data lines&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No delimiters in data lines&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">data_delim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_test</span><span class="p">:</span>
                 <span class="n">linecache</span><span class="o">.</span><span class="n">clearcache</span><span class="p">()</span>
-                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No delimiters in data lines&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;No delimiters in data lines&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">data_delim</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="n">data_line</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
@@ -174,7 +178,7 @@
     <span class="n">_defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;header_line&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;data_line&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;header_delim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;data_delim&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="KermitPNGFile"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.KermitPNGFile.html#Stoner.formats.generic.KermitPNGFile">[docs]</a><span class="k">class</span> <span class="nc">KermitPNGFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+<div class="viewcode-block" id="KermitPNGFile"><a class="viewcode-back" href="../../../classes/Stoner.formats.generic.KermitPNGFile.html#Stoner.formats.generic.KermitPNGFile">[docs]</a><span class="k">class</span> <span class="nc">KermitPNGFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Loads PNG files with additional metadata embedded in them and extracts as metadata.&quot;&quot;&quot;</span>
 
@@ -190,7 +194,7 @@
     <span class="n">mime_type</span> <span class="o">=</span> <span class="s2">&quot;image/png&quot;</span>
 
     <span class="k">def</span> <span class="nf">_check_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check that this is a PNG file and raie a Core.StonerLoadError if not.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check that this is a PNG file and raie a StonerLoadError if not.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test</span><span class="p">:</span>
                 <span class="n">sig</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
@@ -198,11 +202,11 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">sig</span> <span class="o">!=</span> <span class="p">[</span><span class="mi">137</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Signature mismatrch&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Signature mismatrch&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">StonerLoadError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">):</span>
             <span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">format_exc</span>
 
-            <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a PNG file!&gt;</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_exc</span><span class="p">()))</span>
+            <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a PNG file!&gt;</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_exc</span><span class="p">()))</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -226,7 +230,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Unable to read as a PNG file.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Unable to read as a PNG file.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
@@ -262,7 +266,7 @@
 <span class="k">try</span><span class="p">:</span>  <span class="c1"># Optional tdms support</span>
     <span class="kn">from</span> <span class="nn">nptdms</span> <span class="kn">import</span> <span class="n">TdmsFile</span>
 
-    <span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;First stab at writing a file that will import TDMS files.&quot;&quot;&quot;</span>
 
@@ -294,43 +298,32 @@
             <span class="c1"># Open the file and read the main file header and unpack into a dict</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="n">TdmsFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-
-                <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-
-                <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">grp</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">grp</span><span class="o">.</span><span class="n">path</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
                         <span class="k">pass</span>  <span class="c1"># skip the rooot group</span>
-                    <span class="k">elif</span> <span class="n">grp</span> <span class="o">==</span> <span class="s2">&quot;/&#39;TDI Format 1.5&#39;&quot;</span><span class="p">:</span>
-                        <span class="n">metadata</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="s2">&quot;TDI Format 1.5&quot;</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">string_to_type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="n">grp</span><span class="o">.</span><span class="n">path</span> <span class="o">==</span> <span class="s2">&quot;/&#39;TDI Format 1.5&#39;&quot;</span><span class="p">:</span>
+                        <span class="n">tmp</span> <span class="o">=</span> <span class="n">DataFile</span><span class="p">(</span><span class="n">grp</span><span class="o">.</span><span class="n">as_dataframe</span><span class="p">())</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">data</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">column_headers</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grp</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
-                            <span class="n">chnl</span> <span class="o">=</span> <span class="n">grp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                            <span class="n">chnl</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
-                            <span class="n">column_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chnl</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                                <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">column_headers</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">tmp</span> <span class="o">=</span> <span class="n">DataFile</span><span class="p">(</span><span class="n">grp</span><span class="o">.</span><span class="n">as_dataframe</span><span class="p">())</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">data</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">column_headers</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="n">StonerLoadError</span><span class="p">):</span>
                 <span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">format_exc</span>
 
-                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a TDMS File </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_exc</span><span class="p">()))</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a TDMS File </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_exc</span><span class="p">()))</span>
 
             <span class="k">return</span> <span class="bp">self</span>
 
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">TDMSFile</span> <span class="o">=</span> <span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span>
+    <span class="n">TDMSFile</span> <span class="o">=</span> <span class="n">DataFile</span>
 
 <span class="k">if</span> <span class="n">Hyperspy_ok</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">hyperspy.api</span> <span class="k">as</span> <span class="nn">hs</span>
 
-    <span class="k">class</span> <span class="nc">HyperSpyFile</span><span class="p">(</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">HyperSpyFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;Wrap the HyperSpy file to map to DataFile.&quot;&quot;&quot;</span>
 
@@ -375,11 +368,20 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
             <span class="c1"># Open the file and read the main file header and unpack into a dict</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">signal</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">load</span> <span class="o">=</span> <span class="n">hs</span><span class="o">.</span><span class="n">load</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="kn">from</span> <span class="nn">hyperspy</span> <span class="kn">import</span> <span class="n">api</span>
+
+                    <span class="n">load</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">load</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Panic over hyperspy&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">signal</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">hs</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">Signal2D</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a 2D signal object - aborting!&quot;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># Pretty generic error catcher</span>
-                <span class="k">raise</span> <span class="n">Core</span><span class="o">.</span><span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not readable by HyperSpy error was </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                    <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a 2D signal object - aborting!&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># pylint: disable=W0703 Pretty generic error catcher</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not readable by HyperSpy error was </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">data</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_meta</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">as_dictionary</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_axes</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">axes_manager</span><span class="p">)</span>
@@ -388,9 +390,10 @@
 
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">HyperSpyFile</span> <span class="o">=</span> <span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span>
+    <span class="n">HyperSpyFile</span> <span class="o">=</span> <span class="n">DataFile</span>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -424,9 +427,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,4 +1,4 @@
-Stoner.Image.ImageFile
+﻿Stoner.Image.ImageFile
 ======================
 
 .. currentmodule:: Stoner.Image

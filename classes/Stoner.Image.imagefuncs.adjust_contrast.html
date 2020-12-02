@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>adjust_contrast &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="align" href="Stoner.Image.imagefuncs.align.html" />
@@ -54,9 +55,9 @@
             
   <div class="section" id="adjust-contrast">
 <h1>adjust_contrast<a class="headerlink" href="#adjust-contrast" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="Stoner.Image.imagefuncs.adjust_contrast">
-<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">adjust_contrast</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">lims=(0.1</em>, <em class="sig-param">0.9)</em>, <em class="sig-param">percent=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#adjust_contrast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.adjust_contrast" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">adjust_contrast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im</span></em>, <em class="sig-param"><span class="n">lims</span><span class="o">=</span><span class="default_value">0.1, 0.9</span></em>, <em class="sig-param"><span class="n">percent</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#adjust_contrast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.adjust_contrast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rescale the intensity of the image.</p>
 <p>Mostly a call through to skimage.exposure.rescale_intensity. The absolute limits of contrast are
 added to the metadata as ‘adjust_contrast’</p>
@@ -76,6 +77,7 @@ histogram, otherwise lims are absolute</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -130,9 +132,9 @@ histogram, otherwise lims are absolute</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

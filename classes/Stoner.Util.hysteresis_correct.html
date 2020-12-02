@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>hysteresis_correct &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="all_size" href="Stoner.tools.all_size.html" />
@@ -54,9 +55,9 @@
             
   <div class="section" id="hysteresis-correct">
 <h1>hysteresis_correct<a class="headerlink" href="#hysteresis-correct" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="Stoner.Util.hysteresis_correct">
-<code class="sig-prename descclassname">Stoner.Util.</code><code class="sig-name descname">hysteresis_correct</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Util.html#hysteresis_correct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Util.hysteresis_correct" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Util.</code><code class="sig-name descname">hysteresis_correct</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Util.html#hysteresis_correct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Util.hysteresis_correct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Peform corrections to a hysteresis loop.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -65,13 +66,13 @@ should be set to give the H and M axes as x and y.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>correct_background</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Correct for a diamagnetic or paramagnetic background to the hystersis loop
+<li><p><strong>correct_background</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Correct for a diamagnetic or paramagnetic background to the hystersis loop
 also recentres the loop about zero moment (default True).</p></li>
-<li><p><strong>correct_H</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
+<li><p><strong>correct_H</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
 this will remove any offset in filed due to trapped flux (default True)</p></li>
-<li><p><strong>saturated_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The fraction of the horizontal (field) range where the moment can be assumed to be
+<li><p><strong>saturated_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The fraction of the horizontal (field) range where the moment can be assumed to be
 fully saturated. If an integer is given it will use that many data points at the end of the loop.</p></li>
-<li><p><strong>h_sat_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – <p>The method used to determine thwe saturation field. Options are -
+<li><p><strong>h_sat_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – <p>The method used to determine thwe saturation field. Options are -
 -   “linear_intercept” (default): Fit a straight line to the central region of each branch of the loop</p>
 <blockquote>
 <div><p>and look at the
@@ -83,11 +84,11 @@ intercept with the relevant saturation moment.</p>
 susceptibility</p></li>
 </ul>
 </p></li>
-<li><p><strong>h_sat_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The central fraction of the saturation moment that is used for calculating the saturation field. Defaults
+<li><p><strong>h_sat_fraction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – The central fraction of the saturation moment that is used for calculating the saturation field. Defaults
 to 0.5</p></li>
 <li><p><strong>xcol</strong> (<em>column index</em>) – Column with the x data in it</p></li>
 <li><p><strong>ycol</strong> (<em>column_index</em>) – Column with the y data in it</p></li>
-<li><p><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><em>iterable</em>) – Column assignments.</p></li>
+<li><p><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a><em> or </em><em>iterable</em>) – Column assignments.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -100,6 +101,7 @@ the background suceptibility, offset in moment, co-ercive fields and saturation 
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -154,9 +156,9 @@ the background suceptibility, offset in moment, co-ercive fields and saturation 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

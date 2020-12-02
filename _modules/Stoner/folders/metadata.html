@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.folders.metadata &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -46,7 +47,7 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute.&quot;&quot;&quot;</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;proxy&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MetadataProxy&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
 
@@ -152,7 +153,7 @@
     <span class="k">return</span> <span class="n">keys</span>
 
 
-<div class="viewcode-block" id="proxy"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy">[docs]</a><span class="k">class</span> <span class="nc">proxy</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+<div class="viewcode-block" id="MetadataProxy"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy">[docs]</a><span class="k">class</span> <span class="nc">MetadataProxy</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Provide methods to interact with a whole collection of metadataObjects&#39; metadata.&quot;&quot;&quot;</span>
 
@@ -210,7 +211,7 @@
         <span class="sd">&quot;&quot;&quot;Return a dictionary of the common_keys that have common values.&quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_by_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">val</span> <span class="o">==</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">val</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])):</span>
                 <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
         <span class="k">return</span> <span class="n">output</span>
 
@@ -261,7 +262,7 @@
         <span class="sd">&quot;&quot;&quot;Implement an XOR operator that gives differences between metadata dictionaries.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">metadata</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">proxy</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MetadataProxy</span><span class="p">):</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">all_by_keys</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">metadataObject</span><span class="p">):</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">metadata</span>
@@ -276,7 +277,7 @@
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="proxy.all_keys"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy.all_keys">[docs]</a>    <span class="k">def</span> <span class="nf">all_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MetadataProxy.all_keys"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy.all_keys">[docs]</a>    <span class="k">def</span> <span class="nf">all_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the union of all the metadata keyus for all objects int he Folder.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_folder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -287,7 +288,7 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">k</span></div>
 
-<div class="viewcode-block" id="proxy.all_items"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy.all_items">[docs]</a>    <span class="k">def</span> <span class="nf">all_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MetadataProxy.all_items"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy.all_items">[docs]</a>    <span class="k">def</span> <span class="nf">all_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the result of indexing the metadata with all_keys().</span>
 
 <span class="sd">        Yields:</span>
@@ -296,7 +297,7 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_keys</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="proxy.all_values"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy.all_values">[docs]</a>    <span class="k">def</span> <span class="nf">all_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MetadataProxy.all_values"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy.all_values">[docs]</a>    <span class="k">def</span> <span class="nf">all_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the result of indexing the metadata with all_keys().</span>
 
 <span class="sd">        Yields:</span>
@@ -305,7 +306,7 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_keys</span><span class="p">():</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="proxy.apply"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+<div class="viewcode-block" id="MetadataProxy.apply"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate a function for each item in the folder and store the return value in a metadata key.</span>
 
 <span class="sd">        Args:</span>
@@ -327,7 +328,7 @@
             <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="proxy.slice"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.proxy.html#Stoner.folders.metadata.proxy.slice">[docs]</a>    <span class="k">def</span> <span class="nf">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=arguments-differ</span>
+<div class="viewcode-block" id="MetadataProxy.slice"><a class="viewcode-back" href="../../../classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy.slice">[docs]</a>    <span class="k">def</span> <span class="nf">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="sd">&quot;&quot;&quot;Return a list of the metadata dictionaries for each item/file in the top level group.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -397,6 +398,7 @@
         <span class="k">return</span> <span class="n">formatter</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -430,9 +432,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

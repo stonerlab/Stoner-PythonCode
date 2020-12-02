@@ -1,4 +1,4 @@
-Stoner.formats.rigs.FmokeFile
+﻿Stoner.formats.rigs.FmokeFile
 =============================
 
 .. currentmodule:: Stoner.formats.rigs
@@ -75,6 +75,7 @@ Stoner.formats.rigs.FmokeFile
       ~Stoner.formats.rigs.FmokeFile.dims
       ~Stoner.formats.rigs.FmokeFile.dtype
       ~Stoner.formats.rigs.FmokeFile.filename
+      ~Stoner.formats.rigs.FmokeFile.filepath
       ~Stoner.formats.rigs.FmokeFile.header
       ~Stoner.formats.rigs.FmokeFile.mask
       ~Stoner.formats.rigs.FmokeFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.rigs.FmokeFile
       ~Stoner.formats.rigs.FmokeFile.records
       ~Stoner.formats.rigs.FmokeFile.setas
       ~Stoner.formats.rigs.FmokeFile.shape
-      ~Stoner.formats.rigs.FmokeFile.subclasses
    
    

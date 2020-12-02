@@ -1,4 +1,4 @@
-Stoner.formats.rigs.BigBlueFile
+﻿Stoner.formats.rigs.BigBlueFile
 ===============================
 
 .. currentmodule:: Stoner.formats.rigs
@@ -75,6 +75,7 @@ Stoner.formats.rigs.BigBlueFile
       ~Stoner.formats.rigs.BigBlueFile.dims
       ~Stoner.formats.rigs.BigBlueFile.dtype
       ~Stoner.formats.rigs.BigBlueFile.filename
+      ~Stoner.formats.rigs.BigBlueFile.filepath
       ~Stoner.formats.rigs.BigBlueFile.header
       ~Stoner.formats.rigs.BigBlueFile.mask
       ~Stoner.formats.rigs.BigBlueFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.rigs.BigBlueFile
       ~Stoner.formats.rigs.BigBlueFile.records
       ~Stoner.formats.rigs.BigBlueFile.setas
       ~Stoner.formats.rigs.BigBlueFile.shape
-      ~Stoner.formats.rigs.BigBlueFile.subclasses
    
    

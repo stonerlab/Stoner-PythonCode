@@ -17,6 +17,7 @@ BlochLaw
 
    .. autosummary::
 
+      ~BlochLaw.blochs_law_bulk
       ~BlochLaw.guess
 
    .. rubric:: Attributes Documentation
@@ -26,4 +27,5 @@ BlochLaw
 
    .. rubric:: Methods Documentation
 
+   .. automethod:: blochs_law_bulk
    .. automethod:: guess

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ImageArray &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,11 +15,11 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ImageStack" href="Stoner.Image.ImageStack.html" />
-    <link rel="prev" title="proxy" href="Stoner.folders.metadata.proxy.html" />
+    <link rel="prev" title="MetadataProxy" href="Stoner.folders.metadata.MetadataProxy.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +30,7 @@
     <ul>
         <li>
           &larr;
-          <a href="Stoner.folders.metadata.proxy.html" title="Previous document">proxy</a>
+          <a href="Stoner.folders.metadata.MetadataProxy.html" title="Previous document">MetadataProxy</a>
         </li>
         <li>
           <a href="Stoner.Image.ImageStack.html" title="Next document">ImageStack</a>
@@ -54,10 +55,10 @@
             
   <div class="section" id="imagearray">
 <h1>ImageArray<a class="headerlink" href="#imagearray" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.Image.ImageArray">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.Image.</code><code class="sig-name descname">ImageArray</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><code class="docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <a class="reference internal" href="Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" title="Stoner.core.base.metadataObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.core.base.metadataObject</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.Image.</code><code class="sig-name descname">ImageArray</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="numpy.ma.MaskedArray"><code class="docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <a class="reference internal" href="Stoner.core.base.metadataObject.html#Stoner.core.base.metadataObject" title="Stoner.core.base.metadataObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.core.base.metadataObject</span></code></a></p>
 <p>A numpy array like class with a metadata parameter and pass through to skimage methods.</p>
 <p>ImageArray is for manipulating images stored as a 2d numpy array.
 It is built to be almost identical to a numpy array except for one extra
@@ -69,18 +70,18 @@ together should yield a ImageArray type (ie. ImageArray+np.ndarray=ImageArray)</
 They can be called as eg. im=im.gaussian(sigma=2). Don’t include the module
 name, just the function name (ie not filters.gaussian). Also omit the first
 image argument required by skimage.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.metadata">
 <code class="sig-name descname">metadata</code><a class="headerlink" href="#Stoner.Image.ImageArray.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>dictionary of metadata for the image</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.clone">
 <code class="sig-name descname">clone</code><a class="headerlink" href="#Stoner.Image.ImageArray.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>copy of self</p>
@@ -91,13 +92,13 @@ image argument required by skimage.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.max_box">
 <code class="sig-name descname">max_box</code><a class="headerlink" href="#Stoner.Image.ImageArray.max_box" title="Permalink to this definition">¶</a></dt>
 <dd><p>coordinate extent (xmin,xmax,ymin,ymax)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)">tuple</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -139,7 +140,7 @@ I would call im=im.translate((4,10))</p>
 <td><p>Rotate clockwise by 90 deg.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.T" title="Stoner.Image.ImageArray.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></p></td>
-<td><p></p></td>
+<td><p>The transposed array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.aspect" title="Stoner.Image.ImageArray.aspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aspect</span></code></a></p></td>
 <td><p>Return the aspect ratio (width/height) of the image.</p></td>
@@ -153,7 +154,7 @@ I would call im=im.translate((4,10))</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.centre" title="Stoner.Image.ImageArray.centre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">centre</span></code></a></p></td>
 <td><p>Return the coordinates of the centre of the image.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.clone" title="Stoner.Image.ImageArray.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="Stoner.Image.ImageArray.clone"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clone</span></code></a></p></td>
 <td><p>Return a copy of the instance.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.ctypes" title="Stoner.Image.ImageArray.ctypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctypes</span></code></a></p></td>
@@ -192,10 +193,10 @@ I would call im=im.translate((4,10))</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.mask" title="Stoner.Image.ImageArray.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
 <td><p>Current mask.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.max_box" title="Stoner.Image.ImageArray.max_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_box</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id1" title="Stoner.Image.ImageArray.max_box"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_box</span></code></a></p></td>
 <td><p>Return the coordinate extent (xmin,xmax,ymin,ymax).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.metadata" title="Stoner.Image.ImageArray.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id2" title="Stoner.Image.ImageArray.metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></a></p></td>
 <td><p>Read the metadata dictionary.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.nbytes" title="Stoner.Image.ImageArray.nbytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></a></p></td>
@@ -221,6 +222,9 @@ I would call im=im.translate((4,10))</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.strides" title="Stoner.Image.ImageArray.strides"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strides</span></code></a></p></td>
 <td><p>Tuple of bytes to step in each dimension when traversing an array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.title" title="Stoner.Image.ImageArray.title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">title</span></code></a></p></td>
+<td><p>Get a title for this image.</p></td>
 </tr>
 </tbody>
 </table>
@@ -310,7 +314,7 @@ I would call im=im.translate((4,10))</p>
 <td><p>Masked dot product of two arrays.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.dtype_limits" title="Stoner.Image.ImageArray.dtype_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype_limits</span></code></a>([clip_negative])</p></td>
-<td><p>Return intensity limits, i.e.</p></td>
+<td><p>Return intensity limits, i.e. (min, max) tuple, of the image’s dtype.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.dump" title="Stoner.Image.ImageArray.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a>(file)</p></td>
 <td><p>Dump a pickle of the array to the specified file.</p></td>
@@ -484,7 +488,7 @@ I would call im=im.translate((4,10))</p>
 <td><p>Transforms a masked array into a flexible-type array.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.tostring" title="Stoner.Image.ImageArray.tostring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tostring</span></code></a>([fill_value, order])</p></td>
-<td><p>This function is a compatibility alias for tobytes.</p></td>
+<td><p>A compatibility alias for <cite>tobytes</cite>, with exactly the same behavior.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.ImageArray.trace" title="Stoner.Image.ImageArray.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a>([offset, axis1, axis2, dtype, out])</p></td>
 <td><p>Return the sum along diagonals of the array.</p></td>
@@ -510,30 +514,30 @@ I would call im=im.translate((4,10))</p>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.CCW">
 <code class="sig-name descname">CCW</code><a class="headerlink" href="#Stoner.Image.ImageArray.CCW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotate counter-clockwise by 90 deg.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.CW">
 <code class="sig-name descname">CW</code><a class="headerlink" href="#Stoner.Image.ImageArray.CW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotate clockwise by 90 deg.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.T">
 <code class="sig-name descname">T</code><a class="headerlink" href="#Stoner.Image.ImageArray.T" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.aspect">
 <code class="sig-name descname">aspect</code><a class="headerlink" href="#Stoner.Image.ImageArray.aspect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the aspect ratio (width/height) of the image.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.base">
 <code class="sig-name descname">base</code><a class="headerlink" href="#Stoner.Image.ImageArray.base" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base object if memory is from some other object.</p>
@@ -551,25 +555,25 @@ I would call im=im.translate((4,10))</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.baseclass">
 <code class="sig-name descname">baseclass</code><a class="headerlink" href="#Stoner.Image.ImageArray.baseclass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class of the underlying data (read-only).</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.centre">
 <code class="sig-name descname">centre</code><a class="headerlink" href="#Stoner.Image.ImageArray.centre" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the coordinates of the centre of the image.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">clone</code></dt>
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">clone</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of the instance.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.ctypes">
 <code class="sig-name descname">ctypes</code><a class="headerlink" href="#Stoner.Image.ImageArray.ctypes" title="Permalink to this definition">¶</a></dt>
 <dd><p>An object to simplify the interaction of the array with the ctypes
@@ -588,7 +592,7 @@ as arguments to a shared library.</p>
 <p>Below are the public attributes of this object which were documented
 in “Guide to NumPy” (we have omitted undocumented public attributes,
 as well as documented private attributes):</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt>
 <code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">data</code></dt>
 <dd><p>A pointer to the memory area of the array as a Python integer.
@@ -604,7 +608,7 @@ pointer to a deallocated array, and should be spelt
 <code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">+</span> <span class="pre">b).ctypes.data_as(ctypes.c_void_p)</span></code></p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt>
 <code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">shape</code></dt>
 <dd><p>A ctypes array of length self.ndim where
@@ -620,7 +624,7 @@ The ctypes array contains the shape of the underlying array.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt>
 <code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">strides</code></dt>
 <dd><p>A ctypes array of length self.ndim where
@@ -635,9 +639,9 @@ get to the next element in the array.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt>
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">data_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span></dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">data_as</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Return the data pointer cast to a particular c-types object.
 For example, calling <code class="docutils literal notranslate"><span class="pre">self._as_parameter_</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">self.data_as(ctypes.c_void_p)</span></code>. Perhaps you want to use the data as a
@@ -646,16 +650,16 @@ pointer to a ctypes array of floating-point data:
 <p>The returned pointer will keep a reference to the array.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt>
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">shape_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span></dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">shape_as</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Return the shape tuple as an array of some other c-types
 type. For example: <code class="docutils literal notranslate"><span class="pre">self.shape_as(ctypes.c_short)</span></code>.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt>
-<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">strides_as</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span></dt>
+<code class="sig-prename descclassname">_ctypes.</code><code class="sig-name descname">strides_as</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Return the strides tuple as an array of some other
 c-types type. For example: <code class="docutils literal notranslate"><span class="pre">self.strides_as(ctypes.c_longlong)</span></code>.</p>
 </dd></dl>
@@ -666,34 +670,31 @@ are not returned and errors may be raised instead. In particular,
 the object will still have the <code class="docutils literal notranslate"><span class="pre">as_parameter</span></code> attribute which will
 return an integer equal to the data attribute.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">array([[0, 1],</span>
-<span class="go">       [2, 3]])</span>
+<span class="go">       [2, 3]], dtype=int32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data</span>
-<span class="go">30439712</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">))</span>
-<span class="go">&lt;ctypes.LP_c_long object at 0x01F01300&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">))</span><span class="o">.</span><span class="n">contents</span>
-<span class="go">c_long(0)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_longlong</span><span class="p">))</span><span class="o">.</span><span class="n">contents</span>
-<span class="go">c_longlong(4294967296L)</span>
+<span class="go">31962608 # may vary</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint32</span><span class="p">))</span>
+<span class="go">&lt;__main__.LP_c_uint object at 0x7ff2fc1fc200&gt; # may vary</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint32</span><span class="p">))</span><span class="o">.</span><span class="n">contents</span>
+<span class="go">c_uint(0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint64</span><span class="p">))</span><span class="o">.</span><span class="n">contents</span>
+<span class="go">c_ulong(4294967296)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x01FFD580&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">shape_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_long</span><span class="p">)</span>
-<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x01FCE620&gt;</span>
+<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x7ff2fc1fce60&gt; # may vary</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">strides</span>
-<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x01FCE620&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">strides_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_longlong</span><span class="p">)</span>
-<span class="go">&lt;numpy.core._internal.c_longlong_Array_2 object at 0x01F01300&gt;</span>
+<span class="go">&lt;numpy.core._internal.c_long_Array_2 object at 0x7ff2fc1ff320&gt; # may vary</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.data">
 <code class="sig-name descname">data</code><a class="headerlink" href="#Stoner.Image.ImageArray.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the underlying data, as a view of the masked array.</p>
-<p>If the underlying data is a subclass of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, it is
+<p>If the underlying data is a subclass of <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, it is
 returned as such.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]),</span> <span class="n">mask</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">data</span>
@@ -705,31 +706,18 @@ returned as such.</p>
 attribute.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.draw">
 <code class="sig-name descname">draw</code><a class="headerlink" href="#Stoner.Image.ImageArray.draw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access the DrawProxy opbject for accessing the skimage draw sub module.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.dtype">
 <code class="sig-name descname">dtype</code><a class="headerlink" href="#Stoner.Image.ImageArray.dtype" title="Permalink to this definition">¶</a></dt>
-<dd><p>Data-type of the array’s elements.</p>
-<p>None</p>
-<p>d : numpy dtype object</p>
-<p>numpy.dtype</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">array([[0, 1],</span>
-<span class="go">       [2, 3]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype(&#39;int32&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-<span class="go">&lt;type &#39;numpy.dtype&#39;&gt;</span>
-</pre></div>
-</div>
-</dd></dl>
+<dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.fill_value">
 <code class="sig-name descname">fill_value</code><a class="headerlink" href="#Stoner.Image.ImageArray.fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>The filling value of the masked array is a scalar. When setting, None
@@ -759,7 +747,7 @@ will set to a default based on the data type.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.flags">
 <code class="sig-name descname">flags</code><a class="headerlink" href="#Stoner.Image.ImageArray.flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Information about the memory layout of the array.</p>
@@ -829,24 +817,24 @@ for C-style contiguous arrays or <code class="docutils literal notranslate"><spa
 Fortran-style contiguous arrays is true.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.flat">
 <code class="sig-name descname">flat</code><a class="headerlink" href="#Stoner.Image.ImageArray.flat" title="Permalink to this definition">¶</a></dt>
 <dd><p>MaskedArray.flat doesn’t work the same as array.flat.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.fmts">
 <code class="sig-name descname">fmts</code><em class="property"> = ['png', 'npy', 'tiff', 'tif']</em><a class="headerlink" href="#Stoner.Image.ImageArray.fmts" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.hardmask">
 <code class="sig-name descname">hardmask</code><a class="headerlink" href="#Stoner.Image.ImageArray.hardmask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hardness of the mask</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.imag">
 <code class="sig-name descname">imag</code><a class="headerlink" href="#Stoner.Image.ImageArray.imag" title="Permalink to this definition">¶</a></dt>
 <dd><p>The imaginary part of the masked array.</p>
@@ -861,7 +849,7 @@ Fortran-style contiguous arrays is true.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.itemsize">
 <code class="sig-name descname">itemsize</code><a class="headerlink" href="#Stoner.Image.ImageArray.itemsize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of one array element in bytes.</p>
@@ -875,25 +863,25 @@ Fortran-style contiguous arrays is true.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.mask">
 <code class="sig-name descname">mask</code><a class="headerlink" href="#Stoner.Image.ImageArray.mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Current mask.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">max_box</code></dt>
+<dl class="py attribute">
+<dt id="id1">
+<code class="sig-name descname">max_box</code><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the coordinate extent (xmin,xmax,ymin,ymax).</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">metadata</code></dt>
+<dl class="py attribute">
+<dt id="id2">
+<code class="sig-name descname">metadata</code><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the metadata dictionary.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.nbytes">
 <code class="sig-name descname">nbytes</code><a class="headerlink" href="#Stoner.Image.ImageArray.nbytes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total bytes consumed by the elements of the array.</p>
@@ -908,7 +896,7 @@ array object.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.ndim">
 <code class="sig-name descname">ndim</code><a class="headerlink" href="#Stoner.Image.ImageArray.ndim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of array dimensions.</p>
@@ -922,7 +910,7 @@ array object.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.real">
 <code class="sig-name descname">real</code><a class="headerlink" href="#Stoner.Image.ImageArray.real" title="Permalink to this definition">¶</a></dt>
 <dd><p>The real part of the masked array.</p>
@@ -937,7 +925,7 @@ array object.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.recordmask">
 <code class="sig-name descname">recordmask</code><a class="headerlink" href="#Stoner.Image.ImageArray.recordmask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get or set the mask of the array if it has no named fields. For
@@ -952,48 +940,18 @@ structured arrays, returns a ndarray of booleans where entries are
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.shape">
 <code class="sig-name descname">shape</code><a class="headerlink" href="#Stoner.Image.ImageArray.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tuple of array dimensions.</p>
-<p>The shape property is usually used to get the current shape of an array,
-but may also be used to reshape the array in-place by assigning a tuple of
-array dimensions to it.  As with <cite>numpy.reshape</cite>, one of the new shape
-dimensions can be -1, in which case its value is inferred from the size of
-the array and the remaining dimensions. Reshaping an array in-place will
-fail if a copy is required.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(4,)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(2, 3, 4)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
-<span class="go">array([[ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.],</span>
-<span class="go">       [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.],</span>
-<span class="go">       [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-<span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
-<span class="gr">ValueError</span>: <span class="n">total size of new array must be unchanged</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">))[::</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,)</span>
-<span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
-<span class="gr">AttributeError</span>: <span class="n">incompatible shape for a non-contiguous array</span>
-</pre></div>
-</div>
-<p>numpy.reshape : similar function
-ndarray.reshape : similar method</p>
-</dd></dl>
+<dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.sharedmask">
 <code class="sig-name descname">sharedmask</code><a class="headerlink" href="#Stoner.Image.ImageArray.sharedmask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Share status of the mask (read-only).</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.size">
 <code class="sig-name descname">size</code><a class="headerlink" href="#Stoner.Image.ImageArray.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of elements in the array.</p>
@@ -1013,7 +971,7 @@ calculations that may overflow a fixed size integer type.</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Image.ImageArray.strides">
 <code class="sig-name descname">strides</code><a class="headerlink" href="#Stoner.Image.ImageArray.strides" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tuple of bytes to step in each dimension when traversing an array.</p>
@@ -1067,8 +1025,14 @@ position in the next row.  As such, the strides for the array <cite>x</cite> wil
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt id="Stoner.Image.ImageArray.title">
+<code class="sig-name descname">title</code><a class="headerlink" href="#Stoner.Image.ImageArray.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a title for this image.</p>
+</dd></dl>
+
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.all">
 <code class="sig-name descname">all</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if all elements evaluate to True.</p>
@@ -1087,9 +1051,9 @@ numpy.all : equivalent function</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.anom">
-<code class="sig-name descname">anom</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.anom" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">anom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.anom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the anomalies (deviations from the arithmetic mean)
 along the given axis.</p>
 <p>Returns an array of anomalies, with the same shape as the input and
@@ -1115,7 +1079,7 @@ the array type.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.any">
 <code class="sig-name descname">any</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.any" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if any of the elements of <cite>a</cite> evaluate to True.</p>
@@ -1125,9 +1089,9 @@ the array type.</p>
 numpy.any : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.argmax">
-<code class="sig-name descname">argmax</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argmax" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">argmax</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns array of indices of the maximum values along the given axis.
 Masked values are treated as if they had the value fill_value.</p>
 <dl class="simple">
@@ -1153,9 +1117,9 @@ and it must be of the right shape to hold the output.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.argmin">
-<code class="sig-name descname">argmin</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argmin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">argmin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argmin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return array of indices to the minimum values along the given axis.</p>
 <dl class="simple">
 <dt>axis<span class="classifier">{None, integer}</span></dt><dd><p>If None, the index is into the flattened array, otherwise along
@@ -1191,9 +1155,9 @@ of index to the minimum values along the given axis.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.argpartition">
-<code class="sig-name descname">argpartition</code><span class="sig-paren">(</span><em class="sig-param">kth</em>, <em class="sig-param">axis=-1</em>, <em class="sig-param">kind='introselect'</em>, <em class="sig-param">order=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argpartition" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">argpartition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kth</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'introselect'</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argpartition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the indices that would partition this array.</p>
 <p>Refer to <cite>numpy.argpartition</cite> for full documentation.</p>
 <div class="versionadded">
@@ -1202,7 +1166,7 @@ of index to the minimum values along the given axis.</p>
 <p>numpy.argpartition : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.argsort">
 <code class="sig-name descname">argsort</code><span class="sig-paren">(</span><em class="sig-param">axis=&lt;no value&gt;</em>, <em class="sig-param">kind=None</em>, <em class="sig-param">order=None</em>, <em class="sig-param">endwith=True</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.argsort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an ndarray of indices that sort the array along the
@@ -1255,9 +1219,9 @@ numpy.ndarray.sort : Inplace sort.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.asfloat">
-<code class="sig-name descname">asfloat</code><span class="sig-paren">(</span><em class="sig-param">normalise=True</em>, <em class="sig-param">clip=False</em>, <em class="sig-param">clip_negative=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.asfloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.asfloat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">asfloat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">normalise</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">clip</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">clip_negative</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.asfloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.asfloat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the image converted to floating point type.</p>
 <p>If currently an int type and normalise then floats will be normalised
 to the maximum allowed value of the int type.
@@ -1267,23 +1231,23 @@ If clip_negative then further clip values to range 0,1</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>normalise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – normalise the image to the max value of current int type</p></li>
-<li><p><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – clip negative intensity to 0</p></li>
+<li><p><strong>normalise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – normalise the image to the max value of current int type</p></li>
+<li><p><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – clip negative intensity to 0</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.asint">
 <code class="sig-name descname">asint</code><span class="sig-paren">(</span><em class="sig-param">dtype=&lt;class 'numpy.uint16'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.asint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.asint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the image to unsigned integer format.</p>
 <p>May raise warnings about loss of precision.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.astype">
-<code class="sig-name descname">astype</code><span class="sig-paren">(</span><em class="sig-param">dtype</em>, <em class="sig-param">order='K'</em>, <em class="sig-param">casting='unsafe'</em>, <em class="sig-param">subok=True</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.astype" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">astype</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dtype</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">'K'</span></em>, <em class="sig-param"><span class="n">casting</span><span class="o">=</span><span class="default_value">'unsafe'</span></em>, <em class="sig-param"><span class="n">subok</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.astype" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy of the array, cast to a specified type.</p>
 <dl>
 <dt>dtype<span class="classifier">str or dtype</span></dt><dd><p>Typecode or data-type to which the array is cast.</p>
@@ -1350,9 +1314,9 @@ one should use <code class="docutils literal notranslate"><span class="pre">a.re
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.byteswap">
-<code class="sig-name descname">byteswap</code><span class="sig-paren">(</span><em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.byteswap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">byteswap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inplace</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.byteswap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Swap the bytes of the array elements</p>
 <p>Toggle between low-endian and big-endian data representation by
 returning a byteswapped array, optionally swapped in-place.
@@ -1399,36 +1363,36 @@ a view to self.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.choose">
-<code class="sig-name descname">choose</code><span class="sig-paren">(</span><em class="sig-param">choices</em>, <em class="sig-param">out=None</em>, <em class="sig-param">mode='raise'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.choose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">choose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">choices</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'raise'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.choose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use an index array to construct a new array from a set of choices.</p>
 <p>Refer to <cite>numpy.choose</cite> for full documentation.</p>
 <p>numpy.choose : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.clear">
 <code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None.  Remove all items from D.<a class="headerlink" href="#Stoner.Image.ImageArray.clear" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.clip">
-<code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param">min=None</em>, <em class="sig-param">max=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.clip" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.clip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an array whose values are limited to <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code>.
 One of max or min must be given.</p>
 <p>Refer to <cite>numpy.clip</cite> for full documentation.</p>
 <p>numpy.clip : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.clip_intensity">
-<code class="sig-name descname">clip_intensity</code><span class="sig-paren">(</span><em class="sig-param">clip_negative=False</em>, <em class="sig-param">limits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.clip_intensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.clip_intensity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clip_intensity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clip_negative</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">limits</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.clip_intensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.clip_intensity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clip intensity outside the range -1,1 or 0,1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – if True clip to range 0,1 else range -1,1</p></li>
+<li><p><strong>clip_negative</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if True clip to range 0,1 else range -1,1</p></li>
 <li><p><strong>limits</strong> (<em>low</em><em>,</em><em>high</em>) – Clip the intensity between low and high rather than zero and 1.</p></li>
 </ul>
 </dd>
@@ -1436,9 +1400,9 @@ One of max or min must be given.</p>
 <p>Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.compress">
-<code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param">condition</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.compress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">condition</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.compress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return <cite>a</cite> where condition is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 <p>If condition is a <cite>MaskedArray</cite>, missing values are considered
 as <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
@@ -1490,7 +1454,7 @@ The output of <a class="reference internal" href="#Stoner.Image.ImageArray.compr
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.compressed">
 <code class="sig-name descname">compressed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.compressed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all the non-masked data as a 1-D array.</p>
@@ -1508,7 +1472,7 @@ The output of <a class="reference internal" href="#Stoner.Image.ImageArray.compr
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.conj">
 <code class="sig-name descname">conj</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.conj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Complex-conjugate all elements.</p>
@@ -1516,7 +1480,7 @@ The output of <a class="reference internal" href="#Stoner.Image.ImageArray.compr
 <p>numpy.conjugate : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.conjugate">
 <code class="sig-name descname">conjugate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.conjugate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the complex conjugate, element-wise.</p>
@@ -1524,15 +1488,15 @@ The output of <a class="reference internal" href="#Stoner.Image.ImageArray.compr
 <p>numpy.conjugate : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.copy">
-<code class="sig-name descname">copy</code><span class="sig-paren">(</span><em class="sig-param">order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.copy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">copy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">'C'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of the array.</p>
 <dl class="simple">
 <dt>order<span class="classifier">{‘C’, ‘F’, ‘A’, ‘K’}, optional</span></dt><dd><p>Controls the memory layout of the copy. ‘C’ means C-order,
 ‘F’ means F-order, ‘A’ means ‘F’ if <cite>a</cite> is Fortran contiguous,
 ‘C’ otherwise. ‘K’ means match the layout of <cite>a</cite> as closely
-as possible. (Note that this function and <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.copy.html#numpy.copy" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.copy()</span></code></a> are very
+as possible. (Note that this function and <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.copy.html#numpy.copy" title="(in NumPy v1.19)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.copy()</span></code></a> are very
 similar, but have different default values for their order=
 arguments.)</p>
 </dd>
@@ -1564,7 +1528,7 @@ numpy.copyto</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.count">
 <code class="sig-name descname">count</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count the non-masked elements of the array along the given axis.</p>
@@ -1615,9 +1579,9 @@ returned.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.crop">
-<code class="sig-name descname">crop</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.crop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">crop</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.crop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crop the image according to a box.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1626,7 +1590,7 @@ If None image will be shown and user will be asked to select
 a box (bit experimental)</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True return a copy of ImageFile with the cropped image</p>
+<dd class="field-even"><p><strong>copy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If True return a copy of ImageFile with the cropped image</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><em>(ImageArray)</em> –     view or copy of array asked for</p>
@@ -1670,9 +1634,9 @@ The extent of the image is used.</p></li>
 <p>a.crop(1,3,None,None)</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.cumprod">
-<code class="sig-name descname">cumprod</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.cumprod" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cumprod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.cumprod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cumulative product of the array elements over the given axis.</p>
 <p>Masked values are set to 1 internally during the computation.
 However, their position is saved, and the result will be masked at
@@ -1685,9 +1649,9 @@ raised on overflow.</p>
 numpy.cumprod : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.cumsum">
-<code class="sig-name descname">cumsum</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.cumsum" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cumsum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.cumsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cumulative sum of the array elements over the given axis.</p>
 <p>Masked values are set to 0 internally during the computation.
 However, their position is saved, and the result will be masked at
@@ -1708,19 +1672,19 @@ numpy.cumsum : equivalent function</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.diagonal">
-<code class="sig-name descname">diagonal</code><span class="sig-paren">(</span><em class="sig-param">offset=0</em>, <em class="sig-param">axis1=0</em>, <em class="sig-param">axis2=1</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.diagonal" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">diagonal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">axis1</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">axis2</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.diagonal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return specified diagonals. In NumPy 1.9 the returned array is a
 read-only view instead of a copy as in previous NumPy versions.  In
 a future version the read-only restriction will be removed.</p>
-<p>Refer to <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.diagonal.html#numpy.diagonal" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.diagonal()</span></code></a> for full documentation.</p>
+<p>Refer to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.diagonal.html#numpy.diagonal" title="(in NumPy v1.19)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.diagonal()</span></code></a> for full documentation.</p>
 <p>numpy.diagonal : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.dot">
-<code class="sig-name descname">dot</code><span class="sig-paren">(</span><em class="sig-param">b</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.dot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Masked dot product of two arrays. Note that <cite>out</cite> and <cite>strict</cite> are
 located in different positions than in <cite>ma.dot</cite>. In order to
 maintain compatibility with the functional version, it is
@@ -1752,9 +1716,9 @@ whole row or column is considered masked.</p>
 <p>numpy.ma.dot : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.dtype_limits">
-<code class="sig-name descname">dtype_limits</code><span class="sig-paren">(</span><em class="sig-param">clip_negative=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.dtype_limits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.dtype_limits" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dtype_limits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clip_negative</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.dtype_limits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.dtype_limits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return intensity limits, i.e. (min, max) tuple, of the image’s dtype.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1770,9 +1734,9 @@ even if the image dtype allows negative values.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.dump">
-<code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param">file</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.dump" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dump a pickle of the array to the specified file.
 The array can be read back with pickle.load or numpy.load.</p>
 <dl>
@@ -1784,7 +1748,7 @@ The array can be read back with pickle.load or numpy.load.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.dumps">
 <code class="sig-name descname">dumps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.dumps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the pickle of the array as a string.
@@ -1792,9 +1756,9 @@ pickle.loads or numpy.loads will convert the string back to an array.</p>
 <p>None</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.fill">
-<code class="sig-name descname">fill</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.fill" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.fill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill the array with a scalar value.</p>
 <dl class="simple">
 <dt>value<span class="classifier">scalar</span></dt><dd><p>All elements of <cite>a</cite> will be assigned this value.</p>
@@ -1812,9 +1776,9 @@ pickle.loads or numpy.loads will convert the string back to an array.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.filled">
-<code class="sig-name descname">filled</code><span class="sig-paren">(</span><em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.filled" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filled</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.filled" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of self, with masked values filled with a given value.
 <strong>However</strong>, if there are no masked values to fill, self will be
 returned instead as an ndarray.</p>
@@ -1853,9 +1817,9 @@ the masked array is a recarray, <cite>filled</cite> returns a recarray:</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.flatten">
-<code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param">order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">'C'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of the array collapsed into one dimension.</p>
 <dl class="simple">
 <dt>order<span class="classifier">{‘C’, ‘F’, ‘A’, ‘K’}, optional</span></dt><dd><p>‘C’ means to flatten in row-major (C-style) order.
@@ -1882,12 +1846,12 @@ flat : A 1-D flat iterator over the array.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.get">
 <code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">k</em><span class="optional">[</span>, <em class="sig-param">d</em><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; D[k] if k in D, else d.  d defaults to None.<a class="headerlink" href="#Stoner.Image.ImageArray.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.get_fill_value">
 <code class="sig-name descname">get_fill_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.get_fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>The filling value of the masked array is a scalar. When setting, None
@@ -1917,7 +1881,7 @@ will set to a default based on the data type.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.get_imag">
 <code class="sig-name descname">get_imag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.get_imag" title="Permalink to this definition">¶</a></dt>
 <dd><p>The imaginary part of the masked array.</p>
@@ -1932,7 +1896,7 @@ will set to a default based on the data type.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.get_real">
 <code class="sig-name descname">get_real</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.get_real" title="Permalink to this definition">¶</a></dt>
 <dd><p>The real part of the masked array.</p>
@@ -1947,9 +1911,9 @@ will set to a default based on the data type.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.getfield">
-<code class="sig-name descname">getfield</code><span class="sig-paren">(</span><em class="sig-param">dtype</em>, <em class="sig-param">offset=0</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.getfield" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getfield</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dtype</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.getfield" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a field of the given array as a certain type.</p>
 <p>A field is a view of the array data with a given data-type. The values in
 the view are determined by the given type and the offset into the current
@@ -1983,7 +1947,7 @@ array for our view:</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.harden_mask">
 <code class="sig-name descname">harden_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.harden_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Force the mask to hard.</p>
@@ -1992,7 +1956,7 @@ its <cite>hardmask</cite> property. <cite>harden_mask</cite> sets <cite>hardmask
 <p>hardmask</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.ids">
 <code class="sig-name descname">ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.ids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the addresses of the data and mask areas.</p>
@@ -2006,12 +1970,12 @@ its <cite>hardmask</cite> property. <cite>harden_mask</cite> sets <cite>hardmask
 is typically not close to the data in memory:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ids</span><span class="p">()</span>
-<span class="go">(166691080, 3083169284L) # may vary</span>
+<span class="go">(166691080, 3083169284) # may vary</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.iscontiguous">
 <code class="sig-name descname">iscontiguous</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.iscontiguous" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a boolean indicating whether the data is contiguous.</p>
@@ -2034,9 +1998,9 @@ is typically not close to the data in memory:</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.item">
-<code class="sig-name descname">item</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.item" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">item</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.item" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy an element of an array to a standard Python scalar and return it.</p>
 <p>*args : Arguments (variable number and type)</p>
 <blockquote>
@@ -2082,15 +2046,15 @@ array using Python’s optimized math.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.items">
-<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.items" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><span class="p">, </span>Any<span class="p">]</span><a class="headerlink" href="#Stoner.Image.ImageArray.items" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make sure we implement an items that doesn’t just iterate over self.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.itemset">
-<code class="sig-name descname">itemset</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.itemset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">itemset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.itemset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert scalar into an array (scalar is cast to array’s dtype, if possible)</p>
 <p>There must be at least 1 argument, and define the last argument
 as <em>item</em>.  Then, <code class="docutils literal notranslate"><span class="pre">a.itemset(*args)</span></code> is equivalent to but faster
@@ -2126,13 +2090,13 @@ look-up at each loop iteration.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.keys">
-<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.keys" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a><a class="headerlink" href="#Stoner.Image.ImageArray.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the keys of the metadata dictionary.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.max">
 <code class="sig-name descname">max</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.max" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the maximum along a given axis.</p>
@@ -2162,7 +2126,7 @@ If <code class="docutils literal notranslate"><span class="pre">out</span></code
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.mean">
 <code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the average of the array elements along given axis.</p>
@@ -2183,7 +2147,7 @@ numpy.ma.average: Weighted average.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.min">
 <code class="sig-name descname">min</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.min" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the minimum along a given axis.</p>
@@ -2213,9 +2177,9 @@ If <code class="docutils literal notranslate"><span class="pre">out</span></code
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.mini">
-<code class="sig-name descname">mini</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.mini" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mini</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.mini" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the array minimum along the specified axis.</p>
 <div class="deprecated">
 <p><span class="versionmodified deprecated">Deprecated since version 1.13.0: </span>This function is identical to both:</p>
@@ -2273,9 +2237,9 @@ dimension one smaller than the array on which <cite>mini</cite> is called.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.newbyteorder">
-<code class="sig-name descname">newbyteorder</code><span class="sig-paren">(</span><em class="sig-param">new_order='S'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.newbyteorder" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">newbyteorder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_order</span><span class="o">=</span><span class="default_value">'S'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.newbyteorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the array with the same data viewed with a different byte order.</p>
 <p>Equivalent to:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">newbytorder</span><span class="p">(</span><span class="n">new_order</span><span class="p">))</span>
@@ -2306,7 +2270,7 @@ byte order.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.nonzero">
 <code class="sig-name descname">nonzero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.nonzero" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of unmasked elements that are not zero.</p>
@@ -2396,9 +2360,9 @@ yields the indices of the <cite>a</cite> where the condition is true.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.partition">
-<code class="sig-name descname">partition</code><span class="sig-paren">(</span><em class="sig-param">kth</em>, <em class="sig-param">axis=-1</em>, <em class="sig-param">kind='introselect'</em>, <em class="sig-param">order=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.partition" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">partition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kth</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'introselect'</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.partition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rearranges the elements in the array in such a way that the value of the
 element in kth position is in the position it would be in a sorted array.
 All elements smaller than the kth element are moved before this element and
@@ -2444,19 +2408,19 @@ sort : Full sort.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.pop">
 <code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param">k</em><span class="optional">[</span>, <em class="sig-param">d</em><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; v, remove specified key and return the corresponding value.<a class="headerlink" href="#Stoner.Image.ImageArray.pop" title="Permalink to this definition">¶</a></dt>
 <dd><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.popitem">
 <code class="sig-name descname">popitem</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; (k, v), remove and return some (key, value) pair<a class="headerlink" href="#Stoner.Image.ImageArray.popitem" title="Permalink to this definition">¶</a></dt>
 <dd><p>as a 2-tuple; but raise KeyError if D is empty.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.prod">
 <code class="sig-name descname">prod</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.prod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the product of the array elements over the given axis.</p>
@@ -2468,7 +2432,7 @@ on overflow.</p>
 numpy.prod : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.product">
 <code class="sig-name descname">product</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.product" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the product of the array elements over the given axis.</p>
@@ -2480,11 +2444,20 @@ on overflow.</p>
 numpy.prod : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.ptp">
-<code class="sig-name descname">ptp</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">fill_value=None</em>, <em class="sig-param">keepdims=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.ptp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ptp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keepdims</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.ptp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return (maximum - minimum) along the given dimension
 (i.e. peak-to-peak value).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><cite>ptp</cite> preserves the data type of the array. This means the
+return value for an input of signed integers with n bits
+(e.g. <cite>np.int8</cite>, <cite>np.int16</cite>, etc) is also a signed integer
+with n bits.  In that case, peak-to-peak values greater than
+<code class="docutils literal notranslate"><span class="pre">2**(n-1)-1</span></code> will be returned as negative values. An example
+with a work-around is shown below.</p>
+</div>
 <dl class="simple">
 <dt>axis<span class="classifier">{None, int}, optional</span></dt><dd><p>Axis along which to find the peaks.  If None (default) the
 flattened array is used.</p>
@@ -2505,11 +2478,53 @@ the result will broadcast correctly against the array.</p>
 specified, in which case a reference to <code class="docutils literal notranslate"><span class="pre">out</span></code> is returned.</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">([[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">]])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">masked_array(data=[8, 6],</span>
+<span class="go">             mask=False,</span>
+<span class="go">       fill_value=999999)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">masked_array(data=[2, 0, 5, 2],</span>
+<span class="go">             mask=False,</span>
+<span class="go">       fill_value=999999)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">ptp</span><span class="p">()</span>
+<span class="go">10</span>
+</pre></div>
+</div>
+<p>This example shows that a negative value can be returned when
+the input is an array of signed integers.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">127</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">127</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">127</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">127</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">masked_array(data=[ 126,  127, -128, -127],</span>
+<span class="go">             mask=False,</span>
+<span class="go">       fill_value=999999,</span>
+<span class="go">            dtype=int8)</span>
+</pre></div>
+</div>
+<p>A work-around is to use the <cite>view()</cite> method to view the result as
+unsigned integers with the same bit width:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="go">masked_array(data=[126, 127, 128, 129],</span>
+<span class="go">             mask=False,</span>
+<span class="go">       fill_value=999999,</span>
+<span class="go">            dtype=uint8)</span>
+</pre></div>
+</div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.put">
-<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">values</em>, <em class="sig-param">mode='raise'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.put" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">indices</span></em>, <em class="sig-param"><span class="n">values</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'raise'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set storage-indexed locations to corresponding values.</p>
 <p>Sets self._data.flat[n] = values[n] for each n in indices.
 If <cite>values</cite> is shorter than <cite>indices</cite> then it will repeat.
@@ -2563,9 +2578,9 @@ in consequence, else the corresponding values are unmasked.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.ravel">
-<code class="sig-name descname">ravel</code><span class="sig-paren">(</span><em class="sig-param">order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.ravel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ravel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">'C'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.ravel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a 1D version of self, as a view.</p>
 <dl class="simple">
 <dt>order<span class="classifier">{‘C’, ‘F’, ‘A’, ‘K’}, optional</span></dt><dd><p>The elements of <cite>a</cite> are read using this index order. ‘C’ means to
@@ -2606,17 +2621,17 @@ By default, ‘C’ index order is used.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.repeat">
-<code class="sig-name descname">repeat</code><span class="sig-paren">(</span><em class="sig-param">repeats</em>, <em class="sig-param">axis=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.repeat" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">repeat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">repeats</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.repeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Repeat elements of an array.</p>
 <p>Refer to <cite>numpy.repeat</cite> for full documentation.</p>
 <p>numpy.repeat : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.reshape">
-<code class="sig-name descname">reshape</code><span class="sig-paren">(</span><em class="sig-param">*s</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.reshape" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reshape</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">s</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.reshape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Give a new shape to the array without changing its data.</p>
 <p>Returns a masked array containing the same data, but with a new shape.
 The result is a view on the original array; if this is not possible, a
@@ -2663,9 +2678,9 @@ to modify the shape in place, use <code class="docutils literal notranslate"><sp
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.resize">
-<code class="sig-name descname">resize</code><span class="sig-paren">(</span><em class="sig-param">newshape</em>, <em class="sig-param">refcheck=True</em>, <em class="sig-param">order=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.resize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">newshape</span></em>, <em class="sig-param"><span class="n">refcheck</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.resize" title="Permalink to this definition">¶</a></dt>
 <dd><div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This method does nothing, except raise a ValueError exception. A
@@ -2676,18 +2691,18 @@ resized in place. Use the <cite>numpy.ma.resize</cite> function instead.</p>
 future releases of NumPy.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.round">
-<code class="sig-name descname">round</code><span class="sig-paren">(</span><em class="sig-param">decimals=0</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.round" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">round</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decimals</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.round" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return each element rounded to the given number of decimals.</p>
 <p>Refer to <cite>numpy.around</cite> for full documentation.</p>
 <p>numpy.ndarray.around : corresponding function for ndarrays
 numpy.around : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the image into the file ‘filename’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2696,9 +2711,9 @@ If this is not set, then then a file dialog is used. If filename is False then a
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – format to save data as. ‘tif’, ‘png’ or ‘npy’ or a list of them. If not included will guess from
+<li><p><strong>fmt</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – format to save data as. ‘tif’, ‘png’ or ‘npy’ or a list of them. If not included will guess from
 filename.</p></li>
-<li><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – integer data will be converted to np.float32 type for saving. if forcetype then preserve and save as
+<li><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – integer data will be converted to np.float32 type for saving. if forcetype then preserve and save as
 int type (will be unsigned).</p></li>
 </ul>
 </dd>
@@ -2718,30 +2733,30 @@ data type which cannot be opened by external programs and will not
 save metadata.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.save_npy">
-<code class="sig-name descname">save_npy</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save_npy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save_npy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_npy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save_npy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save_npy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the ImageArray as a numpy array.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.save_png">
-<code class="sig-name descname">save_png</code><span class="sig-paren">(</span><em class="sig-param">filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save_png"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save_png" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_png</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save_png"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save_png" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the ImageArray with metadata in a png file.</p>
 <p>This can only save as 8bit unsigned integer so there is likely
 to be a loss of precision on floating point data</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.save_tiff">
-<code class="sig-name descname">save_tiff</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">forcetype=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save_tiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save_tiff" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_tiff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">forcetype</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.save_tiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.ImageArray.save_tiff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the ImageArray as a tiff image with metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Filename to save file as.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – (depricated) if forcetype then preserve data type as best as possible on save.
+<dd class="field-even"><p><strong>forcetype</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – (depricated) if forcetype then preserve data type as best as possible on save.
 Otherwise we let the underlying pillow library choose the best data type.</p>
 </dd>
 </dl>
@@ -2755,27 +2770,27 @@ The type name is added as a string to the metadata before saving.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.searchsorted">
-<code class="sig-name descname">searchsorted</code><span class="sig-paren">(</span><em class="sig-param">v</em>, <em class="sig-param">side='left'</em>, <em class="sig-param">sorter=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.searchsorted" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">searchsorted</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">side</span><span class="o">=</span><span class="default_value">'left'</span></em>, <em class="sig-param"><span class="n">sorter</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.searchsorted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find indices where elements of v should be inserted in a to maintain order.</p>
 <p>For full documentation, see <cite>numpy.searchsorted</cite></p>
 <p>numpy.searchsorted : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.set_fill_value">
-<code class="sig-name descname">set_fill_value</code><span class="sig-paren">(</span><em class="sig-param">value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.set_fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_fill_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.set_fill_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.setdefault">
 <code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param">k</em><span class="optional">[</span>, <em class="sig-param">d</em><span class="optional">]</span><span class="sig-paren">)</span> &#x2192; D.get(k,d), also set D[k]=d if k not in D<a class="headerlink" href="#Stoner.Image.ImageArray.setdefault" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.setfield">
-<code class="sig-name descname">setfield</code><span class="sig-paren">(</span><em class="sig-param">val</em>, <em class="sig-param">dtype</em>, <em class="sig-param">offset=0</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.setfield" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setfield</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">dtype</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.setfield" title="Permalink to this definition">¶</a></dt>
 <dd><p>Put a value into a specified place in a field defined by a data-type.</p>
 <p>Place <cite>val</cite> into <cite>a</cite>’s field defined by <cite>dtype</cite> and beginning <cite>offset</cite>
 bytes into the field.</p>
@@ -2812,9 +2827,9 @@ bytes into the field.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.setflags">
-<code class="sig-name descname">setflags</code><span class="sig-paren">(</span><em class="sig-param">write=None</em>, <em class="sig-param">align=None</em>, <em class="sig-param">uic=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.setflags" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setflags</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">write</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">align</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">uic</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.setflags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set array flags WRITEABLE, ALIGNED, (WRITEBACKIFCOPY and UPDATEIFCOPY),
 respectively.</p>
 <p>These Boolean-valued flags affect how numpy interprets the memory
@@ -2878,7 +2893,7 @@ as the full name.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.shrink_mask">
 <code class="sig-name descname">shrink_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.shrink_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reduce a mask to nomask when possible.</p>
@@ -2900,7 +2915,7 @@ as the full name.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.soften_mask">
 <code class="sig-name descname">soften_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.soften_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Force the mask to soft.</p>
@@ -2909,9 +2924,9 @@ its <cite>hardmask</cite> property. <cite>soften_mask</cite> sets <cite>hardmask
 <p>hardmask</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.sort">
-<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param">axis=-1</em>, <em class="sig-param">kind=None</em>, <em class="sig-param">order=None</em>, <em class="sig-param">endwith=True</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.sort" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">endwith</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort the array, in-place</p>
 <dl class="simple">
 <dt>a<span class="classifier">array_like</span></dt><dd><p>Array to be sorted.</p>
@@ -2973,15 +2988,15 @@ searchsorted : Find elements in a sorted array.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.squeeze">
-<code class="sig-name descname">squeeze</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">squeeze</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove single-dimensional entries from the shape of <cite>a</cite>.</p>
 <p>Refer to <cite>numpy.squeeze</cite> for full documentation.</p>
 <p>numpy.squeeze : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.std">
 <code class="sig-name descname">std</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">ddof=0</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.std" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the standard deviation of the array elements along given axis.</p>
@@ -2991,7 +3006,7 @@ searchsorted : Find elements in a sorted array.</p>
 numpy.std : Equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.sum">
 <code class="sig-name descname">sum</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sum of the array elements over the given axis.</p>
@@ -3025,22 +3040,22 @@ numpy.sum : equivalent function</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.swapaxes">
-<code class="sig-name descname">swapaxes</code><span class="sig-paren">(</span><em class="sig-param">axis1</em>, <em class="sig-param">axis2</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.swapaxes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">swapaxes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis1</span></em>, <em class="sig-param"><span class="n">axis2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.swapaxes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a view of the array with <cite>axis1</cite> and <cite>axis2</cite> interchanged.</p>
 <p>Refer to <cite>numpy.swapaxes</cite> for full documentation.</p>
 <p>numpy.swapaxes : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.take">
-<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param">indices</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">mode='raise'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.take" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">take</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">indices</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'raise'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.take" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.tobytes">
-<code class="sig-name descname">tobytes</code><span class="sig-paren">(</span><em class="sig-param">fill_value=None</em>, <em class="sig-param">order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tobytes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">tobytes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">'C'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tobytes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the array data as a string containing the raw bytes in the array.</p>
 <p>The array is filled with a fill value before the string conversion.</p>
 <div class="versionadded">
@@ -3070,9 +3085,9 @@ but also about <cite>fill_value</cite>, will be lost.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.tofile">
-<code class="sig-name descname">tofile</code><span class="sig-paren">(</span><em class="sig-param">fid</em>, <em class="sig-param">sep=''</em>, <em class="sig-param">format='%s'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tofile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">tofile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fid</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">format</span><span class="o">=</span><span class="default_value">'%s'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tofile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a masked array to a file in binary format.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -3084,7 +3099,7 @@ but also about <cite>fill_value</cite>, will be lost.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.toflex">
 <code class="sig-name descname">toflex</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.toflex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms a masked array into a flexible-type array.</p>
@@ -3121,9 +3136,9 @@ that meta information (<code class="docutils literal notranslate"><span class="p
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.tolist">
-<code class="sig-name descname">tolist</code><span class="sig-paren">(</span><em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tolist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">tolist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tolist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data portion of the masked array as a hierarchical Python list.</p>
 <p>Data items are converted to the nearest compatible Python type.
 Masked values are converted to <cite>fill_value</cite>. If <cite>fill_value</cite> is None,
@@ -3145,7 +3160,7 @@ the corresponding entries in the output list will be <code class="docutils liter
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.torecords">
 <code class="sig-name descname">torecords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.torecords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms a masked array into a flexible-type array.</p>
@@ -3182,24 +3197,27 @@ that meta information (<code class="docutils literal notranslate"><span class="p
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.tostring">
-<code class="sig-name descname">tostring</code><span class="sig-paren">(</span><em class="sig-param">fill_value=None</em>, <em class="sig-param">order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tostring" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is a compatibility alias for tobytes. Despite its name it
-returns bytes not strings.</p>
+<code class="sig-name descname">tostring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">'C'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.tostring" title="Permalink to this definition">¶</a></dt>
+<dd><p>A compatibility alias for <cite>tobytes</cite>, with exactly the same behavior.</p>
+<p>Despite its name, it returns <cite>bytes</cite> not <cite>str</cite>s.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.19.0.</span></p>
+</div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.trace">
-<code class="sig-name descname">trace</code><span class="sig-paren">(</span><em class="sig-param">offset=0</em>, <em class="sig-param">axis1=0</em>, <em class="sig-param">axis2=1</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.trace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">trace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">axis1</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">axis2</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.trace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sum along diagonals of the array.</p>
 <p>Refer to <cite>numpy.trace</cite> for full documentation.</p>
 <p>numpy.trace : equivalent function</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.transpose">
-<code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param">*axes</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">axes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a view of the array with axes transposed.</p>
 <p>For a 1-D array this has no effect, as a transposed vector is simply the
 same vector. To convert a 1-D array into a 2D column vector, an additional
@@ -3243,7 +3261,7 @@ ndarray.reshape : Give a new shape to an array without changing its data.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.unshare_mask">
 <code class="sig-name descname">unshare_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.unshare_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy the mask and set the sharedmask flag to False.</p>
@@ -3253,7 +3271,7 @@ A copy of the mask is only made if it was shared.</p>
 <p>sharedmask</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.update">
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param">E</em>, <span class="optional">]</span><em class="sig-param">**F</em><span class="sig-paren">)</span> &#x2192; None.  Update D from mapping/iterable E and F.<a class="headerlink" href="#Stoner.Image.ImageArray.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
@@ -3261,13 +3279,13 @@ If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
 In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.values">
-<code class="sig-name descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.values" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Any<a class="headerlink" href="#Stoner.Image.ImageArray.values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the values of the metadata dictionary.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.var">
 <code class="sig-name descname">var</code><span class="sig-paren">(</span><em class="sig-param">axis=None</em>, <em class="sig-param">dtype=None</em>, <em class="sig-param">out=None</em>, <em class="sig-param">ddof=0</em>, <em class="sig-param">keepdims=&lt;no value&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the variance along the specified axis.</p>
@@ -3356,9 +3374,9 @@ keyword can alleviate this issue.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Image.ImageArray.view">
-<code class="sig-name descname">view</code><span class="sig-paren">(</span><em class="sig-param">dtype=None</em>, <em class="sig-param">type=None</em>, <em class="sig-param">fill_value=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.view" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">view</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageArray.view" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a view of the MaskedArray data.</p>
 <dl class="simple">
 <dt>dtype<span class="classifier">data-type or ndarray sub-class, optional</span></dt><dd><p>Data-type descriptor of the returned view, e.g., float32 or int16.
@@ -3406,6 +3424,7 @@ results.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -3415,8 +3434,8 @@ results.</p>
               <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.folders.metadata.proxy.html"
-                        title="previous chapter">proxy</a></p>
+  <p class="topless"><a href="Stoner.folders.metadata.MetadataProxy.html"
+                        title="previous chapter">MetadataProxy</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.ImageStack.html"
                         title="next chapter">ImageStack</a></p>
@@ -3443,7 +3462,7 @@ results.</p>
     <ul>
         <li>
           &larr;
-          <a href="Stoner.folders.metadata.proxy.html" title="Previous document">proxy</a>
+          <a href="Stoner.folders.metadata.MetadataProxy.html" title="Previous document">MetadataProxy</a>
         </li>
         <li>
           <a href="Stoner.Image.ImageStack.html" title="Next document">ImageStack</a>
@@ -3460,9 +3479,9 @@ results.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

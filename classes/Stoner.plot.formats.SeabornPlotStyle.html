@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SeabornPlotStyle &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="errorfill" href="Stoner.plot.utils.errorfill.html" />
@@ -54,52 +55,49 @@
             
   <div class="section" id="seabornplotstyle">
 <h1>SeabornPlotStyle<a class="headerlink" href="#seabornplotstyle" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.plot.formats.SeabornPlotStyle">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.plot.formats.</code><code class="sig-name descname">SeabornPlotStyle</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#SeabornPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.SeabornPlotStyle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.plot.formats.</code><code class="sig-name descname">SeabornPlotStyle</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#SeabornPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.SeabornPlotStyle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" title="Stoner.plot.formats.DefaultPlotStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.plot.formats.DefaultPlotStyle</span></code></a></p>
 <p>A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.SeabornPlotStyle.stylename">
 <code class="sig-name descname">stylename</code><a class="headerlink" href="#Stoner.plot.formats.SeabornPlotStyle.stylename" title="Permalink to this definition">¶</a></dt>
 <dd><p>The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.SeabornPlotStyle.context">
 <code class="sig-name descname">context</code><a class="headerlink" href="#Stoner.plot.formats.SeabornPlotStyle.context" title="Permalink to this definition">¶</a></dt>
 <dd><p>The seaborn plot context for scaling elements - paper,notebook,talk, or poster</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.SeabornPlotStyle.palette">
 <code class="sig-name descname">palette</code><a class="headerlink" href="#Stoner.plot.formats.SeabornPlotStyle.palette" title="Permalink to this definition">¶</a></dt>
 <dd><p>A name of a predefined seaborn palette.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example plot style using Seaborn plot styling template.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
-
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">SeabornPlotStyle</span>
-
 <span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
     <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;sample.txt&quot;</span><span class="p">)</span>
 <span class="p">)</span>
@@ -124,13 +122,13 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.SeabornPlotStyle.context" title="Stoner.plot.formats.SeabornPlotStyle.context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="Stoner.plot.formats.SeabornPlotStyle.context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context</span></code></a></p></td>
 <td><p>Provide context getter.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.SeabornPlotStyle.palette" title="Stoner.plot.formats.SeabornPlotStyle.palette"><code class="xref py py-obj docutils literal notranslate"><span class="pre">palette</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id1" title="Stoner.plot.formats.SeabornPlotStyle.palette"><code class="xref py py-obj docutils literal notranslate"><span class="pre">palette</span></code></a></p></td>
 <td><p>Provide palette getter.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.SeabornPlotStyle.stylename" title="Stoner.plot.formats.SeabornPlotStyle.stylename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stylename</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="Stoner.plot.formats.SeabornPlotStyle.stylename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stylename</span></code></a></p></td>
 <td><p>Provide getter for stylename.</p></td>
 </tr>
 </tbody>
@@ -148,26 +146,26 @@
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">context</code></dt>
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">context</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide context getter.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">palette</code></dt>
+<dl class="py attribute">
+<dt id="id1">
+<code class="sig-name descname">palette</code><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide palette getter.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">stylename</code></dt>
+<dl class="py attribute">
+<dt id="id2">
+<code class="sig-name descname">stylename</code><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide getter for stylename.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.SeabornPlotStyle.apply">
 <code class="sig-name descname">apply</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#SeabornPlotStyle.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.SeabornPlotStyle.apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override base method to apply seaborn style sheets.</p>
@@ -178,6 +176,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -232,9 +231,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

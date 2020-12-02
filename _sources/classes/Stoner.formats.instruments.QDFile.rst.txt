@@ -1,4 +1,4 @@
-Stoner.formats.instruments.QDFile
+﻿Stoner.formats.instruments.QDFile
 =================================
 
 .. currentmodule:: Stoner.formats.instruments
@@ -75,6 +75,7 @@ Stoner.formats.instruments.QDFile
       ~Stoner.formats.instruments.QDFile.dims
       ~Stoner.formats.instruments.QDFile.dtype
       ~Stoner.formats.instruments.QDFile.filename
+      ~Stoner.formats.instruments.QDFile.filepath
       ~Stoner.formats.instruments.QDFile.header
       ~Stoner.formats.instruments.QDFile.mask
       ~Stoner.formats.instruments.QDFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.instruments.QDFile
       ~Stoner.formats.instruments.QDFile.records
       ~Stoner.formats.instruments.QDFile.setas
       ~Stoner.formats.instruments.QDFile.shape
-      ~Stoner.formats.instruments.QDFile.subclasses
    
    

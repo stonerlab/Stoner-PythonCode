@@ -1,4 +1,4 @@
-Stoner.formats.rigs.MokeFile
+﻿Stoner.formats.rigs.MokeFile
 ============================
 
 .. currentmodule:: Stoner.formats.rigs
@@ -75,6 +75,7 @@ Stoner.formats.rigs.MokeFile
       ~Stoner.formats.rigs.MokeFile.dims
       ~Stoner.formats.rigs.MokeFile.dtype
       ~Stoner.formats.rigs.MokeFile.filename
+      ~Stoner.formats.rigs.MokeFile.filepath
       ~Stoner.formats.rigs.MokeFile.header
       ~Stoner.formats.rigs.MokeFile.mask
       ~Stoner.formats.rigs.MokeFile.metadata
@@ -85,6 +86,5 @@ Stoner.formats.rigs.MokeFile
       ~Stoner.formats.rigs.MokeFile.records
       ~Stoner.formats.rigs.MokeFile.setas
       ~Stoner.formats.rigs.MokeFile.shape
-      ~Stoner.formats.rigs.MokeFile.subclasses
    
    

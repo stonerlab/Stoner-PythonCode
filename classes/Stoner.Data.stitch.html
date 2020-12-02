@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.stitch &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.subplot" href="Stoner.Data.subplot.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-stitch">
 <h1>Data.stitch<a class="headerlink" href="#data-stitch" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.stitch">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">stitch</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">overlap=None</em>, <em class="sig-param">min_overlap=0.0</em>, <em class="sig-param">mode='All'</em>, <em class="sig-param">func=None</em>, <em class="sig-param">p0=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.stitch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">stitch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_overlap</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'All'</span></em>, <em class="sig-param"><span class="n">func</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">p0</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.stitch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a scaling to this data set to make it stich to another dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -70,13 +71,13 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
+<li><p><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
 if left as None, thenthe common overlap of the x data is used.</p></li>
-<li><p><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
+<li><p><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
 data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap
 on this DataFile.</p></li>
-<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</p></li>
-<li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</p></li>
+<li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
 functions defined by <em>mode</em></p></li>
 <li><p><strong>p0</strong> (<em>iterable</em>) – if func is not None then p0 should be the starting values for the stitching function parameters</p></li>
 </ul>
@@ -109,6 +110,7 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -166,9 +168,9 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

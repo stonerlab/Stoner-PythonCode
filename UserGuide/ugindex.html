@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Stoner Python Package User Guide &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Installation of Stoner Package" href="install.html" />
@@ -99,6 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="plotfile.html#types-of-plot">Types of Plot</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="plotfile.html#plotting-2d-data">Plotting 2D data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plotfile.html#plotting-3d-data">Plotting 3D Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotfile.html#plotting-3d-scalar-fields">Plotting 3D Scalar Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="plotfile.html#plotting-vector-fields">Plotting Vector Fields</a></li>
 </ul>
 </li>
@@ -220,6 +222,20 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade.html">Converting Scripts from older versions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#python-version-support">Python Version Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#data-class-versus-datafile-analysisfile-plotfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code> class versus DataFile, AnalysisFile, PlotFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#stoner-plotformats-and-stoner-plot-modules-removed">Stoner.PlotFormats and Stoner.Plot modules removed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#stoner-folders-module-depricated">Stoner.Folders Module depricated</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#stoner-fit-module-depricated">Stoner.Fit Module depricated</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#stoner-fileformats-module-depricated">Stoner.FileFormats Module depricated</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#stoner-image-changes">Stoner.Image changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="upgrade.html#depricated-image-functions">Depricated Image functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade.html#stoner-datafolder-stoner-imagefolder-changes">Stoner.DataFolder/Stoner.ImageFolder changes</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developing and Extending</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="developer.html#understanding-the-class-structure">Understanding the Class Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="developer.html#adding-new-data-file-types">Adding New Data File Types</a></li>
@@ -231,6 +247,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -282,9 +299,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

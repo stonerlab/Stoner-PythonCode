@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.griddata &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.image_plot" href="Stoner.Data.image_plot.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-griddata">
 <h1>Data.griddata<a class="headerlink" href="#data-griddata" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.griddata">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">griddata</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">method='linear'</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.griddata" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">griddata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ucol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shape</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.griddata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert xyz data onto a regular grid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -71,20 +72,31 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>shape</strong> (<em>two-tuple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of
+<li><p><strong>ucol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – U (magnitude) column index or label</p></li>
+<li><p><strong>shape</strong> (<em>two-tuple</em><em>, </em><em>three-ruple</em>) – Number of points along x and y in the grid - defaults to a square of sidelength = square root of
 the length of the data.</p></li>
-<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The xlimits</p></li>
-<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – The ylimits</p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Type of interploation to use, default is linear</p></li>
-<li><p><strong>ReturnsL</strong> – X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data</p></li>
+<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – The xlimits</p></li>
+<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – The ylimits</p></li>
+<li><p><strong>zlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – The ylimits</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a>) – Type of interploation to use, default is linear</p></li>
+<li><p><strong>ReturnsL</strong> – <dl class="simple">
+<dt>(X,Y,Z) or (X,Y,Z,M):</dt><dd><p>three two dimensional arrays of the co-ordinates of the interpolated data or 4 three diemensional
+arrays of the interpolated data</p>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Depending on whether 3 or 4 columns of data can be identified, this method will produce data for a
+<span class="math notranslate nohighlight">\(Z(X,Y)\)</span> plot or a <span class="math notranslate nohighlight">\(M(X,Y,Z)\)</span> volumetric plot.</p>
 </dd></dl>
 
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -142,9 +154,9 @@ the length of the data.</p></li>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

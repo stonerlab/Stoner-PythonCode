@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.decompose &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.del_column" href="Stoner.Data.del_column.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-decompose">
 <h1>Data.decompose<a class="headerlink" href="#data-decompose" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.decompose">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">decompose</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">sym=None</em>, <em class="sig-param">asym=None</em>, <em class="sig-param">replace=True</em>, <em class="sig-param">**kwords</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.decompose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">decompose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sym</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">asym</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replace</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwords</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.decompose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
@@ -68,7 +69,7 @@
 <li><p><strong>ycol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><em>list of indices</em>) – indices of y column(s) data</p></li>
 <li><p><strong>sym</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Index of column to place symmetric data in default, append to end of data</p></li>
 <li><p><strong>asym</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Index of column for asymmetric part of ata. Defaults to appending to end of data</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Overwrite data with output (true)</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Overwrite data with output (true)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -77,11 +78,9 @@
 </dl>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Decompose Into symmetric and antisymmetric parts example.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">format_val</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">reshape</span><span class="p">,</span> <span class="n">array</span>
-
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">201</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">11</span> <span class="o">*</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">20</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">])</span>
@@ -111,6 +110,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -168,9 +168,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

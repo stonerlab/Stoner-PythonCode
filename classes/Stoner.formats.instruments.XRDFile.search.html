@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>XRDFile.search &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="XRDFile.section" href="Stoner.formats.instruments.XRDFile.section.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="xrdfile-search">
 <h1>XRDFile.search<a class="headerlink" href="#xrdfile-search" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.formats.instruments.XRDFile.search">
-<code class="sig-prename descclassname">XRDFile.</code><code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">xcol</em>, <em class="sig-param">value</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">accuracy=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.instruments.XRDFile.search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">XRDFile.</code><code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xcol</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">accuracy</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.instruments.XRDFile.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search the numerica data part of the file for lines that match and returns  the corresponding rows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -70,8 +71,8 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>columns</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><em>array of indices</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> (</em><em>default</em><em>)</em>) – columns of data to return - none represents all columns.</p></li>
-<li><p><strong>accuracy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Uncertainty to accept when testing equalities</p></li>
+<li><p><strong>columns</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><em>array of indices</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em> (</em><em>default</em><em>)</em>) – columns of data to return - none represents all columns.</p></li>
+<li><p><strong>accuracy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Uncertainty to accept when testing equalities</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -94,6 +95,7 @@ the search col for the the current row and the entire row.</p></li>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -151,9 +153,9 @@ the search col for the the current row and the entire row.</p></li>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

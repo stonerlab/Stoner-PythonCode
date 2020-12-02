@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BlochLaw &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="FMR_Power" href="Stoner.analysis.fitting.models.magnetism.FMR_Power.html" />
@@ -57,29 +58,31 @@
             
   <div class="section" id="blochlaw">
 <h1>BlochLaw<a class="headerlink" href="#blochlaw" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.analysis.fitting.models.magnetism.BlochLaw">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">BlochLaw</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#BlochLaw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.magnetism.</code><code class="sig-name descname">BlochLaw</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#BlochLaw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
 <p>Bloch’s law for spontaneous magnetism at low temperatures.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>T</strong> (<em>array like</em>) – Temperatures at which M has been measured (Probably in K)</p></li>
-<li><p><strong>Ms</strong> (<em>float</em>) – The magnetisation at 0K (in whtaever units M is being measured in)</p></li>
-<li><p><strong>Tc</strong> (<em>float</em>) – Curie temperature in K</p></li>
+<li><p><strong>T</strong> (<em>array like</em>) – Temperature (K)</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Lande g-factor</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – The echange stiffness (Jm^{-1})</p></li>
+<li><p><strong>Ms</strong> (<em>float</em>) – Saturation moment (Am^{-1})</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><em>(array like)</em> –     Calculated values of M</p>
+<dd class="field-even"><p><em>(array like)</em> –     Magnetisation values corresponding to the given temperatures.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>This fits the Bloch Law as given by:</p>
-<blockquote>
-<div><p><span class="math notranslate nohighlight">\(M(T) = M_s\left[1 - \left(\frac{T}{T_C}\right)^\frac{3}{2}\right]\)</span></p>
-</div></blockquote>
-<p>This expression is only really valid in the low temperature regime.</p>
+<dl class="simple">
+<dt>Calculates :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>1 - frac{left((Gamma(3/2) zeta(3/2)right)}</dt><dd><p>{(4pi^2)}  (v_{ws} / S) (k_B T / D)^{3/2}`</p>
+</dd>
+</dl>
+<p>This is the bulk version of Bloch’s law which is not fully correct for thin films. Model adapted from code
+by Dr Joseph Barker &lt;<a class="reference external" href="mailto:j&#46;barker&#37;&#52;&#48;leeds&#46;ac&#46;uk">j<span>&#46;</span>barker<span>&#64;</span>leeds<span>&#46;</span>ac<span>&#46;</span>uk</a>&gt;</p>
 <p class="rubric">Attributes Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -102,26 +105,53 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.guess" title="Stoner.analysis.fitting.models.magnetism.BlochLaw.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.blochs_law_bulk" title="Stoner.analysis.fitting.models.magnetism.BlochLaw.blochs_law_bulk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">blochs_law_bulk</span></code></a>(T, g, A, Ms)</p></td>
+<td><p>Bloch’s Law in bulk systems.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.guess" title="Stoner.analysis.fitting.models.magnetism.BlochLaw.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, x])</p></td>
 <td><p>Guess some starting values.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.analysis.fitting.models.magnetism.BlochLaw.display_names">
-<code class="sig-name descname">display_names</code><em class="property"> = ['M_s', 'T_C']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.display_names" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">display_names</code><em class="property"> = ['g', 'A', 'M_s']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.display_names" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.analysis.fitting.models.magnetism.BlochLaw.units">
-<code class="sig-name descname">units</code><em class="property"> = ['emu/cc', 'K']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.units" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">units</code><em class="property"> = ['', 'Jm^{-1}', 'Am^{-1}']</em><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.units" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
+<dt id="Stoner.analysis.fitting.models.magnetism.BlochLaw.blochs_law_bulk">
+<code class="sig-name descname">blochs_law_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">T</span></em>, <em class="sig-param"><span class="n">g</span></em>, <em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">Ms</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#BlochLaw.blochs_law_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.blochs_law_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bloch’s Law in bulk systems.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>array like</em>) – Temperature (K)</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Lande g-factor</p></li>
+<li><p><strong>A</strong> (<em>float</em>) – The echange stiffness (Jm^{-1})</p></li>
+<li><p><strong>Ms</strong> (<em>float</em>) – Saturation moment (Am^{-1})</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>(array like)</em> –     Magnetisation values corresponding to the given temperatures.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>Calculates :math:<a href="#id3"><span class="problematic" id="id4">`</span></a>1 - frac{left((Gamma(3/2) zeta(3/2)right)}</dt><dd><p>{(4pi^2)}  (v_{ws} / S) (k_B T / D)^{3/2}`</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="Stoner.analysis.fitting.models.magnetism.BlochLaw.guess">
-<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">x=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#BlochLaw.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.guess" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/magnetism.html#BlochLaw.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.magnetism.BlochLaw.guess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Guess some starting values.</p>
 </dd></dl>
 
@@ -130,6 +160,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -187,9 +218,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

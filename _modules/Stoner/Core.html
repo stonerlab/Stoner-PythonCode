@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.Core &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -56,14 +57,16 @@
 <span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
-
-<span class="c1"># import pdb # for debugging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableSequence</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">inspect</span> <span class="k">as</span> <span class="nn">_inspect_</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">TextWrapper</span>
 <span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">format_exc</span>
 <span class="kn">import</span> <span class="nn">csv</span>
@@ -74,6 +77,7 @@
 
 <span class="kn">from</span> <span class="nn">.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">_pattern_type</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">all_type</span><span class="p">,</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">isLikeList</span><span class="p">,</span> <span class="n">get_option</span>
+<span class="kn">from</span> <span class="nn">.tools.file</span> <span class="kn">import</span> <span class="n">get_file_name_type</span><span class="p">,</span> <span class="n">auto_load_classes</span>
 
 <span class="kn">from</span> <span class="nn">.core.exceptions</span> <span class="kn">import</span> <span class="n">StonerLoadError</span><span class="p">,</span> <span class="n">StonerSetasError</span><span class="p">,</span> <span class="n">StonerUnrecognisedFormat</span>
 <span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">_setas</span><span class="p">,</span> <span class="n">regexpDict</span><span class="p">,</span> <span class="n">typeHintedDict</span><span class="p">,</span> <span class="n">metadataObject</span>
@@ -83,6 +87,8 @@
 <span class="kn">from</span> <span class="nn">.core.interfaces</span> <span class="kn">import</span> <span class="n">DataFileInterfacesMixin</span>
 <span class="kn">from</span> <span class="nn">.core.methods</span> <span class="kn">import</span> <span class="n">DataFileSearchMixin</span>
 <span class="kn">from</span> <span class="nn">.core.utils</span> <span class="kn">import</span> <span class="n">copy_into</span><span class="p">,</span> <span class="n">tab_delimited</span>
+<span class="kn">from</span> <span class="nn">.tools.classes</span> <span class="kn">import</span> <span class="n">subclasses</span>
+<span class="kn">from</span> <span class="nn">.tools.file</span> <span class="kn">import</span> <span class="n">file_dialog</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
@@ -201,11 +207,10 @@
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prepare the basic DataFile instance before the mixins add their bits.&quot;&quot;&quot;</span>
-        <span class="bp">self</span> <span class="o">=</span> <span class="n">metadataObject</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">metadataObject</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">,</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs_real</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_data&quot;</span><span class="p">,</span> <span class="n">DataArray</span><span class="p">([]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_baseclass</span> <span class="o">=</span> <span class="n">DataFile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kargs</span> <span class="o">=</span> <span class="n">kargs</span>
@@ -257,7 +262,7 @@
 <span class="sd">                All keyword arguments that match public attributes are used to set those public attributes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># init instance attributes</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>  <span class="c1"># initialise self.metadata)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>  <span class="c1"># initialise self.metadata)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
             <span class="s2">&quot;setas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">string_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span>
@@ -296,78 +301,33 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done DataFile init&quot;</span><span class="p">)</span></div>
 
+    <span class="c1"># ============================================================================================</span>
+    <span class="c1">############################   Constructor Methods ###########################################</span>
+    <span class="c1"># ============================================================================================</span>
+
     <span class="k">def</span> <span class="nf">_init_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handle constructor with 1 arguement - called from __init__.&quot;&quot;&quot;</span>
         <span class="n">arg</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">arg</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">):</span>
-            <span class="c1"># Filename- load datafile</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-            <span class="c1"># numpy.array - set data</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">arg</span><span class="p">),</span> <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Column_</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">])]</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">:</span>
-                    <span class="bp">self</span> <span class="o">+=</span> <span class="n">row</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># Dictionary - use as data or metadata</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">string_types</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">])</span>
-            <span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">!=</span> <span class="s2">&quot;_baseclass&quot;</span><span class="p">:</span>
-                    <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="n">arg</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
-        <span class="k">elif</span> <span class="s2">&quot;&lt;class &#39;Stoner.Image.core.ImageFile&#39;&gt;&quot;</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span>
-        <span class="p">]:</span>  <span class="c1"># Crazy hack to avoid importing a circular ref!</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x_vector&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y_vector&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-            <span class="n">z</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">image</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">z</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Intensity&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyz&quot;</span>
-        <span class="k">elif</span> <span class="n">pd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">values</span>
-            <span class="n">ch</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                    <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">ch</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">ch_i</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ch_i</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                            <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch_i</span><span class="p">)</span>
-                            <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Column </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">ch</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">ch</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">levels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;xyzdefuvw.&quot;</span><span class="p">):</span>
-                        <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_init_many</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="n">inits</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_load</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_array</span><span class="p">,</span>
+            <span class="n">DataFile</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_datafile</span><span class="p">,</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_pandas</span><span class="p">,</span>
+            <span class="s2">&quot;Stoner.Image.core.ImageFile&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_imagefile</span><span class="p">,</span>
+            <span class="n">Mapping</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_dict</span><span class="p">,</span>
+            <span class="n">Iterable</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_list</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">meth</span> <span class="ow">in</span> <span class="n">inits</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">typ</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="n">mod</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="n">typ</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+                <span class="n">meth</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No constructor for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No constructor for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_init_double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -388,10 +348,101 @@
         <span class="sd">&quot;&quot;&quot;Handle more than two arguments to the constructor - called from init.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="sd">&quot;&quot;&quot;Initialise from a single numpy array.&quot;&quot;&quot;</span>
+        <span class="c1"># numpy.array - set data</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">arg</span><span class="p">),</span> <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Column_</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">arg</span><span class="p">)[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">:</span>
+                <span class="bp">self</span> <span class="o">+=</span> <span class="n">row</span>
+
+    <span class="k">def</span> <span class="nf">_init_datafile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="sd">&quot;&quot;&quot;Initialise from datafile.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span> <span class="o">!=</span> <span class="s2">&quot;_baseclass&quot;</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="n">arg</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+
+    <span class="k">def</span> <span class="nf">_init_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="sd">&quot;&quot;&quot;Initialise from dictionary.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">string_types</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">])</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_init_imagefile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="sd">&quot;&quot;&quot;Initialise from an ImageFile.&quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x_vector&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y_vector&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">image</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">z</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Intensity&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyz&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_init_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="sd">&quot;&quot;&quot;Initialise from a pandas dataframe.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">col</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">ch_i</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ch_i</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                        <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch_i</span><span class="p">)</span>
+                        <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">ch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">levels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;xyzdefuvw.&quot;</span><span class="p">):</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_init_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load data from a file-like source.</span>
+
+<span class="sd">        arg(str, PurePath, IOBase, bool):</span>
+<span class="sd">            If arg is a str, PaurePath, ioBase then open the file like object and read. If arg is bool and False,</span>
+<span class="sd">            provide a dialog box instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arg</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot construct a DataFile with a single argument of True&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="p">):</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_init_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialise from a list or other ioterable.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">all_type</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_many</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to construct DataFile from a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># ============================================================================================</span>
     <span class="c1">############################   Speical Methods ###############################################</span>
@@ -441,7 +492,7 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">RecursionError</span><span class="p">):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">result</span>
 
@@ -451,15 +502,14 @@
 <span class="sd">        Augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.&quot;&quot;&quot;</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">col_check</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">}</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">col_check</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;_setas&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-                <span class="k">break</span>
-            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_check</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
-                    <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_check</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">col_check</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_check</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                        <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_check</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -487,7 +537,7 @@
         <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;debug&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -529,7 +579,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr_short_</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr_table_</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__repr_core__</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -544,11 +594,11 @@
 <span class="sd">                -   data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">name</span><span class="p">),</span> <span class="nb">property</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="s2">&quot;xyzuvwdef&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setattr_col</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide an implementation for str(DataFile) that does not shorten the output.&quot;&quot;&quot;</span>
@@ -561,52 +611,6 @@
     <span class="k">def</span> <span class="nf">_col_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create an object which has keys  based either on arguments or setas attribute.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>  <span class="c1"># Now just pass through to DataArray</span>
-
-    <span class="k">def</span> <span class="nf">__file_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create a file dialog box for loading or saving ~b DataFile objects.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            mode (string):</span>
-<span class="sd">                The mode of the file operation  &#39;r&#39; or &#39;w&#39;</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (str):</span>
-<span class="sd">                A filename to be used for the file operation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Wildcard pattern to be used in file dialogs.</span>
-
-        <span class="n">descs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;*.*&quot;</span><span class="p">:</span> <span class="s2">&quot;All Files&quot;</span><span class="p">}</span>
-        <span class="n">patterns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>  <span class="c1"># pylint: disable=not-an-iterable</span>
-            <span class="n">descs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot; file&quot;</span>
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="p">:</span>  <span class="c1"># pylint: disable=E1136, E1133</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>  <span class="c1"># pylint: disable=unsubscriptable-object</span>
-                <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">descs</span><span class="p">:</span>
-                    <span class="n">descs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span>
-                        <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot; file&quot;</span>  <span class="c1"># pylint: disable=E1136</span>
-                    <span class="p">)</span>  <span class="c1"># pylint: disable=unsubscriptable-object</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">descs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot; file&quot;</span>  <span class="c1"># pylint: disable=unsubscriptable-object</span>
-
-        <span class="n">patterns</span> <span class="o">=</span> <span class="n">descs</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-            <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;r&quot;</span> <span class="ow">in</span> <span class="n">mode</span><span class="p">:</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;file&quot;</span>
-        <span class="k">elif</span> <span class="s2">&quot;w&quot;</span> <span class="ow">in</span> <span class="n">mode</span><span class="p">:</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;save&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;directory&quot;</span>
-        <span class="n">dlg</span> <span class="o">=</span> <span class="n">get_filedialog</span><span class="p">(</span><span class="n">what</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">dirname</span><span class="p">,</span> <span class="n">patterns</span><span class="o">=</span><span class="n">patterns</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dlg</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">dlg</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_getattr_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a column using the setas attribute.&quot;&quot;&quot;</span>
@@ -692,64 +696,52 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">datafile</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">dialect</span><span class="o">=</span><span class="n">tab_delimited</span><span class="p">())</span>
-                <span class="n">row</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;TDI Format 1.5&quot;</span><span class="p">:</span>
-                    <span class="n">fmt</span> <span class="o">=</span> <span class="mf">1.5</span>
-                <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;TDI Format=Text 1.0&quot;</span><span class="p">:</span>
-                    <span class="n">fmt</span> <span class="o">=</span> <span class="mf">1.0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a TDI File&quot;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">datafile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;TDI Format 1.5&quot;</span><span class="p">):</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="mf">1.5</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;TDI Format=Text 1.0&quot;</span><span class="p">):</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Not a TDI File&quot;</span><span class="p">)</span>
-            <span class="n">col_headers_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
-            <span class="n">data_array</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">metaDataArray</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">datafile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">dialect</span><span class="o">=</span><span class="n">tab_delimited</span><span class="p">())</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>  <span class="c1"># Now read through the metadata columns</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                    <span class="n">data_array</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="n">still_data</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">still_data</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>  <span class="c1"># end of metadata:</span>
-                    <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">cols</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
-                    <span class="n">metaDataArray</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">import_key</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="c1"># End of metadata reading, close filke and reopen to read data</span>
-        <span class="k">if</span> <span class="n">still_data</span><span class="p">:</span>  <span class="c1"># data extends beyond metada - read with genfromtxt</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
-                    <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="n">usemask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">usecols</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span>
-                    <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\0</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="n">metadata</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">cols</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">max_rows</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">import_key</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">col_headers_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="s2">&quot;Some errors were detected !&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+                <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">usemask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">usecols</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span>
+                <span class="n">invalid_raise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\0</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">missing_values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                <span class="n">filling_values</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+                <span class="n">max_rows</span><span class="o">=</span><span class="n">max_rows</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">data_array</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># some data less than metadata</span>
-            <span class="n">footer</span> <span class="o">=</span> <span class="n">metaDataArray</span> <span class="o">-</span> <span class="n">data_array</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
-                    <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="n">skip_footer</span><span class="o">=</span><span class="n">footer</span><span class="p">,</span>
-                    <span class="n">usemask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\0</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">usecols</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">col_headers_tmp</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">breakpoint</span><span class="p">()</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">retain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">retain</span><span class="p">])</span>
         <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;TDI Format&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fmt</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">col_headers_tmp</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="c1"># def _parse_metadata(self, key, value):</span>
@@ -911,6 +903,7 @@
         <span class="n">args</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">_inspect_</span><span class="o">.</span><span class="n">getargs</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__code__</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="n">args</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">r</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1268,7 +1261,6 @@
 <span class="sd">            Implement val is a tuple for deletinging in a range of values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">mask_rows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">compress_rows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># delete rows with a slice to make a list of indices</span>
@@ -1420,9 +1412,6 @@
 <span class="sd">                A copy of the loaded :py:data:`DataFile` instance</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Possible subclasses to try and load from are identified at run time using the speciall</span>
-<span class="sd">            :py:attr:`DataFile.subclasses` attribute.</span>
-
 <span class="sd">            If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it</span>
 <span class="sd">            is used as a partial match and the first class in priority order is that matches is used.</span>
 
@@ -1434,114 +1423,28 @@
 
 <span class="sd">            If not class can load a file successfully then a RunttimeError exception is raised.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">filetype</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;filetype&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">auto_load</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;auto_load&quot;</span><span class="p">,</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1"># We can specify filetype as part of name</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">filetype</span> <span class="o">=</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">filetype</span><span class="p">]</span>  <span class="c1"># pylint: disable=E1136</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># pylint: disable=E1136, E1101</span>
-                    <span class="k">if</span> <span class="n">filetype</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
-                        <span class="n">filetype</span> <span class="o">=</span> <span class="bp">cls</span>
-                        <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognised class name for file type: </span><span class="si">{</span><span class="n">filetype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">):</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__file_dialog</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">):</span>  <span class="c1"># Opened file</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot find </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2"> to load&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">filemagic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">filemagic</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="n">MAGIC_MIME_TYPE</span><span class="p">)</span> <span class="k">as</span> <span class="n">m</span><span class="p">:</span>
-                <span class="n">mimetype</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">id_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mimetype:</span><span class="si">{</span><span class="n">mimetype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">filetype</span> <span class="o">=</span> <span class="n">get_file_name_type</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">)</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
-        <span class="n">failed</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">auto_load</span><span class="p">:</span>  <span class="c1"># We&#39;re going to try every subclass we canA</span>
-            <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>  <span class="c1"># pylint: disable=E1136, E1101</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">filemagic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mimetype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">mime_type</span>
-                    <span class="p">):</span>  <span class="c1"># short circuit for non-=matching mime-types</span>
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> due to mismatcb mime type </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">mime_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="k">continue</span>
-                    <span class="n">test</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="ow">and</span> <span class="n">filemagic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trying: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> =mimetype </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">mime_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-                    <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">auto_load</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">test</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Class </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;s _load returned None !!&quot;</span><span class="p">)</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="n">kargs</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">_kargs</span>
-                        <span class="nb">delattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;_kargs&quot;</span><span class="p">)</span>
-                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                        <span class="k">pass</span>
-
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Passed Load&quot;</span><span class="p">)</span>
-                    <span class="n">failed</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="n">test</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test matadata: </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="n">copy_into</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Self matadata: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-                    <span class="k">break</span>
-                <span class="k">except</span> <span class="n">StonerLoadError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed Load: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="k">continue</span>
-                <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="si">}</span><span class="s2"> Failed with a uncicode decode error for </span><span class="si">{</span> <span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">StonerUnrecognisedFormat</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Ran out of subclasses to try and load </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> as.&quot;</span>
-                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; Recognised filetype are:</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># pylint: disable=E1101</span>
-                <span class="p">)</span>
+            <span class="n">copy_into</span><span class="p">(</span><span class="n">auto_load_classes</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">kargs</span><span class="o">=</span><span class="n">kargs</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">test</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-                <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-                <span class="n">kargs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;_kargs&quot;</span><span class="p">,</span> <span class="n">kargs</span><span class="p">)</span>
-                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">data</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-                <span class="n">failed</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
                 <span class="n">test</span> <span class="o">=</span> <span class="n">filetype</span><span class="p">()</span>
-                <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-                <span class="n">kargs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;_kargs&quot;</span><span class="p">,</span> <span class="n">kargs</span><span class="p">)</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="n">copy_into</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
                 <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filetype</span><span class="o">.</span><span class="vm">__name__</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">data</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">column_headers</span>
-                <span class="n">failed</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
-                <span class="n">test</span> <span class="o">=</span> <span class="n">filetype</span><span class="o">.</span><span class="n">clone</span>
-                <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-                <span class="n">kargs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;_kargs&quot;</span><span class="p">,</span> <span class="n">kargs</span><span class="p">)</span>
-                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filetype</span><span class="o">.</span><span class="vm">__name__</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">data</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">column_headers</span>
-                <span class="n">failed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">DataFile</span><span class="p">()</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="n">copy_into</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFile</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to load </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;Failed to load file&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">False</span><span class="p">)):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
@@ -1642,16 +1545,18 @@
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">):</span>
             <span class="c1"># now go and ask for one</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__file_dialog</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">file_dialog</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Cannot get filename to save&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">as_loaded</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="nb">isinstance</span><span class="p">(</span><span class="n">as_loaded</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;Loaded as&quot;</span> <span class="ow">in</span> <span class="bp">self</span>
             <span class="p">):</span>  <span class="c1"># Use the Loaded as key to find a different save routine</span>
-                <span class="bp">cls</span> <span class="o">=</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]]</span>  <span class="c1"># pylint: disable=unsubscriptable-object</span>
-            <span class="k">elif</span> <span class="p">(</span>
-                <span class="nb">isinstance</span><span class="p">(</span><span class="n">as_loaded</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">as_loaded</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span>
+                <span class="bp">cls</span> <span class="o">=</span> <span class="n">subclasses</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)[</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]]</span>  <span class="c1"># pylint: disable=unsubscriptable-object</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">as_loaded</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">as_loaded</span> <span class="ow">in</span> <span class="n">subclasses</span><span class="p">(</span>
+                <span class="n">DataFile</span>
             <span class="p">):</span>  <span class="c1"># pylint: disable=E1136, E1135</span>
-                <span class="bp">cls</span> <span class="o">=</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">as_loaded</span><span class="p">]</span>  <span class="c1"># pylint: disable=unsubscriptable-object</span>
+                <span class="bp">cls</span> <span class="o">=</span> <span class="n">subclasses</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)[</span><span class="n">as_loaded</span><span class="p">]</span>  <span class="c1"># pylint: disable=unsubscriptable-object</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">as_loaded</span><span class="si">}</span><span class="s2"> cannot be interpreted as a valid sub class of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1679,10 +1584,10 @@
             <span class="n">mdtext</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mdtext</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdtext</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">))</span>
         <span class="n">data_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mdtext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">data_out</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">mdremains</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">str2bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>  <span class="c1"># (str2bytes(self.metadata.export(k) + &quot;\n&quot;))</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (str2bytes(self.metadata.export(k) + &quot;\n&quot;))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -1736,6 +1641,7 @@
         <span class="k">return</span> <span class="n">df</span></div></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -1769,9 +1675,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

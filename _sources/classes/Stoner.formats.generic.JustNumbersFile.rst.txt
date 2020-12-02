@@ -1,4 +1,4 @@
-Stoner.formats.generic.JustNumbersFile
+﻿Stoner.formats.generic.JustNumbersFile
 ======================================
 
 .. currentmodule:: Stoner.formats.generic
@@ -75,6 +75,7 @@ Stoner.formats.generic.JustNumbersFile
       ~Stoner.formats.generic.JustNumbersFile.dims
       ~Stoner.formats.generic.JustNumbersFile.dtype
       ~Stoner.formats.generic.JustNumbersFile.filename
+      ~Stoner.formats.generic.JustNumbersFile.filepath
       ~Stoner.formats.generic.JustNumbersFile.header
       ~Stoner.formats.generic.JustNumbersFile.mask
       ~Stoner.formats.generic.JustNumbersFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.generic.JustNumbersFile
       ~Stoner.formats.generic.JustNumbersFile.records
       ~Stoner.formats.generic.JustNumbersFile.setas
       ~Stoner.formats.generic.JustNumbersFile.shape
-      ~Stoner.formats.generic.JustNumbersFile.subclasses
    
    

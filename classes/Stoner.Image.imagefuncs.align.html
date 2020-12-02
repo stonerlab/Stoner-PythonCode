@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>align &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="convert" href="Stoner.Image.imagefuncs.convert.html" />
@@ -54,9 +55,9 @@
             
   <div class="section" id="align">
 <h1>align<a class="headerlink" href="#align" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="Stoner.Image.imagefuncs.align">
-<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">align</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">ref</em>, <em class="sig-param">method='scharr'</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#align"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.align" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">align</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im</span></em>, <em class="sig-param"><span class="n">ref</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'scharr'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#align"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.align" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use one of a variety of algroithms to align two images.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -67,10 +68,10 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If given specifies which module to try and use.
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – If given specifies which module to try and use.
 Options: ‘scharr’, ‘chi2_shift’, ‘imreg_dft’, ‘cv2’</p></li>
-<li><p><strong>box</strong> (<em>integer</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>tuple of images</em><em> or </em><em>floats</em>) – Used with ImageArray.crop to select a subset of the image to use for the aligning process.</p></li>
-<li><p><strong>oversample</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Rescale the image and reference image by constant factor before finding the translation vector.</p></li>
+<li><p><strong>box</strong> (<em>integer</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>tuple of images</em><em> or </em><em>floats</em>) – Used with ImageArray.crop to select a subset of the image to use for the aligning process.</p></li>
+<li><p><strong>oversample</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Rescale the image and reference image by constant factor before finding the translation vector.</p></li>
 <li><p><strong>**kargs</strong> (<em>various</em>) – All other keyword arguments are passed to the specific algorithm.</p></li>
 </ul>
 </dd>
@@ -98,6 +99,7 @@ from: <a class="reference external" href="http://www.learnopencv.com/image-align
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -152,9 +154,9 @@ from: <a class="reference external" href="http://www.learnopencv.com/image-align
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TexFormatter &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TexEngFormatter" href="Stoner.plot.formats.TexEngFormatter.html" />
@@ -54,10 +55,10 @@
             
   <div class="section" id="texformatter">
 <h1>TexFormatter<a class="headerlink" href="#texformatter" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.plot.formats.TexFormatter">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.plot.formats.</code><code class="sig-name descname">TexFormatter</code><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/api/ticker_api.html#matplotlib.ticker.Formatter" title="(in Matplotlib v3.2.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.ticker.Formatter</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://matplotlib.org/api/ticker_api.html#matplotlib.ticker.Formatter" title="(in Matplotlib v3.3.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.ticker.Formatter</span></code></a></p>
 <p>An axis tick label formatter that emits Tex formula mode code.</p>
 <p>Formating is set so that large numbers are registered as :math`times 10^{power}`
 rather than using E notation.</p>
@@ -80,21 +81,21 @@ rather than using E notation.</p>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.TexFormatter.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">pos=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">pos</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the value ina  suitable texable format.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.TexFormatter.format_data">
-<code class="sig-name descname">format_data</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">format_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the full string representation of the value with the position unspecified.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.TexFormatter.format_data_short">
-<code class="sig-name descname">format_data_short</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data_short"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data_short" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">format_data_short</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#TexFormatter.format_data_short"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.TexFormatter.format_data_short" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a short string version of the tick value.</p>
 <p>Defaults to the position-independent long value.</p>
 </dd></dl>
@@ -104,6 +105,7 @@ rather than using E notation.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -158,9 +160,9 @@ rather than using E notation.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,4 +1,4 @@
-Stoner.formats.facilities.OpenGDAFile
+﻿Stoner.formats.facilities.OpenGDAFile
 =====================================
 
 .. currentmodule:: Stoner.formats.facilities
@@ -75,6 +75,7 @@ Stoner.formats.facilities.OpenGDAFile
       ~Stoner.formats.facilities.OpenGDAFile.dims
       ~Stoner.formats.facilities.OpenGDAFile.dtype
       ~Stoner.formats.facilities.OpenGDAFile.filename
+      ~Stoner.formats.facilities.OpenGDAFile.filepath
       ~Stoner.formats.facilities.OpenGDAFile.header
       ~Stoner.formats.facilities.OpenGDAFile.mask
       ~Stoner.formats.facilities.OpenGDAFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.facilities.OpenGDAFile
       ~Stoner.formats.facilities.OpenGDAFile.records
       ~Stoner.formats.facilities.OpenGDAFile.setas
       ~Stoner.formats.facilities.OpenGDAFile.shape
-      ~Stoner.formats.facilities.OpenGDAFile.subclasses
    
    

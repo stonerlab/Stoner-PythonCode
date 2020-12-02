@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.tools.tests &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -60,14 +61,16 @@
     <span class="s2">&quot;isProperty&quot;</span><span class="p">,</span>
     <span class="s2">&quot;isTuple&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Iterable</span> <span class="k">as</span> <span class="n">IterableType</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">logical_and</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
 
 <span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">..core.Typing</span> <span class="kn">import</span> <span class="n">Numeric</span><span class="p">,</span> <span class="n">NumericArray</span>
 
 
-<div class="viewcode-block" id="all_size"><a class="viewcode-back" href="../../../classes/Stoner.tools.all_size.html#Stoner.tools.all_size">[docs]</a><span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="all_size"><a class="viewcode-back" href="../../../classes/Stoner.tools.all_size.html#Stoner.tools.all_size">[docs]</a><span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check whether each element of *iterator* is the same length/shape.</span>
 
 <span class="sd">    Arguments:</span>
@@ -95,8 +98,8 @@
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
-<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../../classes/Stoner.tools.all_type.html#Stoner.tools.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determines if an interable omnly contains a common type.</span>
+<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../../classes/Stoner.tools.all_type.html#Stoner.tools.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">:</span> <span class="n">IterableType</span><span class="p">,</span> <span class="n">typ</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Determine if an interable omnly contains a common type.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        iterator (Iterable):</span>
@@ -126,7 +129,7 @@
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
-<div class="viewcode-block" id="isAnyNone"><a class="viewcode-back" href="../../../classes/Stoner.tools.isAnyNone.html#Stoner.tools.isAnyNone">[docs]</a><span class="k">def</span> <span class="nf">isAnyNone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="isAnyNone"><a class="viewcode-back" href="../../../classes/Stoner.tools.isAnyNone.html#Stoner.tools.isAnyNone">[docs]</a><span class="k">def</span> <span class="nf">isAnyNone</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Intelligently check whether any of the inputs are None.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -134,8 +137,8 @@
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="isComparable"><a class="viewcode-back" href="../../../classes/Stoner.tools.isComparable.html#Stoner.tools.isComparable">[docs]</a><span class="k">def</span> <span class="nf">isComparable</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns true if v1 and v2 can be compared sensibly</span>
+<div class="viewcode-block" id="isComparable"><a class="viewcode-back" href="../../../classes/Stoner.tools.isComparable.html#Stoner.tools.isComparable">[docs]</a><span class="k">def</span> <span class="nf">isComparable</span><span class="p">(</span><span class="n">v1</span><span class="p">:</span> <span class="n">NumericArray</span><span class="p">,</span> <span class="n">v2</span><span class="p">:</span> <span class="n">NumericArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return true if v1 and v2 can be compared sensibly.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        v1,v2 (any):</span>
@@ -155,7 +158,7 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="isIterable"><a class="viewcode-back" href="../../../classes/Stoner.tools.isIterable.html#Stoner.tools.isIterable">[docs]</a><span class="k">def</span> <span class="nf">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="isIterable"><a class="viewcode-back" href="../../../classes/Stoner.tools.isIterable.html#Stoner.tools.isIterable">[docs]</a><span class="k">def</span> <span class="nf">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Chack to see if a value is iterable.</span>
 
 <span class="sd">    Args:</span>
@@ -169,13 +172,13 @@
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="isLikeList"><a class="viewcode-back" href="../../../classes/Stoner.tools.isLikeList.html#Stoner.tools.isLikeList">[docs]</a><span class="k">def</span> <span class="nf">isLikeList</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if value is an iterable but not a string.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="isLikeList"><a class="viewcode-back" href="../../../classes/Stoner.tools.isLikeList.html#Stoner.tools.isLikeList">[docs]</a><span class="k">def</span> <span class="nf">isLikeList</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return True if value is an iterable but not a string.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../../classes/Stoner.tools.isNone.html#Stoner.tools.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if input is None or an empty iterator, or an iterator of None.</span>
+<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../../classes/Stoner.tools.isNone.html#Stoner.tools.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IterableType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return True if input is None or an empty iterator, or an iterator of None.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        iterator (None or Iterable):</span>
@@ -204,7 +207,7 @@
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
-<div class="viewcode-block" id="isProperty"><a class="viewcode-back" href="../../../classes/Stoner.tools.isProperty.html#Stoner.tools.isProperty">[docs]</a><span class="k">def</span> <span class="nf">isProperty</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="isProperty"><a class="viewcode-back" href="../../../classes/Stoner.tools.isProperty.html#Stoner.tools.isProperty">[docs]</a><span class="k">def</span> <span class="nf">isProperty</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check whether an attribute of an object or class is a property.</span>
 
 <span class="sd">    Args:</span>
@@ -217,7 +220,7 @@
 <span class="sd">        (bool):</span>
 <span class="sd">            Whether the name is a property or not.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -226,7 +229,7 @@
     <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="nb">property</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="isTuple"><a class="viewcode-back" href="../../../classes/Stoner.tools.isTuple.html#Stoner.tools.isTuple">[docs]</a><span class="k">def</span> <span class="nf">isTuple</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="isTuple"><a class="viewcode-back" href="../../../classes/Stoner.tools.isTuple.html#Stoner.tools.isTuple">[docs]</a><span class="k">def</span> <span class="nf">isTuple</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine if obj is a tuple of a certain signature.</span>
 
 <span class="sd">    Args:</span>
@@ -243,7 +246,6 @@
 <span class="sd">        (bool):</span>
 <span class="sd">            True if obj is a matching tuple.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">strict</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
@@ -264,6 +266,7 @@
     <span class="k">return</span> <span class="ow">not</span> <span class="n">bad</span></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -300,9 +303,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

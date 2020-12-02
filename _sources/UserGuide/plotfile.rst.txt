@@ -12,16 +12,16 @@ Quick Plots
 
 The :py:class:`Data` class is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
-for containing error bars. This is done with the :py:attr:`Data.setas` attribute (see :ref:`setas` for full details). 
+for containing error bars. This is done with the :py:attr:`Data.setas` attribute (see :ref:`setas` for full details).
 Once this is done, the plotting methods will use these to try to make a sensible plot.::
 
     p.setas="xye"
     p.plot()
 
-:py:meth:`Data.plot` is simply a wrapper that insepects the available columns and calls either :py:meth:`Data.plot_xy` or 
+:py:meth:`Data.plot` is simply a wrapper that insepects the available columns and calls either :py:meth:`Data.plot_xy` or
 :py:meth:`Data.plot_xyz` as appropriate. All keyword arguments to :py:meth:`Data.plot` are passed on to the actual plotting method.
 
-Each :py:class:`Data` instance maintains it's own :py:class:`matplotlib.pyplot.Figure` in the :py:attr:`Data.fig` attribute, if no 
+Each :py:class:`Data` instance maintains it's own :py:class:`matplotlib.pyplot.Figure` in the :py:attr:`Data.fig` attribute, if no
 figure is set when the :py:meth:`Data.plot` method is called, a new figure will be created.
 
 Types of Plot
@@ -66,10 +66,10 @@ through to the relevant plotting function. The final example illustrates a conve
 plots. By default, :py:meth:`Data.plot_xy` uses the **pyplot.plot** function to produce linear scaler plots. There
 are a number of useful plotter functions that will work like this
 
-*   [:py:func:`matplotlib.pyplot.semilogx`,:py:func:`matplotlib.pyplot.semilogy`] These two plotting functions will produce 
+*   [:py:func:`matplotlib.pyplot.semilogx`,:py:func:`matplotlib.pyplot.semilogy`] These two plotting functions will produce
     log-linear plots, with semilogx making the x-axes the log one and semilogy the y-axis.
 *   [:py:func:`matplotlib.pyplot.loglog`] Like the semi-log plots, this will produce a log-log plot.
-*   [:py:func:`matplotlib.pyplot.errorbar`] this particularly useful plotting function will draw error bars. The values for 
+*   [:py:func:`matplotlib.pyplot.errorbar`] this particularly useful plotting function will draw error bars. The values for
     the error bars are passed as keyword arguments, *xerr* or *yerr*. In standard matplotlib, these can be numpy arrays or constants.
     :py:meth:`Data.plot_xy` extends this by intercepting these arguements and offering some short cuts::
 
@@ -148,6 +148,20 @@ origin of the matrix is moved to be one column further over and one row further 
 below the columns and rows used to generate the x and y data values). The final example illustrates how to generate a
 new 2D surface plot in a new window using default matrix setup.
 
+Plotting 3D Scalar Fields
+-------------------------
+
+A 3D scalar field is a some :math:`F(x,y,z)` where the function returns a scalar value. One option is to plot this as a
+volumetric plot where a colour is interpolated over a volume. For this purpose, :py:meth:`Data.voxel_plot` is provided.
+The function will accept x,y and z column indices for the co-ordinates (or take them from the :py:attr:`Data.setas`
+attribute) and a fourth, *u* column index (or the column defined as holding the *u* data in the :py:attr:`Data.setas`
+attribute). Keyword arguments *visible* or $filled$ indicate whether a particular voxel will be plotted or not to
+allow a cross section of the 3D co-ordinate space to be show.
+
+.. plot:: samples/voxel_plot.py
+    :include-source:
+    :outname: voxel2
+
 Plotting Vector Fields
 ----------------------
 
@@ -224,10 +238,10 @@ Setting Axes Labels, Plot Titles and Legends
 --------------------------------------------
 
 :py:class:`Data` provides some useful attributes for setting specific aspects of the figures. Any
-*get_* and *set_* method of :py:class:`matplotlib.pyplot.Axes` or :py:class:`matplotlib.pyplot.Figure` can be read or 
+*get_* and *set_* method of :py:class:`matplotlib.pyplot.Axes` or :py:class:`matplotlib.pyplot.Figure` can be read or
 written as a :py:class:`Data` attribute.
 
-Internally this is implemented by calling the corresponding method on the current axes or fgiure of the :py:class:`Data` 
+Internally this is implemented by calling the corresponding method on the current axes or fgiure of the :py:class:`Data`
 instance. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
 keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
 element tuple.
@@ -243,8 +257,8 @@ Particualrly useful attributes include:
         header is used instead. If a column header is changed, then the :py:attr:`Data.labels` attribute will
         be overwritten.
 
-In addition, you can read any function of :py:mod:`matplotlib.pyplot`, or method of :py:class:`matplotlib.pyplot.Axes`, or 
-:py:class:`matplotlib.pyplot.Figure`  as an attribute of :py:class:`Data`. This allows one to call the methods directly on 
+In addition, you can read any function of :py:mod:`matplotlib.pyplot`, or method of :py:class:`matplotlib.pyplot.Axes`, or
+:py:class:`matplotlib.pyplot.Figure`  as an attribute of :py:class:`Data`. This allows one to call the methods directly on
 the Data instance without needing to extract a reference to the current axes or figure.::
 
     p.xlabel="My X Axis"
@@ -330,7 +344,7 @@ One-off changes in the template can also be done. The :py:class:`DefaultPlotStyl
 correspond to settings of the :py:class:`matplotlib.RcParams`. Reading the keys of the :py:class:`DefaultPlotStyle` returns the current settings,
 setting them changes the underlying :py:class:`matplotlib.RcParams` and deleting them resets the settings back to defaults. The
 :py:class:`DefaultPlotStyle` otherwise behaves like a standard mutable-mapping object, supporting the expected methods such as *get*, *pop*,
-*keys*, *values* etc. It is also possible to access the settings as attributes of the template except that they are prefixed with *template_* and 
+*keys*, *values* etc. It is also possible to access the settings as attributes of the template except that they are prefixed with *template_* and
 periods '.' are replced with double underscores '__'.
 
 .. plot:: samples/plotstyles/customising.py

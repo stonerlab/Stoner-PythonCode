@@ -1,4 +1,4 @@
-Stoner.formats.facilities.BNLFile
+﻿Stoner.formats.facilities.BNLFile
 =================================
 
 .. currentmodule:: Stoner.formats.facilities
@@ -75,6 +75,7 @@ Stoner.formats.facilities.BNLFile
       ~Stoner.formats.facilities.BNLFile.dims
       ~Stoner.formats.facilities.BNLFile.dtype
       ~Stoner.formats.facilities.BNLFile.filename
+      ~Stoner.formats.facilities.BNLFile.filepath
       ~Stoner.formats.facilities.BNLFile.header
       ~Stoner.formats.facilities.BNLFile.mask
       ~Stoner.formats.facilities.BNLFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.facilities.BNLFile
       ~Stoner.formats.facilities.BNLFile.records
       ~Stoner.formats.facilities.BNLFile.setas
       ~Stoner.formats.facilities.BNLFile.shape
-      ~Stoner.formats.facilities.BNLFile.subclasses
    
    

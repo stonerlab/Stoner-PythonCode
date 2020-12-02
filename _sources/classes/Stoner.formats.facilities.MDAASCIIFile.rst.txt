@@ -1,4 +1,4 @@
-Stoner.formats.facilities.MDAASCIIFile
+﻿Stoner.formats.facilities.MDAASCIIFile
 ======================================
 
 .. currentmodule:: Stoner.formats.facilities
@@ -75,6 +75,7 @@ Stoner.formats.facilities.MDAASCIIFile
       ~Stoner.formats.facilities.MDAASCIIFile.dims
       ~Stoner.formats.facilities.MDAASCIIFile.dtype
       ~Stoner.formats.facilities.MDAASCIIFile.filename
+      ~Stoner.formats.facilities.MDAASCIIFile.filepath
       ~Stoner.formats.facilities.MDAASCIIFile.header
       ~Stoner.formats.facilities.MDAASCIIFile.mask
       ~Stoner.formats.facilities.MDAASCIIFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.facilities.MDAASCIIFile
       ~Stoner.formats.facilities.MDAASCIIFile.records
       ~Stoner.formats.facilities.MDAASCIIFile.setas
       ~Stoner.formats.facilities.MDAASCIIFile.shape
-      ~Stoner.formats.facilities.MDAASCIIFile.subclasses
    
    

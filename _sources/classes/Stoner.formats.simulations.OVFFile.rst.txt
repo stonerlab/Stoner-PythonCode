@@ -1,4 +1,4 @@
-Stoner.formats.simulations.OVFFile
+﻿Stoner.formats.simulations.OVFFile
 ==================================
 
 .. currentmodule:: Stoner.formats.simulations
@@ -75,6 +75,7 @@ Stoner.formats.simulations.OVFFile
       ~Stoner.formats.simulations.OVFFile.dims
       ~Stoner.formats.simulations.OVFFile.dtype
       ~Stoner.formats.simulations.OVFFile.filename
+      ~Stoner.formats.simulations.OVFFile.filepath
       ~Stoner.formats.simulations.OVFFile.header
       ~Stoner.formats.simulations.OVFFile.mask
       ~Stoner.formats.simulations.OVFFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.simulations.OVFFile
       ~Stoner.formats.simulations.OVFFile.records
       ~Stoner.formats.simulations.OVFFile.setas
       ~Stoner.formats.simulations.OVFFile.shape
-      ~Stoner.formats.simulations.OVFFile.subclasses
    
    

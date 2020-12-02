@@ -1,29 +1,29 @@
-proxy
-=====
+MetadataProxy
+=============
 
 .. currentmodule:: Stoner.folders.metadata
 
-.. autoclass:: proxy
+.. autoclass:: MetadataProxy
    :show-inheritance:
 
    .. rubric:: Attributes Summary
 
    .. autosummary::
 
-      ~proxy.all
-      ~proxy.all_by_keys
-      ~proxy.common_keys
-      ~proxy.common_metadata
+      ~MetadataProxy.all
+      ~MetadataProxy.all_by_keys
+      ~MetadataProxy.common_keys
+      ~MetadataProxy.common_metadata
 
    .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~proxy.all_items
-      ~proxy.all_keys
-      ~proxy.all_values
-      ~proxy.apply
-      ~proxy.slice
+      ~MetadataProxy.all_items
+      ~MetadataProxy.all_keys
+      ~MetadataProxy.all_values
+      ~MetadataProxy.apply
+      ~MetadataProxy.slice
 
    .. rubric:: Attributes Documentation
 

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.outlier_detection &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.peaks" href="Stoner.Data.peaks.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-outlier-detection">
 <h1>Data.outlier_detection<a class="headerlink" href="#data-outlier-detection" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.outlier_detection">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">outlier_detection</code><span class="sig-paren">(</span><em class="sig-param">column=None</em>, <em class="sig-param">window=7</em>, <em class="sig-param">certainty=3.0</em>, <em class="sig-param">action='mask'</em>, <em class="sig-param">width=1</em>, <em class="sig-param">func=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.outlier_detection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">outlier_detection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">certainty</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">action</span><span class="o">=</span><span class="default_value">'mask'</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">func</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.outlier_detection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Detect outliers in a column of data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -68,16 +69,19 @@ defaults to the current y set column.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – data window for anomoly detection</p></li>
-<li><p><strong>certainty</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – eg 3 detects data 3 standard deviations from average</p></li>
-<li><p><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – what to do with outlying points, options are
+<li><p><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – data window for anomoly detection</p></li>
+<li><p><strong>certainty</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – eg 3 detects data 3 standard deviations from average</p></li>
+<li><p><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – what to do with outlying points, options are
 * ‘mask’ outlier points are masked (default)
 * ‘mask row’ outlier rows are masked
 * ‘delete’  outlier rows are deleted
 * callable  the value of the action keyword is called with the outlier row
 * anything else defaults to do nothing.</p></li>
 <li><p><strong>width</strong> (<em>odd integer</em>) – Number of rows that an outliing spike could occupy. Defaults to 1.</p></li>
-<li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – A function that determines if the current row is an outlier.</p></li>
+<li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – A function that determines if the current row is an outlier.</p></li>
+<li><p><strong>action_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – if <em>action</em> is callable, then action_args can be used to pass extra arguments to the action callable</p></li>
+<li><p><strong>action_kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – If <em>action</em> is callable, then action_kargs can be useed to pass extra keyword arguments to the action
+callable.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -98,26 +102,22 @@ data average.</p>
 </div>
 <p>All extra keyword arguments are passed to the outlier detector.</p>
 <p>IF <em>action</em> is a callable function then it should take the form of:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">action_args</span><span class="p">,</span> <span class="o">**</span><span class="n">action_kargs</span><span class="p">):</span>
     <span class="k">pass</span>
 </pre></div>
 </div>
 <p>where <em>i</em> is the number of the outlier row, <em>column</em> the same value as above
-and <em>row</em> is the data for the row.</p>
+and <em>data</em> is the complete set of data.</p>
 <p>In all cases the indices of the outlier rows are added to the ;outlier’ metadata.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Detect outlying points from a lione.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.utils</span> <span class="kn">import</span> <span class="n">poly_outlier</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">201</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">)</span>
-
 <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span>
 <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)),</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;raw data&quot;</span><span class="p">)</span>
 <span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">clone</span>
@@ -146,6 +146,7 @@ and <em>row</em> is the data for the row.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -203,9 +204,9 @@ and <em>row</em> is the data for the row.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

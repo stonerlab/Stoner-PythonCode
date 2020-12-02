@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.odr &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.outlier_detection" href="Stoner.Data.outlier_detection.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-odr">
 <h1>Data.odr<a class="headerlink" href="#data-odr" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.odr">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">odr</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.odr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">odr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.odr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap the scipy.odr orthogonal distance regression fitting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -73,25 +74,25 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – A vector of initial parameter values to try. See the notes to <a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> for
+<li><p><strong>p0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>, </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – A vector of initial parameter values to try. See the notes to <a class="reference internal" href="Stoner.Data.curve_fit.html#Stoner.Data.curve_fit" title="Stoner.Data.curve_fit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Data.curve_fit()</span></code></a> for
 more details.</p></li>
 <li><p><strong>sigma_x</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – The index of the column with the x-error bars</p></li>
 <li><p><strong>sigma_y</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – The index of the column with the x-error bars</p></li>
-<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</p></li>
-<li><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
+<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</p></li>
+<li><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Determines whether the fitted data should be added into the DataFile object. If result is True then
 the last column will be used. If result is a string or an integer then it is used as a column index.
 Default to None for not adding fitted data</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Inidcatesa whether the fitted data replaces existing data or is inserted as a new column
 (default False)</p></li>
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</p></li>
-<li><p><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</p></li>
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – If this is a string then it is used as the name of the fitted data. (default None)</p></li>
+<li><p><strong>output</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>default &quot;fit&quot;</em>) – Specifiy what to return.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><p><em>( various )</em> –</p>
 <dl>
 <dt>The return value is determined by the <em>output</em> parameter. Options are</dt><dd><ul>
-<li><p>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.4.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</p></li>
+<li><p>”fit”    just the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Output.html#scipy.odr.Output" title="(in SciPy v1.5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Output</span></code></a> instance (default)</p></li>
 <li><dl class="simple">
 <dt>”row”     just a one dimensional numpy array of the fit paraeters interleaved with their</dt><dd><p>uncertainties</p>
 </dd>
@@ -116,7 +117,7 @@ Default to None for not adding fitted data</p></li>
 <p>The function tries to make use of whatever model you give it. Specifically, it accepts:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.4.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the
+<li><p>A subclass or an instance of <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.odr.Model.html#scipy.odr.Model" title="(in SciPy v1.5.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.odr.Model</span></code></a> : this is the native model type for the
 underlying scipy odr package.</p></li>
 <li><p>A subclass or instance of an lmfit.models.Model: the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.analysis.fitting.models</span></code>
 package has a number of useful prebuilt lmfit models that can be used directly by this function.</p></li>
@@ -139,22 +140,16 @@ scip.odr stadnard f(beta,x)</p></li>
 </div>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Simple use of lmfit to fit data.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.utils</span> <span class="kn">import</span> <span class="n">errorfill</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">random</span>
-
 <span class="c1"># Make some data</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="mf">1.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">101</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">+=</span> <span class="o">+</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">101</span><span class="p">)</span>
-
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="s2">&quot;Signal&quot;</span><span class="p">],</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>  <span class="c1"># plot our data</span>
-
 <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">/</span> <span class="n">C</span><span class="p">)</span>
-
 <span class="c1"># Do the fitting and plot the result</span>
 <span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span>
@@ -166,27 +161,22 @@ scip.odr stadnard f(beta,x)</p></li>
     <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span>
     <span class="n">residuals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-
 <span class="c1"># Reset labels</span>
 <span class="n">d</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
-
 <span class="c1"># Make nice two panel plot layout</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x..y&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g+&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
 <span class="c1"># Plot up the data</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x.y&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">xticklabels</span> <span class="o">=</span> <span class="p">[[]]</span>
 <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
 <span class="c1"># Annotate plot with fitting parameters</span>
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
 <span class="n">text</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$y=A+Be^{-x/C}$&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
@@ -203,6 +193,7 @@ scip.odr stadnard f(beta,x)</p></li>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -260,9 +251,9 @@ scip.odr stadnard f(beta,x)</p></li>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>correct_drift &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="subtract_image" href="Stoner.Image.imagefuncs.subtract_image.html" />
@@ -54,9 +55,9 @@
             
   <div class="section" id="correct-drift">
 <h1>correct_drift<a class="headerlink" href="#correct-drift" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="Stoner.Image.imagefuncs.correct_drift">
-<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">correct_drift</code><span class="sig-paren">(</span><em class="sig-param">im</em>, <em class="sig-param">ref</em>, <em class="sig-param">threshold=0.005</em>, <em class="sig-param">upsample_factor=50</em>, <em class="sig-param">box=None</em>, <em class="sig-param">do_shift=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#correct_drift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.correct_drift" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">correct_drift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im</span></em>, <em class="sig-param"><span class="n">ref</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.005</span></em>, <em class="sig-param"><span class="n">upsample_factor</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">do_shift</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#correct_drift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.correct_drift" title="Permalink to this definition">¶</a></dt>
 <dd><p>Align images to correct for image drift.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -64,14 +65,14 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – threshold for detecting imperfections in images
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – threshold for detecting imperfections in images
 (see skimage.feature.corner_fast for details)</p></li>
-<li><p><strong>upsample_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – the resolution for the shift 1/upsample_factor pixels registered.
+<li><p><strong>upsample_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – the resolution for the shift 1/upsample_factor pixels registered.
 see skimage.feature.register_translation for more details</p></li>
 <li><p><strong>box</strong> (<em>sequence of 4 ints</em>) – defines a region of the image to use for identifyign the drift
 defaults to the whol image. Use this to avoid drift calculations being confused by
 the scale bar/annotation region.</p></li>
-<li><p><strong>do_shift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Shift the image, or just calculate the drift and store in metadata (default True, shit)</p></li>
+<li><p><strong>do_shift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Shift the image, or just calculate the drift and store in metadata (default True, shit)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -86,6 +87,7 @@ image back to it’s origin.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -140,9 +142,9 @@ image back to it’s origin.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

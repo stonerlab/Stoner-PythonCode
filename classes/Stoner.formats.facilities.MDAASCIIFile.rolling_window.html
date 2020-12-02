@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MDAASCIIFile.rolling_window &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="MDAASCIIFile.rows" href="Stoner.formats.facilities.MDAASCIIFile.rows.html" />
@@ -57,16 +58,16 @@
             
   <div class="section" id="mdaasciifile-rolling-window">
 <h1>MDAASCIIFile.rolling_window<a class="headerlink" href="#mdaasciifile-rolling-window" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.formats.facilities.MDAASCIIFile.rolling_window">
-<code class="sig-prename descclassname">MDAASCIIFile.</code><code class="sig-name descname">rolling_window</code><span class="sig-paren">(</span><em class="sig-param">window=7</em>, <em class="sig-param">wrap=True</em>, <em class="sig-param">exclude_centre=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.facilities.MDAASCIIFile.rolling_window" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">MDAASCIIFile.</code><code class="sig-name descname">rolling_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">wrap</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">exclude_centre</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.facilities.MDAASCIIFile.rolling_window" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate with a rolling window section of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Size of the rolling window (must be odd and &gt;= 3)</p></li>
-<li><p><strong>wrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Whether to use data from the other end of the array when at one end or the other.</p></li>
-<li><p><strong>exclude_centre</strong> (<em>odd int</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Exclude the ciurrent row from the rolling window (defaults to False)</p></li>
+<li><p><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Size of the rolling window (must be odd and &gt;= 3)</p></li>
+<li><p><strong>wrap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to use data from the other end of the array when at one end or the other.</p></li>
+<li><p><strong>exclude_centre</strong> (<em>odd int</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Exclude the ciurrent row from the rolling window (defaults to False)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -79,6 +80,7 @@ one row further on.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -136,9 +138,9 @@ one row further on.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

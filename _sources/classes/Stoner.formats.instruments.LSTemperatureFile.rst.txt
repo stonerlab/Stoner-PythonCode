@@ -1,4 +1,4 @@
-Stoner.formats.instruments.LSTemperatureFile
+﻿Stoner.formats.instruments.LSTemperatureFile
 ============================================
 
 .. currentmodule:: Stoner.formats.instruments
@@ -75,6 +75,7 @@ Stoner.formats.instruments.LSTemperatureFile
       ~Stoner.formats.instruments.LSTemperatureFile.dims
       ~Stoner.formats.instruments.LSTemperatureFile.dtype
       ~Stoner.formats.instruments.LSTemperatureFile.filename
+      ~Stoner.formats.instruments.LSTemperatureFile.filepath
       ~Stoner.formats.instruments.LSTemperatureFile.header
       ~Stoner.formats.instruments.LSTemperatureFile.mask
       ~Stoner.formats.instruments.LSTemperatureFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.instruments.LSTemperatureFile
       ~Stoner.formats.instruments.LSTemperatureFile.records
       ~Stoner.formats.instruments.LSTemperatureFile.setas
       ~Stoner.formats.instruments.LSTemperatureFile.shape
-      ~Stoner.formats.instruments.LSTemperatureFile.subclasses
    
    

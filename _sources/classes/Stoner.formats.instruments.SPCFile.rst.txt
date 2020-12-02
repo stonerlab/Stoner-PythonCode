@@ -1,4 +1,4 @@
-Stoner.formats.instruments.SPCFile
+﻿Stoner.formats.instruments.SPCFile
 ==================================
 
 .. currentmodule:: Stoner.formats.instruments
@@ -75,6 +75,7 @@ Stoner.formats.instruments.SPCFile
       ~Stoner.formats.instruments.SPCFile.dims
       ~Stoner.formats.instruments.SPCFile.dtype
       ~Stoner.formats.instruments.SPCFile.filename
+      ~Stoner.formats.instruments.SPCFile.filepath
       ~Stoner.formats.instruments.SPCFile.header
       ~Stoner.formats.instruments.SPCFile.mask
       ~Stoner.formats.instruments.SPCFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.instruments.SPCFile
       ~Stoner.formats.instruments.SPCFile.records
       ~Stoner.formats.instruments.SPCFile.setas
       ~Stoner.formats.instruments.SPCFile.shape
-      ~Stoner.formats.instruments.SPCFile.subclasses
    
    

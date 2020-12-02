@@ -17,8 +17,8 @@
    :target: http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg
-   :target: https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode
+.. image:: https://zenodo.org/badge/10057055.svg
+   :target: https://zenodo.org/badge/latestdoi/10057055
 
 
 Introduction
@@ -171,7 +171,10 @@ features at this time. Better integration with pandas and xarray are under consi
 
 New Features in 0.10-dev include:
 
-    *   Continued refactoring of code to break large monolithic classes and modules into smaller parts
+    *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
+    * Start implementing PEP484 Type hinting
+    *   Support pathlib for paths
+    *   Switch from Tk based dialogs to Qt5 ones
     *   Refactoring the **baseFolder** class so that sub-groups are stored in an attribute that is an instance of a custom
         dictionary with methods to prune and filter in the virtual tree of sub-folders.
 

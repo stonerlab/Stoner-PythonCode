@@ -1,4 +1,4 @@
-Stoner.Data
+﻿Stoner.Data
 ===========
 
 .. currentmodule:: Stoner
@@ -71,6 +71,7 @@ Stoner.Data
       ~Stoner.Data.peaks
       ~Stoner.Data.plot
       ~Stoner.Data.plot_matrix
+      ~Stoner.Data.plot_voxels
       ~Stoner.Data.plot_xy
       ~Stoner.Data.plot_xyuv
       ~Stoner.Data.plot_xyuvw
@@ -134,6 +135,7 @@ Stoner.Data
       ~Stoner.Data.fig
       ~Stoner.Data.fignum
       ~Stoner.Data.filename
+      ~Stoner.Data.filepath
       ~Stoner.Data.header
       ~Stoner.Data.labels
       ~Stoner.Data.mask
@@ -148,7 +150,6 @@ Stoner.Data
       ~Stoner.Data.setas
       ~Stoner.Data.shape
       ~Stoner.Data.showfig
-      ~Stoner.Data.subclasses
       ~Stoner.Data.subplots
       ~Stoner.Data.template
    

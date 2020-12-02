@@ -1,4 +1,4 @@
-Stoner.Image.ImageFolder
+﻿Stoner.Image.ImageFolder
 ========================
 
 .. currentmodule:: Stoner.Image
@@ -42,7 +42,6 @@ Stoner.Image.ImageFolder
       ~Stoner.Image.ImageFolder.loadgroup
       ~Stoner.Image.ImageFolder.make_name
       ~Stoner.Image.ImageFolder.mean
-      ~Stoner.Image.ImageFolder.next
       ~Stoner.Image.ImageFolder.on_load_process
       ~Stoner.Image.ImageFolder.pop
       ~Stoner.Image.ImageFolder.popitem

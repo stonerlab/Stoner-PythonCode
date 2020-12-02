@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.Analysis &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -43,8 +44,7 @@
           <div class="body" role="main">
             
   <h1>Source code for Stoner.Analysis</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Stoner .Analysis provides a subclass of :class:`.Data` that has extra analysis routines builtin.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Stoner .Analysis provides a subclass of :class:`.Data` that has extra analysis routines builtin.&quot;&quot;&quot;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AnalysisMixin&quot;</span><span class="p">,</span> <span class="s2">&quot;GetAffineTransform&quot;</span><span class="p">,</span> <span class="s2">&quot;ApplyAffineTransform&quot;</span><span class="p">]</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getfullargspec</span>
@@ -67,15 +67,15 @@
     <span class="sd">&quot;&quot;&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Handles the local attributes as well as the inherited ones&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Handle the local attributes as well as the inherited ones.&quot;&quot;&quot;</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">AnalysisMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">())</span>
+        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">())</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AnalysisMixin.apply"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Applies the given function to each row in the data set and adds to the data set.</span>
+        <span class="sd">&quot;&quot;&quot;Apply the given function to each row in the data set and adds to the data set.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            func (callable):</span>
@@ -133,7 +133,7 @@
         <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">header</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
-            <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">replace</span><span class="p">:</span>
@@ -327,7 +327,6 @@
 <span class="sd">                The newly modified Data object.</span>
 
 <span class="sd">        Notes:</span>
-
 <span class="sd">            The *limits* parameter is used to set the input scale being normalised from - if the data has a few</span>
 <span class="sd">            outliers then this setting can be used to clip the input range before normalising. The parameters in</span>
 <span class="sd">            the limit are the values at the *low* and *high* fractions of the cumulative distribution function of</span>
@@ -489,7 +488,7 @@
         <span class="n">assertion</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">set1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">set2</span><span class="p">),</span> <span class="s2">&quot;The number of points in the overlap are different in the two data sets&quot;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">set1</span><span class="p">,</span> <span class="o">*</span><span class="n">p</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Wrapper function to fit for transform.&quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;Construct the wrapper function to fit for transform.&quot;&quot;&quot;</span>
             <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">set1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">set1</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">set1</span><span class="p">[</span><span class="n">m</span><span class="p">:]</span>
@@ -508,7 +507,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="AnalysisMixin.threshold"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin.threshold">[docs]</a>    <span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Finds partial indices where the data in column passes the threshold, rising or falling.</span>
+        <span class="sd">&quot;&quot;&quot;Find partial indices where the data in column passes the threshold, rising or falling.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            threshold (float):</span>
@@ -614,6 +613,7 @@
         <span class="k">return</span> <span class="n">ret</span></div></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -647,9 +647,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

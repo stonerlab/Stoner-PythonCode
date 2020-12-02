@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.plot.formats &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -44,8 +45,7 @@
             
   <h1>Source code for Stoner.plot.formats</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Plot Templates module - contains classes that style plots produced by :class:`.Data`.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Plot Templates module - contains classes that style plots produced by :class:`.Data`.&quot;&quot;&quot;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;TexFormatter&quot;</span><span class="p">,</span>
@@ -282,7 +282,7 @@
             <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>
                 <span class="n">nk</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">k</span><span class="p">[:</span><span class="mi">9</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">nk</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
-                    <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">nk</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">nk</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
                     <span class="bp">self</span><span class="p">[</span><span class="n">nk</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">_add_dots</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span><span class="p">})</span></div>
@@ -297,7 +297,7 @@
             <span class="k">del</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delattr__</span><span class="p">(</span><span class="n">_remove_dots</span><span class="p">(</span><span class="s2">&quot;template_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delattr__</span><span class="p">(</span><span class="n">_remove_dots</span><span class="p">(</span><span class="s2">&quot;template_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
@@ -310,7 +310,7 @@
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;template attribute not in rcParams&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;showlegend&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_legend</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to match *name* to a style setting.&quot;&quot;&quot;</span>
@@ -341,9 +341,9 @@
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;template_&quot;</span><span class="p">):</span>
             <span class="n">attrname</span> <span class="o">=</span> <span class="n">_add_dots</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">9</span><span class="p">:])</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">attrname</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set a stylesheet setting by *name*.&quot;&quot;&quot;</span>
@@ -353,7 +353,7 @@
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">_remove_dots</span><span class="p">(</span><span class="s2">&quot;template_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-                <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not recognised as part of the template&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
@@ -431,7 +431,7 @@
 <span class="sd">        may be specified, with .&#39;s replaced with _ and )_ replaced with __.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span>
                 <span class="s2">&quot;Only one posotional argument which should be a Mapping subclass can be supplied toi update.&quot;</span>
@@ -604,7 +604,7 @@
 
 <div class="viewcode-block" id="GBPlotStyle.customise_axes"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.GBPlotStyle.html#Stoner.plot.formats.GBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override the default axis configuration.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GBPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
@@ -656,7 +656,7 @@
 
     <span class="sd">&quot;&quot;&quot;A figure Style for making figures for Phys Rev * Jounrals.</span>
 
-<span class="sd">    Example</span>
+<span class="sd">    Example:</span>
 <span class="sd">        .. plot:: samples/plotstyles/PRBStyle.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: prbstyle</span>
@@ -677,7 +677,7 @@
 <span class="sd">    Implemented as a bit of a joke, but perhaps someone will use this in a real</span>
 <span class="sd">    presentation one day ?</span>
 
-<span class="sd">    Example</span>
+<span class="sd">    Example:</span>
 <span class="sd">        .. plot:: samples/plotstyles/SketchStyle.py</span>
 <span class="sd">            :include-source:</span>
 <span class="sd">            :outname: sketchstyle</span>
@@ -691,7 +691,7 @@
 
 <div class="viewcode-block" id="SketchPlot.customise_axes"><a class="viewcode-back" href="../../../classes/Stoner.plot.formats.SketchPlot.html#Stoner.plot.formats.SketchPlot.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override the default axis configuration.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SketchPlot</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">plot</span><span class="o">.</span><span class="n">multiple</span> <span class="o">==</span> <span class="s2">&quot;y2&quot;</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -756,12 +756,9 @@
         <span class="nd">@palette</span><span class="o">.</span><span class="n">setter</span>
         <span class="k">def</span> <span class="nf">palette</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Force palette to take allowed values.&quot;&quot;&quot;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-                    <span class="k">pass</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_palette</span> <span class="o">=</span> <span class="n">name</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">e</span>
+            <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_palette</span> <span class="o">=</span> <span class="n">name</span>
 
         <span class="nd">@property</span>
         <span class="k">def</span> <span class="nf">stylename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -788,6 +785,7 @@
     <span class="n">SeabornPlotStyle</span> <span class="o">=</span> <span class="n">DefaultPlotStyle</span>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -821,9 +819,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

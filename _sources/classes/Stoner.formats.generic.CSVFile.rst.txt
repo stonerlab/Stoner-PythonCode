@@ -1,4 +1,4 @@
-Stoner.formats.generic.CSVFile
+﻿Stoner.formats.generic.CSVFile
 ==============================
 
 .. currentmodule:: Stoner.formats.generic
@@ -75,6 +75,7 @@ Stoner.formats.generic.CSVFile
       ~Stoner.formats.generic.CSVFile.dims
       ~Stoner.formats.generic.CSVFile.dtype
       ~Stoner.formats.generic.CSVFile.filename
+      ~Stoner.formats.generic.CSVFile.filepath
       ~Stoner.formats.generic.CSVFile.header
       ~Stoner.formats.generic.CSVFile.mask
       ~Stoner.formats.generic.CSVFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.generic.CSVFile
       ~Stoner.formats.generic.CSVFile.records
       ~Stoner.formats.generic.CSVFile.setas
       ~Stoner.formats.generic.CSVFile.shape
-      ~Stoner.formats.generic.CSVFile.subclasses
    
    

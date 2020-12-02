@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.plot_xyz &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.plot_xyzuvw" href="Stoner.Data.plot_xyzuvw.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-plot-xyz">
 <h1>Data.plot_xyz<a class="headerlink" href="#data-plot-xyz" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.plot_xyz">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">plot_xyz</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">zcol=None</em>, <em class="sig-param">shape=None</em>, <em class="sig-param">xlim=None</em>, <em class="sig-param">ylim=None</em>, <em class="sig-param">projection='3d'</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.plot_xyz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">plot_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">zcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shape</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">projection</span><span class="o">=</span><span class="default_value">'3d'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.plot_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -71,22 +72,22 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then
+<li><p><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then
 the routine will attempt to calculate
 these from the data provided</p></li>
-<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Defines the x-axis limits and grid of the data to be plotted</p></li>
-<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a>) – Defines the Y-axis limits and grid of the data data to be plotted</p></li>
+<li><p><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – Defines the x-axis limits and grid of the data to be plotted</p></li>
+<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a>) – Defines the Y-axis limits and grid of the data data to be plotted</p></li>
 <li><p><strong>cmap</strong> (<em>matplotlib colour map</em>) – Surface colour map - defaults to the jet colour map</p></li>
-<li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – True Turns on interactive plot control</p></li>
-<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</p></li>
-<li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – Filename used to save the plot</p></li>
+<li><p><strong>show_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – True Turns on interactive plot control</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a>) – Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</p></li>
+<li><p><strong>save_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a>) – Filename used to save the plot</p></li>
 <li><p><strong>figure</strong> (<em>matplotlib figure</em>) – Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If
 False then a new figure is always used, otherwise it will default to using the last figure used
 by this DataFile object.</p></li>
-<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface
+<li><p><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – Optional arguement that passes a plotting function into the routine. Default is a 3d surface
 plotter, but contour plot and pcolormesh also work.</p></li>
-<li><p><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Whether to use a 3D projection or regular 2D axes (deault is 3D)</p></li>
-<li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
+<li><p><strong>projection</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – Whether to use a 3D projection or regular 2D axes (deault is 3D)</p></li>
+<li><p><strong>**kargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – A dictionary of other keyword arguments to pass into the plot function.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -98,6 +99,7 @@ plotter, but contour plot and pcolormesh also work.</p></li>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -155,9 +157,9 @@ plotter, but contour plot and pcolormesh also work.</p></li>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

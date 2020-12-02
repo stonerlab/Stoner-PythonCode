@@ -1,4 +1,4 @@
-Stoner.formats.generic.KermitPNGFile
+﻿Stoner.formats.generic.KermitPNGFile
 ====================================
 
 .. currentmodule:: Stoner.formats.generic
@@ -75,6 +75,7 @@ Stoner.formats.generic.KermitPNGFile
       ~Stoner.formats.generic.KermitPNGFile.dims
       ~Stoner.formats.generic.KermitPNGFile.dtype
       ~Stoner.formats.generic.KermitPNGFile.filename
+      ~Stoner.formats.generic.KermitPNGFile.filepath
       ~Stoner.formats.generic.KermitPNGFile.header
       ~Stoner.formats.generic.KermitPNGFile.mask
       ~Stoner.formats.generic.KermitPNGFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.generic.KermitPNGFile
       ~Stoner.formats.generic.KermitPNGFile.records
       ~Stoner.formats.generic.KermitPNGFile.setas
       ~Stoner.formats.generic.KermitPNGFile.shape
-      ~Stoner.formats.generic.KermitPNGFile.subclasses
    
    

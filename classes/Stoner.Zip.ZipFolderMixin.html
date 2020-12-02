@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZipFolderMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ZipFolder" href="Stoner.Zip.ZipFolder.html" />
@@ -54,10 +55,10 @@
             
   <div class="section" id="zipfoldermixin">
 <h1>ZipFolderMixin<a class="headerlink" href="#zipfoldermixin" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.Zip.ZipFolderMixin">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.Zip.</code><code class="sig-name descname">ZipFolderMixin</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.Zip.</code><code class="sig-name descname">ZipFolderMixin</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Provides methods to load and save data from a single Zip file.</p>
 <p>See <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Folders.DataFolder</span></code></a> for documentation on constructor.</p>
 <div class="admonition note">
@@ -96,32 +97,32 @@ provides a __setter__ method without causing a problem.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Zip.ZipFolderMixin.full_key">
 <code class="sig-name descname">full_key</code><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.full_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a full canonical path through the zip archive to this file.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Zip.ZipFolderMixin.key">
 <code class="sig-name descname">key</code><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the immediate filename of the stored file.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Zip.ZipFolderMixin.getlist">
-<code class="sig-name descname">getlist</code><span class="sig-paren">(</span><em class="sig-param">recursive=None</em>, <em class="sig-param">directory=None</em>, <em class="sig-param">flatten=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getlist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recursive</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">directory</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">flatten</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.getlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the Zip File to construct a list of ZipFile objects.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Zip.ZipFolderMixin.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">root=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">root</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFolderMixin.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFolderMixin.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a load of files to a single Zip file, creating members as it goes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The name of the Zip file to save to if set to None, will prompt for a filename.</p>
+<dd class="field-odd"><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a>) – The name of the Zip file to save to if set to None, will prompt for a filename.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of group paths in the Zip file</p>
@@ -134,6 +135,7 @@ provides a __setter__ method without causing a problem.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -188,9 +190,9 @@ provides a __setter__ method without causing a problem.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

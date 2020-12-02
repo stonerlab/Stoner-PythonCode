@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SLS_STXMFile &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="STXMImage" href="Stoner.HDF5.STXMImage.html" />
@@ -54,9 +55,9 @@
             
   <div class="section" id="sls-stxmfile">
 <h1>SLS_STXMFile<a class="headerlink" href="#sls-stxmfile" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.HDF5.SLS_STXMFile">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.HDF5.</code><code class="sig-name descname">SLS_STXMFile</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#SLS_STXMFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.HDF5.</code><code class="sig-name descname">SLS_STXMFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#SLS_STXMFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a></p>
 <p>Load images from the Swiss Light Source Pollux beamline.</p>
 <p class="rubric">Attributes Summary</p>
@@ -96,35 +97,35 @@
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.HDF5.SLS_STXMFile.compression">
 <code class="sig-name descname">compression</code><em class="property"> = 'gzip'</em><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile.compression" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.HDF5.SLS_STXMFile.compression_opts">
 <code class="sig-name descname">compression_opts</code><em class="property"> = 6</em><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile.compression_opts" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.HDF5.SLS_STXMFile.mime_type">
 <code class="sig-name descname">mime_type</code><em class="property"> = ['application/x-hdf']</em><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile.mime_type" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.HDF5.SLS_STXMFile.patterns">
 <code class="sig-name descname">patterns</code><em class="property"> = ['*.hdf']</em><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile.patterns" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.HDF5.SLS_STXMFile.priority">
 <code class="sig-name descname">priority</code><em class="property"> = 16</em><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile.priority" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.HDF5.SLS_STXMFile.scan_meta">
-<code class="sig-name descname">scan_meta</code><span class="sig-paren">(</span><em class="sig-param">group</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#SLS_STXMFile.scan_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile.scan_meta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">scan_meta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">group</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#SLS_STXMFile.scan_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.SLS_STXMFile.scan_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata.</p>
 </dd></dl>
 
@@ -133,6 +134,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -187,9 +189,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

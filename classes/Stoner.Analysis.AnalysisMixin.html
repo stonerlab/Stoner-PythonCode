@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AnalysisMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="odr_Model" href="Stoner.analysis.fitting.odr_Model.html" />
@@ -54,10 +55,10 @@
             
   <div class="section" id="analysismixin">
 <h1>AnalysisMixin<a class="headerlink" href="#analysismixin" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.Analysis.AnalysisMixin">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.Analysis.</code><code class="sig-name descname">AnalysisMixin</code><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A mixin calss designed to work with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a> to provide additional analysis methods.</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
@@ -67,7 +68,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.apply" title="Stoner.Analysis.AnalysisMixin.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a>(func[, col, replace, header])</p></td>
-<td><p>Applies the given function to each row in the data set and adds to the data set.</p></td>
+<td><p>Apply the given function to each row in the data set and adds to the data set.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.clip" title="Stoner.Analysis.AnalysisMixin.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>(clipper[, column])</p></td>
 <td><p>Clips the data based on the column and the clipper value.</p></td>
@@ -85,15 +86,15 @@
 <td><p>Apply a scaling to this data set to make it stich to another dataset.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Analysis.AnalysisMixin.threshold" title="Stoner.Analysis.AnalysisMixin.threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold</span></code></a>(threshold, **kargs)</p></td>
-<td><p>Finds partial indices where the data in column passes the threshold, rising or falling.</p></td>
+<td><p>Find partial indices where the data in column passes the threshold, rising or falling.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Analysis.AnalysisMixin.apply">
-<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">col=None</em>, <em class="sig-param">replace=True</em>, <em class="sig-param">header=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies the given function to each row in the data set and adds to the data set.</p>
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">col</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replace</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the given function to each row in the data set and adds to the data set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -103,8 +104,8 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Either replace the existing column/complete data or create a new column or data file.</p></li>
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The new column header(s) (defaults to the name of the function func</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Either replace the existing column/complete data or create a new column or data file.</p></li>
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – The new column header(s) (defaults to the name of the function func</p></li>
 </ul>
 </dd>
 </dl>
@@ -130,9 +131,9 @@ column headers for the new data file.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Analysis.AnalysisMixin.clip">
-<code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param">clipper</em>, <em class="sig-param">column=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.clip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.clip" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clipper</span></em>, <em class="sig-param"><span class="n">column</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.clip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.clip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clips the data based on the column and the clipper value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -154,9 +155,9 @@ assignments are used.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Analysis.AnalysisMixin.decompose">
-<code class="sig-name descname">decompose</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">sym=None</em>, <em class="sig-param">asym=None</em>, <em class="sig-param">replace=True</em>, <em class="sig-param">**kwords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.decompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.decompose" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">decompose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sym</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">asym</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replace</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwords</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.decompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.decompose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
@@ -165,7 +166,7 @@ assignments are used.</p>
 <li><p><strong>ycol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><em>list of indices</em>) – indices of y column(s) data</p></li>
 <li><p><strong>sym</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Index of column to place symmetric data in default, append to end of data</p></li>
 <li><p><strong>asym</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Index of column for asymmetric part of ata. Defaults to appending to end of data</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Overwrite data with output (true)</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Overwrite data with output (true)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -174,11 +175,9 @@ assignments are used.</p>
 </dl>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Decompose Into symmetric and antisymmetric parts example.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">format_val</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">reshape</span><span class="p">,</span> <span class="n">array</span>
-
 <span class="n">x</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">201</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">11</span> <span class="o">*</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">20</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">])</span>
@@ -205,7 +204,7 @@ assignments are used.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Analysis.AnalysisMixin.integrate">
 <code class="sig-name descname">integrate</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">result=None</em>, <em class="sig-param">header=None</em>, <em class="sig-param">result_name=None</em>, <em class="sig-param">output='data'</em>, <em class="sig-param">bounds=&lt;function AnalysisMixin.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.integrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.integrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inegrate a column of data, optionally returning the cumulative integral.</p>
@@ -219,12 +218,12 @@ assignments are used.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>result</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
+<li><p><strong>result</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
 or True to add a new column or None to not store the cumulative result.</p></li>
-<li><p><strong>result_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The metadata name for the final result</p></li>
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The name of the header for the results column.</p></li>
+<li><p><strong>result_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The metadata name for the final result</p></li>
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The name of the header for the results column.</p></li>
 <li><p><strong>output</strong> (<em>Str</em>) – What to return - ‘data’ (default) - this object, ‘result’: final result</p></li>
-<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – A function that evaluates for each row to determine if the data should be integrated over.</p></li>
+<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – A function that evaluates for each row to determine if the data should be integrated over.</p></li>
 <li><p><strong>**kargs</strong> – Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method</p></li>
 </ul>
 </dd>
@@ -241,9 +240,9 @@ of data. If xcol or ycol are not specified then the current values from the
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Analysis.AnalysisMixin.normalise">
-<code class="sig-name descname">normalise</code><span class="sig-paren">(</span><em class="sig-param">target=None</em>, <em class="sig-param">base=None</em>, <em class="sig-param">replace=True</em>, <em class="sig-param">header=None</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">limits=(0.0</em>, <em class="sig-param">1.0)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.normalise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">normalise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replace</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scale</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">limits</span><span class="o">=</span><span class="default_value">0.0, 1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.normalise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.normalise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalise data columns by dividing through by a base column value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -254,10 +253,10 @@ If None then the default ‘y’ column is used.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>base</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – The column to normalise to, can be an integer or string. <strong>Depricated</strong> can also be a tuple (low,
 high) being the output range</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Set True(default) to overwrite  the target data columns</p></li>
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The new column header - default is target name(norm)</p></li>
-<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>tuple of float</em><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Output range after normalising - low,high or None to map to -1,1</p></li>
-<li><p><strong>limits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – (low,high) - Take the input range from the <em>high</em> and <em>low</em> fraction of the input when sorted.</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Set True(default) to overwrite  the target data columns</p></li>
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – The new column header - default is target name(norm)</p></li>
+<li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em> or </em><em>tuple of float</em><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Output range after normalising - low,high or None to map to -1,1</p></li>
+<li><p><strong>limits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – (low,high) - Take the input range from the <em>high</em> and <em>low</em> fraction of the input when sorted.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -271,9 +270,9 @@ the limit are the values at the <em>low</em> and <em>high</em> fractions of the 
 the data.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Analysis.AnalysisMixin.stitch">
-<code class="sig-name descname">stitch</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">overlap=None</em>, <em class="sig-param">min_overlap=0.0</em>, <em class="sig-param">mode='All'</em>, <em class="sig-param">func=None</em>, <em class="sig-param">p0=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.stitch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.stitch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stitch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_overlap</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'All'</span></em>, <em class="sig-param"><span class="n">func</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">p0</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.stitch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.stitch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a scaling to this data set to make it stich to another dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -284,13 +283,13 @@ the data.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
+<li><p><strong>overlap</strong> (<em>tuple of</em><em> (</em><em>lower</em><em>,</em><em>higher</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – The band of x values that are used in both data sets to match,
 if left as None, thenthe common overlap of the x data is used.</p></li>
-<li><p><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
+<li><p><strong>min_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – If you know that overlap must be bigger than a certain amount, the bounds between the two
 data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap
 on this DataFile.</p></li>
-<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</p></li>
-<li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</p></li>
+<li><p><strong>func</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – a stitching function that transforms <span class="math notranslate nohighlight">\((x,y)\rightarrow(x',y')\)</span>. Default is to use
 functions defined by <em>mode</em></p></li>
 <li><p><strong>p0</strong> (<em>iterable</em>) – if func is not None then p0 should be the starting values for the stitching function parameters</p></li>
 </ul>
@@ -320,10 +319,10 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Analysis.AnalysisMixin.threshold">
-<code class="sig-name descname">threshold</code><span class="sig-paren">(</span><em class="sig-param">threshold</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds partial indices where the data in column passes the threshold, rising or falling.</p>
+<code class="sig-name descname">threshold</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">threshold</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find partial indices where the data in column passes the threshold, rising or falling.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>threshold</strong> (<em>float</em>) – Value to look for in column col</p>
@@ -331,14 +330,14 @@ numbers of <span class="math notranslate nohighlight">\((x,y)\)</span> points <e
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>col</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a>) – Column index to look for data in</p></li>
-<li><p><strong>rising</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – look for case where the data is increasing in value (defaukt True)</p></li>
-<li><p><strong>falling</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – look for case where data is fallinh in value (default False)</p></li>
-<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – rather than returning a fractional row index, return the
+<li><p><strong>rising</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – look for case where the data is increasing in value (defaukt True)</p></li>
+<li><p><strong>falling</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – look for case where data is fallinh in value (default False)</p></li>
+<li><p><strong>xcol</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – rather than returning a fractional row index, return the
 interpolated value in column xcol. If xcol is False, then return a complete row
 all_vals (bool): return all crossing points of the threshold or just the first. (default False)</p></li>
 <li><p><strong>transpose</strong> (<em>bbool</em>) – Swap the x and y columns around - this is most useful when the column assignments
 have been done via the setas attribute</p></li>
-<li><p><strong>all_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Return all values that match the criteria, or just the first in the file.</p></li>
+<li><p><strong>all_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Return all values that match the criteria, or just the first in the file.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -363,6 +362,7 @@ present order.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -417,9 +417,9 @@ present order.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

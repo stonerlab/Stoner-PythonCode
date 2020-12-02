@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>setas &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="assertion" href="Stoner.core.exceptions.assertion.html" />
@@ -54,10 +55,10 @@
             
   <div class="section" id="setas">
 <h1>setas<a class="headerlink" href="#setas" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.core.setas.setas">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.core.setas.</code><code class="sig-name descname">setas</code><span class="sig-paren">(</span><em class="sig-param">row=False</em>, <em class="sig-param">bless=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.core.setas.</code><code class="sig-name descname">setas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">row</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bless</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></a></p>
 <p>A Class that provides a mechanism for managing the column assignments in a DataFile like object.</p>
 <p>Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).</p>
 <div class="admonition note">
@@ -73,9 +74,9 @@ setas(x=”column_1”,y=3,column4=”z”)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>_self</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
+<li><p><strong>_self</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
 return None</p></li>
-<li><p><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
+<li><p><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
 assignments before setting new ones (default).</p></li>
 </ul>
 </dd>
@@ -96,25 +97,28 @@ assignments before setting new ones (default).</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.column_headers" title="Stoner.core.setas.setas.column_headers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">column_headers</span></code></a></p></td>
 <td><p>Get the current column headers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.not_set" title="Stoner.core.setas.setas.not_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">not_set</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.empty" title="Stoner.core.setas.setas.empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code></a></p></td>
+<td><p>Determine if any columns are set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.not_set" title="Stoner.core.setas.setas.not_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">not_set</span></code></a></p></td>
 <td><p>Return a boolean array if not set.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.set" title="Stoner.core.setas.setas.set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.set" title="Stoner.core.setas.setas.set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></p></td>
 <td><p>Return a boolean array if column is set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.setas" title="Stoner.core.setas.setas.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.setas" title="Stoner.core.setas.setas.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
 <td><p>Guard the setas attribute.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.shape" title="Stoner.core.setas.setas.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.shape" title="Stoner.core.setas.setas.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Return the shape of the array that we think we are.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
 <td><p>Quick access to the x column number.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
 <td><p>Quick access to the y column numbers list.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.z" title="Stoner.core.setas.setas.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.core.setas.setas.z" title="Stoner.core.setas.setas.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
 <td><p>Quick access to the z column numbers list.</p></td>
 </tr>
 </tbody>
@@ -174,49 +178,55 @@ assignments before setting new ones (default).</p></li>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.clone">
 <code class="sig-name descname">clone</code><a class="headerlink" href="#Stoner.core.setas.setas.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an exact copy of the current object.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.cols">
 <code class="sig-name descname">cols</code><a class="headerlink" href="#Stoner.core.setas.setas.cols" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the current column assignments.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.column_headers">
 <code class="sig-name descname">column_headers</code><a class="headerlink" href="#Stoner.core.setas.setas.column_headers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the current column headers.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
+<dt id="Stoner.core.setas.setas.empty">
+<code class="sig-name descname">empty</code><a class="headerlink" href="#Stoner.core.setas.setas.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if any columns are set.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.not_set">
 <code class="sig-name descname">not_set</code><a class="headerlink" href="#Stoner.core.setas.setas.not_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a boolean array if not set.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.set">
 <code class="sig-name descname">set</code><a class="headerlink" href="#Stoner.core.setas.setas.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a boolean array if column is set.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.setas">
 <code class="sig-name descname">setas</code><a class="headerlink" href="#Stoner.core.setas.setas.setas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Guard the setas attribute.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.shape">
 <code class="sig-name descname">shape</code><a class="headerlink" href="#Stoner.core.setas.setas.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the shape of the array that we think we are.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.x">
 <code class="sig-name descname">x</code><a class="headerlink" href="#Stoner.core.setas.setas.x" title="Permalink to this definition">¶</a></dt>
 <dd><p>Quick access to the x column number.</p>
@@ -225,22 +235,22 @@ value we should use the setas(x=1,y=2) style call (so that reset can
 be handled properly)</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.y">
 <code class="sig-name descname">y</code><a class="headerlink" href="#Stoner.core.setas.setas.y" title="Permalink to this definition">¶</a></dt>
 <dd><p>Quick access to the y column numbers list.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.core.setas.setas.z">
 <code class="sig-name descname">z</code><a class="headerlink" href="#Stoner.core.setas.setas.z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Quick access to the z column numbers list.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Treat the current instance as a callable object and assign columns accordingly.</p>
 <p>Variois forms of this method are accepted:</p>
 <p>setas(“xyzuvw”)
@@ -249,16 +259,16 @@ setas(x=”column_1”,y=3,column4=”z”)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>_self</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
+<li><p><strong>_self</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
 return None. Default - <strong>False</strong></p></li>
-<li><p><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If False then preserve the existing set columns and simply add the new ones. Otherwise, clear
+<li><p><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If False then preserve the existing set columns and simply add the new ones. Otherwise, clear
 all column assignments before setting new ones (default).</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.clear">
 <code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear the current setas attrbute.</p>
@@ -266,9 +276,9 @@ all column assignments before setting new ones (default).</p></li>
 <p>Equivalent to doing <a class="reference internal" href="#Stoner.core.setas.setas.unset" title="Stoner.core.setas.setas.unset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setas.unset()</span></code></a> with no argument.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.find_col">
-<code class="sig-name descname">find_col</code><span class="sig-paren">(</span><em class="sig-param">col</em>, <em class="sig-param">force_list=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.find_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.find_col" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">find_col</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">col</span></em>, <em class="sig-param"><span class="n">force_list</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.find_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.find_col" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indexes the column headers in order to locate a column of data.shape.</p>
 <p>Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.</p>
 <ul class="simple">
@@ -288,7 +298,7 @@ in turn.</p></li>
 <dd class="field-odd"><p><strong>col</strong> (<em>int, a string, a re, a slice or a list</em>) – Which column(s) to retuirn indices for.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>force_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Force the output always to be a list. Mainly for internal use only</p>
+<dd class="field-even"><p><strong>force_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Force the output always to be a list. Mainly for internal use only</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The matching column index as an integer or a KeyError</p>
@@ -296,45 +306,45 @@ in turn.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implement a get method.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.items">
 <code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.items" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access mapping items.</p>
 <p>Mapping items iterates over keys and values.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.keys">
 <code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acess mapping keys.</p>
 <p>Mapping keys are the same as iterating over the unique headers</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.pop">
-<code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.pop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">pop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.pop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implement a get method.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.popitem">
 <code class="sig-name descname">popitem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.popitem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.popitem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return and clear a column assignment.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.setdefault">
-<code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.setdefault" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setdefault</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.setdefault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.setdefault" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implement a setdefault method.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.to_dict">
 <code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the setas attribute as a dictionary.</p>
@@ -342,22 +352,22 @@ in turn.</p></li>
 returned as a list. If column headers are duplicated</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.to_list">
 <code class="sig-name descname">to_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.to_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the setas attribute as a list of letter types.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.to_string">
-<code class="sig-name descname">to_string</code><span class="sig-paren">(</span><em class="sig-param">encode=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.to_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.to_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the setas attribute encoded as a string.</p>
 <p>Optionally replaces runs of 3 or more identical characters with a precediung digit.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.unset">
-<code class="sig-name descname">unset</code><span class="sig-paren">(</span><em class="sig-param">what=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.unset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.unset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">unset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">what</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.unset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.unset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove column settings from the setas attribute in  method call.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -374,13 +384,13 @@ returned as a list. If column headers are duplicated</p>
 </ul>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">other=()</em>, <em class="sig-param">**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace any assignments in self with assignments from other.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.core.setas.setas.values">
 <code class="sig-name descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/setas.html#setas.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.setas.setas.values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access mapping values.</p>
@@ -392,6 +402,7 @@ returned as a list. If column headers are duplicated</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -446,9 +457,9 @@ returned as a list. If column headers are duplicated</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

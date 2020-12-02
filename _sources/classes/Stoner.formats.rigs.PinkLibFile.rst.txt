@@ -1,4 +1,4 @@
-Stoner.formats.rigs.PinkLibFile
+﻿Stoner.formats.rigs.PinkLibFile
 ===============================
 
 .. currentmodule:: Stoner.formats.rigs
@@ -75,6 +75,7 @@ Stoner.formats.rigs.PinkLibFile
       ~Stoner.formats.rigs.PinkLibFile.dims
       ~Stoner.formats.rigs.PinkLibFile.dtype
       ~Stoner.formats.rigs.PinkLibFile.filename
+      ~Stoner.formats.rigs.PinkLibFile.filepath
       ~Stoner.formats.rigs.PinkLibFile.header
       ~Stoner.formats.rigs.PinkLibFile.mask
       ~Stoner.formats.rigs.PinkLibFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.rigs.PinkLibFile
       ~Stoner.formats.rigs.PinkLibFile.records
       ~Stoner.formats.rigs.PinkLibFile.setas
       ~Stoner.formats.rigs.PinkLibFile.shape
-      ~Stoner.formats.rigs.PinkLibFile.subclasses
    
    

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PlotMethodsMixin &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,10 +15,10 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="item" href="Stoner.folders.each.item.html" />
+    <link rel="next" title="Item" href="Stoner.folders.each.Item.html" />
     <link rel="prev" title="DataMethodsMixin" href="Stoner.folders.mixins.DataMethodsMixin.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +33,7 @@
           <a href="Stoner.folders.mixins.DataMethodsMixin.html" title="Previous document">DataMethodsMixin</a>
         </li>
         <li>
-          <a href="Stoner.folders.each.item.html" title="Next document">item</a>
+          <a href="Stoner.folders.each.Item.html" title="Next document">Item</a>
           &rarr;
         </li>
     </ul>
@@ -54,42 +55,32 @@
             
   <div class="section" id="plotmethodsmixin">
 <h1>PlotMethodsMixin<a class="headerlink" href="#plotmethodsmixin" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.folders.mixins.PlotMethodsMixin">
 <em class="property">class </em><code class="sig-prename descclassname">Stoner.folders.mixins.</code><code class="sig-name descname">PlotMethodsMixin</code><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#PlotMethodsMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.PlotMethodsMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A Mixin for <a class="reference internal" href="Stoner.folders.core.baseFolder.html#Stoner.folders.core.baseFolder" title="Stoner.folders.core.baseFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.folders.core.baseFolder</span></code></a> with extra methods for plotting lots of files.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Demonstrate PlotFolder Class.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
-
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">atleast_2d</span>
 <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">mu_0</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gmean</span>
-
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.magnetism</span> <span class="kn">import</span> <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">Inverse_Kittel</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.generic</span> <span class="kn">import</span> <span class="n">Linear</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="n">TexEngFormatter</span>
 <span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="kn">import</span> <span class="n">PlotFolder</span>
-
-<span class="c1"># set_option(&quot;multiprocessing&quot;,os.name!=&quot;nt&quot;)</span>
-
 <span class="c1"># Customise a plot template</span>
 <span class="n">template</span> <span class="o">=</span> <span class="n">DefaultPlotStyle</span><span class="p">()</span>
 <span class="n">template</span><span class="o">.</span><span class="n">xformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span><span class="p">()</span>
 <span class="n">template</span><span class="o">.</span><span class="n">xformatter</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;T&quot;</span>
 <span class="n">template</span><span class="o">.</span><span class="n">yformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
-
-
 <span class="k">def</span> <span class="nf">field_sign</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Custom function for split.&quot;&quot;&quot;</span>
     <span class="n">pos</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;neg&quot;</span><span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">extra</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function for customising each individual plot.&quot;&quot;&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
@@ -97,33 +88,20 @@
     <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Field $\mu_0H\,$&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Abs. (arb)&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">plt_legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">FMR_Power</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-
-
+    <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">FMR_Power</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">do_fit</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Function to fit just one set of data.&quot;&quot;&quot;</span>
     <span class="n">f</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
     <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">1.75e5</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span>
-        <span class="n">FMR_Power</span><span class="p">,</span>
-        <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span>
-        <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span>
-        <span class="n">output</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="p">,</span>
+    <span class="n">f</span><span class="p">[</span><span class="s2">&quot;Frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">//</span> <span class="s2">&quot;Frequency&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span>
+        <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">]</span>
     <span class="p">)</span>
-    <span class="n">ch</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">column_headers</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">),</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;Field Sign&quot;</span><span class="p">]])</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">atleast_2d</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-    <span class="n">res</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">ch</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Frequency (Hz)&quot;</span><span class="p">,</span> <span class="s2">&quot;Field Sign&quot;</span><span class="p">]</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
-    <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">column_headers</span>
-
-
+    <span class="k">return</span> <span class="n">f</span>
 <span class="c1">###############################################################################################</span>
 <span class="c1">#################### Important - if using multiprocessing on Windows, this  block must be ######</span>
 <span class="c1">#################### Inside a if __name__==&quot;__main__&quot;: test. ###################################</span>
 <span class="c1">###############################################################################################</span>
-
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># Load data</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;sample-data&quot;</span><span class="p">,</span> <span class="s2">&quot;FMR-data.txt&quot;</span><span class="p">))</span>
@@ -132,67 +110,56 @@
         <span class="s2">&quot;Absorption::X&quot;</span><span class="p">,</span> <span class="s2">&quot;FMR&quot;</span>
     <span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="c1"># Deine x and y columns and normalise to a big number</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;FMR&quot;</span><span class="p">)</span>  <span class="c1"># pylint: disable=not-callable</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;FMR&quot;</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">))</span>
     <span class="n">fldr</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">field_sign</span><span class="p">,</span> <span class="s2">&quot;Frequency&quot;</span><span class="p">)</span>
-
     <span class="c1"># Split the data file into separate files by frequencies and sign of field</span>
     <span class="n">fldr</span> <span class="o">=</span> <span class="n">PlotFolder</span><span class="p">(</span><span class="n">fldr</span><span class="p">)</span>  <span class="c1"># Convert to a PlotFolder</span>
     <span class="n">fldr</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>  <span class="c1"># Set my custom plot template</span>
     <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fldr</span><span class="p">[</span><span class="s2">&quot;neg&quot;</span><span class="p">]:</span>  <span class="c1"># Invert the negative field side</span>
         <span class="n">f</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">f</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
     <span class="n">resfldr</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">PlotFolder</span><span class="p">()</span>
     <span class="p">)</span>  <span class="c1"># Somewhere to keep the results from +ve and -ve fields</span>
-
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fldr</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>  <span class="c1"># Fit each FMR spectra</span>
         <span class="n">subfldr</span> <span class="o">=</span> <span class="n">fldr</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
         <span class="n">subfldr</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Field Sign&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
-
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;s=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subfldr</span><span class="o">.</span><span class="n">each</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">do_fit</span><span class="p">)):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-
-        <span class="n">data</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">result</span><span class="p">)</span>
-        <span class="n">new_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="n">new_data</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
+        <span class="p">(</span><span class="n">do_fit</span> <span class="o">@</span> <span class="n">subfldr</span><span class="o">.</span><span class="n">each</span><span class="p">)()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subfldr</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">,</span> <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">subfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subfldr</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">common_keys</span><span class="p">}</span>
+        <span class="p">)</span>
         <span class="c1"># Now plot all the fits</span>
-
+        <span class="n">subfldr</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
         <span class="n">subfldr</span><span class="o">.</span><span class="n">plots_per_page</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Plot results</span>
-        <span class="n">subfldr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">extra</span><span class="o">=</span><span class="n">extra</span><span class="p">)</span>
-
+        <span class="n">subfldr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;k.&quot;</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">],</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">extra</span>
+        <span class="p">)</span>
         <span class="c1"># Work with the overall results</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span>  <span class="c1"># pylint: disable=not-callable</span>
-            <span class="n">y</span><span class="o">=</span><span class="s2">&quot;H_res&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="s2">&quot;H_res.stderr&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Freq&quot;</span>
-        <span class="p">)</span>  <span class="c1"># pylint: disable=not-callable</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">mu_0</span>  <span class="c1"># Convert to A/m</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">e</span> <span class="o">/</span> <span class="n">mu_0</span>
-
-        <span class="n">resfldr</span> <span class="o">+=</span> <span class="n">result</span>  <span class="c1"># Stash the results</span>
-
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span>
+                <span class="n">y</span><span class="o">=</span><span class="s2">&quot;H_res$&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="s2">&quot;H_res err&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Frequency&quot;</span>
+            <span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">mu_0</span>  <span class="c1"># Convert to A/m</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">e</span> <span class="o">/</span> <span class="n">mu_0</span>
+            <span class="n">resfldr</span> <span class="o">+=</span> <span class="n">result</span>  <span class="c1"># Stash the results</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">continue</span>
     <span class="c1"># Merge the two field signs into a single file, taking care of the error columns too</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
         <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">c</span><span class="p">]</span> <span class="o">+</span> <span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">c</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]:</span>
         <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">gmean</span><span class="p">((</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">c</span><span class="p">],</span> <span class="n">resfldr</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">c</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
     <span class="c1"># Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors</span>
     <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">200e3</span><span class="p">,</span> <span class="mf">10e3</span><span class="p">]</span>  <span class="c1"># Some sensible guesses</span>
     <span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span>
         <span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Kittel Fit&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span>
     <span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
-
     <span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">yformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
     <span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">xformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
     <span class="n">result</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
@@ -202,7 +169,6 @@
     <span class="n">result</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">7e9</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
     <span class="n">result</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;$H_</span><span class="si">{res}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">mathrm{(Am^{-1})}$&quot;</span>
     <span class="n">result</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Inverse Kittel Fit&quot;</span>
-
     <span class="c1"># Get alpha</span>
     <span class="n">result</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Delta_H&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="s2">&quot;Delta_H.stderr&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Freq&quot;</span><span class="p">)</span>
@@ -222,7 +188,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.mixins.PlotMethodsMixin.figure" title="Stoner.folders.mixins.PlotMethodsMixin.figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">figure</span></code></a>(*args, **kargs)</p></td>
-<td><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p></td>
+<td><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.3.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.mixins.PlotMethodsMixin.plot" title="Stoner.folders.mixins.PlotMethodsMixin.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(*args, **kargs)</p></td>
 <td><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p></td>
@@ -230,15 +196,15 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.folders.mixins.PlotMethodsMixin.figure">
-<code class="sig-name descname">figure</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#PlotMethodsMixin.figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.PlotMethodsMixin.figure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p>
+<code class="sig-name descname">figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#PlotMethodsMixin.figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.PlotMethodsMixin.figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass through for <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure" title="(in Matplotlib v3.3.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code></a> but alos takes a note of the arguments for later.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.folders.mixins.PlotMethodsMixin.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#PlotMethodsMixin.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.PlotMethodsMixin.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/mixins.html#PlotMethodsMixin.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.mixins.PlotMethodsMixin.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -249,14 +215,14 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a><em>(</em><a class="reference internal" href="Stoner.core.array.DataArray.html#Stoner.core.array.DataArray.i" title="Stoner.core.array.DataArray.i"><em>i</em></a><em>,</em><em>j</em><em>,</em><em>d</em><em>)</em>) – A callable that can carry out additional processing per plot after the plot is done</p></li>
-<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><em>tuple</em></a><em>(</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><em>x</em></a><em>,</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><em>y</em></a><em>)</em>) – Size of the figure to create</p></li>
-<li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – dots per inch on the figure</p></li>
+<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a><em>(</em><a class="reference internal" href="Stoner.core.array.DataArray.html#id1" title="Stoner.core.array.DataArray.i"><em>i</em></a><em>,</em><em>j</em><em>,</em><em>d</em><em>)</em>) – A callable that can carry out additional processing per plot after the plot is done</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>(</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><em>x</em></a><em>,</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><em>y</em></a><em>)</em>) – Size of the figure to create</p></li>
+<li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – dots per inch on the figure</p></li>
 <li><p><strong>edgecolor</strong><strong>,</strong><strong>facecolor</strong> (<em>matplotlib colour</em>) – figure edge and frame colours.</p></li>
-<li><p><strong>frameon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Turns figure frames on or off</p></li>
+<li><p><strong>frameon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Turns figure frames on or off</p></li>
 <li><p><strong>FigureClass</strong> (<em>class</em>) – Passed to matplotlib figure call.</p></li>
-<li><p><strong>plots_per_page</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – maximum number of plots per figure.</p></li>
-<li><p><strong>tight_layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><em>False</em></a>) – If not False, arguments to pass to a call of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="(in Matplotlib v3.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.tight_layout()</span></code></a>. Defaults to {}</p></li>
+<li><p><strong>plots_per_page</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – maximum number of plots per figure.</p></li>
+<li><p><strong>tight_layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><em>False</em></a>) – If not False, arguments to pass to a call of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="(in Matplotlib v3.3.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.tight_layout()</span></code></a>. Defaults to {}</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -276,6 +242,7 @@ from the aspect ratio of the figure and the number of files in the <code class="
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -288,8 +255,8 @@ from the aspect ratio of the figure and the number of files in the <code class="
   <p class="topless"><a href="Stoner.folders.mixins.DataMethodsMixin.html"
                         title="previous chapter">DataMethodsMixin</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.folders.each.item.html"
-                        title="next chapter">item</a></p>
+  <p class="topless"><a href="Stoner.folders.each.Item.html"
+                        title="next chapter">Item</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -316,7 +283,7 @@ from the aspect ratio of the figure and the number of files in the <code class="
           <a href="Stoner.folders.mixins.DataMethodsMixin.html" title="Previous document">DataMethodsMixin</a>
         </li>
         <li>
-          <a href="Stoner.folders.each.item.html" title="Next document">item</a>
+          <a href="Stoner.folders.each.Item.html" title="Next document">Item</a>
           &rarr;
         </li>
     </ul>
@@ -330,9 +297,9 @@ from the aspect ratio of the figure and the number of files in the <code class="
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

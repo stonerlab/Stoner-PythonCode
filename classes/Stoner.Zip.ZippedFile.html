@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZippedFile &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ZipFolderMixin" href="Stoner.Zip.ZipFolderMixin.html" />
@@ -54,9 +55,9 @@
             
   <div class="section" id="zippedfile">
 <h1>ZippedFile<a class="headerlink" href="#zippedfile" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.Zip.ZippedFile">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.Zip.</code><code class="sig-name descname">ZippedFile</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZippedFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZippedFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.Zip.</code><code class="sig-name descname">ZippedFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZippedFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZippedFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.DataFile</span></code></a></p>
 <p>A sub class of DataFile that sores itself in a zip file.</p>
 <p>If the first non-keyword arguement is not an <code class="xref py py-class docutils literal notranslate"><span class="pre">zipfile:ZipFile</span></code> then
@@ -93,25 +94,25 @@ calls parent constructor.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Zip.ZippedFile.mime_type">
 <code class="sig-name descname">mime_type</code><em class="property"> = ['application/zip']</em><a class="headerlink" href="#Stoner.Zip.ZippedFile.mime_type" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Zip.ZippedFile.patterns">
 <code class="sig-name descname">patterns</code><em class="property"> = ['*.zip']</em><a class="headerlink" href="#Stoner.Zip.ZippedFile.patterns" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.Zip.ZippedFile.priority">
 <code class="sig-name descname">priority</code><em class="property"> = 32</em><a class="headerlink" href="#Stoner.Zip.ZippedFile.priority" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Zip.ZippedFile.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZippedFile.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZippedFile.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Zip.html#ZippedFile.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZippedFile.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the save method to allow ZippedFile to be written out to disc (as a mininmalist output).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -128,6 +129,7 @@ calls parent constructor.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -182,9 +184,9 @@ calls parent constructor.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

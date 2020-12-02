@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.integrate &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.interpolate" href="Stoner.Data.interpolate.html" />
@@ -57,7 +58,7 @@
             
   <div class="section" id="data-integrate">
 <h1>Data.integrate<a class="headerlink" href="#data-integrate" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.integrate">
 <code class="sig-prename descclassname">Data.</code><code class="sig-name descname">integrate</code><span class="sig-paren">(</span><em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">result=None</em>, <em class="sig-param">header=None</em>, <em class="sig-param">result_name=None</em>, <em class="sig-param">output='data'</em>, <em class="sig-param">bounds=&lt;function AnalysisMixin.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.integrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inegrate a column of data, optionally returning the cumulative integral.</p>
@@ -71,12 +72,12 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>result</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
+<li><p><strong>result</strong> (<a class="reference internal" href="Stoner.Core.DataFile.index.html#Stoner.Core.DataFile.index" title="Stoner.Core.DataFile.index"><em>index</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – Either a column index (or header) to overwrite with the cumulative data,
 or True to add a new column or None to not store the cumulative result.</p></li>
-<li><p><strong>result_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The metadata name for the final result</p></li>
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The name of the header for the results column.</p></li>
+<li><p><strong>result_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The metadata name for the final result</p></li>
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The name of the header for the results column.</p></li>
 <li><p><strong>output</strong> (<em>Str</em>) – What to return - ‘data’ (default) - this object, ‘result’: final result</p></li>
-<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – A function that evaluates for each row to determine if the data should be integrated over.</p></li>
+<li><p><strong>bounds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – A function that evaluates for each row to determine if the data should be integrated over.</p></li>
 <li><p><strong>**kargs</strong> – Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method</p></li>
 </ul>
 </dd>
@@ -96,6 +97,7 @@ of data. If xcol or ycol are not specified then the current values from the
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -153,9 +155,9 @@ of data. If xcol or ycol are not specified then the current values from the
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

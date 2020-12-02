@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner-PythonCode &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="_static/better.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="The Stoner Python Package User Guide" href="UserGuide/ugindex.html" />
@@ -54,7 +55,7 @@
 <a class="reference external image-reference" href="https://badge.fury.io/py/Stoner"><img alt="https://badge.fury.io/py/Stoner.svg" src="https://badge.fury.io/py/Stoner.svg" /></a>
 <a class="reference external image-reference" href="https://anaconda.org/phygbu/stoner"><img alt="https://anaconda.org/phygbu/stoner/badges/version.svg" src="https://anaconda.org/phygbu/stoner/badges/version.svg" /></a>
 <a class="reference external image-reference" href="http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest" /></a>
-<a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode"><img alt="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" src="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" /></a>
+<a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/10057055"><img alt="https://zenodo.org/badge/10057055.svg" src="https://zenodo.org/badge/10057055.svg" /></a>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The  <em>Stoner</em> Python package is a set of utility classes for writing data analysis code. It was written within
@@ -174,7 +175,10 @@ features at this time. Better integration with pandas and xarray are under consi
 <p>New Features in 0.10-dev include:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Continued refactoring of code to break large monolithic classes and modules into smaller parts</p></li>
+<li><p>Refactor Stoner.Core.DataFile to move functionality to mixin classes</p></li>
+<li><p>Start implementing PEP484 Type hinting</p></li>
+<li><p>Support pathlib for paths</p></li>
+<li><p>Switch from Tk based dialogs to Qt5 ones</p></li>
 <li><p>Refactoring the <strong>baseFolder</strong> class so that sub-groups are stored in an attribute that is an instance of a custom
 dictionary with methods to prune and filter in the virtual tree of sub-folders.</p></li>
 </ul>
@@ -246,6 +250,7 @@ encourage any users to cite this package via that doi.</p>
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/datafolder.html">Working with Lots of Data Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/image.html">Working with images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/cookbook.html">Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UserGuide/upgrade.html">Converting Scripts from older versions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/developer.html">Developing and Extending</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/credits.html">Credits</a></li>
 </ul>
@@ -270,6 +275,7 @@ encourage any users to cite this package via that doi.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -348,9 +354,9 @@ encourage any users to cite this package via that doi.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

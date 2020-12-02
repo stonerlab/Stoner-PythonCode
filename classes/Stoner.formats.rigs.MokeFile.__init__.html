@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MokeFile.__init__ &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="MokeFile.add_column" href="Stoner.formats.rigs.MokeFile.add_column.html" />
@@ -57,43 +58,43 @@
             
   <div class="section" id="mokefile-init">
 <h1>MokeFile.__init__<a class="headerlink" href="#mokefile-init" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.formats.rigs.MokeFile.__init__">
-<code class="sig-prename descclassname">MokeFile.</code><code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.rigs.MokeFile.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">MokeFile.</code><code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.rigs.MokeFile.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialise the DataFile from arrays, dictionaries and filenames.</p>
 <p>Various forms are recognised:</p>
-<dl class="function">
+<dl class="py function">
 <dt>
 <code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param">'filename'</em>, <em class="sig-param">&lt;optional filetype&gt;</em>, <em class="sig-param">&lt;args&gt;</em><span class="sig-paren">)</span></dt>
 <dd><p>Creates the new DataFile object and then executes the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code>.load
 method to load data from the given <em>filename</em>.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt>
-<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param">array</em><span class="sig-paren">)</span></dt>
+<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Creates a new DataFile object and assigns the <em>array</em> to the
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.data</span></code>  attribute.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt>
-<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param">dictionary</em><span class="sig-paren">)</span></dt>
+<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dictionary</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Creates the new DataFile object. If the dictionary keys are all strigns and the values are all
 numpy D arrays of equal length, then assumes the dictionary represents columns of data and the keys
 are the column titles, otherwise initialises the metadata with :parameter: dictionary.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt>
-<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param">array</em>, <em class="sig-param">dictionary</em><span class="sig-paren">)</span></dt>
+<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">dictionary</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Creates the new DataFile object and does the combination of the
 previous two forms.</p>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt>
-<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param">DataFile</em><span class="sig-paren">)</span></dt>
+<code class="sig-prename descclassname">Stoner.formats.rigs.</code><code class="sig-name descname">DataFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">DataFile</span></em><span class="sig-paren">)</span></dt>
 <dd><p>Creates the new DataFile object and initialises all data from the
 existing <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code> instance. This on the face of it does the same as
 the assignment operator, but is more useful when one or other of the
@@ -113,6 +114,7 @@ DataFile objects is an instance of a sub - class of DataFile</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -170,9 +172,9 @@ DataFile objects is an instance of a sub - class of DataFile</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

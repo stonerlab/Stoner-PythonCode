@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AttocubeScan.correct_drifts &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="AttocubeScan.count" href="Stoner.formats.attocube.AttocubeScan.count.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="attocubescan-correct-drifts">
 <h1>AttocubeScan.correct_drifts<a class="headerlink" href="#attocubescan-correct-drifts" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.formats.attocube.AttocubeScan.correct_drifts">
-<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">correct_drifts</code><span class="sig-paren">(</span><em class="sig-param">refindex</em>, <em class="sig-param">threshold=0.005</em>, <em class="sig-param">upsample_factor=50</em>, <em class="sig-param">box=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.correct_drifts" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">correct_drifts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">refindex</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.005</span></em>, <em class="sig-param"><span class="n">upsample_factor</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.correct_drifts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Align images to correct for image drift.</p>
 <p>Pass through to ImageArray.corret_drift.</p>
 <dl class="simple">
@@ -72,8 +73,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – see ImageArray.correct_drift</p></li>
-<li><p><strong>upsample_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – see ImageArray.correct_drift</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – see ImageArray.correct_drift</p></li>
+<li><p><strong>upsample_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – see ImageArray.correct_drift</p></li>
 <li><p><strong>box</strong> – see ImageArray.correct_drift</p></li>
 </ul>
 </dd>
@@ -83,6 +84,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -140,9 +142,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,5 +1,5 @@
 """Detect peaks in a dataset."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,unsubscriptable-object
 from Stoner import Data
 
 from matplotlib.cm import jet

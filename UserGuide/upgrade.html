@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ConvertingScripts from Older Versions of the Stoner Package &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Developer’s Guide" href="developer.html" />
+    <link rel="prev" title="Cookbook" href="cookbook.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="cookbook.html" title="Previous document">Cookbook</a>
+        </li>
+        <li>
+          <a href="developer.html" title="Next document">Developer’s Guide</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="ugindex.html">The Stoner Python Package User Guide</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="convertingscripts-from-older-versions-of-the-stoner-package">
+<h1>ConvertingScripts from Older Versions of the Stoner Package<a class="headerlink" href="#convertingscripts-from-older-versions-of-the-stoner-package" title="Permalink to this headline">¶</a></h1>
+<p>THe Stoner package has gradually undergone several changes as additional functions have been added to keep the code base
+managable. This document summarizes the main changes from previous versions.</p>
+<div class="section" id="python-version-support">
+<h2>Python Version Support<a class="headerlink" href="#python-version-support" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Versions &lt;= 0.5 supported Python 2.7 with some support for Python 3.x</p></li>
+<li><p>Version 0.7 and 0.8 supported Python 2.7, 3.5 and 3.6</p></li>
+<li><p>Version 0.9 supportes Python 2.7, 3.5, 3.6 and 3.7. The final release of 0.9 also supports Python 3.8</p></li>
+<li><p>Version 0.10 does <em>not</em> support Python 2.7 or 3.5. The supported versions of Pythin are 3.6, 3.7 and 3.8</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="data-class-versus-datafile-analysisfile-plotfile">
+<h2><a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a> class versus DataFile, AnalysisFile, PlotFile<a class="headerlink" href="#data-class-versus-datafile-analysisfile-plotfile" title="Permalink to this headline">¶</a></h2>
+<p>Originally the package provided several subclasses of a <strong>DataFile</strong> class and the user was encouraged to make a superclass
+of all of them. Thus code would have:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Stoner.Analysis</span> <span class="k">as</span> <span class="nn">SA</span>
+<span class="kn">import</span> <span class="nn">Stoner.Plot</span> <span class="k">as</span> <span class="nn">SP</span>
+<span class="kn">import</span> <span class="nn">Stoner.Core</span> <span class="k">as</span> <span class="nn">SC</span>
+
+<span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">SC</span><span class="o">.</span><span class="n">AnalysisFile</span><span class="p">,</span> <span class="n">SP</span><span class="o">.</span><span class="n">PlotFile</span><span class="p">,</span> <span class="n">SC</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>This should now simply be replaced with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stoner-plotformats-and-stoner-plot-modules-removed">
+<h2>Stoner.PlotFormats and Stoner.Plot modules removed<a class="headerlink" href="#stoner-plotformats-and-stoner-plot-modules-removed" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Stoner.Plot</strong> and <strong>Stoner.PlotFormats</strong> modules were replaced with the <a class="reference internal" href="../Stoner.html#module-Stoner.plot" title="Stoner.plot"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.plot</span></code></a> package. Code that did:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">JTBStyle</span><span class="p">,</span> <span class="n">TexFormatter</span>
+</pre></div>
+</div>
+<p>should now do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">JTBPlotStyle</span><span class="p">,</span> <span class="n">TexFormatter</span>
+</pre></div>
+</div>
+<p>Most of the functionality of the  <strong>Stoner.Plot</strong> module was in the <strong>PlotFile</strong> subclass and is now accessed via the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a>
+class. A few additional functions that used to be in <strong>Stoner.Plot</strong> are now in <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.plot.utils</span></code>.</p>
+</div>
+<div class="section" id="stoner-folders-module-depricated">
+<h2>Stoner.Folders Module depricated<a class="headerlink" href="#stoner-folders-module-depricated" title="Permalink to this headline">¶</a></h2>
+<p>The code around <a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> has been exte nsively rewritten and cleaned up in versions 0.9 onwards. Firstly, theold
+<strong>Stoner.Folders</strong> module is replaced with the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.forlders</span></code> package, and the <a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> class is
+now directly importable from the root <a class="reference internal" href="../Stoner.html#module-Stoner" title="Stoner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code></a> package. Thus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="kn">import</span> <span class="n">DataFolder</span>
+</pre></div>
+</div>
+<p>becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">DataFolder</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../Stoner.html#module-Stoner.folders" title="Stoner.folders"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.folders</span></code></a> package contains many modules and subpackages to implement generic folder-like objects, but for end
+users of the package, the <a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> class is probably all that is required to be improted.</p>
+</div>
+<div class="section" id="stoner-fit-module-depricated">
+<h2>Stoner.Fit Module depricated<a class="headerlink" href="#stoner-fit-module-depricated" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Stoner.Fit</strong> module contained a mixed bad of assorted fitting functions and <strong>lmfit.Model</strong> classes. These have been
+reorganised into a series of sub-modules of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.analysis</span></code> package. Although this makes the import lines
+rather long, it groups the functions more logically by physics theme. Thus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">blochGrueneisen</span>
+</pre></div>
+</div>
+<p>becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.e_transport</span> <span class="kn">import</span> <span class="n">blochGrueneisen</span>
+</pre></div>
+</div>
+<p>The <strong>Stoner.Fit</strong> module also contained various functions to make <strong>lmfit.Model</strong> classes from functions or from ini files -
+these functions are now in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.analysis.fitting.models</span></code> package directly.</p>
+</div>
+<div class="section" id="stoner-fileformats-module-depricated">
+<h2>Stoner.FileFormats Module depricated<a class="headerlink" href="#stoner-fileformats-module-depricated" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Stoner.FileFormats</strong> module was getting a bit big and unwieldy with many different file formats being implemented. It has
+now been superceded by the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.formats</span></code> package which groups the fileformats into different sub-modules.</p>
+<p>Generally there is no particular reason to directly access the individual file format classes - the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> class
+can access all the subclasses loaded in memory and so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Stoner.FileFormats</span>
+</pre></div>
+</div>
+<p>can simply be removed if the <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> is used.</p>
+</div>
+<div class="section" id="stoner-image-changes">
+<h2>Stoner.Image changes<a class="headerlink" href="#stoner-image-changes" title="Permalink to this headline">¶</a></h2>
+<p>The original write of the <a class="reference internal" href="../Stoner.html#module-Stoner.Image" title="Stoner.Image"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Image</span></code></a> package developped a subclass of numpy array wioth metadata - <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Imnage.ImageArray</span></code>
+but for many purposes is is more useful to have a class thatr wraps the image data and provides additional attributes and methods
+in parallel to the image data rather than having name collisions with the numpy methods and attributes. For this reason, the
+preferred class to work with is <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.ImageFile</span></code> which is an analog of <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a>. Generally the code can be
+transferred directly so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="kn">import</span> <span class="n">ImageArray</span>
+</pre></div>
+</div>
+<p>becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">ImageFile</span>
+</pre></div>
+</div>
+<p>Like <a class="reference internal" href="../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray" title="Stoner.Image.ImageArray"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Image.ImageArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.ImageFile</span></code> can access key image processing functions from <code class="xref py py-mod docutils literal notranslate"><span class="pre">skimage</span></code>,
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/ndimage.html#module-scipy.ndimage" title="(in SciPy v1.5.4)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scipy.ndimage</span></code></a> and the <code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner.Image.imagefuncs</span></code> modules.</p>
+<div class="section" id="depricated-image-functions">
+<h3>Depricated Image functions<a class="headerlink" href="#depricated-image-functions" title="Permalink to this headline">¶</a></h3>
+<p>The following ImageArray/ImageFile methods should be swapped:</p>
+<ul class="simple">
+<li><p>.box() - use <a class="reference internal" href="../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.crop" title="Stoner.Image.ImageArray.crop"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageArray.crop()</span></code></a> instead</p></li>
+<li><p>.crop_image() - use <a class="reference internal" href="../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.crop" title="Stoner.Image.ImageArray.crop"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageArray.crop()</span></code></a> instead</p></li>
+<li><p>.convert_float() - use <a class="reference internal" href="../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.asfloat" title="Stoner.Image.ImageArray.asfloat"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageArray.asfloat()</span></code></a> instead</p></li>
+<li><p>.convert_int() - use <a class="reference internal" href="../classes/Stoner.Image.ImageArray.html#Stoner.Image.ImageArray.asint" title="Stoner.Image.ImageArray.asint"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageArray.asint()</span></code></a> instead</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="stoner-datafolder-stoner-imagefolder-changes">
+<h2>Stoner.DataFolder/Stoner.ImageFolder changes<a class="headerlink" href="#stoner-datafolder-stoner-imagefolder-changes" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../classes/Stoner.DataFolder.html#Stoner.DataFolder" title="Stoner.DataFolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.DataFolder</span></code></a> and <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.ImageFolder</span></code> are essentially similar objects for managing collections
+of <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a> ad <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.ImageFile</span></code> respectively.</p>
+<p>Earlier versions of the Stoner package exposed the ability to call methods of the sotred <a class="reference internal" href="../classes/Stoner.Data.html#Stoner.Data" title="Stoner.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Data</span></code></a>/
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.ImageFile</span></code> instances by calling a correspomnding method directly on the folder object. The problem with this
+is that if there is a name collision with a method intended to work directly on the Folder, it’s not clear what method is being
+called. To remove this problem, and to make it a little more explicit when accessing a method of the stored instances, the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.DataFolder.each</span></code> attribute is now provided. Thus code like:</p>
+<blockquote>
+<div><p>fldr=DataFolder(“.”, pattern=”<a href="#id1"><span class="problematic" id="id2">*</span></a>.txt”, setas=”xy”)
+fldr.curve_fit(Linear)</p>
+</div></blockquote>
+<p>now becomes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fldr</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">fldr</span><span class="o">.</span><span class="n">each</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">Linear</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>One of the frequently required operations is to loop through all the files in a folder and extract some of their metadata
+nd build that into a new table. This used to be done something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">fldr</span><span class="p">:</span>
+    <span class="n">result</span><span class="o">+=</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;thing_1&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;thing_2&quot;</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>The new <code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.DataFolder.metadata</span></code> attribute and <a class="reference internal" href="../classes/Stoner.folders.metadata.MetadataProxy.html#Stoner.folders.metadata.MetadataProxy.slice" title="Stoner.folders.metadata.MetadataProxy.slice"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.folders.metadata.MetadataProxy.slice()</span></code></a> method
+allow this to be done directly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="o">=</span><span class="n">fldr</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">slice</span><span class="p">([</span><span class="s2">&quot;thing_1&quot;</span><span class="p">,</span><span class="s2">&quot;thing_2&quot;</span><span class="p">],</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ConvertingScripts from Older Versions of the Stoner Package</a><ul>
+<li><a class="reference internal" href="#python-version-support">Python Version Support</a></li>
+<li><a class="reference internal" href="#data-class-versus-datafile-analysisfile-plotfile"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code> class versus DataFile, AnalysisFile, PlotFile</a></li>
+<li><a class="reference internal" href="#stoner-plotformats-and-stoner-plot-modules-removed">Stoner.PlotFormats and Stoner.Plot modules removed</a></li>
+<li><a class="reference internal" href="#stoner-folders-module-depricated">Stoner.Folders Module depricated</a></li>
+<li><a class="reference internal" href="#stoner-fit-module-depricated">Stoner.Fit Module depricated</a></li>
+<li><a class="reference internal" href="#stoner-fileformats-module-depricated">Stoner.FileFormats Module depricated</a></li>
+<li><a class="reference internal" href="#stoner-image-changes">Stoner.Image changes</a><ul>
+<li><a class="reference internal" href="#depricated-image-functions">Depricated Image functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stoner-datafolder-stoner-imagefolder-changes">Stoner.DataFolder/Stoner.ImageFolder changes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cookbook.html"
+                        title="previous chapter">Cookbook</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="developer.html"
+                        title="next chapter">Developer’s Guide</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/upgrade.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="cookbook.html" title="Previous document">Cookbook</a>
+        </li>
+        <li>
+          <a href="developer.html" title="Next document">Developer’s Guide</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="ugindex.html">The Stoner Python Package User Guide</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      3.2.1
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

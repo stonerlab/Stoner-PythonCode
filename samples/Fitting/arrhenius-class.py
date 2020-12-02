@@ -53,6 +53,6 @@ d.annotate_fit(
 
 
 d.title = "Arrhenius Test Fit"
-d.ylabel("Rate")
-d.xlabel("Temperature (K)")
-d.yscale("log")
+d.ylabel = "Rate"
+d.xlabel = "Temperature (K)"
+d.yscale = "log"

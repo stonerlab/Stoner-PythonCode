@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.Util &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -80,6 +81,68 @@
     <span class="n">X</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">mid</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span>
     <span class="k">return</span> <span class="n">y</span>
+
+
+<span class="k">def</span> <span class="nf">_h_sat_linear</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Ms_vals</span><span class="p">,</span> <span class="n">Hsat_vals</span><span class="p">,</span> <span class="n">h_sat_fraction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determine the saturation field from linear fits to the hysteresis loop.</span>
+
+<span class="sd">    This method uses the intercept of the saturated state with zero field portions of the loop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.generic</span> <span class="kn">import</span> <span class="n">Linear</span>
+
+    <span class="n">Ms</span><span class="p">,</span> <span class="n">Ms_err</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Ms_vals</span>
+    <span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span> <span class="o">=</span> <span class="n">Hsat_vals</span>
+
+    <span class="c1"># Fit a striaght line to the central fraction of the data</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Ms</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Ms</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
+    <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+    <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))</span>
+    <span class="n">popt</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">pferr</span> <span class="o">=</span> <span class="n">perr</span> <span class="o">/</span> <span class="n">popt</span>
+    <span class="c1"># Pick the positive or negative Ms depending on the up or down loop</span>
+    <span class="n">Ms_i</span> <span class="o">=</span> <span class="n">Ms</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">Ms</span>
+    <span class="c1"># Find the intercept</span>
+    <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsolve</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Linear</span><span class="p">()</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ms_i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Uncertainity is the sum of error in slope * found intercept and error in Ms times slope</span>
+    <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">pferr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ms_err</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_h_sat_susceptibility</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Ms_vals</span><span class="p">,</span> <span class="n">Hsat_vals</span><span class="p">,</span> <span class="n">h_sat_fraction</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+    <span class="sd">&quot;&quot;&quot;Determine the saturation field from the change in local sysceptibility in the looop.&quot;&quot;&quot;</span>
+    <span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span> <span class="o">=</span> <span class="n">Hsat_vals</span>
+    <span class="n">xi</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">xi</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x.y&quot;</span><span class="p">)</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="mi">7</span> <span class="o">&lt;</span> <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
+    <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
+    <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
+    <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_h_sat_delta_M</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">Ms_vals</span><span class="p">,</span> <span class="n">Hsat_vals</span><span class="p">,</span> <span class="n">h_sat_fraction</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+    <span class="sd">&quot;&quot;&quot;Determine the saturation field from the change in magnetisation from Ms.&quot;&quot;&quot;</span>
+    <span class="n">m_sat</span> <span class="o">=</span> <span class="n">Ms_vals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span> <span class="o">=</span> <span class="n">Hsat_vals</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="n">m_sat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
+    <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">hs</span> <span class="o">=</span> <span class="n">hs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hs</span><span class="p">))]</span>
+    <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hs</span>  <span class="c1"># Get the H_sat value</span>
+    <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -264,14 +327,22 @@
 
     <span class="n">h_sat_method</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;h_sat_method&quot;</span><span class="p">,</span> <span class="s2">&quot;linear_intercept&quot;</span><span class="p">)</span>
     <span class="n">h_sat_fraction</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;h_sat_fraction&quot;</span><span class="p">,</span> <span class="mf">0.5</span> <span class="k">if</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;linear_intercept&quot;</span> <span class="k">else</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">hsat_methods</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;linear_intercept&quot;</span><span class="p">:</span> <span class="n">_h_sat_linear</span><span class="p">,</span>
+        <span class="s2">&quot;susceptibility&quot;</span><span class="p">:</span> <span class="n">_h_sat_susceptibility</span><span class="p">,</span>
+        <span class="s2">&quot;delta_M&quot;</span><span class="p">:</span> <span class="n">_h_sat_delta_M</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">h_sat_method</span><span class="p">)</span> <span class="ow">or</span> <span class="n">h_sat_method</span> <span class="ow">in</span> <span class="n">hsat_methods</span><span class="p">:</span>
+        <span class="n">h_sat_method</span> <span class="o">=</span> <span class="n">hsat_methods</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">h_sat_method</span><span class="p">,</span> <span class="n">h_sat_method</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Saturation field method not recognized!&quot;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error setting attribute from keyword </span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error setting attribute from keyword </span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
     <span class="k">if</span> <span class="s2">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>  <span class="c1"># Allow us to override the setas variable</span>
         <span class="n">data</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">)</span>
 
@@ -332,50 +403,8 @@
         <span class="k">if</span> <span class="n">hc</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">Hc_err</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;linear_intercept&quot;</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.generic</span> <span class="kn">import</span> <span class="n">Linear</span>
+        <span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span> <span class="o">=</span> <span class="n">h_sat_method</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">Ms</span><span class="p">,</span> <span class="n">Ms_err</span><span class="p">,</span> <span class="n">m_sat</span><span class="p">),</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">,</span> <span class="n">Hsat_err</span><span class="p">),</span> <span class="n">h_sat_fraction</span><span class="p">)</span>
 
-            <span class="c1"># Fit a striaght line to the central fraction of the data</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">bounds</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Ms</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">bounds</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Ms</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
-            <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">Linear</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
-            <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))</span>
-            <span class="n">popt</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">pferr</span> <span class="o">=</span> <span class="n">perr</span> <span class="o">/</span> <span class="n">popt</span>
-            <span class="c1"># Pick the positive or negative Ms depending on the up or down loop</span>
-            <span class="n">Ms_i</span> <span class="o">=</span> <span class="n">Ms</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">Ms</span>
-            <span class="c1"># Find the intercept</span>
-            <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsolve</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Linear</span><span class="p">()</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">popt</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ms_i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># Uncertainity is the sum of error in slope * found intercept and error in Ms times slope</span>
-            <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">pferr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ms_err</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;susceptibility&quot;</span><span class="p">:</span>
-            <span class="n">xi</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">xi</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x.y&quot;</span><span class="p">)</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="ow">not</span> <span class="mi">7</span> <span class="o">&lt;</span> <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span> <span class="o">*</span> <span class="n">h_sat_fraction</span>
-            <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
-            <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
-            <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="k">elif</span> <span class="n">h_sat_method</span> <span class="o">==</span> <span class="s2">&quot;delta_M&quot;</span><span class="p">:</span>  <span class="c1"># threshold on m_sat</span>
-            <span class="n">m</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">()</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">))[</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
-            <span class="n">threshold</span> <span class="o">=</span> <span class="n">m_sat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">hs</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-            <span class="p">)</span>  <span class="c1"># Get the H_sat value</span>
-            <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">hs</span> <span class="o">=</span> <span class="n">hs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hs</span><span class="p">))]</span>
-            <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">hs</span>  <span class="c1"># Get the H_sat value</span>
-            <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unrecognized method for calculating H_saturation ! </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h_sat_method</span><span class="p">))</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">Mr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">mr</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mr</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -414,6 +443,7 @@
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -447,9 +477,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Developer’s Guide &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,11 +15,11 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Contributors and Credits" href="credits.html" />
-    <link rel="prev" title="Cookbook" href="cookbook.html" />
+    <link rel="prev" title="ConvertingScripts from Older Versions of the Stoner Package" href="upgrade.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
     <header id="pageheader"><h1><a href="../index.html ">
@@ -29,7 +30,7 @@
     <ul>
         <li>
           &larr;
-          <a href="cookbook.html" title="Previous document">Cookbook</a>
+          <a href="upgrade.html" title="Previous document">ConvertingScripts from Older Versions of the Stoner Package</a>
         </li>
         <li>
           <a href="credits.html" title="Next document">Contributors and Credits</a>
@@ -61,7 +62,7 @@
 From the end-user perspective, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFile</span></code></a> class contains several attributes that behave like data types that the user is familiar with:</p>
 <ul class="simple">
 <li><p>data
-Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code>, with an extra attribute
+Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="https://numpy.org/doc/stable/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.19)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code>, with an extra attribute
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.setas</span></code> that is used to label the columns of data and to track assignments to types of columns (x,y,z etc). As
 <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> can thus track what columns mean in cartersian co-ordinate systems, it can provide an on-the-fly conversion to polar
 co-ordinate sustems. <code class="xref py py-class docutils literal notranslate"><span class="pre">DataArray</span></code> also keeps track of the row numbers of the array and can label its rows with the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataArray.i</span></code>
@@ -142,6 +143,7 @@ strings so that the API documentation is picked up correctly.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -160,8 +162,8 @@ strings so that the API documentation is picked up correctly.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="cookbook.html"
-                        title="previous chapter">Cookbook</a></p>
+  <p class="topless"><a href="upgrade.html"
+                        title="previous chapter">ConvertingScripts from Older Versions of the Stoner Package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="credits.html"
                         title="next chapter">Contributors and Credits</a></p>
@@ -188,7 +190,7 @@ strings so that the API documentation is picked up correctly.</p>
     <ul>
         <li>
           &larr;
-          <a href="cookbook.html" title="Previous document">Cookbook</a>
+          <a href="upgrade.html" title="Previous document">ConvertingScripts from Older Versions of the Stoner Package</a>
         </li>
         <li>
           <a href="credits.html" title="Next document">Contributors and Credits</a>
@@ -205,9 +207,9 @@ strings so that the API documentation is picked up correctly.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -40,6 +40,7 @@ ImageArray
       ~ImageArray.sharedmask
       ~ImageArray.size
       ~ImageArray.strides
+      ~ImageArray.title
 
    .. rubric:: Methods Summary
 
@@ -170,6 +171,7 @@ ImageArray
    .. autoattribute:: sharedmask
    .. autoattribute:: size
    .. autoattribute:: strides
+   .. autoattribute:: title
 
    .. rubric:: Methods Documentation
 

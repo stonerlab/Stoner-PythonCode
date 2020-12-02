@@ -1,4 +1,4 @@
-Stoner.Core.DataFile
+﻿Stoner.Core.DataFile
 ====================
 
 .. currentmodule:: Stoner.Core
@@ -75,6 +75,7 @@ Stoner.Core.DataFile
       ~Stoner.Core.DataFile.dims
       ~Stoner.Core.DataFile.dtype
       ~Stoner.Core.DataFile.filename
+      ~Stoner.Core.DataFile.filepath
       ~Stoner.Core.DataFile.header
       ~Stoner.Core.DataFile.mask
       ~Stoner.Core.DataFile.metadata
@@ -84,6 +85,5 @@ Stoner.Core.DataFile
       ~Stoner.Core.DataFile.records
       ~Stoner.Core.DataFile.setas
       ~Stoner.Core.DataFile.shape
-      ~Stoner.Core.DataFile.subclasses
    
    

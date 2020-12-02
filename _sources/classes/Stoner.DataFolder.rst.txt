@@ -1,4 +1,4 @@
-Stoner.DataFolder
+﻿Stoner.DataFolder
 =================
 
 .. currentmodule:: Stoner
@@ -38,7 +38,6 @@ Stoner.DataFolder
       ~Stoner.DataFolder.keep_latest
       ~Stoner.DataFolder.keys
       ~Stoner.DataFolder.make_name
-      ~Stoner.DataFolder.next
       ~Stoner.DataFolder.on_load_process
       ~Stoner.DataFolder.pop
       ~Stoner.DataFolder.popitem

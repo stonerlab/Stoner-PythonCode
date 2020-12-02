@@ -41,6 +41,7 @@ KerrArray
       ~KerrArray.size
       ~KerrArray.strides
       ~KerrArray.tesseractable
+      ~KerrArray.title
 
    .. rubric:: Methods Summary
 
@@ -178,6 +179,7 @@ KerrArray
    .. autoattribute:: size
    .. autoattribute:: strides
    .. autoattribute:: tesseractable
+   .. autoattribute:: title
 
    .. rubric:: Methods Documentation
 

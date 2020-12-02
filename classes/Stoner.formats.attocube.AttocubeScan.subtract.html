@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AttocubeScan.subtract &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="AttocubeScan.to_HDF5" href="Stoner.formats.attocube.AttocubeScan.to_HDF5.html" />
@@ -57,34 +58,28 @@
             
   <div class="section" id="attocubescan-subtract">
 <h1>AttocubeScan.subtract<a class="headerlink" href="#attocubescan-subtract" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.formats.attocube.AttocubeScan.subtract">
-<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">subtract</code><span class="sig-paren">(</span><em class="sig-param">background</em>, <em class="sig-param">contrast=16</em>, <em class="sig-param">clip_intensity=True</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.subtract" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">subtract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">background</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.subtract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subtract a background image (or index) from all images in the stack.</p>
-<p>The formula used is new = (ImageArray - background) * contrast + 0.5
-If clip_intensity then clip negative intensities to 0. Array is always
-converted to float for this method.</p>
-<dl class="simple">
-<dt>Arg:</dt><dd><dl class="simple">
-<dt>background(int or np.ndarray or ImageFile):</dt><dd><p>the background image to subtract. If int is given this is used
-as an index on the stack.</p>
-</dd>
-</dl>
-</dd>
-</dl>
 <dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>contrast</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Determines contrast of resulting image</p></li>
-<li><p><strong>clip_intensity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – whether to clip the image intensities in range (0,1) after subtraction</p></li>
-</ul>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>background</strong> (<em>int, str or 2D array</em>) – Background image to index</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>(ImageStack)</em> –     The modified image stack.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Method cahnged for v0.10 to not normalise or clip the data.
+The background image is scaled by the ratio of the mean pixel values of the unmasked
+region in the background image.</p>
 </dd></dl>
 
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -142,9 +137,9 @@ as an index on the stack.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

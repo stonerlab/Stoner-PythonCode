@@ -1,4 +1,4 @@
-Stoner.formats.facilities.SNSFile
+﻿Stoner.formats.facilities.SNSFile
 =================================
 
 .. currentmodule:: Stoner.formats.facilities
@@ -75,6 +75,7 @@ Stoner.formats.facilities.SNSFile
       ~Stoner.formats.facilities.SNSFile.dims
       ~Stoner.formats.facilities.SNSFile.dtype
       ~Stoner.formats.facilities.SNSFile.filename
+      ~Stoner.formats.facilities.SNSFile.filepath
       ~Stoner.formats.facilities.SNSFile.header
       ~Stoner.formats.facilities.SNSFile.mask
       ~Stoner.formats.facilities.SNSFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.facilities.SNSFile
       ~Stoner.formats.facilities.SNSFile.records
       ~Stoner.formats.facilities.SNSFile.setas
       ~Stoner.formats.facilities.SNSFile.shape
-      ~Stoner.formats.facilities.SNSFile.subclasses
    
    

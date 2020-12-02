@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>numpy.ma.core &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -65,19 +66,12 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># pylint: disable-msg=E1002</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">print_function</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">textwrap</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
-
-<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">builtins</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">__builtin__</span> <span class="k">as</span> <span class="nn">builtins</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.core.umath</span> <span class="k">as</span> <span class="nn">umath</span>
@@ -86,7 +80,7 @@
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span> <span class="k">as</span> <span class="n">narray</span>
 <span class="kn">from</span> <span class="nn">numpy.lib.function_base</span> <span class="kn">import</span> <span class="n">angle</span>
 <span class="kn">from</span> <span class="nn">numpy.compat</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">getargspec</span><span class="p">,</span> <span class="n">formatargspec</span><span class="p">,</span> <span class="n">long</span><span class="p">,</span> <span class="n">basestring</span><span class="p">,</span> <span class="n">unicode</span><span class="p">,</span> <span class="nb">bytes</span>
+    <span class="n">getargspec</span><span class="p">,</span> <span class="n">formatargspec</span><span class="p">,</span> <span class="n">long</span><span class="p">,</span> <span class="n">unicode</span><span class="p">,</span> <span class="nb">bytes</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">expand_dims</span>
 <span class="kn">from</span> <span class="nn">numpy.core.numeric</span> <span class="kn">import</span> <span class="n">normalize_axis_tuple</span>
@@ -146,7 +140,7 @@
 <span class="sd">        The array which argsort was called on</span>
 
 <span class="sd">    np.ma.argsort has a long-term bug where the default of the axis argument</span>
-<span class="sd">    is wrong (gh-8701), which now must be kept for backwards compatibiity.</span>
+<span class="sd">    is wrong (gh-8701), which now must be kept for backwards compatibility.</span>
 <span class="sd">    Thankfully, this only makes a difference when arrays are 2- or more-</span>
 <span class="sd">    dimensional, so we only need a warning then.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -243,14 +237,17 @@
     <span class="n">default_filler</span><span class="p">[</span><span class="s2">&quot;M8[&quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="s2">&quot;NaT&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
     <span class="n">default_filler</span><span class="p">[</span><span class="s2">&quot;m8[&quot;</span> <span class="o">+</span> <span class="n">v</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="s2">&quot;NaT&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
+<span class="n">float_types_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">half</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">single</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">longdouble</span><span class="p">,</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">csingle</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cdouble</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">clongdouble</span><span class="p">]</span>
 <span class="n">max_filler</span> <span class="o">=</span> <span class="n">ntypes</span><span class="o">.</span><span class="n">_minvals</span>
-<span class="n">max_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]])</span>
-<span class="n">min_filler</span> <span class="o">=</span> <span class="n">ntypes</span><span class="o">.</span><span class="n">_maxvals</span>
-<span class="n">min_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]])</span>
-<span class="k">if</span> <span class="s1">&#39;float128&#39;</span> <span class="ow">in</span> <span class="n">ntypes</span><span class="o">.</span><span class="n">typeDict</span><span class="p">:</span>
-    <span class="n">max_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)])</span>
-    <span class="n">min_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">np</span><span class="o">.</span><span class="n">float128</span><span class="p">,</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)])</span>
+<span class="n">max_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">float_types_list</span><span class="p">[:</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">max_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="nb">complex</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">float_types_list</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]])</span>
 
+<span class="n">min_filler</span> <span class="o">=</span> <span class="n">ntypes</span><span class="o">.</span><span class="n">_maxvals</span>
+<span class="n">min_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span>  <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">float_types_list</span><span class="p">[:</span><span class="mi">4</span><span class="p">]])</span>
+<span class="n">min_filler</span><span class="o">.</span><span class="n">update</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="nb">complex</span><span class="p">(</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">float_types_list</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]])</span>
+
+<span class="k">del</span> <span class="n">float_types_list</span>
 
 <span class="k">def</span> <span class="nf">_recursive_fill_value</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -337,11 +334,10 @@
     <span class="k">def</span> <span class="nf">_scalar_fill_value</span><span class="p">(</span><span class="n">dtype</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">extremum</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Unsuitable type </span><span class="si">{}</span><span class="s2"> for calculating </span><span class="si">{}</span><span class="s2">.&quot;</span>
-                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">extremum_name</span><span class="p">)</span>
-            <span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsuitable type </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> for calculating </span><span class="si">{</span><span class="n">extremum_name</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
 
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">_get_dtype_of</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_recursive_fill_value</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">_scalar_fill_value</span><span class="p">)</span>
@@ -507,7 +503,7 @@
             <span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_recursive_set_fill_value</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">ndtype</span><span class="p">),</span>
                                   <span class="n">dtype</span><span class="o">=</span><span class="n">ndtype</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ndtype</span><span class="o">.</span><span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s1">&#39;OSVU&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ndtype</span><span class="o">.</span><span class="n">char</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s1">&#39;OSVU&#39;</span><span class="p">):</span>
             <span class="c1"># Note this check doesn&#39;t work if fill_value is not a scalar</span>
             <span class="n">err_msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot set fill value of string with array of dtype </span><span class="si">%s</span><span class="s2">&quot;</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">err_msg</span> <span class="o">%</span> <span class="n">ndtype</span><span class="p">)</span>
@@ -832,9 +828,9 @@
     <span class="k">return</span> <span class="n">a</span>
 
 <span class="k">def</span> <span class="nf">is_string_or_list_of_strings</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">or</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span>
             <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">and</span>
-             <span class="n">builtins</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">val</span><span class="p">)))</span>
+             <span class="n">builtins</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">val</span><span class="p">)))</span>
 
 <span class="c1">###############################################################################</span>
 <span class="c1">#                                  Ufuncs                                     #</span>
@@ -845,7 +841,7 @@
 <span class="n">ufunc_fills</span> <span class="o">=</span> <span class="p">{}</span>
 
 
-<span class="k">class</span> <span class="nc">_DomainCheckInterval</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_DomainCheckInterval</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define a valid interval, so that :</span>
 
@@ -870,7 +866,7 @@
                                     <span class="n">umath</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">))</span>
 
 
-<span class="k">class</span> <span class="nc">_DomainTan</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_DomainTan</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define a valid interval for the `tan` function, so that:</span>
 
@@ -888,7 +884,7 @@
             <span class="k">return</span> <span class="n">umath</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">umath</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">umath</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_DomainSafeDivide</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_DomainSafeDivide</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define a domain for safe division.</span>
 
@@ -909,7 +905,7 @@
             <span class="k">return</span> <span class="n">umath</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">&gt;=</span> <span class="n">umath</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_DomainGreater</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_DomainGreater</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    DomainGreater(v)(x) is True where x &lt;= v.</span>
 
@@ -925,7 +921,7 @@
             <span class="k">return</span> <span class="n">umath</span><span class="o">.</span><span class="n">less_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_value</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_DomainGreaterEqual</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_DomainGreaterEqual</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    DomainGreaterEqual(v)(x) is True where x &lt; v.</span>
 
@@ -941,14 +937,14 @@
             <span class="k">return</span> <span class="n">umath</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_value</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_MaskedUFunc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_MaskedUFunc</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ufunc</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">ufunc</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">ufunc</span><span class="o">.</span><span class="vm">__doc__</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">ufunc</span><span class="o">.</span><span class="vm">__name__</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Masked version of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Masked version of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="si">}</span><span class="s2">&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">_MaskedUnaryOperation</span><span class="p">(</span><span class="n">_MaskedUFunc</span><span class="p">):</span>
@@ -1854,8 +1850,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">sequence</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_flatsequence</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
-                        <span class="k">yield</span> <span class="n">f</span>
+                    <span class="k">yield from</span> <span class="n">_flatsequence</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">yield</span> <span class="n">element</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
@@ -2431,7 +2426,7 @@
 <span class="c1">###############################################################################</span>
 
 
-<span class="k">class</span> <span class="nc">_MaskedPrintOption</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_MaskedPrintOption</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handle the string used to represent missing data in a masked array.</span>
 
@@ -2582,8 +2577,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">elm</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">flatten_sequence</span><span class="p">(</span><span class="n">elm</span><span class="p">):</span>
-                    <span class="k">yield</span> <span class="n">f</span>
+                <span class="k">yield from</span> <span class="n">flatten_sequence</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">elm</span>
 
@@ -2649,7 +2643,7 @@
     <span class="k">return</span> <span class="n">wrapped_method</span>
 
 
-<span class="k">class</span> <span class="nc">MaskedIterator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MaskedIterator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Flat iterator object to iterate over masked arrays.</span>
 
@@ -2756,8 +2750,6 @@
                 <span class="k">return</span> <span class="n">masked</span>
         <span class="k">return</span> <span class="n">d</span>
 
-    <span class="nb">next</span> <span class="o">=</span> <span class="fm">__next__</span>
-
 
 <span class="k">class</span> <span class="nc">MaskedArray</span><span class="p">(</span><span class="n">ndarray</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2811,6 +2803,52 @@
 <span class="sd">        If order is &#39;A&#39; (default), then the returned array may be</span>
 <span class="sd">        in any order (either C-, Fortran-contiguous, or even discontiguous),</span>
 <span class="sd">        unless a copy is required, in which case it will be C-contiguous.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    The ``mask`` can be initialized with an array of boolean values</span>
+<span class="sd">    with the same shape as ``data``.</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.arange(6).reshape((2, 3))</span>
+<span class="sd">    &gt;&gt;&gt; np.ma.MaskedArray(data, mask=[[False, True, False],</span>
+<span class="sd">    ...                               [False, False, True]])</span>
+<span class="sd">    masked_array(</span>
+<span class="sd">      data=[[0, --, 2],</span>
+<span class="sd">            [3, 4, --]],</span>
+<span class="sd">      mask=[[False,  True, False],</span>
+<span class="sd">            [False, False,  True]],</span>
+<span class="sd">      fill_value=999999)</span>
+
+<span class="sd">    Alternatively, the ``mask`` can be initialized to homogeneous boolean</span>
+<span class="sd">    array with the same shape as ``data`` by passing in a scalar</span>
+<span class="sd">    boolean value:</span>
+
+<span class="sd">    &gt;&gt;&gt; np.ma.MaskedArray(data, mask=False)</span>
+<span class="sd">    masked_array(</span>
+<span class="sd">      data=[[0, 1, 2],</span>
+<span class="sd">            [3, 4, 5]],</span>
+<span class="sd">      mask=[[False, False, False],</span>
+<span class="sd">            [False, False, False]],</span>
+<span class="sd">      fill_value=999999)</span>
+
+<span class="sd">    &gt;&gt;&gt; np.ma.MaskedArray(data, mask=True)</span>
+<span class="sd">    masked_array(</span>
+<span class="sd">      data=[[--, --, --],</span>
+<span class="sd">            [--, --, --]],</span>
+<span class="sd">      mask=[[ True,  True,  True],</span>
+<span class="sd">            [ True,  True,  True]],</span>
+<span class="sd">      fill_value=999999,</span>
+<span class="sd">      dtype=int64)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The recommended practice for initializing ``mask`` with a scalar</span>
+<span class="sd">        boolean value is to use ``True``/``False`` rather than</span>
+<span class="sd">        ``np.True_``/``np.False_``. The reason is :attr:`nomask`</span>
+<span class="sd">        is represented internally as ``np.False_``.</span>
+
+<span class="sd">        &gt;&gt;&gt; np.False_ is np.ma.nomask</span>
+<span class="sd">        True</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -2873,8 +2911,8 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># If data is a sequence of masked array</span>
-                    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">getmaskarray</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span>
-                                    <span class="n">dtype</span><span class="o">=</span><span class="n">mdtype</span><span class="p">)</span>
+                    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">getmaskarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mdtype</span><span class="p">))</span>
+                                                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mdtype</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="c1"># If data is nested</span>
                     <span class="n">mask</span> <span class="o">=</span> <span class="n">nomask</span>
@@ -3310,6 +3348,10 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_value</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span>
 
+                    <span class="c1"># Something like gh-15895 has happened if this check fails.</span>
+                    <span class="c1"># _fill_value should always be an ndarray.</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Internal NumPy error.&#39;</span><span class="p">)</span>
                     <span class="c1"># If we&#39;re indexing a multidimensional field in a</span>
                     <span class="c1"># structured array (such as dtype(&quot;(2,)i2,(2,)i1&quot;)),</span>
                     <span class="c1"># dimensionality goes up (M[field].ndim == M.ndim +</span>
@@ -3317,19 +3359,21 @@
                     <span class="c1"># M[field] but problematic for M[field].fill_value</span>
                     <span class="c1"># which should have shape () to avoid breaking several</span>
                     <span class="c1"># methods. There is no great way out, so set to</span>
-                    <span class="c1"># first element.  See issue #6723.</span>
+                    <span class="c1"># first element. See issue #6723.</span>
                     <span class="k">if</span> <span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">==</span>
                                 <span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                                 <span class="s2">&quot;Upon accessing multidimensional field &quot;</span>
-                                <span class="s2">&quot;</span><span class="si">{indx:s}</span><span class="s2">, need to keep dimensionality &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indx</span><span class="si">!s}</span><span class="s2">, need to keep dimensionality &quot;</span>
                                 <span class="s2">&quot;of fill_value at 0. Discarding &quot;</span>
                                 <span class="s2">&quot;heterogeneous fill_value and setting &quot;</span>
-                                <span class="s2">&quot;all to </span><span class="si">{fv!s}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">indx</span><span class="o">=</span><span class="n">indx</span><span class="p">,</span>
-                                    <span class="n">fv</span><span class="o">=</span><span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                                <span class="sa">f</span><span class="s2">&quot;all to </span><span class="si">{</span><span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!s}</span><span class="s2">.&quot;</span><span class="p">,</span>
                                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-                        <span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="c1"># Need to use `.flat[0:1].squeeze(...)` instead of just</span>
+                        <span class="c1"># `.flat[0]` to ensure the result is a 0d array and not</span>
+                        <span class="c1"># a scalar.</span>
+                        <span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span> <span class="o">=</span> <span class="n">dout</span><span class="o">.</span><span class="n">_fill_value</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">dout</span><span class="o">.</span><span class="n">_isfield</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="c1"># Update the mask if needed</span>
             <span class="k">if</span> <span class="n">mout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">nomask</span><span class="p">:</span>
@@ -3351,7 +3395,7 @@
             <span class="k">raise</span> <span class="n">MaskError</span><span class="p">(</span><span class="s1">&#39;Cannot alter the masked element.&#39;</span><span class="p">)</span>
         <span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
         <span class="n">_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indx</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indx</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">_data</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">if</span> <span class="n">_mask</span> <span class="ow">is</span> <span class="n">nomask</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">_mask</span> <span class="o">=</span> <span class="n">make_mask_none</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
@@ -3942,10 +3986,6 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_insert_masked_print</span><span class="p">())</span>
 
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_insert_masked_print</span><span class="p">())</span>
-
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Literal string representation.</span>
@@ -3975,7 +4015,7 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">_legacy_print_templates</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">%</span> <span class="n">parameters</span>
 
-        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;masked_</span><span class="si">{}</span><span class="s1">(&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;masked_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">(&quot;</span>
 
         <span class="n">dtype_needed</span> <span class="o">=</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">arrayprint</span><span class="o">.</span><span class="n">dtype_is_implied</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="ow">or</span>
@@ -4389,17 +4429,6 @@
             <span class="k">raise</span> <span class="n">MaskError</span><span class="p">(</span><span class="s1">&#39;Cannot convert masked element to a Python int.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">__long__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert to long.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Only length-1 arrays can be converted &quot;</span>
-                            <span class="s2">&quot;to Python scalars&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MaskError</span><span class="p">(</span><span class="s1">&#39;Cannot convert masked element to a Python long.&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">long</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">imag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -4795,7 +4824,7 @@
 
 <span class="sd">        &gt;&gt;&gt; x = np.ma.array([1, 2, 3])</span>
 <span class="sd">        &gt;&gt;&gt; x.ids()</span>
-<span class="sd">        (166691080, 3083169284L) # may vary</span>
+<span class="sd">        (166691080, 3083169284) # may vary</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="ow">is</span> <span class="n">nomask</span><span class="p">:</span>
@@ -5880,6 +5909,14 @@
 <span class="sd">        Return (maximum - minimum) along the given dimension</span>
 <span class="sd">        (i.e. peak-to-peak value).</span>
 
+<span class="sd">        .. warning::</span>
+<span class="sd">            `ptp` preserves the data type of the array. This means the</span>
+<span class="sd">            return value for an input of signed integers with n bits</span>
+<span class="sd">            (e.g. `np.int8`, `np.int16`, etc) is also a signed integer</span>
+<span class="sd">            with n bits.  In that case, peak-to-peak values greater than</span>
+<span class="sd">            ``2**(n-1)-1`` will be returned as negative values. An example</span>
+<span class="sd">            with a work-around is shown below.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis : {None, int}, optional</span>
@@ -5902,6 +5939,45 @@
 <span class="sd">            A new array holding the result, unless ``out`` was</span>
 <span class="sd">            specified, in which case a reference to ``out`` is returned.</span>
 
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; x = np.ma.MaskedArray([[4, 9, 2, 10],</span>
+<span class="sd">        ...                        [6, 9, 7, 12]])</span>
+
+<span class="sd">        &gt;&gt;&gt; x.ptp(axis=1)</span>
+<span class="sd">        masked_array(data=[8, 6],</span>
+<span class="sd">                     mask=False,</span>
+<span class="sd">               fill_value=999999)</span>
+
+<span class="sd">        &gt;&gt;&gt; x.ptp(axis=0)</span>
+<span class="sd">        masked_array(data=[2, 0, 5, 2],</span>
+<span class="sd">                     mask=False,</span>
+<span class="sd">               fill_value=999999)</span>
+
+<span class="sd">        &gt;&gt;&gt; x.ptp()</span>
+<span class="sd">        10</span>
+
+<span class="sd">        This example shows that a negative value can be returned when</span>
+<span class="sd">        the input is an array of signed integers.</span>
+
+<span class="sd">        &gt;&gt;&gt; y = np.ma.MaskedArray([[1, 127],</span>
+<span class="sd">        ...                        [0, 127],</span>
+<span class="sd">        ...                        [-1, 127],</span>
+<span class="sd">        ...                        [-2, 127]], dtype=np.int8)</span>
+<span class="sd">        &gt;&gt;&gt; y.ptp(axis=1)</span>
+<span class="sd">        masked_array(data=[ 126,  127, -128, -127],</span>
+<span class="sd">                     mask=False,</span>
+<span class="sd">               fill_value=999999,</span>
+<span class="sd">                    dtype=int8)</span>
+
+<span class="sd">        A work-around is to use the `view()` method to view the result as</span>
+<span class="sd">        unsigned integers with the same bit width:</span>
+
+<span class="sd">        &gt;&gt;&gt; y.ptp(axis=1).view(np.uint8)</span>
+<span class="sd">        masked_array(data=[126, 127, 128, 129],</span>
+<span class="sd">                     mask=False,</span>
+<span class="sd">               fill_value=999999,</span>
+<span class="sd">                    dtype=uint8)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">,</span>
@@ -5918,13 +5994,13 @@
 
     <span class="k">def</span> <span class="nf">partition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Warning: &#39;partition&#39; will ignore the &#39;mask&#39; &quot;</span>
-                      <span class="s2">&quot;of the </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+                      <span class="sa">f</span><span class="s2">&quot;of the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
                       <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">argpartition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Warning: &#39;argpartition&#39; will ignore the &#39;mask&#39; &quot;</span>
-                      <span class="s2">&quot;of the </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+                      <span class="sa">f</span><span class="s2">&quot;of the </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
                       <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaskedArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -6016,10 +6092,17 @@
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">tostring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function is a compatibility alias for tobytes. Despite its name it</span>
-<span class="sd">        returns bytes not strings.</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A compatibility alias for `tobytes`, with exactly the same behavior.</span>
+
+<span class="sd">        Despite its name, it returns `bytes` not `str`\ s.</span>
+
+<span class="sd">        .. deprecated:: 1.19.0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 2020-03-30, Numpy 1.19.0</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;tostring() is deprecated. Use tobytes() instead.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
 
@@ -6270,8 +6353,7 @@
         <span class="s2">&quot;Defines an iterator for mvoid&quot;</span>
         <span class="p">(</span><span class="n">_data</span><span class="p">,</span> <span class="n">_mask</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">_mask</span> <span class="ow">is</span> <span class="n">nomask</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">_data</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">d</span>
+            <span class="k">yield from</span> <span class="n">_data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_data</span><span class="p">,</span> <span class="n">_mask</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
@@ -6441,16 +6523,27 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">masked_print_option</span><span class="o">.</span><span class="n">_display</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">major</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">unicode</span><span class="p">(</span><span class="n">masked_print_option</span><span class="o">.</span><span class="n">_display</span><span class="p">)</span>
-
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">MaskedConstant</span><span class="o">.</span><span class="n">__singleton</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;masked&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># it&#39;s a subclass, or something is wrong, make it obvious</span>
             <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
+        <span class="c1"># Replace ndarray.__format__ with the default, which supports no format characters.</span>
+        <span class="c1"># Supporting format characters is unwise here, because we do not know what type</span>
+        <span class="c1"># the user was expecting - better to not guess.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="c1"># 2020-03-23, NumPy 1.19.0</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Format strings passed to MaskedConstant are ignored, but in future may &quot;</span>
+                <span class="s2">&quot;error or produce different behavior&quot;</span><span class="p">,</span>
+                <span class="ne">FutureWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override of MaskedArray&#39;s __reduce__.</span>
@@ -6488,7 +6581,7 @@
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">MaskedConstant</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">__singleton</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                <span class="s2">&quot;attributes of </span><span class="si">{!r}</span><span class="s2"> are not writeable&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+                <span class="sa">f</span><span class="s2">&quot;attributes of </span><span class="si">{</span><span class="bp">self</span><span class="si">!r}</span><span class="s2"> are not writeable&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># duplicate instance - we can end up here from __array_finalize__,</span>
             <span class="c1"># where we set the __class__ attribute</span>
@@ -6593,8 +6686,8 @@
         <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># 2016-04-13, 1.13.0</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Single-argument form of np.ma.</span><span class="si">{0}</span><span class="s2"> is deprecated. Use &quot;</span>
-                <span class="s2">&quot;np.ma.</span><span class="si">{0}</span><span class="s2">.reduce instead.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+                <span class="sa">f</span><span class="s2">&quot;Single-argument form of np.ma.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is deprecated. Use &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;np.ma.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.reduce instead.&quot;</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
@@ -6607,11 +6700,9 @@
         <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">_NoValue</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># 2017-05-06, Numpy 1.13.0: warn on axis default</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;In the future the default for ma.</span><span class="si">{0}</span><span class="s2">.reduce will be axis=0, &quot;</span>
-                <span class="s2">&quot;not the current None, to match np.</span><span class="si">{0}</span><span class="s2">.reduce. &quot;</span>
-                <span class="s2">&quot;Explicitly pass 0 or None to silence this warning.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span>
-                <span class="p">),</span>
+                <span class="sa">f</span><span class="s2">&quot;In the future the default for ma.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.reduce will be axis=0, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;not the current None, to match np.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.reduce. &quot;</span>
+                <span class="s2">&quot;Explicitly pass 0 or None to silence this warning.&quot;</span><span class="p">,</span>
                 <span class="n">MaskedArrayFutureWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
             <span class="n">axis</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -6691,7 +6782,7 @@
 <span class="c1">##############################################################################</span>
 
 
-<span class="k">class</span> <span class="nc">_frommethod</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_frommethod</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define functions from existing MaskedArray methods.</span>
 
@@ -6838,7 +6929,18 @@
 <span class="n">argsort</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">MaskedArray</span><span class="o">.</span><span class="n">argsort</span><span class="o">.</span><span class="vm">__doc__</span>
 
 <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endwith</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="s2">&quot;Function version of the eponymous method.&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a sorted copy of the masked array.</span>
+
+<span class="sd">    Equivalent to creating a copy of the array</span>
+<span class="sd">    and applying the  MaskedArray ``sort()`` method.</span>
+
+<span class="sd">    Refer to ``MaskedArray.sort`` for the full documentation</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    MaskedArray.sort : equivalent method</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -6850,7 +6952,6 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">a</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">a</span>
-<span class="n">sort</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">MaskedArray</span><span class="o">.</span><span class="n">sort</span><span class="o">.</span><span class="vm">__doc__</span>
 
 
 <span class="k">def</span> <span class="nf">compressed</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -7950,10 +8051,8 @@
 <span class="k">def</span> <span class="nf">_pickle_warn</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
     <span class="c1"># NumPy 1.15.0, 2017-12-10</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s2">&quot;np.ma.</span><span class="si">{method}</span><span class="s2"> is deprecated, use pickle.</span><span class="si">{method}</span><span class="s2"> instead&quot;</span>
-            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">),</span>
-        <span class="ne">DeprecationWarning</span><span class="p">,</span>
-        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="sa">f</span><span class="s2">&quot;np.ma.</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> is deprecated, use pickle.</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> instead&quot;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">fromfile</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">count</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
@@ -8025,7 +8124,7 @@
     <span class="k">return</span> <span class="n">masked_array</span><span class="p">(</span><span class="n">fxarray</span><span class="p">[</span><span class="s1">&#39;_data&#39;</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="n">fxarray</span><span class="p">[</span><span class="s1">&#39;_mask&#39;</span><span class="p">])</span>
 
 
-<span class="k">class</span> <span class="nc">_convert2ma</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_convert2ma</span><span class="p">:</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert functions from numpy to numpy.ma.</span>
@@ -8129,6 +8228,7 @@
     <span class="k">return</span> <span class="n">concatenate</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">axis</span><span class="p">)</span>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -8162,9 +8262,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

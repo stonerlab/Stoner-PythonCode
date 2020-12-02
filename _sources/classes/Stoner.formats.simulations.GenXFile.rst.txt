@@ -1,4 +1,4 @@
-Stoner.formats.simulations.GenXFile
+﻿Stoner.formats.simulations.GenXFile
 ===================================
 
 .. currentmodule:: Stoner.formats.simulations
@@ -75,6 +75,7 @@ Stoner.formats.simulations.GenXFile
       ~Stoner.formats.simulations.GenXFile.dims
       ~Stoner.formats.simulations.GenXFile.dtype
       ~Stoner.formats.simulations.GenXFile.filename
+      ~Stoner.formats.simulations.GenXFile.filepath
       ~Stoner.formats.simulations.GenXFile.header
       ~Stoner.formats.simulations.GenXFile.mask
       ~Stoner.formats.simulations.GenXFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.simulations.GenXFile
       ~Stoner.formats.simulations.GenXFile.records
       ~Stoner.formats.simulations.GenXFile.setas
       ~Stoner.formats.simulations.GenXFile.shape
-      ~Stoner.formats.simulations.GenXFile.subclasses
    
    

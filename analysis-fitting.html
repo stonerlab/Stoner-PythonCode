@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Additional Fitting models &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="_static/better.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Linear" href="classes/Stoner.analysis.fitting.models.generic.Linear.html" />
@@ -104,7 +105,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
+<td><p>Model class.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.generic.PowerLaw.html#Stoner.analysis.fitting.models.generic.PowerLaw" title="Stoner.analysis.fitting.models.generic.PowerLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerLaw</span></code></a>([independent_vars, prefix, nan_policy])</p></td>
 <td><p>Power Law Fitting Equation.</p></td>
@@ -163,7 +164,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Arrhenius Equation with a variable T power dependent prefactor.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
+<td><p>Model class.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.thermal.NDimArrhenius.html#Stoner.analysis.fitting.models.thermal.NDimArrhenius" title="Stoner.analysis.fitting.models.thermal.NDimArrhenius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NDimArrhenius</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Arrhenius Equation without T dependendent prefactor for various dimensions.</p></td>
@@ -219,7 +220,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Fowler Nordhiem Model of electron tunnelling.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code>(func[, independent_vars, param_names, …])</p></td>
-<td><p></p></td>
+<td><p>Model class.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.tunnelling.Simmons.html#Stoner.analysis.fitting.models.tunnelling.Simmons" title="Stoner.analysis.fitting.models.tunnelling.Simmons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Simmons</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Simmons model of electron tunnelling.</p></td>
@@ -296,7 +297,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Bloch’s law for spontaneous magnetism at low temperatures.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fmr_power</span></code>(H, H_res, Delta_H, K_1, K_2)</p></td>
-<td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
+<td><p>Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_kittel</span></code>(f, g, M_s, H_k)</p></td>
 <td><p>Rewritten Kittel equation for finding ferromagnetic resonsance in field with frequency.</p></td>
@@ -305,7 +306,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">langevin</span></code>(H, M_s, m, T)</p></td>
-<td><p>The Langevin function for paramagnetic M-H loops.</p></td>
+<td><p>Langevin function for paramagnetic M-H loops.</p></td>
 </tr>
 </tbody>
 </table>
@@ -322,7 +323,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 <td><p>Bloch’s law for spontaneous magnetism at low temperatures.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.FMR_Power.html#Stoner.analysis.fitting.models.magnetism.FMR_Power" title="Stoner.analysis.fitting.models.magnetism.FMR_Power"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FMR_Power</span></code></a>(*args, **kwargs)</p></td>
-<td><p>A combination of a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
+<td><p>Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.html#Stoner.analysis.fitting.models.magnetism.Inverse_Kittel" title="Stoner.analysis.fitting.models.magnetism.Inverse_Kittel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Inverse_Kittel</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</p></td>
@@ -394,6 +395,7 @@ and so can simplify the fitting code considerably. Many of the models come with 
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -503,9 +505,9 @@ and so can simplify the fitting code considerably. Many of the models come with 
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

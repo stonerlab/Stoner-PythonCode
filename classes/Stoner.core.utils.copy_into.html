@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>copy_into &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,10 +15,10 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="itersubclasses" href="Stoner.core.utils.itersubclasses.html" />
+    <link rel="next" title="decode_string" href="Stoner.core.utils.decode_string.html" />
     <link rel="prev" title="mod_core" href="Stoner.core.utils.mod_core.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +33,7 @@
           <a href="Stoner.core.utils.mod_core.html" title="Previous document">mod_core</a>
         </li>
         <li>
-          <a href="Stoner.core.utils.itersubclasses.html" title="Next document">itersubclasses</a>
+          <a href="Stoner.core.utils.decode_string.html" title="Next document">decode_string</a>
           &rarr;
         </li>
     </ul>
@@ -54,10 +55,10 @@
             
   <div class="section" id="copy-into">
 <h1>copy_into<a class="headerlink" href="#copy-into" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="Stoner.core.utils.copy_into">
-<code class="sig-prename descclassname">Stoner.core.utils.</code><code class="sig-name descname">copy_into</code><span class="sig-paren">(</span><em class="sig-param">source</em>, <em class="sig-param">dest</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/core/utils.html#copy_into"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.utils.copy_into" title="Permalink to this definition">¶</a></dt>
-<dd><p>Copies the data associated with source to dest.</p>
+<code class="sig-prename descclassname">Stoner.core.utils.</code><code class="sig-name descname">copy_into</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n">DataFile</span></em>, <em class="sig-param"><span class="n">dest</span><span class="p">:</span> <span class="n">DataFile</span></em><span class="sig-paren">)</span> &#x2192; DataFile<a class="reference internal" href="../_modules/Stoner/core/utils.html#copy_into"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.core.utils.copy_into" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy the data associated with source to dest.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -76,6 +77,7 @@ overwrites the attributes that represent the data in the DataFile.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -88,8 +90,8 @@ overwrites the attributes that represent the data in the DataFile.</p>
   <p class="topless"><a href="Stoner.core.utils.mod_core.html"
                         title="previous chapter">mod_core</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.core.utils.itersubclasses.html"
-                        title="next chapter">itersubclasses</a></p>
+  <p class="topless"><a href="Stoner.core.utils.decode_string.html"
+                        title="next chapter">decode_string</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -116,7 +118,7 @@ overwrites the attributes that represent the data in the DataFile.</p>
           <a href="Stoner.core.utils.mod_core.html" title="Previous document">mod_core</a>
         </li>
         <li>
-          <a href="Stoner.core.utils.itersubclasses.html" title="Next document">itersubclasses</a>
+          <a href="Stoner.core.utils.decode_string.html" title="Next document">decode_string</a>
           &rarr;
         </li>
     </ul>
@@ -130,9 +132,9 @@ overwrites the attributes that represent the data in the DataFile.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

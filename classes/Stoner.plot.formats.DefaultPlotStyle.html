@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DefaultPlotStyle &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="GBPlotStyle" href="Stoner.plot.formats.GBPlotStyle.html" />
@@ -54,82 +55,82 @@
             
   <div class="section" id="defaultplotstyle">
 <h1>DefaultPlotStyle<a class="headerlink" href="#defaultplotstyle" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.plot.formats.DefaultPlotStyle">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.plot.formats.</code><code class="sig-name descname">DefaultPlotStyle</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.plot.formats.</code><code class="sig-name descname">DefaultPlotStyle</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></a></p>
 <p>Produces a default plot style.</p>
 <p>To produce alternative plot styles, create subclasses of this plot. Either override or
 create additional attributes to define rc Parameters (see Matplotlib documentation for
 available rc parameters) and override the :py:meth:Stoner.pot.formats.DefaultPlotStyle.customise`
 method to carry out additional plot formatting.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.fig_width_pt">
 <code class="sig-name descname">fig_width_pt</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.fig_width_pt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Preferred width of plot in points</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.show_xlabel">
 <code class="sig-name descname">show_xlabel</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.show_xlabel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the title in the plot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.show_ylabel">
 <code class="sig-name descname">show_ylabel</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.show_ylabel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the x-axis Labels</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.show_zlabel">
 <code class="sig-name descname">show_zlabel</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.show_zlabel" title="Permalink to this definition">¶</a></dt>
 <dd><p>show the y-xaxis labels</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.show_title">
 <code class="sig-name descname">show_title</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.show_title" title="Permalink to this definition">¶</a></dt>
 <dd><p>show the title</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.show_legend">
 <code class="sig-name descname">show_legend</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.show_legend" title="Permalink to this definition">¶</a></dt>
 <dd><p>show the legend</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.stylename">
 <code class="sig-name descname">stylename</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.stylename" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the matplotlib style to use</p>
@@ -140,25 +141,22 @@ method to carry out additional plot formatting.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.stylesheet">
 <code class="sig-name descname">stylesheet</code><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.stylesheet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculated list of stylesheets found by traversing the class heirarchy</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl>
 <dt>Example</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example plot using default style.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
-
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
-
 <span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span>
     <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;sample.txt&quot;</span><span class="p">)</span>
 <span class="p">)</span>
@@ -179,25 +177,25 @@ method to carry out additional plot formatting.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.show_legend" title="Stoner.plot.formats.DefaultPlotStyle.show_legend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_legend</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="Stoner.plot.formats.DefaultPlotStyle.show_legend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_legend</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.show_title" title="Stoner.plot.formats.DefaultPlotStyle.show_title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_title</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id1" title="Stoner.plot.formats.DefaultPlotStyle.show_title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_title</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.show_xlabel" title="Stoner.plot.formats.DefaultPlotStyle.show_xlabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_xlabel</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="Stoner.plot.formats.DefaultPlotStyle.show_xlabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_xlabel</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.show_ylabel" title="Stoner.plot.formats.DefaultPlotStyle.show_ylabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_ylabel</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id3" title="Stoner.plot.formats.DefaultPlotStyle.show_ylabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_ylabel</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.show_zlabel" title="Stoner.plot.formats.DefaultPlotStyle.show_zlabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_zlabel</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id4" title="Stoner.plot.formats.DefaultPlotStyle.show_zlabel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_zlabel</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.stylename" title="Stoner.plot.formats.DefaultPlotStyle.stylename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stylename</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#id5" title="Stoner.plot.formats.DefaultPlotStyle.stylename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stylename</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.stylesheet" title="Stoner.plot.formats.DefaultPlotStyle.stylesheet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stylesheet</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id6" title="Stoner.plot.formats.DefaultPlotStyle.stylesheet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stylesheet</span></code></a></p></td>
 <td><p>Horribly hacky method to traverse over the class heirarchy for style sheet names.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.subplot_settings" title="Stoner.plot.formats.DefaultPlotStyle.subplot_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subplot_settings</span></code></a></p></td>
@@ -219,7 +217,7 @@ method to carry out additional plot formatting.</p>
 <td><p>Call all the routines necessary to annotate the axes etc.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.apply" title="Stoner.plot.formats.DefaultPlotStyle.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a>()</p></td>
-<td><p>Update matplotlib rc parameters from any attributes starting <a href="#id1"><span class="problematic" id="id2">template_</span></a>.</p></td>
+<td><p>Update matplotlib rc parameters from any attributes starting <a href="#id7"><span class="problematic" id="id8">template_</span></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.plot.formats.DefaultPlotStyle.clear" title="Stoner.plot.formats.DefaultPlotStyle.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
 <td><p>Reset everything back o defaults.</p></td>
@@ -239,57 +237,57 @@ method to carry out additional plot formatting.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">show_legend</code><em class="property"> = True</em></dt>
+<dl class="py attribute">
+<dt id="id0">
+<code class="sig-name descname">show_legend</code><em class="property"> = True</em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">show_title</code><em class="property"> = True</em></dt>
+<dl class="py attribute">
+<dt id="id1">
+<code class="sig-name descname">show_title</code><em class="property"> = True</em><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">show_xlabel</code><em class="property"> = True</em></dt>
+<dl class="py attribute">
+<dt id="id2">
+<code class="sig-name descname">show_xlabel</code><em class="property"> = True</em><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">show_ylabel</code><em class="property"> = True</em></dt>
+<dl class="py attribute">
+<dt id="id3">
+<code class="sig-name descname">show_ylabel</code><em class="property"> = True</em><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">show_zlabel</code><em class="property"> = True</em></dt>
+<dl class="py attribute">
+<dt id="id4">
+<code class="sig-name descname">show_zlabel</code><em class="property"> = True</em><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">stylename</code><em class="property"> = 'default'</em></dt>
+<dl class="py attribute">
+<dt id="id5">
+<code class="sig-name descname">stylename</code><em class="property"> = 'default'</em><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">stylesheet</code></dt>
+<dl class="py attribute">
+<dt id="id6">
+<code class="sig-name descname">stylesheet</code><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
 <dd><p>Horribly hacky method to traverse over the class heirarchy for style sheet names.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.subplot_settings">
 <code class="sig-name descname">subplot_settings</code><em class="property"> = {'panels': {'title': (True, False, False), 'xlabel': (False, False, True), 'ylabel': (True, True, True), 'zlabel': (False, False, False)}, 'subplots': {'title': (True, True, True), 'xlabel': (True, True, True), 'ylabel': (True, True, True), 'zlabel': (False, False, False)}, 'y2': {'title': (True, False, False), 'xlabel': (True, False, False), 'ylabel': (True, True, True), 'zlabel': (False, False, False)}}</em><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.subplot_settings" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call the template object can manipulate the rcParams that will be set.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.annotate">
-<code class="sig-name descname">annotate</code><span class="sig-paren">(</span><em class="sig-param">ix</em>, <em class="sig-param">multiple</em>, <em class="sig-param">plot</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.annotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.annotate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">annotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ix</span></em>, <em class="sig-param"><span class="n">multiple</span></em>, <em class="sig-param"><span class="n">plot</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.annotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.annotate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call all the routines necessary to annotate the axes etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -302,19 +300,19 @@ method to carry out additional plot formatting.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.apply">
 <code class="sig-name descname">apply</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update matplotlib rc parameters from any attributes starting <a href="#id3"><span class="problematic" id="id4">template_</span></a>.</p>
+<dd><p>Update matplotlib rc parameters from any attributes starting <a href="#id9"><span class="problematic" id="id10">template_</span></a>.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.clear">
 <code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset everything back o defaults.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.customise">
 <code class="sig-name descname">customise</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.customise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.customise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implement hook to customise plot.</p>
@@ -323,9 +321,9 @@ plot customisation after the rc paramaters are updated from the class and
 instance attributes.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.customise_axes">
-<code class="sig-name descname">customise_axes</code><span class="sig-paren">(</span><em class="sig-param">ax</em>, <em class="sig-param">plot</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.customise_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.customise_axes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">customise_axes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">plot</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.customise_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.customise_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implement hook for for when we have an axis to manipulate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -339,16 +337,16 @@ plotting mode for all axes.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.new_figure">
-<code class="sig-name descname">new_figure</code><span class="sig-paren">(</span><em class="sig-param">figure=False</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.new_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.new_figure" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">new_figure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">figure</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.new_figure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.new_figure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new figure.</p>
 <p>This is called by PlotMixin to setup a new figure before we do anything.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.plot.formats.DefaultPlotStyle.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#DefaultPlotStyle.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.DefaultPlotStyle.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the template with new attributes from keyword arguments.</p>
 <p>Up to one positional argument may be supplied</p>
 <p>Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
@@ -360,6 +358,7 @@ may be specified, with .’s replaced with _ and )_ replaced with __.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -414,9 +413,9 @@ may be specified, with .’s replaced with _ and )_ replaced with __.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

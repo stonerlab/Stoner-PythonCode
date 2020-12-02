@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BigBlueFile.add_column &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="BigBlueFile.append" href="Stoner.formats.rigs.BigBlueFile.append.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="bigbluefile-add-column">
 <h1>BigBlueFile.add_column<a class="headerlink" href="#bigbluefile-add-column" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.formats.rigs.BigBlueFile.add_column">
-<code class="sig-prename descclassname">BigBlueFile.</code><code class="sig-name descname">add_column</code><span class="sig-paren">(</span><em class="sig-param">column_data</em>, <em class="sig-param">header=None</em>, <em class="sig-param">index=None</em>, <em class="sig-param">func_args=None</em>, <em class="sig-param">replace=False</em>, <em class="sig-param">setas=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.rigs.BigBlueFile.add_column" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BigBlueFile.</code><code class="sig-name descname">add_column</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">column_data</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">func_args</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replace</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">setas</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.rigs.BigBlueFile.add_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append a column of data or inserts a column to a datafile instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -67,13 +68,13 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a>) – The text to set the column header to,
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a>) – The text to set the column header to,
 if not supplied then defaults to ‘col#’</p></li>
 <li><p><strong>index</strong> (<em>index type</em>) – The  index (numeric or string) to insert (or replace) the data</p></li>
-<li><p><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – If column_data is a callable object, then this argument
+<li><p><strong>func_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a>) – If column_data is a callable object, then this argument
 can be used to supply a dictionary of function arguments to the callable object.</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Replace the data or insert the data (default)</p></li>
-<li><p><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Replace the data or insert the data (default)</p></li>
+<li><p><strong>setas</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Set the type of column (x,y,z data etc - see <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Stoner.Core.DataFile.setas</span></code></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -90,6 +91,7 @@ the original DataFile Instance as well as returning it.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -147,9 +149,9 @@ the original DataFile Instance as well as returning it.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

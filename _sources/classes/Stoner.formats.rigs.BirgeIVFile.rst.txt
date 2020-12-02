@@ -1,4 +1,4 @@
-Stoner.formats.rigs.BirgeIVFile
+﻿Stoner.formats.rigs.BirgeIVFile
 ===============================
 
 .. currentmodule:: Stoner.formats.rigs
@@ -75,6 +75,7 @@ Stoner.formats.rigs.BirgeIVFile
       ~Stoner.formats.rigs.BirgeIVFile.dims
       ~Stoner.formats.rigs.BirgeIVFile.dtype
       ~Stoner.formats.rigs.BirgeIVFile.filename
+      ~Stoner.formats.rigs.BirgeIVFile.filepath
       ~Stoner.formats.rigs.BirgeIVFile.header
       ~Stoner.formats.rigs.BirgeIVFile.mask
       ~Stoner.formats.rigs.BirgeIVFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.rigs.BirgeIVFile
       ~Stoner.formats.rigs.BirgeIVFile.records
       ~Stoner.formats.rigs.BirgeIVFile.setas
       ~Stoner.formats.rigs.BirgeIVFile.shape
-      ~Stoner.formats.rigs.BirgeIVFile.subclasses
    
    

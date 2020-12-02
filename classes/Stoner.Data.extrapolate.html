@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.extrapolate &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.figure" href="Stoner.Data.figure.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-extrapolate">
 <h1>Data.extrapolate<a class="headerlink" href="#data-extrapolate" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.extrapolate">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">extrapolate</code><span class="sig-paren">(</span><em class="sig-param">new_x</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">yerr=None</em>, <em class="sig-param">overlap=20</em>, <em class="sig-param">kind='linear'</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.extrapolate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">extrapolate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_x</span></em>, <em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">yerr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">overlap</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">errors</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.extrapolate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extrapolate data based on local fit to x,y data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -67,13 +68,14 @@
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>xcol</strong> (<em>column index</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – column containing x-data or None to use setas attribute</p></li>
-<li><p><strong>ycol</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – column(s) containing the y-data or None to use setas attribute.</p></li>
-<li><p><strong>yerr</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – y error data column or None to use setas attribute</p></li>
-<li><p><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – range of x-data used for the local fit for extrapolating. If int then overlap number of
+<li><p><strong>xcol</strong> (<em>column index</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – column containing x-data or None to use setas attribute</p></li>
+<li><p><strong>ycol</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – column(s) containing the y-data or None to use setas attribute.</p></li>
+<li><p><strong>yerr</strong> (<em>column index</em><em>(</em><em>es</em><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – y error data column or None to use setas attribute</p></li>
+<li><p><strong>overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – range of x-data used for the local fit for extrapolating. If int then overlap number of
 points is used, if float then that range x-axis space is used.</p></li>
-<li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.8)"><em>callable</em></a>) – Determines local fitting function. If string should be “linear”, “quadratic” or “cubic” if
+<li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a>) – Determines local fitting function. If string should be “linear”, “quadratic” or “cubic” if
 callable, then represents a function to be fitted to the data.</p></li>
+<li><p><strong>errors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – If <em>kind</em> is a callable function, then errs must be defined and must also be a callable function.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -93,6 +95,7 @@ the other parameters (i.e. as with <code class="xref py py-meth docutils literal
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -150,9 +153,9 @@ the other parameters (i.e. as with <code class="xref py py-meth docutils literal
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

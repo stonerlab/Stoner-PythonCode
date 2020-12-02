@@ -37,6 +37,7 @@ PlotMixin
       ~PlotMixin.legend
       ~PlotMixin.plot
       ~PlotMixin.plot_matrix
+      ~PlotMixin.plot_voxels
       ~PlotMixin.plot_xy
       ~PlotMixin.plot_xyuv
       ~PlotMixin.plot_xyuvw
@@ -75,6 +76,7 @@ PlotMixin
    .. automethod:: legend
    .. automethod:: plot
    .. automethod:: plot_matrix
+   .. automethod:: plot_voxels
    .. automethod:: plot_xy
    .. automethod:: plot_xyuv
    .. automethod:: plot_xyuvw

@@ -1,4 +1,4 @@
-Stoner.formats.instruments.VSMFile
+﻿Stoner.formats.instruments.VSMFile
 ==================================
 
 .. currentmodule:: Stoner.formats.instruments
@@ -75,6 +75,7 @@ Stoner.formats.instruments.VSMFile
       ~Stoner.formats.instruments.VSMFile.dims
       ~Stoner.formats.instruments.VSMFile.dtype
       ~Stoner.formats.instruments.VSMFile.filename
+      ~Stoner.formats.instruments.VSMFile.filepath
       ~Stoner.formats.instruments.VSMFile.header
       ~Stoner.formats.instruments.VSMFile.mask
       ~Stoner.formats.instruments.VSMFile.metadata
@@ -84,6 +85,5 @@ Stoner.formats.instruments.VSMFile
       ~Stoner.formats.instruments.VSMFile.records
       ~Stoner.formats.instruments.VSMFile.setas
       ~Stoner.formats.instruments.VSMFile.shape
-      ~Stoner.formats.instruments.VSMFile.subclasses
    
    

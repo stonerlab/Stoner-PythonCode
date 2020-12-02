@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FowlerNordheim &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Simmons" href="Stoner.analysis.fitting.models.tunnelling.Simmons.html" />
@@ -57,10 +58,10 @@
             
   <div class="section" id="fowlernordheim">
 <h1>FowlerNordheim<a class="headerlink" href="#fowlernordheim" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.tunnelling.</code><code class="sig-name descname">FowlerNordheim</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#FowlerNordheim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.analysis.fitting.models.tunnelling.</code><code class="sig-name descname">FowlerNordheim</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#FowlerNordheim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#lmfit.model.Model" title="(in lmfit v1.0.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">lmfit.model.Model</span></code></a></p>
 <p>Fowler Nordhiem Model of electron tunnelling.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -77,7 +78,6 @@
 </dl>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of nDimArrhenius Fit.&quot;&quot;&quot;</span>
-<span class="c1"># pylint: disable=invalid-name</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.tunnelling</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">fowlerNordheim</span><span class="p">,</span>
@@ -85,14 +85,11 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ones_like</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
-
 <span class="c1"># Make some data</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 <span class="n">I</span> <span class="o">=</span> <span class="n">fowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="mi">2500</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
 <span class="n">dI</span> <span class="o">=</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">*</span> <span class="mf">10e-6</span>
-
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">dI</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Bias&quot;</span><span class="p">,</span> <span class="s2">&quot;Current&quot;</span><span class="p">,</span> <span class="s2">&quot;Noise&quot;</span><span class="p">])</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span>
     <span class="n">fowlerNordheim</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mi">2500</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">],</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span>
 <span class="p">)</span>
@@ -105,7 +102,6 @@
     <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;fowlerNordheim&quot;</span><span class="p">,</span>
     <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">},</span>
 <span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye&quot;</span>
 <span class="n">fit</span> <span class="o">=</span> <span class="n">FowlerNordheim</span><span class="p">()</span>
 <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2500</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">]</span>
@@ -125,7 +121,6 @@
     <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;FowlerNordheim&quot;</span><span class="p">,</span>
     <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">},</span>
 <span class="p">)</span>
-
 <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Current&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Fowler-Nordheim Model test&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
@@ -143,15 +138,15 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess" title="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess</span></code></a>(data[, V])</p></td>
-<td><p>Just set the A, phi and d values to typical answers for a small tunnel junction</p></td>
+<td><p>Set the A, phi and d values to typical answers for a small tunnel junction.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess">
-<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">V=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#FowlerNordheim.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Just set the A, phi and d values to typical answers for a small tunnel junction</p>
+<code class="sig-name descname">guess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">V</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/analysis/fitting/models/tunnelling.html#FowlerNordheim.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the A, phi and d values to typical answers for a small tunnel junction.</p>
 </dd></dl>
 
 </dd></dl>
@@ -159,6 +154,7 @@
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -216,9 +212,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

@@ -1,10 +1,11 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>item &#8212; Stoner Pacakge API Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Item &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -14,10 +15,10 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="proxy" href="Stoner.folders.metadata.proxy.html" />
+    <link rel="next" title="MetadataProxy" href="Stoner.folders.metadata.MetadataProxy.html" />
     <link rel="prev" title="PlotMethodsMixin" href="Stoner.folders.mixins.PlotMethodsMixin.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -32,7 +33,7 @@
           <a href="Stoner.folders.mixins.PlotMethodsMixin.html" title="Previous document">PlotMethodsMixin</a>
         </li>
         <li>
-          <a href="Stoner.folders.metadata.proxy.html" title="Next document">proxy</a>
+          <a href="Stoner.folders.metadata.MetadataProxy.html" title="Next document">MetadataProxy</a>
           &rarr;
         </li>
     </ul>
@@ -53,11 +54,11 @@
           <div class="body" role="main">
             
   <div class="section" id="item">
-<h1>item<a class="headerlink" href="#item" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="Stoner.folders.each.item">
-<em class="property">class </em><code class="sig-prename descclassname">Stoner.folders.each.</code><code class="sig-name descname">item</code><span class="sig-paren">(</span><em class="sig-param">folder</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.item" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<h1>Item<a class="headerlink" href="#item" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="Stoner.folders.each.Item">
+<em class="property">class </em><code class="sig-prename descclassname">Stoner.folders.each.</code><code class="sig-name descname">Item</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">folder</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#Item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.Item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Provides a proxy object for accessing methods on the inividual members of a Folder.</p>
 <p class="rubric">Notes</p>
 <p>The pupose of this class is to allow it to be explicit that we’re calling methods
@@ -70,7 +71,7 @@ around nameclashes.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.each.item.setas" title="Stoner.folders.each.item.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.each.Item.setas" title="Stoner.folders.each.Item.setas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setas</span></code></a></p></td>
 <td><p>Return a proxy object for manipulating all the setas objects in a folder.</p></td>
 </tr>
 </tbody>
@@ -82,25 +83,25 @@ around nameclashes.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.each.item.__call__" title="Stoner.folders.each.item.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(func, *args, **kargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.folders.each.Item.__call__" title="Stoner.folders.each.Item.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(func, *args, **kargs)</p></td>
 <td><p>Iterate over the baseFolder, calling func on each item.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.each.item.iter" title="Stoner.folders.each.item.iter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter</span></code></a>(func, *args, **kargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.folders.each.Item.iter" title="Stoner.folders.each.Item.iter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter</span></code></a>(func, *args, **kargs)</p></td>
 <td><p>Iterate over the baseFolder, calling func on each item.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt id="Stoner.folders.each.item.setas">
-<code class="sig-name descname">setas</code><a class="headerlink" href="#Stoner.folders.each.item.setas" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="Stoner.folders.each.Item.setas">
+<code class="sig-name descname">setas</code><a class="headerlink" href="#Stoner.folders.each.Item.setas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a proxy object for manipulating all the setas objects in a folder.</p>
 </dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="Stoner.folders.each.item.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#item.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.item.__call__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="Stoner.folders.each.Item.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#Item.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.Item.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate over the baseFolder, calling func on each item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -108,7 +109,7 @@ around nameclashes.</p>
 a metadataObject type instance as it’s first argument.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>_return</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Controls how the return value from <em>func</em> is added to the DataFolder</p>
+<dd class="field-even"><p><strong>_return</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Controls how the return value from <em>func</em> is added to the DataFolder</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A list of the results of evaluating <em>func</em> for each item in the folder.</p>
@@ -122,16 +123,16 @@ storing, then the return value replaces trhe original <code class="xref py py-cl
 string. then return result is stored in the corresponding name.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="Stoner.folders.each.item.iter">
-<code class="sig-name descname">iter</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#item.iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.item.iter" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="Stoner.folders.each.Item.iter">
+<code class="sig-name descname">iter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/folders/each.html#Item.iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.folders.each.Item.iter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate over the baseFolder, calling func on each item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>func</strong> (<em>callable</em>) – A Callable object that must take a metadataObject type instance as it’s first argument.</p>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
-<dd class="field-even"><p><strong>_return</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Controls how the return value from <em>func</em> is added to the DataFolder</p>
+<dd class="field-even"><p><strong>_return</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Controls how the return value from <em>func</em> is added to the DataFolder</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A list of the results of evaluating <em>func</em> for each item in the folder.</p>
@@ -150,6 +151,7 @@ string. then return result is stored in the corresponding name.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -162,12 +164,12 @@ string. then return result is stored in the corresponding name.</p>
   <p class="topless"><a href="Stoner.folders.mixins.PlotMethodsMixin.html"
                         title="previous chapter">PlotMethodsMixin</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.folders.metadata.proxy.html"
-                        title="next chapter">proxy</a></p>
+  <p class="topless"><a href="Stoner.folders.metadata.MetadataProxy.html"
+                        title="next chapter">MetadataProxy</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.folders.each.item.rst.txt"
+      <li><a href="../_sources/classes/Stoner.folders.each.Item.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -190,7 +192,7 @@ string. then return result is stored in the corresponding name.</p>
           <a href="Stoner.folders.mixins.PlotMethodsMixin.html" title="Previous document">PlotMethodsMixin</a>
         </li>
         <li>
-          <a href="Stoner.folders.metadata.proxy.html" title="Next document">proxy</a>
+          <a href="Stoner.folders.metadata.MetadataProxy.html" title="Next document">MetadataProxy</a>
           &rarr;
         </li>
     </ul>
@@ -204,9 +206,9 @@ string. then return result is stored in the corresponding name.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

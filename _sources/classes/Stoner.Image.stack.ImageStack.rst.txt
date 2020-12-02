@@ -80,7 +80,6 @@ ImageStack
       ~ImageStack.loadgroup
       ~ImageStack.make_name
       ~ImageStack.mean
-      ~ImageStack.next
       ~ImageStack.on_load_process
       ~ImageStack.pop
       ~ImageStack.popitem
@@ -175,7 +174,6 @@ ImageStack
    .. automethod:: loadgroup
    .. automethod:: make_name
    .. automethod:: mean
-   .. automethod:: next
    .. automethod:: on_load_process
    .. automethod:: pop
    .. automethod:: popitem

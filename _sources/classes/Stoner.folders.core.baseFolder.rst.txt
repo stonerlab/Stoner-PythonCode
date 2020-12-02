@@ -58,7 +58,6 @@ baseFolder
       ~baseFolder.items
       ~baseFolder.keys
       ~baseFolder.make_name
-      ~baseFolder.next
       ~baseFolder.pop
       ~baseFolder.popitem
       ~baseFolder.prune
@@ -122,7 +121,6 @@ baseFolder
    .. automethod:: items
    .. automethod:: keys
    .. automethod:: make_name
-   .. automethod:: next
    .. automethod:: pop
    .. automethod:: popitem
    .. automethod:: prune

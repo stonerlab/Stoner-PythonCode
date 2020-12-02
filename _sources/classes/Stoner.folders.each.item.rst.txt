@@ -1,23 +1,23 @@
-item
+Item
 ====
 
 .. currentmodule:: Stoner.folders.each
 
-.. autoclass:: item
+.. autoclass:: Item
    :show-inheritance:
 
    .. rubric:: Attributes Summary
 
    .. autosummary::
 
-      ~item.setas
+      ~Item.setas
 
    .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~item.__call__
-      ~item.iter
+      ~Item.__call__
+      ~Item.iter
 
    .. rubric:: Attributes Documentation
 

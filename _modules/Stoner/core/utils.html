@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stoner.core.utils &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../../../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -47,28 +48,21 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Utility functions to support :py:mod:`Stoner.Core`.&quot;&quot;&quot;</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;add_core&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;and_core&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;sub_core&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;mod_core&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;copy_into&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;itersubclasses&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tab_delimited&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;decode_string&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;add_core&quot;</span><span class="p">,</span> <span class="s2">&quot;and_core&quot;</span><span class="p">,</span> <span class="s2">&quot;sub_core&quot;</span><span class="p">,</span> <span class="s2">&quot;mod_core&quot;</span><span class="p">,</span> <span class="s2">&quot;copy_into&quot;</span><span class="p">,</span> <span class="s2">&quot;tab_delimited&quot;</span><span class="p">,</span> <span class="s2">&quot;decode_string&quot;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span> <span class="k">as</span> <span class="n">MappingType</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">int_types</span>
-<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">all_type</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">int_types</span>
+<span class="kn">from</span> <span class="nn">..tools</span> <span class="kn">import</span> <span class="n">all_type</span>
+<span class="kn">from</span> <span class="nn">.Typing</span> <span class="kn">import</span> <span class="n">Numeric</span><span class="p">,</span> <span class="n">Column_Index</span><span class="p">,</span> <span class="n">Int_Types</span>
 
 
-<div class="viewcode-block" id="add_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.add_core.html#Stoner.core.utils.add_core">[docs]</a><span class="k">def</span> <span class="nf">add_core</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implements the core work of adding other to self and modifying newdata.</span>
+<div class="viewcode-block" id="add_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.add_core.html#Stoner.core.utils.add_core">[docs]</a><span class="k">def</span> <span class="nf">add_core</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;DataFile&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Numeric</span><span class="p">],</span> <span class="n">MappingType</span><span class="p">],</span> <span class="n">newdata</span><span class="p">:</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Implement the core work of adding other to self and modifying newdata.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        other (DataFile,array,list):</span>
@@ -155,8 +149,8 @@
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
-<div class="viewcode-block" id="and_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.and_core.html#Stoner.core.utils.and_core">[docs]</a><span class="k">def</span> <span class="nf">and_core</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implements the core of the &amp; operator, returning data in newdata</span>
+<div class="viewcode-block" id="and_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.and_core.html#Stoner.core.utils.and_core">[docs]</a><span class="k">def</span> <span class="nf">and_core</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;DataFile&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">newdata</span><span class="p">:</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Implement the core of the &amp; operator, returning data in newdata.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        other (array,DataFile):</span>
@@ -229,8 +223,8 @@
     <span class="k">return</span> <span class="n">newdata</span></div>
 
 
-<div class="viewcode-block" id="mod_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.mod_core.html#Stoner.core.utils.mod_core">[docs]</a><span class="k">def</span> <span class="nf">mod_core</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implements the column deletion method.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="mod_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.mod_core.html#Stoner.core.utils.mod_core">[docs]</a><span class="k">def</span> <span class="nf">mod_core</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Column_Index</span><span class="p">,</span> <span class="n">newdata</span><span class="p">:</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Implement the column deletion method.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
         <span class="n">newdata</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -239,8 +233,8 @@
     <span class="k">return</span> <span class="n">newdata</span></div>
 
 
-<div class="viewcode-block" id="sub_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.sub_core.html#Stoner.core.utils.sub_core">[docs]</a><span class="k">def</span> <span class="nf">sub_core</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Actually do the subtraction.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="sub_core"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.sub_core.html#Stoner.core.utils.sub_core">[docs]</a><span class="k">def</span> <span class="nf">sub_core</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Int_Types</span><span class="p">,</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span> <span class="n">newdata</span><span class="p">:</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Worker for the subtraction.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="n">int_types</span><span class="p">))</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
         <span class="n">newdata</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">all_type</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">int_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">all_type</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
@@ -251,8 +245,8 @@
     <span class="k">return</span> <span class="n">newdata</span></div>
 
 
-<div class="viewcode-block" id="copy_into"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.copy_into.html#Stoner.core.utils.copy_into">[docs]</a><span class="k">def</span> <span class="nf">copy_into</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Copies the data associated with source to dest.</span>
+<div class="viewcode-block" id="copy_into"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.copy_into.html#Stoner.core.utils.copy_into">[docs]</a><span class="k">def</span> <span class="nf">copy_into</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Copy the data associated with source to dest.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source(DataFile): The DataFile object to be copied from</span>
@@ -286,47 +280,8 @@
     <span class="n">lineterminator</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span></div>
 
 
-<div class="viewcode-block" id="itersubclasses"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.itersubclasses.html#Stoner.core.utils.itersubclasses">[docs]</a><span class="k">def</span> <span class="nf">itersubclasses</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_seen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Iterate over subclasses of a given class.</span>
-
-<span class="sd">    Generator over all subclasses of a given class, in depth first order.</span>
-
-<span class="sd">    &gt;&gt;&gt; list(itersubclasses(int)) == [bool]</span>
-<span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; class A(object): pass</span>
-<span class="sd">    &gt;&gt;&gt; class B(A): pass</span>
-<span class="sd">    &gt;&gt;&gt; class C(A): pass</span>
-<span class="sd">    &gt;&gt;&gt; class D(B,C): pass</span>
-<span class="sd">    &gt;&gt;&gt; class E(D): pass</span>
-<span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; for cls in itersubclasses(A):</span>
-<span class="sd">    ...     print(cls.__name__)</span>
-<span class="sd">    B</span>
-<span class="sd">    D</span>
-<span class="sd">    E</span>
-<span class="sd">    C</span>
-<span class="sd">    &gt;&gt;&gt; # get ALL (new-style) classes currently defined</span>
-<span class="sd">    &gt;&gt;&gt; [cls.__name__ for cls in itersubclasses(object)] #doctest: +ELLIPSIS</span>
-<span class="sd">    [&#39;type&#39;, ...&#39;tuple&#39;, ...]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;itersubclasses must be called with &quot;</span> <span class="s2">&quot;new-style classes, not </span><span class="si">%.100r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">_seen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">subs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># fails only when cls is type</span>
-        <span class="n">subs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">subs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">sub</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_seen</span><span class="p">:</span>
-            <span class="n">_seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
-            <span class="k">yield</span> <span class="n">sub</span>
-            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">itersubclasses</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">_seen</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">sub</span></div>
-
-
-<div class="viewcode-block" id="decode_string"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.decode_string.html#Stoner.core.utils.decode_string">[docs]</a><span class="k">def</span> <span class="nf">decode_string</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Expands a string of column assignments, replacing numbers with repeated characters.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="decode_string"><a class="viewcode-back" href="../../../classes/Stoner.core.utils.decode_string.html#Stoner.core.utils.decode_string">[docs]</a><span class="k">def</span> <span class="nf">decode_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Expand a string of column assignments, replacing numbers with repeated characters.&quot;&quot;&quot;</span>
     <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))&quot;</span><span class="p">)</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -338,6 +293,7 @@
     <span class="k">return</span> <span class="n">value</span></div>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -371,9 +327,9 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 

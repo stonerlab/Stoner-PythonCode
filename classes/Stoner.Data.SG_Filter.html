@@ -1,9 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data.SG_Filter &#8212; Stoner Pacakge API Documentation</title>
     <link rel="stylesheet" href="../_static/better.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +15,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/language_data.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data.__init__" href="Stoner.Data.__init__.html" />
@@ -57,9 +58,9 @@
             
   <div class="section" id="data-sg-filter">
 <h1>Data.SG_Filter<a class="headerlink" href="#data-sg-filter" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
+<dl class="py method">
 <dt id="Stoner.Data.SG_Filter">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">SG_Filter</code><span class="sig-paren">(</span><em class="sig-param">col=None</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">points=15</em>, <em class="sig-param">poly=1</em>, <em class="sig-param">order=0</em>, <em class="sig-param">pad=True</em>, <em class="sig-param">result=None</em>, <em class="sig-param">replace=False</em>, <em class="sig-param">header=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.SG_Filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">SG_Filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">col</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">points</span><span class="o">=</span><span class="default_value">15</span></em>, <em class="sig-param"><span class="n">poly</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pad</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">result</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replace</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Data.SG_Filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implement a Savitsky-Golay filtering of data for smoothing and differentiating data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -71,12 +72,12 @@
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>xcol</strong> (<em>coilumn index</em>) – If <em>order</em>&gt;1 then can be used to specify an x-column to differentiate with respect to.</p></li>
-<li><p><strong>poly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</p></li>
-<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Order of differentiation to carry out. Default=0 meaning smooth the data only.</p></li>
-<li><p><strong>pad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Pad the start and end of the array with the mean value (True, default) or specired value (float) or
+<li><p><strong>poly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</p></li>
+<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – Order of differentiation to carry out. Default=0 meaning smooth the data only.</p></li>
+<li><p><strong>pad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Pad the start and end of the array with the mean value (True, default) or specired value (float) or
 leave as is.</p></li>
-<li><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><em>True</em></a><em>, or </em><em>column_index</em>) – If not None, column index to insert new data, or True to append as last column</p></li>
-<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.8)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Header for new column if result is not None. If header is Nne, a suitable column header is generated.</p></li>
+<li><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.9)"><em>True</em></a><em>, or </em><em>column_index</em>) – If not None, column index to insert new data, or True to append as last column</p></li>
+<li><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.9)"><em>string</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – Header for new column if result is not None. If header is Nne, a suitable column header is generated.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -87,7 +88,7 @@ Otherwise, a copy of the modified AnalysisMixin object is returned.</p>
 <p class="rubric">Notes</p>
 <p>If col is not specified or is None then the <code class="xref py py-attr docutils literal notranslate"><span class="pre">DataFile.setas</span></code> column assignments are used
 to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
-for differentiating data. This is now a pass through to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html#scipy.signal.savgol_filter" title="(in SciPy v1.4.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.savgol_filter()</span></code></a></p>
+for differentiating data. This is now a pass through to <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.savgol_filter.html#scipy.signal.savgol_filter" title="(in SciPy v1.5.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.signal.savgol_filter()</span></code></a></p>
 <p>Padding can help stop wildly wrong artefacts in the data at the start and enf of the data, particularly
 when the differntial order is &gt;1.</p>
 <div class="admonition seealso">
@@ -99,6 +100,7 @@ when the differntial order is &gt;1.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -156,9 +158,9 @@ when the differntial order is &gt;1.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Apr 13, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
-      2.4.4
+      3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">
           better</a> theme.
 
