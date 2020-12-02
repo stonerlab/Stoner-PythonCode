@@ -835,7 +835,9 @@ def run(arguments, content, options, state_machine, state, lineno):
             else:
                 lines = [".. code-block:: python", ""]
                 for code_line in ["    %s" % row.rstrip() for row in code_piece.split("\n")]:
-                    #code_line=re.sib(pylint,"",code_line)
+                    code_line=re.sub(r"\s*#\s+pylint\:.*","",code_line)
+                    if code_line.strip()=="":
+                        continue
                     lines.append(code_line)
             source_code = "\n".join(lines)
         else:
