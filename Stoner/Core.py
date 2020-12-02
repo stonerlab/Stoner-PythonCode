@@ -18,22 +18,20 @@ import pathlib
 import warnings
 
 from collections.abc import MutableSequence, Mapping, Iterable
-import os.path as path
 import inspect as _inspect_
 from importlib import import_module
 from textwrap import TextWrapper
-from traceback import format_exc
 import csv
 
 import numpy as np
 from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
-from .compat import string_types, int_types, index_types, get_filedialog, str2bytes, _pattern_type
+from .compat import string_types, int_types, index_types, _pattern_type
 from .tools import all_type, isIterable, isLikeList, get_option
 from .tools.file import get_file_name_type, auto_load_classes
 
-from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
+from .core.exceptions import StonerLoadError, StonerSetasError
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
 from .core.array import DataArray
 from .core.operators import DataFileOperatorsMixin
@@ -52,7 +50,7 @@ except ImportError:
     tabulate = None
 
 try:
-    from magic import Magic as filemagic, MAGIC_MIME_TYPE
+    from magic import Magic as filemagic
 except ImportError:
     filemagic = None
 

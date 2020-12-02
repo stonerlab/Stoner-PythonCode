@@ -18,7 +18,7 @@ from collections.abc import Iterable
 from numpy import ndarray, dtype, isnan, logical_and  # pylint: disable=redefined-builtin
 
 from ..compat import string_types
-from ..core.Typing import Numeric, NumericArray
+from ..core.Typing import NumericArray
 
 
 def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -> bool:
