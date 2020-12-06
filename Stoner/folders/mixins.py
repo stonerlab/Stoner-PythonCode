@@ -581,7 +581,7 @@ class DataMethodsMixin:
             xerr = None
             cols = group[0]._col_args(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False)
             lookup = xcol is None and ycol is None
-            xcol = cols["xcol"]
+            xcol = cols["xcol"][0]
 
             if cols["has_xerr"]:
                 xerr = cols["xerr"]

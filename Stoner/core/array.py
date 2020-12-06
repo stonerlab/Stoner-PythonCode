@@ -478,13 +478,14 @@ class DataArray(ma.MaskedArray):
             "yerr": yerr,
             "zerr": zerr,
         }
-        no_guess = True
+        no_guess = kargs.get("no_guess", True)
         for i in cols.values():
             if i is not None:  # User specification wins out
                 break
         else:  # User didn't set any values, setas will win
-            no_guess = False
+            no_guess = kargs.get("no_guess", False)
         ret = AttributeStore(self.setas._get_cols(no_guess=no_guess))
+        force_list = kargs.get("force_list", not scalar)
         for c in list(cols.keys()):
             if isNone(cols[c]):  # Not defined, fallback on setas
                 del cols[c]
@@ -499,7 +500,7 @@ class DataArray(ma.MaskedArray):
                     continue
             elif isinstance(cols[c], float):
                 continue
-            cols[c] = self.setas.find_col(cols[c])
+            cols[c] = self.setas.find_col(cols[c], force_list=force_list)
         ret.update(cols)
         if scalar:
             for c in ret:

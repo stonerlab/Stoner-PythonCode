@@ -3,8 +3,9 @@
 
 __all__ = ["DataFileSearchMixin"]
 
-import numpy as np
 import copy
+import numpy as np
+from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import index_types, int_types
 from ..tools import operator, isIterable
@@ -103,6 +104,97 @@ class DataFileSearchMixin:
                 The matching column index as an integer or a KeyError
         """
         return self.data._setas.find_col(col, force_list)
+
+    def find_duplicates(self, xcol=None, delta=1e-8):
+        """Find rows with duplicated values of the search column(s).
+
+        Keyword Arguments:
+            xcol (index types):
+                The column)s) to search for duplicates in.
+            delta (float or array):
+                The absolute difference(s) to consider equal when comparing floats.
+
+        Returns:
+            (dictionary of value:[list of row indices]):
+                The unique value and the associated rows that go with it.
+
+        Notes:
+            If *xcol* is not specified, then the :py:attr:`Data.setas` attribute is used. If this is also
+            not set, then all columns are considered.
+        """
+        _ = self._col_args(xcol=xcol)
+        if not _.has_xcol:
+            _.xcol = list(range(self.shape[1]))
+        search_data = self.data[:, _.xcol]
+        if search_data.ndim == 1:
+            search_data = np.atleast_2d(search_data).T
+
+        delta = np.atleast_1d(np.array(delta))
+        if delta.size != search_data.shape[1]:
+            delta = np.append(delta, np.ones(search_data.shape[1]) * delta[0])[: search_data.shape[1]]
+        results = dict()
+        for ix in range(search_data.shape[0]):
+            row = np.atleast_1d(search_data[ix])
+            if tuple(row) in results:
+                continue
+            for iy, (value, delt) in enumerate(zip(row, delta)):
+                # Modify all search data that is close to the current row
+                search_data[np.isclose(search_data[:, iy], value, atol=delt), iy] = value
+            matches = np.arange(search_data.shape[0])[np.all(search_data == row, axis=1)]
+            results[tuple(row)] = matches.tolist()
+        return results
+
+    def remove_duplicates(self, xcol=None, delta=1e-8, strategy="keep first", ycol=None, yerr=None):
+        """Find and remove rows with duplicated values of the search column(s).
+
+        Keyword Arguments:
+            xcol (index types):
+                The column)s) to search for duplicates in.
+            delta (float or array):
+                The absolute difference(s) to consider equal when comparing floats.
+            strategy (str, default *keep first*):
+                What to do with duplicated rows. Options are:
+                    - *keep first* - the first row is kept, others are discarded
+                    - *average* - the duplicate rows are average together.
+            ycol, yerr (index types):
+                When using an average strategey identifies columns that represent values and uncertainties where
+                the proper weighted standard error should be done.
+
+        Returns:
+            (dictionary of value:[list of row indices]):
+                The unique value and the associated rows that go with it.
+
+        Notes:
+            If *ycol* is not specified, then the :py:attr:`Data.setas` attribute is used. If this is also
+            not set, then all columns are considered.
+        """
+        _ = self._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
+        dups = self.find_duplicates(xcol=xcol, delta=delta)
+        tmp = self.clone
+        tmp.data = np.ma.empty((0, self.data.shape[1]))
+        for indices in dups.values():
+            section = self[indices, :]
+            if strategy == "keep first":
+                section = section[0, :]
+            elif strategy == "average":
+                tmp_sec = np.mean(section, axis=0)
+                if _.has_ycol and _.has_yerr:  # reclaculate the ycolumns
+                    ycol = _.ycol
+                    yerr = _.yerr
+                    if len(yerr) < len(ycol):
+                        yerr += [yerr[0]] * (len(ycol) - len(yerr))
+                    for yy, ye in zip(ycol, yerr):
+                        stats = DescrStatsW(section[:, yy], weights=1 / (section[:, ye]) ** 2)
+                        tmp_sec[yy] = stats.mean
+                        tmp_sec[ye] = stats.std_mean
+                section = tmp_sec
+            else:
+                raise RuntimeError(f"Unknown duplicate removal strategy {strategy}")
+            tmp += section
+        setas = self.setas
+        self.data = tmp.data
+        self.setas = setas
+        return self
 
     def rolling_window(self, window=7, wrap=True, exclude_centre=False):
         """Iterate with a rolling window section of the data.

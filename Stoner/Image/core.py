@@ -245,7 +245,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             print(curframe, calframe)
         _extra_attributes = getattr(obj, "_optinfo", deepcopy(ImageArray._extra_attributes_default))
         setattr(self, "_optinfo", copy(_extra_attributes))
-        for k, v in _extra_attributes.items():
+        for k, v in list(_extra_attributes.items()):
             try:
                 setattr(self, k, getattr(obj, k, v))
             except AttributeError:  # Some versions of  python don't like this

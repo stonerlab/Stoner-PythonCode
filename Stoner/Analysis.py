@@ -499,11 +499,12 @@ class AnalysisMixin:
         """
         DataArray = self.data.__class__
         col = kargs.pop("col", None)
-        if col is None:
-            col = self.setas._get_cols("ycol")
-            xcol = kargs.pop("xcol", self.setas._get_cols("xcol"))
-        else:
-            xcol = kargs.pop("xcol", None)
+        xcol = kargs.pop("xcol", None)
+        _ = self._col_args(xcol=xcol, ycol=col)
+
+        col = _.ycol
+        if xcol is None and _.has_xcol:
+            xcol = _.xcol
 
         rising = kargs.pop("rising", True)
         falling = kargs.pop("falling", False)

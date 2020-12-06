@@ -50,6 +50,7 @@ import os
 import numpy as np
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
+from scipy import signal
 from matplotlib.colors import Normalize
 import matplotlib.cm as cm
 from matplotlib import pyplot as plt
@@ -733,28 +734,43 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
     """Wrap sckit-image method of the same name to get a line_profile.
 
     Parameters:
-        img(ImageArray): Image data to take line section of
-        src, dst (2-tuple of int or float): start and end of line profile. If the co-ordinates
+        img(ImageArray):
+            Image data to take line section of
+
+    Keyword Parameters:
+        src, dst (2-tuple of int or float):
+            start and end of line profile. If the co-ordinates
             are given as intergers then they are assumed to be pxiel co-ordinates, floats are
             assumed to be real-space co-ordinates using the embedded metadata.
-        linewidth (int): the wideth of the profile to be taken.
-        order (int 1-3): Order of interpolation used to find image data when not aligned to a point
-        mode (str): How to handle data outside of the image.
-        cval (float): The constant value to assume for data outside of the image is mode is "constant"
-        constrain (bool): Ensure the src and dst are within the image (default True).
+        linewidth (int):
+            the wideth of the profile to be taken.
+        order (int 1-3):
+            Order of interpolation used to find image data when not aligned to a point
+        mode (str):
+            How to handle data outside of the image.
+        cval (float):
+            The constant value to assume for data outside of the image is mode is "constant"
+        constrain (bool):
+            Ensure the src and dst are within the image (default True).
+        no_scale (bool):
+            Do not attempt to scale values by the image scale and work in pixels throughout. (default False)
+
 
     Returns:
         A :py:class:`Stoner.Data` object containing the line profile data and the metadata from the image.
     """
-    scale = img.get("MicronsPerPixel", 1.0)
+    scale = 1.0 if kargs.get("no_scale", False) else img.get("MicronsPerPixel", 1.0)
     r, c = img.shape
+    fast_mode = False
     if src is None and dst is None:
         if "x" in kargs:
-            src = (kargs["x"], 0)
-            dst = (kargs["x"], r)
+            src = (0, kargs["x"])
+            dst = (r, kargs["x"])
+            fast_mode = kargs.get("no_scale", False)
         if "y" in kargs:
-            src = (0, kargs["y"])
-            dst = (c, kargs["y"])
+            src = (kargs["y"], 0)
+            dst = (kargs["y"], c)
+            fast_mode = kargs.get("no_scale", False)
     if isinstance(src, float):
         src = (src, src)
     if isinstance(dst, float):
@@ -773,12 +789,23 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
         src = (fix(src[0], r), fix(src[1], c))
         dst = (fix(dst[0], r), fix(dst[1], c))
 
-    result = measure.profile_line(img, src, dst, linewidth, order, mode, cval)
-    points = measure.profile._line_profile_coordinates(src, dst, linewidth)[:, :, 0]
+    if fast_mode:
+        if "x" in kargs:
+            result = img[:, src[1]]
+            points = np.row_stack((np.ones(img.shape[0]) * src[1], np.arange(img.shape[0])))
+        else:
+            result = img[src[0], :]
+            points = np.row_stack((np.arange(img.shape[1]), np.ones(img.shape[1]) * src[0]))
+    else:
+        result = measure.profile_line(img, src, dst, linewidth, order, mode, cval)
+        points = measure.profile._line_profile_coordinates(src, dst, linewidth)[:, :, 0]
     ret = make_Data()
     ret.data = points.T
     ret.setas = "xy"
-    ret &= np.sqrt(ret.x ** 2 + ret.y ** 2) * scale
+    x, y = points
+    x -= x[0]
+    y -= y[0]
+    ret &= np.sqrt(x ** 2 + y ** 2) * scale
     ret &= result
     ret.column_headers = ["X", "Y", "Distance", "Intensity"]
     ret.setas = "..xy"
@@ -916,6 +943,117 @@ def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=
         ret.metadata["transform:rotation"] = angle
     except AttributeError:
         pass
+    return ret
+
+
+def sgolay2d(img, points=15, poly=1, derivative=None):
+    """Implements a 2D Savitsky Golay Filter for a 2D array (e.g. image).
+
+    Arguments:
+        img (ImageArray or ImageFile):
+            image to be filtered
+
+    Keyword Arguments:
+        points (int):
+            The number of points in the window aperture. Must be an odd number. (default 15)
+        poly (int):
+            Degree of polynomial to use in the filter. (defatult 1)
+        derivative (str or None):
+            Type of defivative to calculate. Can be:
+                None - smooth only (default)
+                "x","y" - calculate dIntentity/dx or dIntensity/dy
+                "both" - calculate the full derivative and return magnitud and angle.
+
+    ReturnsL
+        (imageArray or ImageFile):
+            filtered image.
+
+    Raises:
+        ValueError if points, order or derivative are incorrect.
+
+    Notes:
+        Adapted from code on the scipy cookbook : https://scipy-cookbook.readthedocs.io/items/SavitzkyGolay.html
+    """
+    # number of terms in the polynomial expression
+    n_terms = (poly + 1) * (poly + 2) / 2.0
+
+    if points % 2 == 0:
+        raise ValueError("window_size must be odd")
+
+    if points ** 2 < n_terms:
+        raise ValueError("order is too high for the window size")
+
+    half_size = points // 2
+
+    # exponents of the polynomial.
+    # p(x,y) = a0 + a1*x + a2*y + a3*x^2 + a4*y^2 + a5*x*y + ...
+    # this line gives a list of two item tuple. Each tuple contains
+    # the exponents of the k-th term. First element of tuple is for x
+    # second element for y.
+    # Ex. exps = [(0,0), (1,0), (0,1), (2,0), (1,1), (0,2), ...]
+    exps = [(k - n, n) for k in range(poly + 1) for n in range(k + 1)]
+
+    # coordinates of points
+    ind = np.arange(-half_size, half_size + 1, dtype=np.float64)
+    dx = np.repeat(ind, points)
+    dy = np.tile(ind, [points, 1]).reshape(points ** 2,)
+
+    # build matrix of system of equation
+    A = np.empty((points ** 2, len(exps)))
+    for i, exp in enumerate(exps):
+        A[:, i] = (dx ** exp[0]) * (dy ** exp[1])
+
+    # pad input array with appropriate values at the four borders
+    new_shape = img.shape[0] + 2 * half_size, img.shape[1] + 2 * half_size
+    Z = np.zeros((new_shape))
+    # top band
+    band = img[0, :]
+    Z[:half_size, half_size:-half_size] = band - np.abs(np.flipud(img[1 : half_size + 1, :]) - band)
+    # bottom band
+    band = img[-1, :]
+    Z[-half_size:, half_size:-half_size] = band + np.abs(np.flipud(img[-half_size - 1 : -1, :]) - band)
+    # left band
+    band = np.tile(img[:, 0].reshape(-1, 1), [1, half_size])
+    Z[half_size:-half_size, :half_size] = band - np.abs(np.fliplr(img[:, 1 : half_size + 1]) - band)
+    # right band
+    band = np.tile(img[:, -1].reshape(-1, 1), [1, half_size])
+    Z[half_size:-half_size, -half_size:] = band + np.abs(np.fliplr(img[:, -half_size - 1 : -1]) - band)
+    # central band
+    Z[half_size:-half_size, half_size:-half_size] = img
+
+    # top left corner
+    band = img[0, 0]
+    Z[:half_size, :half_size] = band - np.abs(np.flipud(np.fliplr(img[1 : half_size + 1, 1 : half_size + 1])) - band)
+    # bottom right corner
+    band = img[-1, -1]
+    Z[-half_size:, -half_size:] = band + np.abs(
+        np.flipud(np.fliplr(img[-half_size - 1 : -1, -half_size - 1 : -1])) - band
+    )
+
+    # top right corner
+    band = Z[half_size, -half_size:]
+    Z[:half_size, -half_size:] = band - np.abs(np.flipud(Z[half_size + 1 : 2 * half_size + 1, -half_size:]) - band)
+    # bottom left corner
+    band = Z[-half_size:, half_size].reshape(-1, 1)
+    Z[-half_size:, :half_size] = band - np.abs(np.fliplr(Z[-half_size:, half_size + 1 : 2 * half_size + 1]) - band)
+
+    # solve system and convolve
+    if derivative == None:
+        m = np.linalg.pinv(A)[0].reshape((points, -1))
+        ret = signal.fftconvolve(Z, m, mode="valid").view(img.__class__)
+    elif derivative == "x":
+        c = np.linalg.pinv(A)[1].reshape((points, -1))
+        ret = signal.fftconvolve(Z, -c, mode="valid").view(img.__class__)
+    elif derivative == "y":
+        r = np.linalg.pinv(A)[2].reshape((points, -1))
+        ret = signal.fftconvolve(Z, -r, mode="valid").view(img.__class__)
+    elif derivative == "both":
+        c = np.linalg.pinv(A)[1].reshape((points, -1))
+        r = np.linalg.pinv(A)[2].reshape((points, -1))
+        ret = signal.fftconvolve(Z, -r, mode="valid"), signal.fftconvolve(Z, -c, mode="valid").view(img.__class__)
+    else:
+        raise ValueError(f"Unknown derivative mode {derivative}")
+    ret.metadata.update(img.metadata)
     return ret
 
 

@@ -166,7 +166,7 @@ class MetadataProxy(MutableMapping):
         output = typeHintedDict()
         for key, val in self.all_by_keys.items():
             if np.all(val == np.array([val[0] for x in val])):
-                output[key] = val
+                output[key] = val[0]
         return output
 
     def __contains__(self, item):

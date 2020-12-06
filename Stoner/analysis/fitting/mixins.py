@@ -610,9 +610,11 @@ class FittingMixin:
         if isinstance(xcol, string_types):
             xdat = working[:, self.find_col(xcol)]
         elif isIterable(xcol):
-            xdat = ()
-            for c in xcol:
-                xdat = xdat + (working[:, self.find_col(c)],)
+            for ix, c in enumerate(xcol):
+                if ix == 0:
+                    xdat = working[:, self.find_col(c)]
+                else:
+                    xdat = np.column_stack((xdat, working[:, self.find_col(c)]))
         else:
             xdat = working[:, self.find_col(xcol)]
 
@@ -862,7 +864,7 @@ class FittingMixin:
         else:  # Inserting data
             tmp_mask = np.column_stack((tmp_mask[:, 0:result], col_mask, tmp_mask[:, result:]))
         if isLikeList(xcol):
-            new_col = func(self[:, xcol].T, *popt)
+            new_col = func(self[:, xcol], *popt)
         else:
             new_col = func(self.column(xcol), *popt)
         if result:

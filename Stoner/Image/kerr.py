@@ -382,14 +382,14 @@ class KerrImageFile(ImageFile):
     def __init__(self, *args, **kargs):
         """Ensure that the image is a KerrImage."""
         super().__init__(*args, **kargs)
-        self._image = self._image.view(KerrArray)
+        self._image = self.image.view(KerrArray)
 
-    @property
+    @ImageFile.image.getter
     def image(self):
         """Access the image data."""
         return self._image.view(KerrArray)
 
-    @image.setter
+    @ImageFile.image.setter
     def image(self, v):
         """Ensure stored image is always an ImageArray."""
         filename = self.filename
@@ -418,6 +418,8 @@ class KerrStackMixin:
             for things like hysteresis.
     """
 
+    _defaults = {"type": KerrImageFile}
+
     @property
     def fields(self):
         """Produce an array of field values from the metadata."""
@@ -427,6 +429,27 @@ class KerrStackMixin:
             else:
                 self._field = np.array(self.metadata["field"])
         return self._field
+
+    def crop_text(self):
+        """Crop the bottom text area from a standard Kermit image across the complete stack.
+
+        Returns:
+        (ImageArray):
+            cropped image
+        """
+        images = self.shape[0]
+        if self.shape[1:3] == IM_SIZE:
+            return self
+        if self.shape[1:3] != AN_IM_SIZE:
+            raise ValueError(
+                "Need a full sized Kerr image to crop. Current size is {}".format(self.shape)
+            )  # check it's a normal image
+        self._sizes = np.column_stack(
+            (np.ones(images, dtype=int) * IM_SIZE[0], np.ones(images, dtype=int) * IM_SIZE[1])
+        )
+        new_size = self.max_size + (images,)
+        self._resize_stack(new_size)
+        return self
 
     def hysteresis(self, mask=None):
         """Make a hysteresis loop of the average intensity in the given images.
@@ -505,20 +528,6 @@ class KerrStackMixin:
         mask = np.zeros(self[0].shape, dtype=bool)
         mask[abs(self[last] - self[first]) < tolerance] = True
         return mask
-
-    def crop_text(self, copy=False):
-        """Crop the bottom text area from a standard Kermit image stack.
-
-        Returns:
-            (self):
-            cropped image
-        """
-        assertion(
-            (self[0].shape == AN_IM_SIZE or self[0].shape == IM_SIZE), "Need a full sized Kerr image to crop"
-        )  # check it's a normal image
-        crop = (0, IM_SIZE[1], 0, IM_SIZE[0])
-        tmp = self.clone if copy else self
-        tmp.crop_stack(box=crop)
 
     def HcMap(
         self,

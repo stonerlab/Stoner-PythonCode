@@ -7,6 +7,7 @@ numpy>=1.19
 Pillow
 scikit-image>=0.13.0
 scipy
+statsmodels
 multiprocess
 asteval
 lmfit

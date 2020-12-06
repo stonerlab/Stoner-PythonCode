@@ -32,7 +32,7 @@ class ImageStackMixin:
 
     def __init__(self, *args, **kargs):
         """Initialise an ImageStack's pricate data and provide a type argument."""
-        self._stack = np.atleast_3d(ImageArray([])).reshape((0, 0, 0))
+        self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
         self._metadata = regexpDict()
         self._public_attrs_store = regexpDict()
         self._names = list()
@@ -242,7 +242,7 @@ class ImageStackMixin:
 
         """
         self._metadata = regexpDict()
-        self._stack = np.atleast_3d(ImageArray([])).reshape((0, 0, 0))
+        self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
 
     ###########################################################################
     ###################      Special methods     ##############################
@@ -281,20 +281,21 @@ class ImageStackMixin:
         ):  # IF the underlying type is an ImageArray, then return as a view with extra metadata
             tmp = self._stack[:r, :c, idx].view(type=self.type)
         else:  # Otherwise it must be something with a data attribute
-            tmp = self.type()
-            tmp.data = self._stack[:r, :c, idx]
+            tmp = self.type(self._stack[:r, :c, idx])
         name = self.__names__()[idx]
         tmp.metadata = self._metadata[name]
         tmp._fromstack = True
         if name in self._public_attrs_store:
             for attr, value in self._public_attrs_store[name].items():
                 setattr(tmp, attr, value)
+        if tmp.filename == "":
+            tmp.filename = self.__names__()[idx]
         return tmp
 
     def _resize_stack(self, new_size, dtype=None):
         """Create a new stack with a new size."""
         old_size = self._stack.shape
-        assertion(isinstance(self._stack, ImageArray), "Trying to resize a non-image aray")
+        assertion(isinstance(self._stack, ImageArray), f"Trying to resize a non-image aray {type(self._stack)}")
         if old_size == new_size:
             return new_size
         if dtype is None:
@@ -318,7 +319,7 @@ class ImageStackMixin:
     @imarray.setter
     def imarray(self, value):
         """Set the 3D stack of images - as [image,x,y]."""
-        value = ImageArray(np.atleast_3d(value))
+        value = np.ma.atleast_3d(value)
         self._stack = np.transpose(value, (1, 2, 0)).view(ImageArray)
 
     @property
@@ -382,7 +383,7 @@ class ImageStackMixin:
         # Aactually this is just a pass through for the imagefuncs.convert routine
         mask = self._stack.mask
         self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise).view(
-            ImageArray
+            self._stack.__class__
         )
         self._stack.mask = mask
         return self

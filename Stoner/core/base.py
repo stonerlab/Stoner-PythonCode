@@ -690,7 +690,11 @@ class metadataObject(MutableMapping):
     @property
     def _public_attrs(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
-        return self._public_attrs_real  # pylint: disable=no-member
+        try:
+            return self._public_attrs_real  # pylint: disable=no-member
+        except AttributeError:
+            self._public_attrs_real = dict()
+            return self._public_attrs_real
 
     @_public_attrs.setter
     def _public_attrs(self, value):

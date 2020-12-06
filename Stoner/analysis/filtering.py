@@ -73,8 +73,11 @@ class FilteringOpsMixin:
         _ = self._col_args(scalar=False, ycol=col, xcol=xcol)
 
         if _.xcol is not None:
-            col = _.ycol + [_.xcol]
-            data = self.column(list(col)).T
+            if not isinstance(_.xcol, list):
+                col = _.ycol + [_.xcol]
+            else:
+                col = _.ycol + _.xcol
+            data = self.column(col).T
         else:
             col = _.ycol
             data = self.column(list(col)).T
