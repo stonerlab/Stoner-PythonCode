@@ -1038,7 +1038,7 @@ def sgolay2d(img, points=15, poly=1, derivative=None):
     Z[-half_size:, :half_size] = band - np.abs(np.fliplr(Z[-half_size:, half_size + 1 : 2 * half_size + 1]) - band)
 
     # solve system and convolve
-    if derivative == None:
+    if derivative is None:
         m = np.linalg.pinv(A)[0].reshape((points, -1))
         ret = signal.fftconvolve(Z, m, mode="valid").view(img.__class__)
     elif derivative == "x":
