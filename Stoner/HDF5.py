@@ -692,6 +692,9 @@ class SLS_STXMFile(DataFile):
         self.metadata["sample_x"], self.metadata["sample_y"] = _np_.meshgrid(
             self.metadata["counter0.sample_x"], self.metadata["counter0.sample_y"]
         )
+        if "control.data" in self.metadata:
+            self.metadata["beam current"] = ImageArray(self.metadata["control.data"].reshape(self.data.shape))
+            self.metadata["beam current"].metadata = self.metadata
 
         return self
 
@@ -730,6 +733,7 @@ class STXMImage(ImageFile):
                 If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates.
         """
         regrid = kargs.pop("regrid", False)
+        bcn = kargs.pop("bcn", False)
         if len(args) > 0 and isinstance(args[0], path_types):
             d = SLS_STXMFile(args[0])
             args = args[1:]
@@ -753,6 +757,10 @@ class STXMImage(ImageFile):
             self.gridimage(**regrid)
         elif regrid:
             self.gridimage()
+        if bcn:
+            if regrid:
+                self.metadata["beam current"] = self.metadata["beam current"].gridimage()
+            self.image /= self["beam current"]
 
     def __floordiv__(self, other):
         """Implement a // operator to do XMCD calculations on a whole image."""

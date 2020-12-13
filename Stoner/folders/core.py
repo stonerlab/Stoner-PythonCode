@@ -641,6 +641,7 @@ class baseFolder(MutableSequence):
         other.args = self.args
         other.kargs = self.kargs
         other.type = self.type
+        other.debug = self.debug
         for k in self.kargs:
             if not hasattr(other, k):
                 setattr(other, k, self.kargs[k])
