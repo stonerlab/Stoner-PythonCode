@@ -264,7 +264,7 @@ def test_other_funcs():
 
 def test_attrs():
     attrs=[x for x in dir(selfimarr) if not x.startswith("_")]
-    expected=896
+    expected=899
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
@@ -334,7 +334,7 @@ def test_methods():
     else:
         assert False,"Subtraction of string didn't raise not implemented"
     attrs=[x for x in dir(image) if not x.startswith("_")]
-    expected=904
+    expected=908
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 

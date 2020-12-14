@@ -476,19 +476,44 @@ def subtract_image(im, background, contrast=16, clip=True, offset=0.5):
     return im
 
 
-def fft(im, shift=True, phase=False):
-    """Perform a 2d fft of the image and shift the result to get zero frequency in the centre."""
+def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None):
+    """Perform a 2d fft of the image and shift the result to get zero frequency in the centre.
+
+    Keyword Args:
+        shift (bool):
+            Shift the fft so that zero order is in the centre of the image. Default True
+        phase (bool, None):
+            If true, return the phase angle rather than the magnitude if False. If None, return the raw fft.
+            Default False - return magnitude of fft.
+        remove_dc(bool):
+            Replace the points around the dc offset with the mean of the fft to avoid dc offset artefacts.
+            Default False
+        gaussian (None or float):
+            Apply a gaussian blur to the fft where this parameter is the width of the blue in px. Default None for off.
+
+    Return:
+        fft of the image, preserving metadata.
+    """
     r = np.fft.fft2(im)
 
+    if remove_dc:
+        fill = r.mean()
+        r[0, 0] = fill
+        r[-1, 0] = fill
+        r[-1, -1] = fill
+        r[0, -1] = fill
     if shift:
         r = np.fft.fftshift(r)
-
+    if phase is None:
+        pass
     if not phase:
         r = np.abs(r)
     else:
         r = np.angle(r)
+    r = r.view(im.__class__)
+    if isinstance(gaussian, (float, int)):
+        r.gaussian(gaussian)
 
-    r = im.__class__(r)
     r.metadata.update(im.metadata)
     return r
 
@@ -818,6 +843,104 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
     ret.column_headers = ["X", "Y", "Distance", "Intensity"]
     ret.setas = "..xy"
     ret.metadata = img.metadata.copy()
+    return ret
+
+
+def radial_coordinates(im, centre=(None, None), pixel_size=(1, 1), angle=False):
+    """Rerurn a map of the radial co-ordinates of an image from a given centre, with adjustments for pixel size.
+
+    Keyword Arguments:
+        centre (2-tuple):
+            Co-ordinates of centre point in terms of the orginal pixels. Defaults to(None,None) for the middle of the
+            image.
+        pixel_size (2-tuple):
+            The size of one pixel in (dx by dy) - defaults to 1,1
+        angle (bool, None):
+            Whether to return the angles (in radians, True), distances (False) o a complex number (None).
+
+    Returns:
+        An array of the same class as the input, but with values corresponding to the radial co-ordinates.
+    """
+    cx, cy = centre
+    r, c = im.shape
+    dx, dy = pixel_size
+    cx = c / 2 if cx is None else cx
+    cy = r / 2 if cy is None else cy
+    x_r = dx * (np.linspace(0, c - 1, c) - cx)
+    y_r = dy * (np.linspace(0, r - 1, c) - cy)
+    Y, X = np.meshgrid(y_r, x_r)
+    Z = -Y + (0 + 1j) * X
+    if angle is None:
+        pass
+    elif not angle:
+        Z = np.abs(Z)
+    else:
+        Z = np.angle(Z)
+    Z = Z.view(im.__class__)
+    Z.metadata = im.metadata
+    return Z
+
+
+def radial_profile(im, angle=None, r=None, centre=(None, None), pixel_size=(1, 1)):
+    """Extract a radial  profile line from an image.
+
+    Keyword Paramaters:
+        angle (float, tuple, None):
+            Select the radial angle to include:
+                - float selects a single angle
+                - tuple selects a range of angles
+                - None integrates over all angles
+        r (array, None):
+            Edges of the bins in the radual direction - will return r.size-1 points. Default is None which uses the
+            minimum r value found on the edges of the image.
+        centre (2-tuple):
+            Co-ordinates of centre point in terms of the orginal pixels. Defaults to(None,None) for the middle of the
+            image.
+        pixel_size (2-tuple):
+            The size of one pixel in (dx by dy) - defaults to 1,1
+
+    Retunrs:
+        (Data):
+            A py:class:`Stoner.Data` object with a column for r and columns for mean, std, and number of pixels.
+    """
+    coords = im.radial_coordinates(centre=centre, pixel_size=pixel_size, angle=None)
+    if r is None:  # Identify the minimum edge value
+        edges = np.append(coords[:, 0], coords[-1, :])
+        edges = np.append(edges, coords[:, -1])
+        edges = np.append(edges, coords[0, :])
+        r_limit = np.abs(edges).min()
+        r = np.linspace(0, np.ceil(r_limit), int(np.ceil(r_limit) + 1))
+    r_l = r[:-1]
+    r_h = r[1:]
+    r_m = (r_l + r_h) / 2
+    if angle is None:
+        angle_select = np.ones_like(coords).astype(bool)
+    elif isinstance(angle, tuple):
+        angle_low = np.angle(coords) >= angle[0]
+        angle_high = np.angle(coords) <= angle[1]
+        angle_select = np.logical_and(angle_low, angle_high)
+    elif isinstance(angle, (int, float)):
+        angle_select = np.isclose(np.angle(coords), angle)
+    else:
+        raise TypeError(f"angle should be a float, tuple of two floats or None not a {type(angle)}")
+    ret = make_Data()
+    for low, high, mid in zip(r_l, r_h, r_m):
+        r_select = np.logical_and(np.abs(coords) >= low, np.abs(coords) < high)
+        data = im[np.logical_and(r_select, angle_select)]
+        if data.size == 0:
+            continue
+        if data.size == 1:
+            avg = data[0]
+            std = np.nan
+        else:
+            avg = data.mean()
+            std = data.std()
+        num = data.size
+        ret += np.array([low, mid, high, avg, std, num])
+    ret.column_headers = ["Low_r", "r", "high_r", "mean", "std", "number"]
+    ret.setas = ".x.ye."
+    ret.metadata = im.metadata
+    ret.filename = im.filename[:-4] + "_profile.txt"
     return ret
 
 
