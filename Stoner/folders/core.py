@@ -14,7 +14,7 @@ import numpy as np
 
 from ..compat import int_types, string_types, commonpath, _pattern_type
 from ..tools import operator, isIterable, all_type, get_option
-from ..core.base import regexpDict
+from ..core.base import regexpDict, typeHintedDict
 from ..core.base import metadataObject
 
 from .utils import pathjoin
@@ -138,6 +138,44 @@ def __sub_core_iterable__(result, other):
     for c in sorted(other):
         __sub_core__(result, c)
     return result
+
+
+def _build_select_function(kargs, arg):
+    """Build a select function from an a list of keywords and a keyword name.
+
+    Args:
+        kargs (dict):
+            The keyword arguments passed to the select function.
+        arg (str):
+            Name of the keyword argument we're considering.
+
+    Returns:
+        tuple of:
+            Callable function that takes two arguments and returns a boolean if the two arguments match.
+            str name of key to look up
+    """
+    parts = arg.split("__")
+    negate = kargs.pop("negate", False)
+    if parts[-1] in operator and len(parts) > 1:
+        if len(parts) > 2 and parts[-2] == "not":
+            end = -2
+            negate = True
+        else:
+            end = -1
+            negate = False
+        arg = "__".join(parts[:end])
+        op = parts[-1]
+    else:
+        if isinstance(kargs[arg], tuple) and len(kargs[arg] == 2):
+            op = "between"  # Assume two length tuples are testing for range
+        elif not isinstance(kargs[arg], string_types) and isIterable(kargs[arg]):
+            op = "in"  # Assume other iterables are testing for memebership
+        else:  # Everything else is exact matches
+            op = "eq"
+    func = operator[op]
+    if negate:
+        func = lambda k, v: not func(k, v)
+    return func, arg
 
 
 class baseFolder(MutableSequence):
@@ -1496,6 +1534,10 @@ class baseFolder(MutableSequence):
                 keyword name to force the equality test.
             -   If the metadata keys to select on are not valid python  identifiers, then pass them via the first
                 positional dictionary value.
+
+            If the metadata item being checked exists in a regular expression file pattern for the folder, then
+            the files are not loaded and the metadata is evaluated based on the filename. This can speed up operations
+            where a file load is not required.
         """
         recurse = kargs.pop("recurse", False)
         negate = kargs.pop("negate", False)
@@ -1508,38 +1550,43 @@ class baseFolder(MutableSequence):
         if recurse:
             gkargs = {}
             gkargs.update(kargs)
+            gkargs["negate"] = negate
             gkargs["recurse"] = True
             for g in self.groups:
                 result.groups[g] = self.groups[g].select(*args, **gkargs)
-        for f in self:
+        if isinstance(self.pattern[0], regexp_type):
+            pattern_keys = list(self.pattern[0].groupindex.keys())
+            for karg in kargs:
+                if karg.split("__")[0] not in pattern_keys:
+                    must_read = True
+                    break
+            else:
+                must_read = False
+        else:
+            must_read = True
+
+        for f in self.objects:
+            if must_read and isinstance(f, string_types):
+                f = self.__getter__(f, instantiate=True)
+            placer = f
+            if not must_read:
+                match = self.pattern[0].search(f)
+                f = typeHintedDict(match.groupdict())
+
             for arg in kargs:
                 if callable(kargs[arg]) and kargs[arg](f):
                     break
                 elif isinstance(arg, string_types):
                     val = kargs[arg]
-                    parts = arg.split("__")
-                    if parts[-1] in operator and len(parts) > 1:
-                        if len(parts) > 2 and parts[-2] == "not":
-                            end = -2
-                            negate = True
-                        else:
-                            end = -1
-                            negate = False
-                        arg = "__".join(parts[:end])
-                        op = parts[-1]
-                    else:
-                        if isinstance(kargs[arg], tuple) and len(kargs[arg] == 2):
-                            op = "between"  # Assume two length tuples are testing for range
-                        elif not isinstance(kargs[arg], string_types) and isIterable(kargs[arg]):
-                            op = "in"  # Assume other iterables are testing for memebership
-                        else:  # Everything else is exact matches
-                            op = "eq"
-                    func = operator[op]
-                    if arg in f and negate ^ func(f[arg], val):
+                    skargs = copy(kargs)
+                    skargs["negate"] = negate
+                    func, key = _build_select_function(skargs, arg)
+                    if key in f and func(f[key], val):
                         break
             else:  # No tests matched - contineu to next line
                 continue
             # Something matched, so append to result
+            f = placer
             if hasattr(f, "filename"):
                 name = f.filename
                 result.__setter__(name, f)
