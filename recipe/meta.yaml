@@ -4,7 +4,7 @@
 
 package:
   name: '{{ name|lower }}'
-  version: '0.10.0b3'
+  version: '0.10.0b4'
 
 source:
   git_tag: master
