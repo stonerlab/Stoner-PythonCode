@@ -238,6 +238,9 @@ class DiskBasedFolderMixin:
             return super().__getter__(name, instantiate=instantiate)
         except (AttributeError, IndexError, KeyError):
             pass
+        # name may still be a number when we have unloaded entries referred to by index:
+        if isinstance(name, int):
+            name = self.__names__()[name]
         # Find a filename and load
         fname = name if path.exists(name) else path.join(self.directory, name)
         try:

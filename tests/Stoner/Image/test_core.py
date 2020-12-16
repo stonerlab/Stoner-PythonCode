@@ -36,6 +36,7 @@ selfimarr = ImageArray(np.copy(selfarr)) #ImageArray object
 selfimarrfile = ImageArray(os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
                 #ImageArray object from file
 
+selfimarr_x = np.copy(selfimarr).view(ImageArray)
     #####test loading with different datatypes  ####
 
 def test_load_from_array():
@@ -263,8 +264,8 @@ def test_other_funcs():
 
 
 def test_attrs():
-    attrs=[x for x in dir(selfimarr) if not x.startswith("_")]
-    expected=899
+    attrs=[x for x in dir(selfimarr_x) if not x.startswith("_")]
+    expected=897
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
