@@ -249,8 +249,11 @@ def align(im, ref, method="scharr", **kargs):
         ref = transform.rescale(ref, scale, order=3)
 
     prefilter = kargs.pop("prefilter", True)
-
-    tvec, data = align_methods[method][0](working, ref, **kargs)
+    try:
+        tvec, data = align_methods[method][0](working, ref, **kargs)
+    except Exception:
+        tvec = (0, 0)
+        data = im
 
     if scale:
         tvec /= scale
