@@ -227,6 +227,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         ret.debug = _debug
         ret._title = _title
         ret._public_attrs = {"title": str, "filename": str}
+        ret._mask_color = "red"
         return ret
 
     def __array_finalize__(self, obj):
@@ -1119,7 +1120,12 @@ class ImageFile(metadataObject):
     def __getitem__(self, n):
         """Pass through to ImageArray."""
         try:
-            return self.image.__getitem__(n)
+            ret = self.image.__getitem__(n)
+            if isinstance(ret, ImageArray):
+                retval = self.clone
+                retval.image = ret
+                return retval
+            return ret
         except KeyError:
             if n not in self.metadata and n in self._image.metadata:
                 self.metadata[n] = self._image.metadata[n]
@@ -1378,7 +1384,7 @@ class ImageFile(metadataObject):
 
     def _repr_png_private_(self):
         """Provide a display function for iPython/Jupyter."""
-        fig = self.image.imshow()
+        fig = self.image.imshow(mask_color=self.mask.colour)
         plt.title(self.filename)
         data = StreamIO()
         fig.savefig(data, format="png")

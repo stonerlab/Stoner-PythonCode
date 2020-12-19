@@ -143,6 +143,16 @@ class MaskProxy:
         return self._IA.mask
 
     @property
+    def colour(self):
+        """Get the colour of the mask."""
+        return self._IA._mask_color
+
+    @colour.setter
+    def colour(self, value):
+        """Set the colour of the mask."""
+        self._IA._mask_color = value
+
+    @property
     def data(self):
         """Get the underlying data as an array - compatibility accessor."""
         return self[:]
@@ -233,3 +243,14 @@ class MaskProxy:
     def invert(self):
         """Invert the mask."""
         self._IA.mask = ~self._IA.mask
+
+    def threshold(self, thresh=None):
+        """Mask based on a threshold.
+
+        Keyword Arguments:
+            thresh (float):
+                Threshold to apply to the current image - default is to calculate using threshold_otsu
+        """
+        if thresh is None:
+            thresh = self._IA.threshold_otsu()
+        self._IA.mask = self._IA > thresh

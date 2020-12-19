@@ -695,7 +695,7 @@ class SLS_STXMFile(DataFile):
         if "control.data" in self.metadata:
             self.metadata["beam current"] = ImageArray(self.metadata["control.data"].reshape(self.data.shape))
             self.metadata["beam current"].metadata = self.metadata
-
+        self.data = self.data[::-1]
         return self
 
     def scan_meta(self, group):

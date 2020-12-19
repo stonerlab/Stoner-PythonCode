@@ -5,6 +5,7 @@ from warnings import warn
 from importlib import import_module
 from os import path
 from json import loads, dumps
+from copy import deepcopy
 
 from skimage.viewer import CollectionViewer
 import numpy as np
@@ -223,10 +224,20 @@ class ImageFolderMixin:
         warn("apply_all is depricated and will be removed in a future version. Use ImageFolder.each() instead")
         return self.each(func, *args, **kargs)
 
-    def average(self, weights=None, _box=None):
+    def average(self, weights=None, _box=None, _metadata="first"):
         """Get an array of average pixel values for the stack.
 
         Pass through to numpy average
+
+        Keyword Arguments:
+            _box (crop box):
+                Specifies the region of the array to be averaged. Default - entire image
+            _metadata (str):
+                Specifies how to generate metadata for the averaged image.
+                - "first": Just ise the first image's metadata
+                - "common": Find the common metadata across all images
+                - "none': no metadata from images.
+
         Returns:
             average(ImageArray):
                 average values
@@ -236,7 +247,10 @@ class ImageFolderMixin:
         stack = np.stack(list(self.images), axis=0)
         average = np.average(stack, axis=0, weights=weights)
         ret = average.view(ImageArray)
-        ret.metadata = self.metadata.common_metadata
+        if _metadata == "common":
+            ret.metadata = self.metadata.common_metadata
+        elif _metadata == "first":
+            ret.metadata = deepcopy(self[0].metadata)
         return self._type(ret[ret._box(_box)])
 
     def loadgroup(self):
@@ -295,15 +309,33 @@ class ImageFolderMixin:
 
         return self
 
-    def mean(self, _box=None):
+    def mean(self, _box=None, _metadata="first"):
         """Calculate the mean value of all the images in the stack.
+
+        Keyword Arguments:
+            _box (crop box):
+                Specifies the region of the array to be averaged. Default - entire image
+            _metadata (str):
+                Specifies how to generate metadata for the averaged image.
+                - "first": Just ise the first image's metadata
+                - "common": Find the common metadata across all images
+                - "none': no metadata from images.
 
         Actually a synonym for self.average with not weights
         """
-        return self.average(_box=_box)
+        return self.average(_box=_box, _metadata=_metadata)
 
-    def stddev(self, weights=None, _box=None):
+    def stddev(self, weights=None, _box=None, _metadata="first"):
         """Calculate weighted standard deviation for stack.
+
+        Keyword Arguments:
+            _box (crop box):
+                Specifies the region of the array to be averaged. Default - entire image
+            _metadata (str):
+                Specifies how to generate metadata for the averaged image.
+                - "first": Just ise the first image's metadata
+                - "common": Find the common metadata across all images
+                - "none': no metadata from images.
 
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
@@ -319,9 +351,19 @@ class ImageFolderMixin:
         ret.metadata = self.metadata.common_metadata
         return self._type(ret[ret._box(_box)])
 
-    def stderr(self, weights=None, _box=None):
-        """Calculate standard error in the stack average."""
-        serr = self.stddev(weights=weights, _box=_box) / np.sqrt(len(self))
+    def stderr(self, weights=None, _box=None, _metadata="first"):
+        """Calculate standard error in the stack average.
+
+        Keyword Arguments:
+            _box (crop box):
+                Specifies the region of the array to be averaged. Default - entire image
+            _metadata (str):
+                Specifies how to generate metadata for the averaged image.
+                - "first": Just ise the first image's metadata
+                - "common": Find the common metadata across all images
+                - "none': no metadata from images.
+        """
+        serr = self.stddev(weights=weights, _box=_box, _metadata=_metadata) / np.sqrt(len(self))
         return serr
 
     def to_tiff(self, filename):

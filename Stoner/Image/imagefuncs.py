@@ -51,7 +51,7 @@ import numpy as np
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
 from scipy import signal
-from matplotlib.colors import Normalize
+from matplotlib.colors import Normalize, to_rgba, ListedColormap
 import matplotlib.cm as cm
 from matplotlib import pyplot as plt
 from skimage import feature, measure, transform, filters
@@ -609,18 +609,11 @@ def imshow(im, **kwargs):
     title = getattr(im, "title", getattr(im, "filename", False))
     title = kwargs.pop("title", title)
     cmap = kwargs.pop("cmap", "gray")
+    mask_alpha = kwargs.pop("mask_alpha", 0.5)
+    mask_col = kwargs.pop("mask_color", "red")
     if isinstance(cmap, string_types):
         cmap = getattr(cm, cmap)
-    if np.ma.is_masked(im):
-        im_data = im.data
-        vmax = np.max(im_data.data)
-        vmin = np.min(im_data.data)
-        alpha = np.where(im.mask, 0.15, 1.0)
-        colors = cmap(Normalize(vmin, vmax)(im_data))
-        colors[..., -1] = alpha
-        im_data = colors
-    else:
-        im_data = im
+    im_data = im
     if figure is not None and isinstance(figure, int):
         fig = plt.figure(figure)
         plt.imshow(im_data, figure=fig, cmap=cmap, **kwargs)
@@ -631,6 +624,12 @@ def imshow(im, **kwargs):
         fig = plt.imshow(im_data, figure=figure, cmap=cmap, **kwargs)
     else:
         fig = plt.imshow(im_data, cmap=cmap, **kwargs)
+    if np.ma.is_masked(im):
+        mask_col = list(to_rgba(mask_col))
+        mask_col[-1] = mask_alpha
+        mask_cmap = ListedColormap([(1.0, 1.0, 1.0, 0.0), mask_col], name="_mask_map")
+        plt.gca().imshow(im.mask, cmap=mask_cmap)
+
     if title is None:
         if "filename" in im.metadata.keys():
             plt.title(os.path.split(im["filename"])[1])
