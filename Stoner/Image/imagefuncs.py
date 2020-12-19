@@ -605,6 +605,7 @@ def imshow(im, **kwargs):
     Any masked areas are set to NaN which stops them being plotted at all.
     """
     figure = kwargs.pop("figure", "new")
+    ax = kwargs.pop("ax", None)
     # Get a title - from keyword argument, from title attr or filename attr
     title = getattr(im, "title", getattr(im, "filename", False))
     title = kwargs.pop("title", title)
@@ -616,14 +617,15 @@ def imshow(im, **kwargs):
     im_data = im
     if figure is not None and isinstance(figure, int):
         fig = plt.figure(figure)
-        plt.imshow(im_data, figure=fig, cmap=cmap, **kwargs)
     elif figure is not None and figure == "new":
         fig = plt.figure()
-        plt.imshow(im_data, figure=fig, cmap=cmap, **kwargs)
     elif figure is not None:  # matplotlib.figure instance
-        fig = plt.imshow(im_data, figure=figure, cmap=cmap, **kwargs)
+        fig = plt.figure(figure.number)
     else:
-        fig = plt.imshow(im_data, cmap=cmap, **kwargs)
+        fig = plt.figure()
+    if ax is not None:
+        plt.sca(ax)
+    plt.gca().imshow(im_data, cmap=cmap, **kwargs)
     if np.ma.is_masked(im):
         mask_col = list(to_rgba(mask_col))
         mask_col[-1] = mask_alpha

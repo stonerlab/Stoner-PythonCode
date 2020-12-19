@@ -5,10 +5,11 @@ from warnings import warn
 from importlib import import_module
 from os import path
 from json import loads, dumps
-from copy import deepcopy
+from copy import deepcopy, copy
 
 from skimage.viewer import CollectionViewer
 import numpy as np
+from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from PIL import Image
 
@@ -324,6 +325,92 @@ class ImageFolderMixin:
         Actually a synonym for self.average with not weights
         """
         return self.average(_box=_box, _metadata=_metadata)
+
+    def montage(self, *args, **kargs):
+        """Call the plot method for each metadataObject, but switching to a subplot each time.
+
+        Args:
+            args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+
+        Keyword Arguments:
+            extra (callable(i,j,d)):
+                A callable that can carry out additional processing per plot after the plot is done
+            figsize(tuple(x,y)):
+                Size of the figure to create
+            dpi(float):
+                dots per inch on the figure
+            edgecolor,facecolor(matplotlib colour):
+                figure edge and frame colours.
+            frameon (bool):
+                Turns figure frames on or off
+            FigureClass(class):
+                Passed to matplotlib figure call.
+            plots_per_page(int):
+                maximum number of plots per figure.
+            tight_layout(dict or False):
+                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
+
+        Returns:
+            A list of :py:class:`matplotlib.pyplot.Axes` instances.
+
+        Notes:
+            If the underlying type of the :py:class:`Stoner.Core.metadataObject` instances in the
+            :py:class:`PlotFolder` lacks a **plot** method, then the instances are converted to
+            :py:class:`Stoner.Core.Data`.
+
+            Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
+            from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
+        """
+        plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
+        plts = min(plts, len(self))
+
+        extra = kargs.pop("extra", lambda i, j, d: None)
+        tight = kargs.pop("tight_layout", {})
+
+        fig_num = kargs.pop("figure", getattr(self, "_figure", None))
+        if isinstance(fig_num, Figure):
+            fig_num = fig_num.number
+        fig_args = getattr(self, "_fig_args", [])
+        fig_kargs = getattr(self, "_fig_kargs", {})
+        for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
+            if arg in kargs:
+                fig_kargs[arg] = kargs.pop(arg)
+        if fig_num is None:
+            fig = figure(*fig_args, **fig_kargs)
+        else:
+            fig = figure(fig_num, **fig_kargs)
+        w, h = fig.get_size_inches()
+        plt_y = int(np.floor(np.sqrt(plts * w / h)))
+        plt_x = int(np.ceil(plts / plt_y))
+
+        kargs["figure"] = fig
+        ret = []
+        j = 0
+        fignum = fig.number
+        for i, d in enumerate(self):
+            plt_kargs = copy(kargs)
+            if i % plts == 0 and i != 0:
+                if isinstance(tight, dict):
+                    tight_layout(**tight)
+                fig = figure(*fig_args, **fig_kargs)
+                fignum = fig.number
+                j = 1
+            else:
+                j += 1
+            fig = figure(fignum)
+            ax = subplot(plt_y, plt_x, j)
+            plt_kargs["figure"] = fig
+            plt_kargs["ax"] = ax
+            if "title" in kargs:
+                if isinstance(kargs["title"], str):
+                    plt_kargs["title"] = kargs["title"].format(**d)
+                elif callable(kargs["title"]):
+                    plt_kargs["title"] = kargs["title"](d)
+            ret.append(d.imshow(*args, **plt_kargs))
+            extra(i, j, d)
+        tight_layout()
+        return ret
 
     def stddev(self, weights=None, _box=None, _metadata="first"):
         """Calculate weighted standard deviation for stack.
