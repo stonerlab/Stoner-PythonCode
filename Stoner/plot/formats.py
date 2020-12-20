@@ -376,7 +376,7 @@ class DefaultPlotStyle(MutableMapping):
         for attr in attrs:
             delattr(self, attr)
 
-    def update(self, *args, **kargs):
+    def update(self, *args, **kargs):  # pylint: disable=signature-differs
         """Update the template with new attributes from keyword arguments.
 
         Up to one positional argument may be supplied

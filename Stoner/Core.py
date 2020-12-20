@@ -50,11 +50,6 @@ except ImportError:
     tabulate = None
 
 try:
-    from magic import Magic as filemagic
-except ImportError:
-    filemagic = None
-
-try:
     import pandas as pd
 except ImportError:
     pd = None

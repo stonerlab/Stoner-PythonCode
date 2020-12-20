@@ -253,10 +253,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 pass
         super().__array_finalize__(obj)
 
-    def __array_prepare__(self, arr, context=None):
-        """Support the numpy machinery for subclassing ndarray."""
-        return super().__array_prepare__(arr, context)
-
     def _load(self, filename, *args, **kargs):
         """Load an image from a file and return as a ImageArray."""
         cls = self.__class__

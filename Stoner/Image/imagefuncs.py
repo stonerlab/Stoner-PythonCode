@@ -35,6 +35,8 @@ __all__ = [
     "normalise",
     "profile_line",
     "quantize",
+    "radial_coordinates",
+    "radial_profile",
     "remove_outliers",
     "rotate",
     "translate",
@@ -46,15 +48,19 @@ __all__ = [
 ]
 import warnings
 import os
+import io
 
 import numpy as np
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
 from scipy import signal
-from matplotlib.colors import Normalize, to_rgba, ListedColormap
+from matplotlib.colors import to_rgba, ListedColormap
 import matplotlib.cm as cm
 from matplotlib import pyplot as plt
 from skimage import feature, measure, transform, filters
+
+from PyQt5.QtGui import QImage
+from PyQt5.QtWidgets import QApplication
 
 from Stoner.compat import string_types
 from Stoner.tools import isTuple, isIterable, make_Data
@@ -251,7 +257,7 @@ def align(im, ref, method="scharr", **kargs):
     prefilter = kargs.pop("prefilter", True)
     try:
         tvec, data = align_methods[method][0](working, ref, **kargs)
-    except Exception:
+    except (ValueError, TypeError):
         tvec = (0, 0)
         data = im
 
@@ -644,6 +650,14 @@ def imshow(im, **kwargs):
     else:
         plt.title(title)
     plt.axis("off")
+
+    def add_figure_to_clipboard(event):
+        if event.key == "ctrl+c":
+            with io.BytesIO() as buffer:
+                fig.savefig(buffer)
+                QApplication.clipboard().setImage(QImage.fromData(buffer.getvalue()))
+
+    fig.canvas.mpl_connect("key_press_event", add_figure_to_clipboard)
     return fig
 
 

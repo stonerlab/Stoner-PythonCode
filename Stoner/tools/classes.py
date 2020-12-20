@@ -88,7 +88,7 @@ def itersubclasses(cls: type, _seen: Optional[set] = None) -> List[type]:
 
 def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-argument
     """Return a list of all in memory subclasses of this DataFile."""
-    global _subclasses
+    global _subclasses  # pylint: disable=global-statement
     if cls is None:
         from ..Core import DataFile  # pylint: disable=import-outside-toplevel
 
@@ -192,9 +192,9 @@ class typedList(MutableSequence):
             raise TypeError("Elelements of this list should be of type {}".format(self._type))
         self._store.extend(other)
 
-    def index(
+    def index(  # pylint:  disable=arguments-differ
         self, search: Any, start: int = 0, end: Optional[int] = None
-    ) -> int:  # pylint:  disable=arguments-differ
+    ) -> int:
         """Index works like a list except we support Python 3 optional parameters everywhere."""
         if end is None:
             end = len(self._store)
