@@ -1,0 +1,8 @@
+
+
+BNLFile.remove_duplicates
+===================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: BNLFile.remove_duplicates

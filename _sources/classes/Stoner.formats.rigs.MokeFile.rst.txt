@@ -28,6 +28,7 @@
       ~Stoner.formats.rigs.MokeFile.extend
       ~Stoner.formats.rigs.MokeFile.filter
       ~Stoner.formats.rigs.MokeFile.find_col
+      ~Stoner.formats.rigs.MokeFile.find_duplicates
       ~Stoner.formats.rigs.MokeFile.get
       ~Stoner.formats.rigs.MokeFile.get_filename
       ~Stoner.formats.rigs.MokeFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.rigs.MokeFile.pop
       ~Stoner.formats.rigs.MokeFile.popitem
       ~Stoner.formats.rigs.MokeFile.remove
+      ~Stoner.formats.rigs.MokeFile.remove_duplicates
       ~Stoner.formats.rigs.MokeFile.rename
       ~Stoner.formats.rigs.MokeFile.reorder_columns
       ~Stoner.formats.rigs.MokeFile.reverse

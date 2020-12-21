@@ -28,6 +28,7 @@
       ~Stoner.formats.instruments.QDFile.extend
       ~Stoner.formats.instruments.QDFile.filter
       ~Stoner.formats.instruments.QDFile.find_col
+      ~Stoner.formats.instruments.QDFile.find_duplicates
       ~Stoner.formats.instruments.QDFile.get
       ~Stoner.formats.instruments.QDFile.get_filename
       ~Stoner.formats.instruments.QDFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.instruments.QDFile.pop
       ~Stoner.formats.instruments.QDFile.popitem
       ~Stoner.formats.instruments.QDFile.remove
+      ~Stoner.formats.instruments.QDFile.remove_duplicates
       ~Stoner.formats.instruments.QDFile.rename
       ~Stoner.formats.instruments.QDFile.reorder_columns
       ~Stoner.formats.instruments.QDFile.reverse

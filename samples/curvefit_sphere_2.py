@@ -25,7 +25,7 @@ def transform(r, q, p):
 
 def sphere(coords, a, b, c, r):
     """Returns zero if (x,y,z) lies on a sphere centred at (a,b,c) with radius r."""
-    x, y, z = coords
+    x, y, z = coords.T
     return (x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2 - r ** 2
 
 

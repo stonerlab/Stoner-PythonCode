@@ -1,0 +1,8 @@
+
+
+SPCFile.remove_duplicates
+====================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: SPCFile.remove_duplicates

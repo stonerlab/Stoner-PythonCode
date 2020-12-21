@@ -51,9 +51,11 @@
 <span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
 <span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">loads</span><span class="p">,</span> <span class="n">dumps</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span><span class="p">,</span> <span class="n">copy</span>
 
 <span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="kn">import</span> <span class="n">CollectionViewer</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">subplot</span><span class="p">,</span> <span class="n">tight_layout</span>
 <span class="kn">from</span> <span class="nn">PIL.TiffImagePlugin</span> <span class="kn">import</span> <span class="n">ImageFileDirectory_v2</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 
@@ -269,10 +271,20 @@
         <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;apply_all is depricated and will be removed in a future version. Use ImageFolder.each() instead&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ImageFolderMixin.average"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.average">[docs]</a>    <span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageFolderMixin.average"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.average">[docs]</a>    <span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_metadata</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get an array of average pixel values for the stack.</span>
 
 <span class="sd">        Pass through to numpy average</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            _box (crop box):</span>
+<span class="sd">                Specifies the region of the array to be averaged. Default - entire image</span>
+<span class="sd">            _metadata (str):</span>
+<span class="sd">                Specifies how to generate metadata for the averaged image.</span>
+<span class="sd">                - &quot;first&quot;: Just ise the first image&#39;s metadata</span>
+<span class="sd">                - &quot;common&quot;: Find the common metadata across all images</span>
+<span class="sd">                - &quot;none&#39;: no metadata from images.</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            average(ImageArray):</span>
 <span class="sd">                average values</span>
@@ -282,7 +294,10 @@
         <span class="n">stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">average</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">common_metadata</span>
+        <span class="k">if</span> <span class="n">_metadata</span> <span class="o">==</span> <span class="s2">&quot;common&quot;</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">common_metadata</span>
+        <span class="k">elif</span> <span class="n">_metadata</span> <span class="o">==</span> <span class="s2">&quot;first&quot;</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">ret</span><span class="o">.</span><span class="n">_box</span><span class="p">(</span><span class="n">_box</span><span class="p">)])</span></div>
 
 <div class="viewcode-block" id="ImageFolderMixin.loadgroup"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.loadgroup">[docs]</a>    <span class="k">def</span> <span class="nf">loadgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -341,15 +356,119 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="ImageFolderMixin.mean"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageFolderMixin.mean"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_metadata</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the mean value of all the images in the stack.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            _box (crop box):</span>
+<span class="sd">                Specifies the region of the array to be averaged. Default - entire image</span>
+<span class="sd">            _metadata (str):</span>
+<span class="sd">                Specifies how to generate metadata for the averaged image.</span>
+<span class="sd">                - &quot;first&quot;: Just ise the first image&#39;s metadata</span>
+<span class="sd">                - &quot;common&quot;: Find the common metadata across all images</span>
+<span class="sd">                - &quot;none&#39;: no metadata from images.</span>
 
 <span class="sd">        Actually a synonym for self.average with not weights</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">_box</span><span class="o">=</span><span class="n">_box</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">_box</span><span class="o">=</span><span class="n">_box</span><span class="p">,</span> <span class="n">_metadata</span><span class="o">=</span><span class="n">_metadata</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ImageFolderMixin.stddev"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.stddev">[docs]</a>    <span class="k">def</span> <span class="nf">stddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageFolderMixin.montage"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.montage">[docs]</a>    <span class="k">def</span> <span class="nf">montage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call the plot method for each metadataObject, but switching to a subplot each time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.</span>
+<span class="sd">            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            extra (callable(i,j,d)):</span>
+<span class="sd">                A callable that can carry out additional processing per plot after the plot is done</span>
+<span class="sd">            figsize(tuple(x,y)):</span>
+<span class="sd">                Size of the figure to create</span>
+<span class="sd">            dpi(float):</span>
+<span class="sd">                dots per inch on the figure</span>
+<span class="sd">            edgecolor,facecolor(matplotlib colour):</span>
+<span class="sd">                figure edge and frame colours.</span>
+<span class="sd">            frameon (bool):</span>
+<span class="sd">                Turns figure frames on or off</span>
+<span class="sd">            FigureClass(class):</span>
+<span class="sd">                Passed to matplotlib figure call.</span>
+<span class="sd">            plots_per_page(int):</span>
+<span class="sd">                maximum number of plots per figure.</span>
+<span class="sd">            tight_layout(dict or False):</span>
+<span class="sd">                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of :py:class:`matplotlib.pyplot.Axes` instances.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If the underlying type of the :py:class:`Stoner.Core.metadataObject` instances in the</span>
+<span class="sd">            :py:class:`PlotFolder` lacks a **plot** method, then the instances are converted to</span>
+<span class="sd">            :py:class:`Stoner.Core.Data`.</span>
+
+<span class="sd">            Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed</span>
+<span class="sd">            from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plts</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;plots_per_page&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;plots_per_page&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+        <span class="n">plts</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">plts</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+        <span class="n">extra</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;extra&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">tight</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;tight_layout&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="n">fig_num</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_figure&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fig_num</span><span class="p">,</span> <span class="n">Figure</span><span class="p">):</span>
+            <span class="n">fig_num</span> <span class="o">=</span> <span class="n">fig_num</span><span class="o">.</span><span class="n">number</span>
+        <span class="n">fig_args</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_fig_args&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">fig_kargs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_fig_kargs&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;figsize&quot;</span><span class="p">,</span> <span class="s2">&quot;dpi&quot;</span><span class="p">,</span> <span class="s2">&quot;facecolor&quot;</span><span class="p">,</span> <span class="s2">&quot;edgecolor&quot;</span><span class="p">,</span> <span class="s2">&quot;frameon&quot;</span><span class="p">,</span> <span class="s2">&quot;FigureClass&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+                <span class="n">fig_kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fig_num</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="o">*</span><span class="n">fig_args</span><span class="p">,</span> <span class="o">**</span><span class="n">fig_kargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">fig_num</span><span class="p">,</span> <span class="o">**</span><span class="n">fig_kargs</span><span class="p">)</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_size_inches</span><span class="p">()</span>
+        <span class="n">plt_y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">plts</span> <span class="o">*</span> <span class="n">w</span> <span class="o">/</span> <span class="n">h</span><span class="p">)))</span>
+        <span class="n">plt_x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">plts</span> <span class="o">/</span> <span class="n">plt_y</span><span class="p">))</span>
+
+        <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;figure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">fignum</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">number</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">plt_kargs</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">plts</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tight</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">tight_layout</span><span class="p">(</span><span class="o">**</span><span class="n">tight</span><span class="p">)</span>
+                <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="o">*</span><span class="n">fig_args</span><span class="p">,</span> <span class="o">**</span><span class="n">fig_kargs</span><span class="p">)</span>
+                <span class="n">fignum</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">number</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">fignum</span><span class="p">)</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">subplot</span><span class="p">(</span><span class="n">plt_y</span><span class="p">,</span> <span class="n">plt_x</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">plt_kargs</span><span class="p">[</span><span class="s2">&quot;figure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span>
+            <span class="n">plt_kargs</span><span class="p">[</span><span class="s2">&quot;ax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span>
+            <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">plt_kargs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]):</span>
+                    <span class="n">plt_kargs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">](</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">plt_kargs</span><span class="p">))</span>
+            <span class="n">extra</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="n">tight_layout</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="ImageFolderMixin.stddev"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.stddev">[docs]</a>    <span class="k">def</span> <span class="nf">stddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_metadata</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate weighted standard deviation for stack.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            _box (crop box):</span>
+<span class="sd">                Specifies the region of the array to be averaged. Default - entire image</span>
+<span class="sd">            _metadata (str):</span>
+<span class="sd">                Specifies how to generate metadata for the averaged image.</span>
+<span class="sd">                - &quot;first&quot;: Just ise the first image&#39;s metadata</span>
+<span class="sd">                - &quot;common&quot;: Find the common metadata across all images</span>
+<span class="sd">                - &quot;none&#39;: no metadata from images.</span>
 
 <span class="sd">        This is a biased standard deviation, may not be appropriate for small sample sizes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -365,9 +484,19 @@
         <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">common_metadata</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">ret</span><span class="o">.</span><span class="n">_box</span><span class="p">(</span><span class="n">_box</span><span class="p">)])</span></div>
 
-<div class="viewcode-block" id="ImageFolderMixin.stderr"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.stderr">[docs]</a>    <span class="k">def</span> <span class="nf">stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate standard error in the stack average.&quot;&quot;&quot;</span>
-        <span class="n">serr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="n">_box</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+<div class="viewcode-block" id="ImageFolderMixin.stderr"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.stderr">[docs]</a>    <span class="k">def</span> <span class="nf">stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_metadata</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate standard error in the stack average.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            _box (crop box):</span>
+<span class="sd">                Specifies the region of the array to be averaged. Default - entire image</span>
+<span class="sd">            _metadata (str):</span>
+<span class="sd">                Specifies how to generate metadata for the averaged image.</span>
+<span class="sd">                - &quot;first&quot;: Just ise the first image&#39;s metadata</span>
+<span class="sd">                - &quot;common&quot;: Find the common metadata across all images</span>
+<span class="sd">                - &quot;none&#39;: no metadata from images.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">serr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">_box</span><span class="o">=</span><span class="n">_box</span><span class="p">,</span> <span class="n">_metadata</span><span class="o">=</span><span class="n">_metadata</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">serr</span></div>
 
 <div class="viewcode-block" id="ImageFolderMixin.to_tiff"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolderMixin.html#Stoner.Image.ImageFolderMixin.to_tiff">[docs]</a>    <span class="k">def</span> <span class="nf">to_tiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
@@ -496,7 +625,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

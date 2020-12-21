@@ -1,0 +1,8 @@
+
+
+DataFile.remove_duplicates
+======================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.remove_duplicates

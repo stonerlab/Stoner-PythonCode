@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.remove_duplicates
+========================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.remove_duplicates

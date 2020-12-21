@@ -1,14 +1,15 @@
 """Test langevin fitting."""
 # pylint: disable=invalid-name
+from copy import copy
+
+from numpy import linspace, ones_like
+from numpy.random import normal
+
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import (
     Lorentzian_diff,
     lorentzian_diff,
 )
-
-from numpy import linspace, ones_like
-from numpy.random import normal
-from copy import copy
 
 x = linspace(-1.0, 1.0, 101)
 params = [1, 0.1, -0.25]

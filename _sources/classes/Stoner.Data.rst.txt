@@ -43,6 +43,7 @@
       ~Stoner.Data.figure
       ~Stoner.Data.filter
       ~Stoner.Data.find_col
+      ~Stoner.Data.find_duplicates
       ~Stoner.Data.find_peaks
       ~Stoner.Data.format
       ~Stoner.Data.get
@@ -82,6 +83,7 @@
       ~Stoner.Data.popitem
       ~Stoner.Data.quiver_plot
       ~Stoner.Data.remove
+      ~Stoner.Data.remove_duplicates
       ~Stoner.Data.rename
       ~Stoner.Data.reorder_columns
       ~Stoner.Data.reverse

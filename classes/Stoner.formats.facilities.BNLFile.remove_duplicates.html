@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BNLFile.remove_duplicates &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BNLFile.rename" href="Stoner.formats.facilities.BNLFile.rename.html" />
+    <link rel="prev" title="BNLFile.remove" href="Stoner.formats.facilities.BNLFile.remove.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.formats.facilities.BNLFile.remove.html" title="Previous document">BNLFile.remove</a>
+        </li>
+        <li>
+          <a href="Stoner.formats.facilities.BNLFile.rename.html" title="Next document">BNLFile.rename</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.formats.facilities.BNLFile.html">Stoner.formats.facilities.BNLFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="bnlfile-remove-duplicates">
+<h1>BNLFile.remove_duplicates<a class="headerlink" href="#bnlfile-remove-duplicates" title="Permalink to this headline">¶</a></h1>
+<dl class="py method">
+<dt id="Stoner.formats.facilities.BNLFile.remove_duplicates">
+<code class="sig-prename descclassname">BNLFile.</code><code class="sig-name descname">remove_duplicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">1e-08</span></em>, <em class="sig-param"><span class="n">strategy</span><span class="o">=</span><span class="default_value">'keep first'</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">yerr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.facilities.BNLFile.remove_duplicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and remove rows with duplicated values of the search column(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xcol</strong> (<em>index types</em>) – The column)s) to search for duplicates in.</p></li>
+<li><p><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em> or </em><a class="reference internal" href="../Stoner.html#module-Stoner.core.array" title="Stoner.core.array"><em>array</em></a>) – The absolute difference(s) to consider equal when comparing floats.</p></li>
+<li><p><strong>strategy</strong> (str, default <em>keep first</em>) – <dl class="simple">
+<dt>What to do with duplicated rows. Options are:</dt><dd><ul>
+<li><p><em>keep first</em> - the first row is kept, others are discarded</p></li>
+<li><p><em>average</em> - the duplicate rows are average together.</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>yerr</strong> (<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.ycol" title="Stoner.Core.DataFile.ycol"><em>ycol</em></a><em>,</em>) – When using an average strategey identifies columns that represent values and uncertainties where
+the proper weighted standard error should be done.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><em>(dictionary of value</em> –</p>
+<dl class="simple">
+<dt>[list of row indices]):</dt><dd><p>The unique value and the associated rows that go with it.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If <em>ycol</em> is not specified, then the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Data.setas</span></code> attribute is used. If this is also
+not set, then all columns are considered.</p>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.formats.facilities.BNLFile.remove.html"
+                        title="previous chapter">BNLFile.remove</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.formats.facilities.BNLFile.rename.html"
+                        title="next chapter">BNLFile.rename</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.formats.facilities.BNLFile.remove_duplicates.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.formats.facilities.BNLFile.remove.html" title="Previous document">BNLFile.remove</a>
+        </li>
+        <li>
+          <a href="Stoner.formats.facilities.BNLFile.rename.html" title="Next document">BNLFile.rename</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.formats.facilities.BNLFile.html">Stoner.formats.facilities.BNLFile</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      3.2.1
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

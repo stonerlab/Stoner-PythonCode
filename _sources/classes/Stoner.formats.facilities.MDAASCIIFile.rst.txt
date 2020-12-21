@@ -28,6 +28,7 @@
       ~Stoner.formats.facilities.MDAASCIIFile.extend
       ~Stoner.formats.facilities.MDAASCIIFile.filter
       ~Stoner.formats.facilities.MDAASCIIFile.find_col
+      ~Stoner.formats.facilities.MDAASCIIFile.find_duplicates
       ~Stoner.formats.facilities.MDAASCIIFile.get
       ~Stoner.formats.facilities.MDAASCIIFile.get_filename
       ~Stoner.formats.facilities.MDAASCIIFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.facilities.MDAASCIIFile.pop
       ~Stoner.formats.facilities.MDAASCIIFile.popitem
       ~Stoner.formats.facilities.MDAASCIIFile.remove
+      ~Stoner.formats.facilities.MDAASCIIFile.remove_duplicates
       ~Stoner.formats.facilities.MDAASCIIFile.rename
       ~Stoner.formats.facilities.MDAASCIIFile.reorder_columns
       ~Stoner.formats.facilities.MDAASCIIFile.reverse

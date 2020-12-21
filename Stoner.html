@@ -1026,7 +1026,7 @@ contains the key classes for achieving this.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.subtract_image.html#Stoner.Image.imagefuncs.subtract_image" title="Stoner.Image.imagefuncs.subtract_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract_image</span></code></a>(im, background[, contrast, …])</p></td>
 <td><p>Subtract a background image from the ImageArray.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.fft.html#Stoner.Image.imagefuncs.fft" title="Stoner.Image.imagefuncs.fft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fft</span></code></a>(im[, shift, phase])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.fft.html#Stoner.Image.imagefuncs.fft" title="Stoner.Image.imagefuncs.fft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fft</span></code></a>(im[, shift, phase, remove_dc, gaussian])</p></td>
 <td><p>Perform a 2d fft of the image and shift the result to get zero frequency in the centre.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.filter_image.html#Stoner.Image.imagefuncs.filter_image" title="Stoner.Image.imagefuncs.filter_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_image</span></code></a>(im[, sigma])</p></td>
@@ -1052,6 +1052,12 @@ contains the key classes for achieving this.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.quantize.html#Stoner.Image.imagefuncs.quantize" title="Stoner.Image.imagefuncs.quantize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantize</span></code></a>(im, output[, levels])</p></td>
 <td><p>Quantise the image data into fixed levels given by a mapping.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.radial_coordinates.html#Stoner.Image.imagefuncs.radial_coordinates" title="Stoner.Image.imagefuncs.radial_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radial_coordinates</span></code></a>(im[, centre, pixel_size, …])</p></td>
+<td><p>Rerurn a map of the radial co-ordinates of an image from a given centre, with adjustments for pixel size.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.radial_profile.html#Stoner.Image.imagefuncs.radial_profile" title="Stoner.Image.imagefuncs.radial_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radial_profile</span></code></a>(im[, angle, r, centre, …])</p></td>
+<td><p>Extract a radial  profile line from an image.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="classes/Stoner.Image.imagefuncs.remove_outliers.html#Stoner.Image.imagefuncs.remove_outliers" title="Stoner.Image.imagefuncs.remove_outliers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_outliers</span></code></a>(im[, percentiles, replace])</p></td>
 <td><p>Find values of the data that are beyond a percentile of the overall distribution and replace them.</p></td>
@@ -1380,7 +1386,7 @@ contains the key classes for achieving this.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -28,6 +28,7 @@
       ~Stoner.formats.rigs.BigBlueFile.extend
       ~Stoner.formats.rigs.BigBlueFile.filter
       ~Stoner.formats.rigs.BigBlueFile.find_col
+      ~Stoner.formats.rigs.BigBlueFile.find_duplicates
       ~Stoner.formats.rigs.BigBlueFile.get
       ~Stoner.formats.rigs.BigBlueFile.get_filename
       ~Stoner.formats.rigs.BigBlueFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.rigs.BigBlueFile.pop
       ~Stoner.formats.rigs.BigBlueFile.popitem
       ~Stoner.formats.rigs.BigBlueFile.remove
+      ~Stoner.formats.rigs.BigBlueFile.remove_duplicates
       ~Stoner.formats.rigs.BigBlueFile.rename
       ~Stoner.formats.rigs.BigBlueFile.reorder_columns
       ~Stoner.formats.rigs.BigBlueFile.reverse

@@ -57,7 +57,7 @@
 <h1>gridimage<a class="headerlink" href="#gridimage" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="Stoner.Image.imagefuncs.gridimage">
-<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">gridimage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im</span></em>, <em class="sig-param"><span class="n">points</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xi</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">rescale</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#gridimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.gridimage" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">gridimage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im</span></em>, <em class="sig-param"><span class="n">points</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xi</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rescale</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#gridimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.gridimage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" title="(in SciPy v1.5.4)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.griddata()</span></code></a> to shift the image to a regular grid of co-ordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -69,8 +69,8 @@
 <dt class="field-even">Keyword Arguments</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>method</strong> (<em>&quot;linear&quot;</em><em>,</em><em>&quot;cubic&quot;</em><em>,</em><em>&quot;nearest&quot;</em>) – how to interpolate, default is linear</p></li>
-<li><p><strong>fill_value</strong> (<em>folat</em>) – What to put when the co-ordinates go out of range (default is 1.0). May be a callable</p></li>
-<li><p><strong>which case the initial image is presented as the only argument</strong> (<em>in</em>) – </p></li>
+<li><p><strong>fill_value</strong> (<em>folat</em><em>, </em><em>Callable</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – What to put when the co-ordinates go out of range (default is None). May be a callable
+in which case the initial image is presented as the only argument. If None, use the mean value.</p></li>
 <li><p><strong>rescale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If the x and y co-ordinates are very different in scale, set this to True.</p></li>
 </ul>
 </dd>
@@ -146,7 +146,7 @@ doesn’t change the image after it has been corrected once.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -28,6 +28,7 @@
       ~Stoner.formats.rigs.EasyPlotFile.extend
       ~Stoner.formats.rigs.EasyPlotFile.filter
       ~Stoner.formats.rigs.EasyPlotFile.find_col
+      ~Stoner.formats.rigs.EasyPlotFile.find_duplicates
       ~Stoner.formats.rigs.EasyPlotFile.get
       ~Stoner.formats.rigs.EasyPlotFile.get_filename
       ~Stoner.formats.rigs.EasyPlotFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.rigs.EasyPlotFile.pop
       ~Stoner.formats.rigs.EasyPlotFile.popitem
       ~Stoner.formats.rigs.EasyPlotFile.remove
+      ~Stoner.formats.rigs.EasyPlotFile.remove_duplicates
       ~Stoner.formats.rigs.EasyPlotFile.rename
       ~Stoner.formats.rigs.EasyPlotFile.reorder_columns
       ~Stoner.formats.rigs.EasyPlotFile.reverse

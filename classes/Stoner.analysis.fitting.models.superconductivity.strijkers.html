@@ -85,15 +85,21 @@
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Demo of new Stoner.Analysis.AnalyseFile.lmfit&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models</span> <span class="kn">import</span> <span class="n">cfg_data_from_ini</span><span class="p">,</span> <span class="n">cfg_model_from_ini</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">__home__</span>
+
 <span class="n">config</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">,</span> <span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">)</span>
 <span class="n">datafile</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;sample-data&quot;</span><span class="p">,</span> <span class="s2">&quot;PCAR Co Data.csv&quot;</span><span class="p">)</span>
+
 <span class="n">d</span> <span class="o">=</span> <span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">datafile</span><span class="p">)</span>
 <span class="n">model</span><span class="p">,</span> <span class="n">p0</span> <span class="o">=</span> <span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+
 <span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span><span class="p">)</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="s2">&quot;bo&quot;</span><span class="p">])</span>  <span class="c1"># plot the data</span>
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">})</span>
+
 <span class="nb">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -201,7 +207,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

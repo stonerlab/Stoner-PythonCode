@@ -1,0 +1,8 @@
+
+
+MokeFile.remove_duplicates
+==============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.remove_duplicates

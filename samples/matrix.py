@@ -1,7 +1,8 @@
 """Plot data defined on a matrix."""
 # pylint: disable=invalid-name
-from Stoner import Data
 import numpy as np
+
+from Stoner import Data
 
 x, y = np.meshgrid(np.linspace(-2, 2, 101), np.linspace(-2, 2, 101))
 z = np.cos(4 * np.pi * np.sqrt(x ** 2 + y ** 2)) * np.exp(

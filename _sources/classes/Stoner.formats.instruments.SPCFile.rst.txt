@@ -28,6 +28,7 @@
       ~Stoner.formats.instruments.SPCFile.extend
       ~Stoner.formats.instruments.SPCFile.filter
       ~Stoner.formats.instruments.SPCFile.find_col
+      ~Stoner.formats.instruments.SPCFile.find_duplicates
       ~Stoner.formats.instruments.SPCFile.get
       ~Stoner.formats.instruments.SPCFile.get_filename
       ~Stoner.formats.instruments.SPCFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.instruments.SPCFile.pop
       ~Stoner.formats.instruments.SPCFile.popitem
       ~Stoner.formats.instruments.SPCFile.remove
+      ~Stoner.formats.instruments.SPCFile.remove_duplicates
       ~Stoner.formats.instruments.SPCFile.rename
       ~Stoner.formats.instruments.SPCFile.reorder_columns
       ~Stoner.formats.instruments.SPCFile.reverse

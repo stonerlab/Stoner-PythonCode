@@ -1,0 +1,8 @@
+
+
+VSMFile.find_duplicates
+==================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.find_duplicates

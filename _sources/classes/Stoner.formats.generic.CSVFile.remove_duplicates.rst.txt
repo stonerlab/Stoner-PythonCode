@@ -1,0 +1,8 @@
+
+
+CSVFile.remove_duplicates
+================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.remove_duplicates

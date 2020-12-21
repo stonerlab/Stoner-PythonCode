@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.find_duplicates
+=====================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.find_duplicates

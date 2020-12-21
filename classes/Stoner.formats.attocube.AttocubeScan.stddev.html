@@ -60,8 +60,19 @@
 <h1>AttocubeScan.stddev<a class="headerlink" href="#attocubescan-stddev" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt id="Stoner.formats.attocube.AttocubeScan.stddev">
-<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">stddev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.stddev" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">stddev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.stddev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate weighted standard deviation for stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 <p>This is a biased standard deviation, may not be appropriate for small sample sizes</p>
 </dd></dl>
 
@@ -126,7 +137,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

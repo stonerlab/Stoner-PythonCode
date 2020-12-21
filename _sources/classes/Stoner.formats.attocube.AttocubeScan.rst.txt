@@ -48,6 +48,7 @@
       ~Stoner.formats.attocube.AttocubeScan.loadgroup
       ~Stoner.formats.attocube.AttocubeScan.make_name
       ~Stoner.formats.attocube.AttocubeScan.mean
+      ~Stoner.formats.attocube.AttocubeScan.montage
       ~Stoner.formats.attocube.AttocubeScan.on_load_process
       ~Stoner.formats.attocube.AttocubeScan.pop
       ~Stoner.formats.attocube.AttocubeScan.popitem

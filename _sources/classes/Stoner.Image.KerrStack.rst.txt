@@ -88,6 +88,7 @@ KerrStack
       ~KerrStack.loadgroup
       ~KerrStack.make_name
       ~KerrStack.mean
+      ~KerrStack.montage
       ~KerrStack.on_load_process
       ~KerrStack.pop
       ~KerrStack.popitem
@@ -191,6 +192,7 @@ KerrStack
    .. automethod:: loadgroup
    .. automethod:: make_name
    .. automethod:: mean
+   .. automethod:: montage
    .. automethod:: on_load_process
    .. automethod:: pop
    .. automethod:: popitem

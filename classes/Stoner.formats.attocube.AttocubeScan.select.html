@@ -124,6 +124,9 @@ keyword name to force the equality test.</p></li>
 <li><p>If the metadata keys to select on are not valid python  identifiers, then pass them via the first
 positional dictionary value.</p></li>
 </ul>
+<p>If the metadata item being checked exists in a regular expression file pattern for the folder, then
+the files are not loaded and the metadata is evaluated based on the filename. This can speed up operations
+where a file load is not required.</p>
 </div>
 </dd></dl>
 
@@ -188,7 +191,7 @@ positional dictionary value.</p></li>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

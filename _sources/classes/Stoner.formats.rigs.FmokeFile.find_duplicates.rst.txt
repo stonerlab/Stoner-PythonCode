@@ -1,0 +1,8 @@
+
+
+FmokeFile.find_duplicates
+=============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.find_duplicates

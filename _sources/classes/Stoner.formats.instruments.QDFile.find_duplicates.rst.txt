@@ -1,0 +1,8 @@
+
+
+QDFile.find_duplicates
+=================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: QDFile.find_duplicates

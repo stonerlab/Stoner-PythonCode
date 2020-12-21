@@ -28,6 +28,7 @@
       ~Stoner.formats.simulations.GenXFile.extend
       ~Stoner.formats.simulations.GenXFile.filter
       ~Stoner.formats.simulations.GenXFile.find_col
+      ~Stoner.formats.simulations.GenXFile.find_duplicates
       ~Stoner.formats.simulations.GenXFile.get
       ~Stoner.formats.simulations.GenXFile.get_filename
       ~Stoner.formats.simulations.GenXFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.simulations.GenXFile.pop
       ~Stoner.formats.simulations.GenXFile.popitem
       ~Stoner.formats.simulations.GenXFile.remove
+      ~Stoner.formats.simulations.GenXFile.remove_duplicates
       ~Stoner.formats.simulations.GenXFile.rename
       ~Stoner.formats.simulations.GenXFile.reorder_columns
       ~Stoner.formats.simulations.GenXFile.reverse

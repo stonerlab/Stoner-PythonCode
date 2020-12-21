@@ -79,15 +79,18 @@
 <span class="math notranslate nohighlight">\(k_B\)</span> is Boltzmann’s constant.</p>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example of Arrhenius Fit.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.thermal</span> <span class="kn">import</span> <span class="n">Arrhenius</span><span class="p">,</span> <span class="n">arrhenius</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">log10</span><span class="p">,</span> <span class="nb">abs</span> <span class="k">as</span> <span class="n">np_abs</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.thermal</span> <span class="kn">import</span> <span class="n">Arrhenius</span><span class="p">,</span> <span class="n">arrhenius</span>
+
 <span class="c1"># Make some data</span>
 <span class="n">T</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
 <span class="n">R</span> <span class="o">=</span> <span class="n">arrhenius</span><span class="p">(</span><span class="n">T</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span> <span class="mf">1e6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="n">E</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">ceil</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">np_abs</span><span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">arrhenius</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))))</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;Rate&quot;</span><span class="p">])</span>
+
 <span class="c1"># Curve_fit on its own</span>
 <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">arrhenius</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="p">(</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyey&quot;</span>
@@ -99,6 +102,7 @@
     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span>
     <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">},</span>
 <span class="p">)</span>
+
 <span class="c1"># lmfit using lmfit guesses</span>
 <span class="n">fit</span> <span class="o">=</span> <span class="n">Arrhenius</span><span class="p">()</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye&quot;</span>
@@ -113,6 +117,7 @@
     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span>
     <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">},</span>
 <span class="p">)</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye&quot;</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">odr</span><span class="p">(</span><span class="n">Arrhenius</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;odr&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ODR&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;x....y&quot;</span>
@@ -125,6 +130,8 @@
     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span>
     <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;x-small&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;magenta&quot;</span><span class="p">},</span>
 <span class="p">)</span>
+
+
 <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Arrhenius Test Fit&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Rate&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="s2">&quot;Temperature (K)&quot;</span>
@@ -235,7 +242,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

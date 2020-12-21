@@ -198,7 +198,7 @@ experimental state. Default is False</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.as_stack" title="Stoner.Image.folders.ImageFolderMixin.as_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_stack</span></code></a>()</p></td>
 <td><p>Return a ImageStack of the images in the current group.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.average" title="Stoner.Image.folders.ImageFolderMixin.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.average" title="Stoner.Image.folders.ImageFolderMixin.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Get an array of average pixel values for the stack.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.from_tiff" title="Stoner.Image.folders.ImageFolderMixin.from_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_tiff</span></code></a>(filename, **kargs)</p></td>
@@ -207,19 +207,22 @@ experimental state. Default is False</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.loadgroup" title="Stoner.Image.folders.ImageFolderMixin.loadgroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadgroup</span></code></a>()</p></td>
 <td><p>Load all files from this group into memory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.mean" title="Stoner.Image.folders.ImageFolderMixin.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.mean" title="Stoner.Image.folders.ImageFolderMixin.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box, _metadata])</p></td>
 <td><p>Calculate the mean value of all the images in the stack.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stddev" title="Stoner.Image.folders.ImageFolderMixin.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights, _box])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.montage" title="Stoner.Image.folders.ImageFolderMixin.montage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">montage</span></code></a>(*args, **kargs)</p></td>
+<td><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stddev" title="Stoner.Image.folders.ImageFolderMixin.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Calculate weighted standard deviation for stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stderr" title="Stoner.Image.folders.ImageFolderMixin.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights, _box])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.stderr" title="Stoner.Image.folders.ImageFolderMixin.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Calculate standard error in the stack average.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.to_tiff" title="Stoner.Image.folders.ImageFolderMixin.to_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_tiff</span></code></a>(filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.to_tiff" title="Stoner.Image.folders.ImageFolderMixin.to_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_tiff</span></code></a>(filename)</p></td>
 <td><p>Save the ImageArray as a tiff image with metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.view" title="Stoner.Image.folders.ImageFolderMixin.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.folders.ImageFolderMixin.view" title="Stoner.Image.folders.ImageFolderMixin.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>()</p></td>
 <td><p>Create a matplotlib animated view of the contents.</p></td>
 </tr>
 </tbody>
@@ -288,10 +291,23 @@ alignment is done. By default the ‘Scharr’ method is used.</p></li>
 
 <dl class="py method">
 <dt id="Stoner.Image.folders.ImageFolderMixin.average">
-<code class="sig-name descname">average</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.average" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">average</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.average" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an array of average pixel values for the stack.</p>
-<p>Pass through to numpy average
-:returns: <em>average(ImageArray)</em> –     average values</p>
+<p>Pass through to numpy average</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>average(ImageArray)</em> –     average values</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -308,22 +324,90 @@ alignment is done. By default the ‘Scharr’ method is used.</p></li>
 
 <dl class="py method">
 <dt id="Stoner.Image.folders.ImageFolderMixin.mean">
-<code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.mean" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean value of all the images in the stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Actually a synonym for self.average with not weights</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="Stoner.Image.folders.ImageFolderMixin.montage">
+<code class="sig-name descname">montage</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.montage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.montage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – Positional arguments to pass through to the <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot()</span></code></a> call.</p></li>
+<li><p><strong>kargs</strong> – Keyword arguments to pass through to the <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot()</span></code></a> call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a><em>(</em><a class="reference internal" href="Stoner.core.array.DataArray.html#id1" title="Stoner.core.array.DataArray.i"><em>i</em></a><em>,</em><em>j</em><em>,</em><em>d</em><em>)</em>) – A callable that can carry out additional processing per plot after the plot is done</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>(</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><em>x</em></a><em>,</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><em>y</em></a><em>)</em>) – Size of the figure to create</p></li>
+<li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – dots per inch on the figure</p></li>
+<li><p><strong>edgecolor</strong><strong>,</strong><strong>facecolor</strong> (<em>matplotlib colour</em>) – figure edge and frame colours.</p></li>
+<li><p><strong>frameon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Turns figure frames on or off</p></li>
+<li><p><strong>FigureClass</strong> (<em>class</em>) – Passed to matplotlib figure call.</p></li>
+<li><p><strong>plots_per_page</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – maximum number of plots per figure.</p></li>
+<li><p><strong>tight_layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><em>False</em></a>) – If not False, arguments to pass to a call of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="(in Matplotlib v3.3.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.tight_layout()</span></code></a>. Defaults to {}</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code> instances.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the underlying type of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code> lacks a <strong>plot</strong> method, then the instances are converted to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>.</p>
+<p>Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
+from the aspect ratio of the figure and the number of files in the <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="Stoner.Image.folders.ImageFolderMixin.stddev">
-<code class="sig-name descname">stddev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.stddev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.stddev" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stddev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.stddev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.stddev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate weighted standard deviation for stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 <p>This is a biased standard deviation, may not be appropriate for small sample sizes</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="Stoner.Image.folders.ImageFolderMixin.stderr">
-<code class="sig-name descname">stderr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.stderr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.stderr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stderr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolderMixin.stderr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolderMixin.stderr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate standard error in the stack average.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -411,7 +495,7 @@ The type name is added as a string to the metadata before saving.</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

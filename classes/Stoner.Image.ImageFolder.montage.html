@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ImageFolder.montage &#8212; Stoner Pacakge API Documentation</title>
+    <link rel="stylesheet" href="../_static/better.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ImageFolder.on_load_process" href="Stoner.Image.ImageFolder.on_load_process.html" />
+    <link rel="prev" title="ImageFolder.mean" href="Stoner.Image.ImageFolder.mean.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head><body>
+    <header id="pageheader"><h1><a href="../index.html ">
+        Stoner Pacakge API Documentation
+    </a></h1></header>
+  <div class="related top">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Image.ImageFolder.mean.html" title="Previous document">ImageFolder.mean</a>
+        </li>
+        <li>
+          <a href="Stoner.Image.ImageFolder.on_load_process.html" title="Next document">ImageFolder.on_load_process</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.Image.ImageFolder.html">Stoner.Image.ImageFolder</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="imagefolder-montage">
+<h1>ImageFolder.montage<a class="headerlink" href="#imagefolder-montage" title="Permalink to this headline">¶</a></h1>
+<dl class="py method">
+<dt id="Stoner.Image.ImageFolder.montage">
+<code class="sig-prename descclassname">ImageFolder.</code><code class="sig-name descname">montage</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.ImageFolder.montage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – Positional arguments to pass through to the <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot()</span></code></a> call.</p></li>
+<li><p><strong>kargs</strong> – Keyword arguments to pass through to the <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot()</span></code></a> call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a><em>(</em><a class="reference internal" href="Stoner.core.array.DataArray.html#id1" title="Stoner.core.array.DataArray.i"><em>i</em></a><em>,</em><em>j</em><em>,</em><em>d</em><em>)</em>) – A callable that can carry out additional processing per plot after the plot is done</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>(</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><em>x</em></a><em>,</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><em>y</em></a><em>)</em>) – Size of the figure to create</p></li>
+<li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – dots per inch on the figure</p></li>
+<li><p><strong>edgecolor</strong><strong>,</strong><strong>facecolor</strong> (<em>matplotlib colour</em>) – figure edge and frame colours.</p></li>
+<li><p><strong>frameon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Turns figure frames on or off</p></li>
+<li><p><strong>FigureClass</strong> (<em>class</em>) – Passed to matplotlib figure call.</p></li>
+<li><p><strong>plots_per_page</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – maximum number of plots per figure.</p></li>
+<li><p><strong>tight_layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><em>False</em></a>) – If not False, arguments to pass to a call of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="(in Matplotlib v3.3.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.tight_layout()</span></code></a>. Defaults to {}</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code> instances.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the underlying type of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code> lacks a <strong>plot</strong> method, then the instances are converted to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>.</p>
+<p>Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
+from the aspect ratio of the figure and the number of files in the <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code>.</p>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Image.ImageFolder.mean.html"
+                        title="previous chapter">ImageFolder.mean</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Image.ImageFolder.on_load_process.html"
+                        title="next chapter">ImageFolder.on_load_process</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Image.ImageFolder.montage.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q"
+   placeholder="type to search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="related bottom">
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="Stoner.Image.ImageFolder.mean.html" title="Previous document">ImageFolder.mean</a>
+        </li>
+        <li>
+          <a href="Stoner.Image.ImageFolder.on_load_process.html" title="Next document">ImageFolder.on_load_process</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+  <nav id="breadcrumbs">
+    <ul>
+      <li><a href="../index.html">Stoner Package</a></li>
+      <li>
+        <a href="../Stoner.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Stoner</span></code> Package</a>
+      </li>
+      <li>
+        <a href="Stoner.Image.ImageFolder.html">Stoner.Image.ImageFolder</a>
+      </li> 
+    </ul>
+  </nav>
+  </div>
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a>
+      3.2.1
+        with the <a href="http://github.com/irskep/sphinx-better-theme">
+          better</a> theme.
+
+  </footer>
+
+  
+  </body>
+</html>

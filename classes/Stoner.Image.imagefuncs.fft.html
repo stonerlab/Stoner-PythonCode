@@ -57,8 +57,23 @@
 <h1>fft<a class="headerlink" href="#fft" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="Stoner.Image.imagefuncs.fft">
-<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">fft</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im</span></em>, <em class="sig-param"><span class="n">shift</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">phase</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#fft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.fft" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Stoner.Image.imagefuncs.</code><code class="sig-name descname">fft</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">im</span></em>, <em class="sig-param"><span class="n">shift</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">phase</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">remove_dc</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">gaussian</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/imagefuncs.html#fft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.imagefuncs.fft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a 2d fft of the image and shift the result to get zero frequency in the centre.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Shift the fft so that zero order is in the centre of the image. Default True</p></li>
+<li><p><strong>phase</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a>) – If true, return the phase angle rather than the magnitude if False. If None, return the raw fft.
+Default False - return magnitude of fft.</p></li>
+<li><p><strong>remove_dc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Replace the points around the dc offset with the mean of the fft to avoid dc offset artefacts.
+Default False</p></li>
+<li><p><strong>gaussian</strong> (<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><em>None</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – Apply a gaussian blur to the fft where this parameter is the width of the blue in px. Default None for off.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>fft of the image, preserving metadata.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -119,7 +134,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -28,6 +28,7 @@
       ~Stoner.formats.rigs.BirgeIVFile.extend
       ~Stoner.formats.rigs.BirgeIVFile.filter
       ~Stoner.formats.rigs.BirgeIVFile.find_col
+      ~Stoner.formats.rigs.BirgeIVFile.find_duplicates
       ~Stoner.formats.rigs.BirgeIVFile.get
       ~Stoner.formats.rigs.BirgeIVFile.get_filename
       ~Stoner.formats.rigs.BirgeIVFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.rigs.BirgeIVFile.pop
       ~Stoner.formats.rigs.BirgeIVFile.popitem
       ~Stoner.formats.rigs.BirgeIVFile.remove
+      ~Stoner.formats.rigs.BirgeIVFile.remove_duplicates
       ~Stoner.formats.rigs.BirgeIVFile.rename
       ~Stoner.formats.rigs.BirgeIVFile.reorder_columns
       ~Stoner.formats.rigs.BirgeIVFile.reverse

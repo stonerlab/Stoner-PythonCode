@@ -1,0 +1,8 @@
+
+
+XRDFile.find_duplicates
+==================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.find_duplicates

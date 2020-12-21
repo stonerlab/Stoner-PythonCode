@@ -3,7 +3,7 @@
 # pylint: disable=invalid-name
 from os.path import join
 
-from numpy import where, append, atleast_2d
+from numpy import where
 from scipy.constants import mu_0
 from scipy.stats import gmean
 
@@ -21,13 +21,13 @@ template.yformatter = TexEngFormatter
 
 
 def field_sign(r):
-    """Custom function for split."""
+    """Return string key for sign of field.."""
     pos = r["Field"] >= 0
     return where(pos, "pos", "neg")
 
 
 def extra(i, j, d):
-    """Function for customising each individual plot."""
+    """Customise each individual plot."""
     d.axvline(x=d["cut"], ls="--")
     d.title = r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency") / 1e9)
     d.xlabel = r"Field $\mu_0H\,$"
@@ -37,7 +37,7 @@ def extra(i, j, d):
 
 
 def do_fit(f):
-    """Function to fit just one set of data."""
+    """Fit just one set of data."""
     f.template = template
     f["cut"] = f.threshold(1.75e5, rising=False, falling=True)
     f["Frequency"] = (f // "Frequency").mean()

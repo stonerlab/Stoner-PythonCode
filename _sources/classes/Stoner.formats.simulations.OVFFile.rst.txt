@@ -28,6 +28,7 @@
       ~Stoner.formats.simulations.OVFFile.extend
       ~Stoner.formats.simulations.OVFFile.filter
       ~Stoner.formats.simulations.OVFFile.find_col
+      ~Stoner.formats.simulations.OVFFile.find_duplicates
       ~Stoner.formats.simulations.OVFFile.get
       ~Stoner.formats.simulations.OVFFile.get_filename
       ~Stoner.formats.simulations.OVFFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.simulations.OVFFile.pop
       ~Stoner.formats.simulations.OVFFile.popitem
       ~Stoner.formats.simulations.OVFFile.remove
+      ~Stoner.formats.simulations.OVFFile.remove_duplicates
       ~Stoner.formats.simulations.OVFFile.rename
       ~Stoner.formats.simulations.OVFFile.reorder_columns
       ~Stoner.formats.simulations.OVFFile.reverse

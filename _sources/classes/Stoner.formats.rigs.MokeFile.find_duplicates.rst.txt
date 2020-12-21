@@ -1,0 +1,8 @@
+
+
+MokeFile.find_duplicates
+============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: MokeFile.find_duplicates

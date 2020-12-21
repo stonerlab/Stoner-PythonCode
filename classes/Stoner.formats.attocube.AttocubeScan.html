@@ -121,7 +121,7 @@ method <code class="xref py py-meth docutils literal notranslate"><span class="p
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.asfloat.html#Stoner.formats.attocube.AttocubeScan.asfloat" title="Stoner.formats.attocube.AttocubeScan.asfloat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asfloat</span></code></a>([normalise, clip, clip_negative])</p></td>
 <td><p>Convert stack to floating point type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.average.html#Stoner.formats.attocube.AttocubeScan.average" title="Stoner.formats.attocube.AttocubeScan.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.average.html#Stoner.formats.attocube.AttocubeScan.average" title="Stoner.formats.attocube.AttocubeScan.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Get an array of average pixel values for the stack.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.clear.html#Stoner.formats.attocube.AttocubeScan.clear" title="Stoner.formats.attocube.AttocubeScan.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
@@ -199,85 +199,88 @@ method <code class="xref py py-meth docutils literal notranslate"><span class="p
 <tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.make_name.html#Stoner.formats.attocube.AttocubeScan.make_name" title="Stoner.formats.attocube.AttocubeScan.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</p></td>
 <td><p>Construct a name from the value object if possible.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.mean.html#Stoner.formats.attocube.AttocubeScan.mean" title="Stoner.formats.attocube.AttocubeScan.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.mean.html#Stoner.formats.attocube.AttocubeScan.mean" title="Stoner.formats.attocube.AttocubeScan.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box, _metadata])</p></td>
 <td><p>Calculate the mean value of all the images in the stack.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.on_load_process.html#Stoner.formats.attocube.AttocubeScan.on_load_process" title="Stoner.formats.attocube.AttocubeScan.on_load_process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_load_process</span></code></a>(tmp)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.montage.html#Stoner.formats.attocube.AttocubeScan.montage" title="Stoner.formats.attocube.AttocubeScan.montage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">montage</span></code></a>(*args, **kargs)</p></td>
+<td><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.on_load_process.html#Stoner.formats.attocube.AttocubeScan.on_load_process" title="Stoner.formats.attocube.AttocubeScan.on_load_process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_load_process</span></code></a>(tmp)</p></td>
 <td><p>Carry out processing on a newly loaded file to set means and extra metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.pop.html#Stoner.formats.attocube.AttocubeScan.pop" title="Stoner.formats.attocube.AttocubeScan.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name, default])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.pop.html#Stoner.formats.attocube.AttocubeScan.pop" title="Stoner.formats.attocube.AttocubeScan.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name, default])</p></td>
 <td><p>Return and remove either a subgroup or named object from this folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.popitem.html#Stoner.formats.attocube.AttocubeScan.popitem" title="Stoner.formats.attocube.AttocubeScan.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.popitem.html#Stoner.formats.attocube.AttocubeScan.popitem" title="Stoner.formats.attocube.AttocubeScan.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
 <td><p>Return the most recent subgroup from this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.prune.html#Stoner.formats.attocube.AttocubeScan.prune" title="Stoner.formats.attocube.AttocubeScan.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.prune.html#Stoner.formats.attocube.AttocubeScan.prune" title="Stoner.formats.attocube.AttocubeScan.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
 <td><p>Remove any empty groups from the objectFolder (and subgroups).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.read_HDF.html#Stoner.formats.attocube.AttocubeScan.read_HDF" title="Stoner.formats.attocube.AttocubeScan.read_HDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_HDF</span></code></a>(filename, *args, **kargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.read_HDF.html#Stoner.formats.attocube.AttocubeScan.read_HDF" title="Stoner.formats.attocube.AttocubeScan.read_HDF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_HDF</span></code></a>(filename, *args, **kargs)</p></td>
 <td><p>Create a new instance from an hdf file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.regrid.html#Stoner.formats.attocube.AttocubeScan.regrid" title="Stoner.formats.attocube.AttocubeScan.regrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrid</span></code></a>(**kargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.regrid.html#Stoner.formats.attocube.AttocubeScan.regrid" title="Stoner.formats.attocube.AttocubeScan.regrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrid</span></code></a>(**kargs)</p></td>
 <td><p>Regrid the data sets based on PosX and PosY channels.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.remove.html#Stoner.formats.attocube.AttocubeScan.remove" title="Stoner.formats.attocube.AttocubeScan.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.remove.html#Stoner.formats.attocube.AttocubeScan.remove" title="Stoner.formats.attocube.AttocubeScan.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
 <td><p>S.remove(value) – remove first occurrence of value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.reverse.html#Stoner.formats.attocube.AttocubeScan.reverse" title="Stoner.formats.attocube.AttocubeScan.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.reverse.html#Stoner.formats.attocube.AttocubeScan.reverse" title="Stoner.formats.attocube.AttocubeScan.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
 <td><p>S.reverse() – reverse <em>IN PLACE</em></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.save.html#Stoner.formats.attocube.AttocubeScan.save" title="Stoner.formats.attocube.AttocubeScan.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.save.html#Stoner.formats.attocube.AttocubeScan.save" title="Stoner.formats.attocube.AttocubeScan.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
 <td><p>Save the entire data folder out to disc using the groups as a directory tree.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.select.html#Stoner.formats.attocube.AttocubeScan.select" title="Stoner.formats.attocube.AttocubeScan.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.select.html#Stoner.formats.attocube.AttocubeScan.select" title="Stoner.formats.attocube.AttocubeScan.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
 <td><p>Select a subset of the objects in the folder based on flexible search criteria on the metadata.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.setdefault.html#Stoner.formats.attocube.AttocubeScan.setdefault" title="Stoner.formats.attocube.AttocubeScan.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[, d])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.setdefault.html#Stoner.formats.attocube.AttocubeScan.setdefault" title="Stoner.formats.attocube.AttocubeScan.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[, d])</p></td>
 <td><p>Return or set a subgroup or named object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.show.html#Stoner.formats.attocube.AttocubeScan.show" title="Stoner.formats.attocube.AttocubeScan.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.show.html#Stoner.formats.attocube.AttocubeScan.show" title="Stoner.formats.attocube.AttocubeScan.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
 <td><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.slice_metadata.html#Stoner.formats.attocube.AttocubeScan.slice_metadata" title="Stoner.formats.attocube.AttocubeScan.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[, output])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.slice_metadata.html#Stoner.formats.attocube.AttocubeScan.slice_metadata" title="Stoner.formats.attocube.AttocubeScan.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[, output])</p></td>
 <td><p>Return an array of the metadata values for each item/file in the top level group.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.sort.html#Stoner.formats.attocube.AttocubeScan.sort" title="Stoner.formats.attocube.AttocubeScan.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key, reverse, recursive])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.sort.html#Stoner.formats.attocube.AttocubeScan.sort" title="Stoner.formats.attocube.AttocubeScan.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key, reverse, recursive])</p></td>
 <td><p>Sort the files by some key.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.stddev.html#Stoner.formats.attocube.AttocubeScan.stddev" title="Stoner.formats.attocube.AttocubeScan.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights, _box])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.stddev.html#Stoner.formats.attocube.AttocubeScan.stddev" title="Stoner.formats.attocube.AttocubeScan.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Calculate weighted standard deviation for stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.stderr.html#Stoner.formats.attocube.AttocubeScan.stderr" title="Stoner.formats.attocube.AttocubeScan.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights, _box])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.stderr.html#Stoner.formats.attocube.AttocubeScan.stderr" title="Stoner.formats.attocube.AttocubeScan.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Calculate standard error in the stack average.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.subtract.html#Stoner.formats.attocube.AttocubeScan.subtract" title="Stoner.formats.attocube.AttocubeScan.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(background)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.subtract.html#Stoner.formats.attocube.AttocubeScan.subtract" title="Stoner.formats.attocube.AttocubeScan.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(background)</p></td>
 <td><p>Subtract a background image (or index) from all images in the stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.to_HDF5.html#Stoner.formats.attocube.AttocubeScan.to_HDF5" title="Stoner.formats.attocube.AttocubeScan.to_HDF5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_HDF5</span></code></a>([filename])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.to_HDF5.html#Stoner.formats.attocube.AttocubeScan.to_HDF5" title="Stoner.formats.attocube.AttocubeScan.to_HDF5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_HDF5</span></code></a>([filename])</p></td>
 <td><p>Save the AttocubeScan to an hdf5 file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.to_tiff.html#Stoner.formats.attocube.AttocubeScan.to_tiff" title="Stoner.formats.attocube.AttocubeScan.to_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_tiff</span></code></a>(filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.to_tiff.html#Stoner.formats.attocube.AttocubeScan.to_tiff" title="Stoner.formats.attocube.AttocubeScan.to_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_tiff</span></code></a>(filename)</p></td>
 <td><p>Save the ImageArray as a tiff image with metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.unflatten.html#Stoner.formats.attocube.AttocubeScan.unflatten" title="Stoner.formats.attocube.AttocubeScan.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.unflatten.html#Stoner.formats.attocube.AttocubeScan.unflatten" title="Stoner.formats.attocube.AttocubeScan.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</p></td>
 <td><p>Take the file list an unflattens them according to the file paths.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.unload.html#Stoner.formats.attocube.AttocubeScan.unload" title="Stoner.formats.attocube.AttocubeScan.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>([name])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.unload.html#Stoner.formats.attocube.AttocubeScan.unload" title="Stoner.formats.attocube.AttocubeScan.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>([name])</p></td>
 <td><p>Remove the instance from memory without losing the name in the Folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.update.html#Stoner.formats.attocube.AttocubeScan.update" title="Stoner.formats.attocube.AttocubeScan.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.update.html#Stoner.formats.attocube.AttocubeScan.update" title="Stoner.formats.attocube.AttocubeScan.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</p></td>
 <td><p>Update this folder with a dictionary or another folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.values.html#Stoner.formats.attocube.AttocubeScan.values" title="Stoner.formats.attocube.AttocubeScan.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.values.html#Stoner.formats.attocube.AttocubeScan.values" title="Stoner.formats.attocube.AttocubeScan.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
 <td><p>Return the sub-groups of this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.view.html#Stoner.formats.attocube.AttocubeScan.view" title="Stoner.formats.attocube.AttocubeScan.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.view.html#Stoner.formats.attocube.AttocubeScan.view" title="Stoner.formats.attocube.AttocubeScan.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>()</p></td>
 <td><p>Create a matplotlib animated view of the contents.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.walk_groups.html#Stoner.formats.attocube.AttocubeScan.walk_groups" title="Stoner.formats.attocube.AttocubeScan.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker, **kargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.walk_groups.html#Stoner.formats.attocube.AttocubeScan.walk_groups" title="Stoner.formats.attocube.AttocubeScan.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker, **kargs)</p></td>
 <td><p>Walk through a heirarchy of groups and calls walker for each file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.zip_groups.html#Stoner.formats.attocube.AttocubeScan.zip_groups" title="Stoner.formats.attocube.AttocubeScan.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Stoner.formats.attocube.AttocubeScan.zip_groups.html#Stoner.formats.attocube.AttocubeScan.zip_groups" title="Stoner.formats.attocube.AttocubeScan.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</p></td>
 <td><p>Return a list of tuples of metadataObjects drawn from the specified groups.</p></td>
 </tr>
 </tbody>
@@ -450,7 +453,7 @@ method <code class="xref py py-meth docutils literal notranslate"><span class="p
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

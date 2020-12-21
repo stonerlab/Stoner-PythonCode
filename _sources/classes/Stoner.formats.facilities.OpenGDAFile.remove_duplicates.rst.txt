@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.remove_duplicates
+=======================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: OpenGDAFile.remove_duplicates

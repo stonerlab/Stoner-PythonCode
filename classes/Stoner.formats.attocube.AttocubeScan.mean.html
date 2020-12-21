@@ -18,7 +18,7 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="AttocubeScan.on_load_process" href="Stoner.formats.attocube.AttocubeScan.on_load_process.html" />
+    <link rel="next" title="AttocubeScan.montage" href="Stoner.formats.attocube.AttocubeScan.montage.html" />
     <link rel="prev" title="AttocubeScan.make_name" href="Stoner.formats.attocube.AttocubeScan.make_name.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   </head><body>
@@ -33,7 +33,7 @@
           <a href="Stoner.formats.attocube.AttocubeScan.make_name.html" title="Previous document">AttocubeScan.make_name</a>
         </li>
         <li>
-          <a href="Stoner.formats.attocube.AttocubeScan.on_load_process.html" title="Next document">AttocubeScan.on_load_process</a>
+          <a href="Stoner.formats.attocube.AttocubeScan.montage.html" title="Next document">AttocubeScan.montage</a>
           &rarr;
         </li>
     </ul>
@@ -60,8 +60,19 @@
 <h1>AttocubeScan.mean<a class="headerlink" href="#attocubescan-mean" title="Permalink to this headline">¶</a></h1>
 <dl class="py method">
 <dt id="Stoner.formats.attocube.AttocubeScan.mean">
-<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.mean" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AttocubeScan.</code><code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.formats.attocube.AttocubeScan.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean value of all the images in the stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Actually a synonym for self.average with not weights</p>
 </dd></dl>
 
@@ -81,8 +92,8 @@
   <p class="topless"><a href="Stoner.formats.attocube.AttocubeScan.make_name.html"
                         title="previous chapter">AttocubeScan.make_name</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.formats.attocube.AttocubeScan.on_load_process.html"
-                        title="next chapter">AttocubeScan.on_load_process</a></p>
+  <p class="topless"><a href="Stoner.formats.attocube.AttocubeScan.montage.html"
+                        title="next chapter">AttocubeScan.montage</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -109,7 +120,7 @@
           <a href="Stoner.formats.attocube.AttocubeScan.make_name.html" title="Previous document">AttocubeScan.make_name</a>
         </li>
         <li>
-          <a href="Stoner.formats.attocube.AttocubeScan.on_load_process.html" title="Next document">AttocubeScan.on_load_process</a>
+          <a href="Stoner.formats.attocube.AttocubeScan.montage.html" title="Next document">AttocubeScan.montage</a>
           &rarr;
         </li>
     </ul>
@@ -126,7 +137,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

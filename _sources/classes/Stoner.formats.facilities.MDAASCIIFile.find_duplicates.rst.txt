@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.find_duplicates
+======================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: MDAASCIIFile.find_duplicates

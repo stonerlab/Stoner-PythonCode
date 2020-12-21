@@ -1,10 +1,10 @@
 """Example of nDimArrhenius Fit."""
 # pylint: disable=invalid-name
-from Stoner import Data
-from Stoner.analysis.fitting.models.thermal import modArrhenius, ModArrhenius
 from numpy import linspace
 from numpy.random import normal
 
+from Stoner import Data
+from Stoner.analysis.fitting.models.thermal import modArrhenius, ModArrhenius
 # Make some data
 T = linspace(200, 350, 101)
 R = modArrhenius(T, 1e6, 0.5, 1.5) * normal(scale=0.00005, loc=1.0, size=len(T))

@@ -88,6 +88,7 @@ MaskStack
       ~MaskStack.loadgroup
       ~MaskStack.make_name
       ~MaskStack.mean
+      ~MaskStack.montage
       ~MaskStack.on_load_process
       ~MaskStack.pop
       ~MaskStack.popitem
@@ -192,6 +193,7 @@ MaskStack
    .. automethod:: loadgroup
    .. automethod:: make_name
    .. automethod:: mean
+   .. automethod:: montage
    .. automethod:: on_load_process
    .. automethod:: pop
    .. automethod:: popitem

@@ -28,6 +28,7 @@
       ~Stoner.formats.facilities.SNSFile.extend
       ~Stoner.formats.facilities.SNSFile.filter
       ~Stoner.formats.facilities.SNSFile.find_col
+      ~Stoner.formats.facilities.SNSFile.find_duplicates
       ~Stoner.formats.facilities.SNSFile.get
       ~Stoner.formats.facilities.SNSFile.get_filename
       ~Stoner.formats.facilities.SNSFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.facilities.SNSFile.pop
       ~Stoner.formats.facilities.SNSFile.popitem
       ~Stoner.formats.facilities.SNSFile.remove
+      ~Stoner.formats.facilities.SNSFile.remove_duplicates
       ~Stoner.formats.facilities.SNSFile.rename
       ~Stoner.formats.facilities.SNSFile.reorder_columns
       ~Stoner.formats.facilities.SNSFile.reverse

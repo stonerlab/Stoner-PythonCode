@@ -1,0 +1,8 @@
+
+
+OVFFile.remove_duplicates
+====================================================
+
+.. currentmodule:: Stoner.formats.simulations
+
+.. automethod:: OVFFile.remove_duplicates

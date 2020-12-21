@@ -1,11 +1,11 @@
 """Example of Quadratic Fit."""
 # pylint: disable=invalid-name
-from Stoner import Data
-from Stoner.analysis.fitting.models.generic import quadratic, Quadratic
 from numpy import linspace
 from numpy.random import normal
 import matplotlib.pyplot as plt
 
+from Stoner import Data
+from Stoner.analysis.fitting.models.generic import quadratic, Quadratic
 # Make some data
 x = linspace(-10, 10, 101)
 y = quadratic(x + normal(size=len(x), scale=0.1), 4, -2, 11) * normal(

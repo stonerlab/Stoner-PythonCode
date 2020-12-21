@@ -28,6 +28,7 @@
       ~Stoner.Core.DataFile.extend
       ~Stoner.Core.DataFile.filter
       ~Stoner.Core.DataFile.find_col
+      ~Stoner.Core.DataFile.find_duplicates
       ~Stoner.Core.DataFile.get
       ~Stoner.Core.DataFile.get_filename
       ~Stoner.Core.DataFile.index
@@ -39,6 +40,7 @@
       ~Stoner.Core.DataFile.pop
       ~Stoner.Core.DataFile.popitem
       ~Stoner.Core.DataFile.remove
+      ~Stoner.Core.DataFile.remove_duplicates
       ~Stoner.Core.DataFile.rename
       ~Stoner.Core.DataFile.reorder_columns
       ~Stoner.Core.DataFile.reverse

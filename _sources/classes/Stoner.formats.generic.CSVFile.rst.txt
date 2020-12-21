@@ -28,6 +28,7 @@
       ~Stoner.formats.generic.CSVFile.extend
       ~Stoner.formats.generic.CSVFile.filter
       ~Stoner.formats.generic.CSVFile.find_col
+      ~Stoner.formats.generic.CSVFile.find_duplicates
       ~Stoner.formats.generic.CSVFile.get
       ~Stoner.formats.generic.CSVFile.get_filename
       ~Stoner.formats.generic.CSVFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.generic.CSVFile.pop
       ~Stoner.formats.generic.CSVFile.popitem
       ~Stoner.formats.generic.CSVFile.remove
+      ~Stoner.formats.generic.CSVFile.remove_duplicates
       ~Stoner.formats.generic.CSVFile.rename
       ~Stoner.formats.generic.CSVFile.reorder_columns
       ~Stoner.formats.generic.CSVFile.reverse

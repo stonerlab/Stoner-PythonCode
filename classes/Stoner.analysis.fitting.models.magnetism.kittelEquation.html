@@ -80,18 +80,22 @@
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Test Weak-localisation fitting.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ones_like</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.magnetism</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">KittelEquation</span><span class="p">,</span>
     <span class="n">kittelEquation</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">TexEngFormatter</span>
+
 <span class="n">B</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">,</span> <span class="mi">51</span><span class="p">)</span>
 <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.2</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mf">2e2</span><span class="p">]</span>
 <span class="n">G</span> <span class="o">=</span> <span class="n">kittelEquation</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">5e7</span><span class="p">)</span>
 <span class="n">dG</span> <span class="o">=</span> <span class="n">ones_like</span><span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="o">*</span> <span class="mf">5e7</span>
+
 <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span>
     <span class="n">B</span><span class="p">,</span>
     <span class="n">G</span><span class="p">,</span>
@@ -99,12 +103,17 @@
     <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span>
     <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Field $Oe$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\nu (Hz)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\delta $\nu (Hz)$&quot;</span><span class="p">],</span>
 <span class="p">)</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">kittelEquation</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">copy</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span><span class="p">)</span>
+
 <span class="n">fit</span> <span class="o">=</span> <span class="n">KittelEquation</span><span class="p">()</span>
 <span class="n">p0</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">guess</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">B</span><span class="p">)</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyeyy&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">])</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
     <span class="n">kittelEquation</span><span class="p">,</span>
     <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
@@ -230,7 +239,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

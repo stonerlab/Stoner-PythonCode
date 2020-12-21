@@ -1,0 +1,8 @@
+
+
+BirgeIVFile.find_duplicates
+===============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BirgeIVFile.find_duplicates

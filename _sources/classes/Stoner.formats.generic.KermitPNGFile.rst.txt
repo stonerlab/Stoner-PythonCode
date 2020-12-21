@@ -28,6 +28,7 @@
       ~Stoner.formats.generic.KermitPNGFile.extend
       ~Stoner.formats.generic.KermitPNGFile.filter
       ~Stoner.formats.generic.KermitPNGFile.find_col
+      ~Stoner.formats.generic.KermitPNGFile.find_duplicates
       ~Stoner.formats.generic.KermitPNGFile.get
       ~Stoner.formats.generic.KermitPNGFile.get_filename
       ~Stoner.formats.generic.KermitPNGFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.generic.KermitPNGFile.pop
       ~Stoner.formats.generic.KermitPNGFile.popitem
       ~Stoner.formats.generic.KermitPNGFile.remove
+      ~Stoner.formats.generic.KermitPNGFile.remove_duplicates
       ~Stoner.formats.generic.KermitPNGFile.rename
       ~Stoner.formats.generic.KermitPNGFile.reorder_columns
       ~Stoner.formats.generic.KermitPNGFile.reverse

@@ -1,0 +1,8 @@
+
+
+PinkLibFile.find_duplicates
+===============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: PinkLibFile.find_duplicates

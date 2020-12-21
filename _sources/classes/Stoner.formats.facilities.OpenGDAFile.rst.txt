@@ -28,6 +28,7 @@
       ~Stoner.formats.facilities.OpenGDAFile.extend
       ~Stoner.formats.facilities.OpenGDAFile.filter
       ~Stoner.formats.facilities.OpenGDAFile.find_col
+      ~Stoner.formats.facilities.OpenGDAFile.find_duplicates
       ~Stoner.formats.facilities.OpenGDAFile.get
       ~Stoner.formats.facilities.OpenGDAFile.get_filename
       ~Stoner.formats.facilities.OpenGDAFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.facilities.OpenGDAFile.pop
       ~Stoner.formats.facilities.OpenGDAFile.popitem
       ~Stoner.formats.facilities.OpenGDAFile.remove
+      ~Stoner.formats.facilities.OpenGDAFile.remove_duplicates
       ~Stoner.formats.facilities.OpenGDAFile.rename
       ~Stoner.formats.facilities.OpenGDAFile.reorder_columns
       ~Stoner.formats.facilities.OpenGDAFile.reverse

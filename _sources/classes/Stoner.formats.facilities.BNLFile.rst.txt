@@ -28,6 +28,7 @@
       ~Stoner.formats.facilities.BNLFile.extend
       ~Stoner.formats.facilities.BNLFile.filter
       ~Stoner.formats.facilities.BNLFile.find_col
+      ~Stoner.formats.facilities.BNLFile.find_duplicates
       ~Stoner.formats.facilities.BNLFile.get
       ~Stoner.formats.facilities.BNLFile.get_filename
       ~Stoner.formats.facilities.BNLFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.facilities.BNLFile.pop
       ~Stoner.formats.facilities.BNLFile.popitem
       ~Stoner.formats.facilities.BNLFile.remove
+      ~Stoner.formats.facilities.BNLFile.remove_duplicates
       ~Stoner.formats.facilities.BNLFile.rename
       ~Stoner.formats.facilities.BNLFile.reorder_columns
       ~Stoner.formats.facilities.BNLFile.reverse

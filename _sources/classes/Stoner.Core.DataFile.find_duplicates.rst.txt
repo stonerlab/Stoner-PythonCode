@@ -1,0 +1,8 @@
+
+
+DataFile.find_duplicates
+====================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.find_duplicates

@@ -1,0 +1,8 @@
+
+
+BigBlueFile.find_duplicates
+===============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.find_duplicates

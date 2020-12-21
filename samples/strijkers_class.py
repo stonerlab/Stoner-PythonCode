@@ -1,6 +1,7 @@
 """Demo of new Stoner.Analysis.AnalyseFile.lmfit"""
 # pylint: disable=invalid-name
 from os.path import join
+
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 from Stoner import __home__
 

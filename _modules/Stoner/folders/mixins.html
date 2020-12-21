@@ -61,8 +61,8 @@
 <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="kn">import</span> <span class="n">masked_invalid</span>
 <span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">subplot</span><span class="p">,</span> <span class="n">tight_layout</span>
 
-<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">,</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path_types</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">make_Data</span>
+<span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">_pattern_type</span><span class="p">,</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path_types</span>
 <span class="kn">from</span> <span class="nn">..core.base</span> <span class="kn">import</span> <span class="n">metadataObject</span><span class="p">,</span> <span class="n">string_to_type</span>
 <span class="kn">from</span> <span class="nn">..core.exceptions</span> <span class="kn">import</span> <span class="n">StonerUnrecognisedFormat</span>
 <span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">baseFolder</span><span class="p">,</span> <span class="n">__add_core__</span> <span class="k">as</span> <span class="n">_base__add_core__</span><span class="p">,</span> <span class="n">__sub_core__</span> <span class="k">as</span> <span class="n">_base__sub_core__</span>
@@ -284,6 +284,9 @@
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="n">instantiate</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
             <span class="k">pass</span>
+        <span class="c1"># name may still be a number when we have unloaded entries referred to by index:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span>
         <span class="c1"># Find a filename and load</span>
         <span class="n">fname</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">else</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -627,7 +630,7 @@
             <span class="n">xerr</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="n">xerr</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">lookup</span> <span class="o">=</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ycol</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="n">xcol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]</span>
+            <span class="n">xcol</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;has_xerr&quot;</span><span class="p">]:</span>
                 <span class="n">xerr</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xerr&quot;</span><span class="p">]</span>
@@ -846,7 +849,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

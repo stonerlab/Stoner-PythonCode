@@ -60,7 +60,7 @@
 
 <span class="kn">from</span> <span class="nn">..compat</span> <span class="kn">import</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">commonpath</span><span class="p">,</span> <span class="n">_pattern_type</span>
 <span class="kn">from</span> <span class="nn">..tools</span> <span class="kn">import</span> <span class="n">operator</span><span class="p">,</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">all_type</span><span class="p">,</span> <span class="n">get_option</span>
-<span class="kn">from</span> <span class="nn">..core.base</span> <span class="kn">import</span> <span class="n">regexpDict</span>
+<span class="kn">from</span> <span class="nn">..core.base</span> <span class="kn">import</span> <span class="n">regexpDict</span><span class="p">,</span> <span class="n">typeHintedDict</span>
 <span class="kn">from</span> <span class="nn">..core.base</span> <span class="kn">import</span> <span class="n">metadataObject</span>
 
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">pathjoin</span>
@@ -184,6 +184,44 @@
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
         <span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_build_select_function</span><span class="p">(</span><span class="n">kargs</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build a select function from an a list of keywords and a keyword name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kargs (dict):</span>
+<span class="sd">            The keyword arguments passed to the select function.</span>
+<span class="sd">        arg (str):</span>
+<span class="sd">            Name of the keyword argument we&#39;re considering.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple of:</span>
+<span class="sd">            Callable function that takes two arguments and returns a boolean if the two arguments match.</span>
+<span class="sd">            str name of key to look up</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
+    <span class="n">negate</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;negate&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">operator</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;not&quot;</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+            <span class="n">negate</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">negate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="n">end</span><span class="p">])</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;between&quot;</span>  <span class="c1"># Assume two length tuples are testing for range</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">],</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]):</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;in&quot;</span>  <span class="c1"># Assume other iterables are testing for memebership</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Everything else is exact matches</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;eq&quot;</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">operator</span><span class="p">[</span><span class="n">op</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">negate</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="ow">not</span> <span class="n">func</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">func</span><span class="p">,</span> <span class="n">arg</span>
 
 
 <div class="viewcode-block" id="baseFolder"><a class="viewcode-back" href="../../../classes/Stoner.folders.core.baseFolder.html#Stoner.baseFolder">[docs]</a><span class="k">class</span> <span class="nc">baseFolder</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
@@ -687,6 +725,7 @@
         <span class="n">other</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span>
         <span class="n">other</span><span class="o">.</span><span class="n">kargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kargs</span>
         <span class="n">other</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kargs</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
@@ -1541,6 +1580,10 @@
 <span class="sd">                keyword name to force the equality test.</span>
 <span class="sd">            -   If the metadata keys to select on are not valid python  identifiers, then pass them via the first</span>
 <span class="sd">                positional dictionary value.</span>
+
+<span class="sd">            If the metadata item being checked exists in a regular expression file pattern for the folder, then</span>
+<span class="sd">            the files are not loaded and the metadata is evaluated based on the filename. This can speed up operations</span>
+<span class="sd">            where a file load is not required.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">recurse</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;recurse&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">negate</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;negate&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -1553,38 +1596,43 @@
         <span class="k">if</span> <span class="n">recurse</span><span class="p">:</span>
             <span class="n">gkargs</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">gkargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="n">gkargs</span><span class="p">[</span><span class="s2">&quot;negate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">negate</span>
             <span class="n">gkargs</span><span class="p">[</span><span class="s2">&quot;recurse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">gkargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">regexp_type</span><span class="p">):</span>
+            <span class="n">pattern_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">groupindex</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">karg</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">karg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pattern_keys</span><span class="p">:</span>
+                    <span class="n">must_read</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">must_read</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">must_read</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">must_read</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">placer</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">must_read</span><span class="p">:</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">())</span>
+
             <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span> <span class="ow">and</span> <span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">](</span><span class="n">f</span><span class="p">):</span>
                     <span class="k">break</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
                     <span class="n">val</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
-                    <span class="n">parts</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">operator</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;not&quot;</span><span class="p">:</span>
-                            <span class="n">end</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
-                            <span class="n">negate</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">end</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-                            <span class="n">negate</span> <span class="o">=</span> <span class="kc">False</span>
-                        <span class="n">arg</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="n">end</span><span class="p">])</span>
-                        <span class="n">op</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
-                            <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;between&quot;</span>  <span class="c1"># Assume two length tuples are testing for range</span>
-                        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">],</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">isIterable</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]):</span>
-                            <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;in&quot;</span>  <span class="c1"># Assume other iterables are testing for memebership</span>
-                        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Everything else is exact matches</span>
-                            <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;eq&quot;</span>
-                    <span class="n">func</span> <span class="o">=</span> <span class="n">operator</span><span class="p">[</span><span class="n">op</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">and</span> <span class="n">negate</span> <span class="o">^</span> <span class="n">func</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">arg</span><span class="p">],</span> <span class="n">val</span><span class="p">):</span>
+                    <span class="n">skargs</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span>
+                    <span class="n">skargs</span><span class="p">[</span><span class="s2">&quot;negate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">negate</span>
+                    <span class="n">func</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">_build_select_function</span><span class="p">(</span><span class="n">skargs</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">f</span> <span class="ow">and</span> <span class="n">func</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">val</span><span class="p">):</span>
                         <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># No tests matched - contineu to next line</span>
                 <span class="k">continue</span>
             <span class="c1"># Something matched, so append to result</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">placer</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">):</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">filename</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
@@ -1802,7 +1850,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

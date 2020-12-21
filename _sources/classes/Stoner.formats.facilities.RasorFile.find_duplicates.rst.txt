@@ -1,0 +1,8 @@
+
+
+RasorFile.find_duplicates
+===================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.find_duplicates

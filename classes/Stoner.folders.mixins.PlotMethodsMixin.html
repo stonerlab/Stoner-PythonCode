@@ -64,33 +64,42 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Demonstrate PlotFolder Class.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">atleast_2d</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">where</span>
 <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">mu_0</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gmean</span>
+
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.magnetism</span> <span class="kn">import</span> <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">Inverse_Kittel</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.generic</span> <span class="kn">import</span> <span class="n">Linear</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="n">TexEngFormatter</span>
 <span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="kn">import</span> <span class="n">PlotFolder</span>
+
 <span class="c1"># Customise a plot template</span>
 <span class="n">template</span> <span class="o">=</span> <span class="n">DefaultPlotStyle</span><span class="p">()</span>
 <span class="n">template</span><span class="o">.</span><span class="n">xformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span><span class="p">()</span>
 <span class="n">template</span><span class="o">.</span><span class="n">xformatter</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;T&quot;</span>
 <span class="n">template</span><span class="o">.</span><span class="n">yformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
+
+
 <span class="k">def</span> <span class="nf">field_sign</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom function for split.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return string key for sign of field..&quot;&quot;&quot;</span>
     <span class="n">pos</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span>
     <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;neg&quot;</span><span class="p">)</span>
+
+
 <span class="k">def</span> <span class="nf">extra</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Function for customising each individual plot.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Customise each individual plot.&quot;&quot;&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\nu=</span><span class="si">{:.1f}</span><span class="s2">\,$GHz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;Field $\mu_0H\,$&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;Abs. (arb)&quot;</span>
     <span class="n">d</span><span class="o">.</span><span class="n">plt_legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">FMR_Power</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+
 <span class="k">def</span> <span class="nf">do_fit</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Function to fit just one set of data.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Fit just one set of data.&quot;&quot;&quot;</span>
     <span class="n">f</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
     <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">1.75e5</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">f</span><span class="p">[</span><span class="s2">&quot;Frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">//</span> <span class="s2">&quot;Frequency&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -98,10 +107,13 @@
         <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;cut&quot;</span><span class="p">]</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">f</span>
+
+
 <span class="c1">###############################################################################################</span>
 <span class="c1">#################### Important - if using multiprocessing on Windows, this  block must be ######</span>
 <span class="c1">#################### Inside a if __name__==&quot;__main__&quot;: test. ###################################</span>
 <span class="c1">###############################################################################################</span>
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># Load data</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;sample-data&quot;</span><span class="p">,</span> <span class="s2">&quot;FMR-data.txt&quot;</span><span class="p">))</span>
@@ -110,34 +122,41 @@
         <span class="s2">&quot;Absorption::X&quot;</span><span class="p">,</span> <span class="s2">&quot;FMR&quot;</span>
     <span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="c1"># Deine x and y columns and normalise to a big number</span>
     <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;FMR&quot;</span><span class="p">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">))</span>
     <span class="n">fldr</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">field_sign</span><span class="p">,</span> <span class="s2">&quot;Frequency&quot;</span><span class="p">)</span>
+
     <span class="c1"># Split the data file into separate files by frequencies and sign of field</span>
     <span class="n">fldr</span> <span class="o">=</span> <span class="n">PlotFolder</span><span class="p">(</span><span class="n">fldr</span><span class="p">)</span>  <span class="c1"># Convert to a PlotFolder</span>
     <span class="n">fldr</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>  <span class="c1"># Set my custom plot template</span>
     <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fldr</span><span class="p">[</span><span class="s2">&quot;neg&quot;</span><span class="p">]:</span>  <span class="c1"># Invert the negative field side</span>
         <span class="n">f</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">f</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">y</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
     <span class="n">resfldr</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">PlotFolder</span><span class="p">()</span>
     <span class="p">)</span>  <span class="c1"># Somewhere to keep the results from +ve and -ve fields</span>
+
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">fldr</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>  <span class="c1"># Fit each FMR spectra</span>
         <span class="n">subfldr</span> <span class="o">=</span> <span class="n">fldr</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
         <span class="n">subfldr</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Field Sign&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;s=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
         <span class="p">(</span><span class="n">do_fit</span> <span class="o">@</span> <span class="n">subfldr</span><span class="o">.</span><span class="n">each</span><span class="p">)()</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">subfldr</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="s2">&quot;Frequency&quot;</span><span class="p">,</span> <span class="n">FMR_Power</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">subfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subfldr</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">common_keys</span><span class="p">}</span>
         <span class="p">)</span>
+
         <span class="c1"># Now plot all the fits</span>
         <span class="n">subfldr</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
         <span class="n">subfldr</span><span class="o">.</span><span class="n">plots_per_page</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Plot results</span>
         <span class="n">subfldr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;k.&quot;</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">],</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">extra</span>
         <span class="p">)</span>
+
         <span class="c1"># Work with the overall results</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span>
@@ -145,21 +164,25 @@
             <span class="p">)</span>
             <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">mu_0</span>  <span class="c1"># Convert to A/m</span>
             <span class="n">result</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">e</span> <span class="o">/</span> <span class="n">mu_0</span>
+
             <span class="n">resfldr</span> <span class="o">+=</span> <span class="n">result</span>  <span class="c1"># Stash the results</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">continue</span>
+
     <span class="c1"># Merge the two field signs into a single file, taking care of the error columns too</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
         <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">c</span><span class="p">]</span> <span class="o">+</span> <span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">c</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]:</span>
         <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">gmean</span><span class="p">((</span><span class="n">resfldr</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="n">c</span><span class="p">],</span> <span class="n">resfldr</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="n">c</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="c1"># Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors</span>
     <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mf">200e3</span><span class="p">,</span> <span class="mf">10e3</span><span class="p">]</span>  <span class="c1"># Some sensible guesses</span>
     <span class="n">result</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span>
         <span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Kittel Fit&quot;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s2">&quot;report&quot;</span>
     <span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
+
     <span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">yformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
     <span class="n">result</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">xformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
     <span class="n">result</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
@@ -169,6 +192,7 @@
     <span class="n">result</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">Inverse_Kittel</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">7e9</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>
     <span class="n">result</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s2">&quot;$H_</span><span class="si">{res}</span><span class="s2"> </span><span class="se">\\</span><span class="s2">mathrm{(Am^{-1})}$&quot;</span>
     <span class="n">result</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Inverse Kittel Fit&quot;</span>
+
     <span class="c1"># Get alpha</span>
     <span class="n">result</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
     <span class="n">result</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;Delta_H&quot;</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="s2">&quot;Delta_H.stderr&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Freq&quot;</span><span class="p">)</span>
@@ -297,7 +321,7 @@ from the aspect ratio of the figure and the number of files in the <code class="
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

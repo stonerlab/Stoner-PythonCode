@@ -1,0 +1,8 @@
+
+
+RasorFile.remove_duplicates
+=====================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: RasorFile.remove_duplicates

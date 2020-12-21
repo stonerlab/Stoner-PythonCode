@@ -1,0 +1,8 @@
+
+
+BigBlueFile.remove_duplicates
+=================================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: BigBlueFile.remove_duplicates

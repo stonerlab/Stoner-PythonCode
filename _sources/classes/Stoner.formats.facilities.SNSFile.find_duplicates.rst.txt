@@ -1,0 +1,8 @@
+
+
+SNSFile.find_duplicates
+=================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.find_duplicates

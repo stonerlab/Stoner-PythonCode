@@ -1,0 +1,8 @@
+
+
+SNSFile.remove_duplicates
+===================================================
+
+.. currentmodule:: Stoner.formats.facilities
+
+.. automethod:: SNSFile.remove_duplicates

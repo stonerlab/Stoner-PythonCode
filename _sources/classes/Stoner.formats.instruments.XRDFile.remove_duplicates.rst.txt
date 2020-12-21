@@ -1,0 +1,8 @@
+
+
+XRDFile.remove_duplicates
+====================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: XRDFile.remove_duplicates

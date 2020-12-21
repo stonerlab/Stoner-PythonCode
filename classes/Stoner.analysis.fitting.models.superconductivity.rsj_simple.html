@@ -86,19 +86,25 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Fit IV data to various RSJ models.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">__home__</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.superconductivity</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">RSJ_Noiseless</span><span class="p">,</span>
     <span class="n">RSJ_Simple</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="s2">&quot;Fitting&quot;</span><span class="p">))</span>
+
 <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="s2">&quot;data/IV.txt&quot;</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Current&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="s2">&quot;Voltage&quot;</span><span class="p">})</span>
+
 <span class="c1"># Fit data with both versions of the RSJ model</span>
 <span class="n">data</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">RSJ_Simple</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Simple&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
 <span class="n">data</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">RSJ_Noiseless</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Noiseless&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;noiseless&quot;</span><span class="p">)</span>
+
 <span class="c1"># Set column assignments and plot the data and fits</span>
 <span class="n">data</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="s2">&quot;Current&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Voltage&quot;</span><span class="p">,</span> <span class="s2">&quot;Simple&quot;</span><span class="p">,</span> <span class="s2">&quot;Noiseless&quot;</span><span class="p">]}</span>
 <span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r+&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">])</span>
+
 <span class="c1"># Annotate fits</span>
 <span class="n">data</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
     <span class="n">RSJ_Simple</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;eng&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span>
@@ -217,7 +223,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

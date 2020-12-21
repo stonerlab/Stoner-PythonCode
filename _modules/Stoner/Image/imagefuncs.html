@@ -81,6 +81,8 @@
     <span class="s2">&quot;normalise&quot;</span><span class="p">,</span>
     <span class="s2">&quot;profile_line&quot;</span><span class="p">,</span>
     <span class="s2">&quot;quantize&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;radial_coordinates&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;radial_profile&quot;</span><span class="p">,</span>
     <span class="s2">&quot;remove_outliers&quot;</span><span class="p">,</span>
     <span class="s2">&quot;rotate&quot;</span><span class="p">,</span>
     <span class="s2">&quot;translate&quot;</span><span class="p">,</span>
@@ -92,14 +94,19 @@
 <span class="p">]</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">io</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
 <span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
-<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">Normalize</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">to_rgba</span><span class="p">,</span> <span class="n">ListedColormap</span>
 <span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cm</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">feature</span><span class="p">,</span> <span class="n">measure</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">filters</span>
+
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QImage</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QApplication</span>
 
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="n">string_types</span>
 <span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="kn">import</span> <span class="n">isTuple</span><span class="p">,</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">make_Data</span>
@@ -181,7 +188,7 @@
     <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="mf">500.0</span><span class="p">)</span>
     <span class="n">ref1</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">scharr</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">))</span>
     <span class="n">im1</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">scharr</span><span class="p">(</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wrap&quot;</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">_align_imreg_dft</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span> <span class="n">ref1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_align_imreg_dft</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span> <span class="n">ref1</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_align_chi2_shift</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -294,8 +301,11 @@
         <span class="n">ref</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
     <span class="n">prefilter</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefilter&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">tvec</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">align_methods</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="mi">0</span><span class="p">](</span><span class="n">working</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tvec</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">align_methods</span><span class="p">[</span><span class="n">method</span><span class="p">][</span><span class="mi">0</span><span class="p">](</span><span class="n">working</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="n">tvec</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">im</span>
 
     <span class="k">if</span> <span class="n">scale</span><span class="p">:</span>
         <span class="n">tvec</span> <span class="o">/=</span> <span class="n">scale</span>
@@ -521,19 +531,44 @@
     <span class="k">return</span> <span class="n">im</span></div>
 
 
-<div class="viewcode-block" id="fft"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.fft.html#Stoner.Image.imagefuncs.fft">[docs]</a><span class="k">def</span> <span class="nf">fft</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Perform a 2d fft of the image and shift the result to get zero frequency in the centre.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="fft"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.fft.html#Stoner.Image.imagefuncs.fft">[docs]</a><span class="k">def</span> <span class="nf">fft</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">remove_dc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gaussian</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perform a 2d fft of the image and shift the result to get zero frequency in the centre.</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        shift (bool):</span>
+<span class="sd">            Shift the fft so that zero order is in the centre of the image. Default True</span>
+<span class="sd">        phase (bool, None):</span>
+<span class="sd">            If true, return the phase angle rather than the magnitude if False. If None, return the raw fft.</span>
+<span class="sd">            Default False - return magnitude of fft.</span>
+<span class="sd">        remove_dc(bool):</span>
+<span class="sd">            Replace the points around the dc offset with the mean of the fft to avoid dc offset artefacts.</span>
+<span class="sd">            Default False</span>
+<span class="sd">        gaussian (None or float):</span>
+<span class="sd">            Apply a gaussian blur to the fft where this parameter is the width of the blue in px. Default None for off.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        fft of the image, preserving metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">remove_dc</span><span class="p">:</span>
+        <span class="n">fill</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill</span>
+        <span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill</span>
+        <span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill</span>
     <span class="k">if</span> <span class="n">shift</span><span class="p">:</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
+    <span class="k">if</span> <span class="n">phase</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">phase</span><span class="p">:</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gaussian</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">gaussian</span><span class="p">)</span>
 
-    <span class="n">r</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
     <span class="n">r</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">r</span></div>
 
@@ -543,18 +578,23 @@
     <span class="k">return</span> <span class="n">im</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="gridimage"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.gridimage.html#Stoner.Image.imagefuncs.gridimage">[docs]</a><span class="k">def</span> <span class="nf">gridimage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="gridimage"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.gridimage.html#Stoner.Image.imagefuncs.gridimage">[docs]</a><span class="k">def</span> <span class="nf">gridimage</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Use :py:func:`scipy.interpolate.griddata` to shift the image to a regular grid of co-ordinates.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        points (tuple of (x-co-ords,yco-ordsa)): The actual sampled data co-ordinates</span>
-<span class="sd">        xi (tupe of (2D array,2D array)): The regular grid co-ordinates (as generated by e.g. :py:func:`np.meshgrid`)</span>
+<span class="sd">        points (tuple of (x-co-ords,yco-ordsa)):</span>
+<span class="sd">            The actual sampled data co-ordinates</span>
+<span class="sd">        xi (tupe of (2D array,2D array)):</span>
+<span class="sd">            The regular grid co-ordinates (as generated by e.g. :py:func:`np.meshgrid`)</span>
 
 <span class="sd">    Keyword Arguments:</span>
-<span class="sd">        method (&quot;linear&quot;,&quot;cubic&quot;,&quot;nearest&quot;): how to interpolate, default is linear</span>
-<span class="sd">        fill_value (folat): What to put when the co-ordinates go out of range (default is 1.0). May be a callable</span>
-<span class="sd">        in which case the initial image is presented as the only argument</span>
-<span class="sd">        rescale (bool): If the x and y co-ordinates are very different in scale, set this to True.</span>
+<span class="sd">        method (&quot;linear&quot;,&quot;cubic&quot;,&quot;nearest&quot;):</span>
+<span class="sd">            how to interpolate, default is linear</span>
+<span class="sd">        fill_value (folat, Callable, None):</span>
+<span class="sd">            What to put when the co-ordinates go out of range (default is None). May be a callable</span>
+<span class="sd">            in which case the initial image is presented as the only argument. If None, use the mean value.</span>
+<span class="sd">        rescale (bool):</span>
+<span class="sd">            If the x and y co-ordinates are very different in scale, set this to True.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A copy of the modified image. The image data is interpolated and metadata kets &quot;actual_x&quot;,&quot;actual_y&quot;,&quot;sample_</span>
@@ -573,6 +613,9 @@
         <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">im</span><span class="p">[</span><span class="s2">&quot;actual_x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">im</span><span class="p">[</span><span class="s2">&quot;actual_y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span>
     <span class="k">if</span> <span class="n">xi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">xi</span> <span class="o">=</span> <span class="n">xi</span> <span class="o">=</span> <span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="s2">&quot;sample_x&quot;</span><span class="p">],</span> <span class="n">im</span><span class="p">[</span><span class="s2">&quot;sample_y&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">fill_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span>
 
     <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">fill_value</span><span class="p">):</span>
         <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
@@ -614,32 +657,33 @@
 <span class="sd">    Any masked areas are set to NaN which stops them being plotted at all.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">figure</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;figure&quot;</span><span class="p">,</span> <span class="s2">&quot;new&quot;</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="c1"># Get a title - from keyword argument, from title attr or filename attr</span>
     <span class="n">title</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
     <span class="n">title</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cmap&quot;</span><span class="p">,</span> <span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="n">mask_alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mask_alpha&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">mask_col</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mask_color&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmap</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
         <span class="n">cmap</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">cmap</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
-        <span class="n">im_data</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">data</span>
-        <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im_data</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">im_data</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="p">)(</span><span class="n">im_data</span><span class="p">))</span>
-        <span class="n">colors</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span>
-        <span class="n">im_data</span> <span class="o">=</span> <span class="n">colors</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">im_data</span> <span class="o">=</span> <span class="n">im</span>
+    <span class="n">im_data</span> <span class="o">=</span> <span class="n">im</span>
     <span class="k">if</span> <span class="n">figure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">figure</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figure</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im_data</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">figure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">figure</span> <span class="o">==</span> <span class="s2">&quot;new&quot;</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im_data</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">figure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># matplotlib.figure instance</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im_data</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figure</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im_data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im_data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
+        <span class="n">mask_col</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">mask_col</span><span class="p">))</span>
+        <span class="n">mask_col</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_alpha</span>
+        <span class="n">mask_cmap</span> <span class="o">=</span> <span class="n">ListedColormap</span><span class="p">([(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">mask_col</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;_mask_map&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mask_cmap</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">&quot;filename&quot;</span> <span class="ow">in</span> <span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">])[</span><span class="mi">1</span><span class="p">])</span>
@@ -652,6 +696,14 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_figure_to_clipboard</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ctrl+c&quot;</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                <span class="n">QApplication</span><span class="o">.</span><span class="n">clipboard</span><span class="p">()</span><span class="o">.</span><span class="n">setImage</span><span class="p">(</span><span class="n">QImage</span><span class="o">.</span><span class="n">fromData</span><span class="p">(</span><span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()))</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;key_press_event&quot;</span><span class="p">,</span> <span class="n">add_figure_to_clipboard</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fig</span></div>
 
 
@@ -779,28 +831,43 @@
     <span class="sd">&quot;&quot;&quot;Wrap sckit-image method of the same name to get a line_profile.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">        img(ImageArray): Image data to take line section of</span>
-<span class="sd">        src, dst (2-tuple of int or float): start and end of line profile. If the co-ordinates</span>
+<span class="sd">        img(ImageArray):</span>
+<span class="sd">            Image data to take line section of</span>
+
+<span class="sd">    Keyword Parameters:</span>
+<span class="sd">        src, dst (2-tuple of int or float):</span>
+<span class="sd">            start and end of line profile. If the co-ordinates</span>
 <span class="sd">            are given as intergers then they are assumed to be pxiel co-ordinates, floats are</span>
 <span class="sd">            assumed to be real-space co-ordinates using the embedded metadata.</span>
-<span class="sd">        linewidth (int): the wideth of the profile to be taken.</span>
-<span class="sd">        order (int 1-3): Order of interpolation used to find image data when not aligned to a point</span>
-<span class="sd">        mode (str): How to handle data outside of the image.</span>
-<span class="sd">        cval (float): The constant value to assume for data outside of the image is mode is &quot;constant&quot;</span>
-<span class="sd">        constrain (bool): Ensure the src and dst are within the image (default True).</span>
+<span class="sd">        linewidth (int):</span>
+<span class="sd">            the wideth of the profile to be taken.</span>
+<span class="sd">        order (int 1-3):</span>
+<span class="sd">            Order of interpolation used to find image data when not aligned to a point</span>
+<span class="sd">        mode (str):</span>
+<span class="sd">            How to handle data outside of the image.</span>
+<span class="sd">        cval (float):</span>
+<span class="sd">            The constant value to assume for data outside of the image is mode is &quot;constant&quot;</span>
+<span class="sd">        constrain (bool):</span>
+<span class="sd">            Ensure the src and dst are within the image (default True).</span>
+<span class="sd">        no_scale (bool):</span>
+<span class="sd">            Do not attempt to scale values by the image scale and work in pixels throughout. (default False)</span>
+
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A :py:class:`Stoner.Data` object containing the line profile data and the metadata from the image.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MicronsPerPixel&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;no_scale&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">else</span> <span class="n">img</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MicronsPerPixel&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">fast_mode</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">src</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
-            <span class="n">src</span> <span class="o">=</span> <span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">dst</span> <span class="o">=</span> <span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">r</span><span class="p">)</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+            <span class="n">dst</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+            <span class="n">fast_mode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;no_scale&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;y&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
-            <span class="n">src</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
-            <span class="n">dst</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">dst</span> <span class="o">=</span> <span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">c</span><span class="p">)</span>
+            <span class="n">fast_mode</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;no_scale&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">src</span> <span class="o">=</span> <span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
@@ -819,16 +886,125 @@
         <span class="n">src</span> <span class="o">=</span> <span class="p">(</span><span class="n">fix</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">),</span> <span class="n">fix</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="p">))</span>
         <span class="n">dst</span> <span class="o">=</span> <span class="p">(</span><span class="n">fix</span><span class="p">(</span><span class="n">dst</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">),</span> <span class="n">fix</span><span class="p">(</span><span class="n">dst</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="p">))</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">profile_line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">)</span>
-    <span class="n">points</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">_line_profile_coordinates</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">fast_mode</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="n">src</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">src</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="n">src</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">src</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">profile_line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">cval</span><span class="p">)</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">_line_profile_coordinates</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">linewidth</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">()</span>
     <span class="n">ret</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">T</span>
     <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
-    <span class="n">ret</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ret</span><span class="o">.</span><span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">points</span>
+    <span class="n">x</span> <span class="o">-=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">-=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ret</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
     <span class="n">ret</span> <span class="o">&amp;=</span> <span class="n">result</span>
     <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Distance&quot;</span><span class="p">,</span> <span class="s2">&quot;Intensity&quot;</span><span class="p">]</span>
     <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;..xy&quot;</span>
     <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="radial_coordinates"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.radial_coordinates.html#Stoner.Image.imagefuncs.radial_coordinates">[docs]</a><span class="k">def</span> <span class="nf">radial_coordinates</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">centre</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">pixel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">angle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rerurn a map of the radial co-ordinates of an image from a given centre, with adjustments for pixel size.</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        centre (2-tuple):</span>
+<span class="sd">            Co-ordinates of centre point in terms of the orginal pixels. Defaults to(None,None) for the middle of the</span>
+<span class="sd">            image.</span>
+<span class="sd">        pixel_size (2-tuple):</span>
+<span class="sd">            The size of one pixel in (dx by dy) - defaults to 1,1</span>
+<span class="sd">        angle (bool, None):</span>
+<span class="sd">            Whether to return the angles (in radians, True), distances (False) o a complex number (None).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An array of the same class as the input, but with values corresponding to the radial co-ordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">centre</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">pixel_size</span>
+    <span class="n">cx</span> <span class="o">=</span> <span class="n">c</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">cx</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cx</span>
+    <span class="n">cy</span> <span class="o">=</span> <span class="n">r</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">cy</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cy</span>
+    <span class="n">x_r</span> <span class="o">=</span> <span class="n">dx</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="n">cx</span><span class="p">)</span>
+    <span class="n">y_r</span> <span class="o">=</span> <span class="n">dy</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="n">cy</span><span class="p">)</span>
+    <span class="n">Y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">y_r</span><span class="p">,</span> <span class="n">x_r</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="o">-</span><span class="n">Y</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span>
+    <span class="k">if</span> <span class="n">angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">angle</span><span class="p">:</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="n">Z</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">metadata</span>
+    <span class="k">return</span> <span class="n">Z</span></div>
+
+
+<div class="viewcode-block" id="radial_profile"><a class="viewcode-back" href="../../../classes/Stoner.Image.imagefuncs.radial_profile.html#Stoner.Image.imagefuncs.radial_profile">[docs]</a><span class="k">def</span> <span class="nf">radial_profile</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">centre</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">pixel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Extract a radial  profile line from an image.</span>
+
+<span class="sd">    Keyword Paramaters:</span>
+<span class="sd">        angle (float, tuple, None):</span>
+<span class="sd">            Select the radial angle to include:</span>
+<span class="sd">                - float selects a single angle</span>
+<span class="sd">                - tuple selects a range of angles</span>
+<span class="sd">                - None integrates over all angles</span>
+<span class="sd">        r (array, None):</span>
+<span class="sd">            Edges of the bins in the radual direction - will return r.size-1 points. Default is None which uses the</span>
+<span class="sd">            minimum r value found on the edges of the image.</span>
+<span class="sd">        centre (2-tuple):</span>
+<span class="sd">            Co-ordinates of centre point in terms of the orginal pixels. Defaults to(None,None) for the middle of the</span>
+<span class="sd">            image.</span>
+<span class="sd">        pixel_size (2-tuple):</span>
+<span class="sd">            The size of one pixel in (dx by dy) - defaults to 1,1</span>
+
+<span class="sd">    Retunrs:</span>
+<span class="sd">        (Data):</span>
+<span class="sd">            A py:class:`Stoner.Data` object with a column for r and columns for mean, std, and number of pixels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">radial_coordinates</span><span class="p">(</span><span class="n">centre</span><span class="o">=</span><span class="n">centre</span><span class="p">,</span> <span class="n">pixel_size</span><span class="o">=</span><span class="n">pixel_size</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Identify the minimum edge value</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">coords</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">r_limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">r_limit</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">r_limit</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">r_l</span> <span class="o">=</span> <span class="n">r</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">r_h</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">r_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_l</span> <span class="o">+</span> <span class="n">r_h</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">angle_select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">angle_low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">angle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">angle_high</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">angle</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">angle_select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">angle_low</span><span class="p">,</span> <span class="n">angle_high</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">angle_select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="n">angle</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;angle should be a float, tuple of two floats or None not a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">make_Data</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">mid</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">r_l</span><span class="p">,</span> <span class="n">r_h</span><span class="p">,</span> <span class="n">r_m</span><span class="p">):</span>
+        <span class="n">r_select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">low</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">high</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">im</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">r_select</span><span class="p">,</span> <span class="n">angle_select</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">avg</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">avg</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">low</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">avg</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">num</span><span class="p">])</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Low_r&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;high_r&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;number&quot;</span><span class="p">]</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;.x.ye.&quot;</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">metadata</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_profile.txt&quot;</span>
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
@@ -965,6 +1141,117 @@
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
+<span class="k">def</span> <span class="nf">sgolay2d</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">derivative</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements a 2D Savitsky Golay Filter for a 2D array (e.g. image).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        img (ImageArray or ImageFile):</span>
+<span class="sd">            image to be filtered</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        points (int):</span>
+<span class="sd">            The number of points in the window aperture. Must be an odd number. (default 15)</span>
+<span class="sd">        poly (int):</span>
+<span class="sd">            Degree of polynomial to use in the filter. (defatult 1)</span>
+<span class="sd">        derivative (str or None):</span>
+<span class="sd">            Type of defivative to calculate. Can be:</span>
+<span class="sd">                None - smooth only (default)</span>
+<span class="sd">                &quot;x&quot;,&quot;y&quot; - calculate dIntentity/dx or dIntensity/dy</span>
+<span class="sd">                &quot;both&quot; - calculate the full derivative and return magnitud and angle.</span>
+
+<span class="sd">    ReturnsL</span>
+<span class="sd">        (imageArray or ImageFile):</span>
+<span class="sd">            filtered image.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError if points, order or derivative are incorrect.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        Adapted from code on the scipy cookbook : https://scipy-cookbook.readthedocs.io/items/SavitzkyGolay.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># number of terms in the polynomial expression</span>
+    <span class="n">n_terms</span> <span class="o">=</span> <span class="p">(</span><span class="n">poly</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">poly</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="k">if</span> <span class="n">points</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;window_size must be odd&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">points</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">&lt;</span> <span class="n">n_terms</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;order is too high for the window size&quot;</span><span class="p">)</span>
+
+    <span class="n">half_size</span> <span class="o">=</span> <span class="n">points</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="c1"># exponents of the polynomial.</span>
+    <span class="c1"># p(x,y) = a0 + a1*x + a2*y + a3*x^2 + a4*y^2 + a5*x*y + ...</span>
+    <span class="c1"># this line gives a list of two item tuple. Each tuple contains</span>
+    <span class="c1"># the exponents of the k-th term. First element of tuple is for x</span>
+    <span class="c1"># second element for y.</span>
+    <span class="c1"># Ex. exps = [(0,0), (1,0), (0,1), (2,0), (1,1), (0,2), ...]</span>
+    <span class="n">exps</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span> <span class="o">-</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">poly</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
+    <span class="c1"># coordinates of points</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">half_size</span><span class="p">,</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="p">[</span><span class="n">points</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">points</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,)</span>
+
+    <span class="c1"># build matrix of system of equation</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">points</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">exps</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">exps</span><span class="p">):</span>
+        <span class="n">A</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span> <span class="o">**</span> <span class="n">exp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">dy</span> <span class="o">**</span> <span class="n">exp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># pad input array with appropriate values at the four borders</span>
+    <span class="n">new_shape</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">half_size</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">half_size</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">new_shape</span><span class="p">))</span>
+    <span class="c1"># top band</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">Z</span><span class="p">[:</span><span class="n">half_size</span><span class="p">,</span> <span class="n">half_size</span><span class="p">:</span><span class="o">-</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:])</span> <span class="o">-</span> <span class="n">band</span><span class="p">)</span>
+    <span class="c1"># bottom band</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">Z</span><span class="p">[</span><span class="o">-</span><span class="n">half_size</span><span class="p">:,</span> <span class="n">half_size</span><span class="p">:</span><span class="o">-</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="o">-</span><span class="n">half_size</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span> <span class="o">-</span> <span class="n">band</span><span class="p">)</span>
+    <span class="c1"># left band</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">img</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">half_size</span><span class="p">])</span>
+    <span class="n">Z</span><span class="p">[</span><span class="n">half_size</span><span class="p">:</span><span class="o">-</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">img</span><span class="p">[:,</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">band</span><span class="p">)</span>
+    <span class="c1"># right band</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">img</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">half_size</span><span class="p">])</span>
+    <span class="n">Z</span><span class="p">[</span><span class="n">half_size</span><span class="p">:</span><span class="o">-</span><span class="n">half_size</span><span class="p">,</span> <span class="o">-</span><span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">img</span><span class="p">[:,</span> <span class="o">-</span><span class="n">half_size</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">band</span><span class="p">)</span>
+    <span class="c1"># central band</span>
+    <span class="n">Z</span><span class="p">[</span><span class="n">half_size</span><span class="p">:</span><span class="o">-</span><span class="n">half_size</span><span class="p">,</span> <span class="n">half_size</span><span class="p">:</span><span class="o">-</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">img</span>
+
+    <span class="c1"># top left corner</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">Z</span><span class="p">[:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span> <span class="o">-</span> <span class="n">band</span><span class="p">)</span>
+    <span class="c1"># bottom right corner</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">Z</span><span class="p">[</span><span class="o">-</span><span class="n">half_size</span><span class="p">:,</span> <span class="o">-</span><span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="o">-</span><span class="n">half_size</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">half_size</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">-</span> <span class="n">band</span>
+    <span class="p">)</span>
+
+    <span class="c1"># top right corner</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">Z</span><span class="p">[</span><span class="n">half_size</span><span class="p">,</span> <span class="o">-</span><span class="n">half_size</span><span class="p">:]</span>
+    <span class="n">Z</span><span class="p">[:</span><span class="n">half_size</span><span class="p">,</span> <span class="o">-</span><span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flipud</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">half_size</span><span class="p">:])</span> <span class="o">-</span> <span class="n">band</span><span class="p">)</span>
+    <span class="c1"># bottom left corner</span>
+    <span class="n">band</span> <span class="o">=</span> <span class="n">Z</span><span class="p">[</span><span class="o">-</span><span class="n">half_size</span><span class="p">:,</span> <span class="n">half_size</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">Z</span><span class="p">[</span><span class="o">-</span><span class="n">half_size</span><span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">band</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="o">-</span><span class="n">half_size</span><span class="p">:,</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">half_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">band</span><span class="p">)</span>
+
+    <span class="c1"># solve system and convolve</span>
+    <span class="k">if</span> <span class="n">derivative</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">derivative</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">derivative</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">derivative</span> <span class="o">==</span> <span class="s2">&quot;both&quot;</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">points</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">),</span> <span class="n">signal</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown derivative mode </span><span class="si">{</span><span class="n">derivative</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
 <span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the minimum and maximum values in the image.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">im</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
@@ -1094,7 +1381,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

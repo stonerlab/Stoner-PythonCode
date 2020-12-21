@@ -42,6 +42,7 @@
       ~Stoner.Image.ImageFolder.loadgroup
       ~Stoner.Image.ImageFolder.make_name
       ~Stoner.Image.ImageFolder.mean
+      ~Stoner.Image.ImageFolder.montage
       ~Stoner.Image.ImageFolder.on_load_process
       ~Stoner.Image.ImageFolder.pop
       ~Stoner.Image.ImageFolder.popitem

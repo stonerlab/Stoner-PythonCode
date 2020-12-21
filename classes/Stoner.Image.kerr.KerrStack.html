@@ -199,7 +199,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.asfloat" title="Stoner.Image.kerr.KerrStack.asfloat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asfloat</span></code></a>([normalise, clip, clip_negative])</p></td>
 <td><p>Convert stack to floating point type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.average" title="Stoner.Image.kerr.KerrStack.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.average" title="Stoner.Image.kerr.KerrStack.average"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Get an array of average pixel values for the stack.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.average_Hcmap" title="Stoner.Image.kerr.KerrStack.average_Hcmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average_Hcmap</span></code></a>([weights, ignore_zeros])</p></td>
@@ -223,8 +223,8 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.crop_stack" title="Stoner.Image.kerr.KerrStack.crop_stack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_stack</span></code></a>(box)</p></td>
 <td><p>Crop the imagestack to a box.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.crop_text" title="Stoner.Image.kerr.KerrStack.crop_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_text</span></code></a>([copy])</p></td>
-<td><p>Crop the bottom text area from a standard Kermit image stack.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.crop_text" title="Stoner.Image.kerr.KerrStack.crop_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">crop_text</span></code></a>()</p></td>
+<td><p>Crop the bottom text area from a standard Kermit image across the complete stack.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.denoise_thresh" title="Stoner.Image.kerr.KerrStack.denoise_thresh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">denoise_thresh</span></code></a>([denoise_weight, thresh, invert])</p></td>
 <td><p>Apply denoise then threshold images.</p></td>
@@ -292,79 +292,82 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.make_name" title="Stoner.Image.kerr.KerrStack.make_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_name</span></code></a>([value])</p></td>
 <td><p>Construct a name from the value object if possible.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.mean" title="Stoner.Image.kerr.KerrStack.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.mean" title="Stoner.Image.kerr.KerrStack.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([_box, _metadata])</p></td>
 <td><p>Calculate the mean value of all the images in the stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.on_load_process" title="Stoner.Image.kerr.KerrStack.on_load_process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_load_process</span></code></a>(tmp)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.montage" title="Stoner.Image.kerr.KerrStack.montage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">montage</span></code></a>(*args, **kargs)</p></td>
+<td><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.on_load_process" title="Stoner.Image.kerr.KerrStack.on_load_process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">on_load_process</span></code></a>(tmp)</p></td>
 <td><p>Carry out processing on a newly loaded file to set means and extra metadata.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.pop" title="Stoner.Image.kerr.KerrStack.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name, default])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.pop" title="Stoner.Image.kerr.KerrStack.pop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pop</span></code></a>([name, default])</p></td>
 <td><p>Return and remove either a subgroup or named object from this folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.popitem" title="Stoner.Image.kerr.KerrStack.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.popitem" title="Stoner.Image.kerr.KerrStack.popitem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">popitem</span></code></a>()</p></td>
 <td><p>Return the most recent subgroup from this folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.prune" title="Stoner.Image.kerr.KerrStack.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.prune" title="Stoner.Image.kerr.KerrStack.prune"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune</span></code></a>([name])</p></td>
 <td><p>Remove any empty groups from the objectFolder (and subgroups).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.remove" title="Stoner.Image.kerr.KerrStack.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.remove" title="Stoner.Image.kerr.KerrStack.remove"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove</span></code></a>(value)</p></td>
 <td><p>S.remove(value) – remove first occurrence of value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.reverse" title="Stoner.Image.kerr.KerrStack.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.reverse" title="Stoner.Image.kerr.KerrStack.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code></a>()</p></td>
 <td><p>S.reverse() – reverse <em>IN PLACE</em></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.save" title="Stoner.Image.kerr.KerrStack.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.save" title="Stoner.Image.kerr.KerrStack.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>([root])</p></td>
 <td><p>Save the entire data folder out to disc using the groups as a directory tree.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.select" title="Stoner.Image.kerr.KerrStack.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.select" title="Stoner.Image.kerr.KerrStack.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(*args, **kargs)</p></td>
 <td><p>Select a subset of the objects in the folder based on flexible search criteria on the metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.setdefault" title="Stoner.Image.kerr.KerrStack.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[, d])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.setdefault" title="Stoner.Image.kerr.KerrStack.setdefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setdefault</span></code></a>(k[, d])</p></td>
 <td><p>Return or set a subgroup or named object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.show" title="Stoner.Image.kerr.KerrStack.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.show" title="Stoner.Image.kerr.KerrStack.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
 <td><p>Pass through to <a class="reference internal" href="Stoner.Image.ImageFolder.view.html#Stoner.Image.ImageFolder.view" title="Stoner.Image.ImageFolder.view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.Image.ImageFolder.view()</span></code></a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.slice_metadata" title="Stoner.Image.kerr.KerrStack.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[, output])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.slice_metadata" title="Stoner.Image.kerr.KerrStack.slice_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice_metadata</span></code></a>(key[, output])</p></td>
 <td><p>Return an array of the metadata values for each item/file in the top level group.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.sort" title="Stoner.Image.kerr.KerrStack.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key, reverse, recursive])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.sort" title="Stoner.Image.kerr.KerrStack.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([key, reverse, recursive])</p></td>
 <td><p>Sort the files by some key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.stable_mask" title="Stoner.Image.kerr.KerrStack.stable_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stable_mask</span></code></a>([tolerance, comparison])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.stable_mask" title="Stoner.Image.kerr.KerrStack.stable_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stable_mask</span></code></a>([tolerance, comparison])</p></td>
 <td><p>Produce a mask of areas of the image that are changing little over the stack.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.stddev" title="Stoner.Image.kerr.KerrStack.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights, _box])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.stddev" title="Stoner.Image.kerr.KerrStack.stddev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stddev</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Calculate weighted standard deviation for stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.stderr" title="Stoner.Image.kerr.KerrStack.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights, _box])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.stderr" title="Stoner.Image.kerr.KerrStack.stderr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stderr</span></code></a>([weights, _box, _metadata])</p></td>
 <td><p>Calculate standard error in the stack average.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.subtract" title="Stoner.Image.kerr.KerrStack.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(background)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.subtract" title="Stoner.Image.kerr.KerrStack.subtract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract</span></code></a>(background)</p></td>
 <td><p>Subtract a background image (or index) from all images in the stack.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.to_tiff" title="Stoner.Image.kerr.KerrStack.to_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_tiff</span></code></a>(filename)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.to_tiff" title="Stoner.Image.kerr.KerrStack.to_tiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_tiff</span></code></a>(filename)</p></td>
 <td><p>Save the ImageArray as a tiff image with metadata.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.unflatten" title="Stoner.Image.kerr.KerrStack.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.unflatten" title="Stoner.Image.kerr.KerrStack.unflatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unflatten</span></code></a>()</p></td>
 <td><p>Take the file list an unflattens them according to the file paths.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.unload" title="Stoner.Image.kerr.KerrStack.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>([name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.unload" title="Stoner.Image.kerr.KerrStack.unload"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unload</span></code></a>([name])</p></td>
 <td><p>Remove the instance from memory without losing the name in the Folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.update" title="Stoner.Image.kerr.KerrStack.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.update" title="Stoner.Image.kerr.KerrStack.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(other)</p></td>
 <td><p>Update this folder with a dictionary or another folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.values" title="Stoner.Image.kerr.KerrStack.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.values" title="Stoner.Image.kerr.KerrStack.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a>()</p></td>
 <td><p>Return the sub-groups of this folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.view" title="Stoner.Image.kerr.KerrStack.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.view" title="Stoner.Image.kerr.KerrStack.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>()</p></td>
 <td><p>Create a matplotlib animated view of the contents.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.walk_groups" title="Stoner.Image.kerr.KerrStack.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker, **kargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.walk_groups" title="Stoner.Image.kerr.KerrStack.walk_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_groups</span></code></a>(walker, **kargs)</p></td>
 <td><p>Walk through a heirarchy of groups and calls walker for each file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.zip_groups" title="Stoner.Image.kerr.KerrStack.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Stoner.Image.kerr.KerrStack.zip_groups" title="Stoner.Image.kerr.KerrStack.zip_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_groups</span></code></a>(groups)</p></td>
 <td><p>Return a list of tuples of metadataObjects drawn from the specified groups.</p></td>
 </tr>
 </tbody>
@@ -712,10 +715,23 @@ If clip_negative then clip values outside the range 0,1</p>
 
 <dl class="py method">
 <dt id="Stoner.Image.kerr.KerrStack.average">
-<code class="sig-name descname">average</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.average" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">average</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.average" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an array of average pixel values for the stack.</p>
-<p>Pass through to numpy average
-:returns: <em>average(ImageArray)</em> –     average values</p>
+<p>Pass through to numpy average</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>average(ImageArray)</em> –     average values</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -850,13 +866,13 @@ is a metadataObject, then  it matches for an equyality test.</p>
 
 <dl class="py method">
 <dt id="Stoner.Image.kerr.KerrStack.crop_text">
-<code class="sig-name descname">crop_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.crop_text" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop the bottom text area from a standard Kermit image stack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><em>(self)</em> – cropped image</p>
-</dd>
-</dl>
+<code class="sig-name descname">crop_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.crop_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop the bottom text area from a standard Kermit image across the complete stack.</p>
+<p>Returns:
+(ImageArray):</p>
+<blockquote>
+<div><p>cropped image</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -1146,9 +1162,55 @@ last file is the correct one.</p>
 
 <dl class="py method">
 <dt id="Stoner.Image.kerr.KerrStack.mean">
-<code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.mean" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean value of all the images in the stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Actually a synonym for self.average with not weights</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Stoner.Image.kerr.KerrStack.montage">
+<code class="sig-name descname">montage</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.montage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call the plot method for each metadataObject, but switching to a subplot each time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – Positional arguments to pass through to the <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot()</span></code></a> call.</p></li>
+<li><p><strong>kargs</strong> – Keyword arguments to pass through to the <a class="reference internal" href="Stoner.plot.PlotMixin.html#Stoner.plot.PlotMixin.plot" title="Stoner.plot.PlotMixin.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stoner.plot.PlotMixin.plot()</span></code></a> call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.9)"><em>callable</em></a><em>(</em><a class="reference internal" href="Stoner.core.array.DataArray.html#id1" title="Stoner.core.array.DataArray.i"><em>i</em></a><em>,</em><em>j</em><em>,</em><em>d</em><em>)</em>) – A callable that can carry out additional processing per plot after the plot is done</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><em>tuple</em></a><em>(</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.x" title="Stoner.core.setas.setas.x"><em>x</em></a><em>,</em><a class="reference internal" href="Stoner.core.setas.setas.html#Stoner.core.setas.setas.y" title="Stoner.core.setas.setas.y"><em>y</em></a><em>)</em>) – Size of the figure to create</p></li>
+<li><p><strong>dpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – dots per inch on the figure</p></li>
+<li><p><strong>edgecolor</strong><strong>,</strong><strong>facecolor</strong> (<em>matplotlib colour</em>) – figure edge and frame colours.</p></li>
+<li><p><strong>frameon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Turns figure frames on or off</p></li>
+<li><p><strong>FigureClass</strong> (<em>class</em>) – Passed to matplotlib figure call.</p></li>
+<li><p><strong>plots_per_page</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – maximum number of plots per figure.</p></li>
+<li><p><strong>tight_layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.9)"><em>False</em></a>) – If not False, arguments to pass to a call of <a class="reference external" href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.tight_layout.html#matplotlib.pyplot.tight_layout" title="(in Matplotlib v3.3.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.tight_layout()</span></code></a>. Defaults to {}</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code> instances.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the underlying type of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.metadataObject</span></code> instances in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code> lacks a <strong>plot</strong> method, then the instances are converted to
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stoner.Core.Data</span></code>.</p>
+<p>Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
+from the aspect ratio of the figure and the number of files in the <code class="xref py py-class docutils literal notranslate"><span class="pre">PlotFolder</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1275,6 +1337,9 @@ keyword name to force the equality test.</p></li>
 <li><p>If the metadata keys to select on are not valid python  identifiers, then pass them via the first
 positional dictionary value.</p></li>
 </ul>
+<p>If the metadata item being checked exists in a regular expression file pattern for the folder, then
+the files are not loaded and the metadata is evaluated based on the filename. This can speed up operations
+where a file load is not required.</p>
 </div>
 </dd></dl>
 
@@ -1357,15 +1422,37 @@ tolerance</p>
 
 <dl class="py method">
 <dt id="Stoner.Image.kerr.KerrStack.stddev">
-<code class="sig-name descname">stddev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.stddev" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stddev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.stddev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate weighted standard deviation for stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 <p>This is a biased standard deviation, may not be appropriate for small sample sizes</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="Stoner.Image.kerr.KerrStack.stderr">
-<code class="sig-name descname">stderr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.stderr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stderr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_box</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">_metadata</span><span class="o">=</span><span class="default_value">'first'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.kerr.KerrStack.stderr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate standard error in the stack average.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_box</strong> (<em>crop box</em>) – Specifies the region of the array to be averaged. Default - entire image</p></li>
+<li><p><strong>_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Specifies how to generate metadata for the averaged image.
+- “first”: Just ise the first image’s metadata
+- “common”: Find the common metadata across all images
+- “none’: no metadata from images.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1552,7 +1639,7 @@ grp_2_file_2….grp_n_file_2)….(grp_1_file_m,grp_2_file_m…grp_n_file_m)]</p>
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

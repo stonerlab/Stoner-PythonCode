@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.remove_duplicates
+==================================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: EasyPlotFile.remove_duplicates

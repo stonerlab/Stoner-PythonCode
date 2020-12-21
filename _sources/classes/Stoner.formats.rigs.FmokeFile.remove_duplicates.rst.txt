@@ -1,0 +1,8 @@
+
+
+FmokeFile.remove_duplicates
+===============================================
+
+.. currentmodule:: Stoner.formats.rigs
+
+.. automethod:: FmokeFile.remove_duplicates

@@ -28,6 +28,7 @@
       ~Stoner.formats.generic.JustNumbersFile.extend
       ~Stoner.formats.generic.JustNumbersFile.filter
       ~Stoner.formats.generic.JustNumbersFile.find_col
+      ~Stoner.formats.generic.JustNumbersFile.find_duplicates
       ~Stoner.formats.generic.JustNumbersFile.get
       ~Stoner.formats.generic.JustNumbersFile.get_filename
       ~Stoner.formats.generic.JustNumbersFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.generic.JustNumbersFile.pop
       ~Stoner.formats.generic.JustNumbersFile.popitem
       ~Stoner.formats.generic.JustNumbersFile.remove
+      ~Stoner.formats.generic.JustNumbersFile.remove_duplicates
       ~Stoner.formats.generic.JustNumbersFile.rename
       ~Stoner.formats.generic.JustNumbersFile.reorder_columns
       ~Stoner.formats.generic.JustNumbersFile.reverse

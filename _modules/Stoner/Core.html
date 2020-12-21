@@ -64,22 +64,20 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">inspect</span> <span class="k">as</span> <span class="nn">_inspect_</span>
 <span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
 <span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">TextWrapper</span>
-<span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">format_exc</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">NaN</span>  <span class="c1"># NOQA pylint: disable=unused-import</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ma</span>
 
-<span class="kn">from</span> <span class="nn">.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">get_filedialog</span><span class="p">,</span> <span class="n">str2bytes</span><span class="p">,</span> <span class="n">_pattern_type</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">int_types</span><span class="p">,</span> <span class="n">index_types</span><span class="p">,</span> <span class="n">_pattern_type</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="kn">import</span> <span class="n">all_type</span><span class="p">,</span> <span class="n">isIterable</span><span class="p">,</span> <span class="n">isLikeList</span><span class="p">,</span> <span class="n">get_option</span>
 <span class="kn">from</span> <span class="nn">.tools.file</span> <span class="kn">import</span> <span class="n">get_file_name_type</span><span class="p">,</span> <span class="n">auto_load_classes</span>
 
-<span class="kn">from</span> <span class="nn">.core.exceptions</span> <span class="kn">import</span> <span class="n">StonerLoadError</span><span class="p">,</span> <span class="n">StonerSetasError</span><span class="p">,</span> <span class="n">StonerUnrecognisedFormat</span>
+<span class="kn">from</span> <span class="nn">.core.exceptions</span> <span class="kn">import</span> <span class="n">StonerLoadError</span><span class="p">,</span> <span class="n">StonerSetasError</span>
 <span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">_setas</span><span class="p">,</span> <span class="n">regexpDict</span><span class="p">,</span> <span class="n">typeHintedDict</span><span class="p">,</span> <span class="n">metadataObject</span>
 <span class="kn">from</span> <span class="nn">.core.array</span> <span class="kn">import</span> <span class="n">DataArray</span>
 <span class="kn">from</span> <span class="nn">.core.operators</span> <span class="kn">import</span> <span class="n">DataFileOperatorsMixin</span>
@@ -96,11 +94,6 @@
     <span class="n">tabulate</span><span class="o">.</span><span class="n">PRESERVE_WHITESPACE</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">tabulate</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">magic</span> <span class="kn">import</span> <span class="n">Magic</span> <span class="k">as</span> <span class="n">filemagic</span><span class="p">,</span> <span class="n">MAGIC_MIME_TYPE</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">filemagic</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -1675,7 +1668,7 @@
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

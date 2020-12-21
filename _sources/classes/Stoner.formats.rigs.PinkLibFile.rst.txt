@@ -28,6 +28,7 @@
       ~Stoner.formats.rigs.PinkLibFile.extend
       ~Stoner.formats.rigs.PinkLibFile.filter
       ~Stoner.formats.rigs.PinkLibFile.find_col
+      ~Stoner.formats.rigs.PinkLibFile.find_duplicates
       ~Stoner.formats.rigs.PinkLibFile.get
       ~Stoner.formats.rigs.PinkLibFile.get_filename
       ~Stoner.formats.rigs.PinkLibFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.rigs.PinkLibFile.pop
       ~Stoner.formats.rigs.PinkLibFile.popitem
       ~Stoner.formats.rigs.PinkLibFile.remove
+      ~Stoner.formats.rigs.PinkLibFile.remove_duplicates
       ~Stoner.formats.rigs.PinkLibFile.rename
       ~Stoner.formats.rigs.PinkLibFile.reorder_columns
       ~Stoner.formats.rigs.PinkLibFile.reverse

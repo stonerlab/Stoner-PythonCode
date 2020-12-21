@@ -1,7 +1,8 @@
 """Plot 3d fdata as a colourmap."""
 # pylint: disable=invalid-name
-from Stoner import Data
 import numpy as np
+
+from Stoner import Data
 
 x, y = np.meshgrid(np.linspace(-2, 2, 100), np.linspace(-2, 2, 100))
 x = x.ravel()

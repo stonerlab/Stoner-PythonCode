@@ -1,0 +1,8 @@
+
+
+VSMFile.remove_duplicates
+====================================================
+
+.. currentmodule:: Stoner.formats.instruments
+
+.. automethod:: VSMFile.remove_duplicates

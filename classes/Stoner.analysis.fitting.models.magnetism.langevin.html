@@ -83,10 +83,13 @@
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Test langevin fitting.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span> <span class="n">ones_like</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.analysis.fitting.models.magnetism</span> <span class="kn">import</span> <span class="n">langevin</span><span class="p">,</span> <span class="n">Langevin</span>
+
 <span class="n">B</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.0e-11</span><span class="p">,</span> <span class="mi">250</span><span class="p">]</span>
 <span class="n">G</span> <span class="o">=</span> <span class="n">langevin</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="o">+</span> <span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="mf">5e-3</span><span class="p">)</span>
@@ -98,16 +101,23 @@
     <span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">,</span>
     <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Field $</span><span class="se">\\</span><span class="s2">mu_0H (T)$&quot;</span><span class="p">,</span> <span class="s2">&quot;Moment&quot;</span><span class="p">,</span> <span class="s2">&quot;dM&quot;</span><span class="p">],</span>
 <span class="p">)</span>
+
 <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">H</span><span class="p">,</span> <span class="n">M_s</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="n">langevin</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">M_s</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">copy</span><span class="p">(</span><span class="n">params</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;curve_fit&quot;</span><span class="p">)</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xye&quot;</span>
 <span class="n">fit</span> <span class="o">=</span> <span class="n">Langevin</span><span class="p">()</span>
 <span class="n">fit</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">guess</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">B</span><span class="p">)</span>
 <span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">250</span>
 <span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">vary</span> <span class="o">=</span> <span class="kc">False</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
+
+
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xyeyy&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r.&quot;</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">])</span>
+
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span>
     <span class="n">func</span><span class="p">,</span>
     <span class="n">x</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
@@ -214,7 +224,7 @@ we can find m/T from the susceptibility <span class="math notranslate nohighligh
     </ul>
   </nav>
   </div>
-  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 02, 2020.
+  <footer id="pagefooter">&copy; 2013-15, Gavin Burnell et al.Last updated on Dec 21, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a>
       3.2.1
         with the <a href="http://github.com/irskep/sphinx-better-theme">

@@ -28,6 +28,7 @@
       ~Stoner.formats.instruments.VSMFile.extend
       ~Stoner.formats.instruments.VSMFile.filter
       ~Stoner.formats.instruments.VSMFile.find_col
+      ~Stoner.formats.instruments.VSMFile.find_duplicates
       ~Stoner.formats.instruments.VSMFile.get
       ~Stoner.formats.instruments.VSMFile.get_filename
       ~Stoner.formats.instruments.VSMFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.instruments.VSMFile.pop
       ~Stoner.formats.instruments.VSMFile.popitem
       ~Stoner.formats.instruments.VSMFile.remove
+      ~Stoner.formats.instruments.VSMFile.remove_duplicates
       ~Stoner.formats.instruments.VSMFile.rename
       ~Stoner.formats.instruments.VSMFile.reorder_columns
       ~Stoner.formats.instruments.VSMFile.reverse

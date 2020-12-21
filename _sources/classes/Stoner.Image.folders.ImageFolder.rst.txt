@@ -73,6 +73,7 @@ ImageFolder
       ~ImageFolder.loadgroup
       ~ImageFolder.make_name
       ~ImageFolder.mean
+      ~ImageFolder.montage
       ~ImageFolder.on_load_process
       ~ImageFolder.pop
       ~ImageFolder.popitem
@@ -158,6 +159,7 @@ ImageFolder
    .. automethod:: loadgroup
    .. automethod:: make_name
    .. automethod:: mean
+   .. automethod:: montage
    .. automethod:: on_load_process
    .. automethod:: pop
    .. automethod:: popitem

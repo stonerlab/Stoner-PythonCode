@@ -1,0 +1,8 @@
+
+
+JustNumbersFile.remove_duplicates
+========================================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: JustNumbersFile.remove_duplicates

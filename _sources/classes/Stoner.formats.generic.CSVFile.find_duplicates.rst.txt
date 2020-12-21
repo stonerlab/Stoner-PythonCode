@@ -1,0 +1,8 @@
+
+
+CSVFile.find_duplicates
+==============================================
+
+.. currentmodule:: Stoner.formats.generic
+
+.. automethod:: CSVFile.find_duplicates

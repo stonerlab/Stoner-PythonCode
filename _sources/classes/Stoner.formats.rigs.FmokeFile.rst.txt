@@ -28,6 +28,7 @@
       ~Stoner.formats.rigs.FmokeFile.extend
       ~Stoner.formats.rigs.FmokeFile.filter
       ~Stoner.formats.rigs.FmokeFile.find_col
+      ~Stoner.formats.rigs.FmokeFile.find_duplicates
       ~Stoner.formats.rigs.FmokeFile.get
       ~Stoner.formats.rigs.FmokeFile.get_filename
       ~Stoner.formats.rigs.FmokeFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.rigs.FmokeFile.pop
       ~Stoner.formats.rigs.FmokeFile.popitem
       ~Stoner.formats.rigs.FmokeFile.remove
+      ~Stoner.formats.rigs.FmokeFile.remove_duplicates
       ~Stoner.formats.rigs.FmokeFile.rename
       ~Stoner.formats.rigs.FmokeFile.reorder_columns
       ~Stoner.formats.rigs.FmokeFile.reverse

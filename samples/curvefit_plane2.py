@@ -1,7 +1,7 @@
 """Use curve_fit to fit a plane to some data."""
 # pylint: disable=invalid-name
 from numpy.random import normal
-from numpy import linspace, meshgrid, column_stack
+from numpy import linspace, meshgrid, column_stack, array
 import matplotlib.cm as cmap
 import matplotlib.pyplot as plt
 
@@ -10,13 +10,14 @@ from Stoner import Data
 
 def plane(coord, a, b, c):
     """Function to define a plane."""
-    return c - (coord[0] * a + coord[1] * b)
+    x, y = coord.T
+    return c - (x * a + y * b)
 
 
 coeefs = [1, -0.5, -1]
 col = linspace(-10, 10, 8)
 X, Y = meshgrid(col, col)
-Z = plane((X, Y), *coeefs) + normal(size=X.shape, scale=2.0)
+Z = plane(array([X, Y]).T, *coeefs) + normal(size=X.shape, scale=2.0)
 d = Data(
     column_stack((X.ravel(), Y.ravel(), Z.ravel())),
     filename="Fitting a Plane",

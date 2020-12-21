@@ -24,6 +24,7 @@ ImageFolderMixin
       ~ImageFolderMixin.from_tiff
       ~ImageFolderMixin.loadgroup
       ~ImageFolderMixin.mean
+      ~ImageFolderMixin.montage
       ~ImageFolderMixin.stddev
       ~ImageFolderMixin.stderr
       ~ImageFolderMixin.to_tiff
@@ -43,6 +44,7 @@ ImageFolderMixin
    .. automethod:: from_tiff
    .. automethod:: loadgroup
    .. automethod:: mean
+   .. automethod:: montage
    .. automethod:: stddev
    .. automethod:: stderr
    .. automethod:: to_tiff

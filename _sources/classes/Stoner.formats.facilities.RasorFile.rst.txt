@@ -28,6 +28,7 @@
       ~Stoner.formats.facilities.RasorFile.extend
       ~Stoner.formats.facilities.RasorFile.filter
       ~Stoner.formats.facilities.RasorFile.find_col
+      ~Stoner.formats.facilities.RasorFile.find_duplicates
       ~Stoner.formats.facilities.RasorFile.get
       ~Stoner.formats.facilities.RasorFile.get_filename
       ~Stoner.formats.facilities.RasorFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.facilities.RasorFile.pop
       ~Stoner.formats.facilities.RasorFile.popitem
       ~Stoner.formats.facilities.RasorFile.remove
+      ~Stoner.formats.facilities.RasorFile.remove_duplicates
       ~Stoner.formats.facilities.RasorFile.rename
       ~Stoner.formats.facilities.RasorFile.reorder_columns
       ~Stoner.formats.facilities.RasorFile.reverse

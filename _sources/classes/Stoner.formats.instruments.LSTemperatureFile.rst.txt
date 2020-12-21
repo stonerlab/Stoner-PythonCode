@@ -28,6 +28,7 @@
       ~Stoner.formats.instruments.LSTemperatureFile.extend
       ~Stoner.formats.instruments.LSTemperatureFile.filter
       ~Stoner.formats.instruments.LSTemperatureFile.find_col
+      ~Stoner.formats.instruments.LSTemperatureFile.find_duplicates
       ~Stoner.formats.instruments.LSTemperatureFile.get
       ~Stoner.formats.instruments.LSTemperatureFile.get_filename
       ~Stoner.formats.instruments.LSTemperatureFile.index
@@ -39,6 +40,7 @@
       ~Stoner.formats.instruments.LSTemperatureFile.pop
       ~Stoner.formats.instruments.LSTemperatureFile.popitem
       ~Stoner.formats.instruments.LSTemperatureFile.remove
+      ~Stoner.formats.instruments.LSTemperatureFile.remove_duplicates
       ~Stoner.formats.instruments.LSTemperatureFile.rename
       ~Stoner.formats.instruments.LSTemperatureFile.reorder_columns
       ~Stoner.formats.instruments.LSTemperatureFile.reverse
