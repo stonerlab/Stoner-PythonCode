@@ -59,13 +59,17 @@ import matplotlib.cm as cm
 from matplotlib import pyplot as plt
 from skimage import feature, measure, transform, filters
 
-from PyQt5.QtGui import QImage
-from PyQt5.QtWidgets import QApplication
-
 from Stoner.compat import string_types
 from Stoner.tools import isTuple, isIterable, make_Data
 from .core import ImageArray
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
+
+try:
+    from PyQt5.QtGui import QImage
+    from PyQt5.QtWidgets import QApplication
+except ImportError:
+    QImage = None
+    QApplication = None
 
 try:  # Make OpenCV an optional import
     import cv2
@@ -650,6 +654,9 @@ def imshow(im, **kwargs):
     else:
         plt.title(title)
     plt.axis("off")
+
+    if QImage is None:  # No Qt5
+        return fig
 
     def add_figure_to_clipboard(event):
         if event.key == "ctrl+c":
