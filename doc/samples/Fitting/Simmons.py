@@ -1,9 +1,10 @@
 """Example of nDimArrhenius Fit."""
 # pylint: disable=invalid-name
-from Stoner import Data
-from Stoner.analysis.fitting.models.tunnelling import simmons, Simmons
 from numpy import linspace, ones_like
 from numpy.random import normal
+
+from Stoner import Data
+from Stoner.analysis.fitting.models.tunnelling import simmons, Simmons
 
 # Make some data
 V = linspace(-4, 4, 101)

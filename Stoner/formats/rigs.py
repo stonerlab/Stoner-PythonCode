@@ -9,10 +9,10 @@ import csv
 
 import numpy as np
 
-import Stoner.Core as Core
-from .generic import CSVFile
 from Stoner.compat import bytes2str
 from Stoner.core.base import string_to_type
+import Stoner.Core as Core
+from .generic import CSVFile
 
 
 class BigBlueFile(CSVFile):

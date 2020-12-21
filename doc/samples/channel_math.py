@@ -1,8 +1,9 @@
 """Demonstrate Channel math operations."""
 # pylint: disable=invalid-name
-from Stoner import Data
 from numpy import linspace, ones_like, sin, cos, pi
 from numpy.random import normal
+
+from Stoner import Data
 from Stoner.plot.utils import errorfill
 
 x = linspace(0, 10 * pi, 101)

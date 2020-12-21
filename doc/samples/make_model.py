@@ -4,6 +4,7 @@
 # pylint: disable=invalid-name, redefined-outer-name
 from numpy import linspace
 from numpy.random import normal
+
 from Stoner import Data
 from Stoner.analysis.fitting.models import make_model
 

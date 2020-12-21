@@ -1,9 +1,10 @@
 """Example of PowerLaw Fit."""
 # pylint: disable=invalid-name
-from Stoner import Data
-from Stoner.analysis.fitting.models.generic import PowerLaw, powerLaw
 from numpy import linspace
 from numpy.random import normal
+
+from Stoner import Data
+from Stoner.analysis.fitting.models.generic import PowerLaw, powerLaw
 
 # Make some data
 T = linspace(50, 500, 101)

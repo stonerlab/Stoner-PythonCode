@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name
 """Demonstrate a waterfall plot styled after the famous album cover from Joy Division."""
+from numpy import log10
 
 from Stoner import Data, DataFolder
 from Stoner.formats.instruments import RigakuFile
 from Stoner.plot.utils import joy_division
-from numpy import log10
 
 
 class RigakuFolder(DataFolder):

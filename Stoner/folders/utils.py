@@ -14,9 +14,9 @@ import re
 import string
 import fnmatch
 import pathlib
+from multiprocessing.pool import ThreadPool
 
 from numpy import array
-from multiprocessing.pool import ThreadPool
 import multiprocess as multiprocessing
 
 from Stoner.compat import string_types, _pattern_type

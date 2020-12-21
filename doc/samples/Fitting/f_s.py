@@ -1,12 +1,13 @@
 """Test Weak-localisation fitting."""
 # pylint: disable=invalid-name
+from numpy import logspace, ones_like, log10
+from numpy.random import normal
+
 from Stoner import Data
 from Stoner.analysis.fitting.models.e_transport import (
     fluchsSondheimer,
     FluchsSondheimer,
 )
-from numpy import logspace, ones_like, log10
-from numpy.random import normal
 
 B = logspace(log10(2), 2, 26)
 params = [12.5, 0.75, 1e3]

@@ -1,9 +1,10 @@
 """Simple use of lmfit to fit data."""
 # pylint: disable=invalid-name
+from numpy import linspace, random
+
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import PowerLaw
 from Stoner.analysis.fitting import odr_Model
-from numpy import linspace, random
 
 # Make some data
 x = linspace(0, 10.0, 101)

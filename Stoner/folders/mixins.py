@@ -15,8 +15,8 @@ from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 
-from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
 from Stoner.tools import isIterable, make_Data
+from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
 from ..core.base import metadataObject, string_to_type
 from ..core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__

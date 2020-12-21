@@ -6,11 +6,12 @@ read in data files. Supports loading from the Brucker D8
 # pylint: disable=invalid-name
 import numpy as np
 import wx
-from Stoner import Data
-from Stoner.compat import string_types
 
 from plugins.data_loader_framework import Template
 from plugins.utils import ShowWarningDialog
+
+from Stoner import Data
+from Stoner.compat import string_types
 
 
 class Plugin(Template):
