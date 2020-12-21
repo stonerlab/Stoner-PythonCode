@@ -178,7 +178,8 @@ class typedList(MutableSequence):
         if isIterable(name) or isinstance(name, slice):
             if not isIterable(value) or not all_type(value, self._type):
                 raise TypeError(
-                    f"Elelements of this list should be of type {self._type} and must set the correct number of elements"
+                    f"Elelements of this list should be of type {self._type} and must set "
+                    + "the correct number of elements"
                 )
         elif not isinstance(value, self._type):
             raise TypeError(f"Elelements of this list should be of type {self._type}")

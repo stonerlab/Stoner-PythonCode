@@ -1523,7 +1523,10 @@ class FittingMixin:
             )
             if result:
                 if header is None:
-                    header = f"Fitted {self.column_headers[self.find_col(ycolumn)]} with {ordinal(polynomial_order)} order polynomial"
+                    header = (
+                        f"Fitted {self.column_headers[self.find_col(ycolumn)]} with "
+                        + f"{ordinal(polynomial_order)} order polynomial"
+                    )
                 self.add_column(
                     np.polyval(p[i, :], x=self.column(_.xcol)), index=result, replace=replace, header=header
                 )

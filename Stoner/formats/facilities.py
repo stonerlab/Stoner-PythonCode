@@ -200,7 +200,7 @@ class MDAASCIIFile(Core.DataFile):
                         else:
                             colname = bits[-2]
                         if bits[-1] != "":
-                            f"{colname} ({bits[-1]})"
+                            colname += f"({bits[-1]})"
                         if colname in column_headers:
                             colname = f"{bits[0]}:{colname}"
                     else:

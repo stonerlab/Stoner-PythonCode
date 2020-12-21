@@ -630,10 +630,10 @@ class setas(MutableMapping):
         """Implement a get method."""
         try:
             return self[name]
-        except (IndexError, KeyError):
+        except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.")
+            raise KeyError(f"{name} is not in setas and no default was given.") from err
 
     def keys(self):
         """Acess mapping keys.
