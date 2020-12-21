@@ -159,7 +159,7 @@ class DataArray(ma.MaskedArray):
         ret = m[axes](self)
         if ret is None:
             raise StonerSetasError(
-                "Insufficient axes defined in setas to calculate the r component. need 2 not {}".format(axes)
+                f"Insufficient axes defined in setas to calculate the r component. need 2 not {axes}"
             )
         else:
             return ret
@@ -180,7 +180,7 @@ class DataArray(ma.MaskedArray):
         ret = m[axes](self)
         if ret is None:
             raise StonerSetasError(
-                "Insufficient axes defined in setas to calculate the theta component. need 2 not {}".format(axes)
+                f"Insufficient axes defined in setas to calculate the theta component. need 2 not {axes}"
             )
         else:
             return ret
@@ -201,7 +201,7 @@ class DataArray(ma.MaskedArray):
         ret = m[axes](self)
         if ret is None:
             raise StonerSetasError(
-                "Insufficient axes defined in setas to calculate the phi component. need 3 not {}".format(axes)
+                f"Insufficient axes defined in setas to calculate the phi component. need 3 not {axes}"
             )
         return ret
 
@@ -324,7 +324,7 @@ class DataArray(ma.MaskedArray):
             if ret.ndim > 0:
                 ret.column_headers = self.column_headers[indexer[-1]]
         if ret is None:
-            raise StonerSetasError("Tried accessing a {} column, but setas is not defined.".format(name))
+            raise StonerSetasError(f"Tried accessing a {name} column, but setas is not defined.")
         return ret
 
     def __getitem__(self, ix):

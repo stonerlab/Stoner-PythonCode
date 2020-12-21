@@ -313,7 +313,7 @@ class AttocubeScanMixin:
             v = metadata.attrs[i]
             t = typehints.get(i, "Detect")
             if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-                tmp.metadata["{}{{{}}}".format(i, t).strip()] = "{}".format(v).strip()
+                tmp.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
             else:
                 tmp[i] = metadata.attrs[i]
         tmp.filename = path.basename(g.name)
@@ -496,7 +496,7 @@ class AttocubeScanMixin:
             v = metadata[i]
             t = typehints.get(i, "Detect")
             if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-                self._common_metadata["{}{{{}}}".format(i, t).strip()] = "{}".format(v).strip()
+                self._common_metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
             else:
                 self._common_metadata[i] = metadata[i]
         grps.remove("common_metadata")

@@ -150,7 +150,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         close as possible.
         """
         if len(args) not in [0, 1]:
-            raise ValueError("ImageArray expects 0 or 1 arguments, {} given".format(len(args)))
+            raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
 
         # Deal with kwargs
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
@@ -194,7 +194,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             elif isinstance(arg, path_types) or loadfromfile:
                 # Filename- load datafile
                 if not os.path.exists(arg):
-                    raise ValueError("File path does not exist {}".format(arg))
+                    raise ValueError(f"File path does not exist {arg}")
                 ret = ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(arg, **array_args)  # pylint: disable=no-member
             elif isinstance(arg, ImageFile):
@@ -205,8 +205,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     ret = np.asarray(arg, **array_args).view(cls)
                     if ret.dtype == "O":  # object dtype - can't deal with this
                         raise ValueError
-                except ValueError:  # ok couldn't load from iterable, we're done
-                    raise ValueError("No constructor for {}".format(type(arg)))
+                except ValueError as err:  # ok couldn't load from iterable, we're done
+                    raise ValueError(f"No constructor for {arg}") from err
 
             if asfloat and ret.dtype.kind != "f":  # convert to float type in place
                 meta = ret.metadata  # preserve any metadata we may already have
@@ -259,7 +259,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         fmt = kargs.pop("fmt", os.path.splitext(filename)[1][1:])
         handlers = {"npy": cls._load_npy, "png": cls._load_png, "tiff": cls._load_tiff, "tif": cls._load_tiff}
         if fmt not in handlers:
-            raise ValueError("{} is not a recognised format for loading.".format(fmt))
+            raise ValueError(f"{fmt} is not a recognised format for loading.")
         ret = handlers[fmt](filename, **kargs)
         return ret
 
@@ -370,7 +370,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if len(args) == 0 and "box" in kargs.keys():
             args = kargs["box"]  # back compatability
         elif len(args) not in (1, 4):
-            raise ValueError("box accepts 1 or 4 arguments, {} given.".format(len(args)))
+            raise ValueError("box accepts 1 or 4 arguments, {len(args)} given.")
         if len(args) == 1:
             box = args[0]
             if isinstance(box, bool) and not box:  # experimental
@@ -394,7 +394,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 ]
                 box = list([int(x) for x in box])
             else:
-                raise ValueError("crop accepts tuple of length 4, {} given.".format(len(box)))
+                raise ValueError(f"crop accepts tuple of length 4, {len(box)} given.")
         else:
             box = list(args)
         for i, item in enumerate(box):  # replace None with max extent
@@ -410,7 +410,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             elif item is None:
                 box[i] = self.max_box[i]
             else:
-                raise TypeError("Arguments for box should be floats, integers or None, not {}".format(type(item)))
+                raise TypeError(f"Arguments for box should be floats, integers or None, not {type(item)}")
         return slice(box[2], box[3]), slice(box[0], box[1])
 
     #################################################################################################
@@ -530,11 +530,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             elif name + "$" in self._funcs:
                 ret = self._funcs[name + "$"]
                 ret = self._func_generator(ret)
-            elif ".*__{}$".format(name) in self._funcs:
-                ret = self._funcs[".*__{}$".format(name)]
+            elif f".*__{name}$" in self._funcs:
+                ret = self._funcs[f".*__{name}$"]
                 ret = self._func_generator(ret)
             if ret is None:
-                raise AttributeError("No attribute found of name {}".format(name))
+                raise AttributeError(f"No attribute found of name {name}")
         return ret
 
     def _func_generator(self, workingfunc):
@@ -842,11 +842,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if not isinstance(fmt, list):
             fmt = [fmt]
         if set(fmt) & set(self.fmts) == set([]):
-            raise ValueError("fmt must be {}".format(",".join(self.fmts)))
+            raise ValueError(f"fmt must be {','.join(self.fmts)}")
         fmt = ["tiff" if f == "tif" else f for f in fmt]
         self.filename = filename
         for fm in fmt:
-            saver = getattr(self, "save_{}".format(fm), "save_tif")
+            saver = getattr(self, f"save_{fm}", "save_tif")
             if fm == "tiff":
                 forcetype = kargs.pop("forcetype", False)
                 saver(filename, forcetype)
@@ -1228,7 +1228,7 @@ class ImageFile(metadataObject):
                 if k == self._image.dtype:
                     break
             else:
-                raise TypeError("Unrecognised unsigned type {}, cannot negate sensibly !".format(self._image.dtype))
+                raise TypeError(f"Unrecognised unsigned type {self._image.dtype}, cannot negate sensibly !")
             high_val = dtype_range[k][1]
             ret.image = high_val - self.image
         else:
@@ -1268,8 +1268,9 @@ class ImageFile(metadataObject):
 
     def __repr__(self):
         """Implement standard representation for text based consoles."""
-        return "{}({}) of shape {} ({}) and {} items of metadata".format(
-            self.filename, type(self), self.shape, self.image.dtype, len(self.metadata)
+        return (
+            f"{self.filename}({type(self)}) of shape {self.shape} ({self.image.dtype}) and"
+            + f" {len(self.metadata)} items of metadata"
         )
 
     ###################################################################################################################

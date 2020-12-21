@@ -52,6 +52,6 @@ d.annotate_fit(
     y=0.65,
     fontdict={"size": "x-small", "color": "green"},
 )
-
+d.ylim(0, 500)
 d.title = "Qudratic Fitting"
 plt.legend(loc=4)

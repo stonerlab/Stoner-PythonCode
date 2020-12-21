@@ -41,7 +41,7 @@ def __add_core__(result, other):
                     result.groups[grp] = copy(other.groups[grp])
         else:
             raise RuntimeError(
-                "Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type, result.type)
+                f"Incompatible types ({other.type} must be a subclass of {result.type}) in the two folders."
             )
     elif isinstance(other, result.type):
         result.append(other)
@@ -57,11 +57,11 @@ def __div_core__(result, other):
         return result
     if isinstance(other, int_types):  # Simple decimate
         for i in range(other):
-            result.add_group("Group {}".format(i))
+            result.add_group(f"Group {i}")
         for ix in range(len(result)):
             d = result.__getter__(ix, instantiate=None)
             group = ix % other
-            result.groups["Group {}".format(group)].__setter__(result.__lookup__(ix), d)
+            result.groups[f"Group {group}"].__setter__(result.__lookup__(ix), d)
         result.__clear__()
         return result
     return NotImplemented
@@ -103,7 +103,7 @@ def __sub_core_string__(result, other):
     if other in result.__names__():
         result.__deleter__(other)
     else:
-        raise RuntimeError("{} is not in the folder.".format(other))
+        raise RuntimeError(f"{other} is not in the folder.")
     return result
 
 
@@ -113,7 +113,7 @@ def __sub_core_data__(result, other):
     if othername in result.__names__():
         result.__deleter__(othername)
     else:
-        raise RuntimeError("{} is not in the folder.".format(othername))
+        raise RuntimeError(f"{othername} is not in the folder.")
     return result
 
 
@@ -128,7 +128,7 @@ def __sub_core_folder__(result, other):
                 result.groups[othergroup] -= other.groups[othergroup]
     else:
         raise RuntimeError(
-            "Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type, result.type)
+            f"Incompatible types ({other.type} must be a subclass of {result.type}) in the two folders."
         )
     return result
 
@@ -291,7 +291,7 @@ class baseFolder(MutableSequence):
                     value = kargs.pop(k, None)
                     self.__setattr__(k, value)
                     if self.debug:
-                        print("Setting self.{} to {}".format(k, value))
+                        print(f"Setting self.{k} to {value}")
         super().__init__()
 
     ###########################################################################
@@ -529,7 +529,7 @@ class baseFolder(MutableSequence):
         elif isinstance(value, metadataObject):
             self._type = value.__class__
         else:
-            raise TypeError("{} os neither a subclass nor instance of metadataObject".format(type(value)))
+            raise TypeError(f"{type(value)} os neither a subclass nor instance of metadataObject")
         self._instance = None  # Reset the instance cache
 
     ################### Methods for subclasses to override to handle storage #####
@@ -589,7 +589,7 @@ class baseFolder(MutableSequence):
             return name
         name = self.objects[name]
         if not isinstance(name, self._type):
-            raise KeyError("{} is not a valid {}".format(name, self._type))
+            raise KeyError(f"{name} is not a valid {self._type}")
         return self._update_from_object_attrs(name)
 
     def __setter__(self, name, value, force_insert=False):
@@ -733,7 +733,7 @@ class baseFolder(MutableSequence):
         if isinstance(name, int_types):
             if -len(self) < name < len(self):
                 return self.__getter__(self.__lookup__(name), instantiate=True)
-            raise IndexError("{} is out of range.".format(name))
+            raise IndexError(f"{name} is out of range.")
         if isinstance(name, slice):  # Possibly ought to return another Folder?
             other = self.__clone__(attrs_only=True)
             for iname in islice(self.__names__(), name.start, name.stop, name.step):
@@ -767,10 +767,10 @@ class baseFolder(MutableSequence):
                         return item.metadata.slice(name, output="Data")
                     if self.debug:
                         print(name)
-                    raise e
-            raise KeyError("Can't index the baseFolder with {}".format(name))
+                    raise
+            raise KeyError(f"Can't index the baseFolder with {name}")
 
-        raise KeyError("Can't index the baseFolder with {}".format(name))
+        raise KeyError(f"Can't index the baseFolder with {name}")
 
     def __setitem__(self, name, value):
         """Attempt to store a value in either the groups or objects.
@@ -791,9 +791,9 @@ class baseFolder(MutableSequence):
             if -len(self) < name < len(self):
                 self.__setter__(self.__lookup__(name), value)
             else:
-                raise IndexError("{} is out of range".format(name))
+                raise IndexError(f"{name} is out of range")
         else:
-            raise KeyError("{} is not a valid key for baseFolder".format(name))
+            raise KeyError(f"{name} is not a valid key for baseFolder")
 
     def __delitem__(self, name):
         """Attempt to delete an item from either a group or list of files.
@@ -809,19 +809,19 @@ class baseFolder(MutableSequence):
             elif name in self.objects:
                 self.__deleter__(self.__lookup__(name))
             else:
-                raise KeyError("Can't use {} as a key to delete in baseFolder. ({})".format(name, self.__names__()))
+                raise KeyError(f"Can't use {name} as a key to delete in baseFolder. ({self.__names__()})")
         elif isinstance(name, int_types):
             if -len(self) < name <= len(self):
                 self.__deleter__(self.__lookup__(name))
             else:
-                raise IndexError("{} is out of range.".format(name))
+                raise IndexError(f"{name} is out of range.")
         elif isinstance(name, slice):
             indices = name.indices(len(self))
             name = range(*indices)
             for ix in sorted(name, reverse=True):
                 del self[ix]
         else:
-            raise KeyError("Can't use {} as a key to delete in baseFolder. ({})".format(name, repr(self.__names__())))
+            raise KeyError(f"Can't use {name} as a key to delete in baseFolder. ({repr(self.__names__())})")
 
     def __contains__(self, name):
         """Check whether name is in a list of groups or in the list of names."""
@@ -942,9 +942,7 @@ class baseFolder(MutableSequence):
         cls = self.__class__.__name__
         pth = self.key
         pattern = getattr(self, "pattern", "")
-        s = "{}({}) with pattern {} has {} files and {} groups\n".format(
-            cls, pth, pattern, len(self), len(self.groups)
-        )
+        s = f"{cls}({pth}) with pattern {pattern} has {len(self)} files and {len(self.groups)} groups\n"
         if not short:
             for r in self.ls:
                 s += "\t" + r + "\n"
@@ -972,7 +970,7 @@ class baseFolder(MutableSequence):
             "objects",
             "key",
         ]:  # pass ddirectly through for private attributes
-            raise AttributeError("{} is a protected attribute and may not be deleted!".format(name))
+            raise AttributeError(f"{name} is a protected attribute and may not be deleted!")
         super().__delattr__(name)
 
     ###########################################################################
@@ -1022,8 +1020,8 @@ class baseFolder(MutableSequence):
             for k in self._object_attrs:
                 try:
                     setattr(obj, k, self._object_attrs[k])
-                except AttributeError:
-                    raise AttributeError("Can't set attribute {} to {}".format(k, self._object_attrs[k]))
+                except AttributeError as err:
+                    raise AttributeError(f"Can't set attribute {k} to {self._object_attrs[k]}") from err
         return obj
 
     def __walk_groups(self, walker, **kargs):
@@ -1070,7 +1068,7 @@ class baseFolder(MutableSequence):
                 )
                 if group and replace_terminal and isinstance(tmp, metadataObject):
                     removeGroups.append(g)
-                    tmp.filename = "{}-{}".format(g, tmp.filename)
+                    tmp.filename = f"{g}-{tmp.filename}"
                     self.append(tmp)
                     ret.append(tmp)
             for g in removeGroups:
@@ -1214,7 +1212,7 @@ class baseFolder(MutableSequence):
             if section in tmp.groups:
                 tmp = tmp.groups[section]
             else:
-                raise KeyError("No group {} exists and not creating groups.".format(section))
+                raise KeyError(f"No group {section} exists and not creating groups.")
         return tmp
 
     def filter(self, filter=None, invert=False, copy=False):  # pylint: disable=redefined-builtin
@@ -1295,14 +1293,14 @@ class baseFolder(MutableSequence):
 
         for g in self.groups:
             if self.debug:
-                print("{}->{}".format(self.key, self.groups[g].key))
+                print(f"{self.key}->{self.groups[g].key}")
             self.groups[g].flatten()
             for n in self.groups[g].__names__():
                 value = self.groups[g].__getter__(n, instantiate=None)
                 old_name = pathjoin(self.groups[g].root, n)
                 new_name = path.relpath(old_name, start=self.root)
                 if self.debug:
-                    print("\t{}::{}=>{}".format(g, old_name, new_name))
+                    print(f"\t{g}::{old_name}=>{new_name}")
 
                 if hasattr(value, "filename"):
                     value.filename = new_name
@@ -1393,7 +1391,7 @@ class baseFolder(MutableSequence):
                 m = fnmatch.filter(search, name)
                 if len(m) > 0:
                     return search.index(m[0] + start)
-                raise ValueError("{} is not a name of a metadataObject in this baseFolder.".format(name))
+                raise ValueError(f"{name} is not a name of a metadataObject in this baseFolder.")
             return search.index(self.__lookup__(name)) + start
         if isinstance(name, _pattern_type):
             for i, n in enumerate(search):
@@ -1414,7 +1412,7 @@ class baseFolder(MutableSequence):
         i = 1
         while name in names:  # Since we're adding a new entry, make sure we have a unique name !
             name, ext = path.splitext(name)
-            name = "{}({}).{}".format(name, i, ext)
+            name = f"{name}({i}).{ext}"
             i += 1
         if -len(self) < ix < len(self):
             ix = ix % len(self)
@@ -1441,17 +1439,17 @@ class baseFolder(MutableSequence):
         if isinstance(value, self.type):
             name = getattr(value, "filename", "")
             if name == "":
-                name = "Untitled-{}".format(self._last_name)
+                name = f"Untitled-{self._last_name}"
                 while name in self:
                     self._last_name += 1
-                    name = "Untitled-{}".format(self._last_name)
+                    name = f"Untitled-{self._last_name}"
             return name
         if isinstance(value, string_types):
             return value
-        name = "Untitled-{}".format(self._last_name)
+        name = f"Untitled-{self._last_name}"
         while name in self:
             self._last_name += 1
-            name = "Untitled-{}".format(self._last_name)
+            name = f"Untitled-{self._last_name}"
         return name
 
     def pop(self, name=-1, default=None):  # pylint: disable=arguments-differ

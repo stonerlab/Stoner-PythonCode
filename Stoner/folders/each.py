@@ -194,7 +194,7 @@ class Item:
         elif name in self._folder._instance_attrs:
             del self._folder._instance_attrs[name]
         else:
-            raise AttributeError("Unrecognised attribute {}".format(name))
+            raise AttributeError(f"Unrecognised attribute {name}")
 
     def __getattr__(self, name):
         """Handle some special case attributes that provide alternative views of the objectFolder.
@@ -230,8 +230,8 @@ class Item:
                     ret = getattr(instance, name, None)
                 if ret is None or (hasattr(ret, "mask") and np.all(ret.mask)):
                     raise AttributeError
-        except AttributeError:  # Ok, pass back
-            raise AttributeError("{} is not an Attribute of {} or {}".format(name, type(self), type(instance)))
+        except AttributeError as err:  # Ok, pass back
+            raise AttributeError(f"{name} is not an Attribute of {type(self)} or {type(instance)}") from err
         # except TypeError as err:  # Can be triggered if self.instance lacks the attribute
         #     if len(self._folder) and hasattr(self._folder[0], name):
         #         ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
@@ -276,7 +276,7 @@ class Item:
                     d = self._folder.__getter__(d)
                     setattr(d, name, v)
         else:
-            raise AttributeError("Unknown attribute {}".format(name))
+            raise AttributeError(f"Unknown attribute {name}")
 
     def __getattr_proxy(self, item):
         """Make a prpoxy call to access a method of the metadataObject like types.

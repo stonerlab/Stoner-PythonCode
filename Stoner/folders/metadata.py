@@ -103,7 +103,7 @@ def _slice_keys(args, possible=None):
         elif isIterable(k):
             keys.extend(_slice_keys(k, possible))
         else:
-            raise KeyError("{} cannot be used as a key name or set of key names".format(type(k)))
+            raise KeyError(f"{type(k)} cannot be used as a key name or set of key names")
     return keys
 
 
@@ -185,8 +185,9 @@ class MetadataProxy(MutableMapping):
 
     def __repr__(self):
         """Give an informative dispaly of the metadata represenation."""
-        return "The {} {} has {} common keys of metadata in {} {} objects".format(
-            self._folder.__class__.__name__, self._folder.key, len(self), len(self._folder), self._folder.type.__name__
+        return (
+            f"The {self._folder.__class__.__name__} {self._folder.key} has"
+            + f" {len(self)} common keys of metadata in {len(self._folder)} {self._folder.type.__name__} objects"
         )
 
     def __delitem__(self, item):
@@ -199,13 +200,13 @@ class MetadataProxy(MutableMapping):
             except KeyError:
                 pass
         if not ok:  # item was not a key in any data file
-            raise KeyError("{} was not recognised as a metadata key in any object in the folder.".format(item))
+            raise KeyError(f"{item} was not recognised as a metadata key in any object in the folder.")
 
     def __getitem__(self, value):
         """Return an array formed by getting a single key from each object in the Folder."""
         ret = self.slice(value, mask_missing=True, output="array")
         if ret.size == 0:
-            raise KeyError("{} did not match any keys in any file".format(value))
+            raise KeyError(f"{value} did not match any keys in any file")
         return ret
 
     def __setitem__(self, key, value):
@@ -317,7 +318,7 @@ class MetadataProxy(MutableMapping):
         output = kwargs.pop("output", None)
         mask_missing = kwargs.pop("mask_missing", False)
         if kwargs:
-            raise SyntaxError("Unused keyword arguments : {}".format(kwargs))
+            raise SyntaxError(f"Unused keyword arguments : {kwargs}")
         if output is None:  # Sort out a definitive value of output
             output = "dict" if not values_only else "smart"
         if isinstance(output, string_types):
@@ -335,7 +336,7 @@ class MetadataProxy(MutableMapping):
             "smart": _fmt_as_smart,
         }
         if output not in outputs:  # Check for good output value
-            raise SyntaxError("output of slice metadata must be either dict, list, or array not {}".format(output))
+            raise TypeError(f"output of slice metadata must be either dict, list, or array not {output}")
         formatter = outputs[output]
         possible = list(self.all_keys()) if mask_missing else self.common_keys
         keys = _slice_keys(args, possible)
@@ -348,6 +349,6 @@ class MetadataProxy(MutableMapping):
                 if k in r and isLikeList(r[k]) and len(r[k]) > 0:
                     v = r[k]
                     del r[k]
-                    r.update({"{}[{}]".format(k, i): vi for i, vi in enumerate(v)})
+                    r.update({f"{k}[{i}]": vi for i, vi in enumerate(v)})
 
         return formatter(results)

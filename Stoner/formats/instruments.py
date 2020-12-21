@@ -54,7 +54,7 @@ class LSTemperatureFile(Core.DataFile):
                     break
                 parts = [p.strip() for p in line.split(":")]
                 if len(parts) != 2:
-                    raise Core.StonerLoadError("Header doesn't contain two parts at {}".format(line.strip()))
+                    raise Core.StonerLoadError(f"Header doesn't contain two parts at {line.strip()}")
                 keys.append(parts[0])
                 vals.append(parts[1])
             else:
@@ -114,33 +114,33 @@ class LSTemperatureFile(Core.DataFile):
                 ("Number of Breakpoints", len(self)),
             ):
                 if k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit"]:
-                    kstr = "{:16s}".format(k + ":")
+                    kstr = f"{k+':':16s}"
                 else:
-                    kstr = "{}:   ".format(k)
+                    kstr = f"{k}:   "
                 v = self.get(k, v)
                 if k == "Data Format":
                     units = ["()", "()", "()", "()", "(Log Ohms/Kelvin)", "(Log Ohms/Log Kelvin)"]
-                    vstr = "{}      {}".format(v, units[int(v)])
+                    vstr = f"{v}      {units[int(v)]}"
                 elif k == "SetPointLimit":
-                    vstr = "{}      (Kelvin)".format(v)
+                    vstr = f"{v}      (Kelvin)"
                 elif k == "Temperature coefficient":
-                    vstr = "{} {}".format(v, ["(positive)", "(negative)"][v])
+                    vstr = f"{v} {['(positive)', '(negative)'][v]}"
                 elif k == "Number of Breakpoints":
                     vstr = str(len(self))
                 else:
                     vstr = str(v)
-                f.write(u"{}{}\n".format(kstr, vstr))
-            f.write(u"\n")
-            f.write(u"No.   ")
+                f.write(f"{kstr}{vstr}\n")
+            f.write("\n")
+            f.write("No.   ")
             for i in cols:
-                f.write(u"{:11s}".format(self.column_headers[i]))
-            f.write(u"\n\n")
+                f.write(f"{self.column_headers[i]:11s}")
+            f.write("\n\n")
             for i in range(
                 len(self.data)
             ):  # This is a slow way to write the data, but there should only ever be 200 lines
-                line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i, cols]])
-                f.write(u"{}\t".format(i))
-                f.write(u"{}\n".format(line))
+                line = "\t".join([f"{n:<10.8f}" for n in self.data[i, cols]])
+                f.write(f"{i}\t")
+                f.write(f"{line}\n")
         self.filename = filename
         return self
 
@@ -193,7 +193,7 @@ class QDFile(Core.DataFile):
                     if parts[1] == "APPNAME":
                         parts[1], parts[2] = parts[2], parts[1]
                     if len(parts) > 2:
-                        key = "{}.{}".format(parts[0], parts[2])
+                        key = f"{parts[0]}.{parts[2]}"
                     else:
                         raise Core.StonerLoadError("No data in file!")
                     key = key.title()
@@ -202,12 +202,12 @@ class QDFile(Core.DataFile):
                     key = parts[0].title()
                     value = " ".join(parts[1:])
                 elif parts[0] == "FIELDGROUP":
-                    key = "{}.{}".format(parts[0], parts[1]).title()
-                    value = "[{}]".format(",".join(parts[2:]))
+                    key = f"{parts[0]}.{parts[1]}".title()
+                    value = f'[{",".join(parts[2:])}]'
                 elif parts[0] == "STARTUPAXIS":
                     axis = parts[1][0].lower()
                     setas[axis] = setas.get(axis, []) + [int(parts[2])]
-                    key = "Startupaxis-{}".format(parts[1].strip())
+                    key = f"Startupaxis-{parts[1].strip()}"
                     value = parts[2].strip()
                 else:
                     key = parts[0] + "," + parts[1]
@@ -702,13 +702,13 @@ class VSMFile(Core.DataFile):
                     elif i == header_line:
                         unit_string = line.strip()
                         column_headers = [
-                            "{} ({})".format(h.strip(), u.strip())
+                            f"{h.strip()} ({u.strip()})"
                             for h, u in zip(header_string.split(header_delim), unit_string.split(header_delim))
                         ]
                     elif i > 3:
                         break
-        except (StonerAssertionError, ValueError, AssertionError, TypeError) as e:
-            raise Core.StonerLoadError("Not a VSM File" + str(e.args))
+        except (StonerAssertionError, ValueError, AssertionError, TypeError) as err:
+            raise Core.StonerLoadError(f"Not a VSM File {err}") from err
         self.data = np.genfromtxt(
             self.filename,
             dtype="float",

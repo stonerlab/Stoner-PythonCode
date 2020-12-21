@@ -34,7 +34,7 @@ def __add_core__(result, other):
         if path.exists(othername) and othername not in result:
             result.append(othername)
         else:
-            raise RuntimeError("{} either does not exist of is already in the folder.".format(othername))
+            raise RuntimeError(f"{othername} either does not exist of is already in the folder.")
     else:
         return _base__add_core__(result, other)
     return result
@@ -318,9 +318,7 @@ class DiskBasedFolderMixin:
         elif isIterable(value):
             self._pattern = [x for x in value]
         else:
-            raise ValueError(
-                "pattern should be a string, regular expression or iterable object not a {}".format(type(value))
-            )
+            raise ValueError(f"pattern should be a string, regular expression or iterable object not a {value}")
 
     def fetch(self):
         """Preload the contents of the DiskBasedFolderMixin.
@@ -383,7 +381,7 @@ class DiskBasedFolderMixin:
         if recursive and not self.multifile:  # No recursion in multifile mode
             for d in dirs:
                 if self.debug:
-                    print("Entering directory {}".format(d))
+                    print(f"Entering directory {d}")
                 self.add_group(d)
                 self.groups[d].getlist(
                     directory=path.join(root, d), recursive=recursive, flatten=flatten, discard_earlier=discard_earlier
@@ -423,12 +421,12 @@ class DiskBasedFolderMixin:
             elif len(tmp) == 1:
                 for h in tmp.column_headers:
                     tmp[h] = tmp.column(h)[0]
-                    tmp["{}_stdev".format(h)] = None
+                    tmp[f"{h}_stdev"] = None
             else:
                 for h in tmp.column_headers:
                     try:
                         tmp[h] = mean(masked_invalid(tmp.column(h)))
-                        tmp["{}_stdev".format(h)] = std(masked_invalid(tmp.column(h)))
+                        tmp[f"{h}_stdev"] = std(masked_invalid(tmp.column(h)))
                     except ValueError:
                         continue
         tmp["Loaded from"] = tmp.filename
@@ -523,7 +521,7 @@ class DataMethodsMixin:
             elif isIterable(m):
                 args.extend(m)
             else:
-                raise TypeError("Metadata values should be strings, or lists of strings, not {}".format(type(m)))
+                raise TypeError(f"Metadata values should be strings, or lists of strings, not {type(m)}")
         metadata = args
 
         def _extractor(group, trail, metadata):
@@ -600,7 +598,7 @@ class DataMethodsMixin:
             results.add_column(xbase, header=xtitle, setas="x")
             if cols["has_xerr"]:
                 xerrdata = group[0].column(xerr)
-                xerr_title = "Error in {}".format(xtitle)
+                xerr_title = f"Error in {xtitle}"
                 results.add_column(xerrdata, header=xerr_title, setas="d")
             for f in group:
                 if lookup:
@@ -614,7 +612,7 @@ class DataMethodsMixin:
                     if cols["has_xerr"]:
                         xerr = cols["xerr"]
                         xerrdata = f.column(xerr)
-                        xerr_title = "Error in {}".format(xtitle)
+                        xerr_title = f"Error in {xtitle}"
                         results.add_column(xerrdata, header=xerr_title, setas="d")
                 for col, has_err, ecol, setcol, setecol in zip(
                     ["ycol", "zcol", "ucol", "vcol", "wcol"],
@@ -627,12 +625,12 @@ class DataMethodsMixin:
                         continue
                     data = f.column(cols[col])
                     for i in range(len(cols[col])):
-                        title = "{}:{}".format(path.basename(f.filename), f.column_headers[cols[col][i]])
+                        title = f"{path.basename(f.filename)}:{f.column_headers[cols[col][i]]}"
                         results.add_column(data[:, i], header=title, setas=setcol)
                     if has_err != "" and cols[has_err]:
                         err_data = f.column(cols[ecol])
                         for i in range(len(cols[ecol])):
-                            title = "{}:{}".format(path.basename(f.filename), f.column_headers[cols[ecol][i]])
+                            title = f"{path.basename(f.filename)}:{f.column_headers[cols[ecol][i]]}"
                             results.add_column(err_data[:, i], header=title, setas=setecol)
             return results
 

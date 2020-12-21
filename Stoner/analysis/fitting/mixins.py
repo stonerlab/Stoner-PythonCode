@@ -69,7 +69,7 @@ class odr_Model(odrModel):
                 return model.fcn(beta, x)
 
             self.func = _func
-            meta["param_names"] = model.meta.pop("param_names", ["Param_{}".format(ix) for ix, p in enumerate(p0)])
+            meta["param_names"] = model.meta.pop("param_names", [f"Param_{ix}" for ix, p in enumerate(p0)])
             meta["name"] = model.fcn.__name__
         elif callable(model):
             self.model = None
@@ -157,7 +157,7 @@ class MimizerAdaptor:
             if not isinstance(hint, lmfit.Parameter):
                 hint = lmfit.Parameter(**hint)
             if not hasattr(hint, "value"):
-                raise RuntimeError("At the very least we need a starting value for the {} parameter".format(name))
+                raise RuntimeError(f"At the very least we need a starting value for the {name} parameter")
             v = hint.value
             p0.append(v)
             limits = [v * 10, v * 0.1]
@@ -310,26 +310,24 @@ class _curve_fit_result:
 
     def fit_report(self):
         """Create a Fit report like lmfit does."""
-        template = """[[ Model ]]
-    {}
+        template = f"""[[ Model ]]
+    {self.name}
 [[ Fit Statistics ]]
-    # function evals   = {}
-    # data points      = {}
-    # variables        = {}
-    chi-square         = {}
-    reduced chi-square = {}
-    Akaike info crit   = {}
-    Bayesian info crit = {}
-[[ Variables ]]\n""".format(
-            self.name, self.nfev, self.N, self.n_p, self.chisqr, self.redchi, self.aic, self.bic
-        )
+    # function evals   = {self.nfev}
+    # data points      = {self.N}
+    # variables        = {self.n_p}
+    chi-square         = {self.chisqr}
+    reduced chi-square = {self.redchi}
+    Akaike info crit   = {self.aic}
+    Bayesian info crit = {self.bic}
+[[ Variables ]]\n"""
         for p, v, e, p0 in zip(self.params, self.popt, self.perr, self.p0):
-            template += "\t{}: {} +/- {} ({:.3f}%) (init {})\n".format(p, v, e, (e * 100 / v), p0)
+            template += f"\t{p}: {v} +/- {e} ({(e * 100 / v):.3f}%) (init {p0})\n"
         template += "[[Correlations]] (unreported correlations are <  0.100)\n"
         for i, p in enumerate(self.params):
             for j in range(i + 1, len(self.params)):
                 if np.abs(self.pcov[i, j]) > 0.1:
-                    template += "\t({},{})\t\t={:.3f}".format(p, list(self.params)[j], self.pcov[i, j])
+                    template += f"\t({p},{list(self.params)[j]})\t\t={self.pcov[i, j]:.3f}"
         return template
 
 
@@ -411,7 +409,7 @@ def _prep_lmfit_model(model, kargs):
     elif callable(model):
         model = Model(model)
     else:
-        raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
+        raise TypeError(f"{model} must be an instance of lmfit.Model or a cllable function!")
     # Nprmalise p0 to be lmfit.Parameters
     # Get a default prefix for the model
     prefix = str(kargs.pop("prefix", model.__class__.__name__))
@@ -471,12 +469,11 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
         return p0, single_fit
 
     if not isinstance(p0, lmfit.Parameters):
-        raise RuntimeError("Unknown data type for initial guess vector p0: {}".format(type(p0)))
+        raise RuntimeError(f"Unknown data type for initial guess vector p0: {type(p0)}")
     if set(p0.keys()) < set(model.param_names):
         raise RuntimeError(
-            "Missing some values from the initial guess vector p0: {}".format(set(model.param_names) - set(p0.keys()))
+            f"Missing some values from the initial guess vector p0: {set(model.param_names) - set(p0.keys())}"
         )
-
     return p0, single_fit
 
 
@@ -537,9 +534,7 @@ class FittingMixin:
             display_names = getattr(model, "display_names", model.param_names)
             units = getattr(model, "units", [""] * len(param_names))
         else:
-            raise RuntimeError(
-                "model should be either an lmfit.Model or a callable function, not a {}".format(type(model))
-            )
+            raise RuntimeError(f"model should be either an lmfit.Model or a callable function, not a {type(model)}")
 
         if prefix is not None:
 
@@ -761,7 +756,7 @@ class FittingMixin:
             res_dict = {}
             for p in fit.params:
                 res_dict[p] = fit.params[p].value
-                res_dict["d_{}".format(p)] = fit.params[p].stderr
+                res_dict[f"d_{p}"] = fit.params[p].stderr
             res_dict["chi-square"] = fit.chisqr
             res_dict["red. chi-sqr"] = fit.redchi
             res_dict["nfev"] = fit.nfev
@@ -775,11 +770,11 @@ class FittingMixin:
                 "dict": res_dict,
             }
             if output not in retval:
-                raise RuntimeError("Failed to recognise output format:{}".format(output))
+                raise RuntimeError(f"Failed to recognise output format:{output}")
             else:
                 return retval[output]
         else:
-            raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
+            raise RuntimeError(f"Failed to complete fit. Error was:\n{fit.lmdif_message}\n{fit.message}")
 
     def _record_curve_fit_result(
         self, func, fit, xcol, header, result, replace, residuals=False, ycol=None, prefix=None
@@ -842,13 +837,13 @@ class FittingMixin:
             fit_data = func(self.data[:, xcol], *popt)
             chisq = np.sum((data - fit_data) ** 2) / nfree
         else:
-            raise RuntimeError("Unable to understand {} as a fitting result".format(type(fit)))
+            raise RuntimeError("Unable to understand {type(fit)} as a fitting result")
 
         for val, err, name, label, unit in zip(popt, perr, args, labels, units):
-            self["{}:{}".format(f_name, name)] = val
-            self["{}:{} err".format(f_name, name)] = err
-            self["{}:{} label".format(f_name, name)] = self.metadata.get("{}:{} label".format(f_name, name), label)
-            self["{}:{} unit".format(f_name, name)] = self.metadata.get("{}:{} unit".format(f_name, name), unit)
+            self[f"{f_name}:{name}"] = val
+            self[f"{f_name}:{name} err"] = err
+            self[f"{f_name}:{name} label"] = self.metadata.get(f"{f_name}:{name} label", label)
+            self[f"{f_name}:{name} unit"] = self.metadata.get(f"{f_name}:{name} unit", unit)
 
         if not isinstance(header, string_types):
             header = "Fitted with " + func.__name__
@@ -882,12 +877,12 @@ class FittingMixin:
                 else:
                     residuals_idx = residuals
                 self.add_column(residual_vals, index=residuals_idx, replace=False, header=header + ":residuals")
-                self["{}:mean residual".format(f_name)] = np.mean(residual_vals)
-                self["{}:std residual".format(f_name)] = np.std(residual_vals)
-                self["{}:chi^2".format(f_name)] = chisq
-                self["{}:chi^2 err".format(f_name)] = np.sqrt(2 / len(residual_vals)) * chisq
+                self[f"{f_name}:mean residual"] = np.mean(residual_vals)
+                self[f"{f_name}:std residual"] = np.std(residual_vals)
+                self[f"{f_name}:chi^2"] = chisq
+                self[f"{f_name}:chi^2 err"] = np.sqrt(2 / len(residual_vals)) * chisq
         if nfev is not None:
-            self["{}:nfev".format(f_name)] = nfev
+            self[f"{f_name}:nfev"] = nfev
 
         self.mask = tmp_mask
         # Make row object
@@ -895,7 +890,7 @@ class FittingMixin:
         ch = []
         for v, e, a in zip(popt, perr, args):
             row.extend([v, e])
-            ch.extend([a, "{} stderr".format(a)])
+            ch.extend([a, f"{a} stderr"])
         row.append(chisq)
         ch.append("$\\chi^2$")
         cls = self.data.__class__
@@ -941,13 +936,16 @@ class FittingMixin:
             fit_result.redchi = fit_result.sum_square / (len(fit_result.y) - len(fit_result.beta))
             fit_result.chisqr = fit_result.sum_square
 
-            tmp = "Beta:{}\nBeta Std Error:{}\nBeta Covariance:{}\n".format(
-                fit_result.beta, fit_result.sd_beta, fit_result.cov_beta
-            )
+            tmp = f"""Beta:{fit_result.beta}
+            Beta Std Error:{fit_result.sd_beta}
+            Beta Covariance:{fit_result.cov_beta}
+            """
+
             if hasattr(fit_result, "info"):
-                tmp += "Residual Variance:{}\nInverse Condition #:{}\nReason(s) for Halting:\n".format(
-                    fit_result.res_var, fit_result.inv_condnum
-                )
+                tmp += f"""Residual Variance:{fit_result.res_var}
+                Inverse Condition #:{fit_result.inv_condnum}
+                Reason(s) for Halting:
+                """
                 for r in fit_result.stopreason:
                     tmp += "  %s\n" % r
             tmp += f""""Sum of orthogonal distance (~chi^2):{fit_result.chisqr}
@@ -972,7 +970,7 @@ class FittingMixin:
         ret_dict = {}
         for i, p in enumerate(param_names):
             row.extend([fit_result.beta[i], fit_result.sd_beta[i]])
-            ret_dict[p], ret_dict["d_{}".format(p)] = fit_result.beta[i], fit_result.sd_beta[i]
+            ret_dict[p], ret_dict[f"d_{p}"] = fit_result.beta[i], fit_result.sd_beta[i]
         row.append(fit_result.redchi)
         ret_dict["chi-square"] = fit_result.chisqr
         ret_dict["red. chi-sqr"] = fit_result.redchi
@@ -988,7 +986,7 @@ class FittingMixin:
             "dict": ret_dict,
         }
         if output not in retval:
-            raise RuntimeError("Failed to recognise output format:{}".format(output))
+            raise RuntimeError(f"Failed to recognise output format:{output}")
         return retval[output]
 
     def curve_fit(self, func, xcol=None, ycol=None, sigma=None, **kargs):
@@ -1194,8 +1192,8 @@ class FittingMixin:
                 )
             try:
                 retvals.append(getattr(report, output))
-            except AttributeError:
-                raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
+            except AttributeError as err:
+                raise RuntimeError(f"Specified output: {kargs['output']}, from curve_fit not recognised") from err
         if i == 0:
             retvals = retvals[0]
         return retvals
@@ -1317,7 +1315,7 @@ class FittingMixin:
         )
         ret_dict = {}
         for i, p in enumerate(model.param_names):
-            ret_dict[p], ret_dict["d_{}".format(p)] = row[2 * i], row[2 * i + 1]
+            ret_dict[p], ret_dict[f"d_{p}"] = row[2 * i], row[2 * i + 1]
         ret_dict["chi-square"] = polish.chisqr
         ret_dict["red. chi-sqr"] = polish.redchi
         ret_dict["nfev"] = fit.nfev
@@ -1332,7 +1330,7 @@ class FittingMixin:
             "dict": fit.dict,
         }
         if output not in retval:
-            raise RuntimeError("Failed to recognise output format:{}".format(output))
+            raise RuntimeError(f"Failed to recognise output format:{output}")
         return retval[output]
 
     def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
@@ -1450,18 +1448,12 @@ class FittingMixin:
                 prefix = ret["lmfit.prefix"][-1]
                 ix = 0
                 for ix, p in enumerate(model.param_names):
-                    if "{}{} label".format(prefix, p) in self:  # Get a label for the columns
-                        label = self["{}{} label".format(prefix, p)]
-                    else:  # Not already defined, so user parameter name
-                        label = p
-                    if "{}{} units".format(prefix, p) in self:  # Get a value for the units
-                        units = r"({})".format(self["{}{} units".format(prefix, p)])
-                    else:  # Not defined - no units
-                        units = ""
+                    label = self.metadata.get(f"{prefix}{p} label", p)
+                    units = self.metadata.get(f"{prefix}{p} units", "")
                     # Set columns
-                    ret.column_headers[2 * ix] = r"${} {}$".format(label, units)
-                    ret.column_headers[2 * ix + 1] = r"$\delta{} {}$".format(label, units)
-                    if not ret["{}{} vary".format(prefix, p)]:
+                    ret.column_headers[2 * ix] = rf"${label} {units}$"
+                    ret.column_headers[2 * ix + 1] = rf"$\delta{label} {units}$"
+                    if not ret[f"{prefix}{p} vary"]:
                         fixed = 2 * ix
                 ret.column_headers[-1] = "$\\chi^2$"
                 ret.labels = ret.column_headers
@@ -1531,15 +1523,13 @@ class FittingMixin:
             )
             if result:
                 if header is None:
-                    header = "Fitted {} with {} order polynomial".format(
-                        self.column_headers[self.find_col(ycolumn)], ordinal(polynomial_order)
-                    )
+                    header = f"Fitted {self.column_headers[self.find_col(ycolumn)]} with {ordinal(polynomial_order)} order polynomial"
                 self.add_column(
                     np.polyval(p[i, :], x=self.column(_.xcol)), index=result, replace=replace, header=header
                 )
         if len(_.ycol) == 1:
             p = p[0, :]
-        self["{}-order polyfit coefficients".format(ordinal(polynomial_order))] = list(p)
+        self[f"{ordinal(polynomial_order)}-order polyfit coefficients"] = list(p)
         return p
 
     def odr(self, model, xcol=None, ycol=None, **kargs):

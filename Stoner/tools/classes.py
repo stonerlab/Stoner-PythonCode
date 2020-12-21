@@ -44,8 +44,8 @@ class attributeStore(dict):
         """Get an attrbute (equivalent to getting an item)."""
         try:
             return self[name]
-        except KeyError:
-            raise AttributeError
+        except KeyError as err:
+            raise AttributeError from err
 
 
 def itersubclasses(cls: type, _seen: Optional[set] = None) -> List[type]:
@@ -72,7 +72,7 @@ def itersubclasses(cls: type, _seen: Optional[set] = None) -> List[type]:
     ['type', ...'tuple', ...]
     """
     if not isinstance(cls, type):
-        raise TypeError("itersubclasses must be called with " "new-style classes, not %.100r" % cls)
+        raise TypeError(f"itersubclasses must be called with new-style classes, not {cls}")
     if _seen is None:
         _seen = set()
     try:
@@ -178,18 +178,16 @@ class typedList(MutableSequence):
         if isIterable(name) or isinstance(name, slice):
             if not isIterable(value) or not all_type(value, self._type):
                 raise TypeError(
-                    "Elelements of this list should be of type {} and must set the correct number of elements".format(
-                        self._type
-                    )
+                    f"Elelements of this list should be of type {self._type} and must set the correct number of elements"
                 )
         elif not isinstance(value, self._type):
-            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+            raise TypeError(f"Elelements of this list should be of type {self._type}")
         self._store[name] = value
 
     def extend(self, other: IterableType) -> None:  # pylint:  disable=arguments-differ
         """Extend the list and do some type checking."""
         if not isIterable(other) or not all_type(other, self._type):
-            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+            raise TypeError(f"Elelements of this list should be of type {self._type}")
         self._store.extend(other)
 
     def index(  # pylint:  disable=arguments-differ
@@ -203,14 +201,14 @@ class typedList(MutableSequence):
     def insert(self, index: int, obj: Any) -> None:  # pylint:  disable=arguments-differ
         """Insert an element and do some type checking."""
         if not isinstance(obj, self._type):
-            raise TypeError("Elelements of this list should be of type {}".format(self._type))
+            raise TypeError(f"Elelements of this list should be of type {self._type}")
         self._store.insert(index, obj)
 
 
 def get_option(name: str) -> bool:
     """Return the option value."""
     if name not in _options.keys():
-        raise IndexError("{} is not a valid package option".format(name))
+        raise IndexError(f"{name} is not a valid package option")
     return _options[name]
 
 
@@ -232,9 +230,9 @@ def set_option(name: str, value: bool) -> None:
             The value to set (see *name*)
     """
     if name not in _options.keys():
-        raise IndexError("{} is not a valid package option".format(name))
+        raise IndexError(f"{name} is not a valid package option")
     if not isinstance(value, bool):
-        raise ValueError("{} takes a boolean value not a {}".format(name, type(value)))
+        raise ValueError(f"{name} takes a boolean value not a {type(value)}")
     _options[name] = value
 
 
@@ -251,21 +249,21 @@ class Options:
         if name.startswith("_"):
             return super().__setattr__(name, value)
         if name not in _options:
-            raise AttributeError("{} is not a recognised option.".format(name))
+            raise AttributeError(f"{name} is not a recognised option.")
         if not isinstance(value, type(_options[name])):
-            raise ValueError("{} takes a {} not a {}".format(name, type(_options[name]), type(value)))
+            raise ValueError(f"{name} takes a {type(_options[name])} not a {type(value)}")
         set_option(name, value)
 
     def __getattr__(self, name: str) -> bool:
         """Lookup an option value."""
         if name not in _options:
-            raise AttributeError("{} is not a recognised option.".format(name))
+            raise AttributeError(f"{name} is not a recognised option.")
         return get_option(name)
 
     def __delattr__(self, name: str) -> None:
         """Clear and Option value back to defaults."""
         if name not in _options:
-            raise AttributeError("{} is not a recognised option.".format(name))
+            raise AttributeError(f"{name} is not a recognised option.")
         set_option(name, self._defaults[name])
 
     def __dir__(self) -> List[str]:
@@ -277,5 +275,5 @@ class Options:
         s = "Stoner Package Options\n"
         s += "~~~~~~~~~~~~~~~~~~~~~~\n"
         for k in dir(self):
-            s += "{} : {}\n".format(k, get_option(k))
+            s += f"{k} : {get_option(k)}\n"
         return s

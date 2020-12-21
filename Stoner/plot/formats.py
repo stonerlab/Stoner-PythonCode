@@ -63,10 +63,10 @@ class TexFormatter(Formatter):
         elif value != 0.0:
             power = np.floor(np.log10(np.abs(value)))
             if np.abs(power) < 4:
-                ret = "${}$".format(_round(value))
+                ret = f"${round(value)}$"
             else:
                 v = _round(value / (10 ** power))
-                ret = "${}\\times 10^{{{:.0f}}}$".format(v, power)
+                ret = f"${v}\\times 10^{{{power:.0f}}}$"
         else:
             ret = "$0.0$"
         return ret
@@ -79,7 +79,7 @@ class TexFormatter(Formatter):
         """Return a short string version of the tick value.
 
         Defaults to the position-independent long value."""
-        return "{:g}".format(value)
+        return f"{value:g}"
 
 
 class TexEngFormatter(EngFormatter):
@@ -118,7 +118,7 @@ class TexEngFormatter(EngFormatter):
             power = np.floor(np.log10(np.abs(value)))
             pre = np.ceil(power / 3.0) * 3
             if -1 <= power <= 3 or pre == 0:
-                ret = "${}\\,\\mathrm{{{}}}$".format(_round(value, 4), self.unit)
+                ret = f"${round(value, 4)}\\,\\mathrm{{{self.unit}}}$"
             else:
                 power = power % 3
                 v = _round(value / (10 ** pre), 4)
@@ -129,7 +129,7 @@ class TexEngFormatter(EngFormatter):
                     v /= 1000
                     pre += 3.0
 
-                ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
+                ret = f"${v}\\mathrm{{{self.prefix[int(pre)]} {self.unit}}}$"
         else:
             ret = "$0.0$"
         return ret
@@ -142,7 +142,7 @@ class TexEngFormatter(EngFormatter):
         """Return a short string version of the tick value.
 
         Defaults to the position-independent long value."""
-        return "{:g}".format(value)
+        return f"{value:g}"
 
 
 class DefaultPlotStyle(MutableMapping):
@@ -251,9 +251,9 @@ class DefaultPlotStyle(MutableMapping):
             del params[name]
             plt.rcdefaults()
             plt.rcParams.update(params)
-            super().__delattr__(_remove_dots("template_{}".format(name)))
+            super().__delattr__(_remove_dots(f"template_{name}"))
         else:
-            raise KeyError("{} is not recognised as part of the template".format(name))
+            raise KeyError(f"{name} is not recognised as part of the template")
 
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
@@ -274,7 +274,7 @@ class DefaultPlotStyle(MutableMapping):
             pass
         if name in plt.rcParams:
             return plt.rcParams[name]
-        raise KeyError("{} is not recognised as part of the template".format(name))
+        raise KeyError(f"{name} is not recognised as part of the template")
 
     def __iter__(self):
         """Iterate over stylesjeet settings."""
@@ -306,10 +306,10 @@ class DefaultPlotStyle(MutableMapping):
         else:
             if name in plt.rcParams:
                 plt.rcParams[name] = value
-                name = _remove_dots("template_{}".format(name))
+                name = _remove_dots(f"template_{name}")
                 super().__setattr__(name, value)
             else:
-                raise KeyError("{} is not recognised as part of the template".format(name))
+                raise KeyError(f"{name} is not recognised as part of the template")
 
     def _allowed_attr(self, x, template=False):
         """Private method to test if this is a template attribute we can set."""
@@ -429,7 +429,7 @@ class DefaultPlotStyle(MutableMapping):
         elif figure is not None:
             fig = plt.figure(figure, figsize=self.template_figure__figsize)
             if len(fig.axes) == 0:
-                rect = [plt.rcParams["figure.subplot.{}".format(i)] for i in ["left", "bottom", "right", "top"]]
+                rect = [plt.rcParams[f"figure.subplot.{i}"] for i in ["left", "bottom", "right", "top"]]
                 rect[2] = rect[2] - rect[0]
                 rect[3] = rect[3] - rect[1]
                 if projection == "3d":

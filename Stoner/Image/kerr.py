@@ -150,7 +150,7 @@ class KerrArray(ImageArray):
             return self
         if self.shape != AN_IM_SIZE:
             raise ValueError(
-                "Need a full sized Kerr image to crop. Current size is {}".format(self.shape)
+                f"Need a full sized Kerr image to crop. Current size is {self.shape}"
             )  # check it's a normal image
         return self.crop(None, None, None, IM_SIZE[0], copy=copy)
 
@@ -220,7 +220,7 @@ class KerrArray(ImageArray):
 
         # parse the reading
         if len(data) == 0:
-            print("No data read for {}".format(key))
+            print(f"No data read for {key}")
         data = _parse_text(data, key=key)
         return data
 
@@ -442,7 +442,7 @@ class KerrStackMixin:
             return self
         if self.shape[1:3] != AN_IM_SIZE:
             raise ValueError(
-                "Need a full sized Kerr image to crop. Current size is {}".format(self.shape)
+                f"Need a full sized Kerr image to crop. Current size is {self.shape}"
             )  # check it's a normal image
         self._sizes = np.column_stack(
             (np.ones(images, dtype=int) * IM_SIZE[0], np.ones(images, dtype=int) * IM_SIZE[1])

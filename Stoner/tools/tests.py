@@ -174,9 +174,7 @@ def isProperty(obj: Any, name: str) -> bool:
     if not isinstance(obj, type):
         obj = obj.__class__
     elif not issubclass(obj, object):
-        raise TypeError(
-            "Can only check for property status on attributes of an object or a class not a {}".format(type(obj))
-        )
+        raise TypeError(f"Can only check for property status on attributes of an object or a class not a {type(obj)}")
     return hasattr(obj, name) and isinstance(getattr(obj, name), property)
 
 

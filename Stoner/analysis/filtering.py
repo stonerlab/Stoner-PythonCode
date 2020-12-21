@@ -106,9 +106,7 @@ class FilteringOpsMixin:
             if not isinstance(header, string_types):
                 header = []
                 for column in col[:-1]:
-                    header.append(
-                        "{} after {} order Savitsky-Golay Filter".format(self.column_headers[column], ordinal(order))
-                    )
+                    header.append(f"{self.column_headers[column]} after {ordinal(order)} order Savitsky-Golay Filter")
             else:
                 header = [header] * (len(col) - 1)
             if r.shape[0] > len(header):
@@ -203,7 +201,7 @@ class FilteringOpsMixin:
                 else:
                     e = np.nan
             if data.shape[0] == 0 and self.debug:
-                warn("Empty bin at {}".format(limits))
+                warn(f"Empty bin at {limits}")
             y = np.sum(data[:, ycol] * (w / W), axis=0)
             ybin[i, :] = y
             ebin[i, :] = e
@@ -218,8 +216,8 @@ class FilteringOpsMixin:
                 head = str(self.column_headers[ycol[i]])
 
                 ret.add_column(ybin[:, i], header=head)
-                ret.add_column(ebin[:, i], header="d{}".format(head))
-                ret.add_column(nbins[:, i], header="#/bin {}".format(head))
+                ret.add_column(ebin[:, i], header=f"d{head}")
+                ret.add_column(nbins[:, i], header=f"#/bin {head}")
                 s = list(ret.setas)
                 s[-3:] = ["y", "e", "."]
                 ret.setas = s
@@ -285,7 +283,7 @@ class FilteringOpsMixin:
             kindf = kinds[kind]
             errsf = errs[kind]
         else:
-            raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
+            raise RuntimeError(f"Failed to recognise extrpolation function '{kind}'")
         scalar_x = not isIterable(new_x)
         if scalar_x:
             new_x = [new_x]
@@ -317,7 +315,7 @@ class FilteringOpsMixin:
                 else:
                     ll = r[_.xcol] - overlap / 2
                     hl = r[_.xcol] + overlap / 2
-                bounds = {"{}__between".format(self.column_headers[_.xcol]): (ll, hl)}
+                bounds = {f"{self.column_headers[_.xcol]}__between": (ll, hl)}
                 mid_x = (ll + hl) / 2.0
             pointdata = work.select(**bounds)
             pointdata.data[:, _.xcol] = pointdata.column(_.xcol) - mid_x
@@ -473,7 +471,7 @@ class FilteringOpsMixin:
                 bin_stop = np.array(splits[1:])
                 bin_centres = np.array(centers)
             else:
-                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
+                raise ValueError(f"mode should be either lin(ear) or log(arthimitc) not {mode}")
         elif isinstance(bins, np.ndarray) and bins.ndim == 1:  # Yser provided manuals bins
             bin_start = bins[:-1]
             bin_stop = bins[1:]
@@ -482,9 +480,9 @@ class FilteringOpsMixin:
             elif mode.lower().startswith("log"):
                 bin_centres = np.exp(np.log(bin_start) + np.log(bin_stop) / 2.0)
             else:
-                raise ValueError("mode should be either lin(ear) or log(arthimitc) not {}".format(mode))
+                raise ValueError(f"mode should be either lin(ear) or log(arthimitc) not {mode}")
         else:
-            raise TypeError("bins must be either an integer or a float, not a {}".format(type(bins)))
+            raise TypeError(f"bins must be either an integer or a float, not a {type(bins)}")
         if len(bin_start) > len(self):
             raise ValueError("Attempting to bin into more bins than there is data.")
         return bin_start, bin_stop, bin_centres
@@ -656,7 +654,7 @@ class FilteringOpsMixin:
             xdat2 = working2[:, other.find_col(_.xcol)]
             ydat2 = working2[:, other.find_col(_.ycol)]
             if len(xdat2) != len(xdat):
-                raise RuntimeError("Data lengths don't match {}!={}".format(len(xdat), len(xdat2)))
+                raise RuntimeError(f"Data lengths don't match {len(xdat)}!={len(xdat2)}")
         elif isinstance(other, np.ndarray):
             if len(other.shape) == 1:
                 other = np.atleast_2d(other).T
@@ -674,9 +672,7 @@ class FilteringOpsMixin:
                 xdat2 = other[:, 0]
                 ydat2 = other[:, 1]
         else:
-            raise RuntimeError(
-                "other should be either a numpy array or subclass of DataFile, not a {}".format(type(other))
-            )
+            raise RuntimeError(f"other should be either a numpy array or subclass of DataFile, not a {type(other)}")
 
         # Need two nx2 arrays of points now
 
@@ -764,7 +760,7 @@ class FilteringOpsMixin:
             data = copy(self.data)
             interp_data = False
         else:
-            raise ValueError("size should either be a float or integer, not a {}".format(type(size)))
+            raise ValueError(f"size should either be a float or integer, not a {type(size)}")
 
         window = get_window(window, size)
         # Handle multiple or single y columns

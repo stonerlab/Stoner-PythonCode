@@ -223,8 +223,8 @@ class DataFilePropertyMixin:
         self.column_headers = ch_bak
         try:
             return self.data.view(dtype=dtype).reshape(len(self))
-        except TypeError:
-            raise TypeError(f"Failed to get record view. Dtype was {dtype}")
+        except TypeError as err:
+            raise TypeError(f"Failed to get record view. Dtype was {dtype}") from err
 
     @property
     def shape(self):

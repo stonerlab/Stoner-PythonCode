@@ -196,8 +196,8 @@ class ImageFolderMixin:
                 ref_data = np.array(ref).view(ImageArray)
                 if ref_data.ndim != 2:
                     raise TypeError()
-            except (TypeError, ValueError):
-                raise TypeError(f"Cannot interpret {type(ref)} as reference image data.")
+            except (TypeError, ValueError) as err:
+                raise TypeError(f"Cannot interpret {type(ref)} as reference image data.") from err
         # Call align on each object
         self.each.align(ref_data, **kargs)
         limits = self.metadata.slice("translation_limits", output="array")

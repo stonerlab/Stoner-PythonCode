@@ -189,7 +189,7 @@ class AnalysisMixin:
         result_name=None,
         output="data",
         bounds=lambda x, y: True,
-        **kargs
+        **kargs,
     ):
         """Inegrate a column of data, optionally returning the cumulative integral.
 
@@ -238,7 +238,7 @@ class AnalysisMixin:
             resultdata = cumtrapz(yd, xdat, **kargs)
             resultdata = np.append(np.array([0]), resultdata)
             if result is not None:
-                header = header if header is not None else "Intergral of {}".format(self.column_headers[_.ycol])
+                header = header if header is not None else f"Intergral of {self.column_headers[_.ycol]}"
                 if isinstance(result, bool) and result:
                     self.add_column(resultdata, header=header, replace=False)
                 else:
@@ -426,7 +426,7 @@ class AnalysisMixin:
             p = np.array([0, A0, B0, C0])
             assertion(isinstance(mode, string_types), "mode keyword should be a string if func is not defined")
             mode = mode.lower()
-            assertion(mode in opts, "mode keyword should be one of {}".format(opts.keys))
+            assertion(mode in opts, f"mode keyword should be one of {opts.keys}")
             func = opts[mode]
             p0 = p[defaults[mode]]
         else:

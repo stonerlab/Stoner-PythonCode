@@ -91,8 +91,8 @@ def get_file_name_type(
             try:
                 mod = import_module(mod)
                 filetype = getattr(mod, parts[-1])
-            except (ImportError, AttributeError):
-                raise ValueError(f"Unable to import {filetype}")
+            except (ImportError, AttributeError) as err:
+                raise ValueError(f"Unable to import {filetype}") from err
             if not issubclass(filetype, parent):
                 raise ValueError(f"{filetype} is  not a subclass of DataFile.")
     if filename is None or (isinstance(filename, bool) and not filename):

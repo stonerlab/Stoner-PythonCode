@@ -296,7 +296,7 @@ def hysteresis_correct(data, **kargs):
             setattr(data, k, kargs[k])
         except AttributeError:
             if data.debug:
-                print("Error setting attribute from keyword {}={}".format(k, kargs[k]))
+                print("Error setting attribute from keyword {k}={args[k]}")
     if "setas" in kargs:  # Allow us to override the setas variable
         data.setas = kargs.pop("setas")
 

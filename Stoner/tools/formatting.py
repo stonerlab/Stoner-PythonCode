@@ -126,7 +126,7 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
         prefixes = prefs.get(fmt, prefs["text"])
         if v_mag in prefixes:
             if fmt == "latex":
-                suffix_val = r"\,\mathrm{{{{{}}}}}".format(prefixes[v_mag])
+                suffix_val = rf"\,\mathrm{{{{{prefixes[v_mag]}}}}}"
             else:
                 suffix_val = " " + prefixes[v_mag]
             value /= 10 ** v_mag
@@ -136,15 +136,15 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
     elif mode == "sci":  # Scientific mode - raise to common power of 10
         v_mag = floor(log10(abs(value)))
         if fmt == "latex":
-            suffix_val = r"\times 10^{{{{{}}}}}\,".format(int(v_mag))
+            suffix_val = rf"\times 10^{{{{{int(v_mag)}}}}}\,"
         elif fmt == "html":
-            suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
+            suffix_val = f"&times; 10<sup>{int(v_mag)}</sup> "
         else:
-            suffix_val = "E{} ".format(int(v_mag))
+            suffix_val = f"E{int(v_mag)} "
         value /= 10 ** v_mag
         error /= 10 ** v_mag
     else:  # Bad mode
-        raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
+        raise RuntimeError(f"Unrecognised mode: {mode} in format_error")
 
     # Now do the rounding of the value based on error to 1 s.f.
     e2 = error
@@ -159,17 +159,17 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
     units = units.replace("{", "{{").replace("}", "}}")
     prefix = prefix.replace("{", "{{").replace("}", "}}")
     if fmt == "latex":  # Switch to latex math mode symbols
-        val_fmt_str = r"${}{{:.{}f}}\pm ".format(prefix, int(abs(u_mag)))
+        val_fmt_str = rf"${prefix}{{:.{int(abs(u_mag))}f}}\pm "
         if units != "":
-            suffix_fmt = r"\mathrm{{{{{}}}}}".format(units)
+            suffix_fmt = rf"\mathrm{{{{{units}}}}}"
         else:
             suffix_fmt = ""
         suffix_fmt += "$"
     elif fmt == "html":  # Switch to latex math mode symbols
-        val_fmt_str = r"{}{{:.{}f}}&plusmin;".format(prefix, int(abs(u_mag)))
+        val_fmt_str = rf"{prefix}{{:.{int(abs(u_mag))}f}}&plusmin;"
         suffix_fmt = units
     else:  # Plain text
-        val_fmt_str = r"{}{{:.{}f}}+/-".format(prefix, int(abs(u_mag)))
+        val_fmt_str = rf"{prefix}{{:.{int(abs(u_mag))}f}}+/-"
         suffix_fmt = units
     if u_mag < 0:  # the error is less than 1, so con strain decimal places
         err_fmt_str = r"{:." + str(int(abs(u_mag))) + "f}"
@@ -233,7 +233,7 @@ def format_val(value: Numeric, **kargs: Any) -> str:
         prefixes = prefs.get(fmt, prefs["text"])
         if v_mag in prefixes:
             if fmt == "latex":
-                suffix_val = r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
+                suffix_val = rf"\mathrm{{{{{prefixes[v_mag]}}}}}"
             else:
                 suffix_val = prefixes[v_mag]
             value /= 10 ** v_mag
@@ -242,30 +242,30 @@ def format_val(value: Numeric, **kargs: Any) -> str:
     elif mode == "sci":  # Scientific mode - raise to common power of 10
         v_mag = floor(log10(abs(value)))
         if fmt == "latex":
-            suffix_val = r"\times 10^{{{{{}}}}}".format(int(v_mag))
+            suffix_val = rf"\times 10^{{{{{int(v_mag)}}}}}"
         elif fmt == "html":
-            suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
+            suffix_val = f"&times; 10<sup>{int(v_mag)}</sup> "
         else:
-            suffix_val = "E{} ".format(int(v_mag))
+            suffix_val = f"E{int(v_mag)} "
         value /= 10 ** v_mag
     else:  # Bad mode
-        raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
+        raise RuntimeError(f"Unrecognised mode: {mode} in format_error")
 
     # Protect {} in units string
     units = units.replace("{", "{{").replace("}", "}}")
     prefix = prefix.replace("{", "{{").replace("}", "}}")
     if fmt == "latex":  # Switch to latex math mode symbols
-        val_fmt_str = r"${}{{}}".format(prefix)
+        val_fmt_str = rf"${prefix}{{}}"
         if units != "":
-            suffix_fmt = r"\mathrm{{{{{}}}}}".format(units)
+            suffix_fmt = rf"\mathrm{{{{{units}}}}}"
         else:
             suffix_fmt = ""
         suffix_fmt += "$"
     elif fmt == "html":  # Switch to latex math mode symbols
-        val_fmt_str = r"{}{{}}".format(prefix)
+        val_fmt_str = rf"{prefix}{{}}"
         suffix_fmt = units
     else:  # Plain text
-        val_fmt_str = r"{}{{}}".format(prefix)
+        val_fmt_str = rf"{prefix}{{}}"
         suffix_fmt = units
     fmt_str = val_fmt_str + suffix_val + suffix_fmt
     if places:

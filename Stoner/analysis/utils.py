@@ -59,7 +59,7 @@ def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=No
             True if current row is an outlier
     """
     if order > window.shape[0] - 2:
-        raise ValueError("order should be smaller than the window length. {} vs {}".format(order, window.shape[0] - 2))
+        raise ValueError(f"order should be smaller than the window length. {order} vs {window.shape[0] - 2}")
 
     x = window[:, xcol] - row[xcol]
     y = window[:, ycol]
@@ -153,7 +153,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     """
     if xy1.shape != xy2.shape or xy1.shape[1] != 2:
         raise RuntimeError(
-            "co-ordinate arrays must be equal length with two columns, not {} and {}".format(xy1.shape, xy2.shape)
+            f"co-ordinate arrays must be equal length with two columns, not {xy1.shape} and {xy2.shape}"
         )
     xvarp = {
         "affine": [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]],
@@ -165,9 +165,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     yvarp = {"linear": [[1, 1], [1, 2]], "scale": [[1, 1]], "offset": [[1, 2]], "fixed": [[]]}
 
     if xmode not in xvarp or ymode not in yvarp:
-        raise RuntimeError(
-            "xmode and ymode must be one of 'linear','scale','offset','fixed' not {} and {}".format(xmode, ymode)
-        )
+        raise RuntimeError(f"xmode and ymode must be one of 'linear','scale','offset','fixed' not {xmode} and {ymode}")
 
     if xmode == "affine":
         ymode = "fixed"
@@ -194,7 +192,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
             p0[i] = m0[u, v]
             default = m0
     else:
-        raise RuntimeError("m0 starting matrix should be a numpy array of size (2,3) not {}".format(m0))
+        raise RuntimeError(f"m0 starting matrix should be a numpy array of size (2,3) not {m0}")
 
     result = np.zeros(len(xy1))
 

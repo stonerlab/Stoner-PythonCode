@@ -76,8 +76,8 @@ class DataFileInterfacesMixin:
             except KeyError:
                 try:
                     ret = self.data[name]
-                except KeyError:
-                    raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.")
+                except KeyError as err:
+                    raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.") from err
         elif isinstance(name, tuple) and isinstance(name[0], string_types):
             try:
                 rest = name[1:]
@@ -86,8 +86,8 @@ class DataFileInterfacesMixin:
             except KeyError:
                 try:
                     ret = self.data[name]
-                except KeyError:
-                    raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.")
+                except KeyError as err:
+                    raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.") from err
         elif isinstance(name, tuple) and name in self.metadata:
             ret = self.metadata[name]
         else:

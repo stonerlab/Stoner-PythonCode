@@ -67,8 +67,8 @@ def literal_eval(string: str) -> Any:
         )
     try:
         return _asteval_interp(string, show_errors=False)
-    except (SyntaxError, ValueError, NameError, IndexError, TypeError):
-        raise ValueError("Cannot interpret {} as valid Python".format(string))
+    except (SyntaxError, ValueError, NameError, IndexError, TypeError) as err:
+        raise ValueError(f"Cannot interpret {string} as valid Python") from err
 
 
 def string_to_type(value: String_Types) -> Any:
@@ -87,7 +87,7 @@ def string_to_type(value: String_Types) -> Any:
     """
     ret = None
     if not isinstance(value, string_types):
-        raise TypeError("Value must be a string not a {}".format(type(value)))
+        raise TypeError(f"Value must be a string not a {type(value)}")
     value = value.strip()
     if value != "None":
         tests = ["list(" + value + ")", "dict(" + value + ")"]
@@ -153,7 +153,7 @@ class regexpDict(sorteddict):
             if not exact and not isinstance(name, string_types + int_types):
                 name = repr(name)
             if exact:
-                raise KeyError("{} not a key and exact match requested.".format(name))
+                raise KeyError(f"{name} not a key and exact match requested.")
             nm = name
             if isinstance(name, string_types):
                 try:
@@ -164,7 +164,7 @@ class regexpDict(sorteddict):
                 try:
                     ret = sorted(self.keys())[name]
                 except IndexError:
-                    raise KeyError("{} is not a match to any key.".format(name))
+                    raise KeyError(f"{name} is not a match to any key.")
             else:
                 nm = name
             if isinstance(nm, _pattern_type):
@@ -173,7 +173,7 @@ class regexpDict(sorteddict):
                     ret = [n for n in self.keys() if isinstance(n, string_types) and nm.search(n)]
 
         if ret is None or isIterable(ret) and not ret:
-            raise KeyError("{} is not a match to any key.".format(name))
+            raise KeyError(f"{name} is not a match to any key.")
         if multiple:  # sort out returing multiple entries or not
             if not isinstance(ret, list):
                 ret = [ret]
@@ -192,7 +192,7 @@ class regexpDict(sorteddict):
             key = self.__lookup__(name, exact=True)
         except KeyError:
             if not isinstance(name, self.allowed_keys):
-                raise KeyError("{} is not a match to any key.".format(name))
+                raise KeyError(f"{name} is not a match to any key.")
             key = name
         super().__setitem__(key, value)
 
@@ -400,7 +400,7 @@ class typeHintedDict(regexpDict):
                     typ = "Cluster (" + tt + ")"
                 elif t == "Array":
                     z = np.zeros(1, dtype=value.dtype)
-                    typ = "{}D Array ({})".format(len(np.shape(value)), self.findtype(z[0]))
+                    typ = f"{value.ndim}D Array ({self.findtype(z[0])})"
                 else:
                     typ = t
                 break
@@ -496,7 +496,7 @@ class typeHintedDict(regexpDict):
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
         if len(value) == 0:  # pylint: disable=len-as-condition
-            raise KeyError("{} is not a valid key even when interpreted as a sregular expression!".format(key))
+            raise KeyError(f"{key} is not a valid key even when interpreted as a sregular expression!")
         if len(value) == 1:
             return value[0]
         return {k: v for k, v in zip(name, value)}
@@ -547,7 +547,7 @@ class typeHintedDict(regexpDict):
 
     def __repr__(self) -> str:
         """Create a text representation of the dictionary with type data."""
-        ret = ["{}:{}:{}".format(repr(key), self.type(key), repr(self[key])) for key in sorted(self)]
+        ret = [f"{repr(key)}:{self.type(key)}:{repr(self[key])}" for key in sorted(self)]
         return "\n".join(ret)
 
     def copy(self) -> "typeHintedDict":
@@ -623,9 +623,9 @@ class typeHintedDict(regexpDict):
             A string of the format : key{type hint} = value
         """
         if isinstance(self[key], string_types):  # avoid string within string problems and backslash overdrive
-            ret = "{}{{{}}}={}".format(key, self.type(key), self[key])
+            ret = f"{key}{{{self.type(key)}}}={self[key]}"
         else:
-            ret = "{}{{{}}}={}".format(key, self.type(key), repr(self[key]))
+            ret = f"{key}{{{self.type(key)}}}={repr(self[key])}"
         return ret
 
     def export_all(self) -> List[str]:
@@ -718,9 +718,7 @@ class metadataObject(MutableMapping):
         elif isinstance(value, typeHintedDict):
             self._metadata = value
         else:
-            raise TypeError(
-                "metadata must be something that can be turned into a dictionary, not a {}".format(type(value))
-            )
+            raise TypeError(f"metadata must be something that can be turned into a dictionary, not a {value}")
 
     def __getitem__(self, name: Union[str, RegExp]) -> Any:
         """Pass through to metadata dictionary."""

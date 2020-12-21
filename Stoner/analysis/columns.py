@@ -82,7 +82,7 @@ class ColumnOpsMixin:
             data = col * np.ones(len(self))
             name = str(col)
         else:
-            raise RuntimeError("Bad column index: {}".format(col))
+            raise RuntimeError(f"Bad column index: {col}")
         return data, name
 
     def add(self, col_a, col_b, replace=False, header=None, index=None):

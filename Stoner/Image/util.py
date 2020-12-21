@@ -162,7 +162,7 @@ def build_funcs_proxy():
         if not d.startswith("_"):
             func = getattr(imagefuncs, d)
             if callable(func) and getattr(func, "__module__", "") == imagefuncs.__name__:
-                name = "{}__{}".format(func.__module__, d).replace(".", "__")
+                name = f"{func.__module__}__{d}".replace(".", "__")
                 func_proxy[name] = func
                 short_names.append((d, func))
 
@@ -174,7 +174,7 @@ def build_funcs_proxy():
                 func = getattr(mod, d)
                 if callable(func) and getattr(func, "__module__", "") == mod.__name__:
                     func.transpose = True
-                    name = "{}__{}".format(func.__module__, d).replace(".", "__")
+                    name = f"{func.__module__}__{d}".replace(".", "__")
                     func_proxy[name] = func
                     short_names.append((d, func))
 

@@ -83,7 +83,7 @@ class ZippedFile(DataFile):
                 ):
                     kargs["filename"] = kargs["filename"][2:]
                 if kargs["filename"] not in other.namelist():  # New file not in the zip file yet
-                    raise StonerLoadError("File {} not found in zip file {}".format(kargs["filename"], other.filename))
+                    raise StonerLoadError(f"File {kargs['filename']} not found in zip file {other.filename}")
                 # Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
                 super().__init__(**kargs)
                 self._extract(other, kargs["filename"])
@@ -148,16 +148,16 @@ class ZippedFile(DataFile):
                 close_me = True
                 solo_file = len(other.namelist()) == 1
             else:
-                raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
+                raise StonerLoadError(f"{self.filename} does  not appear to be a real zip file")
         except StonerLoadError as e:
-            raise e
-        except Exception:  # pylint: disable=W0703 # Catching everything else here
+            raise
+        except Exception as err:  # pylint: disable=W0703 # Catching everything else here
             try:
                 exc = format_exc()
                 other.close()
             except (AttributeError, NameError, ValueError, TypeError, zf.BadZipFile, zf.LargeZipFile):
                 pass
-            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename, exc))
+            raise StonerLoadError(f"{self.filename} threw an error when opening\n{exc}") from err
         # Ok we can try reading now
         self._extract(other, member)
         if close_me:
@@ -188,14 +188,14 @@ class ZippedFile(DataFile):
                     zipfile = zf.ZipFile(zipfile, "a")
                     close_me = True
                 elif path.exists(filename):  # The fiule exists but isn't a zip file
-                    raise IOError("{} Should either be a zip file or a new zip file".format(filename))
+                    raise IOError(f"{filename} Should either be a zip file or a new zip file")
                 else:  # Path doesn't exist, use extension of file part to find where the zip file should be
                     parts = path.split(filename)
                     for i, part in enumerate(parts):
                         if path.splitext(part)[1].lower() == ".zip":
                             break
                     else:
-                        raise IOError("Can't figure out where the zip file is in {}".format(filename))
+                        raise IOError(f"Can't figure out where the zip file is in {filename}")
                     zipfile = zf.ZipFile(path.join(*parts[: i + 1]), "w", compression, True)
                     close_me = True
                     member = path.join("/", *parts[i + 1 :])
@@ -226,7 +226,7 @@ class ZippedFile(DataFile):
             try:
                 zipfile.close()
             finally:
-                raise IOError("Error saving zipfile\n{}".format(error))
+                raise IOError(f"Error saving zipfile\n{error}")
         return self
 
 
@@ -330,7 +330,7 @@ class ZipFolderMixin:
                 self.File = zf.ZipFile(self.File.filename, "r")
                 close_me = True
         else:
-            raise IOError("{} does not appear to be zip file!".format(directory))
+            raise IOError(f"{directory} does not appear to be zip file!")
         # At this point directory contains an open h5py.File object, or possibly a group
         self.path = self.File.filename
         files = [x.filename for x in self.File.filelist]

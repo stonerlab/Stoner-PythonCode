@@ -56,14 +56,14 @@ class ImageStackMixin:
             super().__init__(*args[1:], **kargs)
             self.imarray = other
             self._sizes = np.ones((other.shape[0], 2), dtype=int) * other.shape[1:]
-            self._names = ["Untitled-{}".format(d) for d in range(other.shape[0])]
+            self._names = [f"Untitled-{d}" for d in range(other.shape[0])]
             for n in self._names:
                 self._metadata[n] = typeHintedDict()
         elif isinstance(other, list):
             try:
                 other = [ImageFile(i) for i in other]
-            except (TypeError, ValueError, RuntimeError):
-                raise ValueError("Failed to initialise ImageStack with list input")
+            except (TypeError, ValueError, RuntimeError) as err:
+                raise ValueError("Failed to initialise ImageStack with list input") from err
             super().__init__(*args[1:], **kargs)
             for ot in other:
                 self.append(ot)
@@ -87,8 +87,8 @@ class ImageStackMixin:
         if isinstance(name, int_types):
             try:
                 self._stack[:, :, name]
-            except IndexError:
-                raise KeyError("{} is out of range for accessing the ImageStack.".format(name))
+            except IndexError as err:
+                raise KeyError(f"{name} is out of range for accessing the ImageStack.") from err
             return name
         if name not in self.__names__():
             name = self._metadata.__lookup__(name)

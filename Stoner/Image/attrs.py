@@ -187,9 +187,9 @@ class MaskProxy:
         """Check name against self._IA._funcs and constructs a method to edit the mask as an image."""
         if hasattr(self._IA.mask, name):
             return getattr(self._IA.mask, name)
-        if not ".*__{}$".format(name) in self._IA._funcs:
-            raise AttributeError("{} not a callable mask method.".format(name))
-        func = self._IA._funcs[".*__{}$".format(name)]
+        if not f".*__{name}$" in self._IA._funcs:
+            raise AttributeError(f"{name} not a callable mask method.")
+        func = self._IA._funcs[f".*__{name}$"]
 
         @wraps(func)
         def _proxy_call(*args, **kargs):

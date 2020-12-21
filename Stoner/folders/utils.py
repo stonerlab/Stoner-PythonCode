@@ -60,7 +60,7 @@ def discard_earlier(files):
     for f in files:
         match = search.match(f)
         if match:
-            fname = "{basename}{ext}".format(**match.groupdict())
+            fname = f"{match.groupdict()['basename']}{match.groupdict()['ext']}"
             rev = int(match.groupdict()["rev"])
             entry = dups.get(fname, [])
             entry.append((rev, f))

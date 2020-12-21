@@ -100,7 +100,7 @@ class BNLFile(Core.DataFile):
             self.data = np.genfromtxt(self.filename, skip_header=self.line_numbers[1] - 1)
         except IOError:
             self.data = np.array([0])
-            print("Did not import any data for {}".format(self.filename))
+            print(f"Did not import any data for {self.filename}")
         self.column_headers = column_headers
 
     def _load(self, filename, *args, **kargs):  # fileType omitted, implicit in class call
@@ -166,7 +166,7 @@ class MDAASCIIFile(Core.DataFile):
                     else:
                         key = bits[1]
                     if len(bits) > 3:
-                        key = key + " ({})".format(bits[3])
+                        key = f"{key} ({bits[3]})"
                     self[key] = string_to_type(bits[2])
                 else:
                     break  # End of Extra PV stuff
@@ -200,9 +200,9 @@ class MDAASCIIFile(Core.DataFile):
                         else:
                             colname = bits[-2]
                         if bits[-1] != "":
-                            colname += " ({})".format(bits[-1])
+                            f"{colname} ({bits[-1]})"
                         if colname in column_headers:
-                            colname = "{}:{}".format(bits[0], colname)
+                            colname = f"{bits[0]}:{colname}"
                     else:
                         colname = res.group(1).strip()
                     column_headers.append(colname)
@@ -239,7 +239,7 @@ class OpenGDAFile(Core.DataFile):
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "&SRS":
-                    raise Core.StonerLoadError("Not a GDA File from Rasor ?" + str(line))
+                    raise Core.StonerLoadError(f"Not a GDA File from Rasor ?\n{line}")
                 if "&END" in line:
                     break
                 parts = line.split("=")

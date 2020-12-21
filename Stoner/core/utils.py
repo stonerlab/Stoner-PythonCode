@@ -35,7 +35,7 @@ def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], n
             t = np.atleast_2d(other)
             c = t.shape[1]
             if len(newdata.column_headers) < c:
-                newdata.column_headers.extend(["Column_{}".format(x) for x in range(c - len(newdata.column_headers))])
+                newdata.column_headers.extend([f"Column_{x}" for x in range(c - len(newdata.column_headers))])
             newdata.data = t
             newdata.setas = setas
             newdata.column_headers = ch
@@ -130,13 +130,13 @@ def and_core(other: Union["DataFile", np.ndarray], newdata: "DataFile") -> "Data
         if len(other.shape) < 2:  # 1D array, make it 2D column
             other = np.atleast_2d(other)
             other = other.T
-        other_headers = ["Column {}".format(i + newdata.shape[1]) for i in range(other.shape[1])]
+        other_headers = [f"Column {i + newdata.shape[1]}" for i in range(other.shape[1])]
     elif isinstance(other, np.ndarray):
         other = newdata.data.__class__(copy.copy(other))
         if len(other.shape) < 2:  # 1D array, make it 2D column
             other = np.atleast_2d(other)
             other = other.T
-        other_headers = ["Column {}".format(i + newdata.shape[1]) for i in range(other.shape[1])]
+        other_headers = [f"Column {i + newdata.shape[1]}" for i in range(other.shape[1])]
     else:
         return NotImplemented
 

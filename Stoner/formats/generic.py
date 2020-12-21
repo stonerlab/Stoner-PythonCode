@@ -66,16 +66,16 @@ class CSVFile(DataFile):
                 header_string = linecache.getline(self.filename, header_line + 1)
                 header_string = re.sub(r'["\n]', "", header_string)
                 header_string.index(header_delim)
-            except (ValueError, SyntaxError):
+            except (ValueError, SyntaxError) as err:
                 linecache.clearcache()
-                raise StonerLoadError("No Delimiters in header line")
+                raise StonerLoadError("No Delimiters in header line") from err
             column_headers = [x.strip() for x in header_string.split(header_delim)]
         else:
             column_headers = ["Column" + str(x) for x in range(np.shape(self.data)[1])]
             try:
                 data_test = linecache.getline(self.filename, data_line + 1)
-            except SyntaxError:
-                raise StonerLoadError("linecache fell over - not a text file?")
+            except SyntaxError as err:
+                raise StonerLoadError("linecache fell over - not a text file?") from err
             if data_delim is None:
                 for data_delim in ["\t", ",", ";", " "]:
                     if data_delim in data_test:
@@ -157,10 +157,10 @@ class KermitPNGFile(DataFile):
                 print(sig)
             if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
                 raise StonerLoadError("Signature mismatrch")
-        except (StonerLoadError, IOError):
+        except (StonerLoadError, IOError) as err:
             from traceback import format_exc
 
-            raise StonerLoadError("Not a PNG file!>\n{}".format(format_exc()))
+            raise StonerLoadError(f"Not a PNG file!>\n{format_exc()}") from err
         return True
 
     def _load(self, filename=None, *args, **kargs):
@@ -183,8 +183,8 @@ class KermitPNGFile(DataFile):
                 for k in img.info:
                     self.metadata[k] = img.info[k]
                 self.data = np.asarray(img)
-        except IOError:
-            raise StonerLoadError("Unable to read as a PNG file.")
+        except IOError as err:
+            raise StonerLoadError("Unable to read as a PNG file.") from err
 
         return self
 
@@ -264,10 +264,10 @@ try:  # Optional tdms support
                         tmp = DataFile(grp.as_dataframe())
                         self.data = tmp.data
                         self.column_headers = tmp.column_headers
-            except (IOError, ValueError, TypeError, StonerLoadError):
+            except (IOError, ValueError, TypeError, StonerLoadError) as err:
                 from traceback import format_exc
 
-                raise StonerLoadError("Not a TDMS File \n{}".format(format_exc()))
+                raise StonerLoadError(f"Not a TDMS File \n{format_exc()}") from err
 
             return self
 
@@ -294,9 +294,9 @@ if Hyperspy_ok:
             if isinstance(value, Mapping):
                 for item in value.keys():
                     if root != "":
-                        self._unpack_meta("{}.{}".format(root, item), value[item])
+                        self._unpack_meta(f"{root}.{item}", value[item])
                     else:
-                        self._unpack_meta("{}".format(item), value[item])
+                        self._unpack_meta(f"{item}", value[item])
             else:
                 self.metadata[root] = value
 
@@ -304,7 +304,7 @@ if Hyperspy_ok:
             """Unpack the axes managber as metadata."""
             for ax in ax_manager.signal_axes:
                 for k in self._axes_keys:
-                    self.metadata["{}.{}".format(ax.name, k)] = getattr(ax, k)
+                    self.metadata[f"{ax.name}.{k}"] = getattr(ax, k)
 
         def _load(self, filename=None, *args, **kargs):
             """Load HyperSpy file loader routine.
@@ -334,8 +334,8 @@ if Hyperspy_ok:
                 signal = load(self.filename)
                 if not isinstance(signal, hs.signals.Signal2D):
                     raise StonerLoadError("Not a 2D signal object - aborting!")
-            except Exception as e:  # pylint: disable=W0703 Pretty generic error catcher
-                raise StonerLoadError("Not readable by HyperSpy error was {}".format(e))
+            except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
+                raise StonerLoadError(f"Not readable by HyperSpy error was {err}") from err
             self.data = signal.data
             self._unpack_meta("", signal.metadata.as_dictionary())
             self._unpack_axes(signal.axes_manager)

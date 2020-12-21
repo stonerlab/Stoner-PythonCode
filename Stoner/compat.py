@@ -54,7 +54,7 @@ try:
 
     HuperSpyVersion = [int(x) for x in hs.__version__.split(".")]
     if HuperSpyVersion[0] <= 1 and HuperSpyVersion[1] <= 3:
-        raise ImportError("Hyperspy should be version 1.4 or above. Actual version is {}".format(hs.__version__))
+        raise ImportError(f"Hyperspy should be version 1.4 or above. Actual version is {hs.__version__}")
     Hyperspy_ok = True
 except ImportError:
     Hyperspy_ok = False
@@ -116,7 +116,7 @@ def get_filedialog(what="file", **opts):
 
     funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
     if what not in funcs:
-        raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
+        raise RuntimeError(f"Unable to recognise required file dialog type:{what}")
     return fileDialog.openDialog(mode=funcs[what], **opts)
 
 

@@ -201,7 +201,7 @@ class setas(MutableMapping):
         cols = self._size
         length = len(self._column_headers)
         if length < cols:  # Extend the column headers if necessary
-            self._column_headers.extend(["Column {}".format(i + length) for i in range(cols - length)])
+            self._column_headers.extend([f"Column {i + length}" for i in range(cols - length)])
         return self._column_headers
 
     @column_headers.setter
@@ -255,7 +255,7 @@ class setas(MutableMapping):
         if 0 <= len(value) <= 2:
             self._shape = tuple(value)
         else:
-            raise AttributeError("shape attribute should be a 2-tuple not a {}-tuple".format(len(value)))
+            raise AttributeError(f"shape attribute should be a 2-tuple not a {value}-tuple")
 
     def __call__(self, *args, **kargs):
         """Treat the current instance as a callable object and assign columns accordingly.
@@ -282,9 +282,7 @@ class setas(MutableMapping):
             args[0] = args[0].to_list()
         if len(args) == 1 and not (isinstance(args[0], string_types + (setas,)) or isIterable(args[0])):
             raise SyntaxError(
-                "setas should be called with eother a string, iterable object or setas object, not a {}".format(
-                    type(args[0])
-                )
+                f"setas should be called with eother a string, iterable object or setas object, not a {type(args[0])}"
             )
 
         # If reset is neither in kargs nor a False boolean, then clear the existing setas assignments
@@ -304,9 +302,7 @@ class setas(MutableMapping):
                     k = self.find_col(k)
                     self._setas[k] = v
                 else:
-                    raise IndexError(
-                        "Unable to workout what do with {}:{} when setting the setas attribute.".format(k, v)
-                    )
+                    raise IndexError(f"Unable to workout what do with {k}:{v} when setting the setas attribute.")
         elif isIterable(value):
             if len(value) > self._size:
                 value = value[: self._size]
@@ -316,7 +312,7 @@ class setas(MutableMapping):
             value = value[: self._size]
             for i, v in enumerate(value):
                 if v.lower() not in "xyzedfuvw.-":
-                    raise ValueError("Set as column element is invalid: {}".format(v))
+                    raise ValueError(f"Set as column element is invalid: {v}")
                 if v != "-":
                     self.setas[i] = v.lower()
         else:
@@ -404,7 +400,7 @@ class setas(MutableMapping):
         elif isIterable(name):
             ret = [self[x] for x in name]
         else:
-            raise IndexError("{} was not found in the setas attribute.".format(name))
+            raise IndexError(f"{name} was not found in the setas attribute.")
         return ret
 
     def __iter__(self):
@@ -488,7 +484,7 @@ class setas(MutableMapping):
                 k = new.find_col(k)
                 new._setas[k] = v
             else:
-                raise IndexError("Unable to workout what do with {}:{} when setting the setas attribute.".format(k, v))
+                raise IndexError(f"Unable to workout what do with {k}:{v} when setting the setas attribute.")
         return new
 
     def __add__(self, other):
@@ -530,11 +526,11 @@ class setas(MutableMapping):
                             else:
                                 me[k] = ""
                         else:
-                            raise ValueError("{} is not set as {}".format(header, k))
+                            raise ValueError(f"{header} is not set as {k}")
                         if len(me[k]) == 0:
                             del me[k]
                 else:
-                    raise ValueError("No column is set as {}".format(k))
+                    raise ValueError(f"No column is set as {k}")
             new.clear()
             new(me)
             return new
@@ -583,7 +579,7 @@ class setas(MutableMapping):
         """
         if isinstance(col, int_types):  # col is an int so pass on
             if col >= len(self.column_headers):
-                raise IndexError("Attempting to index a non - existant column {}".format(col))
+                raise IndexError(f"Attempting to index a non - existant column {col}")
             if col < 0:
                 col = col % len(self.column_headers)
         elif isinstance(col, string_types):  # Ok we have a string
@@ -596,12 +592,10 @@ class setas(MutableMapping):
                 if not possible:
                     try:
                         col = int(col)
-                    except ValueError:
+                    except ValueError as err:
                         raise KeyError(
-                            'Unable to find any possible column matches for "{} in {}"'.format(
-                                col, self.column_headers
-                            )
-                        )
+                            f'Unable to find any possible column matches for "{col} in {self.column_headers}"'
+                        ) from err
                     if col < 0 or col >= self.data.shape[1]:
                         raise KeyError("Column index out of range")
                 else:
@@ -610,7 +604,7 @@ class setas(MutableMapping):
             test = col
             possible = [x for x in self.column_headers if test.search(x)]
             if not possible:
-                raise KeyError("Unable to find any possible column matches for {}".format(col.pattern))
+                raise KeyError(f"Unable to find any possible column matches for {col.pattern}")
             col = self.find_col(possible)
         elif isinstance(col, slice):
             indices = col.indices(self.shape[1])
@@ -619,7 +613,7 @@ class setas(MutableMapping):
         elif isIterable(col):
             col = [self.find_col(x) for x in col]
         else:
-            raise TypeError("Column index must be an integer, string, list or slice, not a {}".format(type(col)))
+            raise TypeError(f"Column index must be an integer, string, list or slice, not a {type(col)}")
         if force_list and not isinstance(col, list):
             col = [col]
         return col
@@ -639,7 +633,7 @@ class setas(MutableMapping):
         except (IndexError, KeyError):
             if default is not None:
                 return default
-            raise KeyError("{} is not in setas and no default was given.".format(name))
+            raise KeyError(f"{name} is not in setas and no default was given.")
 
     def keys(self):
         """Acess mapping keys.
@@ -671,7 +665,7 @@ class setas(MutableMapping):
         except (IndexError, KeyError):
             if default is not None:
                 return default
-            raise KeyError("{} is not in setas and no default was given.".format(name))
+            raise KeyError(f"{name} is not in setas and no default was given.")
 
     def popitem(self):
         """Return and clear a column assignment."""
@@ -719,8 +713,8 @@ class setas(MutableMapping):
         else:
             try:
                 other = dict(other)
-            except (ValueError, TypeError):
-                raise TypeError("setas.update requires a dictionary not a {}".format(type(other)))
+            except (ValueError, TypeError) as err:
+                raise TypeError(f"setas.update requires a dictionary not a {type(other)}") from err
         vals = list(other.values())
         keys = list(other.keys())
         for k in "xyzuvwdef":

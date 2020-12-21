@@ -111,8 +111,7 @@ class OVFFile(DataFile):
                     bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
                 )
                 assertion(
-                    uvwdata[0] == 1234567.0,
-                    "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0]),
+                    uvwdata[0] == 1234567.0, f"Binary 4 format check value incorrect ! Actual Value was {uvwdata[0]}",
                 )
             uvwdata = uvwdata[1:]
             uvwdata = np.reshape(uvwdata, (-1, self["valuedim"]))
@@ -128,11 +127,11 @@ class OVFFile(DataFile):
                 )
                 assertion(
                     (uvwdata[0] == 123456789012345.0),
-                    "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0]),
+                    f"Binary 4 format check value incorrect ! Actual Value was {uvwdata[0]}",
                 )
             uvwdata = np.reshape(uvwdata, (-1, self["valuedim"]))
         else:
-            raise StonerLoadError("Unknow OVF Format {}".format(fmt))
+            raise StonerLoadError(f"Unknow OVF Format {fmt}")
         return uvwdata
 
     def _load(self, filename=None, *args, **kargs):
@@ -155,7 +154,7 @@ class OVFFile(DataFile):
                 else:
                     raise StonerLoadError("Cannot determine version of OOMMFF file")
             else:  # bug out oif we don't like the header
-                raise StonerLoadError("Not n OOMMF OVF File: opening line eas {}".format(line))
+                raise StonerLoadError(f"Not n OOMMF OVF File: opening line eas {line}")
             pattern = re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
             i = None
             for i, line in enumerate(data):

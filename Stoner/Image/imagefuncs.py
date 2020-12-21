@@ -992,7 +992,7 @@ def quantize(im, output, levels=None):
         lvl[-1] = section.max() + delta
         levels = lvl
     else:
-        raise RuntimeError("{} output levels and {} input levels".format(len(output), len(levels)))
+        raise RuntimeError(f"{len(output)} output levels and {len(levels)} input levels")
 
     ret = im.clone
     ret.mask = False

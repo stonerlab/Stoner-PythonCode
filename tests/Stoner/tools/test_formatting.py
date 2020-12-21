@@ -48,4 +48,4 @@ def test_ordinal():
     assert formatting.ordinal(21).endswith("st"), "Failed to add st to 21st in ordinal"
 
 if __name__ == "__main__":
-    pytest.main()
+    pytest.main(["--pdb",__file__])

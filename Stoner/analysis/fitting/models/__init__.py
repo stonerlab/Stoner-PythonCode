@@ -58,7 +58,7 @@ def _get_model_(model):
     if not isinstance(model, Model) and callable(model):  # Ok, wrap the callable in a model
         model = Model(model)
     if not isinstance(model, Model):
-        raise TypeError("model {} is not an instance of llmfit.Model".format(model.__name__))
+        raise TypeError(f"model {model.__name__} is not an instance of llmfit.Model")
     return model
 
 
@@ -135,9 +135,9 @@ def make_model(model_func):
                 limits = func(**kargs)
                 for param in limits:
                     if param not in self.param_names:
-                        raise RuntimeError("Unrecognised parameter in hinter function: {}".format(param))
+                        raise RuntimeError(f"Unrecognised parameter in hinter function: {param}")
                     if not isinstance(limits[param], Mapping):
-                        raise RuntimeError("Parameter hint for {} was not a mapping".format(param))
+                        raise RuntimeError(f"Parameter hint for {param} was not a mapping")
                 return limits
 
             cls._limits = _limits_proxy
@@ -281,8 +281,8 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     if model is None:  # Check to see if config file specified a model
         try:
             model = config.get("Options", "model")
-        except (IOError, ValueError, TypeError):
-            raise RuntimeError("Model is notspecifed either as keyword argument or in inifile")
+        except (IOError, ValueError, TypeError) as err:
+            raise RuntimeError("Model is notspecifed either as keyword argument or in inifile") from err
     model = _get_model_(model)
     if config.has_option("option", "prefix"):
         prefix = config.get("option", "prefix")
@@ -292,7 +292,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     vals = []
     for p in model.param_names:
         if not config.has_section(p):
-            raise RuntimeError("Config file does not have a section for parameter {}".format(p))
+            raise RuntimeError(f"Config file does not have a section for parameter {p}")
         keys = {
             "vary": bool,
             "value": float,
@@ -315,7 +315,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
         if isinstance(data, _SC_.DataFile):  # stuff the parameter hint data into metadata
             for k in keys:  # remove keywords not needed
                 if k in kargs:
-                    data["{}{} {}".format(prefix, p, k)] = kargs[k]
+                    data[f"{prefix}{p} {k}"] = kargs[k]
             if "lmfit.prerfix" in data:
                 data["lmfit.prefix"].append(prefix)
             else:

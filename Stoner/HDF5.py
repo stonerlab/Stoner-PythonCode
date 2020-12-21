@@ -106,9 +106,9 @@ def _open_filename(filename):
             if grp.strip() != "":
                 f = f[grp]
     except IOError:
-        _raise_error(f, message="Failed to open {} as a n hdf5 file".format(filename))
+        _raise_error(f, message=f"Failed to open {filename} as a n hdf5 file")
     except KeyError:
-        _raise_error(f, message="Could not find group {} in file {}".format(group, filename))
+        _raise_error(f, message="Could not find group {group} in file {filename}")
     return f
 
 
@@ -237,7 +237,7 @@ class HDF5File(DataFile):
             v = metadata.attrs[i]
             t = typehints.get(i, "Detect")
             if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-                self.metadata["{}{{{}}}".format(i, t).strip()] = "{}".format(v).strip()
+                self.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
             else:
                 self[i] = metadata.attrs[i]
         if isinstance(f, h5py.Group):
@@ -369,8 +369,8 @@ class HGXFile(DataFile):
                     raise StonerLoadError("Looks like an unexpected HDF layout!.")
                 self.scan_group(f["current"], "")
                 self.main_data(f["current"]["data"])
-        except IOError:
-            raise StonerLoadError("Looks like an unexpected HDF layout!.")
+        except IOError as err:
+            raise StonerLoadError("Looks like an unexpected HDF layout!.") from err
         return self
 
     def scan_group(self, grp, pth):
@@ -382,7 +382,7 @@ class HGXFile(DataFile):
             return None
         if self.debug:
             if self.debug:
-                print("Scanning in {}".format(pth))
+                print(f"Scanning in {pth}")
         for x in grp:
             if pth == "":
                 new_pth = x
@@ -468,7 +468,7 @@ class HDF5FolderMixin:
         while len(names) > 0:
             next_group = names.pop(0)
             if next_group not in grp:
-                raise IOError("Cannot find {} in {}".format(name, self.File.filename))
+                raise IOError(f"Cannot find {name} in {self.File.filename}")
             grp = grp[next_group]
         tmp = self.loader(grp)
         tmp.filename = grp.name
@@ -598,7 +598,7 @@ class HDF5FolderMixin:
         # root should be an open h5py file
         root.attrs["type"] = "HDF5Folder"
         for ix, obj in enumerate(self):
-            name = os.path.basename(getattr(obj, "filename", "obj-{}".format(ix)))
+            name = os.path.basename(getattr(obj, "filename", f"obj-{ix}"))
             if name not in root:
                 root.create_group(name)
             name = root[name]
@@ -652,12 +652,12 @@ class SLS_STXMFile(DataFile):
         if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
             try:
                 f = h5py.File(filename, "r+")
-            except IOError:
-                raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
+            except IOError as err:
+                raise StonerLoadError(f"Failed to open {filename} as a n hdf5 file") from err
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:
-            raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
+            raise StonerLoadError(f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
         items = [x for x in f.items()]
         if len(items) == 1 and items[0][0] == "entry1":
             group1 = [x for x in f["entry1"]]
@@ -714,7 +714,7 @@ class SLS_STXMFile(DataFile):
                 else:
                     self.metadata[name] = thing[...]
         for attr in group.attrs:
-            self.metadata["{}.{}".format(root, attr)] = group.attrs[attr]
+            self.metadata[f"{root}.{attr}"] = group.attrs[attr]
 
 
 class STXMImage(ImageFile):

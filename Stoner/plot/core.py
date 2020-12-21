@@ -1092,8 +1092,8 @@ class PlotMixin:
             plotter = plotters.get(axes, None)
             ret = plotter(*args, **kargs)
             plt.show()
-        except KeyError:
-            raise RuntimeError("Unable to work out plot type !")
+        except KeyError as err:
+            raise RuntimeError("Unable to work out plot type !") from err
         return ret
 
     def plot_matrix(

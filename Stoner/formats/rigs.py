@@ -184,9 +184,9 @@ class FmokeFile(Core.DataFile):
         with io.open(self.filename, mode="rb") as f:
             try:
                 value = [float(x.strip()) for x in bytes2str(f.readline()).split("\t")]
-            except (TypeError, ValueError):
+            except (TypeError, ValueError) as err:
                 f.close()
-                raise Core.StonerLoadError("Not an FMOKE file?")
+                raise Core.StonerLoadError("Not an FMOKE file?") from err
             label = [x.strip() for x in bytes2str(f.readline()).split("\t")]
             if label[0] != "Header:":
                 f.close()
@@ -238,9 +238,9 @@ class EasyPlotFile(Core.DataFile):
                     parts = [x.strip('"') for x in next(csv.reader([line], delimiter=" ")) if x != ""]
                     cmd = parts[0].strip("/")
                     if len(cmd) > 1:
-                        cmdname = "_{}_cmd".format(cmd)
+                        cmdname = f"_{cmd}_cmd"
                         if cmdname in dir(self):  # If this command is implemented as a function run it
-                            cmd = getattr(self, "_{}_cmd".format(cmd))
+                            cmd = getattr(self, f"_{cmd}_cmd")
                             cmd(parts[1:])
                         else:
                             if len(parts[1:]) > 1:
@@ -271,7 +271,7 @@ class EasyPlotFile(Core.DataFile):
             self.data = np.append(
                 self.data, np.zeros((self.shape[0], i - length)), axis=1
             )  # Need to expand the array first
-            self.column_headers.extend(["Column {}".format(x) for x in range(length, i)])
+            self.column_headers.extend([f"Column {x}" for x in range(length, i)])
 
     def _et_cmd(self, parts):
         """Handle axis labellling command."""
