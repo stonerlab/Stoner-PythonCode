@@ -253,7 +253,7 @@ def test_other_funcs():
     assert hasattr(selfimarr,'img_as_float'), 'skimage funcs not being added to dir'
     im = selfimarr.do_nothing() #see if it can run
     assert np.allclose(im, selfimarr), 'imagefuncs not working'
-    assert not shares_memory(im, selfimarr), 'imagefunc failed to clone'
+    assert shares_memory(im, selfimarr), 'imagefunc failed to share memory'
     im0 = ImageArray(np.linspace(0,1,12).reshape(3,4))
     im1 = im0.clone * 5
     im2 = im1.rescale_intensity() #test skimage

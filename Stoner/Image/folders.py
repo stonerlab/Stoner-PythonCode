@@ -225,7 +225,7 @@ class ImageFolderMixin:
         warn("apply_all is depricated and will be removed in a future version. Use ImageFolder.each() instead")
         return self.each(func, *args, **kargs)
 
-    def average(self, weights=None, _box=None, _metadata="first"):
+    def average(self, weights=None, _box=False, _metadata="first"):
         """Get an array of average pixel values for the stack.
 
         Pass through to numpy average
@@ -310,7 +310,7 @@ class ImageFolderMixin:
 
         return self
 
-    def mean(self, _box=None, _metadata="first"):
+    def mean(self, _box=False, _metadata="first"):
         """Calculate the mean value of all the images in the stack.
 
         Keyword Arguments:
@@ -412,7 +412,7 @@ class ImageFolderMixin:
         tight_layout()
         return ret
 
-    def stddev(self, weights=None, _box=None, _metadata="first"):
+    def stddev(self, weights=None, _box=False, _metadata="first"):
         """Calculate weighted standard deviation for stack.
 
         Keyword Arguments:
@@ -438,7 +438,7 @@ class ImageFolderMixin:
         ret.metadata = self.metadata.common_metadata
         return self._type(ret[ret._box(_box)])
 
-    def stderr(self, weights=None, _box=None, _metadata="first"):
+    def stderr(self, weights=None, _box=False, _metadata="first"):
         """Calculate standard error in the stack average.
 
         Keyword Arguments:

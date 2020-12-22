@@ -63,6 +63,7 @@ from Stoner.compat import string_types
 from Stoner.tools import isTuple, isIterable, make_Data
 from .core import ImageArray
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
+from .widgets import LineSelect
 
 try:
     from PyQt5.QtGui import QImage
@@ -829,6 +830,8 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
             src = (kargs["y"], 0)
             dst = (kargs["y"], c)
             fast_mode = kargs.get("no_scale", False)
+        if src is None and dst is None:
+            src, dst = LineSelect()(img)
     if isinstance(src, float):
         src = (src, src)
     if isinstance(dst, float):

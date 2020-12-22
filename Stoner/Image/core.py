@@ -23,6 +23,7 @@ from ..compat import (
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
 from .util import build_funcs_proxy, changes_size
+from .widgets import RegionSelect, LineSelect
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -368,18 +369,17 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             - (iterable of length 4) - assumed to give 4 integers to describe a specific box
         """
         if len(args) == 0 and "box" in kargs.keys():
-            args = kargs["box"]  # back compatability
-        elif len(args) not in (1, 4):
+            args = [kargs["box"]]  # back compatability
+        elif len(args) not in (0, 1, 4):
             raise ValueError("box accepts 1 or 4 arguments, {len(args)} given.")
+        if len(args) == 0 or (len(args) == 1 and args[0] is None):
+            args = RegionSelect()(self)
         if len(args) == 1:
             box = args[0]
-            if isinstance(box, bool) and not box:  # experimental
-                print("Select crop area")
-                box = self.draw_rectangle(box)
+            if isinstance(box, bool) and not box:  # box=False is the same as all values
+                return slice(None, None, None), slice(None, None, None)
             elif isLikeList(box) and len(box) == 4:  # Full box as a list
                 box = [x for x in box]
-            elif box is None:  # Whole image
-                box = [0, self.shape[1], 0, self.shape[0]]
             elif isinstance(box, int):  # Take a border of n pixels out
                 box = [box, self.shape[1] - box, box, self.shape[0] - box]
             elif isinstance(box, string_types):
@@ -564,9 +564,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             """Wrap magic proxy function call."""
             transpose = getattr(workingfunc, "transpose", False)
             if transpose:
-                change = self.clone.T
+                change = self.T
             else:
-                change = self.clone
+                change = self
             r = workingfunc(change, *args, **kwargs)  # send copy of self as the first arg
             if isinstance(r, make_Data(None)):
                 pass  # Data return is ok
@@ -576,9 +576,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 r.column_headers[0] = workingfunc.__name__
             elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
                 if transpose:
-                    r = r.view(type=self.__class__).T
-                else:
-                    r = r.view(type=self.__class__)
+                    r = r.T
+                if isinstance(r, self.__class__) and np.shares_memory(r, self):  # Assume everything was inplace
+                    return r
+                r = r.view(self.__class__)
                 sm = self.metadata.copy()  # Copy the currenty metadata
                 sm.update(r.metadata)  # merge in any new metadata from the call
                 r.metadata = sm  # and put the returned metadata as the merged data
@@ -609,6 +610,12 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         metadata = local.pop("metadata", {})
         super().__setstate__(original)
         self.metadata.update(metadata)
+
+    def __delattr__(self, name):
+        """Handle deleting attributes."""
+        super().__delattr__(name)
+        if name in self._optinfo:
+            del self._optinfo[name]
 
     def __setattr__(self, name, value):
         """Set an attribute on the object."""
@@ -1160,6 +1167,12 @@ class ImageFile(metadataObject):
         except KeyError:
             self.metadata.__delitem__(n)
 
+    def __delattr__(self, name):
+        """Handle the delete attribute code."""
+        super().__delattr__(name)
+        if name in self._public_attrs_real:
+            del self._public_attrs_real[name]
+
     def __getattr__(self, n):
         """Handle attriobute access."""
         obj = self._where_attr(n)
@@ -1331,12 +1344,15 @@ class ImageFile(metadataObject):
         @wraps(workingfunc)
         def gen_func(*args, **kargs):
             """Wrap a called method to capture the result back into the calling object."""
-            box = kargs.pop("_box", None)
+            box = kargs.pop("_box", False)
             if len(args) > 0:
                 args = list(args)
                 for ix, a in enumerate(args):
                     if isinstance(a, ImageFile):
-                        args[ix] = a.image[self.image._box(box)]
+                        if isinstance(box, bool) and not box:
+                            args[ix] = a.image
+                        else:
+                            args[ix] = a.image[self.image._box(box)]
             if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
                 # special case for common function crop which will change the array shape
                 force = True

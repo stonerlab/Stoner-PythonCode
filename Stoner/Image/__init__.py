@@ -10,6 +10,7 @@ __all__ = [
     "folders",
     "stack",
     "kerr",
+    "widgets",
     "ImageArray",
     "ImageFile",
     "ImageFolder",
@@ -23,3 +24,4 @@ from .folders import ImageFolder
 from .stack import ImageStack
 from .kerr import KerrArray, KerrStack, MaskStack
 from . import attrs
+from . import widgets
