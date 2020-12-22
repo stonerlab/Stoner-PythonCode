@@ -23,7 +23,7 @@ from ..compat import (
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
 from .util import build_funcs_proxy, changes_size
-from .widgets import RegionSelect, LineSelect
+from .widgets import RegionSelect
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -378,7 +378,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             box = args[0]
             if isinstance(box, bool) and not box:  # box=False is the same as all values
                 return slice(None, None, None), slice(None, None, None)
-            elif isLikeList(box) and len(box) == 4:  # Full box as a list
+            if isLikeList(box) and len(box) == 4:  # Full box as a list
                 box = [x for x in box]
             elif isinstance(box, int):  # Take a border of n pixels out
                 box = [box, self.shape[1] - box, box, self.shape[0] - box]

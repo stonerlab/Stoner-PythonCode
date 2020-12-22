@@ -22,8 +22,22 @@ class LineSelect:
         self.fig = None
         self.crs = None
         self.mode = "xy"
+        self.kargs = {}
 
     def __call__(self, image, **kargs):
+        """Do the actual line selection.
+
+        Args:
+            image (ImageArray, ImageFile):
+                The image to shopw to the user for the selection
+            **kargs (mixed):
+                Other keywords to pass to the line drawing.
+
+        Returns:
+            list:
+                [(x_start,y_start),(x_finish,y_finish)] coordinates for the endpoints of the line
+
+        """
         self.fig = image.imshow()
         self.ax = plt.gca()
         self.kargs = kargs
@@ -120,7 +134,7 @@ class LineSelect:
 
 class RegionSelect:
 
-    """Show an Image and slow the user to select a rectangular section"""
+    """Show an Image and slow the user to select a rectangular section."""
 
     def __init__(self):
         """Create the LineSelect object, display the image and register the hooks.
@@ -134,8 +148,22 @@ class RegionSelect:
         self.ax = None
         self.fig = None
         self.select = None
+        self.kargs = {}
 
     def __call__(self, image, **kargs):
+        """Actuall do the region selection.
+
+        Args:
+            image (ImageArray, ImageFile):
+                The image to shopw to the user for the selection
+            **kargs (mixed):
+                Other keywords to pass to the line drawing.
+
+        Returns:
+            list:
+                The x and y range coordinates, in te order left-x, right-x, top-y, bottom-y
+
+        """
         self.fig = image.imshow()
         plt.title("Click and drag to select region and press return")
         self.ax = plt.gca()
