@@ -1,6 +1,5 @@
 """Fit a sphere with curve_fit."""
 # pylint: disable=invalid-name, redefined-outer-name
-from Stoner import Data
 from numpy import (
     sin,
     cos,
@@ -13,6 +12,8 @@ from numpy import (
 )
 from numpy.random import normal, uniform
 import matplotlib.pyplot as plt
+
+from Stoner import Data
 
 
 def transform(r, q, p):

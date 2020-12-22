@@ -1,7 +1,8 @@
 """Smoothing Data methods example."""
 # pylint: disable=invalid-name, no-member, not-callable
-from Stoner import Data
 import matplotlib.pyplot as plt
+
+from Stoner import Data
 
 fig = plt.figure(figsize=(9, 6))
 

@@ -1,8 +1,9 @@
 """Simple ploting with a template."""
 # pylint: disable=invalid-name, no-member
+from cycler import cycler
+
 from Stoner import Data
 from Stoner.plot.formats import DefaultPlotStyle
-from cycler import cycler
 
 p = Data("sample.txt", setas="xy", template=DefaultPlotStyle())
 p.template(  # pylint: disable=not-callable

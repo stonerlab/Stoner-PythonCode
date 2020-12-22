@@ -1,9 +1,9 @@
 """Detect peaks in a dataset."""
 # pylint: disable=invalid-name,unsubscriptable-object
-from Stoner import Data
-
 from matplotlib.cm import jet
 from numpy import linspace
+
+from Stoner import Data
 
 d = Data("../../sample-data/New-XRay-Data.dql")
 e = d.clone

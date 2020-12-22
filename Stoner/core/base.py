@@ -7,10 +7,6 @@ from collections.abc import MutableMapping, Mapping
 import re
 import copy
 import datetime
-from dateutil import parser
-import numpy as np
-from numpy import NaN
-import asteval
 from typing import (
     Union,
     Optional,
@@ -25,6 +21,11 @@ from typing import (
     Iterable as IterableType,
     Generator,
 )
+
+from dateutil import parser
+import numpy as np
+from numpy import NaN
+import asteval
 
 try:
     import pandas as pd
