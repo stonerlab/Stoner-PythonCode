@@ -24,20 +24,27 @@ for fname in [
     imgs += img
 
 # Align the two images
-imgs.align(imgs[0], method="scharr", scale=4)
+imgs.align(method="imreg_dft", scale=10)
 imgs.each.crop(2)
 
-# Calculate the XMCD image and normalise it
+# Calculate the XMCD image
 xmcd = imgs[0] // imgs[1]
 xmcd.normalise()
 
 imgs += xmcd
-
 strctural = (imgs[0] + imgs[1]) / 2
-
 imgs += strctural
+
 # Mask out the background, using the structural image
-xmcd.mask = imgs[0].image > 20e3
+xmcd.mask = strctural.image > strctural.threshold_otsu()
+
+# Remove the background XMCD atio
+xmcd.mask.invert()
+mean = xmcd.mean()
+xmcd.mask = False
+xmcd -= mean
+xmcd.mask = strctural.image > strctural.threshold_otsu()
+xmcd.normalise()
 
 # Create a profile and plot it
 profile = xmcd.profile_line((0, 0), (100, 100))

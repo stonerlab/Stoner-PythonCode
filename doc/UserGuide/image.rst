@@ -7,14 +7,34 @@ Introduction
 ============
 
 The :mod:`Stoner.Image` package provides a means to carry out image processing functions in a smilar way that :mod:`Stoner.Core` and :class:`Stoner.Data` and
-:class:`Stoner.DataFolder` do. The :mod:`Stomner.Image.core` module contains the key classes for achieving this.
+:class:`Stoner.DataFolder` do.
 
 :class:`ImageFile`
-===================
-This class inherits from :class:`Stoner.Core.metadataObject` and is analagous to :class:`Stoner.Data` but focussed on handling and manipulating grey scale
-images. The data is stored internally as an :class:`ImageArray` attribute which inherits itself from numpy.ndarray type.
-:class:`ImageFile` provides the same metadata faciltities as the general :class:`Stoner.Data` and also contains load routines that allow it to extract
-certain metadata stored in image files.
+------------------
+
+In the Stoner package, a :class:`ImageFile` represent a single image along with associated metadata from when the image was taken.
+The actual image data is stored in the :attr:`ImageFile.image` as a 2D numpy array. This is actually a masked array - the mask is
+useful for ignoring certain portions of the image when carrying out operations. As well as the image data, a :class:`ImageFile` also
+has a :attr:`ImageFile.metadata` attribute that stores the associated image metadata as a set of key-value pairs in a dictionary.
+
+As with :class:`Stoner.Data`, :class:`ImageFile` has a rich array of methods that can carry out different image analysis tasks -
+in common with the philosophy of the Stoner package, these methods operate *in place* and also return the modified :class:`ImageFile`
+allowing a sequence of operations to be completed by chaining the method calls together.
+
+The array of methods available to a :class:`ImageFile` is particularly rich as the class automatically wraps functions from the
+popular scikit-image package as well as the :py@mod:`scipy.ndimage` module. In general such functions take an image as their first argument
+and :class:`ImageFile` passes its own image data as that argument to whatever funcion is being wrapped. If the function Returns
+image data of the same size that the original image, then the wrapper replaces the :class:`ImageFile`'s image data with the new
+image data.
+
+We well as the wrapped scikit-image and scipy.ndimage functions, ImageFile wraps the opencv2 package if it is available as well
+as providing a set of its own functions for carrying out some common image processing operations.
+
+The native :class:`ImageFile` can load and save both .tiff and .png files and will embed its metadata into custom tags in those
+formats.
+
+Subclasses of the :class:`ImageFile` are provided for reading the .png files produced by the CM group's Evico Kerr Microscopes as well as
+a :class:`Stoner.HDF5.STXMImage` class that reads the SLS Pollux Beamline's STXM images.
 
 Loading an Image
 ----------------
@@ -22,37 +42,214 @@ Loading an Image
 The :class:`ImageFile` constructor supports taking a string argument which is interpreted as a filename of an image format recognised by PIL. The resulting
 image data is used to form the contents of the :attr:`ImageFile.image` which holds the image data.
 
-   from Stoner.Image import ImageFile
+   from Stoner import ImageFile
    im = ImageFile('my_image.png')
 
 Like :class:`Stoner.Data` :class:`ImageFile` supports image metadata. Where this can be stored in the file, e.g. in png and tiff images, this is read in
 automatically. This metadata is stored as a :class:`Stoner.Core.typeHintedDict` dictionary. This metadata can be set directly in the
 construction of the :class:`ImageFile`::
 
-   im = ImageArray(np.arange(12).reshape(3,4), metadata={'myarray':1})
+   im = ImageFile(np.arange(10000).reshape(100,100), metadata={'myarray':1})
 
-Examining and manipulating the ImageArray
+Examining and manipulating the ImageFile
 -----------------------------------------
+
+IF you are using an ipython console or Jupyter Notebook, then the :class:`ImageFile` supports rich format outputs and
+it will show you a picture of the image data as its default representation.
 
 Local functions and properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Typical start functions might be to convert the image into floating point form which is more precise than
-integer format and crop the image::
+:class:`ImageFile`s use the appropriate data type for the underlying image format - integers for png and either integers or
+floating point numbers for tiffs (STXM files are always floating point).
 
-  im.asfloat()
-  im.crop(1,8,40,200) #(xmin, xmax, ymin, ymax)
-  copyofim = im.clone #behaviour similar to data file
+The :meth:`ImageFile.convert` method can be used to convert the data to a more appropriate format::
 
-#get a metadata item::
+    im.convert(float)
+    im.asfloat()
+    im.asint()
 
-  im['mymeta'] = 5
+It also has simpler :meth:`ImageFile.asfloat` and :meth:`ImageFile.asinit` methods for converting to floating point or integer
+formats as required.
 
-Then view parts of the array::
+There are a number of attributes that can tell you information about the :class:`ImageFile` such as:
 
-	im[:,10:50]
-	im.metadata.keys()
-	im.view()
+    - :attr:`ImageFile.centre` - the co-ordinates of the centre of the image
+    - :attr:`ImageFile.aspect` - the image aspect ratio
+    - :attr:`ImageFile.shape` - the size of the underlying numpy array for the image.
+
+To make it easier to quickly get a rotated image, the attributes :aattr:`ImageFile.CW` and :attr:`ImageFile.CCW` return
+copies of the :class:`ImageFile` that are rotate 90 degrees clockwise and counter-clockwise.
+
+In many cases the default behaviour of modifying the image data in place may not be desired- to get a copy of the
+:class:`ImageFile` you use the :attr:`ImageFile.clone` attribute::
+
+    new_im = im.clone.gaussian(1.0) # create a copy of im and then apply a guassian blur
+
+An :class:`ImageFile` can be indexed like an array to return a new :class:`ImageFile` object which contains only a subset
+of the original image data.::
+
+	im[:,10:50] # Return a vertical section of the image
+	im[::-1,:] # Flip the image vertically
+
+Indexing an :class:`ImageFile` with a string will instead acces the metadata stored with the object.::
+
+    img["Loaded as"]
+
+The :class:`ImageFile` inherits from a dictionary like class - so all the usual Python dictionary methods work on the
+metadata of the image.::
+
+    for metadata_key in im:
+        print(f"{key}->{im[keuy}")
+
+    averages = im.pop("Averages",1)
+    if "Message" in im:
+        orint(f"Message = {im['Message']}")
+
+Like the :class:`Stoner.Data` class, the metadata dictionary  will fall back to matching keys with regular expressions
+if not exact match is found. In this case, if multiple metadata items match then the result of indexing with a string
+may return a dictionary with all the matching keys.
+
+The metadata associated with an image will always be stored in the best Python type that can be found - where possible
+metadata is stored in files with a hint as to the native type of that data and this type hint is used to map to an
+appropriate Python type. Unmappable types are retained as a string representation.
+
+Common Functions
+----------------
+
+It is not possible to provide an exhaustive guid to all the functions made available from scikit-image, scipy.ndimage and
+opencv2, but this section will cover some of the commonly used functionality.
+
+
+Specify a box
+^^^^^^^^^^^^^
+
+Many of the functions can be used with a *_box* parameter to limit their operation to a sepcified region of the image.
+Additionally the :meth:`ImageFile.crop` method will discard the image outside a region specifed in a similar way. The
+working box can be given as follows:
+
+    - A single integer:
+        This is interpreted to exclude a regio of n pixels from all sides of the image.
+    - A single floating point number between 0.0 and 0.5:
+        This is interpreted to exclude this corresponding fraction of the width and height from each side of the image
+    - A tuple of 4 numbers, or 4 arguments:
+        This is interpreeted as a sequence of pxiel co-ordinates for (left-x, right-x, top-y, bottom-y). If any of the
+        numbers are None, then this is take as the minimum or maximum extents of the width or height (depending on whether
+        the None value substitutes for the left, right top or bottom co-ordinate).
+    - A single string:
+        The argument is interpreted as the name of a metadata item that will define the box to be bropped.
+    - A sigle value False:
+        This is equivalent to the whole iamge (i.e. to not specify a box)
+    - A single None value:
+        In this case a copy of the image is shown to the user and they are invited to draw the box with the mouse and
+        then press the <Enter> key to confirm their selection.
+
+Aligning Two Images
+^^^^^^^^^^^^^^^^^^^
+
+The :meth:`Stoner.ImageFile.align` method can ve used to align an image to a reference image. It offers a variety of different
+algorthims which may be better or worse depending on the nature of the image. The options are:
+
+    - chi2_shift:   this uses the image-registration module to carry out a chi-squared analysis of shifting the two iamges
+                    relative to each other.
+    - imreg_dft:    this uses the imreg_dft module to carry out the image registration. In essence it takes a fourier transform
+                    of the two images and then compares the phases within the fourier transforms to calculate the necessary shift.
+    - scharr:       this is the default method used. It first of all applies a Scharr edge detection filter and uses the
+                    imreg_dft method to find the translation vector.
+    - cv2:          this method uses the opencv2 package's alignment algorthim.
+
+
+Align also takes a *_box* keyword parameter to confine the section of the image used for the alignment to a sepcific region
+(this can make the operation more efficient  if much of the images are featureless), and a *scale* parameter that will upscale
+the image before attempting to do the alignment. This may improve sub-pixel alignment corrections.
+
+As well as returning the shifted images, :meth:`ImageFile.align` will record the translation vector used in the metadata item *tvec*.::
+
+    im.align(ref,method="imreg_dft", scale=4)
+    print(f"Translation Vector={im['tvec']}")
+
+Align also calculates a *translation-limits* metadata item that represents the maximum extent of the image where the pixels
+have not been added to accommodate the translation for the alignment.
+
+Cropping an Image
+^^^^^^^^^^^^^^^^^
+
+The :meth:`ImageFile.crop` will crop the image to the box you specify. If called with no parameters, then it will show the current
+image and allow you to draw the crop box on it. Pressing return will select the region to crop.
+
+The combination of the *translation_limits* metadata item from the :meth:`ImageFile.align` method and the specification of the box
+for cropping allows images to be aligned and then cropped to match.::
+
+    im.align(ref,method="imreg_dft", scale=4)
+    # Crop the image according to the translation limits worked out be align.
+    im.crop("translation_limits")
+
+    # Now crop the reference image, using the revsed translation limits
+    ref.crop(im.translation_limits("tvec", reverse=True))
+
+Contrast Normalisation
+^^^^^^^^^^^^^^^^^^^^^^
+
+If the absolute value of the image data is not important, then normalising the image can improve the contrast. The
+:meth:`ImageFile.normalise` will do this.By default it will remap the image intensity values to the range -1 to +1. This
+can be changed with the *limits* keyword parameter. The area of the image used to calculate the mapping between the old and
+new intensity values can be set with the *sample*  parameter. If there are a few pixels with extreme values in the image then
+this can reduce the contrast for the bulk of the image. By using the *limits* parameter you can restrict the portion
+of the input range to be rescaled over. For example, *limits=(0.1,0.9)* will map the first 10% and the last 10% of the
+pixels to -1 or +1 and the middle 80% between the two extremes.::
+
+    im.normalise(limits=(0.01,0.99))
+
+Image Filtering
+^^^^^^^^^^^^^^^
+
+Filtering is frequently used to remove npise and other artefacts from images. Most of the filters that can be applied are
+functions within the sckit-image.filters module. A good general purpose option is to use a gaussian filter - this will
+convolute the image with a 2-D gaussian function with a user-definable width. This is effective for removing high frequency
+noise and speckle.::
+
+    im.gaussian(1.0)
+
+For band-pass filt4ering the scikit-image.fitlers method *difference_of_gaussians* can be used. This filters the image with two
+different gaussian blurs and then takes the difference between them - the smaller gaussian blur removes high frequency noise
+whilst the large gaussian removes low spatial frequency variations.::
+
+    im.difference_of_gaussians(1.0,2.0)
+
+Another filtering approach is to us a Savitsky-Golay filter - this fits a polynomial surface locally over the data to smooth
+or differentiate the date. This sort of filtering is good for preserving feature sizes in the original data set.::
+
+    im:sgolay2d(pints=5)
+
+Fourier transforms
+^^^^^^^^^^^^^^^^^^
+
+Fast Fourier transforms are oftern used when we need to examain the frequency spectra of image data. The :meth:`ImageFile.fft`
+method provides a convenient one-stop method for generating the fft that can also take care of some of the artefacts that
+can result.::
+
+    fft=im.clone.fft(replace_dc=True, window="hamming")
+
+In this example, a copy of the image is transformed to the mangitude of its fourier transform. THe fourier transform is shifted
+so that the central pixels are the 0-ffrequency componennts. The optional keywrod *remove_dc* replaces the 0 frequency data with the
+mean value of the FFT to avoid a large spike int he FFT from the mean value of the image. The *window* parameter tells the method
+to multiply the image by the corresponding window function (from scikit-image.filters.window) before calculating the FFT. This
+avoids artefacts caused by the discontinuities at the edges of the image.
+
+The shifting of the FFT to align the dc componentns to the centre of the image can be controlled with the *shift* keyword
+parameter, whilst the output is controlled by the *phase* parameter - False gives the magnitude, True returns the phase angle in radians
+and None returns the full complex FFT.
+
+To aid with analyhsing radial distributions in FFTs (or images), the :meth:`ImageFile.radial_profile` method can be used.
+This will compute a prfile from a given centre outwards - either integrating over all angles, or restricting to specific angles.
+At its simpletst one can just do::
+
+    profile=fft.radial_profile()
+
+Which will return a :calss:`Stoner.Data` object with columns for the radial distance, mean pixel value at the corresponding radius,
+standard deviation and number of pixels counted. The optional *angle* keyword parameter will select either one angle (float) or a
+rangle of angles (tuple of two floats)
+
 
 Further functions
 ^^^^^^^^^^^^^^^^^

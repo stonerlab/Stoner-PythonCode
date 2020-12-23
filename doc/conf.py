@@ -111,7 +111,8 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 autosummary_generate = True
-automodsumm_inherited_members = False
+automodsumm_inherited_members = True
+autosummary_imported_members = True
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
 
 inheritance_graph_attrs = dict(rankdir="TB", size='"6.0, 8.0"',
