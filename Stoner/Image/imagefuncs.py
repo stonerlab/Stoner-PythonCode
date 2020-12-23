@@ -204,10 +204,12 @@ def align(im, ref, method="scharr", **kargs):
         method (str or None):
             If given specifies which module to try and use.
             Options: 'scharr', 'chi2_shift', 'imreg_dft', 'cv2'
-        box (integer, float, tuple of images or floats):
+        _box (integer, float, tuple of images or floats):
             Used with ImageArray.crop to select a subset of the image to use for the aligning process.
-        oversample (int):
+        scale (int):
             Rescale the image and reference image by constant factor before finding the translation vector.
+        prefilter (callable):
+            A method to apply to the image before carrying out the translation to the align to the reference.
         **kargs (various): All other keyword arguments are passed to the specific algorithm.
 
 
@@ -237,14 +239,13 @@ def align(im, ref, method="scharr", **kargs):
         if mod is None:
             del align_methods[meth]
     method = method.lower()
-    new_type = im.dtype
     if not len(align_methods):
         raise ImportError("align requires one of imreg_dft, chi2_shift or cv2 modules to be available.")
     if method not in align_methods:
         raise ValueError(f"{method} is not available either because it is not recognised or there is a missing module")
 
-    if "box" in kargs:
-        box = kargs.pop("box")
+    if "box" in kargs or "_box" in kargs:
+        box = kargs.pop("box", kargs.pop("_box"))
         if not isIterable(box):
             box = [box]
         working = im.crop(*box, copy=True)
@@ -254,6 +255,11 @@ def align(im, ref, method="scharr", **kargs):
         working = im
 
     scale = kargs.pop("scale", None)
+    mode = kargs.pop("mode", "mirror")
+    cval = kargs.pop("cval", im.mean())
+    if mode == "mean":
+        mode = "constant"
+        cval = im.mean()
 
     if scale:
         working = working.rescale(scale, order=3)
@@ -266,11 +272,12 @@ def align(im, ref, method="scharr", **kargs):
         tvec = (0, 0)
         data = im
 
+    data.pop("timg", None)
+
     if scale:
         tvec /= scale
-    new_im = im.shift((tvec[1], tvec[0]), prefilter=prefilter).astype(new_type)
-    for k, v in data.items():
-        new_im[k] = v
+    new_im = im.shift((tvec[1], tvec[0]), prefilter=prefilter, mode=mode, cval=cval)
+    new_im.metadata.update(data)
     new_im["tvec"] = tuple(tvec)
     new_im["translation_limits"] = new_im.translate_limits("tvec")
     return new_im
@@ -490,7 +497,7 @@ def subtract_image(im, background, contrast=16, clip=True, offset=0.5):
     return im
 
 
-def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None):
+def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None, window=None):
     """Perform a 2d fft of the image and shift the result to get zero frequency in the centre.
 
     Keyword Args:
@@ -504,10 +511,16 @@ def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None):
             Default False
         gaussian (None or float):
             Apply a gaussian blur to the fft where this parameter is the width of the blue in px. Default None for off.
+        window (None or str):
+            If not None (default) the image is multiplied by the given window function before the fft is calculated. This
+            avpoids leaking some signal into the higher frequency bands due to discontinuities at the image edges.
 
     Return:
         fft of the image, preserving metadata.
     """
+    if window:
+        window = filters.window(window, im.shape)
+        im = im.clone * window
     r = np.fft.fft2(im)
 
     if remove_dc:
@@ -751,7 +764,7 @@ def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
         values at the *low* and *high* fractions of the cumulative distribution functions.
     """
     mask = im.mask
-    cls = im.__class__
+    cls = type(im)
     im = im.astype(float)
     if scale is None:
         scale = (-1.0, 1.0)
@@ -759,6 +772,8 @@ def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
         section = im[im._box(sample)]
     else:
         section = im
+
+    section = section[~section.mask]
     if limits != (0.0, 1.0):
         low, high = limits
         low = np.sort(section.ravel())[int(low * section.size)]
@@ -773,8 +788,8 @@ def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
     scaled = (im.data - low) / (high - low)
     delta = scale[1] - scale[0]
     offset = scale[0]
-    im = scaled * delta + offset
-    im = im.view(cls)
+    scaled = scaled * delta + offset
+    im = np.where(im.mask, im, scaled).view(cls)
     im.mask = mask
     return im
 
@@ -1254,7 +1269,7 @@ def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=No
     return im
 
 
-def translate_limits(im, translation):
+def translate_limits(im, translation, reverse=False):
     """Find the limits of an image after a translation.
 
     After using ImageArray.translate some areas will be black,
@@ -1264,6 +1279,10 @@ def translate_limits(im, translation):
         translation: 2-tuple
             the (x,y) translation applied to the image
 
+    Keyword Args:
+        reverse (bool):
+            whether to reverse the translation vector (default False, no)
+
     Returns:
         limits: 4-tuple
             (xmin,xmax,ymin,ymax) the maximum coordinates of the image with original
@@ -1271,6 +1290,10 @@ def translate_limits(im, translation):
     """
     if isinstance(translation, string_types):
         translation = im[translation]
+
+    translation = np.array(translation)
+    if reverse:
+        translation *= -1
 
     shape = im.shape
 
