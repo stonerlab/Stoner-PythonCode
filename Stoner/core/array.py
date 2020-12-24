@@ -490,15 +490,15 @@ class DataArray(ma.MaskedArray):
             if isNone(cols[c]):  # Not defined, fallback on setas
                 del cols[c]
                 continue
-            elif isinstance(cols[c], bool) and not cols[c]:  # False, delete column altogether
+            if isinstance(cols[c], bool) and not cols[c]:  # False, delete column altogether
                 del cols[c]
                 if c in ret:
                     del ret[c]
                 continue
-            elif c in ret and isinstance(ret[c], list):
+            if c in ret and isinstance(ret[c], list):
                 if isinstance(cols[c], float) or (isinstance(cols[c], np.ndarray) and cols[c].size == len(self)):
                     continue
-            elif isinstance(cols[c], float):
+            if isinstance(cols[c], float):
                 continue
             cols[c] = self.setas.find_col(cols[c], force_list=force_list)
         ret.update(cols)

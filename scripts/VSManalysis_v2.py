@@ -251,14 +251,13 @@ while True:
         )
         if whatNext == "r":
             continue
-        elif whatNext == "q":
+        if whatNext == "q":
             break
-        else:
-            Data = t
-            Data.save(
-                "EditedFiles/" + pathsplit[0] + "_edit.txt"
-            )  # overwrite the file created earlier
-            break
+        Data = t
+        Data.save(
+            "EditedFiles/" + pathsplit[0] + "_edit.txt"
+        )  # overwrite the file created earlier
+        break
     if (
         whatNext == "q"
         or input(

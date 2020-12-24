@@ -367,8 +367,7 @@ class Item:
                 try:  # Check if ret has same data type, otherwise will not overwrite well
                     if ret.data.dtype != f.data.dtype:
                         continue
-                    else:
-                        new_d = ret
+                    new_d = ret
                 except AttributeError:
                     pass
             elif _return is not None:

@@ -1,7 +1,7 @@
 **************************
 Working with Images
 **************************
-.. currentmodule:: Stoner.Image.core
+.. :currentmodule:: Stoner.Image
 
 Introduction
 ============
@@ -40,10 +40,12 @@ Loading an Image
 ----------------
 
 The :class:`ImageFile` constructor supports taking a string argument which is interpreted as a filename of an image format recognised by PIL. The resulting
-image data is used to form the contents of the :attr:`ImageFile.image` which holds the image data.
+image data is used to form the contents of the :attr:`ImageFile.image` which holds the image data.::
 
    from Stoner import ImageFile
-   im = ImageFile('my_image.png')
+   im = Image.ImageFile("kermit.png")
+
+.. image:: ../../sample-data/kermit.png
 
 Like :class:`Stoner.Data` :class:`ImageFile` supports image metadata. Where this can be stored in the file, e.g. in png and tiff images, this is read in
 automatically. This metadata is stored as a :class:`Stoner.Core.typeHintedDict` dictionary. This metadata can be set directly in the
@@ -57,8 +59,26 @@ Examining and manipulating the ImageFile
 IF you are using an ipython console or Jupyter Notebook, then the :class:`ImageFile` supports rich format outputs and
 it will show you a picture of the image data as its default representation.
 
-Local functions and properties
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ImageFile Attributes and Properties
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The key attributes and properties of the :class:`ImageFile` are:
+
+    - :attr:`ImageFile.image`:
+        This is the actual numpy array of data that is the image.
+    - :attr:`ImageFile.metadata`:
+        This is the dictionary that contains the metadata assoicated with the image. This is normally parameters and
+        information about the measurement or data that is encoded within the the measurement file, but can be supplemented
+        by information added by the user directly or by methods and functions. Each item of metadata is normally referred to by a string *key*.
+    - :attr:`ImageFile.filename`:
+        This is the name of the file from which the image was loaded (as a string). It is also used as a default title when
+        displaying the iamge.
+    - :attr:`ImageFile.mask`:
+        This represents the mask data for an image file. By default it is entirely False, meaning all parts of the image
+        are visible. It supports a variety of different ways of manipulating which parts of the image are masked - see the section
+        below.
+    - :attr:`ImageFile.draw`:
+        THis is a special attribute that lets you draw simple geometric shapes on the image.
 
 :class:`ImageFile`s use the appropriate data type for the underlying image format - integers for png and either integers or
 floating point numbers for tiffs (STXM files are always floating point).
@@ -72,11 +92,14 @@ The :meth:`ImageFile.convert` method can be used to convert the data to a more a
 It also has simpler :meth:`ImageFile.asfloat` and :meth:`ImageFile.asinit` methods for converting to floating point or integer
 formats as required.
 
-There are a number of attributes that can tell you information about the :class:`ImageFile` such as:
+There are a number of other attributes that can tell you information about the :class:`ImageFile` such as:
 
-    - :attr:`ImageFile.centre` - the co-ordinates of the centre of the image
-    - :attr:`ImageFile.aspect` - the image aspect ratio
-    - :attr:`ImageFile.shape` - the size of the underlying numpy array for the image.
+    - :attr:`ImageFile.centre`:
+        the co-ordinates of the centre of the image
+    - :attr:`ImageFile.aspect`:
+        the image aspect ratio
+    - :attr:`ImageFile.shape`:
+        the size of the underlying numpy array for the image.
 
 To make it easier to quickly get a rotated image, the attributes :aattr:`ImageFile.CW` and :attr:`ImageFile.CCW` return
 copies of the :class:`ImageFile` that are rotate 90 degrees clockwise and counter-clockwise.
@@ -84,17 +107,27 @@ copies of the :class:`ImageFile` that are rotate 90 degrees clockwise and counte
 In many cases the default behaviour of modifying the image data in place may not be desired- to get a copy of the
 :class:`ImageFile` you use the :attr:`ImageFile.clone` attribute::
 
-    new_im = im.clone.gaussian(1.0) # create a copy of im and then apply a guassian blur
+    new_im = im.clone.gaussian(4.0) # create a copy of im and then apply a guassian blur
+
+.. image:: figures/kermit-blurred.png
 
 An :class:`ImageFile` can be indexed like an array to return a new :class:`ImageFile` object which contains only a subset
 of the original image data.::
 
 	im[:,10:50] # Return a vertical section of the image
+
+.. image:: figures/kermit_vslice.png
+
+::
+
 	im[::-1,:] # Flip the image vertically
+
+.. image:: figures/kermit_flipped.png
 
 Indexing an :class:`ImageFile` with a string will instead acces the metadata stored with the object.::
 
-    img["Loaded as"]
+    im["Loaded as"]
+    >>> 'KermitPNGFile'
 
 The :class:`ImageFile` inherits from a dictionary like class - so all the usual Python dictionary methods work on the
 metadata of the image.::
@@ -144,20 +177,25 @@ working box can be given as follows:
         In this case a copy of the image is shown to the user and they are invited to draw the box with the mouse and
         then press the <Enter> key to confirm their selection.
 
+.. image:: figures/kermit-crop.png
+
 Aligning Two Images
 ^^^^^^^^^^^^^^^^^^^
 
 The :meth:`Stoner.ImageFile.align` method can ve used to align an image to a reference image. It offers a variety of different
 algorthims which may be better or worse depending on the nature of the image. The options are:
 
-    - chi2_shift:   this uses the image-registration module to carry out a chi-squared analysis of shifting the two iamges
-                    relative to each other.
-    - imreg_dft:    this uses the imreg_dft module to carry out the image registration. In essence it takes a fourier transform
-                    of the two images and then compares the phases within the fourier transforms to calculate the necessary shift.
-    - scharr:       this is the default method used. It first of all applies a Scharr edge detection filter and uses the
-                    imreg_dft method to find the translation vector.
-    - cv2:          this method uses the opencv2 package's alignment algorthim.
-
+    - chi2_shift:
+        this uses the image-registration module to carry out a chi-squared analysis of shifting the two iamges
+        relative to each other.
+    - imreg_dft:
+        this uses the imreg_dft module to carry out the image registration. In essence it takes a fourier transform
+        of the two images and then compares the phases within the fourier transforms to calculate the necessary shift.
+    - scharr:
+        this is the default method used. It first of all applies a Scharr edge detection filter and uses the
+        imreg_dft method to find the translation vector.
+    - cv2:
+        this method uses the opencv2 package's alignment algorthim.
 
 Align also takes a *_box* keyword parameter to confine the section of the image used for the alignment to a sepcific region
 (this can make the operation more efficient  if much of the images are featureless), and a *scale* parameter that will upscale
@@ -216,6 +254,8 @@ whilst the large gaussian removes low spatial frequency variations.::
 
     im.difference_of_gaussians(1.0,2.0)
 
+.. image:: figures/kermit-bandpass.png
+
 Another filtering approach is to us a Savitsky-Golay filter - this fits a polynomial surface locally over the data to smooth
 or differentiate the date. This sort of filtering is good for preserving feature sizes in the original data set.::
 
@@ -229,6 +269,8 @@ method provides a convenient one-stop method for generating the fft that can als
 can result.::
 
     fft=im.clone.fft(replace_dc=True, window="hamming")
+
+.. image:: figures/kermit-fft.png
 
 In this example, a copy of the image is transformed to the mangitude of its fourier transform. THe fourier transform is shifted
 so that the central pixels are the 0-ffrequency componennts. The optional keywrod *remove_dc* replaces the 0 frequency data with the
@@ -248,7 +290,12 @@ At its simpletst one can just do::
 
 Which will return a :calss:`Stoner.Data` object with columns for the radial distance, mean pixel value at the corresponding radius,
 standard deviation and number of pixels counted. The optional *angle* keyword parameter will select either one angle (float) or a
-rangle of angles (tuple of two floats)
+rangle of angles (tuple of two floats). This can be easily plotted since the :class:`Stoner.Data` object is created with the
+appropriate columns setup as x oand y data columns.::
+
+    fft.radial_profile(angle=(-0.04,0.04)).plot(plotter=semilogy)
+
+.. image:: figures/kermit-fft-profile.png
 
 
 Further functions

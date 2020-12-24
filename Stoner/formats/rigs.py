@@ -332,7 +332,7 @@ class PinkLibFile(Core.DataFile):
                     header_line = i - 2  # -2 because there's a commented out data line
                     happened_before = True
                     continue  # want to get the metadata at the bottom of the file too
-                elif any(s in line for s in ("Start time", "End time", "Title")):
+                if any(s in line for s in ("Start time", "End time", "Title")):
                     tmp = line.strip("#").split(":")
                     self.metadata[tmp[0].strip()] = ":".join(tmp[1:]).strip()
             column_headers = f[header_line].strip("#\t ").split("\t")

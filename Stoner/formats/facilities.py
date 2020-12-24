@@ -56,7 +56,7 @@ class BNLFile(Core.DataFile):
                     raise Core.StonerLoadError("Not a BNL File ?")
                 if len(line) < 2:
                     continue  # if there's nothing written on the line go to the next
-                elif line[0:2] == "#L":
+                if line[0:2] == "#L":
                     self.line_numbers[0] = counter
                 elif line[0:2] == "#S":
                     self.line_numbers[2] = counter
@@ -158,7 +158,7 @@ class MDAASCIIFile(Core.DataFile):
             for i[1], line in enumerate(data):
                 if line.strip() == "":
                     continue
-                elif line.startswith("# Extra PV"):
+                if line.startswith("# Extra PV"):
                     res = pvpat.match(line)
                     bits = [b.strip().strip(r'"') for b in res.group(1).split(",")]
                     if bits[1] == "":

@@ -512,8 +512,8 @@ def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None, window=None
         gaussian (None or float):
             Apply a gaussian blur to the fft where this parameter is the width of the blue in px. Default None for off.
         window (None or str):
-            If not None (default) the image is multiplied by the given window function before the fft is calculated. This
-            avpoids leaking some signal into the higher frequency bands due to discontinuities at the image edges.
+            If not None (default) the image is multiplied by the given window function before the fft is calculated.
+            This avpoids leaking some signal into the higher frequency bands due to discontinuities at the image edges.
 
     Return:
         fft of the image, preserving metadata.
@@ -910,8 +910,8 @@ def radial_coordinates(im, centre=(None, None), pixel_size=(1, 1), angle=False):
     cx = c / 2 if cx is None else cx
     cy = r / 2 if cy is None else cy
     x_r = dx * (np.linspace(0, c - 1, c) - cx)
-    y_r = dy * (np.linspace(0, r - 1, c) - cy)
-    Y, X = np.meshgrid(y_r, x_r)
+    y_r = dy * (np.linspace(0, r - 1, r) - cy)
+    Y, X = np.meshgrid(x_r, y_r)
     Z = -Y + (0 + 1j) * X
     if angle is None:
         pass
