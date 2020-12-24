@@ -26,6 +26,7 @@ __all__ = [
     "set_option",
     "ordinal",
     "file",
+    "decorators",
 ]
 from collections.abc import Iterable, MutableSequence
 import inspect
@@ -34,19 +35,13 @@ from importlib import import_module
 
 from numpy import log10, floor, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
 
-try:
-    from memoization import cached
-except ImportError:
-
-    def cached(func, *_):
-        """Null dectorator."""
-        return func
-
 
 from ..compat import bytes2str
 from .classes import attributeStore as AttributeStore, typedList, Options, get_option, set_option
 from .tests import all_size, all_type, isAnyNone, isComparable, isIterable, isLikeList, isNone, isProperty, isTuple
 from .formatting import format_error, format_val, quantize, html_escape, tex_escape, ordinal
+from . import decorators
+from .decorators import make_Data, fix_signature
 
 operator = {
     "eq": lambda k, v: k == v,
@@ -68,33 +63,3 @@ operator = {
     "endsswith": lambda k, v: str(v).endswith(k),
     "iendsswith": lambda k, v: str(v).upper().endswith(k.upper()),
 }
-
-
-###############################################################################################################
-######################  Functions #############################################################################
-###############################################################################################################
-
-
-@cached
-def make_Data(*args, **kargs):
-    """Return an instance of Stoner.Data passig through constructor arguments.
-
-    Calling make_Data(None) is a speical case to return the Data class ratther than an instance
-    """
-    if len(args) == 1 and args[0] is None:
-        return import_module("Stoner.core.data").Data
-    return import_module("Stoner.core.data").Data(*args, **kargs)
-
-
-def fix_signature(proxy_func, wrapped_func):
-    """Tries to update proxy_func to have a signature that matches the wrapped func."""
-    try:
-        proxy_func.__wrapped__.__signature__ = inspect.signature(wrapped_func)
-    except AttributeError:  # Non-critical error
-        try:
-            proxy_func.__signature__ = inspect.signature(wrapped_func)
-        except AttributeError:
-            pass
-    if hasattr(wrapped_func, "changes_size"):
-        proxy_func.changes_size = wrapped_func.changes_size
-    return proxy_func

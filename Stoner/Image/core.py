@@ -11,10 +11,27 @@ from io import BytesIO as StreamIO
 import numpy as np
 from PIL import Image, PngImagePlugin
 import matplotlib.pyplot as plt
+from scipy import ndimage as ndi
+from skimage import (
+    color,
+    exposure,
+    feature,
+    io,
+    measure,
+    filters,
+    graph,
+    util,
+    restoration,
+    morphology,
+    segmentation,
+    transform,
+    viewer,
+)
 
 from ..core.base import typeHintedDict, metadataObject
 from ..Core import DataFile
 from ..tools import isTuple, fix_signature, isLikeList, make_Data
+from ..tools.decorators import class_modifier, changes_size
 from ..compat import (
     string_types,
     get_filedialog,
@@ -22,8 +39,8 @@ from ..compat import (
     path_types,
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
-from .util import build_funcs_proxy, changes_size
 from .widgets import RegionSelect
+from . import imagefuncs
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -81,6 +98,26 @@ def __sub_core__(result, other):
     return result
 
 
+@class_modifier(imagefuncs, overload=True)
+@class_modifier([ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier], transpose=True)
+@class_modifier(
+    [
+        color,
+        exposure,
+        feature,
+        io,
+        measure,
+        filters,
+        filters.rank,
+        graph,
+        util,
+        restoration,
+        morphology,
+        segmentation,
+        transform,
+        viewer,
+    ]
+)
 class ImageArray(np.ma.MaskedArray, metadataObject):
 
     """A numpy array like class with a metadata parameter and pass through to skimage methods.
@@ -477,116 +514,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     def CCW(self):
         """Rotate counter-clockwise by 90 deg."""
         return self.T[::-1, :]
-
-    @property
-    def _funcs(self):
-        """Return an index of possible callable functions in other modules, caching result if not alreadty there.
-
-        Look in Stoner.Image.imagefuncs, scipy.ndimage.* an d scikit.* for functions. We assume that each function
-        takes a first argument that is an ndarray of image data, so with __getattrr__ and _func_generator we
-        can make a bound method through duck typing."""
-        if self._func_proxy is None:  # Buyild the cache
-            self._func_proxy = build_funcs_proxy()
-        return self._func_proxy
-
-    # ==============================================================
-    # function generator
-    # ==============================================================
-    def __dir__(self):
-        """Implement code for dir() to include proxy functions."""
-        proxy = set(list(self._funcs.keys()))
-        parent = set(dir(super()))
-        return sorted(list(proxy | parent))
-
-    def __getattr__(self, name):
-        """Magic attribute access method.
-
-        Tries first to get the attribute via a superclass call, if this fails
-        checks for some well known attribute names and supplies missing defaults.
-
-        To handle magic calls into other modules, we have a regular expression dicitonary
-        that stores and index of callables by full name where the . are changed to __
-        If we can get a match to __<name> then we get that callable from our index.
-
-        The callable is then passed to self._func_generator for wrapping into a
-        'on the fly' method of this class.
-
-        Todo:
-            An alternative nested attribute system could be something like
-            http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects
-            might be cool sometime.
-        """
-        ret = None
-        try:
-            ret = getattr(super(), name)
-        except AttributeError:
-            # first check kermit funcs
-            if name.startswith("_") or name in ["debug"]:
-                if name == "_hardmask":
-                    ret = False
-                else:  # Ugh
-                    ret = object.__getattribute__(self, name)
-
-            elif name + "$" in self._funcs:
-                ret = self._funcs[name + "$"]
-                ret = self._func_generator(ret)
-            elif f".*__{name}$" in self._funcs:
-                ret = self._funcs[f".*__{name}$"]
-                ret = self._func_generator(ret)
-            if ret is None:
-                raise AttributeError(f"No attribute found of name {name}")
-        return ret
-
-    def _func_generator(self, workingfunc):
-        """Wrap an arbitary callbable to make it a bound method of this class.
-
-        Args:
-            workingfunc (callable):
-                The callable object to be wrapped.
-
-        Returns:
-            (function):
-                A function with enclosure that holds additional information about this object.
-
-        The function returned from here will call workingfunc with the first argument being a clone of this
-        ImageArray. If the meothd returns an ndarray, it is wrapped back to our own class and the metadata dictionary
-        is updated. If the function returns a :py:class:`Stoner.Data` object then this is also updated with our
-        metadata.
-
-        This method also updates the name and documentation strings for the wrapper to match the wrapped function -
-        thus ensuring that Spyder's help window can generate useful information.
-
-        """
-        # Avoid PEP257/black issue
-
-        @wraps(workingfunc)
-        def gen_func(*args, **kwargs):
-            """Wrap magic proxy function call."""
-            transpose = getattr(workingfunc, "transpose", False)
-            if transpose:
-                change = self.T
-            else:
-                change = self
-            r = workingfunc(change, *args, **kwargs)  # send copy of self as the first arg
-            if isinstance(r, make_Data(None)):
-                pass  # Data return is ok
-            elif isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
-                r = make_Data(r)
-                r.metadata = self.metadata.copy()
-                r.column_headers[0] = workingfunc.__name__
-            elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
-                if transpose:
-                    r = r.T
-                if isinstance(r, self.__class__) and np.shares_memory(r, self):  # Assume everything was inplace
-                    return r
-                r = r.view(self.__class__)
-                sm = self.metadata.copy()  # Copy the currenty metadata
-                sm.update(r.metadata)  # merge in any new metadata from the call
-                r.metadata = sm  # and put the returned metadata as the merged data
-            # NB we might not be returning an ndarray at all here !
-            return r
-
-        return fix_signature(gen_func, workingfunc)
 
     @property
     def draw(self):
@@ -1258,7 +1185,7 @@ class ImageFile(metadataObject):
             return NotImplemented
         if self.image.dtype != other.image.dtype:
             raise ValueError(
-                f"Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
+                "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
                 + "Mimatch is {self.image.dtype} vs {other.image.dtype}"
             )
         if self.image.dtype.kind != "f":

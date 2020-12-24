@@ -259,13 +259,13 @@ def test_other_funcs():
     im2 = im1.rescale_intensity() #test skimage
     assert np.allclose(im2, im0), 'skimage func failed'
     assert not shares_memory(im2, im1), 'skimage failed to clone'
-    im3 = im1.exposure__rescale_intensity() #test call with module name
+    im3 = im1.skimage__exposure__exposure__rescale_intensity() #test call with module name
     assert np.allclose(im3, im0), 'skimage call with module name failed'
 
 
 def test_attrs():
     attrs=[x for x in dir(selfimarr_x) if not x.startswith("_")]
-    expected=897
+    expected=1029
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
@@ -335,7 +335,7 @@ def test_methods():
     else:
         assert False,"Subtraction of string didn't raise not implemented"
     attrs=[x for x in dir(image) if not x.startswith("_")]
-    expected=908
+    expected=1030
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 

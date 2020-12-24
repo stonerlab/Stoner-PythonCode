@@ -61,7 +61,8 @@ from skimage import feature, measure, transform, filters
 
 from Stoner.compat import string_types
 from Stoner.tools import isTuple, isIterable, make_Data
-from .core import ImageArray
+
+# from .core import ImageArray
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
 from .widgets import LineSelect
 
@@ -234,6 +235,7 @@ def align(im, ref, method="scharr", **kargs):
         "imreg_dft": (_align_imreg_dft, imreg_dft),
         "cv2": (_align_cv2, cv2),
     }
+    cls = im.__class__
     for meth in list(align_methods.keys()):
         mod = align_methods[meth][1]
         if mod is None:
@@ -250,7 +252,7 @@ def align(im, ref, method="scharr", **kargs):
             box = [box]
         working = im.crop(*box, copy=True)
         if ref.shape != working.shape:
-            ref = ref.view(ImageArray).crop(*box, copy=True)
+            ref = ref.view(cls).crop(*box, copy=True)
     else:
         working = im
 
@@ -439,7 +441,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
     return image.astype(dtype)
 
 
-def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=None, do_shift=True):
+def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=False, do_shift=True):
     """Align images to correct for image drift.
 
     Args:
@@ -462,17 +464,17 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=None, do_shi
     Adds 'drift_shift' to the metadata as the (x,y) vector that translated the
     image back to it's origin.
     """
-    if box is None:
-        box = im.max_box
-    cim = im.crop(box=box)
+    if isinstance(box, bool) and not box:
+        im = im.clone.crop(box=box)
+    cls = im.__class__
 
-    refed = ImageArray(ref, get_metadata=False)
+    refed = cls(ref, get_metadata=False)
     refed = refed.crop(box=box)
     refed = refed.filter_image(sigma=1)
     refed = refed > refed.threshold_otsu()
     refed = refed.corner_fast(threshold=threshold)
 
-    imed = cim.clone
+    imed = im.clone
     imed = imed.filter_image(sigma=1)
     imed = imed > imed.threshold_otsu()
     imed = imed.corner_fast(threshold=threshold)

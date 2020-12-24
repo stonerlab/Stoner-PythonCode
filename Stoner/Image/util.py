@@ -3,7 +3,7 @@
 
 from __future__ import division
 
-__all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2", "build_funcs_proxy", "changes_size"]
+__all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2"]
 from warnings import warn
 
 import numpy as np
@@ -129,88 +129,3 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
     a *= (2 ** o - 1) // (2 ** n - 1)
     a //= 2 ** (o - m)
     return a
-
-
-def build_funcs_proxy():
-    """Build a dictionary of references to Image manipulation functions."""
-    # Delayed imports
-    from . import imagefuncs
-
-    from skimage import (
-        color,
-        exposure,
-        feature,
-        io,
-        measure,
-        filters,
-        graph,
-        util,
-        restoration,
-        morphology,
-        segmentation,
-        transform,
-        viewer,
-    )
-    import scipy.ndimage as ndi
-
-    # Cache is a regular expression dictionary - keys matched directly and then by regular expression
-    func_proxy = regexpDict()
-    short_names = []
-
-    # Get the Stoner.Image.imagefuncs mopdule first
-    for d in dir(imagefuncs):
-        if not d.startswith("_"):
-            func = getattr(imagefuncs, d)
-            if callable(func) and getattr(func, "__module__", "") == imagefuncs.__name__:
-                name = f"{func.__module__}__{d}".replace(".", "__")
-                func_proxy[name] = func
-                short_names.append((d, func))
-
-    # Add scipy.ndimage functions
-    _sp_mods = [ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier]
-    for mod in _sp_mods:
-        for d in dir(mod):
-            if not d.startswith("_"):
-                func = getattr(mod, d)
-                if callable(func) and getattr(func, "__module__", "") == mod.__name__:
-                    func.transpose = True
-                    name = f"{func.__module__}__{d}".replace(".", "__")
-                    func_proxy[name] = func
-                    short_names.append((d, func))
-
-    # Add the scikit images modules
-    _ski_modules = [
-        color,
-        exposure,
-        feature,
-        io,
-        measure,
-        filters,
-        filters.rank,
-        graph,
-        util,
-        restoration,
-        morphology,
-        segmentation,
-        transform,
-        viewer,
-    ]
-    for mod in _ski_modules:
-        for d in dir(mod):
-            if not d.startswith("_"):
-                func = getattr(mod, d)
-                if callable(func):
-                    name = f"{getattr(func,'__module__','')}__{d}".replace(".", "__")
-                    func_proxy[name] = func
-                    short_names.append((d, func))
-
-    for n, f in reversed(short_names):
-        func_proxy[n] = f
-
-    return func_proxy
-
-
-def changes_size(func):
-    """Mark a function as one that changes the size of the ImageArray."""
-    func.changes_size = True
-    return func

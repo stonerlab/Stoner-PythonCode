@@ -11,7 +11,8 @@ import numpy as np
 from skimage import draw
 import matplotlib.pyplot as plt
 
-from Stoner.tools import fix_signature
+from ..tools import fix_signature
+from .imagefuncs import imshow
 
 
 class DrawProxy:
@@ -187,16 +188,16 @@ class MaskProxy:
         """Check name against self._IA._funcs and constructs a method to edit the mask as an image."""
         if hasattr(self._IA.mask, name):
             return getattr(self._IA.mask, name)
-        if f".*__{name}$" not in self._IA._funcs:
+        func = getattr(self._IA.__class__, name, None)
+        if func is None:
             raise AttributeError(f"{name} not a callable mask method.")
-        func = self._IA._funcs[f".*__{name}$"]
 
         @wraps(func)
         def _proxy_call(*args, **kargs):
-            retval = func(self._mask.astype(float) * 1000, *args, **kargs)
+            retval = func(self._mask.astype(float).view(self._IA.__class__) * 1000, *args, **kargs)
             if isinstance(retval, np.ndarray) and retval.shape == self._IA.shape:
-                retval = (retval + retval.min()) / (retval.max() - retval.min())
-                self._IA.mask = retval > 0.5
+                retval.normalise()
+                self._IA.mask = retval > 0
             return retval
 
         _proxy_call.__doc__ = func.__doc__
@@ -227,7 +228,7 @@ class MaskProxy:
 
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
-        fig = self._IA._funcs[".*imshow"](self._mask.astype(int))
+        fig = imshow(self._mask.astype(int))
         data = StreamIO()
         fig.savefig(data, format="png")
         plt.close(fig)
