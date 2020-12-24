@@ -1,7 +1,8 @@
 **************************
 Working with Images
 **************************
-.. :currentmodule:: Stoner.Image
+
+.. py:currentmodule:: Stone.Image.core
 
 Introduction
 ============
