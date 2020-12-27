@@ -59,7 +59,7 @@ confidence=
 #
 # Kubeflow disables string-interpolation because we are starting to use f
 # style strings
-disable=import-error, bad-continuation, protected-access
+disable=import-error, bad-continuation, protected-access, redefined-outer-name
 
 
 [REPORTS]

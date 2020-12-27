@@ -136,7 +136,7 @@ def image_file_raw_adaptor(workingfunc):
             return r
         if isinstance(r, np.ndarray) and r.ndim != 2:  # 1D Array goes back straight
             return r
-        elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
+        if isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
             if isinstance(r, im.__class__) and np.shares_memory(r, im):  # Assume everything was inplace
@@ -154,8 +154,7 @@ def image_file_raw_adaptor(workingfunc):
             metadata.update(r.metadata)
             ret.metadata = metadata
             return ret
-        else:
-            return r
+        return r
 
     return fix_signature(gen_func, workingfunc)
 
@@ -353,7 +352,7 @@ def class_wrapper(
                 and hasattr(attr, "fget")
                 and (name not in dir(cls) or name in dir(exclude_below))
             ):
-                fget = adaptor(getattr(attr, "fget"))
+                fget = getter_adaptor(getattr(attr, "fget"))
                 fset = setter_adaptor(getattr(attr, "fset", None))
                 fdel = deleter_adaptor(getattr(attr, "fdel", None))
                 doc = getattr(attr, "__doc__", "")

@@ -772,7 +772,7 @@ class ImageFile(metadataObject):
         else:
             self._image = ImageArray(v)
         self.filename = filename
-        self.metadata
+        self.image.metadata.update(metadata)
 
     # @property
     # def filename(self):
