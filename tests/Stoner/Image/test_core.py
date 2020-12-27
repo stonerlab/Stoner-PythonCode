@@ -77,7 +77,7 @@ def test_load_save_all():
         ims[fmt].save_tiff(path.join(tmpdir,"kermit-forcetype{}.tiff".format(fmt)),forcetype=True)
         ims[fmt].save_npy(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
         if fmt!="uint16":
-            im=Image.fromarray((ims[fmt].image.view(np.ndarray)),mode=modes[fmt])
+            im=Image.fromarray((ims[fmt].image.view(np.ndarray)).astype(fmt),mode=modes[fmt])
             im.save(path.join(tmpdir,"kermit-nometadata-{}.tiff".format(fmt)))
         del ims[fmt]["Loaded from"]
     for fmt in fmts:
@@ -264,8 +264,8 @@ def test_other_funcs():
 
 
 def test_attrs():
-    attrs=[x for x in dir(selfimarr_x) if not x.startswith("_")]
-    expected=1029
+    attrs=[x for x in dir(ImageArray([])) if not x.startswith("_")]
+    expected=1049
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
@@ -312,7 +312,7 @@ def test_methods():
     ifi.crop(0,3,0,None)
     assert ifi.shape==(3,3) #check crop is forced to overwrite ifi despite shape change
     datadir=path.join(__home__,"..","sample-data")
-    image=ImageFile(path.join(datadir,"kermit.png"))
+    image=ImageFile(path.join(datadir,"kermit.png")).asfloat(normalise=False)
     i2=image.clone.crop(5,_=True)
     assert i2.shape==(469, 349),"Failed to trim box by integer"
     i2=image.clone.crop(0.25,_=True)
@@ -327,15 +327,12 @@ def test_methods():
     i3=i2.CCW
     assert i3.shape==(479,359),"Failed to rotate counter-clockwise"
     i2=image.clone
-    assert (i2-127).mean()==pytest.approx(39086.4687283,rel=1E-2),"Subtract integer failed."
-    try:
+    i3=i2-127
+    assert i3.mean()==pytest.approx(33940.72596111909,rel=1E-2),"Subtract integer failed."
+    with pytest.raises(TypeError):
         i2-"Gobble"
-    except TypeError:
-        pass
-    else:
-        assert False,"Subtraction of string didn't raise not implemented"
-    attrs=[x for x in dir(image) if not x.startswith("_")]
-    expected=1030
+    attrs=[x for x in dir(i2) if not x.startswith("_")]
+    expected=1050
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 

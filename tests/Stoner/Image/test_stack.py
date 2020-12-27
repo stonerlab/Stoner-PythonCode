@@ -144,7 +144,7 @@ def test_accessing():
     ist2[3].image[0,1] = 101
     #ist2[3,0,2] = 102 may want to support this type of index accessing in the future?
     for i in range(3):
-        assert np.allclose(ist2[i],im)
+        assert np.allclose(ist2[i].asarray(),im)
     assert np.allclose(ist2[3][0,0],100)
     assert np.allclose(ist2[3][0,1],101)
     #check imarray behaviour

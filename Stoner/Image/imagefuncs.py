@@ -1343,6 +1343,7 @@ def do_nothing(self):
     """Nulop function for testing the integration into ImageArray."""
     return self
 
+
 @changes_size
 def crop(self, *args, **kargs):
     """Crop the image according to a box.
@@ -1397,6 +1398,7 @@ def crop(self, *args, **kargs):
         ret = ret.clone
     return ret
 
+
 def dtype_limits(self, clip_negative=True):
     """Return intensity limits, i.e. (min, max) tuple, of the image's dtype.
 
@@ -1417,10 +1419,12 @@ def dtype_limits(self, clip_negative=True):
         imin = 0
     return imin, imax
 
+
 @keep_return_type
 def asarray(self):
     """Provide a consistent way to get at the underlying array data in both ImageArray and ImageFile objects."""
     return self
+
 
 def asfloat(self, normalise=True, clip=False, clip_negative=False):
     """Return the image converted to floating point type.
@@ -1452,6 +1456,7 @@ def asfloat(self, normalise=True, clip=False, clip_negative=False):
         ret = ret.clip_intensity(clip_negative=clip_negative)
     return ret
 
+
 def clip_intensity(self, clip_negative=False, limits=None):
     """Clip intensity outside the range -1,1 or 0,1.
 
@@ -1471,6 +1476,7 @@ def clip_intensity(self, clip_negative=False, limits=None):
     np.clip(self, dl[0], dl[1], out=self)
     return self
 
+
 def asint(self, dtype=np.uint16):
     """Convert the image to unsigned integer format.
 
@@ -1488,6 +1494,7 @@ def asint(self, dtype=np.uint16):
     for k, v in self._optinfo.items():
         setattr(ret, k, v)
     return ret
+
 
 def save(self, filename=None, **kargs):
     """Save the image into the file 'filename'.
@@ -1547,6 +1554,7 @@ def save(self, filename=None, **kargs):
         else:
             saver(filename)
 
+
 def save_png(self, filename):
     """Save the ImageArray with metadata in a png file.
 
@@ -1562,10 +1570,12 @@ def save_png(self, filename):
     im = Image.fromarray(s.astype("uint8"), mode="L")
     im.save(pngname, pnginfo=meta)
 
+
 def save_npy(self, filename):
     """Save the ImageArray as a numpy array."""
     npyname = os.path.splitext(filename)[0] + ".npy"
     np.save(npyname, np.array(self))
+
 
 def save_tiff(self, filename, forcetype=False):
     """Save the ImageArray as a tiff image with metadata.
@@ -1611,11 +1621,7 @@ def save_tiff(self, filename, forcetype=False):
                 im = Image.fromarray(self.astype("float32"))
     ifd = ImageFileDirectory_v2()
     ifd[270] = json.dumps(
-        {
-            "type": self.__class__.__name__,
-            "module": self.__class__.__module__,
-            "metadata": self.metadata.export_all(),
-        }
+        {"type": self.__class__.__name__, "module": self.__class__.__module__, "metadata": self.metadata.export_all(),}
     )
     ext = os.path.splitext(filename)[1]
     if ext in [".tif", ".tiff"]:  # ensure extension is preserved in save

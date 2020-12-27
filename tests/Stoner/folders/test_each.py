@@ -33,7 +33,7 @@ def test_each_call():
     filenames=[path.relpath(x,start=fldr6.directory) for x in fldr6.each.filename.tolist()]
     assert filenames==paths,"Reading attributes from each failed."
     meths=[x for x in dir(fldr6.each) if not x.startswith("_")]
-    assert len(meths)==136,"Dir of folders.each failed ({}).".format(len(meths))
+    assert len(meths)==137,"Dir of folders.each failed ({}).".format(len(meths))
 
 def test_each_call_or_operator():
     os.chdir(datadir)

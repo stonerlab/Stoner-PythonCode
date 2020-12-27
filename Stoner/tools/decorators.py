@@ -61,36 +61,33 @@ def image_file_adaptor(workingfunc):
         else:
             force = kargs.pop("_", False)
         r = workingfunc(im, *args, **kargs)
-        if getattr(workingfunc,"keep_class",False):
+        if getattr(workingfunc, "keep_class", False):
             return r
-        if isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(
-            r.shape
-        ):  # 1D Array
+        if isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
             ret = make_Data(r)
             ret.metadata = self.metadata.copy()
             ret.column_headers[0] = workingfunc.__name__
         elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
-            if isinstance(r, im.__class__) and np.shares_memory(
-                r, im
-            ):  # Assume everything was inplace
+            if isinstance(r, im.__class__) and np.shares_memory(r, im):  # Assume everything was inplace
                 self.image = r
                 return self
             r = r.view(im.__class__)
-            if r.shape==self.shape:
-                self.image=self.image.astype(r.dtype)
-                self.image[...]=r[...]
+            if r.shape == self.shape:
+                self.image = self.image.astype(r.dtype)
+                self.image[...] = r[...]
                 self.metadata.update(r.metadata)
                 return self
-            ret=self.clone if not force else self
-            ret.image=r.view(im.__class__)
-            metadata=copy(self.metadata)
+            ret = self.clone if not force else self
+            ret.image = r.view(im.__class__)
+            metadata = copy(self.metadata)
             metadata.update(r.metadata)
-            ret.metadata=metadata
+            ret.metadata = metadata
             return ret
         else:
             return r
+
     return fix_signature(gen_func, workingfunc)
 
 
@@ -135,32 +132,31 @@ def image_file_raw_adaptor(workingfunc):
         else:
             force = kargs.pop("_", False)
         r = workingfunc(im, *args, **kargs)
-        if getattr(workingfunc,"keep_class",False):
+        if getattr(workingfunc, "keep_class", False):
             return r
-        if isinstance(r, np.ndarray) and r.ndim!=2:  # 1D Array goes back straight
+        if isinstance(r, np.ndarray) and r.ndim != 2:  # 1D Array goes back straight
             return r
         elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
-            if isinstance(r, im.__class__) and np.shares_memory(
-                r, im
-            ):  # Assume everything was inplace
+            if isinstance(r, im.__class__) and np.shares_memory(r, im):  # Assume everything was inplace
                 self.image = r
                 return self
             r = r.view(im.__class__)
-            if r.shape==self.shape:
-                self.image=self.image.astype(r.dtype)
-                self.image[...]=r[...]
+            if r.shape == self.shape:
+                self.image = self.image.astype(r.dtype)
+                self.image[...] = r[...]
                 self.metadata.update(r.metadata)
                 return self
-            ret=self.clone if not force else self
-            ret.image=r.view(im.__class__)
-            metadata=copy(self.metadata)
+            ret = self.clone if not force else self
+            ret.image = r.view(im.__class__)
+            metadata = copy(self.metadata)
             metadata.update(r.metadata)
-            ret.metadata=metadata
+            ret.metadata = metadata
             return ret
         else:
             return r
+
     return fix_signature(gen_func, workingfunc)
 
 
@@ -211,7 +207,7 @@ def array_file_attr(name):
     def deleter(self):
         return delattr(self._image, name)
 
-    return property(getter, setter, deleter,f"Pass thrpough for {name}")
+    return property(getter, setter, deleter, f"Pass thrpough for {name}")
 
 
 def image_array_adaptor(workingfunc):
@@ -247,18 +243,14 @@ def image_array_adaptor(workingfunc):
         r = workingfunc(change, *args, **kwargs)  # send copy of self as the first arg
         if isinstance(r, make_Data(None)):
             pass  # Data return is ok
-        elif isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(
-            r.shape
-        ):  # 1D Array
+        elif isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
             r = make_Data(r)
             r.metadata = self.metadata.copy()
             r.column_headers[0] = workingfunc.__name__
         elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
-            if isinstance(r, self.__class__) and np.shares_memory(
-                r, self
-            ):  # Assume everything was inplace
+            if isinstance(r, self.__class__) and np.shares_memory(r, self):  # Assume everything was inplace
                 return r
             r = r.view(self.__class__)
             sm = self.metadata.copy()  # Copy the currenty metadata
@@ -267,13 +259,11 @@ def image_array_adaptor(workingfunc):
         # NB we might not be returning an ndarray at all here !
         return r
 
-    gen_func.keep_class=getattr(workingfunc,"keep_class",False)
+    gen_func.keep_class = getattr(workingfunc, "keep_class", False)
     return fix_signature(gen_func, workingfunc)
 
 
-def class_modifier(
-    module, adaptor=image_array_adaptor, transpose=False, overload=False, proxy_cls=None
-):
+def class_modifier(module, adaptor=image_array_adaptor, transpose=False, overload=False, proxy_cls=None):
     """Decorate  a class by addiding member functions from module.
 
     The purpose of this is to incorporate the functions within a module into being methods of the class being
@@ -310,11 +300,7 @@ def class_modifier(
             for fname in dir(mod):
                 if not fname.startswith("_"):
                     func = getattr(mod, fname)
-                    fmod = getattr(
-                        func,
-                        "__module__",
-                        getattr(getattr(func, "__class__", None), "__module__", ""),
-                    )
+                    fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""),)
                     if callable(func) and fmod[:5] in ["Stone", "scipy", "skima"]:
                         if transpose:
                             func.transpose = transpose
@@ -372,7 +358,7 @@ def class_wrapper(
                 fdel = deleter_adaptor(getattr(attr, "fdel", None))
                 doc = getattr(attr, "__doc__", "")
                 setattr(cls, name, property(fget, fset, fdel, doc))
-            elif name not in cls.__dict__ and not callable(attr) and not isProperty(target,name):
+            elif name not in cls.__dict__ and not callable(attr) and not isProperty(target, name):
                 setattr(cls, name, attr_pass(name))
         return cls
 

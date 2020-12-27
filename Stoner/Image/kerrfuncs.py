@@ -86,6 +86,7 @@ def crop_text(kerr_im, copy=False):
         )  # check it's a normal image
     return kerr_im.crop(None, None, None, IM_SIZE[0], copy=copy)
 
+
 def reduce_metadata(kerr_im):
     """Reduce the metadata down to a few useful pieces and do a bit of processing.
 
@@ -109,6 +110,7 @@ def reduce_metadata(kerr_im):
             newmet.pop("Images to Average")
     kerr_im.metadata = typeHintedDict(newmet)
     return kerr_im.metadata
+
 
 def _tesseract_image(kerr_im, key):
     """Ocr image with tesseract tool.
@@ -156,9 +158,10 @@ def _tesseract_image(kerr_im, key):
     data = _parse_text(data, key=key)
     return data
 
+
 def get_scalebar(kerr_im):
     """Get the length in pixels of the image scale bar."""
-    im = kerr_im[519:520,:419]
+    im = kerr_im[519:520, :419]
     im = im.astype(float)
     im = (im - im.min()) / (im.max() - im.min())
     im = exposure.rescale_intensity(im, in_range=(0.49, 0.5))  # saturate black and white pixels
@@ -168,6 +171,7 @@ def get_scalebar(kerr_im):
     assertion(len(lim) == 2, "Couldn't find scalebar")
     return lim[1] - lim[0]
 
+
 def float_and_croptext(kerr_im):
     """Convert image to float and crop_text.
 
@@ -176,6 +180,7 @@ def float_and_croptext(kerr_im):
     ret = kerr_im.asfloat()
     ret = ret.crop_text()
     return ret
+
 
 def ocr_metadata(kerr_im, field_only=False):
     """Use image recognition to try to pull the metadata numbers off the image.
@@ -238,6 +243,7 @@ def ocr_metadata(kerr_im, field_only=False):
         kerr_im.metadata["ocr_field"] = np.nan  # didn't read the field properly
     return kerr_im.metadata
 
+
 def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
     """Try to create a boolean array which is a mask for typical defects found in Image images.
 
@@ -286,6 +292,7 @@ def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=
         }
         return totmask, info
     return totmask
+
 
 def defect_mask_subtract_image(kerr_im, threshmin=0.25, threshmax=0.9, denoise_weight=0.1, return_extra=False):
     """Create a mask array for a typical subtract Image image.

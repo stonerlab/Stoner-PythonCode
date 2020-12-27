@@ -757,9 +757,9 @@ class baseFolder(MutableSequence):
                     test = (len(item),) + item[0].data[name].shape
                     output = np.array([]).view(item[0].data.__class__)
                     for data in item:
-                        append=data[name]
-                        if not isinstance(append,np.ndarray):
-                            append=append.asarray()
+                        append = data[name]
+                        if not isinstance(append, np.ndarray):
+                            append = append.asarray()
                         output = np.append(output, append)
                     output = output.reshape(test)
                     return output

@@ -60,7 +60,8 @@ dtype_range = {
     np.float64: (-1, 1),
 }
 
-RTD="READTHEDOCS" in os.environ
+RTD = "READTHEDOCS" in os.environ
+
 
 def __add_core__(result, other):
     """Actually do result=result-other."""
@@ -182,7 +183,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     # These will be overriden with isntance attributes, but setting here allows ImageFile properties to be defined.
     filename = None
-    debug =False
+    debug = False
     filename = ""
 
     # now initialise class
@@ -546,9 +547,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     def __dir__(self):
         """Merge both the ImageFile and ImageArray dirs."""
-        items=super().__dir__()
+        items = super().__dir__()
         if RTD:
-            items=[x for x in items if getattr(getattr(self,x),"_src_mod","Stoner.Image.core").startswith("Stoner")]
+            items = [
+                x for x in items if getattr(getattr(self, x), "_src_mod", "Stoner.Image.core").startswith("Stoner")
+            ]
         return items
 
     def __delattr__(self, name):
@@ -601,9 +604,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     ############################################################################################################
     ############### Custom Methods for ImageArray###############################################################
 
-
     ############################################################################################################
     ############## Depricated Methods ##########################################################################
+
 
 @class_modifier(
     [
@@ -621,9 +624,14 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         segmentation,
         transform,
         viewer,
-    ], adaptor=image_file_adaptor
+    ],
+    adaptor=image_file_adaptor,
 )
-@class_modifier([ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier], transpose=True, adaptor=image_file_adaptor)
+@class_modifier(
+    [ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier],
+    transpose=True,
+    adaptor=image_file_adaptor,
+)
 @class_modifier(imagefuncs, overload=True, adaptor=image_file_adaptor)
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
 class ImageFile(metadataObject):
@@ -676,7 +684,7 @@ class ImageFile(metadataObject):
         x and y or if omitted asquare grid will be interpolated.
 
         """
-        self._image=ImageArray() # Ensire we have the image data in place
+        self._image = ImageArray()  # Ensire we have the image data in place
         super().__init__(*args, **kargs)
         args = list(args)
         if len(args) == 0:
@@ -705,7 +713,6 @@ class ImageFile(metadataObject):
     @property
     def _repr_png_(self):
         return self._repr_png_private_
-
 
     @property
     def clone(self):
@@ -805,7 +812,6 @@ class ImageFile(metadataObject):
     #     """Set the metadata attribute."""
     #     self.image.metadata = value
 
-
     # @property
     # def shape(self):
     #     """Pass through for shape attribute."""
@@ -837,9 +843,11 @@ class ImageFile(metadataObject):
 
     def __dir__(self):
         """Merge both the ImageFile and ImageArray dirs."""
-        items=super().__dir__()
+        items = super().__dir__()
         if RTD:
-            items=[x for x in items if getattr(getattr(self,x),"_src_mod","Stoner.Image.core").startswith("Stoner")]
+            items = [
+                x for x in items if getattr(getattr(self, x), "_src_mod", "Stoner.Image.core").startswith("Stoner")
+            ]
         return items
 
     def __getstate__(self):
@@ -882,7 +890,7 @@ class ImageFile(metadataObject):
 
     def __setattr__(self, n, v):
         """Handle setting attributes."""
-        obj,attr = self._where_attr(n)
+        obj, attr = self._where_attr(n)
         if obj is None:  # This is a new attribute so note it for preserving
             obj = self
             if self._where_attr("_public_attrs_real")[0] is self:

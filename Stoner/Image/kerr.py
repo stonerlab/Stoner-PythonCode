@@ -30,6 +30,7 @@ IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
 
+
 @class_modifier(kerrfuncs)
 class KerrArray(ImageArray):
 
@@ -177,7 +178,7 @@ class KerrStackMixin:
         hyst = np.column_stack((self.fields, np.zeros(len(self))))
         for i, im in enumerate(self):
             if isinstance(im, ImageFile):
-                im=im.image
+                im = im.image
             if isinstance(mask, np.ndarray) and len(mask.shape) == 2:
                 hyst[i, 1] = np.average(im[np.invert(mask.astype(bool))])
             elif isinstance(mask, np.ndarray) and len(mask.shape) == 3:
@@ -220,9 +221,9 @@ class KerrStackMixin:
         """
         if testim is None:
             testim = self[len(self) // 2]
-        elif isinstance(testim,(int,str)):
+        elif isinstance(testim, (int, str)):
             testim = self[testim]
-        elif isinstance(testim, np.ndarray) and testim.shape==self[len(self)//2].shape:
+        elif isinstance(testim, np.ndarray) and testim.shape == self[len(self) // 2].shape:
             pass
         else:
             raise ValueError("Cannot find testimage for thresholding.")
