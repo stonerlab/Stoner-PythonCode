@@ -58,13 +58,19 @@ from matplotlib.colors import to_rgba, ListedColormap
 import matplotlib.cm as cm
 from matplotlib import pyplot as plt
 from skimage import feature, measure, transform, filters
+from PIL import Image, PngImagePlugin
 
-from Stoner.compat import string_types
 from Stoner.tools import isTuple, isIterable, make_Data
 
 # from .core import ImageArray
+from ..core.base import metadataObject
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
+from ..tools.decorators import changes_size, keep_return_type
 from .widgets import LineSelect
+from ..compat import (
+    string_types,
+    get_filedialog,
+)  # Some things to help with Python2 and Python3 compatibility
 
 try:
     from PyQt5.QtGui import QImage
@@ -87,6 +93,8 @@ try:  # image_registration module
     from image_registration import chi2_shift
 except ImportError:
     chi2_shift = None
+
+IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
 
 def _scale(coord, scale=1.0, to_pixel=True):
@@ -1334,3 +1342,285 @@ def denoise(im, weight=0.1):
 def do_nothing(self):
     """Nulop function for testing the integration into ImageArray."""
     return self
+
+@changes_size
+def crop(self, *args, **kargs):
+    """Crop the image according to a box.
+
+    Args:
+        box(tuple) or 4 separate args or None:
+            (xmin,xmax,ymin,ymax)
+            If None image will be shown and user will be asked to select
+            a box (bit experimental)
+
+    Keyword Arguments:
+        copy(bool):
+            If True return a copy of ImageFile with the cropped image
+    Returns:
+        (ImageArray):
+            view or copy of array asked for
+
+    Notes:
+        This is essentially like taking a view onto the array
+        but uses image x,y coords (x,y --> col,row)
+        Returns a view according to the coords given. If box is None it will
+        allow the user to select a rectangle. If a tuple is given with None
+        included then max extent is used for that coord (analagous to slice).
+        If copy then return a copy of self with the cropped image.
+
+        The box can be specified in a number of ways:
+            -   (int):
+                A border around all sides of the given number pixels is ignored.
+            -   (float 0.0-1.0):
+                A border of the given fraction of the images height and width is ignored
+            -   (string):
+                A correspoinding item of metadata is located and used  to specify the box
+            -   (tuple of 4 ints or floats):
+                For each item in the tuple it is interpreted as foloows:
+                    -   (int):
+                        A pixel co-ordinate in either the x or y direction
+                    -   (float 0.0-1.0):
+                        A fraction of the width or height in from the left, right, top, bottom sides
+                    -   (float > 1.0):
+                        Is rounded to the nearest integer and used a pixel cordinate.
+                    -   None:
+                        The extent of the image is used.
+
+    Example:
+        a=ImageFile(np.arange(12).reshape(3,4))
+
+        a.crop(1,3,None,None)
+    """
+    box = self._box(*args, **kargs)
+    ret = self[box]
+    if "copy" in kargs.keys() and kargs["copy"]:
+        ret = ret.clone
+    return ret
+
+def dtype_limits(self, clip_negative=True):
+    """Return intensity limits, i.e. (min, max) tuple, of the image's dtype.
+
+    Args:
+        image(ndarray):
+            Input image.
+        clip_negative(bool):
+            If True, clip the negative range (i.e. return 0 for min intensity)
+            even if the image dtype allows negative values.
+
+    Returns:
+        (imin, imax : tuple): Lower and upper intensity limits.
+    """
+    if clip_negative is None:
+        clip_negative = True
+    imin, imax = dtype_range[self.dtype.type]
+    if clip_negative:
+        imin = 0
+    return imin, imax
+
+@keep_return_type
+def asarray(self):
+    """Provide a consistent way to get at the underlying array data in both ImageArray and ImageFile objects."""
+    return self
+
+def asfloat(self, normalise=True, clip=False, clip_negative=False):
+    """Return the image converted to floating point type.
+
+    If currently an int type and normalise then floats will be normalised
+    to the maximum allowed value of the int type.
+    If currently a float type then no change occurs.
+    If clip then clip values outside the range -1,1
+    If clip_negative then further clip values to range 0,1
+
+    Keyword Arguments:
+        normalise(bool):
+            normalise the image to the max value of current int type
+        clip_negative(bool):
+            clip negative intensity to 0
+    """
+    if self.dtype.kind == "f":
+        ret = self
+    else:
+        ret = self.convert(dtype=np.float64, normalise=normalise).view(self.__class__)  # preserve metadata
+        tmp = metadataObject.__new__(metadataObject)
+        for k, v in tmp.__dict__.items():
+            if k not in ret.__dict__:
+                ret.__dict__[k] = v
+        c = self.clone  # copy formatting and apply to new array
+        for k, v in c._optinfo.items():
+            setattr(ret, k, v)
+    if clip or clip_negative:
+        ret = ret.clip_intensity(clip_negative=clip_negative)
+    return ret
+
+def clip_intensity(self, clip_negative=False, limits=None):
+    """Clip intensity outside the range -1,1 or 0,1.
+
+    Keyword Arguments:
+        clip_negative(bool):
+            if True clip to range 0,1 else range -1,1
+        limits (low,high):
+            Clip the intensity between low and high rather than zero and 1.
+
+    Ensure data range is -1 to 1 or 0 to 1 if clip_negative is True.
+
+    """
+    if limits is None:
+        dl = self.dtype_limits(clip_negative=clip_negative)
+    else:
+        dl = list(limits)
+    np.clip(self, dl[0], dl[1], out=self)
+    return self
+
+def asint(self, dtype=np.uint16):
+    """Convert the image to unsigned integer format.
+
+    May raise warnings about loss of precision.
+    """
+    if self.dtype.kind == "f" and (np.max(self) > 1 or np.min(self) < -1):
+        self = self.normalise()
+    ret = self.convert(dtype)
+    ret = ret.view(self.__class__)
+    tmp = metadataObject.__new__(metadataObject)
+    for k, v in tmp.__dict__.items():
+        if k not in ret.__dict__:
+            ret.__dict__[k] = v
+
+    for k, v in self._optinfo.items():
+        setattr(ret, k, v)
+    return ret
+
+def save(self, filename=None, **kargs):
+    """Save the image into the file 'filename'.
+
+    Args:
+        filename (string, bool or None):
+            Filename to save data as, if this is None then the current filename for the object is used
+            If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
+
+    Keyword Args:
+        fmt (string or list):
+            format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
+            filename.
+        forcetype (bool):
+            integer data will be converted to np.float32 type for saving. if forcetype then preserve and save as
+            int type (will be unsigned).
+
+    Notes:
+        Metadata will be preserved in .png and .tif format.
+
+        fmt can be 'png', 'npy', 'tif', 'tiff'  or a list of more than one of those.
+        tif is recommended since metadata is lost in .npy format but data is
+        converted to integer format for png so that definition cannot be
+        saved.
+
+    Since Stoner.Image is meant to be a general 2d array often with negative
+    and floating point data this poses a problem for saving images. Images
+    are naturally saved as 8 or more bit unsigned integer values representing colour.
+    The only obvious way to save an image and preserve negative data
+    is to save as a float32 tif. This has the advantage over the npy
+    data type which cannot be opened by external programs and will not
+    save metadata.
+    """
+    # Standard filename block
+    if filename is None:
+        filename = getattr(self, "filename", None)
+    if filename is None or (isinstance(filename, bool) and not filename):
+        # now go and ask for one
+        filename = get_filedialog(what="file", filetypes=IMAGE_FILES)
+
+    def_fmt = os.path.splitext(filename)[1][1:]  # Get a default format from the filename
+    if def_fmt not in self.fmts:  # Default to png if nothing else
+        def_fmt = "png"
+    fmt = kargs.pop("fmt", [def_fmt])
+
+    if not isinstance(fmt, list):
+        fmt = [fmt]
+    if set(fmt) & set(self.fmts) == set([]):
+        raise ValueError(f"fmt must be {','.join(self.fmts)}")
+    fmt = ["tiff" if f == "tif" else f for f in fmt]
+    self.filename = filename
+    for fm in fmt:
+        saver = getattr(self, f"save_{fm}", "save_tif")
+        if fm == "tiff":
+            forcetype = kargs.pop("forcetype", False)
+            saver(filename, forcetype)
+        else:
+            saver(filename)
+
+def save_png(self, filename):
+    """Save the ImageArray with metadata in a png file.
+
+    This can only save as 8bit unsigned integer so there is likely
+    to be a loss of precision on floating point data"""
+    pngname = os.path.splitext(filename)[0] + ".png"
+    meta = PngImagePlugin.PngInfo()
+    info = self.metadata.export_all()
+    info = [(i.split("=")[0], "=".join(i.split("=")[1:])) for i in info]
+    for k, v in info:
+        meta.add_text(k, v)
+    s = (self - self.min()) * 256 / (self.max() - self.min())
+    im = Image.fromarray(s.astype("uint8"), mode="L")
+    im.save(pngname, pnginfo=meta)
+
+def save_npy(self, filename):
+    """Save the ImageArray as a numpy array."""
+    npyname = os.path.splitext(filename)[0] + ".npy"
+    np.save(npyname, np.array(self))
+
+def save_tiff(self, filename, forcetype=False):
+    """Save the ImageArray as a tiff image with metadata.
+
+    Args:
+        filename (str):
+            Filename to save file as.
+
+    Keyword Args:
+        forcetype(bool):
+            (depricated) if forcetype then preserve data type as best as possible on save.
+            Otherwise we let the underlying pillow library choose the best data type.
+
+    Note:
+        PIL can save in modes "L" (8bit unsigned int), "I" (32bit signed int),
+        or "F" (32bit signed float). In general max info is preserved for "F"
+        type so if forcetype is not specified then this is the default. For
+        boolean type data mode "L" will suffice and this is chosen in all cases.
+        The type name is added as a string to the metadata before saving.
+
+    """
+    from PIL.TiffImagePlugin import ImageFileDirectory_v2
+    import json
+
+    dtype = np.dtype(self.dtype).name  # string representation of dtype we can save
+    self["ImageArray.dtype"] = dtype  # add the dtype to the metadata for saving.
+    if forcetype:  # PIL supports uint8, int32 and float32, try to find the best match
+        if self.dtype == np.uint8 or self.dtype.kind == "b":  # uint8 or boolean
+            im = Image.fromarray(self, mode="L")
+        elif self.dtype.kind in ["i", "u"]:
+            im = Image.fromarray(self.astype("int32"), mode="I")
+        else:  # default to float32
+            im = Image.fromarray(self.astype(np.float32), mode="F")
+    else:
+        if (
+            self.dtype.kind == "b"
+        ):  # boolean we're not going to lose data by saving as unsigned int	            im = Image.fromarray(self)
+            im = Image.fromarray(self, mode="L")
+        else:  # try to convert everything else to float32 which can has maximum preservation of info
+            try:
+                im = Image.fromarray(self)
+            except TypeError:
+                im = Image.fromarray(self.astype("float32"))
+    ifd = ImageFileDirectory_v2()
+    ifd[270] = json.dumps(
+        {
+            "type": self.__class__.__name__,
+            "module": self.__class__.__module__,
+            "metadata": self.metadata.export_all(),
+        }
+    )
+    ext = os.path.splitext(filename)[1]
+    if ext in [".tif", ".tiff"]:  # ensure extension is preserved in save
+        pass
+    else:  # default to tiff
+        ext = ".tiff"
+    tiffname = os.path.splitext(filename)[0] + ext
+    im.save(tiffname, tiffinfo=ifd)

@@ -19,6 +19,7 @@ __all__ = [
     "isLikeList",
     "isProperty",
     "isTuple",
+    "make_Data"
     "quantize",
     "tex_escape",
     "typedList",

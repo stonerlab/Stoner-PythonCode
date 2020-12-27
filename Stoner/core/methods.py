@@ -38,6 +38,10 @@ class DataFileSearchMixin:
             raise RuntimeError(f"Unknown search value type {value}")
         return ix
 
+    def asarray(self):
+        """Provide a consistent way to get at the underlying array data."""
+        return self.data
+
     def closest(self, value, xcol=None):
         """Return the row in a data file which has an x-column value closest to the given value.
 

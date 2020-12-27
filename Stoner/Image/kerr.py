@@ -9,17 +9,13 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 
 import os
-import subprocess  # nosec
-import tempfile
 
 import numpy as np
-from skimage import exposure, io, transform
 
-from Stoner.Core import typeHintedDict
-from Stoner.Image import ImageArray, ImageStack, ImageFile
-from Stoner.core.exceptions import assertion, StonerAssertionError
-from Stoner.compat import which
-from Stoner.tools import make_Data
+from ..Image import ImageArray, ImageStack, ImageFile
+from ..tools import make_Data
+from ..tools.decorators import class_modifier, image_file_adaptor
+from . import kerrfuncs
 
 try:
     import pytesseract  # pylint: disable=unused-import
@@ -29,67 +25,18 @@ except ImportError:
     pytesseract = None
     _tesseractable = False
 
-
 GRAY_RANGE = (0, 65535)  # 2^16
 IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
 
-
-def _parse_text(text, key=None):
-    """Parse text which has been recognised from an image if key is given specific hints may be applied."""
-    # strip any internal white space
-    text = [t.strip() for t in text.split()]
-    text = "".join(text)
-
-    # replace letters that look like numbers
-    errors = [
-        ("s", "5"),
-        ("S", "5"),
-        ("O", "0"),
-        ("f", "/"),
-        ("::", "x"),
-        ("Z", "2"),
-        ("l", "1"),
-        ("\xe2\x80\x997", "7"),
-        ("?", "7"),
-        ("I", "1"),
-        ("].", "1"),
-        ("'", ""),
-    ]
-    for item in errors:
-        text = text.replace(item[0], item[1])
-
-    # apply any key specific corrections
-    if key in ["ocr_field", "ocr_scalebar_length_microns"]:
-        try:
-            text = float(text)
-        except ValueError:
-            pass  # leave it as string
-    # print '{} after processsing: \'{}\''.format(key,data)
-
-    return text
-
-
+@class_modifier(kerrfuncs)
 class KerrArray(ImageArray):
 
     """A subclass for Kerr microscopy specific image functions."""
 
     # useful_keys are metadata keys that we'd usually like to keep from a
     # standard kerr output.
-    _useful_keys = [
-        "X-B-2d",
-        "field: units",
-        "MicronsPerPixel",
-        "Comment:",
-        "Contrast Shift",
-        "HorizontalFieldOfView",
-        "Images to Average",
-        "Lens",
-        "Magnification",
-        "Substraction Std",
-    ]
-    _test_keys = ["X-B-2d", "field: units"]  # minimum keys in data to assert that it is a standard file output
 
     def __init__(self, *args, **kargs):
         """Initialise KerrArray as a subclasses ImageArray.
@@ -135,246 +82,8 @@ class KerrArray(ImageArray):
         """Do a test call to tesseract to see if it is there and cache the result."""
         return _tesseractable
 
-    def crop_text(self, copy=False):
-        """Crop the bottom text area from a standard Kermit image.
 
-        KeywordArguments:
-            copy(bool):
-                Whether to return a copy of the data or the original data
-
-        Returns:
-        (ImageArray):
-            cropped image
-        """
-        if self.shape == IM_SIZE:
-            return self
-        if self.shape != AN_IM_SIZE:
-            raise ValueError(
-                f"Need a full sized Kerr image to crop. Current size is {self.shape}"
-            )  # check it's a normal image
-        return self.crop(None, None, None, IM_SIZE[0], copy=copy)
-
-    def reduce_metadata(self):
-        """Reduce the metadata down to a few useful pieces and do a bit of processing.
-
-        Returns:
-            (:py:class:`typeHintedDict`): the new metadata
-        """
-        newmet = {}
-        if not all([k in self.keys() for k in KerrArray._test_keys]):
-            return self.metadata  # we've not got a standard Labview output, not safe to reduce
-        for key in KerrArray._useful_keys:
-            if key in self.keys():
-                newmet[key] = self[key]
-        newmet["field"] = newmet.pop("X-B-2d")  # rename
-        if "Substraction Std" in self.keys():
-            newmet["subtraction"] = newmet.pop("Substraction Std")
-        if "Averaging" in self.keys():
-            if self["Averaging"]:  # averaging was on
-                newmet["Averaging"] = newmet.pop("Images to Average")
-            else:
-                newmet["Averaging"] = 1
-                newmet.pop("Images to Average")
-        self.metadata = typeHintedDict(newmet)
-        return self.metadata
-
-    def _tesseract_image(self, im, key):
-        """Ocr image with tesseract tool.
-
-        im is the cropped image containing just a bit of text
-        key is the metadata key we're trying to find, it may give a
-        hint for parsing the text generated.
-        """
-        # first set up temp files to work with
-        tmpdir = tempfile.mkdtemp()
-        textfile = os.path.join(tmpdir, "tmpfile.txt")
-        stdoutfile = os.path.join(tmpdir, "logfile.txt")
-        imagefile = os.path.join(tmpdir, "tmpim.tif")
-        with open(textfile, "w") as tf:  # open a text file to export metadata to temporarily
-            pass
-
-        # process image to make it easier to read
-        i = 1.0 * im / np.max(im)  # change to float and normalise
-        i = exposure.rescale_intensity(i, in_range=(0.49, 0.5))  # saturate black and white pixels
-        i = exposure.rescale_intensity(i)  # make sure they're black and white
-        i = transform.rescale(i, 5.0, mode="constant")  # rescale to get more pixels on text
-        io.imsave(
-            imagefile, (255.0 * i).astype("uint8"), plugin="pil"
-        )  # python imaging library will save according to file extension
-
-        # call tesseract
-        if self.tesseractable:
-            tesseract = which("tesseract")
-            with open(stdoutfile, "w") as stdout:
-                subprocess.call(  # nosec
-                    [tesseract, imagefile, textfile[:-4]], stdout=stdout, stderr=subprocess.STDOUT
-                )  # adds '.txt' extension itself
-            os.unlink(stdoutfile)
-        with open(textfile, "r") as tf:
-            data = tf.readline()
-
-        # delete the temp files
-        os.remove(textfile)
-        os.remove(imagefile)
-        os.rmdir(tmpdir)
-
-        # parse the reading
-        if len(data) == 0:
-            print(f"No data read for {key}")
-        data = _parse_text(data, key=key)
-        return data
-
-    def _get_scalebar(self):
-        """Get the length in pixels of the image scale bar."""
-        box = (0, 419, 519, 520)  # row where scalebar exists
-        im = self.crop(box=box, copy=True)
-        im = im.astype(float)
-        im = (im - im.min()) / (im.max() - im.min())
-        im = exposure.rescale_intensity(im, in_range=(0.49, 0.5))  # saturate black and white pixels
-        im = exposure.rescale_intensity(im)  # make sure they're black and white
-        im = np.diff(im[0])  # 1d numpy array, differences
-        lim = [np.where(im > 0.9)[0][0], np.where(im < -0.9)[0][0]]  # first occurance of both cases
-        assertion(len(lim) == 2, "Couldn't find scalebar")
-        return lim[1] - lim[0]
-
-    def float_and_croptext(self):
-        """Convert image to float and crop_text.
-
-        Just to group typical functions together
-        """
-        ret = self.asfloat()
-        ret = ret.crop_text()
-        return ret
-
-    def ocr_metadata(self, field_only=False):
-        """Use image recognition to try to pull the metadata numbers off the image.
-
-        Requirements:
-            This function uses tesseract to recognise the image, therefore
-            tesseract file1 file2 must be valid on your command line.
-            Install tesseract from
-            https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
-
-        KeywordArguments:
-            field_only(bool):
-                only try to return a field value
-
-        Returns:
-            metadata: dict
-                updated metadata dictionary
-        """
-        if self.shape != AN_IM_SIZE:
-            pass  # can't do anything without an annotated image
-
-        # now we have to crop the image to the various text areas and try tesseract
-        elif field_only:
-            fbox = (110, 165, 527, 540)  # (This is just the number area not the unit)
-            im = self.crop(box=fbox, copy=True)
-            field = self._tesseract_image(im, "ocr_field")
-            self.metadata["ocr_field"] = field
-        else:
-            text_areas = {
-                "ocr_field": (110, 165, 527, 540),
-                "ocr_date": (542, 605, 512, 527),
-                "ocr_time": (605, 668, 512, 527),
-                "ocr_subtract": (237, 260, 527, 540),
-                "ocr_average": (303, 350, 527, 540),
-            }
-            try:
-                sb_length = self._get_scalebar()
-            except (StonerAssertionError, AssertionError):
-                sb_length = None
-            if sb_length is not None:
-                text_areas.update(
-                    {
-                        "ocr_scalebar_length_microns": (sb_length + 10, sb_length + 27, 514, 527),
-                        "ocr_lens": (sb_length + 51, sb_length + 97, 514, 527),
-                        "ocr_zoom": (sb_length + 107, sb_length + 149, 514, 527),
-                    }
-                )
-
-            metadata = {}  # now go through and process all keys
-            for key in text_areas:
-                im = self.crop(box=text_areas[key], copy=True)
-                metadata[key] = self._tesseract_image(im, key)
-            metadata["ocr_scalebar_length_pixels"] = sb_length
-            if isinstance(metadata["ocr_scalebar_length_microns"], float):
-                metadata["ocr_microns_per_pixel"] = metadata["ocr_scalebar_length_microns"] / sb_length
-                metadata["ocr_pixels_per_micron"] = 1 / metadata["ocr_microns_per_pixel"]
-                metadata["ocr_field_of_view_microns"] = np.array(IM_SIZE) * metadata["ocr_microns_per_pixel"]
-            self.metadata.update(metadata)
-        if "ocr_field" in self.metadata.keys() and not isinstance(self.metadata["ocr_field"], (int, float)):
-            self.metadata["ocr_field"] = np.nan  # didn't read the field properly
-        return self.metadata
-
-    def defect_mask(self, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
-        """Try to create a boolean array which is a mask for typical defects found in Image images.
-
-        Best for unprocessed raw images. (for subtract images
-        see defect_mask_subtract_image)
-        Looks for big bright things by thresholding and small and dark defects using
-        skimage's corner_fast algorithm
-
-        Parameters:
-        thresh (float):
-            brighter stuff than this gets removed (after image levelling)
-        corner_thresh (float):
-            see corner_fast (skimage):
-        radius (float):
-            radius of pixels around corners that are added to mask
-        return_extra (bool):
-            this returns a dictionary with some of the intermediate steps of the
-            calculation
-
-        Returns:
-            totmask (ndarray of bool):
-                mask
-        info (*optional* dict):
-            dictionary of intermediate calculation steps
-        """
-        im = self.asfloat()
-        im = im.level_image(poly_vert=3, poly_horiz=3)
-        th = im.threshold_minmax(0, thresh)
-        # corner fast good at finding the small black dots
-        cor = im.corner_fast(threshold=corner_thresh)
-        blobs = cor.blob_doh(min_sigma=1, max_sigma=20, num_sigma=3, threshold=0.01)
-        q = np.zeros_like(im)
-        for y, x, _ in blobs:
-            q[
-                int(np.round(y - radius)) : int(np.round(y + radius)),
-                int(np.round(x - radius)) : int(np.round(x + radius)),
-            ] = 1.0
-        totmask = np.logical_or(q, th)
-        if return_extra:
-            info = {
-                "flattened_image": im,
-                "corner_fast": cor,
-                "corner_points": blobs,
-                "corner_mask": q,
-                "thresh_mask": th,
-            }
-            return totmask, info
-        return totmask
-
-    def defect_mask_subtract_image(self, threshmin=0.25, threshmax=0.9, denoise_weight=0.1, return_extra=False):
-        """Create a mask array for a typical subtract Image image.
-
-        Uses a denoise algorithm followed by simple thresholding.
-
-        Returns:
-            totmask (ndarray of bool):
-                the created mask
-            info (*optional* dict):
-                the intermediate denoised image
-        """
-        p = self.denoise_tv_chambolle(weight=denoise_weight)
-        submask = p.threshold_minmax(threshmin, threshmax)
-        if return_extra:
-            info = {"denoised_image": p}
-            return submask, info
-        return submask
-
-
+@class_modifier(kerrfuncs, adaptor=image_file_adaptor)
 class KerrImageFile(ImageFile):
 
     """Subclass of ImageFile that keeps the data as a KerrArray so that extra functions are available."""
@@ -467,6 +176,8 @@ class KerrStackMixin:
         """
         hyst = np.column_stack((self.fields, np.zeros(len(self))))
         for i, im in enumerate(self):
+            if isinstance(im, ImageFile):
+                im=im.image
             if isinstance(mask, np.ndarray) and len(mask.shape) == 2:
                 hyst[i, 1] = np.average(im[np.invert(mask.astype(bool))])
             elif isinstance(mask, np.ndarray) and len(mask.shape) == 3:
@@ -493,11 +204,11 @@ class KerrStackMixin:
                 else return True for values between thresh and 1
         """
         masks = self.clone
-        masks.apply_all("denoise", weight=denoise_weight)
-        masks.apply_all("threshold_minmax", threshmin=thresh, threshmax=np.max(masks.imarray))
+        masks.each.denoise(weight=denoise_weight)
+        masks.each.threshold_minmax(threshmin=thresh, threshmax=np.max(masks.imarray))
         masks = MaskStack(masks)
         if invert:
-            masks.imarray = np.invert(masks.imarray)
+            masks.stack = ~masks.stack
         return masks
 
     def find_threshold(self, testim=None, mask=None):
@@ -508,13 +219,17 @@ class KerrStackMixin:
         irrelevant.
         """
         if testim is None:
-            testim = self[len(self) / 2]
-        else:
+            testim = self[len(self) // 2]
+        elif isinstance(testim,(int,str)):
             testim = self[testim]
-        if mask is None:
-            med = np.median(testim)
+        elif isinstance(testim, np.ndarray) and testim.shape==self[len(self)//2].shape:
+            pass
         else:
-            med = np.median(np.ravel(testim[np.invert(mask)]))
+            raise ValueError("Cannot find testimage for thresholding.")
+        if mask is None:
+            med = testim.median()
+        else:
+            med = testim[~testim.mask]
         return med
 
     def stable_mask(self, tolerance=1e-2, comparison=(0, -1)):

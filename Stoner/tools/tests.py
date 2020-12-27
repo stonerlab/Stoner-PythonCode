@@ -20,7 +20,6 @@ from numpy import ndarray, dtype, isnan, logical_and  # pylint: disable=redefine
 from ..compat import string_types
 from ..core.Typing import NumericArray
 
-
 def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -> bool:
     """Check whether each element of *iterator* is the same length/shape.
 
