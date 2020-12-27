@@ -6,6 +6,7 @@ import inspect
 from importlib import import_module
 from collections.abc import Iterable
 from copy import copy
+from os import environ
 
 import numpy as np
 
@@ -18,6 +19,9 @@ except ImportError:
     def cached(func, *_):
         """Null dectorator."""
         return func
+
+
+_RTD = "READTHEDOCS" in environ
 
 
 def image_file_adaptor(workingfunc):
@@ -296,6 +300,8 @@ def class_modifier(module, adaptor=image_array_adaptor, transpose=False, overloa
         proxy_class = cls if proxy_cls is None else proxy_cls
         mods = module if isinstance(module, Iterable) else [module]
         for mod in mods:
+            if _RTD and not getattr(mod, "__package__", "Stoner").startswith("Stoner"):
+                continue  # Do not bind all the external functions if we're in ReadTheDocs
             for fname in dir(mod):
                 if not fname.startswith("_"):
                     func = getattr(mod, fname)

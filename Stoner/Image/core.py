@@ -60,8 +60,6 @@ dtype_range = {
     np.float64: (-1, 1),
 }
 
-RTD = "READTHEDOCS" in os.environ
-
 
 def __add_core__(result, other):
     """Actually do result=result-other."""
@@ -545,15 +543,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         super().__setstate__(original)
         self.metadata.update(metadata)
 
-    def __dir__(self):
-        """Merge both the ImageFile and ImageArray dirs."""
-        items = super().__dir__()
-        if RTD:
-            items = [
-                x for x in items if getattr(getattr(self, x), "_src_mod", "Stoner.Image.core").startswith("Stoner")
-            ]
-        return items
-
     def __delattr__(self, name):
         """Handle deleting attributes."""
         super().__delattr__(name)
@@ -840,15 +829,6 @@ class ImageFile(metadataObject):
             self.metadata.__setitem__(n, v)
         else:
             self.image.__setitem__(n, v)
-
-    def __dir__(self):
-        """Merge both the ImageFile and ImageArray dirs."""
-        items = super().__dir__()
-        if RTD:
-            items = [
-                x for x in items if getattr(getattr(self, x), "_src_mod", "Stoner.Image.core").startswith("Stoner")
-            ]
-        return items
 
     def __getstate__(self):
         """Record state for pickling ImageFiles."""
