@@ -265,7 +265,7 @@ def test_other_funcs():
 
 def test_attrs():
     attrs=[x for x in dir(ImageArray([])) if not x.startswith("_")]
-    expected=1049
+    expected=1051
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
@@ -326,13 +326,17 @@ def test_methods():
     assert i2.shape==(359,479),"Failed to rotate clockwise"
     i3=i2.CCW
     assert i3.shape==(479,359),"Failed to rotate counter-clockwise"
+    i3=i2.flip_h
+    assert np.all(i3[:,0]==i2[:,-1]),"Flip Horizontal failled"
+    i3=i2.flip_v
+    assert np.all(i3[0,:]==i2[-1,:]),"Flip Horizontal failled"
     i2=image.clone
     i3=i2-127
     assert i3.mean()==pytest.approx(33940.72596111909,rel=1E-2),"Subtract integer failed."
     with pytest.raises(TypeError):
         i2-"Gobble"
     attrs=[x for x in dir(i2) if not x.startswith("_")]
-    expected=1050
+    expected=1052
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 

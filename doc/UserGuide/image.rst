@@ -2,7 +2,7 @@
 Working with Images
 **************************
 
-.. py:currentmodule:: Stone.Image.core
+.. py:currentmodule:: Stoner.Image
 
 Introduction
 ============
@@ -23,15 +23,15 @@ in common with the philosophy of the Stoner package, these methods operate *in p
 allowing a sequence of operations to be completed by chaining the method calls together.
 
 The array of methods available to a :class:`ImageFile` is particularly rich as the class automatically wraps functions from the
-popular scikit-image package as well as the :py@mod:`scipy.ndimage` module. In general such functions take an image as their first argument
+popular scikit-image package (:py:mod:`skimage`) as well as the :py:mod:`scipy.ndimage` module. In general such functions take an image as their first argument
 and :class:`ImageFile` passes its own image data as that argument to whatever funcion is being wrapped. If the function Returns
 image data of the same size that the original image, then the wrapper replaces the :class:`ImageFile`'s image data with the new
 image data.
 
-We well as the wrapped scikit-image and scipy.ndimage functions, ImageFile wraps the opencv2 package if it is available as well
-as providing a set of its own functions for carrying out some common image processing operations.
+As well as the wrapped scikit-image and scipy.ndimage functions, :class:`ImageFile` provides a set of its own functions for
+carrying out some common image processing operations.
 
-The native :class:`ImageFile` can load and save both .tiff and .png files and will embed its metadata into custom tags in those
+By default :class:`ImageFile` can load and save both .tiff and .png files and will embed its metadata into custom tags in those
 formats.
 
 Subclasses of the :class:`ImageFile` are provided for reading the .png files produced by the CM group's Evico Kerr Microscopes as well as
@@ -65,7 +65,7 @@ ImageFile Attributes and Properties
 
 The key attributes and properties of the :class:`ImageFile` are:
 
-    - :attr:`ImageFile.image`:
+    - :py:attr:`ImageFile.image`:
         This is the actual numpy array of data that is the image.
     - :attr:`ImageFile.metadata`:
         This is the dictionary that contains the metadata assoicated with the image. This is normally parameters and
@@ -90,7 +90,7 @@ The :meth:`ImageFile.convert` method can be used to convert the data to a more a
     im.asfloat()
     im.asint()
 
-It also has simpler :meth:`ImageFile.asfloat` and :meth:`ImageFile.asinit` methods for converting to floating point or integer
+It also has simpler :meth:`ImageFile.asfloat` and :meth:`ImageFile.asint` methods for converting to floating point or integer
 formats as required.
 
 There are a number of other attributes that can tell you information about the :class:`ImageFile` such as:
@@ -102,10 +102,10 @@ There are a number of other attributes that can tell you information about the :
     - :attr:`ImageFile.shape`:
         the size of the underlying numpy array for the image.
 
-To make it easier to quickly get a rotated image, the attributes :aattr:`ImageFile.CW` and :attr:`ImageFile.CCW` return
+To make it easier to quickly get a rotated image, the attributes :attr:`ImageFile.CW` and :attr:`ImageFile.CCW` return
 copies of the :class:`ImageFile` that are rotate 90 degrees clockwise and counter-clockwise.
 
-In many cases the default behaviour of modifying the image data in place may not be desired- to get a copy of the
+In many cases the default behaviour of modifying the image data in place may not be desired - to get a copy of the
 :class:`ImageFile` you use the :attr:`ImageFile.clone` attribute::
 
     new_im = im.clone.gaussian(4.0) # create a copy of im and then apply a guassian blur
@@ -171,7 +171,7 @@ working box can be given as follows:
         numbers are None, then this is take as the minimum or maximum extents of the width or height (depending on whether
         the None value substitutes for the left, right top or bottom co-ordinate).
     - A single string:
-        The argument is interpreted as the name of a metadata item that will define the box to be bropped.
+        The argument is interpreted as the name of a metadata item that will define the box to be used.
     - A sigle value False:
         This is equivalent to the whole iamge (i.e. to not specify a box)
     - A single None value:
@@ -289,7 +289,7 @@ At its simpletst one can just do::
 
     profile=fft.radial_profile()
 
-Which will return a :calss:`Stoner.Data` object with columns for the radial distance, mean pixel value at the corresponding radius,
+Which will return a :class:`Stoner.Data` object with columns for the radial distance, mean pixel value at the corresponding radius,
 standard deviation and number of pixels counted. The optional *angle* keyword parameter will select either one angle (float) or a
 rangle of angles (tuple of two floats). This can be easily plotted since the :class:`Stoner.Data` object is created with the
 appropriate columns setup as x oand y data columns.::

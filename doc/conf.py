@@ -120,12 +120,15 @@ inheritance_graph_attrs = dict(rankdir="TB", size='"6.0, 8.0"',
 
 intersphinx_mapping = {
    'python': ('https://docs.python.org/3/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
+    'numpy': ('https://numpy.org/doc/stable', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
     'matplotlib': ('https://matplotlib.org/', None),
+    'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
+    'seaborn': ('https://seaborn.pydata.org/', None),
     'astropy': ('http://docs.astropy.org/en/stable/', None),
     'h5py': ('http://docs.h5py.org/en/latest/', None),
     'lmfit': ('https://lmfit.github.io/lmfit-py/', None),
+    'skimage': ('https://scikit-image.org/docs/stable', None)
     }
 
 primary_domain = "py"
