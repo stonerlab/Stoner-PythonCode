@@ -393,7 +393,7 @@ def test_mask():
 def test_draw():
     i=ImageFile(np.zeros((200,200)))
     attrs=[x for x in dir(i.draw) if not x.startswith("_")]
-    expected = 22
+    expected = 40
     assert len(attrs)==expected,"Directory of DrawProxy failed"
 
 def test_operators():

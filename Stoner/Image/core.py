@@ -561,7 +561,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     @property
     def draw(self):
         """Access the DrawProxy opbject for accessing the skimage draw sub module."""
-        return DrawProxy(self)
+        return DrawProxy(self, self)
 
     # ==============================================================================
     # OTHER SPECIAL METHODS
@@ -796,6 +796,11 @@ class ImageFile(metadataObject):
     def data(self, value):
         """Access the image data by data attribute."""
         self.image = value
+
+    @property
+    def draw(self):
+        """Access the DrawProxy opbject for accessing the skimage draw sub module."""
+        return DrawProxy(self.image, self)
 
     @property
     def image(self):

@@ -12,35 +12,47 @@ from skimage import draw
 import matplotlib.pyplot as plt
 
 from ..tools import fix_signature
+from ..tools.decorators import class_modifier
 from .imagefuncs import imshow
 
 
+def _draw_apaptor(func):
+    """Adapt methods for class."""
+
+    @wraps(func)
+    def _proxy(self, *args, **kargs):
+        value = kargs.pop("value", np.ones(1, dtype=self._img.dtype)[0])
+        coords = func(*args, **kargs)
+        if len(coords) == 3:
+            rr, cc, vv = coords
+            if len(rr) == len(cc):
+                coords = rr, cc
+                value = value * vv
+        if len(coords) == 2 and isinstance(coords[0], np.ndarray) and coords[0].ndim == 3:
+            im = self._img.__class__(np.zeros(self._img.shape, dtype="uint32"))
+            im += coords[0][:, :, 0]
+            im += coords[0][:, :, 1] * 256
+            im += coords[0][:, :, 2] * 256 ** 2
+            im[im == 16777215] = 0
+            im.convert(self._img.dtype)
+            self._img[im != 0] = im[im != 0]
+            return self._parent
+
+        self._img[coords] = value
+        return self._parent
+
+    return fix_signature(_proxy, func)
+
+
+@class_modifier(draw, adaptor=_draw_apaptor)
 class DrawProxy:
 
     """Provides a wrapper around :py:mod:`skimage.draw` to allow easy drawing of objects onto images."""
 
     def __init__(self, *args, **kargs):  # pylint: disable=unused-argument
         """Grab the parent image from the constructor."""
-        self.img = args[0]
-
-    def __getattr__(self, name):
-        """Retiurn a callable function that will carry out the draw operation requested."""
-        func = getattr(draw, name)
-
-        @wraps(func)
-        def _proxy(*args, **kargs):
-            value = kargs.pop("value", np.ones(1, dtype=self.img.dtype)[0])
-            coords = func(*args, **kargs)
-            self.img[coords] = value
-            return self.img
-
-        return fix_signature(_proxy, func)
-
-    def __dir__(self):
-        """Pass through to the dir of skimage.draw."""
-        own = set(dir(super()))
-        d = set(dir(draw))
-        return list(own | d)
+        self._img = args[0]
+        self._parent = args[1]
 
     def annulus(self, r, c, radius1, radius2, shape=None, value=1.0):
         """Use a combination of two circles to draw and annulus.
@@ -60,7 +72,7 @@ class DrawProxy:
             so that the annulus is left clear and the filed is filled.
         """
         if shape is None:
-            shape = self.img.shape
+            shape = self._img.shape
         invert = radius2 < radius1
         if invert:
             buf = np.ones(shape)
@@ -75,8 +87,8 @@ class DrawProxy:
         buf[rr, cc] = fill
         rr, cc = draw.circle(r, c, radius1, shape=shape)
         buf[rr, cc] = bg
-        self.img[:, :] = (self.img * buf + value * (1.0 - buf)).astype(self.img.dtype)
-        return self.img
+        self._img[:, :] = (self._img * buf + value * (1.0 - buf)).astype(self._img.dtype)
+        return self._parent
 
     def rectangle(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
         """Draw a rectangle on an image.
@@ -94,7 +106,7 @@ class DrawProxy:
             A copy of the current image with a rectangle drawn on.
         """
         if shape is None:
-            shape = self.img.shape
+            shape = self._img.shape
 
         x1 = r - h / 2
         x2 = r + h / 2
@@ -107,8 +119,40 @@ class DrawProxy:
             r = np.array([[cos(angle), -sin(angle)], [sin(angle), cos(angle)]])
             co_ords = np.array([centre + m(r, xy - centre) for xy in co_ords])
         rr, cc = draw.polygon(co_ords[:, 0], co_ords[:, 1], shape=shape)
-        self.img[rr, cc] = value
-        return self.img
+        self._img[rr, cc] = value
+        return self._parent
+
+    def rectangle_perimeter(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
+        """Draw the perimter of a rectangle on an image.
+
+        Args:
+            r,c (float): Centre co-ordinates
+            w,h (float): Lengths of the two sides of the rectangle
+
+        Keyword Arguments:
+            angle (float): Angle to rotate the rectangle about
+            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            value (float): The value to draw with.
+
+        Returns:
+            A copy of the current image with a rectangle drawn on.
+        """
+        if shape is None:
+            shape = self._img.shape
+
+        x1 = r - h / 2
+        x2 = r + h / 2
+        y1 = c - w / 2
+        y2 = c + w / 2
+        co_ords = np.array([[x1, y1], [x2, y1], [x2, y2], [x1, y2]])
+        if angle != 0:
+            centre = np.array([r, c])
+            cos, sin, m = np.cos, np.sin, np.matmul
+            r = np.array([[cos(angle), -sin(angle)], [sin(angle), cos(angle)]])
+            co_ords = np.array([centre + m(r, xy - centre) for xy in co_ords])
+        rr, cc = draw.polygon_perimeter(co_ords[:, 0], co_ords[:, 1], shape=shape)
+        self._img[rr, cc] = value
+        return self._parent
 
     def square(self, r, c, w, angle=0.0, shape=None, value=1.0):
         """Draw a square on an image.
@@ -166,7 +210,7 @@ class MaskProxy:
     @property
     def draw(self):
         """Access the draw proxy opbject."""
-        return DrawProxy(self._mask)
+        return DrawProxy(self._mask, self._IF)
 
     def __init__(self, *args, **kargs):
         """Keep track of the underlying objects."""

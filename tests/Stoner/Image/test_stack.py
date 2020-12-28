@@ -230,7 +230,7 @@ def test_mask():
     ist2[3].mask = np.ones(im.shape, dtype=bool)
     assert np.all(ist2[3].mask), 'setting mask on an image stack item not working'
     istack2=selfistack2.clone
-    mask=ImageFile(np.zeros_like(istack2[0].image)).mask.draw.circle(20,20,10)
+    mask=ImageFile(np.zeros_like(istack2[0].image)).mask.draw.circle(20,20,10).mask
     mask = ~mask
     istack2.each.mask=mask
     assert istack2[0].mask[0,0],"Mask not set correctly in stack"
