@@ -79,7 +79,7 @@ def image_file_adaptor(workingfunc):
                 return self
             r = r.view(im.__class__)
             if r.shape == self.shape:
-                self.image = self.image.astype(r.dtype)
+                self.image = self.image.clone.astype(r.dtype)  # Ensure we're replacing out own image
                 self.image[...] = r[...]
                 self.metadata.update(r.metadata)
                 return self
@@ -119,6 +119,7 @@ def image_file_raw_adaptor(workingfunc):
         """Wrap a called method to capture the result back into the calling object."""
         box = kargs.pop("_box", False)
         transpose = getattr(workingfunc, "transpose", False)
+        clones = getattr(workingfunc, "clones", False)
         if isinstance(box, bool) and not box:
             im = self.image
         else:
@@ -143,18 +144,19 @@ def image_file_raw_adaptor(workingfunc):
         if isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
+            ret = self if not clones else self.clone
             if isinstance(r, im.__class__) and np.shares_memory(r, im):  # Assume everything was inplace
-                self.image = r
-                return self
+                ret.image = r
+                return ret
             r = r.view(im.__class__)
-            if r.shape == self.shape:
-                self.image = self.image.astype(r.dtype)
-                self.image[...] = r[...]
-                self.metadata.update(r.metadata)
-                return self
+            if r.shape == ret.shape:
+                ret.image = ret.image.astype(r.dtype)
+                ret.image[...] = r[...]
+                ret.metadata.update(r.metadata)
+                return ret
             ret = self.clone if not force else self
             ret.image = r.view(im.__class__)
-            metadata = copy(self.metadata)
+            metadata = copy(ret.metadata)
             metadata.update(r.metadata)
             ret.metadata = metadata
             return ret
@@ -183,7 +185,8 @@ def array_file_property(workingfunc):
     def gen_func(self, *args, **kargs):
         """Wrap magic proxy function call."""
         transpose = getattr(workingfunc, "transpose", False)
-        im = self.image
+        clones = getattr(workingfunc, "clones", False)
+        im = self.image if not clones else self.clone.image
         if transpose:
             im = im.T
         args = list(args)
@@ -380,6 +383,12 @@ def changes_size(func):
 def keep_return_type(func):
     """Mark a function as one that Should not be converted from an array to an ImageFile."""
     func.keep_class = True
+    return func
+
+
+def clones(func):
+    """Mark the mthod as one that expects it's input to be cloned."""
+    func.clones = True
     return func
 
 

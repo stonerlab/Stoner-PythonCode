@@ -31,7 +31,7 @@ from skimage import (
 from ..core.base import typeHintedDict, metadataObject
 from ..Core import DataFile
 from ..tools import isTuple, fix_signature, isLikeList, make_Data
-from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper
+from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones
 from ..compat import (
     string_types,
     get_filedialog,
@@ -135,12 +135,41 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     image argument required by skimage.
 
     Attributes:
-        metadata (dict):
-            dictionary of metadata for the image
-        clone (self):
-            copy of self
-        max_box (tuple):
-            coordinate extent (xmin,xmax,ymin,ymax)
+        metadata (:py:class:`Stoner.core.regexpDict`):
+            A dictionary of metadata items associated with this image.
+        filename (str):
+            The name of the file from which this image was laoded.
+        title (str):
+            The title of the image (defaults to the filename).
+        mask (:py:class:`numpy.ndarray of bool`):
+            The underlying mask data of the image. Masked elements (i.e. where mask=True) are ignored for many
+            image operations. Indexing them will return the mask fill value (typically NaN, ot -1 or -MAXINT)
+            draw (:py:class:`Stoner.Image.attrs.DrawProxy`):
+            A sepcial object that allows the user to manipulate the image data by making use of
+            :py:mod:`skimage.draw` functions as well as some additional drawing functions.
+        clone (:py:class:`Stoner.ImageFile`):
+            Return a duplicate copy of the current image - this allows subsequent methods to
+            modify the cloned version rather than the original version.
+        centre (tuple of (int,int)):
+            The coordinates of the centre of the image.
+        aspect (float):
+            The aspect ratio (width/height) of the image.
+        max_box (tuple (0,x-size,0-y-size)):
+            The extent of the iamge size in a form suitable for use in defining a box.
+        flip_h (ImageFile):
+            Clone the current image and then flip it horizontally (left-right).
+        flip_v (ImageFile):
+            Clone the current image and then flip it vertically (top-bottom).
+        CW (ImageFile):
+            Clone the current image and then rotate it 90 degrees clockwise.
+        CCW (ImageFile):
+            Clone the current image and then rotate it 90 degrees counter-clockwise.
+        T (ImageFile):
+            Transpose the current image
+        shape (tuple (int,int)):
+            Return the current shape of the image (rows, columns)
+        dtype (:py:class:`numpy.dtype`):
+            The current dtype of the elements of the image data.
 
 
     For clarity it should be noted that any function will not alter the current
@@ -470,8 +499,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @property
     def clone(self):
-        """Return a copy of the instance."""
-        ret = ImageArray(np.copy(self))
+        """Duplicate the ImageFile and return the copy.
+
+        Using .clone allows further methods to modify the clone, allowing the original immage to be unmodified.
+        """
+        ret = self.copy().view(self.__class__)
         self._optinfo["mask"] = self.mask  # Make sure we've updated our mask record
         for k, v in self._optinfo.items():
             try:
@@ -481,13 +513,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return ret
 
     @property
-    def flat(self):
-        """MaskedArray.flat doesn't work the same as array.flat."""
-        return np.asarray(self).flat
-
-    @property
     def max_box(self):
-        """Return the coordinate extent (xmin,xmax,ymin,ymax)."""
+        """Return the maximum coordinate extent (xmin,xmax,ymin,ymax)."""
         box = (0, self.shape[1], 0, self.shape[0])
         return box
 
@@ -505,20 +532,31 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             title = repr(title)
         self._title = title
 
-    #    @property
-    #    def data(self):
-    #        """alias for image[:]. Equivalence to Stoner.data behaviour"""
-    #        return self[:]
+    @property
+    @clones
+    def flip_h(self):
+        """Clone the image and then mirror the image horizontally."""
+        ret = self.clone[:, ::-1]
+        return ret
 
     @property
+    @clones
+    def flip_v(self):
+        """Clone the image and then mirror the image vertically."""
+        ret = self.clone[::-1, :]
+        return ret
+
+    @property
+    @clones
     def CW(self):
-        """Rotate clockwise by 90 deg."""
-        return self.T[:, ::-1]
+        """Clone the image and then rotate the imaage 90 degrees clockwise."""
+        return self.clone.T[:, ::-1]
 
     @property
+    @clones
     def CCW(self):
-        """Rotate counter-clockwise by 90 deg."""
-        return self.T[::-1, :]
+        """Clone the image and then rotate the imaage 90 degrees counter clockwise."""
+        return self.clone.T[::-1, :]
 
     @property
     def draw(self):
@@ -590,12 +628,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         else:
             super().__delitem__(index)
 
-    ############################################################################################################
-    ############### Custom Methods for ImageArray###############################################################
-
-    ############################################################################################################
-    ############## Depricated Methods ##########################################################################
-
 
 @class_modifier(
     [
@@ -625,11 +657,50 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
 class ImageFile(metadataObject):
 
-    """An Image file type that is analagous to DataFile.
+    """An Image file type that is analagous to :py:class:`Stoner.Data`.
 
     This contains metadata and an image attribute which
-    is an ImageArray type which subclasses numpy ndarray and adds lots of extra
-    image specific processing functions.
+    is an :py:class:`Stoner.Image.ImageArray` type which subclasses numpy ndarray and
+    adds lots of extra image specific processing functions.
+
+    Attributes:
+        image (:py:class:`Stoner.Image.ImageArray`):
+            A :py:class:`numpy.ndarray` subclass that stores the actual image data.
+        metadata (:py:class:`Stoner.core.regexpDict`):
+            A dictionary of metadata items associated with this image.
+        filename (str):
+            The name of the file from which this image was laoded.
+        title (str):
+            The title of the image (defaults to the filename).
+        mask (:py:class:`Stoner.Image.attrs.MaskProxy`):
+            A special object that allows manipulation of the image's mask - thius allows the
+            user to selectively disable regions of the image from rpocessing functions.
+        draw (:py:class:`Stoner.Image.attrs.DrawProxy`):
+            A sepcial object that allows the user to manipulate the image data by making use of
+            :py:mod:`skimage.draw` functions as well as some additional drawing functions.
+        clone (:py:class:`Stoner.ImageFile`):
+            Return a duplicate copy of the current image - this allows subsequent methods to
+            modify the cloned version rather than the original version.
+        centre (tuple of (int,int)):
+            The coordinates of the centre of the image.
+        aspect (float):
+            The aspect ratio (width/height) of the image.
+        max_box (tuple (0,x-size,0-y-size)):
+            The extent of the iamge size in a form suitable for use in defining a box.
+        flip_h (ImageFile):
+            Clone the current image and then flip it horizontally (left-right).
+        flip_v (ImageFile):
+            Clone the current image and then flip it vertically (top-bottom).
+        CW (ImageFile):
+            Clone the current image and then rotate it 90 degrees clockwise.
+        CCW (ImageFile):
+            Clone the current image and then rotate it 90 degrees counter-clockwise.
+        T (ImageFile):
+            Transpose the current image
+        shape (tuple (int,int)):
+            Return the current shape of the image (rows, columns)
+        dtype (:py:class:`numpy.dtype`):
+            The current dtype of the elements of the image data.
 
     The ImageFile owned attribute is image. All other calls including metadata
     are passed through to ImageArray (so no need to inherit from metadataObject).
@@ -708,7 +779,7 @@ class ImageFile(metadataObject):
         """Make a copy of this ImageFile."""
         new = self.__class__(self.image.clone)
         for attr in self.__dict__:
-            if callable(getattr(self, attr)) or attr in ["image", "metadata"]:
+            if callable(getattr(self, attr)) or attr in ["image", "metadata"] or attr.startswith("_"):
                 continue
             try:
                 setattr(new, attr, deepcopy(getattr(self, attr)))
@@ -725,20 +796,6 @@ class ImageFile(metadataObject):
     def data(self, value):
         """Access the image data by data attribute."""
         self.image = value
-
-    # @property
-    # def CW(self):
-    #     """Rotate clockwise by 90 deg."""
-    #     ret = self.clone
-    #     ret.image = ret.image.CW
-    #     return ret
-
-    # @property
-    # def CCW(self):
-    #     """Rotate counter-clockwise by 90 deg."""
-    #     ret = self.clone
-    #     ret.image = ret.image.CCW
-    #     return ret
 
     @property
     def image(self):
@@ -763,20 +820,6 @@ class ImageFile(metadataObject):
         self.filename = filename
         self.image.metadata.update(metadata)
 
-    # @property
-    # def filename(self):
-    #     """Pass through to image attribute."""
-    #     if self._image is not None:
-    #         return self.image.filename
-    #     return ""
-
-    # @filename.setter
-    # def filename(self, value):
-    #     """Pass through to image attribute."""
-    #     if self._image is None:
-    #         self._image = ImageArray()
-    #     self.image.filename = value
-
     @property
     def mask(self):
         """Get the mask of the underlying IamgeArray."""
@@ -790,21 +833,6 @@ class ImageFile(metadataObject):
         if isinstance(value, MaskProxy):
             value = value._mask
         self.image.mask = value
-
-    # @property
-    # def metadata(self):
-    #     """Intercept metadata and redirect to image.metadata."""
-    #     return self.image.metadata
-
-    # @metadata.setter
-    # def metadata(self, value):
-    #     """Set the metadata attribute."""
-    #     self.image.metadata = value
-
-    # @property
-    # def shape(self):
-    #     """Pass through for shape attribute."""
-    #     return self._image.shape
 
     ###################################################################################################################
     ############################# Special methods #####################################################################
