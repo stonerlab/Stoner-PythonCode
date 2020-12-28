@@ -44,7 +44,7 @@ def _draw_apaptor(func):
     return fix_signature(_proxy, func)
 
 
-@class_modifier(draw, adaptor=_draw_apaptor)
+@class_modifier(draw, adaptor=_draw_apaptor, RTD_restrictions=False, no_long_names=True)
 class DrawProxy:
 
     """Provides a wrapper around :py:mod:`skimage.draw` to allow easy drawing of objects onto images."""

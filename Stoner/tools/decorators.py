@@ -269,7 +269,15 @@ def image_array_adaptor(workingfunc):
     return fix_signature(gen_func, workingfunc)
 
 
-def class_modifier(module, adaptor=image_array_adaptor, transpose=False, overload=False, proxy_cls=None):
+def class_modifier(
+    module,
+    adaptor=image_array_adaptor,
+    transpose=False,
+    overload=False,
+    proxy_cls=None,
+    RTD_restrictions=True,
+    no_long_names=False,
+):
     """Decorate  a class by addiding member functions from module.
 
     The purpose of this is to incorporate the functions within a module into being methods of the class being
@@ -292,6 +300,11 @@ def class_modifier(module, adaptor=image_array_adaptor, transpose=False, overloa
         proxy (class,None):
             If not None, the class whose attributes we are being augmented with these functions - need to check for
             clashing names.
+        RTD_Restrictions (bool):
+            If True (default), do not add members from outside our own package when on ReadTheDocs.
+        no_long_names (bool):
+            To avoid name collision the default is to create two entries in the class __dict__ - one for the standard name
+            and one to include the full module path. This disables the latter.
 
 
     Returns:
@@ -303,7 +316,7 @@ def class_modifier(module, adaptor=image_array_adaptor, transpose=False, overloa
         proxy_class = cls if proxy_cls is None else proxy_cls
         mods = module if isinstance(module, Iterable) else [module]
         for mod in mods:
-            if _RTD and not getattr(mod, "__package__", "Stoner").startswith("Stoner"):
+            if (RTD_restrictions and _RTD) and not getattr(mod, "__package__", "Stoner").startswith("Stoner"):
                 continue  # Do not bind all the external functions if we're in ReadTheDocs
             for fname in dir(mod):
                 if not fname.startswith("_"):
@@ -315,7 +328,7 @@ def class_modifier(module, adaptor=image_array_adaptor, transpose=False, overloa
                         name = f"{fmod}__{fname}".replace(".", "__")
                         proxy = adaptor(func)
                         setattr(proxy, "_src_mod", fmod)
-                        if not _RTD:
+                        if not no_long_names:
                             setattr(cls, name, proxy)
                         if overload or fname not in dir(proxy_class):
                             setattr(cls, fname, proxy)
