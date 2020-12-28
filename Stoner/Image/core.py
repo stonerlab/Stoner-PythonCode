@@ -147,24 +147,24 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             draw (:py:class:`Stoner.Image.attrs.DrawProxy`):
             A sepcial object that allows the user to manipulate the image data by making use of
             :py:mod:`skimage.draw` functions as well as some additional drawing functions.
-        clone (:py:class:`Stoner.ImageFile`):
+        clone (:py:class:`Stoner.ImageArry`):
             Return a duplicate copy of the current image - this allows subsequent methods to
             modify the cloned version rather than the original version.
-        centre (tuple of (int,int)):
+        centre (tuple of (float,float)):
             The coordinates of the centre of the image.
         aspect (float):
             The aspect ratio (width/height) of the image.
         max_box (tuple (0,x-size,0-y-size)):
             The extent of the iamge size in a form suitable for use in defining a box.
-        flip_h (ImageFile):
+        flip_h (:py:class:`ImageArray`):
             Clone the current image and then flip it horizontally (left-right).
-        flip_v (ImageFile):
+        flip_v (:py:class:`ImageArray`):
             Clone the current image and then flip it vertically (top-bottom).
-        CW (ImageFile):
+        CW (:py:class:`ImageArray`):
             Clone the current image and then rotate it 90 degrees clockwise.
-        CCW (ImageFile):
+        CCW (:py:class:`ImageArray`):
             Clone the current image and then rotate it 90 degrees counter-clockwise.
-        T (ImageFile):
+        T (:py:class:`ImageArray`):
             Transpose the current image
         shape (tuple (int,int)):
             Return the current shape of the image (rows, columns)

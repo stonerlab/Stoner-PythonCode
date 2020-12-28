@@ -267,6 +267,11 @@ Main Image Classes
     :inherited-members:
     :headings: -~
 
+.. automodapi:: Stoner.Image.attrs
+   :no-main-docstr:
+    :inherited-members:
+    :headings: -~
+
 .. module:: Stoner.formats.generic
 
 Generic Fomats
