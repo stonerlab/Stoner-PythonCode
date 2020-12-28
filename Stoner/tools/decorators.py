@@ -312,7 +312,8 @@ def class_modifier(module, adaptor=image_array_adaptor, transpose=False, overloa
                         name = f"{fmod}__{fname}".replace(".", "__")
                         proxy = adaptor(func)
                         setattr(proxy, "_src_mod", fmod)
-                        setattr(cls, name, proxy)
+                        if not _RTD:
+                            setattr(cls, name, proxy)
                         if overload or fname not in dir(proxy_class):
                             setattr(cls, fname, proxy)
         return cls
