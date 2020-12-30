@@ -300,6 +300,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         ret._title = _title
         ret._public_attrs = {"title": str, "filename": str}
         ret._mask_color = "red"
+        ret._mask_alpha = 0.5
         return ret
 
     def __array_finalize__(self, obj):
@@ -511,6 +512,11 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             except (TypeError, ValueError, RecursionError):
                 setattr(ret, k, copy(v))
         return ret
+
+    @property
+    def flat(self):
+        """Return the numpy.ndarray.flat rather than a MaskedIterator."""
+        return self.asarray().flat
 
     @property
     def max_box(self):

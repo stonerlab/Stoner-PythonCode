@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 from ..tools import fix_signature
 from ..tools.decorators import class_modifier
+from .widgets import ShapeSelect
 from .imagefuncs import imshow
 
 
@@ -262,6 +263,10 @@ class MaskProxy:
         """Make a textual representation of the image."""
         return repr(self._mask)
 
+    def __bool__(self):
+        """Check whether any of the mask elements are set."""
+        return np.any(self._mask)
+
     def __invert__(self):
         """Invert the mask."""
         return np.logical_not(self._mask)
@@ -288,6 +293,33 @@ class MaskProxy:
     def invert(self):
         """Invert the mask."""
         self._IA.mask = ~self._IA.mask
+
+    def select(self):
+        """Interactive selection mode.
+
+        This method allows the user to interactively choose a mask region on the image. It will require the
+        Matplotlib backen to be set to Qt or other non-inline backend that suppports a user vent loop.
+
+        The image is displayed in the window and athe user can interact with it with the mouse and keyboard.
+        -   left-clicking the mouse sets a new vertex
+        -   right-clicking the mouse removes the last set vertex
+        -   pressing "i" inverts the mask (i.e. controls whether the shape the user is drawing is masked or clear)
+        -   pressing "p" sets polygon mode (the default) - each vertex is then the corener of a polygon. The polygon
+            vertices are defined in order going around the shape.
+        -   pressing "r" sets rectangular mode. The first vertex defined is one corner. With only two vertices the
+            rectangle is not-rotated and the two vertices define opposite corners. If three vertices are defined then
+            the first two form one side and then third vertex controls the extent of the rectangle in the direction
+            perpendicular to the side defined.
+        -   pressing "c" sets circle/ellipse mode. The first vertex defines one point on the circumference of the circle,
+            the next point will define a point on the opposite side of the circumference. If three vertices are defined
+            then a circle that passes through all three of them is used. Defining 4 certices causes the mode to attempt to
+            find the non-rotated ellipse through the points and further vertices allows the ellipse to be rotated.
+
+        This method directly sets the mask and then returns a copy of the parent :py:class:`Stoner.ImageFile`.
+        """
+        selector = ShapeSelect()
+        self._IA.mask = selector(self._IA)
+        return self._IF
 
     def threshold(self, thresh=None):
         """Mask based on a threshold.

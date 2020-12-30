@@ -641,11 +641,11 @@ def imshow(im, **kwargs):
     figure = kwargs.pop("figure", "new")
     ax = kwargs.pop("ax", None)
     # Get a title - from keyword argument, from title attr or filename attr
-    title = getattr(im, "title", getattr(im, "filename", False))
+    title = os.path.split(getattr(im, "title", getattr(im, "filename", "")))[-1]
     title = kwargs.pop("title", title)
     cmap = kwargs.pop("cmap", "gray")
-    mask_alpha = kwargs.pop("mask_alpha", 0.5)
-    mask_col = kwargs.pop("mask_color", "red")
+    mask_alpha = kwargs.pop("mask_alpha", getattr(im, "_mask_alpha", 0.5))
+    mask_col = kwargs.pop("mask_color", getattr(im, "_mask_color", "red"))
     if isinstance(cmap, string_types):
         cmap = getattr(cm, cmap)
     im_data = im
@@ -659,12 +659,13 @@ def imshow(im, **kwargs):
         fig = plt.figure()
     if ax is not None:
         plt.sca(ax)
-    plt.gca().imshow(im_data, cmap=cmap, **kwargs)
+    ax = plt.gca().imshow(im_data.view(np.ndarray), cmap=cmap, **kwargs)
     if np.ma.is_masked(im):
         mask_col = list(to_rgba(mask_col))
         mask_col[-1] = mask_alpha
-        mask_cmap = ListedColormap([(1.0, 1.0, 1.0, 0.0), mask_col], name="_mask_map")
-        plt.gca().imshow(im.mask, cmap=mask_cmap)
+        mask_data = np.zeros(im.shape + (4,))
+        mask_data[im.mask] = mask_col
+        plt.gca().imshow(mask_data)
 
     if title is None:
         if "filename" in im.metadata.keys():
@@ -753,13 +754,19 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None, mode="clip")
     return im
 
 
-def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
+def normalise(im, scale=None, sample=False, limits=(0.0, 1.0), scale_masked=False):
     """Norm alise the data to a fixed scale.
 
     Keyword Arguements:
-        scale (2-tuple): The range to scale the image to, defaults to -1 to 1.
-        saple (box): Only use a section of the input image to calculate the new scale over.
-        limits (low,high): Take the input range from the *high* and *low* fraction of the input when sorted.
+        scale (2-tuple):
+            The range to scale the image to, defaults to -1 to 1.
+        saple (box):
+            Only use a section of the input image to calculate the new scale over. Default is False - whole image
+        limits (low,high):
+            Take the input range from the *high* and *low* fraction of the input when sorted.
+        scale_masked (bool):
+            If True then the masked region is also scaled, otherwise any masked region is ignored. Default, False.
+
 
     Returns:
         A scaled version of the data. The ndarray min and max methods are used to allow masked images
@@ -778,10 +785,7 @@ def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
     im = im.astype(float)
     if scale is None:
         scale = (-1.0, 1.0)
-    if sample is not None:
-        section = im[im._box(sample)]
-    else:
-        section = im
+    section = im[im._box(sample)]
 
     section = section[~section.mask]
     if limits != (0.0, 1.0):
@@ -799,7 +803,10 @@ def normalise(im, scale=None, sample=None, limits=(0.0, 1.0)):
     delta = scale[1] - scale[0]
     offset = scale[0]
     scaled = scaled * delta + offset
-    im = np.where(im.mask, im, scaled).view(cls)
+    if not scale_masked:
+        im = np.where(im.mask, im, scaled).view(cls)
+    else:
+        im = scaled.view(cls)
     im.mask = mask
     return im
 

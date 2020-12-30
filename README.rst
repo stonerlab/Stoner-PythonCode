@@ -52,7 +52,7 @@ Compatibility
 --------------
 
 Versions 0.9.x (stable branch) are compatible with Python 2.7, 3.5, 3.6 and 3.7. The latest 0.9.6 version is also compatible with Python 3.8
-The development verstion (0.10dev, master branch) is compatrible with Python 3.6, 3.7 and 3.8 but not 2.7.
+The development verstion (0.10, master branch) is compatible with Python 3.6, 3.7 and 3.8 but not 2.7.
 
 Conda packages are prepared for the stable branch and when the development branch enters beta testing. Pip wheels are prepared for selected stable releases only.
 
@@ -78,11 +78,27 @@ and some sample data files can be obtained from the github repository: https://g
 Overview
 ========
 
-The main part of the **Stoner** package provides two basic top-level classes that describe an individual file of experimental data and a
-list (such as a directory tree on disc) of many experimental files. For our research, a typical single experimental data file
-is essentially a single 2D table of floating point numbers with associated metadata, usually saved in some
-ASCII text format. This seems to cover most experiments in the physical sciences, but it you need a more complex
-format with more dimensions of data, we suggest you look elsewhere.
+The main part of the **Stoner** package provides four basic top-level classes that describe:
+    - an individual file of experimental data (**Stoner.Data**),
+    - an individual experimental image (**Stoner.ImageFile**),
+    - a list (such as a directory tree on disc) of many experimental files (**Stoner.DataFolder**)
+    - a list (such as a directory tree on disc) of many image files (**Stoner.ImageFolder**).
+
+For our research, a typical single experimental data file is essentially a single 2D table of floating point
+numbers with associated metadata, usually saved in some ASCII text format. This seems to cover most experiments
+in the physical sciences, but it you need a more complex format with more dimensions of data, we suggest
+you look elsewhere.
+
+Increasingly we seem also to need process image files and so partnering the experimental measurement file classes,
+we have a parallel set of classes for interacting with image data.
+
+The general philosophy used in the package is to work with data by using methods that transform the data in place.
+Additionally, many of the analysis methods pass a copy of the data as their return value, allowing a sequence of
+operations to be chained together in one line.
+
+This is a *data-centric* approach - we have some data and we do various operations on it to get to our result. In
+contrasr, traditional functional programming thinks in terms of various functions into which you pass data.
+
 
 Data and Friends
 ----------------
@@ -92,6 +108,16 @@ It is actually composed of several mixin classes that provide different function
 to examine and manipulate data, manage metadata, load and save data files, plot results and carry out various analysis tasks.
 It has a large number of sub classes - most of these are in Stoner.formats and are used to handle the loading of specific
 file formats.
+
+ImageFile
+---------
+
+**Stoner.ImageFile** is the top-level class for managing image data. It is the equivalent of **Stoner.Data** and maintains
+metadta and comes with a number of methods to manipulate image data. The image data is stored internally as a masked numpy
+array and where possible the masking is taken into account when carrying out image analysis tasks. Through some abuse of
+the Python class system, functions in the scpy.ndimage and scikit-image modules are mapped into methods of the ImageFile
+class allowing a very rich set of operations on the data sets. The default IO methods handle tiff and png images and can
+store the metadata of the ImageFile within those file formats.
 
 DataFolder
 ----------
@@ -103,37 +129,27 @@ its ability to work with the collated metadata from the individual files that ar
 In combination with its ability to walk through a complete heirarchy of groups of
 **Data** objects, the handling of the common metadata provides powerful tools for quickly writing data reduction scripts.
 
+ImageFolder
+-----------
+
+**Stoner.ImageFolder** is the equivalent of DataFolder but for images (although technically a DataFolder can contain ImageFile
+objects, the ImageFolder class offers additional Image specific functionality). There is a subclass of ImageFolder,
+**Stoner.Image.ImageStack** that uses a 3D numpy array as it's primary image store which permits faster access
+(at the expense of a larger memory footprint) than the lazy loading ordered dictionary of **ImageFolder**
+
+Other Modules and Classes
+-------------------------
+
 The **Stoner.HDF5** module provides some additional classes to manipulate *Data* and *DataFolder* objects within HDF5
 format files. HDF5 is a common chouse for storing data from large scale facilties, although providing a way to handle
 arbitary HDF5 files is beyond the scope of this package at this time - the format is much too complex and flexible to make that
 an easy task. Rather it provides a way to work with large numbers of experimental sets using just a single file which may be less
 brutal to your computer's OS than having directory trees with millions of individual files.
 
-The module also provides some classes to support loading some particular HDF5 flavoured files into a **Data** object.
+The module also provides some classes to support loading some particular HDF5 flavoured files into **Data** and **ImageFile**
+objects.
 
 The **Stoner.Zip** module provides a similar set of classes to **Stoner.HDF5** but working with the ubiquitous zip compressed file format.
-
-Image Subpackage
-----------------
-
-The **Stoner.Image** package is a feature of recent versions of the package and provides dedicated classes for working with image data,
-and in particular for analysing Magnetic microscopy files such as Kerr Microscope image files or Scanning transmission microscopy files.
- It provides an **ImageFile** class that is functionally similar to **Data** except that the numerical data is understood to represent
- image data and additional methods are incorporated to facilitate processing. The **ImageFolder** and **ImageStack** classes
- provide similar functionality to **DataFolder** but with additional methods specific to handling collections of images. **ImageStack**
-uses a 3D numpy array as it's primary image store which permits faster access (at the expense of a larger memory footprint) than the lazy loading ordered
-dictionary of **ImageFolder**
-
-The **ImageFile** class allows a direct interaction with many of the image routines in *scikit-image* and the *scipy.ndimage* modules -
-which when coupled with the ability of **ImageFolder** and **ImageStack** to iteratively process their **ImageFile** members
-can allow scripts to process large numbers of images to be written in only a few lines of code.
-
-Multiprocessing
----------------
-
-The **DataFolder** and **ImageFolder/ImageStack** classes will optionally make use of the *multiprocessing* module when applying a function
-to their members for more efficient parallel processing of large numbers of data files. This is disabled by default due to issues with
-threading and plotting on posix platforms and slow process start ups on Windows.
 
 Resources
 ==========
@@ -145,13 +161,13 @@ for carrying out various operations and some sample data files for testing the l
 Contact and Licensing
 =====================
 
-The lead developer for this code is `Dr Gavin Burnell`_ <g.burnell@leeds.ac.uk>, but many current and former members of the CM Physics group have
-contributed code, ideas and bug testing.
+The lead developer for this code is `Dr Gavin Burnell`_ <g.burnell@leeds.ac.uk>, but many current and former members of
+the CM Physics group have contributed code, ideas and bug testing.
 
 The User Guide gives the current list of other contributors to the project.
 
-This code and the sample data are all (C) The University of Leeds 2008-2020 unless otherwise indficated in the source file.
-The contents of this package are licensed under the terms of the GNU Public License v3
+This code and the sample data are all (C) The University of Leeds 2008-2021 unless otherwise indficated in the source
+file. The contents of this package are licensed under the terms of the GNU Public License v3
 
 Recent Changes
 ==============
@@ -162,21 +178,23 @@ Current PyPi Version
 The current version of the package on PyPi will be the stable branch until the development branch enters beta testing, when we start
 making beta packages available.
 
-
 Development Version
 -------------------
 
-The current development version is hosted in the master branch of the repository and will become version 0.10. There is no definitive list of
-features at this time. Better integration with pandas and xarray are under consideration as is depricating some of the less optimal parts of the api.
+The current development version is hosted in the master branch of the repository and will become version 0.10.
 
 New Features in 0.10-dev include:
 
     *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
-    * Start implementing PEP484 Type hinting
+    *   Start implementing PEP484 Type hinting
     *   Support pathlib for paths
     *   Switch from Tk based dialogs to Qt5 ones
     *   Refactoring the **baseFolder** class so that sub-groups are stored in an attribute that is an instance of a custom
         dictionary with methods to prune and filter in the virtual tree of sub-folders.
+    *   Refactoring of the **ImageArray** and **ImageFile** so that binding of external functions as methods is done at
+        class definition time rather than at runtime with overly complex __getattr__ methods. The longer term goal is to
+        depricate the use of ImageArray in favour of just using ImageFile.
+    *   Introduce interactive selection of boxes, lines and mask regions for interactive Matplotlib backends.
 
 Build Status
 ~~~~~~~~~~~~
@@ -185,7 +203,7 @@ Version 0.7 onwards are tested using the Travis-CI services with unit test cover
 
 Version 0.9 is tested with Python 2.7, 3.5, 3.6 using the standard unittest module.
 
-The development version - which will be 0.10 is tested using pytest with Python 3.6, Python 3.7 and Python 3.8.
+The development version - which will be 0.10 is tested using **pytest** with Python 3.6, Python 3.7 and Python 3.8.
 
 
 Citing the Stoner Package
@@ -197,6 +215,8 @@ encourage any users to cite this package via that doi.
 Stable Versions
 ---------------
 
+Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
+
 Version 0.9 is the current stable version. This is the last version to support Python 2 and 3<3.6. Features of this release are:
 
     *   Refactoring of the package into a more granual core, plot, formats, folders packages with submodules
@@ -205,8 +225,6 @@ Version 0.9 is the current stable version. This is the last version to support P
     *   Droppping support for matplotlib<2.0
     *   Support for Python 3.7 (and 3.8 from 0.9.6)
     *   Unit tests now > 80% coverage across the package.
-
-Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
 
 Version 0.8 is the previous stable release. The main new features were:
 
