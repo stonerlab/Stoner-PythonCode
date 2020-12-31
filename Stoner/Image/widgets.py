@@ -9,6 +9,24 @@ from matplotlib.colors import to_rgba
 from skimage import draw
 
 
+def _straight_ellipse(p, data):
+    """A non-rotated ellipse."""
+    xc, yc, a, b = p
+    x, y = data.T
+    t1 = (x - xc) ** 2 / a ** 2
+    t2 = (y - yc) ** 2 / b ** 2
+    return np.abs(np.sum(t1 + t2 - 1.0))
+
+
+def _rotated_ellipse(p, data):
+    """A non-rotated ellipse."""
+    xc, yc, a, b, phi = p
+    x, y = data.T
+    t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a ** 2
+    t2 = ((x - xc) * np.sin(phi) - (y - yc) * np.cos(phi)) ** 2 / b ** 2
+    return np.abs(np.sum(t1 + t2 - 1.0))
+
+
 class LineSelect:
 
     """Show an Image and slow the user to draw a line on it using cursors."""
@@ -277,7 +295,8 @@ class ShapeSelect:
         self.crs = Cursor(self.ax)
         plt.title(self.draw_poly.instructions)
         plt.xlabel(
-            "LMB: Select, RMB: remove, LMB-Dbl: finish, Esc: cancel\ni: invert, c: circle/ellipse, r:rectangle, p:polygon"
+            "LMB: Select, RMB: remove, LMB-Dbl: finish, Esc: cancel\ni: invert,"
+            + "c: circle/ellipse, r:rectangle, p:polygon"
         )
         plt.pause(0.1)
         bp_ev = self.crs.connect_event("button_press_event", self.on_click)
@@ -324,7 +343,7 @@ class ShapeSelect:
             self.invert = False
             self.ov_layer.set_array(np.ones(self.shape + (4,)))
             self.finished = True
-            return None
+            return self.draw(event)
 
     def on_click(self, event):
         """Habndle mouse click events.
@@ -443,7 +462,7 @@ class ShapeSelect:
             xc, yc = vertices.mean(axis=0)
             a, b = vertices.max(axis=0) - vertices.min(axis=0)
             x0 = [xc, yc, a, b]
-            result = minimize(self._straight_ellipse, x0=x0, args=(vertices,))
+            result = minimize(_straight_ellipse, x0=x0, args=(vertices,))
             xc, yc, a, b = result.x
             return draw.ellipse(yc, xc, b, a, shape=self.shape)
         if len(vertices) > 4:
@@ -451,7 +470,7 @@ class ShapeSelect:
             a, b = vertices.max(axis=0) - vertices.min(axis=0)
             phi = 0
             x0 = [xc, yc, a, b, phi]
-            result = minimize(self._rotated_ellipse, x0=x0, args=(vertices,))
+            result = minimize(_rotated_ellipse, x0=x0, args=(vertices,))
             xc, yc, a, b, phi = result.x
             return draw.ellipse(yc, xc, b, a, shape=self.shape, rotation=phi)
 
@@ -484,22 +503,6 @@ class ShapeSelect:
 
     draw_rectangle.min_vertices = 2
     draw_rectangle.instructions = "Click to add corner vertices."
-
-    def _straight_ellipse(self, p, data):
-        """A non-rotated ellipse."""
-        xc, yc, a, b = p
-        x, y = data.T
-        t1 = (x - xc) ** 2 / a ** 2
-        t2 = (y - yc) ** 2 / b ** 2
-        return np.abs(np.sum(t1 + t2 - 1.0))
-
-    def _rotated_ellipse(self, p, data):
-        """A non-rotated ellipse."""
-        xc, yc, a, b, phi = p
-        x, y = data.T
-        t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a ** 2
-        t2 = ((x - xc) * np.sin(phi) - (y - yc) * np.cos(phi)) ** 2 / b ** 2
-        return np.abs(np.sum(t1 + t2 - 1.0))
 
     def get_mask(self):
         """Convert a list of vertices to a mask array."""

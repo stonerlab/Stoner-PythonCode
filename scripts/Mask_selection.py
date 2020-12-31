@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=no-member, invalid-name
 """Demonstrates the interactive mask selection code."""
 
 from Stoner import __homepath__

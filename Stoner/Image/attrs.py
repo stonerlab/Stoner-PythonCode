@@ -18,7 +18,7 @@ from .imagefuncs import imshow
 
 
 def _draw_apaptor(func):
-    """Adapt methods for class."""
+    """Adapt methods for DrawProxy class to bind :py:mod:`skimage.draw` functions."""
 
     @wraps(func)
     def _proxy(self, *args, **kargs):
@@ -48,7 +48,16 @@ def _draw_apaptor(func):
 @class_modifier(draw, adaptor=_draw_apaptor, RTD_restrictions=False, no_long_names=True)
 class DrawProxy:
 
-    """Provides a wrapper around :py:mod:`skimage.draw` to allow easy drawing of objects onto images."""
+    """Provides a wrapper around :py:mod:`skimage.draw` to allow easy drawing of objects onto images.
+
+    This class allows access the user to draw simply shapes on an image (or its mask) by specifying the desired shape
+    and geometry (centre, length/width etc). Mostly this implemented by pass throughs to the :py:mod:`skimage.draw`
+    module, but methods are provided for an annulus, rectangle (and square) and rectangle-perimeter meothdds- the
+    latter offering rotation about the centre pooint in contrast to the :py:mod:`skimage.draw` equivalents.
+
+    No state data is stored with this class so the attribute does not need to be serialised when the parent ImageFile
+    is saved.
+    """
 
     def __init__(self, *args, **kargs):  # pylint: disable=unused-argument
         """Grab the parent image from the constructor."""
@@ -175,7 +184,40 @@ class DrawProxy:
 
 class MaskProxy:
 
-    """Provides a wrapper to support manipulating the image mask easily."""
+    """Provides a wrapper to support manipulating the image mask easily.
+
+    The actual mask of a :py:class:`Stonmer.ImageFile` is held by the mask attribute of the underlying
+    :py:class:`numpy.ma.MaskedArray`, but this class implements an attribute for an ImageFile that not only
+    provides a means to index into the mask data, but supported other operations too.
+
+    Attributes:
+        color (matplotlib colour):
+            This defines the colour of the mask that is used when showing a masked image in a window. It can be a
+            named colour - such as *red*, *blue* etc. or a tuple of 3 or 4 numbers between 0 and 1 - which define an
+            RGB(Alpha) colour. Note that the Alpha channel is actually an opacity channel = so 1.0 is solid and 0 is
+            transparent.
+        data (numpy array of bool):
+            This accesses the actual boolean masked array if it is necessary to get at the full array. It is equivalent
+            to .mask[:]
+        image (numpoy array of bool):
+            This is a synonym for :py:attr:`MaskProxy.data`.
+        draw (:py:class:`DrawProxy`):
+            This allows the mask to drawn on like the image. This is particularly useful as it provides a convenient
+            programmatic way to define regions of interest in the mask with simply geometric shapes.
+
+    Indexing of the MaskProxy simply passes through to the underlying mask data - thus getting, setting and deleting
+    element directly changes the mask data.
+
+    The string representation of the mask is an ascii art version of the mask where . is unmasked and X is masked.
+
+    Conversion to a boolean is equaivalent to testing whether **any** elements of the mask are True.
+
+    The mask also supports the invert and negate operators which both return the inverse of the mask (but do not
+    change the mask itself - unlike :py:meth:`MaskProxy.invert`).
+
+    For rich displays, the class also supports a png representation which is simply a black and white version of the
+    mask with black pixels being masked elements and white unmasked elements.
+    """
 
     @property
     def _IA(self):
@@ -301,19 +343,22 @@ class MaskProxy:
         Matplotlib backen to be set to Qt or other non-inline backend that suppports a user vent loop.
 
         The image is displayed in the window and athe user can interact with it with the mouse and keyboard.
-        -   left-clicking the mouse sets a new vertex
-        -   right-clicking the mouse removes the last set vertex
-        -   pressing "i" inverts the mask (i.e. controls whether the shape the user is drawing is masked or clear)
-        -   pressing "p" sets polygon mode (the default) - each vertex is then the corener of a polygon. The polygon
-            vertices are defined in order going around the shape.
-        -   pressing "r" sets rectangular mode. The first vertex defined is one corner. With only two vertices the
-            rectangle is not-rotated and the two vertices define opposite corners. If three vertices are defined then
-            the first two form one side and then third vertex controls the extent of the rectangle in the direction
-            perpendicular to the side defined.
-        -   pressing "c" sets circle/ellipse mode. The first vertex defines one point on the circumference of the circle,
-            the next point will define a point on the opposite side of the circumference. If three vertices are defined
-            then a circle that passes through all three of them is used. Defining 4 certices causes the mode to attempt to
-            find the non-rotated ellipse through the points and further vertices allows the ellipse to be rotated.
+
+            -   left-clicking the mouse sets a new vertex
+            -   right-clicking the mouse removes the last set vertex
+            -   pressing "i" inverts the mask (i.e. controls whether the shape the user is drawing is masked or clear)
+            -   pressing "p" sets polygon mode (the default) - each vertex is then the corener of a polygon. The
+                polygon
+                vertices are defined in order going around the shape.
+            -   pressing "r" sets rectangular mode. The first vertex defined is one corner. With only two vertices the
+                rectangle is not-rotated and the two vertices define opposite corners. If three vertices are defined
+                then the first two form one side and then third vertex controls the extent of the rectangle in the
+                direction perpendicular to the side defined.
+            -   pressing "c" sets circle/ellipse mode. The first vertex defines one point on the circumference of the
+                circle, the next point will define a point on the opposite side of the circumference. If three
+                vertices are defined then a circle that passes through all three of them is used. Defining 4
+                vertices causes the mode to attempt to find the non-rotated ellipse through the points and further
+                vertices allows the ellipse to be rotated.
 
         This method directly sets the mask and then returns a copy of the parent :py:class:`Stoner.ImageFile`.
         """
