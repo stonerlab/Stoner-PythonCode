@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/stonerlab/Stoner-PythonCode.svg?branch=master
-   :target: https://travis-ci.org/stonerlab/Stoner-PythonCode
+.. image:: https://travis-ci.com/stonerlab/Stoner-PythonCode.svg?branch=master
+    :target: https://travis-ci.com/stonerlab/Stoner-PythonCode
 
 .. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
     :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
