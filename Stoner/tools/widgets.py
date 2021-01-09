@@ -6,6 +6,10 @@ Code based on the PyQt5 Tutorial code,
 __all__ = ["fileDialog"]
 import pathlib
 from typing import Any, Union, Optional, Dict, Type
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.widgets import SpanSelector
+from matplotlib.patches import Rectangle
 
 try:
     from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
@@ -117,7 +121,13 @@ else:
             patterns = ";;".join([f"{v} ({k})" for k, v in patterns.items()])
             options = QFileDialog.Options()
 
-            kwargs = {"caption": title, "directory": start, "filter": patterns, "options": options, "modal": True}
+            kwargs = {
+                "caption": title,
+                "directory": start,
+                "filter": patterns,
+                "options": options,
+                "modal": True,
+            }
             kwargs = {k: kwargs[k] for k in (set(kwargs.keys()) & set(self.modes[mode]["arg"]))}
 
             ret = method(self.dialog, **kwargs)
@@ -133,6 +143,101 @@ else:
             else:
                 raise TypeError(f"Something when wrong here - can't handle {ret} as a {type(ret)}")
             return ret
+
+
+class RangeSelect:
+
+    """A simple class to allow a matplotlib graph to be used to select data."""
+
+    def __init__(self):
+        """Initialise the selector state."""
+        self.data = None
+        self.finished = False
+        self.selector = []
+        self.invert = False
+        self.xcol = None
+        self.ycol = None
+        self.selection = []
+        self.ax = None
+
+    def __call__(self, data, xcol, accuracy, invert=False):
+        """Run the selector with the data."""
+        self.data = data
+        self.data._select = self  # To allow for unit testing
+        self.xcol = xcol
+        self.invert = invert
+
+        col = "red" if self.invert else "green"
+
+        if len(self.data.setas.y) > 0:
+            self.ycvol = self.data.setas.y
+        else:
+            self.ycol = list(range(self.shape[1]))
+            self.ycol.remove(self.xcol)
+        # Preserve figure settings before creating plot
+        fig_tmp = getattr(self.data, "fig", None), getattr(self.data, "axes", None)
+        fig = plt.figure()
+        self.data.plot(self.xcol, self.ycol, figure=fig)
+        self.data.title = "Select Data and press Enter to confirm\nEsc to cancel, i to invert selection."
+        self.ax = self.data.axes[-1]
+        self.selector = SpanSelector(
+            self.ax,
+            self.onselect,
+            "horizontal",
+            useblit=True,
+            rectprops={"edgecolor": col, "facecolor": col, "alpha": 0.5},
+        )
+        fig.canvas.mpl_connect("key_press_event", self.keypress)
+        while not self.finished:
+            plt.pause(0.1)
+        # Clean up and resotre the figure settings
+        plt.close(self.data.fig.number)
+        if fig_tmp[0] is not None and fig_tmp[0] in plt.get_fignums():
+            self.data.fig = fig_tmp[0]
+        delattr(self.data, "_select")
+        idx = np.ones(len(self.data), dtype=bool)
+        for ix, selection in enumerate(self.selection):
+            if ix == 0:
+                idx = self.data._search_index(xcol, selection, accuracy, invert=self.invert)
+            else:
+                idx = np.logical_or(idx, self.data._search_index(xcol, selection, accuracy, invert=self.invert),)
+        return idx
+
+    def onselect(self, xmin, xmax):
+        """Add the selection limits to the selections list."""
+        self.selection.append((xmin, xmax))
+        ylim = self.ax.get_ylim()
+        col = "red" if self.invert else "green"
+        rect = Rectangle((xmin, ylim[0]), xmax - xmin, ylim[1] - ylim[0], edgecolor=col, facecolor=col, alpha=0.5,)
+        self.ax.add_patch(rect)
+
+    def keypress(self, event):
+        """Habndle key press events.
+
+        Args:
+            event (matplotlib event):
+                The matplotlib event object
+
+        Returns:
+            None.
+
+        Tracks the mode and adjusts the cursor display.
+        """
+        if event.key.lower() == "enter":  # Finish selection
+            self.finished = True
+        elif event.key.lower() == "escape":  # Abandon selection
+            self.selection = []
+            self.finished = True
+        elif event.key.lower() == "backspace":  # Delete last selection
+            if len(self.selection) > 0:
+                del self.selection[-1]
+                del self.ax.patches[-1]
+                self.data.fig.canvas.draw()
+        elif event.key.lower() == "i":  # Invert selection
+            self.invert = ~self.invert
+            col = "red" if self.invert else "green"
+            for p in self.ax.patches:
+                p.update({"color": col, "facecolor": col})
 
 
 fileDialog: Type[App] = App()

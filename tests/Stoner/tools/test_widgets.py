@@ -8,8 +8,11 @@ Created on Sun Apr 19 12:04:58 2020
 import sys
 from warnings import warn
 import pytest
+from matplotlib.backend_bases import Event
 from pathlib import Path
-
+import threading
+import time
+import numpy as np
 import Stoner
 ret_pth = Stoner.__homepath__/".."/"sample-data"/"TDI_Format_RT.txt"
 
@@ -74,6 +77,60 @@ def test_loader():
     assert fldr.shape==(48, {'attocube_scan': (15, {}), 'NLIV': (11, {}), 'recursivefoldertest': (1, {}), 'working': (4, {})})
     fldr=DataFolder(False,multifile=True)
     assert fldr.shape==(1, {}), "multifile mode failed!"
+
+def _event(data,name,**kargs):
+    """Make a fake event."""
+    select=data._select
+    event=Event("fake",select.data.fig.canvas)
+    for k,v in kargs.items():
+        setattr(event,k,v)
+    try:
+        getattr(select,name)(event)
+    except Exception as err:
+        breakpoint()
+        pass
+
+def _trigger0(data):
+    time.sleep(1)
+    select=data._select
+    select.onselect(50,100)
+    _event(data,"keypress",key="escape")
+
+def _trigger1(data):
+    time.sleep(1)
+    select=data._select
+    select.onselect(50,100)
+    _event(data,"keypress",key="enter")
+
+def _trigger2(data):
+    time.sleep(1)
+    select=data._select
+    select.onselect(50,100)
+    select.onselect(150,200)
+    _event(data,"keypress",key="i")
+    _event(data,"keypress",key="backspace")
+    _event(data,"keypress",key="enter")
+
+def test_range_select():
+    data=Stoner.Data(ret_pth,setas="xy")
+    thread=threading.Thread(target=_trigger0,args=(data,))
+    thread.start()
+    result = data.search()
+    xmin,xmax=result.x.min(),result.x.max()
+    assert xmin<4.4 and xmax>291,"Failed to select and clear"
+    thread=threading.Thread(target=_trigger1,args=(data,))
+    thread.start()
+    result = data.search()
+    xmin1,xmax1=result.x.min(),result.x.max()
+    assert np.isclose(xmin1,50,atol=1) and np.isclose(xmax1,100,1), "Single selection failed."
+    thread=threading.Thread(target=_trigger2,args=(data,))
+    thread.start()
+    result = data.search()
+    xmin2,xmax2=result.x.min(),result.x.max()
+    assert np.isclose(xmin,xmin2) and np.isclose(xmax,xmax2), "Selection with keypresses failed"
+
+
+
 
 if __name__ == "__main__":
     pytest.main(["--pdb",__file__])

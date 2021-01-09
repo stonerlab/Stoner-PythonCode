@@ -8,19 +8,21 @@ import numpy as np
 from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import index_types, int_types
-from ..tools import operator, isIterable
+from ..tools import operator, isIterable, all_type
+from ..tools.widgets import RangeSelect
 
 
 class DataFileSearchMixin:
 
     """Mixin class that provides the search, selecting and sorting methods for a DataFile."""
 
-    def _search_index(self, xcol, value, accuracy):
+    def _search_index(self, xcol=None, value=None, accuracy=0.0, invert=False):
         """Return an array of booleans for indexing matching rows for use with search method."""
-        x = self.find_col(xcol)
-        if isinstance(value, (int_types, float)):
-            ix = np.less_equal(np.abs(self.data[:, x] - value), accuracy)
-        elif isinstance(value, tuple) and len(value) == 2:
+        _ = self._col_args(scalar=False, xcol=xcol)
+        x = self.find_col(_.xcol)
+        if isinstance(value, (int_types, float)):  # Search for a value in x-column
+            ix = np.isclose(self.data[:, x], value, atol=accuracy)
+        elif isinstance(value, tuple) and len(value) == 2:  # within a range of values
             (low, u) = (min(value), max(value))
             low -= accuracy
             u += accuracy
@@ -28,14 +30,27 @@ class DataFileSearchMixin:
             low = np.ones_like(v) * low
             u = np.ones_like(v) * u
             ix = np.logical_and(v > low, v <= u)
-        elif isinstance(value, (list, np.ndarray)):
+        elif (
+            isinstance(value, (list, np.ndarray)) and all_type(value, bool) and len(value) <= len(self)
+        ):  # index by list or array of booleans
+            if len(value) < len(self):  # Expand array if necessary
+                ix = np.append(value, [False] * len(self) - len(value))
+            else:
+                ix = np.array(value)
+        elif isinstance(value, (list, np.ndarray)):  # Array or list of values
             ix = np.zeros(len(self), dtype=bool)
             for v in value:
                 ix = np.logical_or(ix, self._search_index(xcol, v, accuracy))
-        elif callable(value):
+        elif callable(value):  # Index with a callable function
             ix = np.array([value(r[x], r) for r in self], dtype=bool)
-        else:
+        elif value is None:  # If indexing with None, use a gui range slector
+            selector = RangeSelect()
+            ix = selector(self, x, accuracy)
+        else:  # error!
             raise RuntimeError(f"Unknown search value type {value}")
+        ix = np.logical_xor(invert, ix)
+        if ix.ndim > 1:
+            ix = ix[:, 0]
         return ix
 
     def asarray(self):
@@ -258,16 +273,14 @@ class DataFileSearchMixin:
                 ret = data
             yield ret
 
-    def search(self, xcol, value, columns=None, accuracy=0.0):
+    def search(self, xcol=None, value=None, columns=None, accuracy=0.0):
         """Search the numerica data part of the file for lines that match and returns  the corresponding rows.
 
-        Args:
-            xcol (index types):
-                a Search Column Index
-            value (float, tuple, list or callable):
-                Value to look for
-
         Keyword Arguments:
+            xcol (index types, None):
+                a Search Column Index. If None (default), use the current setas.x
+            value (float, tuple, list or callable, None):
+                Value to look for
             columns (index or array of indices or None (default)):
                 columns of data to return - none represents all columns.
             accuracy (float):
@@ -281,9 +294,11 @@ class DataFileSearchMixin:
 
             - a float looks for an exact match
             - a list is a list of exact matches
+            - an array or list of booleans (index like Numpy does)
             - a tuple should contain a (min,max) value.
             - A callable object should have accept a float and an array representing the value of
               the search col for the the current row and the entire row.
+            - None opens an interactive span selector in a plot window.
         """
         ix = self._search_index(xcol, value, accuracy)
         if columns is None:  # Get the whole slice
