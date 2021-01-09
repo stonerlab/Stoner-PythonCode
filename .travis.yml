@@ -51,7 +51,7 @@ install:
   # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
   # Hyperspy is now an optional dependency for 3.6 onwards
   - conda install hyperspy
-  - conda install pytest pytest-runner pytest-cov
+  - conda install pytest pytest-runner pytest-cov pytest-forked pytest-xdist
   # Now we unistall the stable stoner - use force to stop downgrading packages!
   - conda remove --yes --force stoner
   - pip install coveralls
