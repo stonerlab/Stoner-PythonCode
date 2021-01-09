@@ -170,9 +170,9 @@ class RangeSelect:
         col = "red" if self.invert else "green"
 
         if len(self.data.setas.y) > 0:
-            self.ycvol = self.data.setas.y
+            self.ycol = self.data.setas.y
         else:
-            self.ycol = list(range(self.shape[1]))
+            self.ycol = list(range(self.data.shape[1]))
             self.ycol.remove(self.xcol)
         # Preserve figure settings before creating plot
         fig_tmp = getattr(self.data, "fig", None), getattr(self.data, "axes", None)
