@@ -68,7 +68,7 @@ class Data(AnalysisMixin, FittingMixin, ColumnOpsMixin, FilteringOpsMixin, Featu
         """
         mode = kargs.pop("mode", "float")
         units = kargs.pop("units", self.get(key + " units", ""))
-        prefix = kargs.pop("prefix", "{self.get(key + ' label', f'{key}')} = ")
+        prefix = kargs.pop("prefix", f"{self.get(key + ' label', f'{key}')} = ")
         latex = kargs.pop("latex", False)
         fmt = kargs.pop("fmt", "latex" if latex else "text")
         escape = kargs.pop("escape", False)
