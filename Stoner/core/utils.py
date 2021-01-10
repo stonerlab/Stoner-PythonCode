@@ -53,7 +53,7 @@ def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], n
             ret = newdata
         else:
             ret = NotImplemented
-    elif isinstance(other, newdata.__class__):  # Appending another DataFile
+    elif isinstance(other, type(newdata)):  # Appending another DataFile
         new_data = np.ones((other.shape[0], newdata.shape[1])) * np.nan
         for i in range(newdata.shape[1]):
             column = newdata.column_headers[i]
@@ -121,18 +121,18 @@ def and_core(other: Union["DataFile", np.ndarray], newdata: "DataFile") -> "Data
 
     # Get other to be a numpy masked array of data
     # Get other_headers to be a suitable length list of strings
-    if isinstance(other, newdata.__class__):
+    if isinstance(other, type(newdata)):
         newdata.metadata.update(other.metadata)
         other_headers = other.column_headers
         other = copy.copy(other.data)
-    elif isinstance(other, newdata.data.__class__):
+    elif isinstance(other, type(newdata.data)):
         other = copy.copy(other)
         if len(other.shape) < 2:  # 1D array, make it 2D column
             other = np.atleast_2d(other)
             other = other.T
         other_headers = [f"Column {i + newdata.shape[1]}" for i in range(other.shape[1])]
     elif isinstance(other, np.ndarray):
-        other = newdata.data.__class__(copy.copy(other))
+        other = type(newdata.data)(copy.copy(other))
         if len(other.shape) < 2:  # 1D array, make it 2D column
             other = np.atleast_2d(other)
             other = other.T

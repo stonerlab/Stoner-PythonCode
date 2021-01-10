@@ -260,7 +260,7 @@ class Item:
             If *value* is iterable and the same length as the folder, then each element in the folder is loaded and
             the corresponding element of *value* is assigned to the attribute of the member.
         """
-        if hasattr(self.__class__, name) or name.startswith("_"):  # Handle setting our own attributes
+        if hasattr(type(self), name) or name.startswith("_"):  # Handle setting our own attributes
             super().__setattr__(name, value)
         elif name in dir(self._folder.instance) or (
             len(self._folder) and hasattr(self._folder[0], name)

@@ -173,14 +173,13 @@ class AttocubeScanMixin:
         if "type" not in f.attrs:
             _raise_error(f, message=f"HDF5 Group does not specify the type attribute used to check we can load it.")
         typ = bytes2str(f.attrs["type"])
-        if typ != self.__class__.__name__ and "module" not in f.attrs:
+        if typ != type(self).__name__ and "module" not in f.attrs:
             _raise_error(
-                f,
-                message=f"HDF5 Group is not a {self.__class__.__name__} and does not specify a module to use to load.",
+                f, message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load.",
             )
         loader = None
-        if typ == self.__class__.__name__:
-            loader = getattr(self.__class__, "read_HDF")
+        if typ == type(self).__name__:
+            loader = getattr(type(self), "read_HDF")
         else:
             mod = importlib.import_module(bytes2str(f.attrs["module"]))
             cls = getattr(mod, typ)
@@ -410,8 +409,8 @@ class AttocubeScanMixin:
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
 
-        f.attrs["type"] = self.__class__.__name__
-        f.attrs["module"] = self.__class__.__module__
+        f.attrs["type"] = type(self).__name__
+        f.attrs["module"] = type(self).__module__
         f.attrs["scan_no"] = self.scan_no
         f.attrs["groups"] = [x for x in self.groups.keys()]
         f.attrs["channels"] = [x for x in self.channels]

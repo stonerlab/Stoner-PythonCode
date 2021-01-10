@@ -30,7 +30,7 @@ def _draw_apaptor(func):
                 coords = rr, cc
                 value = value * vv
         if len(coords) == 2 and isinstance(coords[0], np.ndarray) and coords[0].ndim == 3:
-            im = self._img.__class__(np.zeros(self._img.shape, dtype="uint32"))
+            im = type(self._img)(np.zeros(self._img.shape, dtype="uint32"))
             im += coords[0][:, :, 0]
             im += coords[0][:, :, 1] * 256
             im += coords[0][:, :, 2] * 256 ** 2
@@ -275,13 +275,13 @@ class MaskProxy:
         """Check name against self._IA._funcs and constructs a method to edit the mask as an image."""
         if hasattr(self._IA.mask, name):
             return getattr(self._IA.mask, name)
-        func = getattr(self._IA.__class__, name, None)
+        func = getattr(type(self._IA), name, None)
         if func is None:
             raise AttributeError(f"{name} not a callable mask method.")
 
         @wraps(func)
         def _proxy_call(*args, **kargs):
-            retval = func(self._mask.astype(float).view(self._IA.__class__) * 1000, *args, **kargs)
+            retval = func(self._mask.astype(float).view(type(self._IA)) * 1000, *args, **kargs)
             if isinstance(retval, np.ndarray) and retval.shape == self._IA.shape:
                 retval.normalise()
                 self._IA.mask = retval > 0

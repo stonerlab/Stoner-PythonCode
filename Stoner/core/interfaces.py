@@ -172,4 +172,4 @@ class DataFileInterfacesMixin:
 
     def insert(self, index, obj):
         """Implement the insert method."""
-        self.data = np.insert(self.data, index, obj, axis=0).view(self.data.__class__)
+        self.data = np.insert(self.data, index, obj, axis=0).view(type(self.data))

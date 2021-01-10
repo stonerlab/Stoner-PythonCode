@@ -55,7 +55,7 @@ class DataFilePropertyMixin:
     @property
     def clone(self):
         """Get a deep copy of the current DataFile."""
-        c = self.__class__()
+        c = type(self)()
         if self.debug:
             print("Cloning in DataFile")
         return copy_into(self, c)

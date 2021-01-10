@@ -287,7 +287,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     if config.has_option("option", "prefix"):
         prefix = config.get("option", "prefix")
     else:
-        prefix = model.__class__.__name__
+        prefix = type(model).__name__
     prefix += ":"
     vals = []
     for p in model.param_names:

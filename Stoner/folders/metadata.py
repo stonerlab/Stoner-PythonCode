@@ -94,7 +94,7 @@ def _slice_keys(args, possible=None):
                         raise KeyError(f"No matching keys for {sub_k} in metadata")
                     keys.append(sub_k)
         elif isinstance(k, Model):
-            model = k.__class__.__name__
+            model = type(k).__name__
             for name in k.param_names:
                 for sub_k in [f"{model}:{name}", f"{model}:{name} err"]:
                     if sub_k not in possible:
@@ -186,7 +186,7 @@ class MetadataProxy(MutableMapping):
     def __repr__(self):
         """Give an informative dispaly of the metadata represenation."""
         return (
-            f"The {self._folder.__class__.__name__} {self._folder.key} has"
+            f"The {type(self._folder).__name__} {self._folder.key} has"
             + f" {len(self)} common keys of metadata in {len(self._folder)} {self._folder.type.__name__} objects"
         )
 
@@ -216,7 +216,7 @@ class MetadataProxy(MutableMapping):
 
     def __xor__(self, other):
         """Implement an XOR operator that gives differences between metadata dictionaries."""
-        if isinstance(other, self._folder.__class__):
+        if isinstance(other, type(self._folder)):
             other = other.metadata
         if isinstance(other, MetadataProxy):
             other = other.all_by_keys

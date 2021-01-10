@@ -61,7 +61,7 @@ class odr_Model(odrModel):
             model = lambda beta, x, **kargs: self.model.func(x, *beta, **kargs)
             meta["param_names"] = self.model.param_names
             meta["param_hints"] = self.model.param_hints
-            meta["name"] = self.model.__class__.__name__
+            meta["name"] = type(self.model).__name__
         elif isinstance(model, odrModel):
             self.model = model
 
@@ -412,7 +412,7 @@ def _prep_lmfit_model(model, kargs):
         raise TypeError(f"{model} must be an instance of lmfit.Model or a cllable function!")
     # Nprmalise p0 to be lmfit.Parameters
     # Get a default prefix for the model
-    prefix = str(kargs.pop("prefix", model.__class__.__name__))
+    prefix = str(kargs.pop("prefix", type(model).__name__))
     return model, prefix
 
 
@@ -517,13 +517,13 @@ class FittingMixin:
             model = model()  # Instantiate a bare class first
 
         if isinstance(model, odrModel):  # Get predix from odrModel
-            model_prefix = model.meta.get("__name__", model.__class__.__name__)
+            model_prefix = model.meta.get("__name__", type(model).__name__)
             prefix = kargs.pop("prefix", self.get("odr.prefix", model_prefix))
             param_names = model.meta.get("param_names", [])
             display_names = model.meta.get("display_names", param_names)
             units = model.meta.get("units", [""] * len(param_names))
         elif _lmfit and isinstance(model, Model):  # Get prefix from lmfit
-            prefix = kargs.pop("prefix", self.get("lmfit.prefix", model.__class__.__name__))
+            prefix = kargs.pop("prefix", self.get("lmfit.prefix", type(model).__name__))
             param_names = model.param_names
             display_names = getattr(model, "display_names", model.param_names)
             units = getattr(model, "units", [""] * len(param_names))
@@ -781,9 +781,9 @@ class FittingMixin:
     ):
         """Annotate the DataFile object with the curve_fit result."""
         if isinstance(func, (lmfit.Model)):
-            f_name = func.__class__.__name__
-            labels = getattr(func.__class__, "labels", None)
-            units = getattr(func.__class__, "units", None)
+            f_name = type(func).__name__
+            labels = getattr(type(func), "labels", None)
+            units = getattr(type(func), "units", None)
             func = func.func
         elif isclass(func) and issubclass(func, lmfit.Model):
             f_name = func.__name__
@@ -893,7 +893,7 @@ class FittingMixin:
             ch.extend([a, f"{a} stderr"])
         row.append(chisq)
         ch.append("$\\chi^2$")
-        cls = self.data.__class__
+        cls = type(self.data)
         row = cls(row)
         row.column_headers = ch
         return row

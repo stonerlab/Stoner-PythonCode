@@ -56,7 +56,7 @@ def image_file_adaptor(workingfunc):
             im = im.T
         args = list(args)
         for ix, a in enumerate(args):
-            if isinstance(a, self.__class__):
+            if isinstance(a, type(self)):
                 args[ix] = a.image
 
         if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
@@ -74,17 +74,17 @@ def image_file_adaptor(workingfunc):
         elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
-            if isinstance(r, im.__class__) and np.shares_memory(r, im):  # Assume everything was inplace
+            if isinstance(r, type(im)) and np.shares_memory(r, im):  # Assume everything was inplace
                 self.image = r
                 return self
-            r = r.view(im.__class__)
+            r = r.view(type(im))
             if r.shape == self.shape:
                 self.image = self.image.clone.astype(r.dtype)  # Ensure we're replacing out own image
                 self.image[...] = r[...]
                 self.metadata.update(r.metadata)
                 return self
             ret = self.clone if not force else self
-            ret.image = r.view(im.__class__)
+            ret.image = r.view(type(im))
             metadata = copy(self.metadata)
             metadata.update(r.metadata)
             ret.metadata = metadata
@@ -128,7 +128,7 @@ def image_file_raw_adaptor(workingfunc):
             im = im.T
         args = list(args)
         for ix, a in enumerate(args):
-            if isinstance(a, self.__class__):
+            if isinstance(a, type(self)):
                 args[ix] = a.image
 
         if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
@@ -145,17 +145,17 @@ def image_file_raw_adaptor(workingfunc):
             if transpose:
                 r = r.T
             ret = self if not clones else self.clone
-            if isinstance(r, im.__class__) and np.shares_memory(r, im):  # Assume everything was inplace
+            if isinstance(r, type(im)) and np.shares_memory(r, im):  # Assume everything was inplace
                 ret.image = r
                 return ret
-            r = r.view(im.__class__)
+            r = r.view(type(im))
             if r.shape == ret.shape:
                 ret.image = ret.image.astype(r.dtype)
                 ret.image[...] = r[...]
                 ret.metadata.update(r.metadata)
                 return ret
             ret = self.clone if not force else self
-            ret.image = r.view(im.__class__)
+            ret.image = r.view(type(im))
             metadata = copy(ret.metadata)
             metadata.update(r.metadata)
             ret.metadata = metadata
@@ -191,7 +191,7 @@ def array_file_property(workingfunc):
             im = im.T
         args = list(args)
         for ix, a in enumerate(args):
-            if isinstance(a, self.__class__):
+            if isinstance(a, type(self)):
                 args[ix] = a.image
 
         ret = workingfunc(im, *args, **kargs)
@@ -256,9 +256,9 @@ def image_array_adaptor(workingfunc):
         elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
-            if isinstance(r, self.__class__) and np.shares_memory(r, self):  # Assume everything was inplace
+            if isinstance(r, type(self)) and np.shares_memory(r, self):  # Assume everything was inplace
                 return r
-            r = r.view(self.__class__)
+            r = r.view(type(self))
             sm = self.metadata.copy()  # Copy the currenty metadata
             sm.update(r.metadata)  # merge in any new metadata from the call
             r.metadata = sm  # and put the returned metadata as the merged data

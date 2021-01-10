@@ -307,10 +307,10 @@ class baseFolder(MutableSequence):
         """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
         if getattr(self, "_default_store", None) is None:
             self._default_store = dict()
-            for cls in reversed(self.__class__.__mro__):
+            for cls in reversed(type(self).__mro__):
                 if hasattr(cls, "_defaults"):
                     self._default_store.update(cls._defaults)
-            for cls in reversed(self.__class__.__mro__):
+            for cls in reversed(type(self).__mro__):
                 if hasattr(cls, "_no_defaults"):
                     for k in cls._no_defaults:
                         self._default_store.pop(k, None)
@@ -527,7 +527,7 @@ class baseFolder(MutableSequence):
         if isclass(value) and issubclass(value, metadataObject):
             self._type = value
         elif isinstance(value, metadataObject):
-            self._type = value.__class__
+            self._type = type(value)
         else:
             raise TypeError(f"{type(value)} os neither a subclass nor instance of metadataObject")
         self._instance = None  # Reset the instance cache
@@ -671,7 +671,7 @@ class baseFolder(MutableSequence):
         if other is None and not attrs_only:
             return deepcopy(self)
         if other is None:
-            other = self.__class__()
+            other = type(self)()
         for arg in self.defaults:
             if hasattr(self, arg):
                 setattr(other, arg, getattr(self, arg))
@@ -687,7 +687,7 @@ class baseFolder(MutableSequence):
             setattr(other, k, getattr(self, k))
         if not attrs_only:
             for g in self.groups:
-                other.groups[g] = self.groups[g].__clone__(other=other.__class__(), attrs_only=attrs_only)
+                other.groups[g] = self.groups[g].__clone__(other=type(other)(), attrs_only=attrs_only)
             for k in self.__names__():
                 other.__setter__(k, self.__getter__(k, instantiate=None))
         return other
@@ -752,7 +752,7 @@ class baseFolder(MutableSequence):
                 name = name[1]
             if isinstance(item, self._type):
                 return item[name]
-            if isinstance(item, self.__class__):
+            if isinstance(item, type(self)):
                 if all_type(name, (int_types, slice)):  # Looks like we're accessing data arrays
                     test = (len(item),) + item[0].data[name].shape
                     output = np.array([]).view(item[0].data.__class__)
@@ -925,7 +925,7 @@ class baseFolder(MutableSequence):
 
     def __deepcopy__(self, memo):
         """Provide support for copy.deepcopy to work."""
-        cls = self.__class__
+        cls = type(self)
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
@@ -942,7 +942,7 @@ class baseFolder(MutableSequence):
             A string representation of the current objectFolder object
         """
         short = get_option("short_folder_rrepr")
-        cls = self.__class__.__name__
+        cls = type(self).__name__
         pth = self.key
         pattern = getattr(self, "pattern", "")
         s = f"{cls}({pth}) with pattern {pattern} has {len(self)} files and {len(self.groups)} groups\n"

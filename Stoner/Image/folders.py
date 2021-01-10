@@ -180,7 +180,7 @@ class ImageFolderMixin:
             ref = 0
         else:
             raise ValueError(
-                f"{self.__class__.__name__}.align only takes zero or one positional arguments not {len(args)}!"
+                f"{type(self).__name__}.align only takes zero or one positional arguments not {len(args)}!"
             )
         # Get me reference data
         if isinstance(ref, (string_types, int_types)):
@@ -485,8 +485,8 @@ class ImageFolderMixin:
         ifd = ImageFileDirectory_v2()
         ifd[270] = dumps(
             {
-                "type": self.__class__.__name__,
-                "module": self.__class__.__module__,
+                "type": type(self).__name__,
+                "module": type(self).__module__,
                 "layout": self.layout,
                 "metadata": metadata_export,
             }

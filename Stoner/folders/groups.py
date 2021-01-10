@@ -21,10 +21,8 @@ class GroupsDict(regexpDict):
 
     def __setitem__(self, name, value):
         """Enforce type checking on values."""
-        if not isinstance(value, self.base.__class__):
-            raise ValueError(
-                f"groups attribute can only contain {type(self.base.__class__)} objects not {type(value)}"
-            )
+        if not isinstance(value, type(self.base)):
+            raise ValueError(f"groups attribute can only contain {type(type(self.base))} objects not {type(value)}")
         super().__setitem__(name, value)
 
     def compress(self, base=None, key=".", keep_terminal=False):

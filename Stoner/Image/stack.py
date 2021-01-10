@@ -383,7 +383,7 @@ class ImageStackMixin:
         # Aactually this is just a pass through for the imagefuncs.convert routine
         mask = self._stack.mask
         self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise).view(
-            self._stack.__class__
+            type(self._stack)
         )
         self._stack.mask = mask
         return self

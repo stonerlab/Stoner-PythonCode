@@ -221,7 +221,7 @@ class regexpDict(sorteddict):
             return NotImplemented
         mk = set(self.keys())
         ok = set(other.keys())
-        ret = self.__class__({k: self[k] for k in (mk - ok)})
+        ret = type(self)({k: self[k] for k in (mk - ok)})
         return ret
 
     def __xor__(self, other: MappingType) -> Union["regexpDict", Set[Any]]:
@@ -233,7 +233,7 @@ class regexpDict(sorteddict):
         if mk != ok:  # Keys differ
             return mk ^ ok
         # Do values differ?
-        ret = self.__class__()
+        ret = type(self)()
         for (mk, mv), (ok, ov) in zip(sorted(self.items()), sorted(other.items())):
             if np.any(mv != ov) and isComparable(mv, ov):
                 ret[mk] = (mv, ov)
@@ -559,7 +559,7 @@ class typeHintedDict(regexpDict):
         Returns:
             A copy of the current typeHintedDict
         """
-        cls = self.__class__
+        cls = type(self)
         ret = cls()
         for k in self.keys():
             t = self._typehints[k]

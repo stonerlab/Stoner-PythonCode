@@ -178,14 +178,13 @@ class HDF5File(DataFile):
         if "type" not in f.attrs:
             _raise_error(f, message=f"HDF5 Group does not specify the type attribute used to check we can load it.")
         typ = bytes2str(f.attrs["type"])
-        if typ != self.__class__.__name__ and "module" not in f.attrs:
+        if typ != type(self).__name__ and "module" not in f.attrs:
             _raise_error(
-                f,
-                message=f"HDF5 Group is not a {self.__class__.__name__} and does not specify a module to use to load.",
+                f, message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load.",
             )
         loader = None
-        if typ == self.__class__.__name__:
-            loader = getattr(self.__class__, "read_HDF")
+        if typ == type(self).__name__:
+            loader = getattr(type(self), "read_HDF")
         else:
             mod = importlib.import_module(bytes2str(f.attrs["module"]))
             cls = getattr(mod, typ)
@@ -310,8 +309,8 @@ class HDF5File(DataFile):
                     metadata.attrs[k] = "=".join(parts[1:])
             f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]
             f.attrs["filename"] = self.filename
-            f.attrs["type"] = self.__class__.__name__
-            f.attrs["module"] = self.__class__.__module__
+            f.attrs["type"] = type(self).__name__
+            f.attrs["module"] = type(self).__module__
         finally:
             if isinstance(filename, str):
                 f.file.close()
@@ -517,7 +516,7 @@ class HDF5FolderMixin:
             if issubclass(self.loader, cls):
                 self.__setter__(obj.name, obj.name)
             elif obj.attrs["type"] == "HDF5Folder" and self.recursive:
-                self.groups[obj.name.split(path.sep)[-1]] = self.__class__(
+                self.groups[obj.name.split(path.sep)[-1]] = type(self)(
                     obj, pattern=self.pattern, type=self.type, recursive=self.recursive, loader=self.loader
                 )
 

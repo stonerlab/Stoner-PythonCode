@@ -162,7 +162,7 @@ class setas(MutableMapping):
     @property
     def clone(self):
         """Create an exact copy of the current object."""
-        cls = self.__class__
+        cls = type(self)
         new = cls()
         for attr in self.__dict__:
             if not callable(self.__dict__[attr]):

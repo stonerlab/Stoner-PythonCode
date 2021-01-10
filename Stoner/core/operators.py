@@ -160,7 +160,7 @@ class DataFileOperatorsMixin:
         Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__
         read_iterable` function.
         """
-        newdata = self.__class__()
+        newdata = type(self)()
         if isinstance(other, string_types):
             lines = map(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
@@ -168,7 +168,7 @@ class DataFileOperatorsMixin:
             newdata.__read_iterable(other)
         else:
             return NotImplemented
-        return self.__class__(newdata)
+        return type(self)(newdata)
 
     def __mod__(self, other):
         """Overload the % operator to mean column deletion.

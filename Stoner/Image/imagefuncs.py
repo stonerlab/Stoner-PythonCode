@@ -243,7 +243,7 @@ def align(im, ref, method="scharr", **kargs):
         "imreg_dft": (_align_imreg_dft, imreg_dft),
         "cv2": (_align_cv2, cv2),
     }
-    cls = im.__class__
+    cls = type(im)
     for meth in list(align_methods.keys()):
         mod = align_methods[meth][1]
         if mod is None:
@@ -474,7 +474,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=False, do_sh
     """
     if isinstance(box, bool) and not box:
         im = im.clone.crop(box=box)
-    cls = im.__class__
+    cls = type(im)
 
     refed = cls(ref, get_metadata=False)
     refed = refed.crop(box=box)
@@ -547,7 +547,7 @@ def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None, window=None
         r = np.abs(r)
     else:
         r = np.angle(r)
-    r = r.view(im.__class__)
+    r = r.view(type(im))
     if isinstance(gaussian, (float, int)):
         r.gaussian(gaussian)
 
@@ -603,7 +603,7 @@ def gridimage(im, points=None, xi=None, method="linear", fill_value=None, rescal
         fill_value = fill_value(im)
 
     im2 = griddata(points, im.ravel(), xi, method, fill_value, rescale)
-    im2 = im.__class__(im2)
+    im2 = type(im)(im2)
     im2.metadata = im.metadata
     im2.metadata["actual_x"] = xi[0]
     im2.metadata["actual_y"] = xi[1]
@@ -936,7 +936,7 @@ def radial_coordinates(im, centre=(None, None), pixel_size=(1, 1), angle=False):
         Z = np.abs(Z)
     else:
         Z = np.angle(Z)
-    Z = Z.view(im.__class__)
+    Z = Z.view(type(im))
     Z.metadata = im.metadata
     return Z
 
@@ -1231,17 +1231,17 @@ def sgolay2d(img, points=15, poly=1, derivative=None):
     # solve system and convolve
     if derivative is None:
         m = np.linalg.pinv(A)[0].reshape((points, -1))
-        ret = signal.fftconvolve(Z, m, mode="valid").view(img.__class__)
+        ret = signal.fftconvolve(Z, m, mode="valid").view(type(img))
     elif derivative == "x":
         c = np.linalg.pinv(A)[1].reshape((points, -1))
-        ret = signal.fftconvolve(Z, -c, mode="valid").view(img.__class__)
+        ret = signal.fftconvolve(Z, -c, mode="valid").view(type(img))
     elif derivative == "y":
         r = np.linalg.pinv(A)[2].reshape((points, -1))
-        ret = signal.fftconvolve(Z, -r, mode="valid").view(img.__class__)
+        ret = signal.fftconvolve(Z, -r, mode="valid").view(type(img))
     elif derivative == "both":
         c = np.linalg.pinv(A)[1].reshape((points, -1))
         r = np.linalg.pinv(A)[2].reshape((points, -1))
-        ret = signal.fftconvolve(Z, -r, mode="valid"), signal.fftconvolve(Z, -c, mode="valid").view(img.__class__)
+        ret = signal.fftconvolve(Z, -r, mode="valid"), signal.fftconvolve(Z, -c, mode="valid").view(type(img))
     else:
         raise ValueError(f"Unknown derivative mode {derivative}")
     ret.metadata.update(img.metadata)
@@ -1451,7 +1451,7 @@ def asfloat(self, normalise=True, clip=False, clip_negative=False):
     if self.dtype.kind == "f":
         ret = self
     else:
-        ret = self.convert(dtype=np.float64, normalise=normalise).view(self.__class__)  # preserve metadata
+        ret = self.convert(dtype=np.float64, normalise=normalise).view(type(self))  # preserve metadata
         tmp = metadataObject.__new__(metadataObject)
         for k, v in tmp.__dict__.items():
             if k not in ret.__dict__:
@@ -1492,7 +1492,7 @@ def asint(self, dtype=np.uint16):
     if self.dtype.kind == "f" and (np.max(self) > 1 or np.min(self) < -1):
         self = self.normalise()
     ret = self.convert(dtype)
-    ret = ret.view(self.__class__)
+    ret = ret.view(type(self))
     tmp = metadataObject.__new__(metadataObject)
     for k, v in tmp.__dict__.items():
         if k not in ret.__dict__:
@@ -1628,7 +1628,7 @@ def save_tiff(self, filename, forcetype=False):
                 im = Image.fromarray(self.astype("float32"))
     ifd = ImageFileDirectory_v2()
     ifd[270] = json.dumps(
-        {"type": self.__class__.__name__, "module": self.__class__.__module__, "metadata": self.metadata.export_all(),}
+        {"type": type(self).__name__, "module": type(self).__module__, "metadata": self.metadata.export_all(),}
     )
     ext = os.path.splitext(filename)[1]
     if ext in [".tif", ".tiff"]:  # ensure extension is preserved in save

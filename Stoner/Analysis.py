@@ -497,7 +497,7 @@ class AnalysisMixin:
             positional argument list. In order to support the use of assigned columns, this has been swapped to the
             present order.
         """
-        DataArray = self.data.__class__
+        DataArray = type(self.data)
         col = kargs.pop("col", None)
         xcol = kargs.pop("xcol", None)
         _ = self._col_args(xcol=xcol, ycol=col)

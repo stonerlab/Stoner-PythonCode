@@ -365,7 +365,7 @@ class FilteringOpsMixin:
             interpolation function takes one argument - if *xcol* was None, this argument is interpreted as
             array indices, but if *xcol* was specified, then this argument is interpreted as an array of xvalues.
         """
-        DataArray = self.data.__class__  # pylint: disable=E0203
+        DataArray = type(self.data)  # pylint: disable=E0203
         lines = np.shape(self.data)[0]  # pylint: disable=E0203
         index = np.arange(lines)
         if xcol is None:

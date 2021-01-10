@@ -231,7 +231,7 @@ class DataFile(
             delattr(self, "_kargs")
         except AttributeError:
             pass
-        self.metadata["Stoner.class"] = self.__class__.__name__
+        self.metadata["Stoner.class"] = type(self).__name__
         if kargs:  # set public attributes from keywords
             to_go = []
             for k in kargs:
@@ -433,7 +433,7 @@ class DataFile(
 
     def __deepcopy__(self, memo):
         """Provide support for copy.deepcopy to work."""
-        cls = self.__class__
+        cls = type(self)
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
@@ -486,7 +486,7 @@ class DataFile(
         try:
             return super().__getattr__(name)
         except AttributeError:
-            ret = self.__dict__.get(name, self.__class__.__dict__.get(name, None))
+            ret = self.__dict__.get(name, type(self).__dict__.get(name, None))
             if ret is not None:
                 return ret
         if name in setas_cols:
@@ -510,7 +510,7 @@ class DataFile(
 
     #    def __reduce_ex__(self, p):
     #        """Machinery used for deepcopy."""
-    #        cls=self.__class__
+    #        cls=type(self)
     #        return (cls, (), self.__getstate__())
 
     def __repr__(self):
@@ -1375,7 +1375,7 @@ class DataFile(
         auto_load = kargs.pop("auto_load", filetype is None)
 
         filename, filetype = get_file_name_type(filename, filetype, DataFile)
-        cls = self.__class__
+        cls = type(self)
         if auto_load:  # We're going to try every subclass we canA
             copy_into(auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs), self)
         else:
@@ -1492,7 +1492,7 @@ class DataFile(
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
-            filename = file_dialog("w", self.filename, self.__class__, DataFile)
+            filename = file_dialog("w", self.filename, type(self), DataFile)
             if not filename:
                 raise RuntimeError("Cannot get filename to save")
         if as_loaded:

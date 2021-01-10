@@ -63,7 +63,7 @@ dtype_range = {
 
 def __add_core__(result, other):
     """Actually do result=result-other."""
-    if isinstance(other, result.__class__) and result.shape == other.shape:
+    if isinstance(other, type(result)) and result.shape == other.shape:
         result.image += other.image
     elif isinstance(other, np.ndarray) and other.shape == result.shape:
         result.image += other
@@ -87,7 +87,7 @@ def __div_core__(result, other):
 
 def __sub_core__(result, other):
     """Actually do result=result-other."""
-    if isinstance(other, result.__class__) and result.shape == other.shape:
+    if isinstance(other, type(result)) and result.shape == other.shape:
         result.image -= other.image
     elif isinstance(other, np.ndarray) and other.shape == result.shape:
         result.image -= other
@@ -328,7 +328,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     def _load(self, filename, *args, **kargs):
         """Load an image from a file and return as a ImageArray."""
-        cls = self.__class__
+        cls = type(self)
         fmt = kargs.pop("fmt", os.path.splitext(filename)[1][1:])
         handlers = {"npy": cls._load_npy, "png": cls._load_png, "tiff": cls._load_tiff, "tif": cls._load_tiff}
         if fmt not in handlers:
@@ -504,7 +504,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
         Using .clone allows further methods to modify the clone, allowing the original immage to be unmodified.
         """
-        ret = self.copy().view(self.__class__)
+        ret = self.copy().view(type(self))
         self._optinfo["mask"] = self.mask  # Make sure we've updated our mask record
         for k, v in self._optinfo.items():
             try:
@@ -783,7 +783,7 @@ class ImageFile(metadataObject):
     @property
     def clone(self):
         """Make a copy of this ImageFile."""
-        new = self.__class__(self.image.clone)
+        new = type(self)(self.image.clone)
         for attr in self.__dict__:
             if callable(getattr(self, attr)) or attr in ["image", "metadata"] or attr.startswith("_"):
                 continue
@@ -898,10 +898,10 @@ class ImageFile(metadataObject):
     #     """Handle attriobute access."""
     #     obj, attr = self._where_attr(n)
     #     if obj is None:
-    #         raise AttributeError(f"{n} is not an attribute of {self.__class__}")
+    #         raise AttributeError(f"{n} is not an attribute of {type(self)}")
     #     if obj is self:
     #         return attr
-    #     raise AttributeError(f"{n} is not an attribute of {self.__class__}")
+    #     raise AttributeError(f"{n} is not an attribute of {type(self)}")
 
     #     if callable(attr):  # we have a method
     #         attr = self._func_generator(attr)  # modiy so that we can change image in place
@@ -1102,7 +1102,7 @@ class ImageFile(metadataObject):
                     # Now swap the iamge in, but keep the metadata
                 metadata = ret.metadata
                 filename = ret.filename
-                ret.image = np.atleast_2d(r).view(self.image.__class__)
+                ret.image = np.atleast_2d(r).view(type(self.image))
                 ret.filename = filename
                 ret.metadata = metadata
                 return ret

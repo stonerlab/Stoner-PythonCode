@@ -244,7 +244,7 @@ class DefaultPlotStyle(MutableMapping):
     def __delitem__(self, name):
         """Clear any setting that overides the default for *name*."""
         if hasattr(self, name):
-            default = getattr(self.__class__(), name)
+            default = getattr(type(self)(), name)
             setattr(self, name, default)
         elif name in plt.rcParams:
             params = dict(plt.rcParams)
@@ -331,7 +331,7 @@ class DefaultPlotStyle(MutableMapping):
         sheets = []
         classes = []
         for c in levels:  # Iterate through all possible parent classes and build a list of stylesheets
-            if c is self.__class__ or c in classes or not isinstance(c, DefaultPlotStyle):
+            if c is type(self) or c in classes or not isinstance(c, DefaultPlotStyle):
                 continue
             for f in [
                 join(realpath(dirname(getfile(c))), c.stylename + ".mplstyle"),
@@ -347,8 +347,8 @@ class DefaultPlotStyle(MutableMapping):
             classes.append(c)  # Stop double visiting files
         # Now do the same for this class, but allow the stylename to be an instance variable as well
         for f in [
-            join(dirname(realpath(getfile(self.__class__))), self.stylename + ".mplstyle"),
-            join(dirname(realpath(getfile(self.__class__))), "stylelib", self.stylename + ".mplstyle"),
+            join(dirname(realpath(getfile(type(self)))), self.stylename + ".mplstyle"),
+            join(dirname(realpath(getfile(type(self)))), "stylelib", self.stylename + ".mplstyle"),
         ]:
             if exists(f):
                 sheets.append(f)
@@ -368,7 +368,7 @@ class DefaultPlotStyle(MutableMapping):
     def clear(self):
         """Reset everything back o defaults."""
         attrs = [x for x in dir(self) if self._allowed_attr(x)]
-        defaults = self.__class__()
+        defaults = type(self)()
         for attr in attrs:
             setattr(self, attr, getattr(defaults, attr))
         plt.rcdefaults()
