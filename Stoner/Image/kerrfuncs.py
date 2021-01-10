@@ -283,13 +283,7 @@ def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=
         ] = 1.0
     totmask = np.logical_or(q, th)
     if return_extra:
-        info = {
-            "flattened_image": im,
-            "corner_fast": cor,
-            "corner_points": blobs,
-            "corner_mask": q,
-            "thresh_mask": th,
-        }
+        info = {"flattened_image": im, "corner_fast": cor, "corner_points": blobs, "corner_mask": q, "thresh_mask": th}
         return totmask, info
     return totmask
 

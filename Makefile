@@ -14,7 +14,7 @@ clean:
 	- find -name '__pycache__' -exec rm -rf {} \;
 
 test:
-	pytest -n 8
+	pytest -n `python -c 'import os;print(min(8,os.cpu_count()))'`
 
 check:
 	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt

@@ -67,10 +67,7 @@ from ..core.base import metadataObject
 from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
 from ..tools.decorators import changes_size, keep_return_type
 from .widgets import LineSelect
-from ..compat import (
-    string_types,
-    get_filedialog,
-)  # Some things to help with Python2 and Python3 compatibility
+from ..compat import string_types, get_filedialog  # Some things to help with Python2 and Python3 compatibility
 
 try:
     from PyQt5.QtGui import QImage
@@ -1193,7 +1190,7 @@ def sgolay2d(img, points=15, poly=1, derivative=None):
     # coordinates of points
     ind = np.arange(-half_size, half_size + 1, dtype=np.float64)
     dx = np.repeat(ind, points)
-    dy = np.tile(ind, [points, 1]).reshape(points ** 2,)
+    dy = np.tile(ind, [points, 1]).reshape(points ** 2)
 
     # build matrix of system of equation
     A = np.empty((points ** 2, len(exps)))
@@ -1634,7 +1631,7 @@ def save_tiff(self, filename, forcetype=False):
                 im = Image.fromarray(self.astype("float32"))
     ifd = ImageFileDirectory_v2()
     ifd[270] = json.dumps(
-        {"type": type(self).__name__, "module": type(self).__module__, "metadata": self.metadata.export_all(),}
+        {"type": type(self).__name__, "module": type(self).__module__, "metadata": self.metadata.export_all()}
     )
     ext = os.path.splitext(filename)[1]
     if ext in [".tif", ".tiff"]:  # ensure extension is preserved in save

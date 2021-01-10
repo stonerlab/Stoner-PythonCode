@@ -158,6 +158,8 @@ class QDFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat"]  # Recognised filename patterns
 
+    mime_type = ["application/x-wine-extension-ini", "text/plain"]
+
     def _load(self, filename=None, *args, **kargs):
         """QD system file loader routine.
 
@@ -754,6 +756,8 @@ class XRDFile(Core.DataFile):
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns = ["*.dql"]  # Recognised filename patterns
+
+    mime_type = ["application/x-wine-extension-ini", "text/plain"]
 
     def __init__(self, *args, **kargs):
         """Add a public attribute to XRD File."""

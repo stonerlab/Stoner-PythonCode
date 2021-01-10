@@ -121,13 +121,7 @@ else:
             patterns = ";;".join([f"{v} ({k})" for k, v in patterns.items()])
             options = QFileDialog.Options()
 
-            kwargs = {
-                "caption": title,
-                "directory": start,
-                "filter": patterns,
-                "options": options,
-                "modal": True,
-            }
+            kwargs = {"caption": title, "directory": start, "filter": patterns, "options": options, "modal": True}
             kwargs = {k: kwargs[k] for k in (set(kwargs.keys()) & set(self.modes[mode]["arg"]))}
 
             ret = method(self.dialog, **kwargs)
@@ -200,7 +194,7 @@ class RangeSelect:
             if ix == 0:
                 idx = self.data._search_index(xcol, selection, accuracy, invert=self.invert)
             else:
-                idx = np.logical_or(idx, self.data._search_index(xcol, selection, accuracy, invert=self.invert),)
+                idx = np.logical_or(idx, self.data._search_index(xcol, selection, accuracy, invert=self.invert))
         return idx
 
     def onselect(self, xmin, xmax):
@@ -208,7 +202,7 @@ class RangeSelect:
         self.selection.append((xmin, xmax))
         ylim = self.ax.get_ylim()
         col = "red" if self.invert else "green"
-        rect = Rectangle((xmin, ylim[0]), xmax - xmin, ylim[1] - ylim[0], edgecolor=col, facecolor=col, alpha=0.5,)
+        rect = Rectangle((xmin, ylim[0]), xmax - xmin, ylim[1] - ylim[0], edgecolor=col, facecolor=col, alpha=0.5)
         self.ax.add_patch(rect)
 
     def keypress(self, event):

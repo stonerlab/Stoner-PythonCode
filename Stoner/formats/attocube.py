@@ -175,7 +175,7 @@ class AttocubeScanMixin:
         typ = bytes2str(f.attrs["type"])
         if typ != type(self).__name__ and "module" not in f.attrs:
             _raise_error(
-                f, message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load.",
+                f, message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load."
             )
         loader = None
         if typ == type(self).__name__:

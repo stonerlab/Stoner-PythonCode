@@ -111,7 +111,7 @@ class OVFFile(DataFile):
                     bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
                 )
                 assertion(
-                    uvwdata[0] == 1234567.0, f"Binary 4 format check value incorrect ! Actual Value was {uvwdata[0]}",
+                    uvwdata[0] == 1234567.0, f"Binary 4 format check value incorrect ! Actual Value was {uvwdata[0]}"
                 )
             uvwdata = uvwdata[1:]
             uvwdata = np.reshape(uvwdata, (-1, self["valuedim"]))
