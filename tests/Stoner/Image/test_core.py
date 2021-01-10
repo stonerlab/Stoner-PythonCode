@@ -93,6 +93,20 @@ def test_load_save_all():
     shutil.rmtree(tmpdir)
     i8=image.convert("uint8")
 
+def test_conversion_bitness():
+    pth=path.join(__home__,"..")
+    datadir=path.join(pth,"sample-data")
+    image=ImageFile(path.join(datadir,"kermit.png"))
+    img=image.clone
+    img2=img.clone//256
+    img.convert("uint8") #Down conversion with prevision loss
+    assert np.all(img.image==img2.image)
+    img.convert("int16") #Upconversion with unequal bit lengths
+    assert img.max()==32767 and img.min()==0
+    img3=img2.clone.convert("uint8") # Downconversion without precision loss
+    assert np.all(img2.image==img3.image)
+
+
 def test_load_from_ImageFile():
     #uses the ImageFile.im attribute to set up ImageArray. Memory overlaps
     imfi = ImageFile(selfarr)
@@ -164,6 +178,14 @@ def test_clone():
     assert c.userxyz == 123
     c.userxyz = 234
     assert c.userxyz != selfimarr.userxyz
+    img=ImageFile(np.zeros((100,100)))
+    img.abcd="Hello"
+    img2=img.clone
+    assert img2.abcd=="Hello"
+    del img["Loaded from"]
+    assert len(img.metadata)==0
+    del img.abcd
+    assert not hasattr(img,"abcd")
 
 def test_metadata():
     assert isinstance(selfimarr.metadata,typeHintedDict)
@@ -240,8 +262,8 @@ def test_crop():
 def test_asint():
     ui = selfimarr.asint()
     assert ui.dtype==np.uint16
-    intarr = np.array([[27312, 43319, 60132, 22149],
-                       [ 3944,  9439, 22571, 64980],
+    intarr = np.array([[27311, 43318, 60131, 22148],
+                       [ 3943,  9439, 22571, 64979],
                        [19556, 60082, 48378, 50169]], dtype=np.uint16)
     assert np.array_equal(ui,intarr)
 
@@ -395,6 +417,17 @@ def test_draw():
     attrs=[x for x in dir(i.draw) if not x.startswith("_")]
     expected = 21
     assert len(attrs)==expected,"Directory of DrawProxy failed"
+    i2=i.clone
+    i2.draw.circle(10,100,10,value=1)
+    assert i2.image.sum()==305
+    i2=i.clone.draw.circle_perimeter_aa(100,100,10,value=1)
+    assert np.isclose(i2.image.sum(),56.5657137141714)
+    i2=i.clone.draw.random_shapes(i.shape,1,1,30,100)
+    assert i2.label()[1]==1
+    i2=i.clone.draw.rectangle_perimeter(100,100,20,10,value=1)
+    assert i2.image.sum()==60.0
+    i2.mask.threshold(0.5)
+    assert i2.mask.sum()==60
 
 def test_operators():
     i=ImageFile(np.zeros((10,10)))

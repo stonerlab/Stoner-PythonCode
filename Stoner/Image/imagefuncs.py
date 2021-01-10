@@ -390,12 +390,18 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
         if not uniform:
             if kind == "u":
                 image *= imax
+            elif itemsize_in <= itemsize and itemsize == 8:  # f64->int64 needs care to avoid overruns!
+                image *= 2 ** 54  # float64 has 52bits of mantissa, so this will avoid precission loss for a +/-1 range
+                np.rint(image, out=image)
+                image = image.astype(dtype)
+                np.clip(image, -(2 ** 54), 2 ** 54 - 1, out=image)
+                image *= 512
             else:
                 image *= imax - imin
                 image -= 1.0
                 image /= 2.0
-            np.rint(image, out=image)
-            np.clip(image, imin, imax, out=image)
+                np.rint(image, out=image)
+                np.clip(image, imin, imax, out=image)
         elif kind == "u":
             image *= imax + 1
             np.clip(image, 0, imax, out=image)

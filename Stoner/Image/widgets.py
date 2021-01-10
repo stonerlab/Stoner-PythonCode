@@ -510,7 +510,5 @@ class ShapeSelect:
         vertices = np.array(self.vertices)
         meth = getattr(self, f"draw_{self.obj}", lambda x: ([], []))
         rr, cc = meth(vertices)
-        if len(rr) == 0:
-            breakpoint()
         mask[rr, cc] = ~self.invert
         return mask

@@ -74,6 +74,17 @@ def __add_core__(result, other):
     return result
 
 
+def __floor_div_core__(result, other):
+    """Actually do result=result/other."""
+    # Cheat and pass through to ImageArray
+
+    if isinstance(other, ImageFile):
+        other = other.image
+
+    result.image = result.image // other
+    return result
+
+
 def __div_core__(result, other):
     """Actually do result=result/other."""
     # Cheat and pass through to ImageArray
@@ -894,19 +905,6 @@ class ImageFile(metadataObject):
         if name in self._public_attrs_real:
             del self._public_attrs_real[name]
 
-    # def __getattr__(self, n):
-    #     """Handle attriobute access."""
-    #     obj, attr = self._where_attr(n)
-    #     if obj is None:
-    #         raise AttributeError(f"{n} is not an attribute of {type(self)}")
-    #     if obj is self:
-    #         return attr
-    #     raise AttributeError(f"{n} is not an attribute of {type(self)}")
-
-    #     if callable(attr):  # we have a method
-    #         attr = self._func_generator(attr)  # modiy so that we can change image in place
-    #     return attr
-
     def __setattr__(self, n, v):
         """Handle setting attributes."""
         obj, attr = self._where_attr(n)
@@ -976,8 +974,9 @@ class ImageFile(metadataObject):
 
     def __floordiv__(self, other):
         """Calculate and XMCD ratio on the images."""
-        if not isinstance(other, ImageFile):
-            return NotImplemented
+        if not isinstance(other, type(self)):  # Only do XMCD type operations on ImageFiles of the same type
+            result = self
+            return __floor_div_core__(result, other)
         if self.image.dtype != other.image.dtype:
             raise ValueError(
                 "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
@@ -1044,71 +1043,71 @@ class ImageFile(metadataObject):
         self["x_vector"] = np.unique(X)
         self["y_vector"] = np.unique(Y)
 
-    def _func_generator(self, workingfunc):
-        """Make wrappers for ImageFile functions.
+    # def _func_generator(self, workingfunc):
+    #     """Make wrappers for ImageFile functions.
 
-        Notes:
-            The wrapped functions take additional keyword arguments that are stripped off from the call.
+    #     Notes:
+    #         The wrapped functions take additional keyword arguments that are stripped off from the call.
 
-        Keyword Arguments:
-            _box(:py:meth:`Stoner.ImageArray.crop` arguments):
-                Crops the image first before calling the parent method.
-            _(bool, None):
-                Controls whether a :py:class:`ImageArray` return will be substituted for the current
-                :py:class:`ImageArray`.
+    #     Keyword Arguments:
+    #         _box(:py:meth:`Stoner.ImageArray.crop` arguments):
+    #             Crops the image first before calling the parent method.
+    #         _(bool, None):
+    #             Controls whether a :py:class:`ImageArray` return will be substituted for the current
+    #             :py:class:`ImageArray`.
 
-                * True: - all ImageArray return types are substituted.
-                * False (default) - Imagearray return types are substituted if they are the same size as the original
-                * None - A copy of the current object is taken and the returned ImageArray provides the data.
-        """
-        # Avoid PEP257/black issue
+    #             * True: - all ImageArray return types are substituted.
+    #             * False (default) - Imagearray return types are substituted if they are the same size as the original
+    #             * None - A copy of the current object is taken and the returned ImageArray provides the data.
+    #     """
+    #     # Avoid PEP257/black issue
 
-        @wraps(workingfunc)
-        def gen_func(*args, **kargs):
-            """Wrap a called method to capture the result back into the calling object."""
-            box = kargs.pop("_box", False)
-            if len(args) > 0:
-                args = list(args)
-                for ix, a in enumerate(args):
-                    if isinstance(a, ImageFile):
-                        if isinstance(box, bool) and not box:
-                            args[ix] = a.image
-                        else:
-                            args[ix] = a.image[self.image._box(box)]
-            if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
-                # special case for common function crop which will change the array shape
-                force = True
-            else:
-                force = kargs.pop("_", False)
-            r = workingfunc(*args, **kargs)
-            if (
-                force is not None
-                and isinstance(r, ImageArray)
-                and (force or r.shape == self.image[self.image._box(box)].shape)
-            ):
-                # Enure that we've captured any metadata added inside the working function
-                self.metadata.update(r.metadata)
-                # Now swap the iamge in, but keep the metadata
-                r.metadata = self.metadata
-                filename = self.filename
-                self.image = r
-                self.filename = filename
+    #     @wraps(workingfunc)
+    #     def gen_func(*args, **kargs):
+    #         """Wrap a called method to capture the result back into the calling object."""
+    #         box = kargs.pop("_box", False)
+    #         if len(args) > 0:
+    #             args = list(args)
+    #             for ix, a in enumerate(args):
+    #                 if isinstance(a, ImageFile):
+    #                     if isinstance(box, bool) and not box:
+    #                         args[ix] = a.image
+    #                     else:
+    #                         args[ix] = a.image[self.image._box(box)]
+    #         if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
+    #             # special case for common function crop which will change the array shape
+    #             force = True
+    #         else:
+    #             force = kargs.pop("_", False)
+    #         r = workingfunc(*args, **kargs)
+    #         if (
+    #             force is not None
+    #             and isinstance(r, ImageArray)
+    #             and (force or r.shape == self.image[self.image._box(box)].shape)
+    #         ):
+    #             # Enure that we've captured any metadata added inside the working function
+    #             self.metadata.update(r.metadata)
+    #             # Now swap the iamge in, but keep the metadata
+    #             r.metadata = self.metadata
+    #             filename = self.filename
+    #             self.image = r
+    #             self.filename = filename
 
-                return self
-            if (force is None or not force) and isinstance(r, np.ndarray) and r.ndim == 2:
-                ret = self.clone
-                if hasattr(r, "metadata"):
-                    ret.metadata.update(r.metadata)
-                    # Now swap the iamge in, but keep the metadata
-                metadata = ret.metadata
-                filename = ret.filename
-                ret.image = np.atleast_2d(r).view(type(self.image))
-                ret.filename = filename
-                ret.metadata = metadata
-                return ret
-            return r
+    #             return self
+    #         if (force is None or not force) and isinstance(r, np.ndarray) and r.ndim == 2:
+    #             ret = self.clone
+    #             if hasattr(r, "metadata"):
+    #                 ret.metadata.update(r.metadata)
+    #                 # Now swap the iamge in, but keep the metadata
+    #             metadata = ret.metadata
+    #             filename = ret.filename
+    #             ret.image = np.atleast_2d(r).view(type(self.image))
+    #             ret.filename = filename
+    #             ret.metadata = metadata
+    #             return ret
+    #         return r
 
-        return fix_signature(gen_func, workingfunc)
+    #     return fix_signature(gen_func, workingfunc)
 
     def _load(self, filename, *args, **kargs):
         """Load an ImageFile by calling the ImageArray method instead."""

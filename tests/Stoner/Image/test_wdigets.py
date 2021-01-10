@@ -12,17 +12,20 @@ import threading
 import time
 import numpy as np
 
-def _event(image,name,**kargs):
+def _event(image,names,**kargs):
     """Make a fake event."""
     select=image._image._select
     event=Event("fake",select.fig.canvas)
-    for k,v in kargs.items():
-        setattr(event,k,v)
-    try:
-        getattr(select,name)(event)
-    except Exception as err:
-        breakpoint()
-        pass
+    if not isinstance(names,list):
+        names=[names]
+    for name in names:
+        for k,v in kargs.items():
+            setattr(event,k,v)
+        try:
+            getattr(select,name)(event)
+        except Exception as err:
+            breakpoint()
+            pass
 
 
 def _trigger(image):
@@ -57,15 +60,20 @@ def _trigger4(image):
 
 def _trigger5(image,mode):
     time.sleep(1)
-    _event(image,"on_click",xdata=50,ydata=25,button=1,dblclick=False)
-    _event(image,"on_click",xdata=75,ydata=50,button=1,dblclick=False)
+    _event(image,["draw","on_click"],xdata=50,ydata=25,button=1,dblclick=False)
+    _event(image,["draw","on_click"],xdata=75,ydata=50,button=1,dblclick=False)
     _event(image,"keypress",xdata=50,ydata=75,key=mode.lower()[0])
     if mode=="c": # add some extra points:
-        _event(image,"on_click",xdata=30,ydata=40,button=1,dblclick=False)
-        _event(image,"on_click",xdata=30,ydata=30,button=1,dblclick=False)
+        _event(image,["draw","on_click"],xdata=30,ydata=40,button=1,dblclick=False)
+        _event(image,["draw","on_click"],xdata=30,ydata=30,button=1,dblclick=False)
     _event(image,"keypress",xdata=50,ydata=75,key="i")
     _event(image,"keypress",xdata=50,ydata=75,key="enter")
 
+def _trigger6(image,mode):
+    time.sleep(1)
+    _event(image,["draw","on_click"],xdata=50,ydata=25,button=1,dblclick=False)
+    _event(image,["draw","on_click"],xdata=75,ydata=50,button=1,dblclick=False)
+    _event(image,"keypress",xdata=50,ydata=75,key="escape")
 
 
 def test_profile_line():
@@ -122,6 +130,11 @@ def test_masking_select():
     result = img.mean()
     assert np.isclose(result,15745.5853061)
     img.mask=False
+    thread=threading.Thread(target=_trigger6,args=(img,"c"))
+    thread.start()
+    img.mask.select()
+    result = img.mean()
+    assert np.isclose(result,27715.3245)
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

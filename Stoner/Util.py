@@ -269,7 +269,7 @@ def hysteresis_correct(data, **kargs):
             the background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
     """
     if isinstance(data, DataFile):
-        cls = data.__class__
+        cls = type(data)
     else:
         cls = make_Data(None)
     data = cls(data)
