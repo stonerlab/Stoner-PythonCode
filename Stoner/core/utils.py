@@ -46,13 +46,13 @@ def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], n
                 newdata.data = np.append(newdata.data, np.atleast_2d(other), 0)
                 ret = newdata
             else:
-                ret = NotImplemented
+                return NotImplemented
         elif len(np.shape(other)) == 2 and np.shape(other)[1] == np.shape(newdata.data)[1]:
             # DataFile + array with correct number of columns
             newdata.data = np.append(newdata.data, other, 0)
             ret = newdata
         else:
-            ret = NotImplemented
+            return NotImplemented
     elif isinstance(other, type(newdata)):  # Appending another DataFile
         new_data = np.ones((other.shape[0], newdata.shape[1])) * np.nan
         for i in range(newdata.shape[1]):
