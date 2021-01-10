@@ -6,6 +6,7 @@ Created on Mon Jun 20 19:21:48 2016
 """
 from Stoner.Image import ImageArray,ImageFile
 from Stoner.HDF5 import STXMImage
+from Stoner import __homepath__
 import pytest
 from os.path import dirname,join
 import numpy as np
@@ -16,6 +17,22 @@ thisdir=dirname(__file__)
 
 def mag(x):
     return np.sqrt(np.dot(x,x))
+
+def test_extra():
+    img=ImageFile(__homepath__/".."/"sample-data"/"kermit.png")
+    img.normalise(limits=(0.01,0.99))
+    assert np.isclose(img.mean(),0.04372557050412787)
+    img.clip_neg()
+    assert np.isclose(img.mean(),0.28186646622726236)
+    assert np.isclose(img.profile_line(x=120).y.max(),1.0)
+    assert np.isclose(img.profile_line(y=120).y.max(),0.9450988802254867)
+    assert np.isclose(img.profile_line(x=120,no_scale=True).y.max(),1.0)
+    assert np.isclose(img.profile_line(y=120,no_scale=True).y.max(),0.9450988802254867)
+    assert np.isclose(img.profile_line(10.0,-10.0).y.mean(),0.013888888888888864)
+    img=ImageFile(np.random.normal(size=(100,100), scale=1.0))
+    img.sgolay2d(points=5)
+    assert np.sqrt(img.image**2).mean()<0.2
+
 
 def test_imagefile_ops():
     img_a2=STXMImage(join(thisdir,"..","..","..","sample-data","Sample_Image_2017-10-15_100.hdf5"))
@@ -91,11 +108,13 @@ def test_imagefuncs():
     X,Y=np.meshgrid(x,x)
     i=ImageFile(np.sin(X)*np.cos(Y))
     i2=i.clone
-    j=i.fft()
-    assert np.all(np.unique(np.argmax(j,axis=1))==np.array([47,53])),"FFT of image test failed"
+    j=i.fft(window="hanning", remove_dc=True)
+    assert j.image[47,47]>583.0
     j.imshow()
     assert len(plt.get_fignums())==1,"Imshow didn't open one window"
     plt.close("all")
+    assert j.radial_profile().y.argmax()==4
+    assert j.radial_profile(angle=np.pi/4).y.argmax()==3
     img_a2.imshow(title=None,figure=None)
     img_a2.imshow(title="Hello",figure=1)
     assert len(plt.get_fignums())==1,"Imshow with arguments didn't open one window"
