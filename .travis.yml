@@ -46,14 +46,8 @@ install:
   # Useful for debugging any issues with conda
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION stoner pandas image-registration python-dateutil
+  - conda env create -f tests/test-env.yml
   - conda activate test-environment
-  # This will ensure we collect all the necessary dependencies so long as master doesn't change them!
-  # Hyperspy is now an optional dependency for 3.6 onwards
-  - conda install hyperspy
-  - conda install pytest pytest-runner pytest-cov pytest-forked pytest-xdist
-  # Now we unistall the stable stoner - use force to stop downgrading packages!
-  - conda remove --yes --force stoner
   - pip install coveralls
   - pip install --no-deps .
 

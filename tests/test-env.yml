@@ -1,0 +1,29 @@
+name: test-environment
+channels:
+    - defaults
+    - phygbu
+    - conda-forge
+dependencies:
+    - anaconda
+    - python=3.7
+    - hyperspy
+    - pytest-xdist
+    - pytest-cov
+    - pytest-runner
+    - pytest
+    - pytest-forked
+    - scikit-image=0.17
+    - h5py<3.0
+    - cycler>=0.10.0
+    - filemagic>=1.6
+    - image-registration>=0.2.1
+    - lmfit>=0.9.7
+    - memoization>=0.1.4
+    - npTDMS>=0.11
+    - python-dateutil>=2.7.0
+    - statsmodels
+    - tabulate>=0.8
+    - imreg_dft>=2.0
+    - multiprocess>=0.70
+    - dill>=0.2.8
+
