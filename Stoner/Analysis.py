@@ -367,6 +367,11 @@ class AnalysisMixin:
 
         See Also:
             User Guide section :ref:`stitch_guide`
+
+        Example:
+            .. plot:: samples/stitch-int-overlap.py
+                :include-source:
+                :outname:  stitch_int_overlap
         """
         _ = self._col_args(xcol=xcol, ycol=ycol, scalar=True)
         points = self.column([_.xcol, _.ycol])
@@ -381,10 +386,10 @@ class AnalysisMixin:
         elif isinstance(overlap, int) and overlap > 0:
             if self_second:
                 lower = points[0, 0]
-                upper = points[0, overlap]
+                upper = points[overlap, 0]
             else:
-                lower = points[0, -overlap - 1]
-                upper = points[0, -1]
+                lower = points[-overlap - 1, 0]
+                upper = points[-1, 0]
         elif (
             isinstance(overlap, tuple)
             and len(overlap) == 2
