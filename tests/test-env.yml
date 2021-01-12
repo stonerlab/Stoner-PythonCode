@@ -5,7 +5,6 @@ channels:
     - conda-forge
 dependencies:
     - anaconda
-    - python=3.7
     - hyperspy
     - pytest-xdist
     - pytest-cov
