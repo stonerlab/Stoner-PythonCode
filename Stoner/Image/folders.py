@@ -110,49 +110,6 @@ class ImageFolderMixin:
             ret._title = name
         return ret
 
-    # def _getattr_proxy(self, item):
-    #     """Override baseFolder proxy call to access a method of the ImageFile.
-
-    #     Args:
-    #         item (string):
-    #             Name of method of metadataObject class to be called
-
-    #     Returns:
-    #         Either a modifed copy of this objectFolder or a list of return values
-    #         from evaluating the method for each file in the Folder.
-    #     """
-    #     meth = getattr(self.instance, item, None)
-
-    #     def _wrapper_(*args, **kargs):
-    #         """Wrap a call to the metadataObject type for magic method calling.
-
-    #         Keyword Arguments:
-    #             _return (index types or None):
-    #                 specify to store the return value in the individual object's metadata
-
-    #         Note:
-    #             This relies on being defined inside the enclosure of the objectFolder method
-    #             so we have access to self and item
-    #         """
-    #         retvals = []
-    #         _return = kargs.pop("_return", None)
-    #         for ix, f in enumerate(self):
-    #             meth = getattr(f, item, None)
-    #             ret = meth(*args, **kargs)  # overwriting array is handled by ImageFile proxy function
-    #             retvals.append(ret)
-    #             if getattr(meth, "changes_size", False):
-    #                 self[ix] = ret
-    #             if _return is not None:
-    #                 if isinstance(_return, bool) and _return:
-    #                     _return = meth.__name__
-    #                 self[ix][_return] = ret
-    #         return retvals
-
-    #     # Ok that's the wrapper function, now return  it for the user to mess around with.
-    #     _wrapper_.__doc__ = meth.__doc__
-    #     _wrapper_.__name__ = meth.__name__
-    #     return _wrapper_
-
     def align(self, *args, **kargs):
         """Align each image in the folder to the reference image.
 
@@ -309,6 +266,13 @@ class ImageFolderMixin:
             self._marshall(layout=layout, data=imglist)
 
         return self
+
+    def mask_select(self):
+        """Run the ImageFile.mask.select() on each image."""
+        sel = []
+        breakpoint()
+        for img in self:
+            img.mask.select(_selection=sel)
 
     def mean(self, _box=False, _metadata="first"):
         """Calculate the mean value of all the images in the stack.

@@ -336,7 +336,7 @@ class MaskProxy:
         """Invert the mask."""
         self._IA.mask = ~self._IA.mask
 
-    def select(self):
+    def select(self, **kargs):
         """Interactive selection mode.
 
         This method allows the user to interactively choose a mask region on the image. It will require the
@@ -362,8 +362,15 @@ class MaskProxy:
 
         This method directly sets the mask and then returns a copy of the parent :py:class:`Stoner.ImageFile`.
         """
-        selector = ShapeSelect()
-        self._IA.mask = selector(self._IA)
+        selection = kargs.get("_selection", [])
+        if len(selection) == 0:
+            selector = ShapeSelect()
+            self._IA.mask = selector(self._IA)
+            selection.append(self._IA.mask)
+        elif len(selection) == 1 and isinstance(selection[0], np.ndarray) and selection[0].dtype.kind == "b":
+            self._IA.mask = selection[0]
+        else:
+            raise ValueError("Unknown value for private keyword _selection")
         return self._IF
 
     def threshold(self, thresh=None):
