@@ -487,7 +487,9 @@ class FilteringOpsMixin:
             raise ValueError("Attempting to bin into more bins than there is data.")
         return bin_start, bin_stop, bin_centres
 
-    def outlier_detection(self, column=None, window=7, certainty=3.0, action="mask", width=1, func=None, **kargs):
+    def outlier_detection(
+        self, column=None, window=7, shape="boxcar", certainty=3.0, action="mask", width=1, func=None, **kargs
+    ):
         """Detect outliers in a column of data.
 
         Args:
@@ -498,6 +500,9 @@ class FilteringOpsMixin:
         Keyword Arguments:
             window(int):
                 data window for anomoly detection
+            shape(str):
+                The name of a :py:mod:`scipy.signal` windowing function to use when averaging the data.
+                Defaults to 'boxcar' for a flat average.
             certainty(float):
                 eg 3 detects data 3 standard deviations from average
             action(str or callable):
@@ -571,7 +576,7 @@ class FilteringOpsMixin:
         action_kargs = kargs.pop("action_kargs", {})
         index = np.zeros(len(self), dtype=bool)
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
-            index[i] = func(self.data[i], t, metric=certainty, **kargs)
+            index[i] = func(self.data[i], t, metric=certainty, shape=shape, **kargs)
         self["outliers"] = np.arange(len(self))[index]  # add outlier indecies to metadata
         if action == "mask" or action == "mask row":
             if action == "mask":

@@ -4,11 +4,12 @@
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit, newton
+from scipy.signal import get_window
 
 __all__ = ["outlier", "threshold", "_twoD_fit", "ApplyAffineTransform", "GetAffineTransform", "poly_outlier"]
 
 
-def outlier(row, window, metric, ycol=None):
+def outlier(row, window, metric, ycol=None, shape="bopxcar"):
     """Outlier detector function.
 
     Calculates if the current row is an outlier from the surrounding data by looking
@@ -30,12 +31,14 @@ def outlier(row, window, metric, ycol=None):
         (bool):
             If True, then the current row is an outlier from the local data.
     """
-    av = np.average(window[:, ycol])
+    windowing = get_window(shape, len(window))
+    windowing /= windowing.sum() / windowing.size
+    av = np.average(window[:, ycol] * windowing)
     std = np.std(window[:, ycol])  # standard deviation
     return abs(row[ycol] - av) > metric * std
 
 
-def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=None):
+def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=None, shape=None):
     """Alternative outlier detection function that fits a polynomial locally over the window.
 
     Args:
