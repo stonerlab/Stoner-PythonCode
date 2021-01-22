@@ -41,3 +41,6 @@ nosetests.xml
 
 #Random
 Backup_of_*.cdr
+
+#Profuling
+prof

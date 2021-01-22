@@ -395,4 +395,4 @@ def test_metadata_save():
     #os.remove(path.join(local, "mixedmetatest2.txt"))
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    pytest.main(["--pdb",__file__])
+    pytest.main(["--pdb","--profile",__file__])

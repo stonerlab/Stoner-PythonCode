@@ -322,7 +322,7 @@ def class_modifier(
                 if not fname.startswith("_"):
                     func = getattr(mod, fname)
                     fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""))
-                    if callable(func) and fmod[:5] in ["Stone", "scipy", "skima"]:
+                    if callable(func) and isinstance(fmod, str) and fmod[:5] in ["Stone", "scipy", "skima"]:
                         if transpose:
                             func.transpose = transpose
                         name = f"{fmod}__{fname}".replace(".", "__")
