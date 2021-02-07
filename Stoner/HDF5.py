@@ -777,5 +777,5 @@ class STXMImage(ImageFile):
 
     def _load(self, filename, *args, **kargs):
         """Pass through to SLS_STXMFile._load."""
-        self.__init__(*args, **kargs)
+        self.__init__(filename, *args, **kargs)
         return self

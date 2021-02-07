@@ -1320,7 +1320,7 @@ class DataFile(
         Note:
             The filename attribute of the current instance is updated by this method as well.
         """
-        self.filename = self.__file_dialog(mode)
+        self.filename = file_dialog(mode, self.filename, type(self), DataFile)
         return self.filename
 
     def insert_rows(self, row, new_data):

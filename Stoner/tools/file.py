@@ -126,6 +126,8 @@ def auto_load_classes(
                     print(f"Skipping {cls.__name__} due to mismatcb mime type {cls.mime_type}")
                 continue
             test = cls()
+            if "_load" not in cls.__dict__:  # No local _load method
+                continue
             if debug and filemagic is not None:
                 print(f"Trying: {cls.__name__} =mimetype {test.mime_type}")
 

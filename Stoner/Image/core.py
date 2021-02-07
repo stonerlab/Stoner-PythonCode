@@ -29,8 +29,10 @@ from skimage import (
 )
 
 from ..core.base import typeHintedDict, metadataObject
+from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..Core import DataFile
 from ..tools import isTuple, fix_signature, isLikeList, make_Data
+from ..tools.file import file_dialog, get_file_name_type, auto_load_classes
 from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones
 from ..compat import (
     string_types,
@@ -107,6 +109,23 @@ def __sub_core__(result, other):
     else:
         return NotImplemented
     return result
+
+
+def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
+    """Copy the data associated with source to dest.
+
+    Args:
+        source(ImageFile): The ImageFile object to be copied from
+        dest (ImageFile): The ImageFile objrct to be changed by recieving the copiued data.
+
+    Returns:
+        The modified *dest* ImageFile.
+
+    Unlike copying or deepcopying a ImageFile, this function preserves the class of the destination and just
+    overwrites the attributes that represent the data in the ImageFile.
+    """
+    dest.image = source.image.clone
+    return dest
 
 
 @class_modifier(
@@ -343,7 +362,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         fmt = kargs.pop("fmt", os.path.splitext(filename)[1][1:])
         handlers = {"npy": cls._load_npy, "png": cls._load_png, "tiff": cls._load_tiff, "tif": cls._load_tiff}
         if fmt not in handlers:
-            raise ValueError(f"{fmt} is not a recognised format for loading.")
+            raise StonerLoadError(f"{fmt} is not a recognised format for loading.")
         ret = handlers[fmt](filename, **kargs)
         return ret
 
@@ -767,7 +786,13 @@ class ImageFile(metadataObject):
         if len(args) == 0:
             pass
         elif len(args) > 0 and isinstance(args[0], path_types):
-            args[0] = ImageArray(*args, **kargs)
+            try:
+                self.load(args[0], **kargs)
+                self._public_attrs = {"title": str, "filename": str}
+                self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
+                return
+            except StonerLoadError:
+                args[0] = ImageArray(*args, **kargs)
         if len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
             self._image = args[0].image
             for k in args[0]._public_attrs:
@@ -1076,6 +1101,88 @@ class ImageFile(metadataObject):
 
     ###################################################################################################################
     #############################  Public methods #####################################################################
+
+    def get_filename(self, mode):
+        """Force the user to choose a new filename using a system dialog box.
+
+        Args:
+            mode (string):
+                The mode of file operation to be used when calling the dialog box
+
+        Returns:
+            str:
+                The new filename
+
+        Note:
+            The filename attribute of the current instance is updated by this method as well.
+        """
+        self.filename = file_dialog(mode, self.filename, type(self), ImageFile)
+        return self.filename
+
+    def load(self, *args, **kargs):
+        """Load the :py:class:`ImageFile` in from disc guessing a better subclass if necessary.
+
+        Args:
+            filename (string or None):
+                path to file to load
+
+        Keyword Arguments:
+            auto_load (bool):
+                If True (default) then the load routine tries all the subclasses of :py:class:`ImageFile` in turn to
+                load the file
+            filetype (:py:class:`ImageFile`, str):
+                If not none then tries using filetype as the loader.
+
+        Returns:
+            (ImageFile):
+                A copy of the loaded :py:data:`ImageFile` instance
+
+        Note:
+            If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it
+            is used as a partial match and the first class in priority order is that matches is used.
+
+            Some subclasses can be found in the :py:mod:`Stoner.FileFormats` module.
+
+            Each subclass is scanned in turn for a class attribute priority which governs the order in which they
+            are tried. Subclasses which can make an early positive determination that a file has the correct format
+            can have higher priority levels. Classes should return a suitable expcetion if they fail to load the file.
+
+            If not class can load a file successfully then a RunttimeError exception is raised.
+        """
+        args = list(args)
+        filename = kargs.pop("filename", args.pop(0) if len(args) > 0 else None)
+        filetype = kargs.pop("filetype", None)
+        auto_load = kargs.pop("auto_load", filetype is None)
+
+        filename, filetype = get_file_name_type(filename, filetype, DataFile)
+        cls = type(self)
+        if auto_load:  # We're going to try every subclass we canA
+            try:
+                copy_into(auto_load_classes(filename, ImageFile, debug=False, args=args, kargs=kargs), self)
+            except StonerUnrecognisedFormat:
+                test = ImageFile()
+                test = test._load(filename, *args, **kargs)
+                copy_into(test, self)
+                self["Loaded as"] = filetype.__name__
+        else:
+            if issubclass(filetype, ImageFile):
+                test = filetype()
+                test = test._load(filename, *args, **kargs)
+                copy_into(test, self)
+                self["Loaded as"] = filetype.__name__
+            elif filetype is None or isinstance(filetype, ImageFile):
+                test = ImageFile()
+                test = test._load(filename, *args, **kargs)
+                copy_into(test, self)
+                self["Loaded as"] = ImageFile.__name__
+            else:
+                raise ValueError(f"Unable to load {filename}")
+
+        for k, i in kargs.items():
+            if not callable(getattr(self, k, lambda x: False)):
+                setattr(self, k, i)
+        self._kargs = kargs
+        return self
 
     def save(self, filename=None, **kargs):
         """Save the image into the file 'filename'.
