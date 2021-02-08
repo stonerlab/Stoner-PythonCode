@@ -9,7 +9,7 @@ Created on Tue Jan 07 22:05:55 2014
 import sys
 import pathlib
 
-from Stoner import Data,__homepath__
+from Stoner import Data,__homepath__, __datapath__, ImageFile
 from Stoner.Core import DataFile
 from Stoner.compat import Hyperspy_ok
 
@@ -21,7 +21,7 @@ from Stoner.core.exceptions import StonerUnrecognisedFormat
 from traceback import format_exc
 
 pth=__homepath__/".."
-datadir=pth/"sample-data"
+datadir=__datapath__
 
 def setup_module():
     sys.path.insert(0,str(pth))
@@ -108,6 +108,15 @@ def test_attocube_scan(tmpdir):
 
     scan1["fwd"].level_image(method="parabola",signal="Amp")
     scan1["bwd"].regrid()
+
+def test_maximus_image():
+    pths=list((datadir/"maximus_scan").glob("MPI_210127019*.*"))
+    assert len(pths)==2
+    for pth in pths:
+        img=ImageFile.load(pth)
+        assert img.shape==(1000,1000)
+        assert len(img.metadata)==210
+
 
 def test_fail_to_load():
     with pytest.raises(StonerUnrecognisedFormat):
