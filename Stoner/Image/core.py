@@ -1123,7 +1123,7 @@ class ImageFile(metadataObject):
 
     @classmethod
     def load(cls, *args, **kargs):
-        """Load the :py:class:`ImageFile` in from disc guessing a better subclass if necessary.
+        """Create a :py:class:`ImageFile` from file abnd guessing a better subclass if necessary.
 
         Args:
             filename (string or None):
@@ -1138,19 +1138,20 @@ class ImageFile(metadataObject):
 
         Returns:
             (ImageFile):
-                A copy of the loaded :py:data:`ImageFile` instance
+                A a new :py:data:`ImageFile` (or subclass thereof) instance
 
         Note:
             If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it
             is used as a partial match and the first class in priority order is that matches is used.
 
-            Some subclasses can be found in the :py:mod:`Stoner.FileFormats` module.
+            Some subclasses can be found in the :py:mod:`Stoner.formats` package.
 
-            Each subclass is scanned in turn for a class attribute priority which governs the order in which they
-            are tried. Subclasses which can make an early positive determination that a file has the correct format
-            can have higher priority levels. Classes should return a suitable expcetion if they fail to load the file.
+            Each subclass is scanned in turn for a class attribute :py:attr:`Stoner.ImnageFile.priority` which governs
+            the order in which they are tried. Subclasses which can make an early positive determination that a
+            file has the correct format can have higher priority levels. Classes should return a suitable expcetion
+            if they fail to load the file.
 
-            If not class can load a file successfully then a RunttimeError exception is raised.
+            If no class can load a file successfully then a RunttimeError exception is raised.
         """
         args = list(args)
         filename = kargs.pop("filename", args.pop(0) if len(args) > 0 else None)
@@ -1176,6 +1177,10 @@ class ImageFile(metadataObject):
                 ret["Loaded as"] = cls.__name__
             else:
                 raise ValueError(f"Unable to load {filename}")
+
+        for k, i in kargs.items():
+            if not callable(getattr(ret, k, lambda x: False)):
+                setattr(ret, k, i)
         ret._kargs = kargs
         return ret
 

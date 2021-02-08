@@ -30,17 +30,18 @@ from pathlib import Path
 
 import numpy as np
 
+# Imports for use in Stoner package
+from ..core.exceptions import StonerLoadError
 from ..Image import ImageFile
 from ..Core import DataFile
-
-from Stoner.core.exceptions import StonerLoadError
 
 
 class MaximusSpectra(DataFile):
 
-    """Provides a DataFile subclass for loading Point spectra from Maximus."""
+    """Provides a :py:class:`Stoner.DataFile` subclass for loading Point spectra from Maximus."""
 
-    _patterns = ["*.hdr"]
+    # We treat the hdr file as the key file type
+    _patterns = ["*.hdr", "*.xsp"]
     mime_type = ["text/plain"]
 
     priority = 16
@@ -60,13 +61,17 @@ class MaximusSpectra(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
+        pth = Path(self.filename)
+        if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
+            pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
+        stem = pth.parent / pth.stem
+
         try:
-            hdr = _flatten_header(hdr_to_dict(self.filename))
+            hdr = _flatten_header(hdr_to_dict(pth))
             if "Point Scan" not in hdr["ScanDefinition.Type"]:
                 raise StonerLoadError("Not an Maximus Single Image File")
         except (StonerLoadError, ValueError, TypeError, IOError) as err:
             raise StonerLoadError("Error loading as Maximus File") from err
-        stem = self.filename[:-4]
         header, data, dims = read_scan(stem)
         self.metadata.update(_flatten_header(header))
         self.data = np.column_stack((dims[0], data))
@@ -84,10 +89,8 @@ class MaximusImage(ImageFile):
 
     """Provide a STXMImage like class for the Maximus Beamline."""
 
-    _patterns = ["*.hdr"]
-
+    _patterns = ["*.hdr", "*.xim"]
     mime_type = ["text/plain"]
-
     priority = 16
 
     def _load(self, filename, *args, **kargs):
@@ -96,13 +99,17 @@ class MaximusImage(ImageFile):
             self.get_filename("r")
         else:
             self.filename = filename
+        pth = Path(self.filename)
+        if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
+            pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
+        stem = pth.parent / pth.stem
+
         try:
-            hdr = _flatten_header(hdr_to_dict(self.filename))
+            hdr = _flatten_header(hdr_to_dict(pth))
             if hdr["ScanDefinition.Type"] != "Image Scan":
                 raise StonerLoadError("Not an Maximus Single Image File")
         except (StonerLoadError, ValueError, TypeError, IOError) as err:
             raise StonerLoadError("Error loading as Maximus File") from err
-        stem = str(self.filename)[:-4]
         data = read_scan(stem)[1]
         self.metadata.update(hdr)
         self.image = data
@@ -157,7 +164,7 @@ def read_scan(file_root):
         (dict,ndarray, (n-1d arrays)):
             Returns the metadata and an ndarray of the scan data and then n 1D arrays of the axes.
     """
-    hdr = Path(file_root + ".hdr")
+    hdr = Path(str(file_root) + ".hdr")
     header = hdr_to_dict(hdr, to_python=True)
     scan_type = header["ScanDefinition"]["Type"]
 
@@ -238,7 +245,7 @@ def _read_images(files, header):
 
 
 def _read_pointscan(files, header):
-    """Read one or more .xim files and construct the data array.
+    """Read one or more .xsp files and construct the data array.
 
     Args:
         files (glob): glob pattern of xim files to read.

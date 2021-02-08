@@ -28,7 +28,7 @@ from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
 from .compat import string_types, int_types, index_types, _pattern_type
-from .tools import all_type, isIterable, isLikeList, get_option
+from .tools import all_type, isIterable, isLikeList, get_option, make_Data
 from .tools.file import get_file_name_type, auto_load_classes
 
 from .core.exceptions import StonerLoadError, StonerSetasError
@@ -212,6 +212,7 @@ class DataFile(
         super().__init__(**kargs)  # initialise self.metadata)
         self._public_attrs = {
             "data": np.ndarray,
+            "filetype": str,
             "setas": (string_types, list, dict),
             "column_headers": list,
             "metadata": typeHintedDict,
@@ -242,7 +243,9 @@ class DataFile(
                         self._raise_type_error(k)
                         to_go.append(k)
                 else:
-                    raise AttributeError(f"{k} is not a recognised attribute ({list(self._public_attrs.keys())})")
+                    raise AttributeError(f"{k} is not an allowed attribute of {self._public_attrs}")
+                    # self._public_attrs[k]=type(kargs[k])
+                    # self.__setattr__(k, kargs[k])
             for k in to_go:
                 del kargs[k]
         if self.debug:
@@ -295,7 +298,7 @@ class DataFile(
         """Handle more than two arguments to the constructor - called from init."""
         for a in args:
             if not (isinstance(a, np.ndarray) and len(a.shape) == 1):
-                self.load(a, **kargs)
+                copy_into(self.__class__.load(a, **kargs), self)
                 break
         else:
             self.data = np.column_stack(args)
@@ -380,7 +383,7 @@ class DataFile(
                 raise ValueError("Cannot construct a DataFile with a single argument of True")
         elif isinstance(arg, pathlib.PurePath):
             arg = str(arg)
-        self.load(filename=arg, **kargs)
+        copy_into(self.__class__.load(filename=arg, **kargs), self)
 
     def _init_list(self, arg, **kargs):
         """Initialise from a list or other ioterable."""
@@ -1340,7 +1343,8 @@ class DataFile(
         self.data = np.insert(self.data, row, new_data, 0)
         return self
 
-    def load(self, *args, **kargs):
+    @classmethod
+    def load(cls, *args, **kargs):
         """Load the :py:class:`DataFile` in from disc guessing a better subclass if necessary.
 
         Args:
@@ -1353,6 +1357,9 @@ class DataFile(
                 load the file
             filetype (:py:class:`DataFile`, str):
                 If not none then tries using filetype as the loader.
+            loaded_class (bool):
+                If True, the return object is kept as the class that managed to load it, otherwise it is copied into a
+                :py:class:`Stoner.Data` object.
 
         Returns:
             (DataFile):
@@ -1362,40 +1369,44 @@ class DataFile(
             If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it
             is used as a partial match and the first class in priority order is that matches is used.
 
-            Some subclasses can be found in the :py:mod:`Stoner.FileFormats` module.
+            Some subclasses can be found in the :py:mod:`Stoner.formats` package.
 
             Each subclass is scanned in turn for a class attribute priority which governs the order in which they
             are tried. Subclasses which can make an early positive determination that a file has the correct format
             can have higher priority levels. Classes should return a suitable expcetion if they fail to load the file.
 
-            If not class can load a file successfully then a RunttimeError exception is raised.
+            If no class can load a file successfully then a RunttimeError exception is raised.
         """
         filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
+        loaded_class = kargs.pop("loaded_class", False)
 
         filename, filetype = get_file_name_type(filename, filetype, DataFile)
-        cls = type(self)
         if auto_load:  # We're going to try every subclass we canA
-            copy_into(auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs), self)
+            ret = auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs)
         else:
+            if filetype is None or isinstance(filetype, DataFile):  # set fieltype to DataFile
+                filetype = DataFile
             if issubclass(filetype, DataFile):
-                test = filetype()
-                test = test._load(filename, *args, **kargs)
-                copy_into(test, self)
-                self["Loaded as"] = filetype.__name__
-            elif filetype is None or isinstance(filetype, DataFile):
-                test = DataFile()
-                test = test._load(filename, *args, **kargs)
-                copy_into(test, self)
-                self["Loaded as"] = DataFile.__name__
+                ret = filetype()
+                ret = ret._load(filename, *args, **kargs)
+                ret["Loaded as"] = filetype.__name__
             else:
                 raise ValueError(f"Unable to load {filename}")
 
         for k, i in kargs.items():
-            if not callable(getattr(self, k, lambda x: False)):
-                setattr(self, k, i)
-        self._kargs = kargs
+            if not callable(getattr(ret, k, lambda x: False)):
+                setattr(ret, k, i)
+        ret._kargs = kargs
+        filetype = ret.__class__.__name__
+        if loaded_class:
+            self = ret
+        else:
+            self = make_Data()
+            self._public_attrs.update(ret._public_attrs)
+            copy_into(ret, self)
+            self.filetype = filetype
         return self
 
     def rename(self, old_col, new_col):

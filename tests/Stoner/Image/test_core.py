@@ -300,8 +300,8 @@ def test_constructors():
     selfimgFile = ImageFile(os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
     selfd=Data(selfimgFile)
     selfimgFile2=ImageFile(selfd)
-    del selfimgFile2["Stoner.class"]
-    del selfimgFile["Stoner.class"]
+    selfimgFile2.pop("Stoner.class","")
+    selfimgFile.pop("Stoner.class","")
     del selfimgFile2["x_vector"]
     del selfimgFile2["y_vector"]
     assert np.all(selfimgFile.image==selfimgFile2.image),"Roundtripping constructor through Data failed to dupliocate data."
