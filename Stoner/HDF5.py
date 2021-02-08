@@ -723,6 +723,8 @@ class STXMImage(ImageFile):
     _reduce_metadata = False
 
     _patterns = ["*.hdf5", "*.hdf"]
+    mime_type = ["application/x-hdf"]
+    priority = 16
 
     def __init__(self, *args, **kargs):
         """Initialise and load a STXM image produced by Pollux.

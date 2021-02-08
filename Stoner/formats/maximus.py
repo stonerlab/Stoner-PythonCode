@@ -41,6 +41,7 @@ class MaximusSpectra(DataFile):
     """Provides a DataFile subclass for loading Point spectra from Maximus."""
 
     _patterns = ["*.hdr"]
+    mime_type = ["text/plain"]
 
     priority = 16
 
@@ -84,6 +85,8 @@ class MaximusImage(ImageFile):
     """Provide a STXMImage like class for the Maximus Beamline."""
 
     _patterns = ["*.hdr"]
+
+    mime_type = ["text/plain"]
 
     priority = 16
 

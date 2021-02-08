@@ -89,6 +89,10 @@ class KerrImageFile(ImageFile):
 
     """Subclass of ImageFile that keeps the data as a KerrArray so that extra functions are available."""
 
+    priority = 16
+    mime_type = ["image/png"]
+    pattern = ["*.png"]
+
     def __init__(self, *args, **kargs):
         """Ensure that the image is a KerrImage."""
         super().__init__(*args, **kargs)

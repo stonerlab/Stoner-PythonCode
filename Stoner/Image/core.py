@@ -765,6 +765,8 @@ class ImageFile(metadataObject):
     _image = None
     _protected_attrs = ["_fromstack"]  # these won't be passed through to self.image attrs
     _patterns = ["*.png", "*.tif", "*.jpeg", "*.jpg"]
+    mime_type = ["image/png", "image/jpeg", "image/tiff", "application/octet-stream"]
+    priority = 32
 
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
@@ -787,7 +789,7 @@ class ImageFile(metadataObject):
             pass
         elif len(args) > 0 and isinstance(args[0], path_types):
             try:
-                self.load(args[0], **kargs)
+                copy_into(self.__class__.load(args[0], **kargs), self)
                 self._public_attrs = {"title": str, "filename": str}
                 self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
                 return
@@ -1119,7 +1121,8 @@ class ImageFile(metadataObject):
         self.filename = file_dialog(mode, self.filename, type(self), ImageFile)
         return self.filename
 
-    def load(self, *args, **kargs):
+    @classmethod
+    def load(cls, *args, **kargs):
         """Load the :py:class:`ImageFile` in from disc guessing a better subclass if necessary.
 
         Args:
@@ -1155,34 +1158,26 @@ class ImageFile(metadataObject):
         auto_load = kargs.pop("auto_load", filetype is None)
 
         filename, filetype = get_file_name_type(filename, filetype, DataFile)
-        cls = type(self)
         if auto_load:  # We're going to try every subclass we canA
             try:
-                copy_into(auto_load_classes(filename, ImageFile, debug=False, args=args, kargs=kargs), self)
+                ret = auto_load_classes(filename, ImageFile, debug=False, args=args, kargs=kargs)
             except StonerUnrecognisedFormat:
-                test = ImageFile()
-                test = test._load(filename, *args, **kargs)
-                copy_into(test, self)
-                self["Loaded as"] = filetype.__name__
+                ret = ImageFile()
+                ret = ret._load(filename, *args, **kargs)
+                ret["Loaded as"] = filetype.__name__
         else:
             if issubclass(filetype, ImageFile):
-                test = filetype()
-                test = test._load(filename, *args, **kargs)
-                copy_into(test, self)
-                self["Loaded as"] = filetype.__name__
+                ret = filetype()
+                ret = ret._load(filename, *args, **kargs)
+                ret["Loaded as"] = filetype.__name__
             elif filetype is None or isinstance(filetype, ImageFile):
-                test = ImageFile()
-                test = test._load(filename, *args, **kargs)
-                copy_into(test, self)
-                self["Loaded as"] = ImageFile.__name__
+                ret = cls()
+                ret = ret._load(filename, *args, **kargs)
+                ret["Loaded as"] = cls.__name__
             else:
                 raise ValueError(f"Unable to load {filename}")
-
-        for k, i in kargs.items():
-            if not callable(getattr(self, k, lambda x: False)):
-                setattr(self, k, i)
-        self._kargs = kargs
-        return self
+        ret._kargs = kargs
+        return ret
 
     def save(self, filename=None, **kargs):
         """Save the image into the file 'filename'.
