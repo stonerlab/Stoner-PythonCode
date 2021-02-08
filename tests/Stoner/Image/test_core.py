@@ -301,6 +301,7 @@ def test_constructors():
     selfd=Data(selfimgFile)
     selfimgFile2=ImageFile(selfd)
     del selfimgFile2["Stoner.class"]
+    del selfimgFile["Stoner.class"]
     del selfimgFile2["x_vector"]
     del selfimgFile2["y_vector"]
     assert np.all(selfimgFile.image==selfimgFile2.image),"Roundtripping constructor through Data failed to dupliocate data."
@@ -358,7 +359,7 @@ def test_methods():
     with pytest.raises(TypeError):
         i2-"Gobble"
     attrs=[x for x in dir(i2) if not x.startswith("_")]
-    expected=1054
+    expected=1056
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 
