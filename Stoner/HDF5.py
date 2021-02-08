@@ -101,6 +101,7 @@ def _open_filename(filename):
 
     confirm_hdf5(filename)
     try:
+        f = None
         f = h5py.File(filename, "r+")
         for grp in group.split("/"):
             if grp.strip() != "":
