@@ -1,0 +1,66 @@
+
+ScanDefinition = { Label = "MPI_210127006.hdr"; Type = "NEXAFS Point Scan"; Flags = "Spectra"; ScanType = "Spectra"; Dwell = 1000;
+	Regions = (1,
+{
+			PAxis = { Name = "Energy"; Unit = "eV"; Min = 704; Max = 712; Dir = 1;
+				Points = (33, 704.000, 704.250, 704.500, 704.750, 705.000, 705.250, 705.500, 705.750, 706.000, 706.250, 706.500, 706.750, 707.000, 707.250, 707.500, 707.750, 708.000, 708.250, 708.500, 708.750, 709.000, 709.250, 709.500, 709.750, 710.000, 710.250, 710.500, 710.750, 711.000, 711.250, 711.500, 711.750, 712.000);
+};
+});
+
+	Channels = (1,
+{ Name = "APD"; Unit = "counts";});
+};
+ Time = "2021 January 27 11:52:49"; BeamFeedback = false; ShutterAutomatic = true;
+Channels = (1,
+{ ID = 2; Type = 0; Name = "APD"; Controller = 0; DeviceNumber = 1; UnitName = "counts"; LinearCoefficient = 1; ConstantCoefficient = 1; ProcessString = "I";});
+
+Monochromator = { Name = "Energy"; LastPosition = 711.84684; Status = 0; Type = 0; ControllerID = 103; Vel = 0;};
+
+EntranceSlit = { Name = "Pinehole"; LastPosition = -8.98593; Status = 0; Type = 0; ControllerID = 104; Vel = 200;};
+
+ExitVSlit = { Name = "Pinehole"; LastPosition = 25.007338; Status = 1; Type = 0; ControllerID = 103; Vel = 200;};
+
+ExitHSlit = { Name = "Microscopy Slit Height"; LastPosition = 24.9996; Status = 1; Type = 0; ControllerID = 101; Vel = 200;};
+
+SampleFineX = { Name = "SampleX"; LastPosition = -70.069964; Status = 0; Type = 0; ControllerID = 41; Vel = 5;};
+
+SampleFineY = { Name = "SampleY"; LastPosition = 2668.9547; Status = 0; Type = 0; ControllerID = 42; Vel = 4;};
+
+SampleFineZ = { Name = "SampleZ"; LastPosition = -20.004884; Status = 0; Type = 0; ControllerID = 31; Vel = 1;};
+
+SampleCoarseX = { Name = "CoarseX"; LastPosition = -69.465284; Status = 0; Type = 1; ControllerID = 84; Vel = 2;};
+
+SampleCoarseY = { Name = "CoarseY"; LastPosition = 2671.778; Status = 0; Type = 1; ControllerID = 85; Vel = 1;};
+
+SampleCoarseZ = { Name = "CoarseZ"; LastPosition = 2357.2673; Status = 0; Type = 1; ControllerID = 91; Vel = 4;};
+
+ZonePlateZ = { Name = "ZonePlate"; LastPosition = -2463.803; Status = 0; Type = 2; ControllerID = 81; Vel = 1;};
+
+OSAX = { Name = "OSA-X"; LastPosition = -0.10193215; Status = 0; Type = 2; ControllerID = 82; Vel = 0.5;};
+
+OSAY = { Name = "OSA-Y"; LastPosition = 0.34488906; Status = 0; Type = 2; ControllerID = 83; Vel = 0.5;};
+
+DetectorX = { Name = "DET-X"; LastPosition = -15.609753; Status = 0; Type = 2; ControllerID = 86; Vel = 1;};
+
+DetectorY = { Name = "DET-Y"; LastPosition = -22.03125; Status = 0; Type = 1; ControllerID = 87; Vel = 0.75;};
+
+DetectorZ = { Name = "DET-Z"; LastPosition = 0.44421387; Status = 0; Type = 2; ControllerID = 88; Vel = 1;};
+
+AUX1 = { Name = "MagnetField"; LastPosition = -2; Status = 0; Type = 0; ControllerID = 117; Vel = 0;};
+
+AUX2 = { Name = "AUX2"; LastPosition = 25.00663; Status = 0; Type = 0; ControllerID = 119; Vel = 3;};
+
+EPUGap = { Name = "EPU Gap"; LastPosition = 21.235474; Status = 0; Type = 2; ControllerID = 107; Vel = 200;};
+
+EPU_Z = { Name = "EPUPhase"; LastPosition = 9.931068; Status = 1; Type = 2; ControllerID = 108; Vel = 200;};
+
+EPU_Polarization = { Name = "SlitPosH"; LastPosition = -8.98592; Status = 0; Type = 2; ControllerID = 115; Vel = 0;};
+ StorageRingCurrent = 298; PMT_CounterDivider = 10; Ao = 830.3; Defocus = 500;
+ImageScan = { ScanType = "Point"; Stage = "Automatic"; Shutter = "Automatic"; Interferometry = "On"; SingleEnergy = false;
+	EnergyRegions = (1,
+{ StartEnergy = 704; EndEnergy = 712; Range = 8; Step = 0.25; Points = 33; DwellTime = 1000;});
+ PointDelay = 1; LineDelay = 150; AccelDist = 0.3; MultipleRegions = true;
+	SpatialRegions = (1,
+{ CentreXPos = -70.071; CentreYPos = 2668.95;});
+};
+Image0 = {StorageRingCurrent = 298.21; Energy = 711.85; Time = "2021 January 27 11:52:49";};

@@ -1345,7 +1345,7 @@ class DataFile(
 
     @classmethod
     def load(cls, *args, **kargs):
-        """Load the :py:class:`DataFile` in from disc guessing a better subclass if necessary.
+        """Create a new :py:class:`DataFile` from a file on disc guessing a better subclass if necessary.
 
         Args:
             filename (string or None):
@@ -1359,14 +1359,14 @@ class DataFile(
                 If not none then tries using filetype as the loader.
             loaded_class (bool):
                 If True, the return object is kept as the class that managed to load it, otherwise it is copied into a
-                :py:class:`Stoner.Data` object.
+                :py:class:`Stoner.Data` object. (Default False)
 
         Returns:
-            (DataFile):
-                A copy of the loaded :py:data:`DataFile` instance
-
+            (Data):
+                A new instance of :py:class:`Stoner.Data` or a s subclass of :py:class:`Stoner.DataFile` if
+                *loaded_class* is True.
         Note:
-            If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it
+            If *filetype* is a string, then it is first tried as an exact match to a subclass name, otherwise it
             is used as a partial match and the first class in priority order is that matches is used.
 
             Some subclasses can be found in the :py:mod:`Stoner.formats` package.
@@ -1375,7 +1375,7 @@ class DataFile(
             are tried. Subclasses which can make an early positive determination that a file has the correct format
             can have higher priority levels. Classes should return a suitable expcetion if they fail to load the file.
 
-            If no class can load a file successfully then a RunttimeError exception is raised.
+            If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
         filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
         filetype = kargs.pop("filetype", None)
