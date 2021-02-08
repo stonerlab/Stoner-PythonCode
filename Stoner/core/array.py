@@ -84,7 +84,7 @@ class DataArray(ma.MaskedArray):
             obj.mask = False
         # Finally, we must return the newly created object:
         obj.i = i
-        obj.setas._row = _row and len(obj.shape) == 1
+        obj.setas._row = _row and obj.ndim == 1
         # Set shared mask - stops some deprication warnings
         obj.unshare_mask()
         if np.issubdtype(obj.dtype, np.floating):
@@ -141,7 +141,7 @@ class DataArray(ma.MaskedArray):
     @isrow.setter
     def isrow(self, value):
         """Set whether this object is a single row or not."""
-        self._setas._row = len(self.shape) == 1 and value
+        self._setas._row = self.ndim == 1 and value
 
     @property
     def r(self):

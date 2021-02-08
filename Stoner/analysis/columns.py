@@ -75,7 +75,7 @@ class ColumnOpsMixin:
                 col = col[0]
             data = self.column(col)
             name = self.column_headers[col]
-        elif isinstance(col, np.ndarray) and len(col.shape) == 1 and len(col) == len(self):
+        elif isinstance(col, np.ndarray) and col.ndim == 1 and len(col) == len(self):
             data = col
             name = "data"
         elif isinstance(col, float):

@@ -297,7 +297,7 @@ class DataFile(
     def _init_many(self, *args, **kargs):
         """Handle more than two arguments to the constructor - called from init."""
         for a in args:
-            if not (isinstance(a, np.ndarray) and len(a.shape) == 1):
+            if not (isinstance(a, np.ndarray) and a.ndim == 1):
                 copy_into(self.__class__.load(a, **kargs), self)
                 break
         else:

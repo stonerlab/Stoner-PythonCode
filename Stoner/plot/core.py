@@ -890,9 +890,9 @@ class PlotMixin:
                 zdata = zcol
             else:
                 zdata = self.column(zcol)
-            if len(zdata.shape) == 1:
+            if zdata.ndim == 1:
                 Z = griddata(points, zdata, pts, method=method)
-            elif len(zdata.shape) == 2:
+            elif zdata.ndim == 2:
                 Z = np.zeros((pts.shape[0], pts.shape[1], zdata.shape[1]))
                 for i in range(zdata.shape[1]):
                     Z[:, :, i] = griddata(points, zdata[:, i], pts, method=method)
@@ -909,9 +909,9 @@ class PlotMixin:
                 udata = ucol
             else:
                 udata = self.column(ucol)
-            if len(udata.shape) == 1:
+            if udata.ndim == 1:
                 U = griddata(points, udata, pts, method=method)
-            elif len(udata.shape) == 2:
+            elif udata.ndim == 2:
                 U = np.zeros((pts.shape[0], pts.shape[1], udata.shape[1]))
                 for i in range(udata.shape[1]):
                     U[:, :, i] = griddata(points, udata[:, i], pts, method=method)
@@ -977,9 +977,9 @@ class PlotMixin:
             cmap = cm.get_cmap(kargs["cmap"])
         elif "cmap" in nonkargs:
             cmap = cm.get_cmap(nonkargs["cmap"])
-        if len(Z.shape) == 2:
+        if Z.ndim == 2:
             Z = cmap(Z)
-        elif len(Z.shape) != 3:
+        elif Z.ndim != 3:
             raise RuntimeError(f"Z Data has a bad shape: {Z.shape}")
         xmin = np.min(X.ravel())
         xmax = np.max(X.ravel())

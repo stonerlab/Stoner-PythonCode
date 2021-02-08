@@ -661,7 +661,7 @@ class FilteringOpsMixin:
             if len(xdat2) != len(xdat):
                 raise RuntimeError(f"Data lengths don't match {len(xdat)}!={len(xdat2)}")
         elif isinstance(other, np.ndarray):
-            if len(other.shape) == 1:
+            if other.ndim == 1:
                 other = np.atleast_2d(other).T
             if other.shape[0] != len(xdat) or not 1 <= other.shape[1] <= 2:
                 raise RuntimeError(

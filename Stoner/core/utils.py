@@ -127,13 +127,13 @@ def and_core(other: Union["DataFile", np.ndarray], newdata: "DataFile") -> "Data
         other = copy.copy(other.data)
     elif isinstance(other, type(newdata.data)):
         other = copy.copy(other)
-        if len(other.shape) < 2:  # 1D array, make it 2D column
+        if other.ndim < 2:  # 1D array, make it 2D column
             other = np.atleast_2d(other)
             other = other.T
         other_headers = [f"Column {i + newdata.shape[1]}" for i in range(other.shape[1])]
     elif isinstance(other, np.ndarray):
         other = type(newdata.data)(copy.copy(other))
-        if len(other.shape) < 2:  # 1D array, make it 2D column
+        if other.ndim < 2:  # 1D array, make it 2D column
             other = np.atleast_2d(other)
             other = other.T
         other_headers = [f"Column {i + newdata.shape[1]}" for i in range(other.shape[1])]

@@ -707,7 +707,7 @@ class SLS_STXMFile(DataFile):
             if isinstance(thing, h5py.Group):
                 self.scan_meta(thing)
             elif isinstance(thing, h5py.Dataset):
-                if len(thing.shape) > 1:
+                if thing.ndim > 1:
                     continue
                 if _np_.product(thing.shape) == 1:
                     self.metadata[name] = thing[0]

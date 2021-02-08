@@ -219,6 +219,10 @@ class setas(MutableMapping):
         return len(self._setas) == 0 or np.all(np.array(self._setas) == ".")
 
     @property
+    def ndim(self):
+        return len(self.shape)
+
+    @property
     def not_set(self):
         """Return a boolean array if not set."""
         return np.array([x == "." for x in self._setas])
@@ -838,7 +842,7 @@ class setas(MutableMapping):
         }.items():
             ret[rk] = columns[ck]
 
-        if axes == 0 and len(self.shape) >= 2 and self.shape[1] in self._col_defaults and not no_guess:
+        if axes == 0 and self.ndim >= 2 and self.shape[1] in self._col_defaults and not no_guess:
             ret = self._col_defaults[self.shape[1]]
         for n in ["xcol", "xerr", "ycol", "yerr", "zcol", "zerr", "ucol", "vcol", "wcol", "axes"]:
             ret[f"has_{n}"] = not (ret[n] is None or (isinstance(ret[n], list) and not ret[n]))

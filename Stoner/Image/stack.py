@@ -51,7 +51,7 @@ class ImageStackMixin:
         elif isinstance(other, ImageFolder):  # ImageFolder can already init from itself
             super().__init__(*args, **kargs)
         elif (
-            isinstance(other, np.ndarray) and len(other.shape) == 3
+            isinstance(other, np.ndarray) and other.ndim == 3
         ):  # Initialise with 3D numpy array, first coordinate is number of images
             super().__init__(*args[1:], **kargs)
             self.imarray = other

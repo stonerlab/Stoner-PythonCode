@@ -183,9 +183,9 @@ class KerrStackMixin:
         for i, im in enumerate(self):
             if isinstance(im, ImageFile):
                 im = im.image
-            if isinstance(mask, np.ndarray) and len(mask.shape) == 2:
+            if isinstance(mask, np.ndarray) and mask.ndim == 2:
                 hyst[i, 1] = np.average(im[np.invert(mask.astype(bool))])
-            elif isinstance(mask, np.ndarray) and len(mask.shape) == 3:
+            elif isinstance(mask, np.ndarray) and mask.ndim == 3:
                 hyst[i, 1] = np.average(im[np.invert(mask[i, :, :].astype(bool))])
             elif isinstance(mask, (tuple, list)):
                 hyst[i, 1] = np.average(im[np.invert(mask[i])])

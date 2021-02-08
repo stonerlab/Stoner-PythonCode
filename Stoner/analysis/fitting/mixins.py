@@ -617,7 +617,7 @@ class FittingMixin:
 
             if isinstance(yc, index_types):
                 ydat = working[:, self.find_col(yc)]
-            elif isinstance(yc, np.ndarray) and len(yc.shape) == 1 and len(yc) == len(self):
+            elif isinstance(yc, np.ndarray) and yc.ndim == 1 and len(yc) == len(self):
                 ydat = yc
             else:
                 raise RuntimeError(
@@ -1166,7 +1166,7 @@ class FittingMixin:
             if isinstance(sigma, np.ndarray) and sigma.shape[0] > 1:
                 if sigma.shape[0] == len(ycol):
                     s = sigma[i]
-                elif len(sigma.shape) == 2 and sigma.shape[1] == len(ycol):
+                elif sigma.ndim == 2 and sigma.shape[1] == len(ycol):
                     s = sigma[:, i]
                 else:
                     s = sigma  # probably this will fail!

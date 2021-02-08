@@ -81,9 +81,9 @@ class DataFilePropertyMixin:
         nv = value
         if not nv.shape:  # nv is a scalar - make it a 2D array
             nv = ma.atleast_2d(nv)
-        elif len(nv.shape) == 1:  # nv is a vector - make it a 2D array
+        elif nv.ndim == 1:  # nv is a vector - make it a 2D array
             nv = ma.atleast_2d(nv).T
-        elif len(nv.shape) > 2:  # nv has more than 2D - raise an error # TODO 0.9? Support 3D arrays in DataFile?
+        elif nv.ndim > 2:  # nv has more than 2D - raise an error # TODO 0.9? Support 3D arrays in DataFile?
             raise ValueError(f"DataFile.data should be no more than 2 dimensional not shape {nv.shape}")
         if not isinstance(
             nv, DataArray
