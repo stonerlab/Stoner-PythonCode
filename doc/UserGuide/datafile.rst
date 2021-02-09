@@ -17,8 +17,8 @@ measurement.::
 In this example we have loaded data from ``my_data.txt`` which should be in the
 current directory
 
-The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.Core.Data`
-class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
+The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.core.data.Data`
+class which in turn is a superset of many of the classes in the Stoner package. This includes code to automatically
 detect the format of many of the measurement files that we use in our research.
 
 The native file format for the Stoner package is known as the *TDI 1.5* format - a tab delimited text file
@@ -26,8 +26,9 @@ that stores arbitary metadata and a single 2D data set. It closely matches the :
 :py:mod:`Stoner.Core` module.
 
 .. note::
-    :py:class:`DataFile` will also read a related text format where the first column of the first line contains the string *TDI Fromat=Text 1.0*
-    which are produced by some of the LabVIEW rigs used by the Device Materials Group in Cambridge.
+    :py:class:`Data` will also read a related text format where the first column of the first line contains the string
+    *TDI Fromat=Text 1.0* which are produced by some of the LabVIEW rigs used by the Device Materials Group in
+    Cambridge.
 
 
 
@@ -42,7 +43,8 @@ Base Classes and Generic Formats
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     :py:class:`DataFile`
-        Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds
+        Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs in the
+        CM Physics group in Leeds
     :py:class:`Stoner.formats.generic.CSVFile`
         Reads a generic comma separated value file. The :py:meth:`Stoner.FileFormats.CSVFile.load`
         routine takes four additional parameters to the constructor and load methods. In
@@ -51,72 +53,73 @@ Base Classes and Generic Formats
         also offers a **save** method to allow data to be saved in a simple deliminated text way (see Section :ref:`save` for details).
     :py:class:`Stoner.formats.generic.JustNumbersFile`
         This is a subclass of CSVFile dedicated for reading a text file that consists purely of rows of numbers with no header or metadata.
-    :py:class:`Stoner.FileFormats.SPCFile`
+    :py:class:`Stoner.formats.instruments.SPCFile`
         Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
         Raman spectrometers. This may also work for other instruments that produce spc files,
         but has not been extensively tested.
-    :py:class:`Stoner.FileFormats.TDMSFile`
+    :py:class:`Stoner.formats.generic.TDMSFile`
         Loads a file saved in the National Instruments TDMS format
-    :py:class:`Stoner.FileFormats.QDFile`
+    :py:class:`Stoner.formats.sinstruments.QDFile`
         Loads data from various Quantum Design instruments, cincluding PPMS, MPMS and  SQUID VSM.
-    :py:class:`Stoner.FileFormats.OVFFile`
+    :py:class:`Stoner.formats.simulations.OVFFile`
         OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0
 
 Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Leeds)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    :py:class:`Stoner.FileFormats.VSMFile`
+    :py:class:`Stoner.formats.instruments.VSMFile`
         The text files produced by the group's Oxford Instruments VSM
-    :py:class:`Stoner.FileFormats.BigBlueFile`
-        Datafiles produced by VB Code running on the Big Blue cryostat. The
-        :py:class:`Stoner.FileFormats.BigBlueFile` version of the :py:meth:`DataFile.load` and :py:class:`DataFile` constructors takes
-        two additional parameters that specify the row on which the column headers will
-        be found and the row on which the data starts.
-    :py:class:`Stoner.FileFormats.XRDFile`
+    :py:class:`Stoner.formats.rigs.BigBlueFile`
+        Datafiles were produced by VB Code running on the Big Blue cryostat. The
+        :py:class:`Stoner.FileFormats.BigBlueFile` version of the :py:meth:`DataFile.load` and :py:class:`DataFile`
+        constructors takes two additional parameters that specify the row on which the column headers will
+        be found and the row on which the data starts. *This class is now largely obsolete as no new data files have
+        been produced in this format for more than 5 years.*
+    :py:class:`Stoner.forms.instruments.XRDFile`
         Loads a scan file produced by Arkengarthdale - the group's Brucker D8
         XRD Machine.
-    :py:class:`Stoner.FileFormats.MokeFile`
-        Loads a file from Leeds Condensed Matter Physics MOKE system.
-    :py:class:`Stoner.FileFormats.FmokeFile`
+    :py:class:`Stoner.formats.rig.MokeFile`
+        Loads a file from Leeds Condensed Matter Physics MOKE system in it's old vb6-code. Like the BigBlueFile, this
+        format is largely obsolete now.
+    :py:class:`Stoner.formats.rigs.FmokeFile`
         Loads a file from Dan Allwood's Focussed MOKE System in Sheffield.
-    :py:class:`Stoner.FileFormats.LSTemperatureFile`
+    :py:class:`Stoner.forms.instruments.LSTemperatureFile`
         Loads and saves data from Lakeshore inc's .340 Temperature Calibration file format.
 
 Classes for Instruments at Major Facilities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    :py:class:`Stoner.FileFormats.BNLFile`
+    :py:class:`Stoner.formats.facilities.BNLFile`
         Loads a SPEC file from Brookhaven (so far only tested on u4b files but may well work with
         other synchrotron data). Produces metadata Snumber: Scan number, Stype: Type of scan, Sdatetime: date time stamp for the measurement, Smotor: z motor position.
-    :py:class:`Stoner.FileFormats.OpenGDAFile` Reads an ascii  scan file generated by OpenGDA -- a software
+    :py:class:`Stoner.formats.facilities.OpenGDAFile` Reads an ascii  scan file generated by OpenGDA -- a software
         suite used for synchrotron such as Diamond.
-    :py:class:`Stoner.FileFormats.RasorFile`
+    :py:class:`Stoner.formats.facilities.RasorFile`
         Simply an alias for OpenGDAFile used for the RASOR instrument on I10 at Diamond.
-    :py:class:`Stoner.FileFormats.SNSFile`
+    :py:class:`Stoner.formats.facilities.SNSFile`
         Reads the ascii export file format from `QuickNXS <http://sourceforge.net/projects/quicknxs/>`_
         the data reduction software used on the BL-4A Beam Line at the SNS in Oak Ridge.
-    :py:class:`Stoner.FileFormats.MDAASCIIFile`
+    :py:class:`Stoner.formats.facilities.MDAASCIIFile`
         This class will read some variants of the output of mda2ascii as used at the APS in Argonne.
-
+    :py:class:`Stoner.HDF5.SLS_STXMFile`
+        This reads an HDF file from the Swiss Light Source Pollux beam line as a data file (as opposed to an image)
+    :py:class:`Stoner.formats.maximus.MAximusSpectra`
+        This reads a .hdr/.xsp spectra file from the Maximus STXM beamline at Bessy.
 
 These classes can be used directly to load data from the appropriate format.::
 
    import Stoner
-   import stoner.FileFormats as SFF
-   d=Stoner.DataFile()
-   d.load('my_data.txt')
-   v=SFF.VSMFIle()
-   v.load('my_VSM_data.fld')
-   c=SFF.CSVFile('data.csv',1,0,',',',')
+   d=Stoner.Data.load("my_data.txt")
+   v=Stoner.Data.load("my_VSM_data.fld", filetype=Stoner.formats.instruments.VSMFile)
+   c=Stoner.Data.load('data.csv',1,0,',',', filetype=Stoner.formats.generic.CSVFile)
 
 .. note::
-   The load method, like many of the DataFile methods returns a copy of
-   the Datafile object **as well as** modifying the object itself. The
-   advantage of this is that it is then possible to chain several methods into one
-   command
+    The :py:meth:`Data.load` is a class method, meaning it creates (and returns) a new
+    instance of the :py:class:`Data` class. Most of the methods of :py:class:`Data` objects will return a copy of
+    the modified instance, allowing a several methods to be chained together into a single operation.
 
-Sometimes you won't know exactly which subclass of :py:class:`DataFile` is the one
-to use. Unfortunately, there is no sure fire way of telling, but :py:meth:`DataFile.load` will try to do
+Sometimes you won't know exactly which subclass of :py:class:`Data` is the one
+to use. Unfortunately, there is no sure fire way of telling, but :py:meth:`Data.load` will try to do
 the best it can and will try all of the subclasses in memory in turn to see if one will
 load the file without throwing an error. If this succeeds then the actual type of file that
 worked is stored in the metadata of the loaded file.
@@ -125,9 +128,10 @@ worked is stored in the metadata of the loaded file.
    The automatic loading assumes that each load routine does sufficient sanity checking that it will
    throw and error if it gets bad data. Whilst one might wish this was always true it relies on
    whoever writes the load method to make sure of this ! If you want to stop the automatic guessing
-   from happening use the ``auto_load=False`` keyword in the *load()* method.
+   from happening use the ``auto_load=False`` keyword in the *load()* method, or provide an explicit *filetype*
+   parameter.
 
-You can also specify a *filetype* parameter to the :py:meth:`DataFile.load` method or directly to the
+You can also specify a *filetype* parameter to the :py:meth:`Data.load` method or directly to the
 :py:class:`Stoner.Data` constructor as illustrated below to load a simple text file of un labelled numbers::
 
     from Stoner import Data
