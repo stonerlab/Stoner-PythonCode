@@ -968,14 +968,22 @@ class ImageFile(metadataObject):
                 raise ValueError("Can only calculate and XMCD ratio from images of opposite polarization")
             if not (hasattr(other, "polarization") and hasattr(self, "polarization")):
                 warn("Calculating XMCD ratio even though one or both image polarizations cannoty be determined.")
+            if self.image.dtype != other.image.dtype:
+                raise ValueError(
+                    "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
+                    + "Mimatch is {self.image.dtype} vs {other.image.dtype}"
+                )
+            if self.image.dtype.kind != "f":
+                ret = self.clone.convert(float)
+                other = other.clone.convert(float)
+            else:
+                ret = self.clone
             plus, minus = self, other
             polarization = getattr(self, "polarization", 1)
-            ret = self.clone
             ret.image = polarization * (plus.image - minus.image) / (plus.image + minus.image)
             return ret
-        ret = self.clone
-        ret.image = self.image // other
-        return ret
+        result = self
+        return __floor_div_core__(result, other)
 
     def __truediv__(self, other):
         """Implement the divide operator."""
@@ -1019,24 +1027,6 @@ class ImageFile(metadataObject):
     def __invert__(self):
         """Equivalent to clockwise rotation."""
         return self.CW
-
-    def __floordiv__(self, other):
-        """Calculate and XMCD ratio on the images."""
-        if not isinstance(other, type(self)):  # Only do XMCD type operations on ImageFiles of the same type
-            result = self
-            return __floor_div_core__(result, other)
-        if self.image.dtype != other.image.dtype:
-            raise ValueError(
-                "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
-                + "Mimatch is {self.image.dtype} vs {other.image.dtype}"
-            )
-        if self.image.dtype.kind != "f":
-            ret = self.clone.convert(float)
-            other = other.clone.convert(float)
-        else:
-            ret = self.clone
-        ret.image = (ret.image - other.image) / (ret.image + other.image)
-        return ret
 
     def __eq__(self, other):
         """Impleent and equality test."""
