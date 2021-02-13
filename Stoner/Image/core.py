@@ -963,10 +963,10 @@ class ImageFile(metadataObject):
             if (
                 hasattr(other, "polarization")
                 and hasattr(self, "polarization")
-                and self.polarization == other.polarization
+                and getattr(self, "polarization") == getattr(other, "polarization")
             ):
                 raise ValueError("Can only calculate and XMCD ratio from images of opposite polarization")
-            elif not (hasattr(other, "polarization") and hasattr(self, "polarization")):
+            if not (hasattr(other, "polarization") and hasattr(self, "polarization")):
                 warn("Calculating XMCD ratio even though one or both image polarizations cannoty be determined.")
             plus, minus = self, other
             polarization = getattr(self, "polarization", 1)

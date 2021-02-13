@@ -103,7 +103,7 @@ class MaximusImage(ImageFile):
         return self
 
 
-class MaximusStack(ImageStack):
+class MaximusStackMisin:
 
     """Handle a stack of Maximus Images."""
 
@@ -145,14 +145,14 @@ class MaximusStack(ImageStack):
         self.compression_opts = 6
 
     def _load(self, filename, *args, **kargs):
-        """Load an ImageStack from either an hdf file or textfiles"""
+        """Load an ImageStack from either an hdf file or textfiles."""
         if filename is None or not filename:
             self.get_filename("r")
         else:
             self.filename = filename
         pth = Path(self.filename)
         if confirm_hdf5(self.filename, raises=False):
-            return self.__class__.read_HDF(self.filename)
+            return self.__class__.read_hdf5(self.filename)
 
         if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
             pth = pth.parent / f"MPI_{self.scan_no:09d}.hdr"
@@ -165,7 +165,7 @@ class MaximusStack(ImageStack):
         except (StonerLoadError, ValueError, TypeError, IOError) as err:
             raise StonerLoadError("Error loading as Maximus File") from err
 
-        metadata, stack, dims = read_scan(stem)
+        metadata, stack, _ = read_scan(stem)
         self._common_metadata.update(_flatten_header(metadata))
         self._stack = stack
         self._names = [f"{stem}_a{ix:03d}" for ix in range(stack.shape[2])]
@@ -229,7 +229,7 @@ class MaximusStack(ImageStack):
         tmp.filename = path.basename(g.name)
         return tmp
 
-    def to_HDF5(self, filename=None):
+    def to_hdf5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
         if filename is None:
             filename = path.join(self.directory, f"MPI_{self.scan_no:09d}.hdf5")
@@ -241,13 +241,13 @@ class MaximusStack(ImageStack):
         if isinstance(filename, string_types):
             mode = "r+" if path.exists(filename) else "w"
             f = h5py.File(filename, mode)
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+        elif isinstance(filename, (h5py.File, h5py.Group)):
             f = filename
 
         f.attrs["type"] = type(self).__name__
         f.attrs["module"] = type(self).__module__
         f.attrs["scan_no"] = self.scan_no
-        f.attrs["groups"] = [x for x in self.groups.keys()]
+        f.attrs["groups"] = list(self.groups.keys())
         f.attrs["names"] = self._names
         if "common_metadata" in f.parent and "common_metadata" not in f:
             f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
@@ -266,7 +266,7 @@ class MaximusStack(ImageStack):
 
         for g in self.groups:  # Recurse to save groups
             grp = f.require_group(g)
-            self.groups[g].to_HDF5(grp)
+            self.groups[g].to_hdf5(grp)
 
         for ch in self._names:
             signal = f.require_group(ch)
@@ -294,7 +294,7 @@ class MaximusStack(ImageStack):
         return self
 
     @classmethod
-    def read_HDF5(cls, filename, *args, **kargs):
+    def read_hdf5(cls, filename, *args, **kargs):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
         close_me = False
@@ -339,7 +339,7 @@ class MaximusStack(ImageStack):
             sub_grps = grps
         for grp in sub_grps:
             if "type" in f[grp].attrs:
-                self.groups[grp] = cls.read_HDF(f[grp], *args, **kargs)
+                self.groups[grp] = cls.read_hdf5(f[grp], *args, **kargs)
                 continue
             g = f[grp]
             self.append(self._read_image(g))
@@ -350,6 +350,11 @@ class MaximusStack(ImageStack):
         if close_me:
             f.close()
         return self
+
+
+class MaximusStack(MaximusStackMisin, ImageStack):
+
+    """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
 
 def hdr_to_dict(filename, to_python=True):

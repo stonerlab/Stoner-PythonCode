@@ -77,9 +77,9 @@ def test_attocube_scan(tmpdir):
     #self.assertEqual(scan1,scan2,"Loading Attocube Scans by root name and number didn't match")
 
     pth=tmpdir/f"SC_{scan1.scan_no:03d}.hdf5"
-    scan1.to_HDF5(pth)
+    scan1.to_hdf5(pth)
 
-    scan3=AttocubeScan.read_HDF(pth)
+    scan3=AttocubeScan.read_hdf5(pth)
 
     assert pth.exists(),f"Failed to save scan as {pth}"
     if scan1!=scan3:
@@ -122,8 +122,8 @@ def test_maximus_stack(tmpdir):
     tmpdir=pathlib.Path(tmpdir)
     scandir=datadir/"maximus_scan"/"MPI_210127021"
     stack=MaximusStack(scandir/"MPI_210127021")
-    stack.to_HDF5(tmpdir/"MPI_210127021.hdf5")
-    stack2=MaximusStack.read_HDF5(tmpdir/"MPI_210127021.hdf5")
+    stack.to_hdf5(tmpdir/"MPI_210127021.hdf5")
+    stack2=MaximusStack.read_hdf5(tmpdir/"MPI_210127021.hdf5")
     assert stack2.shape==stack.shape,"Round trip through MaximusStack"
 
 def test_fail_to_load():

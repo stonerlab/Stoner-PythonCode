@@ -137,11 +137,11 @@ class AttocubeScanMixin:
             )
         loader = None
         if typ == type(self).__name__:
-            loader = getattr(type(self), "read_HDF")
+            loader = getattr(type(self), "read_hdf5")
         else:
             mod = importlib.import_module(bytes2str(f.attrs["module"]))
             cls = getattr(mod, typ)
-            loader = getattr(cls, "read_HDF")
+            loader = getattr(cls, "read_hdf5")
         if loader is None:
             _raise_error(f, message="Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
 
@@ -352,7 +352,7 @@ class AttocubeScanMixin:
         data.data = Z.reshape(xs, ys)
         return self
 
-    def to_HDF5(self, filename=None):
+    def to_hdf5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
         if filename is None:
             filename = path.join(self.directory, f"SC_{self.scan_no:03d}.hdf5")
@@ -389,7 +389,7 @@ class AttocubeScanMixin:
 
         for g in self.groups:  # Recurse to save groups
             grp = f.require_group(g)
-            self.groups[g].to_HDF5(grp)
+            self.groups[g].to_hdf5(grp)
 
         for ch in self.channels:
             signal = f.require_group(ch)
@@ -417,7 +417,7 @@ class AttocubeScanMixin:
         return self
 
     @classmethod
-    def read_HDF(cls, filename, *args, **kargs):
+    def read_hdf5(cls, filename, *args, **kargs):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
         close_me = False
@@ -462,7 +462,7 @@ class AttocubeScanMixin:
             sub_grps = grps
         for grp in sub_grps:
             if "type" in f[grp].attrs:
-                self.groups[grp] = cls.read_HDF(f[grp], *args, **kargs)
+                self.groups[grp] = cls.read_hdf5(f[grp], *args, **kargs)
                 continue
             g = f[grp]
             self.append(self._read_signal(g))
@@ -496,7 +496,7 @@ class AttocubeScan(AttocubeScanMixin, ImageStack):
     an HDF5 group which then has a *type* and *module* attribute that specifies the class and module pf the Python
     object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
 
-    There is a class method :py:meth:`AttocubeSca.read_HDF` to read the stack from the HDSF format and an instance
+    There is a class method :py:meth:`AttocubeSca.read_hdf5` to read the stack from the HDSF format and an instance
     method :py:meth:`AttocubeScan.to_HDF` that will save to either a new or existing HDF file format.
 
     The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
