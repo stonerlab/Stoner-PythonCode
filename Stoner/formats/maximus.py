@@ -103,7 +103,7 @@ class MaximusImage(ImageFile):
         return self
 
 
-class MaximusStackMisin:
+class MaximusStackMixin:
 
     """Handle a stack of Maximus Images."""
 
@@ -352,7 +352,7 @@ class MaximusStackMisin:
         return self
 
 
-class MaximusStack(MaximusStackMisin, ImageStack):
+class MaximusStack(MaximusStackMixin, ImageStack):
 
     """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
