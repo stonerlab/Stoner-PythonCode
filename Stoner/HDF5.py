@@ -15,7 +15,7 @@ import os.path as path
 import os
 
 import h5py
-import numpy as _np_
+import numpy as np
 
 from .compat import string_types, bytes2str, get_filedialog, path_types
 from .Core import StonerLoadError, metadataObject, DataFile
@@ -45,12 +45,16 @@ def close_file(f, filename):
     return ret
 
 
-def confirm_hdf5(filename):
+def confirm_hdf5(filename, raises=True):
     """Sniff a file to look for the HDF5 signature.
 
     Args:
         filename)str):
            File to open.
+
+    Keyword Args:
+        raise (bool):
+            (default True) If True, function raises a StonerLoadError, if false, returns False
 
     Returns:
         (bool):
@@ -60,6 +64,11 @@ def confirm_hdf5(filename):
         StonerLoadError:
             If the file does npt have the hdf5 magic bytes.
     """
+    if not os.path.exists(filename):
+        if raises:
+            raise StonerLoadError(f"{filename} not found!")
+        return False
+
     with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
         sniff.seek(0, 2)
         size = sniff.tell()
@@ -74,7 +83,9 @@ def confirm_hdf5(filename):
                 if blk == b"\x89HDF\r\n\x1a\n":
                     break
             else:
-                raise StonerLoadError("Couldn't find the HD5 format singature block")
+                if raises:
+                    raise StonerLoadError(f"Couldn't find the HD5 format singature block in {filename}")
+                return False
     return True
 
 
@@ -216,7 +227,7 @@ class HDF5File(DataFile):
             _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
 
         data = f["data"]
-        if _np_.product(_np_.array(data.shape)) > 0:
+        if np.product(np.array(data.shape)) > 0:
             self.data = data[...]
         else:
             self.data = [[]]
@@ -669,7 +680,7 @@ class SLS_STXMFile(DataFile):
             raise StonerLoadError("HDF5 file lacks single top level group called entry1")
         root = f["entry1"]
         data = root["counter0"]["data"]
-        if _np_.product(_np_.array(data.shape)) > 0:
+        if np.product(np.array(data.shape)) > 0:
             self.data = data[...]
         else:
             self.data = [[]]
@@ -689,7 +700,7 @@ class SLS_STXMFile(DataFile):
             self.metadata["actual_x"] = self.metadata["instrument.sample_x.data"].reshape(self.shape)
         if "instrument.sample_y.data" in self.metadata:
             self.metadata["actual_y"] = self.metadata["instrument.sample_y.data"].reshape(self.shape)
-        self.metadata["sample_x"], self.metadata["sample_y"] = _np_.meshgrid(
+        self.metadata["sample_x"], self.metadata["sample_y"] = np.meshgrid(
             self.metadata["counter0.sample_x"], self.metadata["counter0.sample_y"]
         )
         if "control.data" in self.metadata:
@@ -709,7 +720,7 @@ class SLS_STXMFile(DataFile):
             elif isinstance(thing, h5py.Dataset):
                 if thing.ndim > 1:
                     continue
-                if _np_.product(thing.shape) == 1:
+                if np.product(thing.shape) == 1:
                     self.metadata[name] = thing[0]
                 else:
                     self.metadata[name] = thing[...]
@@ -764,19 +775,14 @@ class STXMImage(ImageFile):
                 self.metadata["beam current"] = self.metadata["beam current"].gridimage()
             self.image /= self["beam current"]
 
-    def __floordiv__(self, other):
-        """Implement a // operator to do XMCD calculations on a whole image."""
-        if isinstance(other, metadataObject):
-            if other["collection.polarization.value"] < 0 <= self["collection.polarization.value"]:
-                plus, minus = self, other
-            elif other["collection.polarization.value"] > 0 >= self["collection.polarization.value"]:
-                plus, minus = other, self
-            else:
-                raise ValueError("XMCD Ratio can only be found from a positive and minus image")
-            ret = self.clone
-            ret.image = (plus.image - minus.image) / (plus.image + minus.image)
-            return ret
-        raise TypeError("Can only do XMCD calculation with another STXMFile")
+    @property
+    def polarization(self):
+        """Return the sign of the polarization used for the image.
+
+        Returns:
+            +1,-1 or 0 for positive, negative or unpolariused light used for the image.
+        """
+        return np.sign(self.get("collection.polarization.value", 0))
 
     def _load(self, filename, *args, **kargs):
         """Pass through to SLS_STXMFile._load."""

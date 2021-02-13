@@ -17,52 +17,10 @@ from Stoner.compat import string_types, bytes2str
 from Stoner.core.base import typeHintedDict
 from Stoner.core.exceptions import StonerLoadError
 from Stoner.Image import ImageStack, ImageFile, ImageArray
-from Stoner.HDF5 import confirm_hdf5, close_file
+from Stoner.HDF5 import confirm_hdf5, close_file, _open_filename, _raise_error
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
-
-
-def _raise_error(f, message="Not a valid hdf5 file."):
-    """Try to clsoe the filehandle f and raise a StonerLoadError."""
-    try:
-        f.file.close()
-    finally:
-        raise StonerLoadError(message)
-
-
-def _open_filename(filename):
-    """Examine a file to see if it is an HDF5 file and open it if so.
-
-    Args:
-        filename (str): Name of the file to open
-
-    Returns:
-        (f5py.Group): Valid h5py.Group containg data/
-
-    Raises:
-        StonerLoadError if not a valid file.
-    """
-    parts = filename.split(pathsep)
-    filename = parts.pop(0)
-    group = ""
-    while len(parts) > 0:
-        if not path.exists(path.join(filename, parts[0])):
-            group = "/".join(parts)
-        else:
-            path.join(filename, parts.pop(0))
-
-    confirm_hdf5(filename)
-    try:
-        f = h5py.File(filename, "r+")
-        for grp in group.split("/"):
-            if grp.strip() != "":
-                f = f[grp]
-    except IOError:
-        _raise_error(f, message=f"Failed to open {filename} as a n hdf5 file")
-    except KeyError:
-        _raise_error(f, message=f"Could not find group {group} in file {filename}")
-    return f
 
 
 def parabola(X, cx, cy, a, b, c):

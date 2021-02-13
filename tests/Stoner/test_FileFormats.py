@@ -16,6 +16,7 @@ from Stoner.compat import Hyperspy_ok
 import pytest
 
 from Stoner.formats.attocube import AttocubeScan
+from Stoner.formats.maximus import MaximusStack
 from Stoner.tools.classes import subclasses
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from traceback import format_exc
@@ -117,6 +118,13 @@ def test_maximus_image():
         assert img.shape==(1000,1000)
         assert len(img.metadata)==210
 
+def test_maximus_stack(tmpdir):
+    tmpdir=pathlib.Path(tmpdir)
+    scandir=datadir/"maximus_scan"/"MPI_210127021"
+    stack=MaximusStack(scandir/"MPI_210127021")
+    stack.to_HDF5(tmpdir/"MPI_210127021.hdf5")
+    stack2=MaximusStack.read_HDF5(tmpdir/"MPI_210127021.hdf5")
+    assert stack2.shape==stack.shape,"Round trip through MaximusStack"
 
 def test_fail_to_load():
     with pytest.raises(StonerUnrecognisedFormat):

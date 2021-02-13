@@ -67,8 +67,7 @@ class ImageStackMixin:
             super().__init__(*args[1:], **kargs)
             for ot in other:
                 self.append(ot)
-            del self[-1]  # Bit of a hack to get rid of initialised zeros data -
-            # this poss needs changing in the append method
+
         else:
             super().__init__(*args, **kargs)
 
@@ -206,6 +205,7 @@ class ImageStackMixin:
         stack_mask = np.insert(np.ma.getmaskarray(self._stack), ix, np.zeros(self.max_size, dtype=bool), axis=2)
         self._stack = np.insert(self._stack, ix, np.zeros(self.max_size), axis=2).view(ImageArray)
         self._stack.mask = stack_mask
+        self._stack = self._stack[: new_size[0], : new_size[1], : new_size[2]]
         value = value.data
         row, col = value.shape
         self._stack[:row, :col, ix] = value

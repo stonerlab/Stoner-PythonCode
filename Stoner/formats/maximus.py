@@ -1,39 +1,26 @@
 # -*- coding: utf-8 -*-
-"""
-Quick hacked  module to read STXM image files from the MAXIMUS STXM beamline.
-
-(C) 2021 Gavin Burnell <g.burnell@leeds.ac.uk>
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
-following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and
-the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""
+"""Support files from the Bessy Maximus instrument."""
 
 __all__ = ["hdr_to_dict", "read_scan", "MaximusImage"]
 
 import json
 import re
 from pathlib import Path
+from os import path
+from copy import deepcopy
 
 import numpy as np
+import h5py
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
-from ..Image import ImageFile
+from ..core.base import typeHintedDict
+from ..Image import ImageFile, ImageStack, ImageArray
 from ..Core import DataFile
+from ..compat import string_types
+from ..HDF5 import confirm_hdf5, close_file, _open_filename, _raise_error
+
+SCAN_NO = re.compile(r"MPI_(\d+)")
 
 
 class MaximusSpectra(DataFile):
@@ -113,6 +100,255 @@ class MaximusImage(ImageFile):
         data = read_scan(stem)[1]
         self.metadata.update(hdr)
         self.image = data
+        return self
+
+
+class MaximusStack(ImageStack):
+
+    """Handle a stack of Maximus Images."""
+
+    _defaults = {"type": MaximusImage, "pattern": "*.hdr"}
+
+    def __init__(self, *args, **kargs):
+        """Construct the attocube subclass of ImageStack."""
+        args = list(args)
+        if len(args) > 0:
+            for ix, arg in enumerate(args):
+                if isinstance(arg, Path):
+                    args[ix] = str(arg)
+        if len(args) > 0 and isinstance(args[0], string_types):
+            root_name = args.pop(0)
+            scan = SCAN_NO.search(root_name)
+            if scan:
+                scan = int(scan.groups()[0])
+            else:
+                scan = -1
+        elif len(args) > 0 and isinstance(args[0], int):
+            scan = args.pop(0)
+            root_name = f"MPI_{scan:039d}"
+        else:
+            root_name = kargs.pop("root", None)
+            scan = kargs.pop("scan", -1)
+
+        super().__init__(*args, **kargs)
+
+        self._common_metadata = typeHintedDict()
+
+        self.scan_no = scan
+
+        if root_name:
+            self._load(root_name)
+
+        self._common_metadata["Scan #"] = scan
+
+        self.compression = "gzip"
+        self.compression_opts = 6
+
+    def _load(self, filename, *args, **kargs):
+        """Load an ImageStack from either an hdf file or textfiles"""
+        if filename is None or not filename:
+            self.get_filename("r")
+        else:
+            self.filename = filename
+        pth = Path(self.filename)
+        if confirm_hdf5(self.filename, raises=False):
+            return self.__class__.read_HDF(self.filename)
+
+        if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
+            pth = pth.parent / f"MPI_{self.scan_no:09d}.hdr"
+        stem = pth.parent / pth.stem
+
+        try:
+            hdr = _flatten_header(hdr_to_dict(pth))
+            if hdr["ScanDefinition.Type"] != "NEXAFS Image Scan":
+                raise StonerLoadError("Not an Maximus ImageStack")
+        except (StonerLoadError, ValueError, TypeError, IOError) as err:
+            raise StonerLoadError("Error loading as Maximus File") from err
+
+        metadata, stack, dims = read_scan(stem)
+        self._common_metadata.update(_flatten_header(metadata))
+        self._stack = stack
+        self._names = [f"{stem}_a{ix:03d}" for ix in range(stack.shape[2])]
+        self._sizes = np.ones((stack.shape[2], 2), dtype=int) * stack.shape[:2]
+        for name, point in zip(self._names, self._common_metadata["ScanDefinition.StackAxis.Points"]):
+            self._metadata.setdefault(name, {})
+            self._metadata[name].update({self._common_metadata["ScanDefinition.StackAxis.Name"]: point})
+        return self
+
+    def _instantiate(self, idx):
+        """Reconstructs the data type."""
+        r, c = self._sizes[idx]
+        if issubclass(
+            self.type, ImageArray
+        ):  # IF the underlying type is an ImageArray, then return as a view with extra metadata
+            tmp = self._stack[:r, :c, idx].view(type=self.type)
+        else:  # Otherwise it must be something with a data attribute
+            tmp = self.type()  # pylint: disable=E1102
+            tmp.data = self._stack[:r, :c, idx]
+        tmp.metadata = deepcopy(self._common_metadata)
+        tmp.metadata.update(self._metadata[self.__names__()[idx]])
+        tmp.metadata["Scan #"] = self.scan_no
+        tmp._fromstack = True
+        return tmp
+
+    def __clone__(self, other=None, attrs_only=False):
+        """Do whatever is necessary to copy attributes from self to other.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+
+
+        """
+        other = super().__clone__(other, attrs_only)
+        other._common_metadata = deepcopy(self._common_metadata)
+        return other
+
+    def _read_image(self, g):
+        """Read an image array and return a member of the image stack."""
+        if "image" not in g:
+            _raise_error(g.parent, message=f"{g.name} does not have a signal dataset !")
+        tmp = self.type()  # pylint: disable=E1102
+        data = g["image"]
+        if np.product(np.array(data.shape)) > 0:
+            tmp.image = data[...]
+        else:
+            tmp.image = [[]]
+        metadata = g.require_group("metadata")
+        typehints = g.get("typehints", None)
+        if not isinstance(typehints, h5py.Group):
+            typehints = dict()
+        else:
+            typehints = typehints.attrs
+        for i in sorted(metadata.attrs):
+            v = metadata.attrs[i]
+            t = typehints.get(i, "Detect")
+            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
+                tmp.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+            else:
+                tmp[i] = metadata.attrs[i]
+        tmp.filename = path.basename(g.name)
+        return tmp
+
+    def to_HDF5(self, filename=None):
+        """Save the AttocubeScan to an hdf5 file."""
+        if filename is None:
+            filename = path.join(self.directory, f"MPI_{self.scan_no:09d}.hdf5")
+        if isinstance(filename, Path):
+            filename = str(filename)
+        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+            filename = self.__file_dialog("w")
+            self.filename = filename
+        if isinstance(filename, string_types):
+            mode = "r+" if path.exists(filename) else "w"
+            f = h5py.File(filename, mode)
+        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+            f = filename
+
+        f.attrs["type"] = type(self).__name__
+        f.attrs["module"] = type(self).__module__
+        f.attrs["scan_no"] = self.scan_no
+        f.attrs["groups"] = [x for x in self.groups.keys()]
+        f.attrs["names"] = self._names
+        if "common_metadata" in f.parent and "common_metadata" not in f:
+            f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
+            f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)
+        else:
+            metadata = f.require_group("common_metadata")
+            typehints = f.require_group("common_typehints")
+            for k in self._common_metadata:
+                try:
+                    typehints.attrs[k] = self._common_metadata._typehints[k]
+                    metadata.attrs[k] = self._common_metadata[k]
+                except TypeError:
+                    # We get this for trying to store a bad data type - fallback to metadata export to string
+                    parts = self._common_metadata.export(k).split("=")
+                    metadata.attrs[k] = "=".join(parts[1:])
+
+        for g in self.groups:  # Recurse to save groups
+            grp = f.require_group(g)
+            self.groups[g].to_HDF5(grp)
+
+        for ch in self._names:
+            signal = f.require_group(ch)
+            data = self[ch]
+            signal.require_dataset(
+                "image",
+                data=data.data,
+                shape=data.shape,
+                dtype=data.dtype,
+                compression=self.compression,
+                compression_opts=self.compression_opts,
+            )
+            metadata = signal.require_group("metadata")
+            typehints = signal.require_group("typehints")
+            for k in self._metadata[ch]:
+                try:
+                    typehints.attrs[k] = data.metadata._typehints[k]
+                    metadata.attrs[k] = data.metadata[k]
+                except TypeError:
+                    # We get this for trying to store a bad data type - fallback to metadata export to string
+                    parts = data.metadata.export(k).split("=")
+                    metadata.attrs[k] = "=".join(parts[1:])
+
+        self.filename = close_file(f, filename)
+        return self
+
+    @classmethod
+    def read_HDF5(cls, filename, *args, **kargs):
+        """Create a new instance from an hdf file."""
+        self = cls(regrid=False)
+        close_me = False
+        if filename is None or not filename:
+            self.get_filename("r")
+            filename = self.filename
+        else:
+            self.filename = filename
+        if isinstance(filename, Path):
+            filename = str(filename)
+        if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
+            f = _open_filename(filename)
+            close_me = True
+        elif isinstance(filename, (h5py.File, h5py.Group)):
+            f = filename
+        else:
+            _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
+        self.scan_no = f.attrs["scan_no"]
+        if "groups" in f.attrs:
+            sub_grps = f.attrs["groups"]
+        else:
+            sub_grps = None
+        if "names" in f.attrs:
+            names = f.attrs["names"]
+        else:
+            names = []
+        grps = list(f.keys())
+        if "common_metadata" not in grps or "common_typehints" not in grps:
+            _raise_error(f, message="Couldn;t find common metadata groups, something is not right here!")
+        metadata = f["common_metadata"].attrs
+        typehints = f["common_typehints"].attrs
+        for i in sorted(metadata):
+            v = metadata[i]
+            t = typehints.get(i, "Detect")
+            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
+                self._common_metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+            else:
+                self._common_metadata[i] = metadata[i]
+        grps.remove("common_metadata")
+        grps.remove("common_typehints")
+        if sub_grps is None:
+            sub_grps = grps
+        for grp in sub_grps:
+            if "type" in f[grp].attrs:
+                self.groups[grp] = cls.read_HDF(f[grp], *args, **kargs)
+                continue
+            g = f[grp]
+            self.append(self._read_image(g))
+        for grp in names:
+            g = f[grp]
+            self.append(self._read_image(g))
+
+        if close_me:
+            f.close()
         return self
 
 

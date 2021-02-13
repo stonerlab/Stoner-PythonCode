@@ -1,0 +1,73 @@
+
+ScanDefinition = { Label = "MPI_210127021.hdr"; Type = "NEXAFS Image Scan"; Flags = "Image Stack"; Dwell = 2.601;
+	Regions = (1,
+{
+			PAxis = { Name = "Sample X"; Unit = "um"; Min = -75.523; Max = -70.523; Dir = 1;
+				Points = (150, -75.523, -75.490, -75.456, -75.423, -75.390, -75.356, -75.323, -75.290, -75.256, -75.223, -75.190, -75.156, -75.123, -75.090, -75.056, -75.023, -74.990, -74.956, -74.923, -74.890, -74.856, -74.823, -74.790, -74.756, -74.723, -74.690, -74.656, -74.623, -74.590, -74.556, -74.523, -74.490, -74.456, -74.423, -74.390, -74.356, -74.323, -74.290, -74.256, -74.223, -74.190, -74.156, -74.123, -74.090, -74.056, -74.023, -73.990, -73.956, -73.923, -73.890, -73.856, -73.823, -73.790, -73.756, -73.723, -73.690, -73.656, -73.623, -73.590, -73.556, -73.523, -73.490, -73.456, -73.423, -73.390, -73.356, -73.323, -73.290, -73.256, -73.223, -73.190, -73.156, -73.123, -73.090, -73.056, -73.023, -72.990, -72.956, -72.923, -72.890, -72.856, -72.823, -72.790, -72.756, -72.723, -72.690, -72.656, -72.623, -72.590, -72.556, -72.523, -72.490, -72.456, -72.423, -72.390, -72.356, -72.323, -72.290, -72.256, -72.223, -72.190, -72.156, -72.123, -72.090, -72.056, -72.023, -71.990, -71.956, -71.923, -71.890, -71.856, -71.823, -71.790, -71.756, -71.723, -71.690, -71.656, -71.623, -71.590, -71.556, -71.523, -71.490, -71.456, -71.423, -71.390, -71.356, -71.323, -71.290, -71.256, -71.223, -71.190, -71.156, -71.123, -71.090, -71.056, -71.023, -70.990, -70.956, -70.923, -70.890, -70.856, -70.823, -70.790, -70.756, -70.723, -70.690, -70.656, -70.623, -70.590, -70.556);
+};
+
+			QAxis = { Name = "Sample Y"; Unit = "um"; Min = 2680.228; Max = 2685.228; Dir = 1;
+				Points = (150, 2680.228, 2680.261, 2680.295, 2680.328, 2680.361, 2680.395, 2680.428, 2680.461, 2680.495, 2680.528, 2680.561, 2680.595, 2680.628, 2680.661, 2680.695, 2680.728, 2680.761, 2680.795, 2680.828, 2680.861, 2680.895, 2680.928, 2680.961, 2680.995, 2681.028, 2681.061, 2681.095, 2681.128, 2681.161, 2681.195, 2681.228, 2681.261, 2681.295, 2681.328, 2681.361, 2681.395, 2681.428, 2681.461, 2681.495, 2681.528, 2681.561, 2681.595, 2681.628, 2681.661, 2681.695, 2681.728, 2681.761, 2681.795, 2681.828, 2681.861, 2681.895, 2681.928, 2681.961, 2681.995, 2682.028, 2682.061, 2682.095, 2682.128, 2682.161, 2682.195, 2682.228, 2682.261, 2682.295, 2682.328, 2682.361, 2682.395, 2682.428, 2682.461, 2682.495, 2682.528, 2682.561, 2682.595, 2682.628, 2682.661, 2682.695, 2682.728, 2682.761, 2682.795, 2682.828, 2682.861, 2682.895, 2682.928, 2682.961, 2682.995, 2683.028, 2683.061, 2683.095, 2683.128, 2683.161, 2683.195, 2683.228, 2683.261, 2683.295, 2683.328, 2683.361, 2683.395, 2683.428, 2683.461, 2683.495, 2683.528, 2683.561, 2683.595, 2683.628, 2683.661, 2683.695, 2683.728, 2683.761, 2683.795, 2683.828, 2683.861, 2683.895, 2683.928, 2683.961, 2683.995, 2684.028, 2684.061, 2684.095, 2684.128, 2684.161, 2684.195, 2684.228, 2684.261, 2684.295, 2684.328, 2684.361, 2684.395, 2684.428, 2684.461, 2684.495, 2684.528, 2684.561, 2684.595, 2684.628, 2684.661, 2684.695, 2684.728, 2684.761, 2684.795, 2684.828, 2684.861, 2684.895, 2684.928, 2684.961, 2684.995, 2685.028, 2685.061, 2685.095, 2685.128, 2685.161, 2685.195);
+};
+});
+
+	StackAxis = { Name = "Energy"; Unit = ""; Min = -2; Max = -1; Dir = 1;
+		Points = (2, -2.000, -1.000);
+};
+
+	Channels = (1,
+{ Name = "APD"; Unit = "counts";});
+};
+ Time = "2021 January 27 15:14:38"; BeamFeedback = false; ShutterAutomatic = true;
+Channels = (1,
+{ ID = 2; Type = 0; Name = "APD"; Controller = 0; DeviceNumber = 1; UnitName = "counts"; LinearCoefficient = 1; ConstantCoefficient = 1; ProcessString = "I";});
+
+Monochromator = { Name = "Energy"; LastPosition = 707.71925; Status = 0; Type = 0; ControllerID = 103; Vel = 0;};
+
+EntranceSlit = { Name = "Pinehole"; LastPosition = -8.98596; Status = 0; Type = 0; ControllerID = 104; Vel = 200;};
+
+ExitVSlit = { Name = "Pinehole"; LastPosition = 24.996726; Status = 1; Type = 0; ControllerID = 103; Vel = 200;};
+
+ExitHSlit = { Name = "Microscopy Slit Height"; LastPosition = 24.9996; Status = 1; Type = 0; ControllerID = 101; Vel = 200;};
+
+SampleFineX = { Name = "SampleX"; LastPosition = -75.40691; Status = 0; Type = 0; ControllerID = 41; Vel = 5;};
+
+SampleFineY = { Name = "SampleY"; LastPosition = 2680.2268; Status = 0; Type = 0; ControllerID = 42; Vel = 4;};
+
+SampleFineZ = { Name = "SampleZ"; LastPosition = -20.004884; Status = 0; Type = 0; ControllerID = 31; Vel = 1;};
+
+SampleCoarseX = { Name = "CoarseX"; LastPosition = -81.122388; Status = 0; Type = 1; ControllerID = 84; Vel = 2;};
+
+SampleCoarseY = { Name = "CoarseY"; LastPosition = 2689.6973; Status = 0; Type = 1; ControllerID = 85; Vel = 1;};
+
+SampleCoarseZ = { Name = "CoarseZ"; LastPosition = 2357.8746; Status = 0; Type = 1; ControllerID = 91; Vel = 4;};
+
+ZonePlateZ = { Name = "ZonePlate"; LastPosition = -2436.2945; Status = 1; Type = 2; ControllerID = 81; Vel = 1;};
+
+OSAX = { Name = "OSA-X"; LastPosition = -0.036624531; Status = 0; Type = 2; ControllerID = 82; Vel = 0.5;};
+
+OSAY = { Name = "OSA-Y"; LastPosition = 0.4388832; Status = 0; Type = 2; ControllerID = 83; Vel = 0.5;};
+
+DetectorX = { Name = "DET-X"; LastPosition = -15.892956; Status = 0; Type = 2; ControllerID = 86; Vel = 1;};
+
+DetectorY = { Name = "DET-Y"; LastPosition = -21.5625; Status = 0; Type = 1; ControllerID = 87; Vel = 0.75;};
+
+DetectorZ = { Name = "DET-Z"; LastPosition = 0.3215332; Status = 0; Type = 2; ControllerID = 88; Vel = 1;};
+
+AUX1 = { Name = "MagnetField"; LastPosition = -2; Status = 0; Type = 0; ControllerID = 117; Vel = 0;};
+
+AUX2 = { Name = "AUX2"; LastPosition = 24.996726; Status = 0; Type = 0; ControllerID = 119; Vel = 3;};
+
+EPUGap = { Name = "EPU Gap"; LastPosition = 21.178139; Status = 0; Type = 2; ControllerID = 107; Vel = 200;};
+
+EPU_Z = { Name = "EPUPhase"; LastPosition = 9.948509; Status = 1; Type = 2; ControllerID = 108; Vel = 200;};
+
+EPU_Polarization = { Name = "SlitPosH"; LastPosition = -8.98597; Status = 0; Type = 2; ControllerID = 115; Vel = 0;};
+ StorageRingCurrent = 297; PMT_CounterDivider = 10; Ao = 828.2;
+ImageScan = { ScanType = "Image (Line - unidirection)"; Stage = "Automatic"; Shutter = "Automatic"; Interferometry = "On"; ScanningStage = "MagnetField"; SingleEnergy = false;
+	EnergyRegions = (1,
+{ StartEnergy = -2; EndEnergy = -1; Range = 1; Step = 1; Points = 2; DwellTime = 2.601;});
+ PointDelay = 0.07803; LineDelay = 150; AccelDist = 0.35; MultipleRegions = false;
+	SpatialRegions = (1,
+{ CentreXPos = -73.023; CentreYPos = 2682.728; XRange = 5; YRange = 5; XStep = 0.0333; YStep = 0.0333; XPoints = 150; YPoints = 150; SquareRegion = true; SquarePixels = false;});
+};

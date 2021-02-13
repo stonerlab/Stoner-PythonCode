@@ -6,9 +6,10 @@ from copy import copy, deepcopy
 import inspect
 from importlib import import_module
 from functools import wraps
-from PIL import Image
 from io import BytesIO as StreamIO
+from warnings import warn
 
+from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage as ndi
@@ -955,6 +956,26 @@ class ImageFile(metadataObject):
         result = self
         result = __add_core__(result, other)
         return result
+
+    def __floordiv__(self, other):
+        """Implement a // operator to do XMCD calculations on a whole image."""
+        if isinstance(other, ImageFile):
+            if (
+                hasattr(other, "polarization")
+                and hasattr(self, "polarization")
+                and self.polarization == other.polarization
+            ):
+                raise ValueError("Can only calculate and XMCD ratio from images of opposite polarization")
+            elif not (hasattr(other, "polarization") and hasattr(self, "polarization")):
+                warn("Calculating XMCD ratio even though one or both image polarizations cannoty be determined.")
+            plus, minus = self, other
+            polarization = getattr(self, "polarization", 1)
+            ret = self.clone
+            ret.image = polarization * (plus.image - minus.image) / (plus.image + minus.image)
+            return ret
+        ret = self.clone
+        ret.image = self.image // other
+        return ret
 
     def __truediv__(self, other):
         """Implement the divide operator."""
