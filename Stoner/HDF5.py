@@ -18,7 +18,7 @@ import h5py
 import numpy as np
 
 from .compat import string_types, bytes2str, get_filedialog, path_types
-from .Core import StonerLoadError, metadataObject, DataFile
+from .Core import StonerLoadError, DataFile
 from .folders import DataFolder
 from .Image.core import ImageFile, ImageArray
 

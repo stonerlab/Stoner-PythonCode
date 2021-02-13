@@ -8,8 +8,6 @@ from warnings import warn
 
 import numpy as np
 
-from ..core.base import regexpDict
-
 dtype_range = {
     np.bool_: (False, True),
     np.bool8: (False, True),

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Module to work with scan files from an AttocubeSPM running Daisy."""
 __all__ = ["AttocubeScan"]
-from os import path, pathsep
 import pathlib
+from os import path
 from copy import deepcopy
 from glob import glob
 import re
@@ -15,9 +15,8 @@ import h5py
 
 from Stoner.compat import string_types, bytes2str
 from Stoner.core.base import typeHintedDict
-from Stoner.core.exceptions import StonerLoadError
 from Stoner.Image import ImageStack, ImageFile, ImageArray
-from Stoner.HDF5 import confirm_hdf5, close_file, _open_filename, _raise_error
+from Stoner.HDF5 import close_file, _open_filename, _raise_error
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
@@ -129,7 +128,7 @@ class AttocubeScanMixin:
         else:
             _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
         if "type" not in f.attrs:
-            _raise_error(f, message=f"HDF5 Group does not specify the type attribute used to check we can load it.")
+            _raise_error(f, message="HDF5 Group does not specify the type attribute used to check we can load it.")
         typ = bytes2str(f.attrs["type"])
         if typ != type(self).__name__ and "module" not in f.attrs:
             _raise_error(

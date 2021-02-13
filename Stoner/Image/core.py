@@ -5,7 +5,6 @@ import os
 from copy import copy, deepcopy
 import inspect
 from importlib import import_module
-from functools import wraps
 from io import BytesIO as StreamIO
 from warnings import warn
 
@@ -32,7 +31,7 @@ from skimage import (
 from ..core.base import typeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..Core import DataFile
-from ..tools import isTuple, fix_signature, isLikeList, make_Data
+from ..tools import isTuple, isLikeList, make_Data
 from ..tools.file import file_dialog, get_file_name_type, auto_load_classes
 from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones
 from ..compat import (
@@ -970,8 +969,8 @@ class ImageFile(metadataObject):
                 warn("Calculating XMCD ratio even though one or both image polarizations cannoty be determined.")
             if self.image.dtype != other.image.dtype:
                 raise ValueError(
-                    "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
-                    + "Mimatch is {self.image.dtype} vs {other.image.dtype}"
+                    "Only ImageFiles with the same type of underlying image data can be used to calculate an"
+                    + "XMCD ratio.Mimatch is {self.image.dtype} vs {other.image.dtype}"
                 )
             if self.image.dtype.kind != "f":
                 ret = self.clone.convert(float)

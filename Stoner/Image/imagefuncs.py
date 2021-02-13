@@ -54,7 +54,7 @@ import numpy as np
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
 from scipy import signal
-from matplotlib.colors import to_rgba, ListedColormap
+from matplotlib.colors import to_rgba
 import matplotlib.cm as cm
 from matplotlib import pyplot as plt
 from skimage import feature, measure, transform, filters
