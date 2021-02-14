@@ -289,9 +289,9 @@ class HDF5File(DataFile):
         Returns
             A copy of the object
         """
-        return self.to_HDF(filename, **kargs)  # Just a pass through to our own to_HDF method
+        return self.to_hdf(filename, **kargs)  # Just a pass through to our own to_hdf method
 
-    def to_HDF(self, filename=None, **kargs):  # pylint: disable=unused-argument
+    def to_hdf(self, filename=None, **kargs):  # pylint: disable=unused-argument
         """Write the current object into  an hdf5 file or group within a file.
 
         Writes the data in afashion that is compatible with being loaded in again.
@@ -371,21 +371,7 @@ class HGXFile(DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-        with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
-            sniff.seek(0, 2)
-            sniff.seek(0)
-            blk = sniff.read(8)
-            if not blk == b"\x89HDF\r\n\x1a\n":
-                c = 0
-                while len(blk) == 8:
-                    sniff.seek(512 * 2 ** c)
-                    c += 1
-                    blk = sniff.read(8)
-                    if blk == b"\x89HDF\r\n\x1a\n":
-                        break
-                else:
-                    raise StonerLoadError("Couldn't find the HD5 format singature block")
-
+        confirm_hdf5(filename)
         try:
             with h5py.File(filename, "r") as f:
                 if "current" in f and "config" in f["current"]:

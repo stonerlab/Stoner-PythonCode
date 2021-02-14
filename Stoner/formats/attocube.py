@@ -496,7 +496,7 @@ class AttocubeScan(AttocubeScanMixin, ImageStack):
     object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
 
     There is a class method :py:meth:`AttocubeSca.read_hdf5` to read the stack from the HDSF format and an instance
-    method :py:meth:`AttocubeScan.to_HDF` that will save to either a new or existing HDF file format.
+    method :py:meth:`AttocubeScan.to_hdf` that will save to either a new or existing HDF file format.
 
     The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
 
