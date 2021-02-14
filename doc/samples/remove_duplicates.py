@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Demonstrate remove duplicates """
+# pylint: disable=no-member
 from Stoner import Data, __homepath__
 
 # Load data
