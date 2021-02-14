@@ -17,7 +17,7 @@ import os
 import h5py
 import numpy as np
 
-from .compat import string_types, bytes2str, get_filedialog, path_types
+from .compat import string_types, bytes2str, get_filedialog, path_types, str2bytes
 from .Core import StonerLoadError, DataFile
 from .folders import DataFolder
 from .Image.core import ImageFile, ImageArray
@@ -238,7 +238,7 @@ class HDF5File(DataFile):
         else:
             typehints = typehints.attrs
         if "column_headers" in f.attrs:
-            self.column_headers = [x.decode("utf8") for x in f.attrs["column_headers"]]
+            self.column_headers = [bytes2str(x) for x in f.attrs["column_headers"]]
             if isinstance(self.column_headers, string_types):
                 self.column_headers = self.metadata.string_to_type(self.column_headers)
             self.column_headers = [bytes2str(x) for x in self.column_headers]
@@ -319,7 +319,7 @@ class HDF5File(DataFile):
                     # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = self.metadata.export(k).split("=")
                     metadata.attrs[k] = "=".join(parts[1:])
-            f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]
+            f.attrs["column_headers"] = [str2bytes(x) for x in self.column_headers]
             f.attrs["filename"] = self.filename
             f.attrs["type"] = type(self).__name__
             f.attrs["module"] = type(self).__module__
