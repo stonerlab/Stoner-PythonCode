@@ -1385,6 +1385,8 @@ class DataFile(
         filename, filetype = get_file_name_type(filename, filetype, DataFile)
         if auto_load:  # We're going to try every subclass we canA
             ret = auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs)
+            if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!
+                return ret
         else:
             if filetype is None or isinstance(filetype, DataFile):  # set fieltype to DataFile
                 filetype = DataFile

@@ -21,6 +21,7 @@ from .compat import string_types, bytes2str, get_filedialog, path_types, str2byt
 from .Core import StonerLoadError, DataFile
 from .folders import DataFolder
 from .Image.core import ImageFile, ImageArray
+from .core.utils import copy_into
 
 
 def _raise_error(f, message="Not a valid hdf5 file."):
@@ -87,6 +88,32 @@ def confirm_hdf5(filename, raises=True):
                     raise StonerLoadError(f"Couldn't find the HD5 format singature block in {filename}")
                 return False
     return True
+
+
+def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
+    """Look inside the open hdf file for details of what class to use to read this group.
+
+    Args:
+        f (h5py.File, h5py.Group):
+            Open hdf file to look for a type attribute that gives the class to use to read this group.
+
+    Returns:
+        (callable):
+            Callable function that can produce an object of an appropriate class.
+    """
+    if "type" not in f.attrs:
+        _raise_error(f, message="HDF5 Group does not specify the type attribute used to check we can load it.")
+    typ = bytes2str(f.attrs["type"])
+    if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
+        _raise_error(
+            f, message="HDF5 Group does not speicify a recongized type and does not specify a module to use to load."
+        )
+
+    if "module" in f.attrs:
+        mod = importlib.import_module(bytes2str(f.attrs["module"]))
+        cls = getattr(mod, typ)
+        return getattr(cls, "read_hdf5", default_loader)
+    return getattr(globals()[typ], "read_hdf5", default_loader)
 
 
 def _open_filename(filename):
@@ -187,28 +214,15 @@ class HDF5File(DataFile):
             f = filename
         else:
             _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
-        if "type" not in f.attrs:
-            _raise_error(f, message=f"HDF5 Group does not specify the type attribute used to check we can load it.")
-        typ = bytes2str(f.attrs["type"])
-        if typ != type(self).__name__ and "module" not in f.attrs:
-            _raise_error(
-                f, message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load."
-            )
-        loader = None
-        if typ == type(self).__name__:
-            loader = getattr(type(self), "read_HDF")
-        else:
-            mod = importlib.import_module(bytes2str(f.attrs["module"]))
-            cls = getattr(mod, typ)
-            loader = getattr(cls, "read_JDF")
-        if loader is None:
-            _raise_error(f, message="Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
-
-        loader(f, *args, instance=self, **kargs)
-        return self
+        loader = get_hdf_loader(f, default_loader=HDF5File.read_hdf)
+        ret = loader(f, *args, instance=self, **kargs)
+        if isinstance(ret, DataFile):
+            copy_into(ret, self)
+            return self
+        return ret
 
     @classmethod
-    def read_HDF(cls, filename, *args, **kargs):  # pylint: disable=unused-argument
+    def read_hdf(cls, filename, *args, **kargs):  # pylint: disable=unused-argument
         """Create a new HDF5File from an actual HDF file."""
         self = kargs.pop("instance", cls())
         if filename is None or not filename:

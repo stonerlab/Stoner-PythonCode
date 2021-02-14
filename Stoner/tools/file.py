@@ -142,7 +142,8 @@ def auto_load_classes(
 
             if debug:
                 print("Passed Load")
-            test["Loaded as"] = cls.__name__
+            if isinstance(test, metadataObject):
+                test["Loaded as"] = cls.__name__
             if debug:
                 print(f"Test matadata: {test.metadata}")
 

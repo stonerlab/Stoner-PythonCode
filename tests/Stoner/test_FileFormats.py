@@ -20,6 +20,7 @@ from Stoner.formats.maximus import MaximusStack
 from Stoner.tools.classes import subclasses
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from traceback import format_exc
+from Stoner.HDF5 import HDF5File
 
 pth=__homepath__/".."
 datadir=__datapath__
