@@ -3,8 +3,12 @@
 
 import threading
 import time
-from matplotlib.backend_bases import Event
+
 import numpy as np
+from matplotlib.backend_bases import Event
+
+from Stoner import ImageFolder, __homepath__
+from Stoner.HDF5 import STXMImage
 
 ### Some functions to allow the selection to be scripted
 def _event(image, names, **kargs):
@@ -16,15 +20,10 @@ def _event(image, names, **kargs):
     for name in names:
         for k, v in kargs.items():
             setattr(event, k, v)
-        try:
-            getattr(select, name)(event)
-        except Exception as err:
-            breakpoint()
-            pass
 
 
 def fake_user_action(image):
-    """This function sends events to the selection widget to sumulate a user."""
+    """Send events to the selection widget to sumulate a user."""
     time.sleep(1)
     _event(
         image,
@@ -51,9 +50,6 @@ def fake_user_action(image):
         key="enter",
     )
 
-
-from Stoner import ImageFolder, __homepath__
-from Stoner.HDF5 import STXMImage
 
 fldr = ImageFolder(
     __homepath__ / ".." / "sample-data",

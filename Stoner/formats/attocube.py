@@ -123,7 +123,7 @@ class AttocubeScanMixin:
             filename = str(filename)
         if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
             f = _open_filename(filename)
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+        elif isinstance(filename, (h5py.File, h5py.Group)):
             f = filename
         else:
             _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
@@ -303,17 +303,17 @@ class AttocubeScanMixin:
 
         xrange = kargs.pop("x_range", (x[:, 0].max(), x[:, -1].min(), x.shape[1]))
         yrange = kargs.pop("y_range", (y[0].max(), y[-1].min(), y.shape[0]))
-        nX, nY = meshgrid(linspace(*xrange), linspace(*yrange))
+        nx, ny = meshgrid(linspace(*xrange), linspace(*yrange))
         for data in self.channels:
             if "PosX" in data or "PosY" in data:
                 continue
             z = self[data]
-            nZ = griddata((x.ravel(), y.ravel()), z.ravel(), (nX.ravel(), nY.ravel()), method="cubic").reshape(
-                nX.shape
+            nz = griddata((x.ravel(), y.ravel()), z.ravel(), (nx.ravel(), ny.ravel()), method="cubic").reshape(
+                nx.shape
             )
-            new[data].data = nZ
-        new["PosX"].data = nX
-        new["PosY"].data = nY
+            new[data].data = nz
+        new["PosX"].data = nx
+        new["PosY"].data = ny
 
         return new
 
@@ -369,8 +369,8 @@ class AttocubeScanMixin:
         f.attrs["type"] = type(self).__name__
         f.attrs["module"] = type(self).__module__
         f.attrs["scan_no"] = self.scan_no
-        f.attrs["groups"] = [x for x in self.groups.keys()]
-        f.attrs["channels"] = [x for x in self.channels]
+        f.attrs["groups"] = list(self.groups.keys())
+        f.attrs["channels"] = list(self.channels)
         if "common_metadata" in f.parent and "common_metadata" not in f:
             f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
             f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)

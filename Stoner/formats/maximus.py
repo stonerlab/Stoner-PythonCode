@@ -33,7 +33,7 @@ class MaximusSpectra(DataFile):
 
     priority = 16
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Maximus xsp file loader routine.
 
         Args:
@@ -43,6 +43,7 @@ class MaximusSpectra(DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename = kargs.get("filename", args[0])
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -80,7 +81,7 @@ class MaximusImage(ImageFile):
     mime_type = ["text/plain"]
     priority = 16
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, filename, **kargs):
         """Load an ImageFile by calling the ImageArray method instead."""
         if filename is None or not filename:
             self.get_filename("r")
@@ -144,7 +145,7 @@ class MaximusStackMixin:
         self.compression = "gzip"
         self.compression_opts = 6
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, filename, **kargs):
         """Load an ImageStack from either an hdf file or textfiles."""
         if filename is None or not filename:
             self.get_filename("r")
