@@ -21,7 +21,7 @@ from matplotlib import figure as mplfig
 from matplotlib import cm, colors
 
 from Stoner.compat import string_types, index_types, int_types, getargspec
-from Stoner.tools import AttributeStore, isNone, isAnyNone, all_type, isIterable, typedList, get_option, fix_signature
+from Stoner.tools import AttributeStore, isnone, isAnyNone, all_type, isIterable, typedList, get_option, fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 from .utils import hsl2rgb
@@ -1431,7 +1431,7 @@ class PlotMixin:
         kargs, nonkargs, fig_kargs = self._fix_kargs(None, defaults, otherargs, **kargs)
 
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
-            if isNone(kargs.get(err, None)):
+            if isnone(kargs.get(err, None)):
                 kargs.pop(err, None)
 
             elif isinstance(kargs[err], index_types):

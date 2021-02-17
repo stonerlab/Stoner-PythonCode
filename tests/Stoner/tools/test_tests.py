@@ -45,17 +45,17 @@ def test_is_like_list():
     assert tests.isLikeList(tuple()),"isLikeList failed."
 
 def test_is_None():
-    assert tests.isNone(None),"isNone with None failed"
-    assert tests.isNone([None,None,None]),"isNone with list oif None failed"
+    assert tests.isnone(None),"isnone with None failed"
+    assert tests.isnone([None,None,None]),"isnone with list oif None failed"
     def g():
         while True:
             yield None
-    assert tests.isNone(g()),"isNone with a generator failed"
+    assert tests.isnone(g()),"isnone with a generator failed"
 
 def test_is_property():
     d=Data()
-    assert tests.isProperty(Data,"data"),"Failed to test isProperty with class"
-    assert tests.isProperty(d,"data"),"Failed to test isProperty with instance"
+    assert tests.isproperty(Data,"data"),"Failed to test isProperty with class"
+    assert tests.isproperty(d,"data"),"Failed to test isProperty with instance"
 
 def test_is_tuple():
     assert not tests.isTuple(5),"isTuple though 5 was a tuple"

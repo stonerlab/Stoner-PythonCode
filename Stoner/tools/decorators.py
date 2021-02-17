@@ -10,7 +10,7 @@ from os import environ
 
 import numpy as np
 
-from .tests import isProperty
+from .tests import isproperty
 
 try:
     from memoization import cached
@@ -367,11 +367,11 @@ def class_wrapper(
             if name.startswith("_"):
                 continue
             attr = getattr(target, name)
-            if callable(attr) and not isProperty(target, name) and name not in dir(cls):
+            if callable(attr) and not isproperty(target, name) and name not in dir(cls):
                 proxy = adaptor(attr)
                 setattr(cls, name, proxy)
             elif (
-                isProperty(target, name)
+                isproperty(target, name)
                 and hasattr(attr, "fget")
                 and (name not in dir(cls) or name in dir(exclude_below))
             ):
@@ -380,7 +380,7 @@ def class_wrapper(
                 fdel = deleter_adaptor(getattr(attr, "fdel", None))
                 doc = getattr(attr, "__doc__", "")
                 setattr(cls, name, property(fget, fset, fdel, doc))
-            elif name not in cls.__dict__ and not callable(attr) and not isProperty(target, name):
+            elif name not in cls.__dict__ and not callable(attr) and not isproperty(target, name):
                 setattr(cls, name, attr_pass(name))
         return cls
 

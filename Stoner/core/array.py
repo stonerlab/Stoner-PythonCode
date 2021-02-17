@@ -12,7 +12,7 @@ import numpy.ma as ma
 import numpy as np
 
 from Stoner.compat import string_types, int_types
-from Stoner.tools import isIterable, all_type, isNone, AttributeStore, all_size
+from Stoner.tools import isIterable, all_type, isnone, AttributeStore, all_size
 
 from .setas import setas as _setas
 from .exceptions import StonerSetasError
@@ -487,7 +487,7 @@ class DataArray(ma.MaskedArray):
         ret = AttributeStore(self.setas._get_cols(no_guess=no_guess))
         force_list = kargs.get("force_list", not scalar)
         for c in list(cols.keys()):
-            if isNone(cols[c]):  # Not defined, fallback on setas
+            if isnone(cols[c]):  # Not defined, fallback on setas
                 del cols[c]
                 continue
             if isinstance(cols[c], bool) and not cols[c]:  # False, delete column altogether

@@ -16,7 +16,7 @@ from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
 from ...compat import string_types, index_types, get_func_params
-from ...tools import isNone, isIterable, isLikeList, AttributeStore, ordinal
+from ...tools import isnone, isIterable, isLikeList, AttributeStore, ordinal
 
 
 try:  # Allow lmfit to be optional
@@ -598,7 +598,7 @@ class FittingMixin:
         """Gather up the xdata and sigma columns for curve_fit."""
         working = self.search(xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
-        if not isNone(sigma):
+        if not isnone(sigma):
             sigma = working[:, self.find_col(sigma)]
         else:
             sigma = None
@@ -667,7 +667,7 @@ class FittingMixin:
                 sigma = ma.array(sigma)  # ensure masked
             else:
                 raise RuntimeError("Sigma should have been a column index or list of values")
-        elif not isNone(_.yerr):
+        elif not isnone(_.yerr):
             sigma = working[:, self.find_col(_.yerr)]
         else:
             sigma = ma.ones(len(xdata))

@@ -8,8 +8,8 @@ __all__ = [
     "isComparable",
     "isIterable",
     "isLikeList",
-    "isNone",
-    "isProperty",
+    "isnone",
+    "isproperty",
     "isTuple",
 ]
 from typing import Optional, Iterable as IterableType, Tuple, Union, Any
@@ -128,7 +128,7 @@ def isLikeList(value: Any) -> bool:
     return isIterable(value) and not isinstance(value, string_types)
 
 
-def isNone(iterator: Optional[IterableType]) -> bool:
+def isnone(iterator: Optional[IterableType]) -> bool:
     """Return True if input is None or an empty iterator, or an iterator of None.
 
     Args:
@@ -158,7 +158,7 @@ def isNone(iterator: Optional[IterableType]) -> bool:
     return ret
 
 
-def isProperty(obj: Any, name: str) -> bool:
+def isproperty(obj: Any, name: str) -> bool:
     """Check whether an attribute of an object or class is a property.
 
     Args:

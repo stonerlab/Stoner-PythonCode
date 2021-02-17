@@ -220,25 +220,25 @@ class MaskProxy:
     """
 
     @property
-    def _IA(self):
+    def _imagearray(self):
         """Get the underliying image data."""
-        return self._IF.image
+        return self._imagefolder.image
 
     @property
     def _mask(self):
         """Get the mask for the underlying image."""
-        self._IA.mask = np.ma.getmaskarray(self._IA)
-        return self._IA.mask
+        self._imagearray.mask = np.ma.getmaskarray(self._imagearray)
+        return self._imagearray.mask
 
     @property
     def colour(self):
         """Get the colour of the mask."""
-        return self._IA._mask_color
+        return self._imagearray._mask_color
 
     @colour.setter
     def colour(self, value):
         """Set the colour of the mask."""
-        self._IA._mask_color = value
+        self._imagearray._mask_color = value
 
     @property
     def data(self):
@@ -253,11 +253,11 @@ class MaskProxy:
     @property
     def draw(self):
         """Access the draw proxy opbject."""
-        return DrawProxy(self._mask, self._IF)
+        return DrawProxy(self._mask, self._imagefolder)
 
     def __init__(self, *args, **kargs):
         """Keep track of the underlying objects."""
-        self._IF = args[0]
+        self._imagefolder = args[0]
 
     def __getitem__(self, index):
         """Proxy through to mask index."""
@@ -265,26 +265,26 @@ class MaskProxy:
 
     def __setitem__(self, index, value):
         """Proxy through to underlying mask."""
-        self._IA.mask.__setitem__(index, value)
+        self._imagearray.mask.__setitem__(index, value)
 
     def __delitem__(self, index):
         """Proxy through to underyling mask."""
-        self._IA.mask.__delitem__(index)
+        self._imagearray.mask.__delitem__(index)
 
     def __getattr__(self, name):
-        """Check name against self._IA._funcs and constructs a method to edit the mask as an image."""
-        if hasattr(self._IA.mask, name):
-            return getattr(self._IA.mask, name)
-        func = getattr(type(self._IA), name, None)
+        """Check name against self._imagearray._funcs and constructs a method to edit the mask as an image."""
+        if hasattr(self._imagearray.mask, name):
+            return getattr(self._imagearray.mask, name)
+        func = getattr(type(self._imagearray), name, None)
         if func is None:
             raise AttributeError(f"{name} not a callable mask method.")
 
         @wraps(func)
         def _proxy_call(*args, **kargs):
-            retval = func(self._mask.astype(float).view(type(self._IA)) * 1000, *args, **kargs)
-            if isinstance(retval, np.ndarray) and retval.shape == self._IA.shape:
+            retval = func(self._mask.astype(float).view(type(self._imagearray)) * 1000, *args, **kargs)
+            if isinstance(retval, np.ndarray) and retval.shape == self._imagearray.shape:
                 retval.normalise()
-                self._IA.mask = retval > 0
+                self._imagearray.mask = retval > 0
             return retval
 
         _proxy_call.__doc__ = func.__doc__
@@ -330,11 +330,11 @@ class MaskProxy:
 
     def clear(self):
         """Clear a mask."""
-        self._IA.mask = np.zeros_like(self._IA)
+        self._imagearray.mask = np.zeros_like(self._imagearray)
 
     def invert(self):
         """Invert the mask."""
-        self._IA.mask = ~self._IA.mask
+        self._imagearray.mask = ~self._imagearray.mask
 
     def select(self, **kargs):
         """Interactive selection mode.
@@ -365,13 +365,13 @@ class MaskProxy:
         selection = kargs.get("_selection", [])
         if len(selection) == 0:
             selector = ShapeSelect()
-            self._IA.mask = selector(self._IA)
-            selection.append(self._IA.mask)
+            self._imagearray.mask = selector(self._imagearray)
+            selection.append(self._imagearray.mask)
         elif len(selection) == 1 and isinstance(selection[0], np.ndarray) and selection[0].dtype.kind == "b":
-            self._IA.mask = selection[0]
+            self._imagearray.mask = selection[0]
         else:
             raise ValueError("Unknown value for private keyword _selection")
-        return self._IF
+        return self._imagefolder
 
     def threshold(self, thresh=None):
         """Mask based on a threshold.
@@ -381,5 +381,5 @@ class MaskProxy:
                 Threshold to apply to the current image - default is to calculate using threshold_otsu
         """
         if thresh is None:
-            thresh = self._IA.threshold_otsu()
-        self._IA.mask = self._IA > thresh
+            thresh = self._imagearray.threshold_otsu()
+        self._imagearray.mask = self._imagearray > thresh

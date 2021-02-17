@@ -12,7 +12,7 @@ from numpy import ma
 from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.signal import get_window, convolve, savgol_filter
 
-from Stoner.tools import isIterable, isNone
+from Stoner.tools import isIterable, isnone
 from Stoner.compat import int_types, string_types, get_func_params
 
 from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
@@ -825,8 +825,8 @@ class FilteringOpsMixin:
         extrapolate function.
         """
         _ = self._col_args(xcol=xcol, ycol=ycol)
-        if sigma is None and (isNone(_.yerr) or _.yerr):
-            if not isNone(_.yerr):
+        if sigma is None and (isnone(_.yerr) or _.yerr):
+            if not isnone(_.yerr):
                 sigma = 1.0 / (self // _.yerr)
             else:
                 sigma = np.ones(len(self))

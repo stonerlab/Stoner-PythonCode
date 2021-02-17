@@ -14,10 +14,10 @@ __all__ = [
     "html_escape",
     "isAnyNone",
     "isComparable",
-    "isNone",
+    "isnone",
     "isIterable",
     "isLikeList",
-    "isProperty",
+    "isproperty",
     "isTuple",
     "make_Data",
     "quantize",
@@ -39,7 +39,7 @@ from numpy import log10, floor, logical_and, isnan, round, ndarray, dtype  # pyl
 
 from ..compat import bytes2str
 from .classes import attributeStore as AttributeStore, typedList, Options, get_option, set_option
-from .tests import all_size, all_type, isAnyNone, isComparable, isIterable, isLikeList, isNone, isProperty, isTuple
+from .tests import all_size, all_type, isAnyNone, isComparable, isIterable, isLikeList, isnone, isproperty, isTuple
 from .formatting import format_error, format_val, quantize, html_escape, tex_escape, ordinal
 from . import decorators
 from .decorators import make_Data, fix_signature
