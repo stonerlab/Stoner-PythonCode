@@ -11,6 +11,7 @@ from plugins.data_loader_framework import Template
 from plugins.utils import ShowWarningDialog
 
 from Stoner import Data
+from Stoner.core.exceptions import StonerUnrecognisedFormat
 from Stoner.compat import string_types
 
 
@@ -31,7 +32,7 @@ class Plugin(Template):
             datafile = Data(
                 str(filename), debug=True
             )  # does all the hard work here
-        except Exception as e:
+        except StonerUnrecognisedFormat as e:
             ShowWarningDialog(
                 self.parent,
                 f"""Could not load the file: {filename}\nPlease check the format.

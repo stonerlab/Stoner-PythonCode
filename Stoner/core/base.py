@@ -189,9 +189,9 @@ class regexpDict(sorteddict):
         """Overwrite any matching key, or if not found adds a new key."""
         try:
             key = self.__lookup__(name, exact=True)
-        except KeyError:
+        except KeyError as err:
             if not isinstance(name, self.allowed_keys):
-                raise KeyError(f"{name} is not a match to any key.")
+                raise KeyError(f"{name} is not a match to any key.") from err
             key = name
         super().__setitem__(key, value)
 

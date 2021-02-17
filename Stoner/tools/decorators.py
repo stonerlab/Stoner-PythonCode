@@ -12,15 +12,6 @@ import numpy as np
 
 from .tests import isproperty
 
-try:
-    from memoization import cached
-except ImportError:
-
-    def cached(func, *_):
-        """Null dectorator."""
-        return func
-
-
 _RTD = "READTHEDOCS" in environ
 
 

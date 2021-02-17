@@ -122,8 +122,7 @@ class AnalysisMixin:
         else:
             col = self.find_col(column)
         clipper = (min(clipper), max(clipper))
-        self = self.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
-        return self
+        return self.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
 
     def decompose(self, xcol=None, ycol=None, sym=None, asym=None, replace=True, **kwords):
         """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
