@@ -165,8 +165,6 @@ class PowerLaw(_PowerLaw):
             :outname: powerlaw-class
     """
 
-    pass
-
 
 class StretchedExp(Model):
 
