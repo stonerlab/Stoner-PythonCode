@@ -470,7 +470,6 @@ class DefaultPlotStyle(MutableMapping):
         This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
-        pass
 
     def customise_axes(self, ax, plot):
         """Implement hook for for when we have an axis to manipulate.

@@ -116,8 +116,6 @@ class _evaluatable:
 
     """Placeholder to indicate that special action needed to convert a string representation to valid Python type."""
 
-    pass
-
 
 class regexpDict(sorteddict):
 

@@ -506,5 +506,3 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
         readlist (bool):
             Whether to read the directory immediately on creation. Default is True
     """
-
-    pass

@@ -253,7 +253,7 @@ class ImageStackMixin:
             return NotImplemented
         if self._stack.dtype != other._stack.dtype:
             raise ValueError(
-                f"Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
+                "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
                 + "Mimatch is {self._stack.dtype} vs {other._stack.dtype}"
             )
         if self._stack.dtype.kind != "f":
@@ -263,7 +263,7 @@ class ImageStackMixin:
             ret = self.clone
         if other._stack.shape != ret._stack.shape:
             raise ValueError(
-                f"Only image stacks that are the same shape can be used to calaculate XMCD data"
+                "Only image stacks that are the same shape can be used to calaculate XMCD data"
                 + f" - passed {ret._stack.shape} and {other._stack.shape}"
             )
         ret._stack = (ret._stack - other._stack) / (ret._stack + other._stack)
@@ -522,5 +522,3 @@ class StackAnalysisMixin:
 class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     """An alternative implementation of an image stack based on baseFolder."""
-
-    pass

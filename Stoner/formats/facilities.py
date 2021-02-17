@@ -258,8 +258,6 @@ class RasorFile(OpenGDAFile):
 
     """Just an alias for OpenGDAFile."""
 
-    pass
-
 
 class SNSFile(Core.DataFile):
 

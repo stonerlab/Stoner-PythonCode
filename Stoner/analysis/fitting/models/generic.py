@@ -122,8 +122,6 @@ class Linear(_Linear):
 
     """Simple linear fit class."""
 
-    pass
-
 
 class Quadratic(_Quadratic):
 
