@@ -4,29 +4,16 @@ Test the Image Widgets used for selections
 
 @author: phygbu
 """
-import pytest
-from matplotlib.backend_bases import Event
-import Stoner
 import os
 import threading
 import time
+
 import numpy as np
+from matplotlib.backend_bases import Event
 
-def _event(image,names,**kargs):
-    """Make a fake event."""
-    select=image._image._select
-    event=Event("fake",select.fig.canvas)
-    if not isinstance(names,list):
-        names=[names]
-    for name in names:
-        for k,v in kargs.items():
-            setattr(event,k,v)
-        try:
-            getattr(select,name)(event)
-        except Exception as err:
-            breakpoint()
-            pass
-
+import pytest
+import Stoner
+from Stoner.Image.widgets import send_event as _event
 
 def _trigger(image):
     time.sleep(1)
@@ -101,7 +88,7 @@ def test_profile_line():
     assert result.x.max()==100.0
     assert np.isclose(result.y.mean(),27029.16,atol=0.01)
 
-def test_regionSelect():
+def test_crop_with_ui():
     os.chdir(Stoner.__homepath__/".."/"sample-data")
     img=Stoner.HDF5.STXMImage("Sample_Image_2017-10-15_100.hdf5")
     thread=threading.Thread(target=_trigger4,args=(img,))
@@ -109,7 +96,7 @@ def test_regionSelect():
     result = img.crop()
     assert result.shape==(25,50)
 
-def test_masking_select():
+def test_mask_select():
     os.chdir(Stoner.__homepath__/".."/"sample-data")
     img=Stoner.HDF5.STXMImage("Sample_Image_2017-10-15_100.hdf5")
     thread=threading.Thread(target=_trigger5,args=(img,"p"))

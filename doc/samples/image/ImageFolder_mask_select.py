@@ -5,21 +5,10 @@ import threading
 import time
 
 import numpy as np
-from matplotlib.backend_bases import Event
 
-from Stoner import ImageFolder, __homepath__
+from Stoner import ImageFolder, __datapath__
 from Stoner.HDF5 import STXMImage
-
-### Some functions to allow the selection to be scripted
-def _event(image, names, **kargs):
-    """Make a fake event to simulate user input."""
-    select = image._image._select
-    event = Event("fake", select.fig.canvas)
-    if not isinstance(names, list):
-        names = [names]
-    for name in names:
-        for k, v in kargs.items():
-            setattr(event, k, v)
+from Stoner.Image.widgets import send_event as _event
 
 
 def fake_user_action(image):
@@ -34,7 +23,7 @@ def fake_user_action(image):
         dblclick=False,
     )
     for y in np.linspace(20, 80, 10):
-        _event(image, "keypress", xdata=50, ydata=y, key="c")
+        _event(image, "draw", xdata=50, ydata=y)
         time.sleep(0.1)
     _event(image, "keypress", xdata=50, ydata=80, key="c")
     time.sleep(0.5)
@@ -52,10 +41,7 @@ def fake_user_action(image):
 
 
 fldr = ImageFolder(
-    __homepath__ / ".." / "sample-data",
-    pattern="Sample*.hdf5",
-    type=STXMImage,
-    recursive=False,
+    __datapath__, pattern="Sample*.hdf5", type=STXMImage, recursive=False,
 )
 
 # Start the scripted control

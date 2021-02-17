@@ -1,12 +1,33 @@
 # -*- coding: utf-8 -*-
 """Line and Box selection Tools for Images."""
 
-import matplotlib.pyplot as plt
 import numpy as np
+import time
+
+import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from matplotlib.widgets import Cursor, RectangleSelector
 from matplotlib.colors import to_rgba
+from matplotlib.backend_bases import Event
+
 from skimage import draw
+
+
+def send_event(image, names, **kargs):
+    """Make a fake event."""
+    time.sleep(0.05)
+    select = image._image._select
+    event = Event("fake", select.fig.canvas)
+    if not isinstance(names, list):
+        names = [names]
+    for name in names:
+        for k, v in kargs.items():
+            setattr(event, k, v)
+        try:
+            getattr(select, name)(event)
+        except Exception as err:
+            breakpoint()
+            pass
 
 
 def _straight_ellipse(p, data):
