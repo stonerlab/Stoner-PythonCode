@@ -220,6 +220,7 @@ class setas(MutableMapping):
 
     @property
     def ndim(self):
+        """Return the number of dimensions of the array."""
         return len(self.shape)
 
     @property
@@ -666,10 +667,10 @@ class setas(MutableMapping):
             ret = self[name]
             self.unset(name)
             return ret
-        except (IndexError, KeyError):
+        except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.")
+            raise KeyError(f"{name} is not in setas and no default was given.") from err
 
     def popitem(self):
         """Return and clear a column assignment."""

@@ -148,11 +148,11 @@ class regexpDict(sorteddict):
         try:  # name directly as key
             super().__getitem__(name)
             ret = name
-        except (KeyError, TypeError):  # Fall back to regular expression lookup
+        except (KeyError, TypeError) as err:  # Fall back to regular expression lookup
             if not exact and not isinstance(name, string_types + int_types):
                 name = repr(name)
             if exact:
-                raise KeyError(f"{name} not a key and exact match requested.")
+                raise KeyError(f"{name} not a key and exact match requested.") from err
             nm = name
             if isinstance(name, string_types):
                 try:
@@ -162,8 +162,8 @@ class regexpDict(sorteddict):
             elif isinstance(name, int_types):  # We can do this because we're a dict!
                 try:
                     ret = sorted(self.keys())[name]
-                except IndexError:
-                    raise KeyError(f"{name} is not a match to any key.")
+                except IndexError as err:
+                    raise KeyError(f"{name} is not a match to any key.") from err
             else:
                 nm = name
             if isinstance(nm, _pattern_type):
