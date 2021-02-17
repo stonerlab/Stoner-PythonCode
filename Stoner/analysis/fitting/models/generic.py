@@ -144,8 +144,6 @@ class Quadratic(_Quadratic):
             :outname: quadratic-class
     """
 
-    pass
-
 
 class PowerLaw(_PowerLaw):
 

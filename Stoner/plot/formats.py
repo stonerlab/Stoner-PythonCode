@@ -582,7 +582,6 @@ class JTBPlotStyle(DefaultPlotStyle):
 
     def customise_axes(self, ax, plot):
         """Override the default axis configuration (or not)."""
-        pass
 
 
 class JTBinsetStyle(DefaultPlotStyle):

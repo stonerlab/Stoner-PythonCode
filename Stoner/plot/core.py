@@ -1248,7 +1248,7 @@ class PlotMixin:
 
         plt.xlabel(str(labels["xlabel"]))
         plt.ylabel(str(labels["ylabel"]))
-        if plotter == self.__SurfPlotter:
+        if plotter is self.__SurfPlotter:
             self.axes[0].set_zlabel(str(labels["zlabel"]))
         if title == "":
             title = self.filename
@@ -1587,7 +1587,7 @@ class PlotMixin:
                 if isinstance(label, list):
                     label = ",".join(label)
                 defaults[k] = label
-        if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] == self.__SurfPlotter):
+        if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] is self.__SurfPlotter):
             otherkargs = [
                 "rstride",
                 "cstride",
@@ -1611,7 +1611,7 @@ class PlotMixin:
         if isinstance(plotter, string_types):
             plotter = ax.__getattribute__(plotter)
         self.plot3d = plotter(xdata, ydata, zdata, **kargs)
-        if plotter != self.__SurfPlotter:
+        if plotter is not self.__SurfPlotter:
             del nonkargs["zlabel"]
         self._fix_titles(0, "none", **nonkargs)
         return self.showfig
@@ -1768,7 +1768,7 @@ class PlotMixin:
                     if isinstance(label, list):
                         label = ",".join(label)
                     defaults[k] = label
-            if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] == __mpl3DQuiver):
+            if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] is __mpl3DQuiver):
                 otherkargs = ["color", "cmap", "linewidth", "ax", "length", "pivot", "arrow_length_ratio"]
             else:
                 otherkargs = ["color", "linewidth"]
