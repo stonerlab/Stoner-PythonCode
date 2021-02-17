@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Line and Box selection Tools for Images."""
 
-import numpy as np
 import time
+import numpy as np
 
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
@@ -23,11 +23,7 @@ def send_event(image, names, **kargs):
     for name in names:
         for k, v in kargs.items():
             setattr(event, k, v)
-        try:
-            getattr(select, name)(event)
-        except Exception as err:
-            breakpoint()
-            pass
+        getattr(select, name)(event)
 
 
 def _straight_ellipse(p, data):
