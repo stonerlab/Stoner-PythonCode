@@ -140,13 +140,6 @@ class ZippedFile(DataFile):
                 member = kargs.get("member", other.namelist()[0])
                 close_me = True
                 solo_file = len(other.namelist()) == 1
-            elif isinstance(self.filename, path_types) and test_is_zip(
-                self.filename
-            ):  # Filename is something buried in a zipfile
-                other, member = test_is_zip(other)
-                other = zf.ZipFile(other, "r")
-                close_me = True
-                solo_file = len(other.namelist()) == 1
             else:
                 raise StonerLoadError(f"{self.filename} does  not appear to be a real zip file")
         except StonerLoadError:

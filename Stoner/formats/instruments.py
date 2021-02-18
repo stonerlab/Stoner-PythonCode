@@ -12,10 +12,11 @@ import struct
 
 import numpy as np
 
-import Stoner.Core as Core
-from Stoner.compat import str2bytes, bytes2str
-from Stoner.core.exceptions import StonerAssertionError, assertion, StonerLoadError
-from Stoner.core.base import string_to_type
+from .. import Core
+from ..compat import str2bytes, bytes2str
+from ..core.exceptions import StonerAssertionError, assertion, StonerLoadError
+from ..core.base import string_to_type
+from ..tools.file import FileManager
 
 
 class LSTemperatureFile(Core.DataFile):
@@ -45,7 +46,7 @@ class LSTemperatureFile(Core.DataFile):
         else:
             self.filename = filename
 
-        with io.open(self.filename, "rb") as data:
+        with FileManager(self.filename, "rb") as data:
             keys = []
             vals = []
             for line in data:
@@ -104,7 +105,7 @@ class LSTemperatureFile(Core.DataFile):
             cols = [self.setas.ycol[0], self.setas.xcol]
         else:
             cols = range(self.shape[1])
-        with io.open(filename, "w", errors="ignore", encoding="utf-8", newline="\r\n") as f:
+        with FileManager(filename, "w", errors="ignore", encoding="utf-8", newline="\r\n") as f:
             for k, v in (
                 ("Sensor Model", "CX-1070-SD"),
                 ("Serial Number", "Unknown"),
@@ -176,7 +177,7 @@ class QDFile(Core.DataFile):
             self.filename = filename
         setas = {}
         i = 0
-        with io.open(self.filename, "r", encoding="utf-8", errors="ignore") as f:  # Read filename linewise
+        with FileManager(self.filename, "r", encoding="utf-8", errors="ignore") as f:  # Read filename linewise
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "[Header]":
@@ -279,7 +280,7 @@ class RigakuFile(Core.DataFile):
         ka = re.compile(r"(.*)\-(\d+)$")
         header = dict()
         i = 0
-        with io.open(self.filename, "rb") as f:
+        with FileManager(self.filename, "rb") as f:
             f.seek(pos)
             for i, line in enumerate(f):
                 line = bytes2str(line).strip()
@@ -513,7 +514,7 @@ class SPCFile(Core.DataFile):
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
         self._filesize = os.stat(self.filename).st_size
-        with io.open(filename, "rb") as f:
+        with FileManager(filename, "rb") as f:
             spchdr = struct.unpack(b"BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s", f.read(512))
             keys = (
                 "ftflgs",
@@ -689,7 +690,7 @@ class VSMFile(Core.DataFile):
             The default values are configured fir read VSM data files
         """
         try:
-            with io.open(self.filename, errors="ignore", encoding="utf-8") as f:
+            with FileManager(self.filename, errors="ignore", encoding="utf-8") as f:
                 for i, line in enumerate(f):
                     if i == 0:
                         first = line.strip()
@@ -783,7 +784,7 @@ class XRDFile(Core.DataFile):
         else:
             self.filename = filename
         sh = re.compile(r"\[(.+)\]")  # Regexp to grab section name
-        with io.open(self.filename, errors="ignore", encoding="utf-8") as f:  # Read filename linewise
+        with FileManager(self.filename, errors="ignore", encoding="utf-8") as f:  # Read filename linewise
             if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
                 raise Core.StonerLoadError("File Format Not Recognized !")
             drive = 0

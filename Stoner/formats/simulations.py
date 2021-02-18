@@ -8,9 +8,10 @@ import io
 
 import numpy as np
 
-from Stoner.Core import DataFile
-from Stoner.core.exceptions import StonerLoadError, assertion
-from Stoner.core.base import string_to_type
+from ..Core import DataFile
+from ..core.exceptions import StonerLoadError, assertion
+from ..core.base import string_to_type
+from ..tools.file import FileManager
 
 
 class GenXFile(DataFile):
@@ -36,7 +37,7 @@ class GenXFile(DataFile):
         pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
         i = 0
         ix = 0
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as datafile:
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as datafile:
             line = datafile.readline()
             match = pattern.match(line)
             match2 = pattern2.match(line)
@@ -142,7 +143,7 @@ class OVFFile(DataFile):
             self.filename = filename
 
         self._ptr = 0
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             line = next(data)
             self._ptr += len(line)
             line = line.strip()

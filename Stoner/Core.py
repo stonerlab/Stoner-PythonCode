@@ -40,7 +40,7 @@ from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
 from .core.utils import copy_into, tab_delimited
 from .tools.classes import subclasses
-from .tools.file import file_dialog
+from .tools.file import file_dialog, FileManager
 
 try:
     from tabulate import tabulate
@@ -645,7 +645,7 @@ class DataFile(
             self.get_filename("r")
         else:
             self.filename = filename
-        with io.open(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
+        with FileManager(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
             line = datafile.readline()
             if line.startswith("TDI Format 1.5"):
                 fmt = 1.5
@@ -693,22 +693,6 @@ class DataFile(
         if self.data.ndim == 2 and self.data.shape[1] > 0:
             self.column_headers = col_headers_tmp
         return self
-
-    # def _parse_metadata(self, key, value):
-    #     """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
-
-    #     Args:
-    #         key (string):
-    #             The name of the metadata parameter to be written, possibly including a type hinting string.
-    #         value (any):
-    #             The value of the item of metadata.
-
-    #     Note:
-    #         Uses the typehint to set the type correctly in the dictionary
-
-    #         All the clever work of managing the typehinting is done in the metadata dictionary object now.
-    #     """
-    #     self.metadata[key] = value
 
     def __repr_core__(self, shorten=1000):
         """Actuall do the repr work, but allow for a shorten parameter to save printing big files out to disc."""

@@ -15,6 +15,7 @@ import numpy as np
 from ..Core import DataFile
 from ..compat import str2bytes, Hyperspy_ok, hs
 from ..core.exceptions import StonerLoadError
+from ..tools.file import FileManager
 
 
 class CSVFile(DataFile):
@@ -152,7 +153,7 @@ class KermitPNGFile(DataFile):
     def _check_signature(self, filename):
         """Check that this is a PNG file and raie a StonerLoadError if not."""
         try:
-            with io.open(filename, "rb") as test:
+            with FileManager(filename, "rb") as test:
                 sig = test.read(8)
             sig = [x for x in sig]
             if self.debug:

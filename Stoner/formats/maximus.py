@@ -19,6 +19,7 @@ from ..Image import ImageFile, ImageStack, ImageArray
 from ..Core import DataFile
 from ..compat import string_types
 from ..HDF5 import confirm_hdf5, close_file, _open_filename, _raise_error
+from ..tools.file import FileManager
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
 
@@ -378,7 +379,8 @@ def hdr_to_dict(filename, to_python=True):
     nan = re.compile(r"([\-0-9\.]+\#QNAN)")  # Handle NaN values
 
     # Use oathlib to suck in the file
-    hdr = Path(filename).read_text()
+    with FileManager(filename, "r") as f:
+        hdr = f.read()
     # Simple string replacements first
     stage1 = hdr.replace("=", ":").replace(";", ",").replace("(", "[").replace(")", "]")
     # Wrap in { }

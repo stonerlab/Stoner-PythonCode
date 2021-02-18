@@ -9,10 +9,11 @@ import csv
 
 import numpy as np
 
-from Stoner.compat import bytes2str
-from Stoner.core.base import string_to_type
-import Stoner.Core as Core
+from ..compat import bytes2str
+from ..core.base import string_to_type
+from .. import Core
 from .generic import CSVFile
+from ..tools.file import FileManager
 
 
 class BigBlueFile(CSVFile):
@@ -70,7 +71,7 @@ class BirgeIVFile(Core.DataFile):
         else:
             self.filename = filename
         ix = 0
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
             if not re.compile(r"\d{1,2}/\d{1,2}/\d{4}").match(f.readline()):
                 raise Core.StonerLoadError("Not a BirgeIVFile as no date on first line")
             data = f.readlines()
@@ -136,7 +137,7 @@ class MokeFile(Core.DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-        with io.open(self.filename, mode="rb") as f:
+        with FileManager(self.filename, mode="rb") as f:
             line = bytes2str(f.readline()).strip()
             if line != "#Leeds CM Physics MOKE":
                 raise Core.StonerLoadError("Not a Core.DataFile from the Leeds MOKE")
@@ -181,7 +182,7 @@ class FmokeFile(Core.DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-        with io.open(self.filename, mode="rb") as f:
+        with FileManager(self.filename, mode="rb") as f:
             try:
                 value = [float(x.strip()) for x in bytes2str(f.readline()).split("\t")]
             except (TypeError, ValueError) as err:
@@ -221,7 +222,7 @@ class EasyPlotFile(Core.DataFile):
         dataend = -1
 
         i = 0
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:
             if "******** EasyPlot save file ********" not in data.read(1024):
                 raise Core.StonerLoadError("Not an EasyPlot Save file?")
             data.seek(0)
@@ -322,7 +323,7 @@ class PinkLibFile(Core.DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
             if "PINKlibrary" not in f.readline():
                 raise Core.StonerLoadError("Not a PINK file")
             f = f.readlines()
@@ -336,7 +337,7 @@ class PinkLibFile(Core.DataFile):
                     tmp = line.strip("#").split(":")
                     self.metadata[tmp[0].strip()] = ":".join(tmp[1:]).strip()
             column_headers = f[header_line].strip("#\t ").split("\t")
-        data = np.genfromtxt(self.filename, dtype="float", delimiter="\t", invalid_raise=False, comments="#")
+            data = np.genfromtxt(f, dtype="float", delimiter="\t", invalid_raise=False, comments="#")
         self.data = data[:, 0:-2]  # Deal with an errant tab at the end of each line
         self.column_headers = column_headers
         if np.all([h in column_headers for h in ("T (C)", "R (Ohm)")]):

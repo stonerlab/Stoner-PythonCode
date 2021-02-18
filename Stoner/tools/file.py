@@ -6,7 +6,7 @@ import pathlib
 from traceback import format_exc
 from typing import Union, Sequence, Dict, Type, Tuple, Optional
 
-from ..compat import string_types
+from ..compat import string_types, path_types
 from .widgets import fileDialog
 from .classes import subclasses
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
@@ -14,7 +14,7 @@ from ..core.base import regexpDict, metadataObject
 
 from ..core.Typing import Filename
 
-__all__ = ["file_dialog", "get_file_name_type", "auto_load_classes", "get_mime_type"]
+__all__ = ["file_dialog", "get_file_name_type", "auto_load_classes", "get_mime_type", "FileManager"]
 
 try:
     from magic import Magic as filemagic, MAGIC_MIME_TYPE
@@ -176,3 +176,49 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
     else:
         mimetype = None
     return mimetype
+
+
+class FileManager:
+
+    """Simple context manager that allows opening files or working with alreadt open string buffers."""
+
+    def __init__(self, filename, *args, **kargs):
+        """Store the parameters passed to the context manager."""
+        self.filename = filename
+        self.args = args
+        self.kargs = kargs
+        if isinstance(filename, path_types):
+            self.mode = "open"
+        elif isinstance(filename, io.TextIOBase):
+            self.mode = "textio"
+        elif isinstance(filename, io.IOBase):
+            self.mode = "bytesio"
+        elif isinstance(filename, bytes):
+            if len(args) > 0 and args[0][-1] == "b":
+                self.filename = io.BytesIO(filename)
+                self.mode = "bytesio"
+            else:
+                self.filename = io.StringIO(filename.decode("utf-8"))
+                self.mode = "textio"
+        else:
+            raise TypeError(f"Unrecognised filename type {type(filename)}")
+
+    def __enter__(self):
+        """Either open the file or reset the buffer."""
+        if self.mode == "open":
+            self.file = open(self.filename, *self.args, **self.kargs)
+        elif self.mode in ["bytesio", "textio"]:
+            self.filename.seek(0)
+            self.file = self.filename
+        else:
+            raise TypeError(f"Unrecognised filename type {type(self.filename)}")
+        return self.file
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        """Close the open file, or reset the buffer position."""
+        if self.mode == "open":
+            self.file.close()
+        elif self.mode in ["textio", "bytesio"]:
+            self.file.seek(0)
+        else:
+            raise TypeError(f"Unrecognised filename type {type(self.filename)}")

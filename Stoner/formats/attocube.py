@@ -13,10 +13,11 @@ from scipy.interpolate import griddata
 from scipy.optimize import curve_fit
 import h5py
 
-from Stoner.compat import string_types, bytes2str
-from Stoner.core.base import typeHintedDict
-from Stoner.Image import ImageStack, ImageFile, ImageArray
-from Stoner.HDF5 import close_file, _open_filename, _raise_error
+from ..compat import string_types, bytes2str
+from ..core.base import typeHintedDict
+from ..Image import ImageStack, ImageFile, ImageArray
+from ..HDF5 import close_file, _open_filename, _raise_error
+from ..tools.file import FileManager
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
@@ -207,7 +208,7 @@ class AttocubeScanMixin:
                 The modififed scan stack.
         """
         filename = path.join(self.directory, f"{root_name}-Parameters.txt")
-        with open(filename, "r") as parameters:
+        with FileManager(filename, "r") as parameters:
             if not parameters.readline().startswith("Daisy Parameter Snapshot"):
                 raise IOError("Parameters file exists but does not have correct header")
             for line in parameters:
@@ -225,7 +226,7 @@ class AttocubeScanMixin:
 
     def _load_asc(self, filename):
         """Load a single scan file from ascii data."""
-        with open(filename, "r") as data:
+        with FileManager(filename, "r") as data:
             if not data.readline().startswith("# Daisy frame view snapshot"):
                 raise ValueError(f"{filename} lacked the correct header line")
             tmp = ImageFile()

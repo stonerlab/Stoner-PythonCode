@@ -4,15 +4,15 @@
 
 __all__ = ["BNLFile", "MDAASCIIFile", "OpenGDAFile", "RasorFile", "SNSFile"]
 # Standard Library imports
-import io
 import linecache
 import re
 
 import numpy as np
 
-import Stoner.Core as Core
-from Stoner.compat import str2bytes
-from Stoner.core.base import string_to_type
+from .. import Core
+from ..compat import str2bytes
+from ..core.base import string_to_type
+from ..tools.file import FileManager
 
 
 class BNLFile(Core.DataFile):
@@ -47,7 +47,7 @@ class BNLFile(Core.DataFile):
 
     def __find_lines(self):
         """Return an array of ints [header_line,data_line,scan_line,date_line,motor_line]."""
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as fp:
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as fp:
             self.line_numbers = [0, 0, 0, 0, 0]
             counter = 0
             for line in fp:
@@ -141,7 +141,7 @@ class MDAASCIIFile(Core.DataFile):
         else:
             self.filename = filename
         i = [0, 0, 0, 0]
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             for i[0], line in enumerate(data):
                 if (
                     i[0] == 0 and line.strip() != "## mda2ascii 1.2 generated output"
@@ -235,7 +235,7 @@ class OpenGDAFile(Core.DataFile):
         else:
             self.filename = filename
         i = 0
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as f:
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as f:
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "&SRS":
@@ -283,7 +283,7 @@ class SNSFile(Core.DataFile):
         else:
             self.filename = filename
 
-        with io.open(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
+        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             line = data.readline()
             if not line.strip().startswith(
                 "# Datafile created by QuickNXS 0.9.39"
