@@ -101,8 +101,11 @@ def get_file_name_type(
         filename = file_dialog("r", filename, filetype, parent)
     elif isinstance(filename, io.IOBase):  # Opened file
         filename = filename.name
-    if not filename.exists():
-        raise IOError(f"Cannot find {filename} to load")
+    try:
+        if not filename.exists():
+            raise IOError(f"Cannot find {filename} to load")
+    except AttributeError as err:
+        raise IOError(f"Unable to tell if file exists - {type(filename)}") from err
     return filename, filetype
 
 

@@ -12,6 +12,7 @@ import os.path as path
 import tempfile
 import Stoner
 import Stoner.Zip as SZ
+import zipfile as zf
 
 pth=path.dirname(__file__)
 
@@ -28,6 +29,11 @@ def test_zipFile(tmpdir):
     z["Loaded as"]=z2["Loaded as"]
     z["Stoner.class"]=z2["Stoner.class"]
     assert z==z2
+    with zf.ZipFile(path.join(tmpdir,"TDI_Format_RT.zip"),"r") as open_zipfile:
+        z3=Stoner.Data().load(open_zipfile, filetype=SZ.ZippedFile)
+    z3["Stoner.class"]=z2["Stoner.class"]
+    assert z2==z3
+
 
 def test_zipfolder():
     #Test constructor from DataFolder

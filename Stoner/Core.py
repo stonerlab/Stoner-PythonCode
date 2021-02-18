@@ -27,7 +27,7 @@ import numpy as np
 from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
-from .compat import string_types, int_types, index_types, _pattern_type
+from .compat import string_types, int_types, index_types, _pattern_type, path_types
 from .tools import all_type, isIterable, isLikeList, get_option, make_Data
 from .tools.file import get_file_name_type, auto_load_classes
 
@@ -1381,8 +1381,10 @@ class DataFile(
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
         loaded_class = kargs.pop("loaded_class", False)
-
-        filename, filetype = get_file_name_type(filename, filetype, DataFile)
+        if isinstance(filename, path_types):
+            filename, filetype = get_file_name_type(filename, filetype, DataFile)
+        elif not auto_load and not filetype:
+            raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA
             ret = auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs)
             if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!
