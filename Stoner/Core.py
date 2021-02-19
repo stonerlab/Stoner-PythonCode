@@ -16,6 +16,7 @@ import re
 
 # import pdb # for debugging
 import os
+import warnings
 import io
 import copy
 import os.path as path
@@ -1260,83 +1261,74 @@ class DataFile(metadataObject):
         """Actually load the data from disc assuming a .tdi file format.
 
         Args:
-            filename (str): Path to filename to be loaded. If None or False, a dialog bax is raised to
-                ask for the filename.
+            filename (str):
+                Path to filename to be loaded. If None or False, a dialog bax is raised to ask for the filename.
 
         Returns:
-            DataFile: A copy of the newly loaded :py:class`DataFile` object.
+            DataFile:
+                A copy of the newly loaded :py:class`DataFile` object.
 
         Exceptions:
-            StonerLoadError: Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
+            StonerLoadError:
+                Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
 
         Note:
             The *_load* methods shouldbe overidden in each child class to handle the process of loading data from
-                disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
-                the loading class can try a different sub-class instead.
+            disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
+            the loading class can try a different sub-class instead.
         """
         if filename is None or not filename:
             self.get_filename("r")
         else:
             self.filename = filename
-        with io.open(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
-            try:
-                reader = csv.reader(datafile, dialect=tab_delimited())
-                row = next(reader)
-                if row[0].strip() == "TDI Format 1.5":
-                    fmt = 1.5
-                elif row[0].strip() == "TDI Format=Text 1.0":
-                    fmt = 1.0
-                else:
-                    raise StonerLoadError("Not a TDI File")
-            except Exception:
+        with open(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
+            line = datafile.readline()
+            if line.startswith("TDI Format 1.5"):
+                fmt = 1.5
+            elif line.startswith("TDI Format=Text 1.0"):
+                fmt = 1.0
+            else:
                 raise StonerLoadError("Not a TDI File")
-            col_headers_tmp = [x.strip() for x in row[1:]]
-            data_array = 0
-            metaDataArray = 0
+
+            datafile.seek(0)
+            reader = csv.reader(datafile, dialect=tab_delimited())
             cols = 0
-            for row in reader:  # Now read through the metadata columns
-                if len(row) > 1 and row[1].strip() != "":
-                    data_array += 1
-                    still_data = True
-                else:
-                    still_data = False
-                if row[0].strip() == "":  # end of metadata:
-                    break
-                else:
-                    cols = max(cols, len(row))
-                    metaDataArray += 1
-                    self.metadata.import_key(row[0])
-        # End of metadata reading, close filke and reopen to read data
-        if still_data:  # data extends beyond metada - read with genfromtxt
-            self.data = DataArray(
-                _np_.genfromtxt(
-                    self.filename,
-                    skip_header=1,
-                    usemask=True,
-                    delimiter="\t",
-                    usecols=range(1, cols),
-                    invalid_raise=False,
-                    comments="\0",
-                )
+            for ix, metadata in enumerate(reader):
+                if ix == 0:
+                    row = metadata
+                    continue
+                if len(metadata) < 1:
+                    continue
+                if cols == 0:
+                    cols = len(metadata)
+                if len(metadata) > 1:
+                    max_rows = ix + 1
+                if "=" in metadata[0]:
+                    self.metadata.import_key(metadata[0])
+        col_headers_tmp = [x.strip() for x in row[1:]]
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", "Some errors were detected !")
+            data = _np_.genfromtxt(
+                self.filename,
+                skip_header=1,
+                usemask=True,
+                delimiter="\t",
+                usecols=range(1, cols),
+                invalid_raise=False,
+                comments="\0",
+                missing_values=[""],
+                filling_values=[_np_.nan],
+                max_rows=max_rows,
             )
-        elif data_array > 0:  # some data less than metadata
-            footer = metaDataArray - data_array
-            self.data = DataArray(
-                _np_.genfromtxt(
-                    self.filename,
-                    skip_header=1,
-                    skip_footer=footer,
-                    usemask=True,
-                    delimiter="\t",
-                    comments="\0",
-                    usecols=range(1, cols),
-                )
-            )
-        else:
-            self.data = _np_.atleast_2d(_np_.array([]))
-        if len(self.data.shape) >= 2 and self.data.shape[1] > 0:
-            self.column_headers = col_headers_tmp
+        if data.ndim < 2:
+            breakpoint()
+            data = _np_.ma.atleast_2d(data)
+        retain = _np_.all(_np_.isnan(data), axis=1)
+        self.data = DataArray(data[~retain])
         self["TDI Format"] = fmt
+        if self.data.ndim == 2 and self.data.shape[1] > 0:
+            self.column_headers = col_headers_tmp
+        return self
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
