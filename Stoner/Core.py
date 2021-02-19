@@ -1281,7 +1281,7 @@ class DataFile(metadataObject):
             self.get_filename("r")
         else:
             self.filename = filename
-        with open(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
+        with io.open(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
             line = datafile.readline()
             if line.startswith("TDI Format 1.5"):
                 fmt = 1.5

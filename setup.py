@@ -5,7 +5,8 @@ import sys, io
 
 
 def get_version():
-    with open("Stoner/__init__.py","r") as init:
+    pth = os.path.dirname(__file__)
+    with open(os.path.join(pth,"Stoner/__init__.py"),"r") as init:
         for line in init:
             line=line.strip()
             if line.startswith("__version_info__"):
