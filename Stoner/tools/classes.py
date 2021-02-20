@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
 """Useful Utility classes."""
 
-__all__ = ["attributeStore", "typedList", "Options", "get_option", "set_option", "itersubclasses", "subclasses"]
+__all__ = [
+    "attributeStore",
+    "typedList",
+    "Options",
+    "get_option",
+    "set_option",
+    "itersubclasses",
+    "subclasses",
+    "copy_into",
+]
 
 import copy
 from typing import Optional, Dict, Any, List, Iterable as IterableType, Union
@@ -278,3 +287,29 @@ class Options:
         for k in dir(self):
             s += f"{k} : {get_option(k)}\n"
         return s
+
+
+def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
+    """Copy the data associated with source to dest.
+
+    Args:
+        source(DataFile): The DataFile object to be copied from
+        dest (DataFile): The DataFile objrct to be changed by recieving the copiued data.
+
+    Returns:
+        The modified *dest* DataFile.
+
+    Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
+    overwrites the attributes that represent the data in the DataFile.
+    """
+    dest.data = source.data.copy()
+    dest.setas = source.setas
+    for attr in source._public_attrs:
+        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data"]:
+            continue
+        try:
+            setattr(dest, attr, copy.deepcopy(getattr(source, attr)))
+        except (NotImplementedError, TypeError):  # Deepcopying failed, so just copy a reference instead
+            setattr(dest, attr, getattr(source, attr))
+    dest._punlic_attrs = source._public_attrs
+    return dest

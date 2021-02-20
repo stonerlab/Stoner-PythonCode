@@ -11,7 +11,7 @@ from collections.abc import Mapping
 from typing import Union, List, Mapping as MappingType, Callable
 import numpy as np
 from ..compat import index_types, int_types
-from ..tools import all_type
+from ..tools import all_type, copy_into
 from .Typing import Numeric, Column_Index, Int_Types
 
 
@@ -197,31 +197,6 @@ def sub_core(other: Union[Int_Types, slice, Callable], newdata: "DataFile") -> "
         newdata = NotImplemented
     newdata._data._setas.shape = newdata.shape
     return newdata
-
-
-def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
-    """Copy the data associated with source to dest.
-
-    Args:
-        source(DataFile): The DataFile object to be copied from
-        dest (DataFile): The DataFile objrct to be changed by recieving the copiued data.
-
-    Returns:
-        The modified *dest* DataFile.
-
-    Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
-    overwrites the attributes that represent the data in the DataFile.
-    """
-    dest.data = source.data.copy()
-    dest.setas = source.setas
-    for attr in source._public_attrs:
-        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data"]:
-            continue
-        try:
-            setattr(dest, attr, copy.deepcopy(getattr(source, attr)))
-        except (NotImplementedError, TypeError):  # Deepcopying failed, so just copy a reference instead
-            setattr(dest, attr, getattr(source, attr))
-    return dest
 
 
 class tab_delimited(csv.Dialect):

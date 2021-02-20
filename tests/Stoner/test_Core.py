@@ -241,10 +241,10 @@ def test_dir():
                   '__le__', '__lt__', '__reversed__', '__slots__',"_abc_negative_cache","_abc_registry",
                   "_abc_negative_cache_version","_abc_cache","_abc_impl"])
     attrs=set(dir(selfd))-bad_keys
-    assert len(attrs)==246,"DataFile.__dir__ failed."
+    assert len(attrs)==247,"DataFile.__dir__ failed."
     selfd.setas.clear()
     attrs=set(dir(selfd))-bad_keys
-    assert len(attrs)==244,"DataFile.__dir__ failed."
+    assert len(attrs)==245,"DataFile.__dir__ failed."
 
 def test_filter():
     global selfd, selfd1, selfd2, selfd3, selfd4

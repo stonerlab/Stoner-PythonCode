@@ -17,6 +17,7 @@ from .Core import DataFile, StonerLoadError
 from .Folders import DiskBasedFolderMixin
 from .folders.core import baseFolder
 from .folders.utils import pathjoin
+from .tools import copy_into, make_Data
 
 
 def test_is_zip(filename, member=""):
@@ -97,6 +98,8 @@ class ZippedFile(DataFile):
                 self.__init__(*args, **kargs)
             else:
                 super().__init__(*args, **kargs)
+        else:
+            super().__init__(*args, **kargs)
 
     def _extract(self, archive, member):
         """Responsible for actually reading the zip file archive.
@@ -110,10 +113,11 @@ class ZippedFile(DataFile):
         Return:
             A datafile like instance
         """
-        tmp = DataFile()
         info = archive.getinfo(member)
-        data = bytes2str(archive.read(info))  # In Python 3 this would be a bytes
-        self.__init__(tmp << data)
+        data = archive.read(info)  # In Python 3 this would be a bytes
+        tmp = make_Data(data)
+        copy_into(tmp, self)
+        # self.__init__(tmp << data)
         self.filename = path.join(archive.filename, member)
         return self
 

@@ -259,7 +259,7 @@ class DataFile(
         """Handle constructor with 1 arguement - called from __init__."""
         arg = args[0]
         inits = {
-            (str, bool, pathlib.PurePath, io.IOBase): self._init_load,
+            path_types + (bool, bytes, io.IOBase): self._init_load,
             np.ndarray: self._init_array,
             DataFile: self._init_datafile,
             pd.DataFrame: self._init_pandas,
@@ -671,19 +671,20 @@ class DataFile(
                     self.metadata.import_key(metadata[0])
         col_headers_tmp = [x.strip() for x in row[1:]]
         with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", "Some errors were detected !")
-            data = np.genfromtxt(
-                self.filename,
-                skip_header=1,
-                usemask=True,
-                delimiter="\t",
-                usecols=range(1, cols),
-                invalid_raise=False,
-                comments="\0",
-                missing_values=[""],
-                filling_values=[np.nan],
-                max_rows=max_rows,
-            )
+            with FileManager(self.filename, "r") as datafile:
+                warnings.filterwarnings("ignore", "Some errors were detected !")
+                data = np.genfromtxt(
+                    datafile,
+                    skip_header=1,
+                    usemask=True,
+                    delimiter="\t",
+                    usecols=range(1, cols),
+                    invalid_raise=False,
+                    comments="\0",
+                    missing_values=[""],
+                    filling_values=[np.nan],
+                    max_rows=max_rows,
+                )
         if data.ndim < 2:
             breakpoint()
             data = np.ma.atleast_2d(data)
