@@ -16,7 +16,7 @@ from .. import Core
 from ..compat import str2bytes, bytes2str
 from ..core.exceptions import StonerAssertionError, assertion, StonerLoadError
 from ..core.base import string_to_type
-from ..tools.file import FileManager
+from ..tools.file import FileManager, SizedFileManager
 
 
 class LSTemperatureFile(Core.DataFile):
@@ -513,8 +513,8 @@ class SPCFile(Core.DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
-        self._filesize = os.stat(self.filename).st_size
-        with FileManager(filename, "rb") as f:
+        with SizedFileManager(filename, "rb") as (f, length):
+            self._filesize = length
             spchdr = struct.unpack(b"BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s", f.read(512))
             keys = (
                 "ftflgs",

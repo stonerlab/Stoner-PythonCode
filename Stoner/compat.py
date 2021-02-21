@@ -90,16 +90,18 @@ int_types = (int,)
 path_types = (str, PurePath)
 
 
-def str2bytes(s):
+def str2bytes(data):
     """Encode a unicode string into UTF-8."""
-    return bytes(str(s), "utf-8")
+    if isinstance(data, bytes):
+        return data
+    return bytes(str(data), "utf-8")
 
 
-def bytes2str(b):
+def bytes2str(data):
     """Decode byte string back to univcode."""
-    if isinstance(b, bytes):
-        return b.decode("utf-8", "ignore")
-    return b
+    if isinstance(data, bytes):
+        return data.decode("utf-8", "ignore")
+    return data
 
 
 def get_filedialog(what="file", **opts):

@@ -134,6 +134,12 @@ def test_fail_to_load():
 def test_arb_class_load():
     d=Data(datadir/"TDI_Format_RT.txt", filetype="dummy.ArbClass")
 
+def test_url_load():
+    """Test URL scheme openers."""
+
+    assert Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/hairboRaman.spc")==Data(__datapath__/"hairboRaman.spc")
+    assert Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql")==Data(__datapath__/"New-XRay-Data.dql")
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb", __file__])

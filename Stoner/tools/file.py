@@ -2,11 +2,13 @@
 """General fle related tools."""
 from importlib import import_module
 import io
+import os
 import pathlib
+import urllib
 from traceback import format_exc
 from typing import Union, Sequence, Dict, Type, Tuple, Optional
 
-from ..compat import string_types, path_types
+from ..compat import string_types, path_types, bytes2str, str2bytes
 from .widgets import fileDialog
 from .classes import subclasses
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
@@ -14,12 +16,22 @@ from ..core.base import regexpDict, metadataObject
 
 from ..core.Typing import Filename
 
-__all__ = ["file_dialog", "get_file_name_type", "auto_load_classes", "get_mime_type", "FileManager"]
+__all__ = [
+    "file_dialog",
+    "get_file_name_type",
+    "auto_load_classes",
+    "get_mime_type",
+    "FileManager",
+    "SizedFileManager",
+    "URL_SCHEMES",
+]
 
 try:
     from magic import Magic as filemagic, MAGIC_MIME_TYPE
 except ImportError:
     filemagic = None
+
+URL_SCHEMES = ["http", "https"]
 
 
 def file_dialog(
@@ -168,7 +180,7 @@ def auto_load_classes(
 
 def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Optional[str]:
     """Get the mime type of the file if filemagic is available."""
-    if filemagic is not None and isinstance(filename, path_types):
+    if filemagic is not None and isinstance(filename, path_types) and urllib.parse.urlparse(filename) in URL_SCHEMES:
         with filemagic(flags=MAGIC_MIME_TYPE) as m:
             mimetype = m.id_filename(str(filename))
         if debug:
@@ -188,17 +200,28 @@ class FileManager:
         self.args = args
         self.kargs = kargs
         if isinstance(filename, path_types):
+            parsed = urllib.parse.urlparse(str(filename))
+            if parsed.scheme not in URL_SCHEMES:
+                filename = pathlib.Path(filename)
+            else:
+                filename = urllib.request.urlopen(filename)
+        if isinstance(filename, path_types):
             self.mode = "open"
         elif isinstance(filename, io.TextIOBase):
             self.mode = "textio"
         elif isinstance(filename, io.IOBase):
-            self.mode = "bytesio"
+            if len(args) > 0 and args[0][-1] == "b":
+                self.mode = "bytesio"
+                self.filename = io.BytesIO(str2bytes(filename.read()))
+            else:
+                self.filename = io.StringIO(bytes2str(filename.read()))
+                self.mode = "textio"
         elif isinstance(filename, bytes):
             if len(args) > 0 and args[0][-1] == "b":
                 self.filename = io.BytesIO(filename)
                 self.mode = "bytesio"
             else:
-                self.filename = io.StringIO(filename.decode("utf-8"))
+                self.filename = io.StringIO(bytes2str(filename))
                 self.mode = "textio"
         else:
             raise TypeError(f"Unrecognised filename type {type(filename)}")
@@ -208,7 +231,10 @@ class FileManager:
         if self.mode == "open":
             self.file = open(self.filename, *self.args, **self.kargs)
         elif self.mode in ["bytesio", "textio"]:
-            self.filename.seek(0)
+            try:
+                self.filename.seek(0)
+            except io.UnsupportedOperation:
+                pass
             self.file = self.filename
         else:
             raise TypeError(f"Unrecognised filename type {type(self.filename)}")
@@ -219,6 +245,31 @@ class FileManager:
         if self.mode == "open":
             self.file.close()
         elif self.mode in ["textio", "bytesio"]:
-            self.file.seek(0)
+            try:
+                self.file.seek(0)
+            except (ValueError, io.UnsupportedOperation):
+                pass
         else:
             raise TypeError(f"Unrecognised filename type {type(self.filename)}")
+
+
+class SizedFileManager(FileManager):
+
+    """Context manager that figures out the size of the file as well as opening it."""
+
+    def __enter__(self):
+        """Add the file length information to the context variable."""
+        super().__enter__()
+        if self.mode == "open":
+            length = os.stat(self.filename).st_size
+        elif self.mode in ["textio", "bytesio"]:
+            if self.file.seekable:
+                pos = self.file.tell()
+                self.file.seek(0, 2)
+                length = self.file.tell()
+                self.file.seek(pos)
+            else:
+                length = -1
+        else:
+            length = len(self.file)
+        return self.file, length

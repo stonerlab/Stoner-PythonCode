@@ -6,6 +6,7 @@ __all__ = ["DataFilePropertyMixin"]
 import os
 import copy
 import pathlib
+import urllib
 
 import numpy as np
 from numpy import ma
@@ -16,6 +17,7 @@ from ..compat import classproperty, path_types
 from .array import DataArray
 from .utils import copy_into
 from ..tools.classes import subclasses
+from ..tools.file import URL_SCHEMES
 
 try:
     from tabulate import tabulate
@@ -127,7 +129,7 @@ class DataFilePropertyMixin:
     @filename.setter
     def filename(self, filename):
         """Store the DataFile filename."""
-        if isinstance(filename, path_types):
+        if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)) in URL_SCHEMES:
             self._filename = pathlib.Path(filename)
         else:
             self._filename = filename

@@ -16,6 +16,7 @@ import io
 import copy
 import pathlib
 import warnings
+import urllib
 
 from collections.abc import MutableSequence, Mapping, Iterable
 import inspect as _inspect_
@@ -40,7 +41,7 @@ from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
 from .core.utils import copy_into, tab_delimited
 from .tools.classes import subclasses
-from .tools.file import file_dialog, FileManager
+from .tools.file import file_dialog, FileManager, URL_SCHEMES
 
 try:
     from tabulate import tabulate
@@ -669,9 +670,9 @@ class DataFile(
                     max_rows = ix + 1
                 if "=" in metadata[0]:
                     self.metadata.import_key(metadata[0])
-        col_headers_tmp = [x.strip() for x in row[1:]]
-        with warnings.catch_warnings():
-            with FileManager(self.filename, "r") as datafile:
+            col_headers_tmp = [x.strip() for x in row[1:]]
+            with warnings.catch_warnings():
+                datafile.seek(0)
                 warnings.filterwarnings("ignore", "Some errors were detected !")
                 data = np.genfromtxt(
                     datafile,
@@ -686,7 +687,6 @@ class DataFile(
                     max_rows=max_rows,
                 )
         if data.ndim < 2:
-            breakpoint()
             data = np.ma.atleast_2d(data)
         retain = np.all(np.isnan(data), axis=1)
         self.data = DataArray(data[~retain])
@@ -1366,7 +1366,7 @@ class DataFile(
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
         loaded_class = kargs.pop("loaded_class", False)
-        if isinstance(filename, path_types):
+        if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
             filename, filetype = get_file_name_type(filename, filetype, DataFile)
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
