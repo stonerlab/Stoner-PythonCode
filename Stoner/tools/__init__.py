@@ -24,6 +24,7 @@ __all__ = [
     "quantize",
     "tex_escape",
     "typedList",
+    "Options",
     "get_option",
     "set_option",
     "ordinal",

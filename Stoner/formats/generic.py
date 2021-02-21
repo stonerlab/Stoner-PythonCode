@@ -4,9 +4,7 @@
 __all__ = ["CSVFile", "HyperSpyFile", "KermitPNGFile", "TDMSFile"]
 import csv
 import io
-import linecache
 import re
-from copy import copy
 from collections.abc import Mapping
 
 import PIL
@@ -16,6 +14,36 @@ from ..Core import DataFile
 from ..compat import str2bytes, Hyperspy_ok, hs
 from ..core.exceptions import StonerLoadError
 from ..tools.file import FileManager
+
+
+def _delim_detect(line):
+    """Detect a delimiter in a line.
+
+    Args:
+        line(str):
+            String to search for delimiters in.
+
+    Returns:
+        (str):
+            Delimiter to use.
+
+    Raises:
+        StnerLoadError:
+            If delimiter cannot be located.
+    """
+    quotes = re.compile(r"([\"\'])[^\1]*\1")
+    line = quotes.sub("", line)  # Remove quoted strings first
+    current = (None, len(line))
+    for delim in "\t ,;":
+        try:
+            idx = line.index(delim)
+        except ValueError:
+            continue
+        if idx < current[1]:
+            current = (delim, idx)
+    if current[0] is None:
+        raise StonerLoadError("Unable to find a delimiter in the line")
+    return current[0]
 
 
 class CSVFile(DataFile):
@@ -52,46 +80,46 @@ class CSVFile(DataFile):
         Returns:
             A copy of the current object after loading the data.
         """
-        defaults = copy(self._defaults)
-        defaults.update(kargs)
-        keep = set(kargs.keys()) - (set(self._defaults.keys()) | set(["auto_load", "filetype"]))
-        kargs = {k: kargs[k] for k in keep}
-        header_line = defaults["header_line"]
-        data_line = defaults["data_line"]
-        data_delim = defaults["data_delim"]
-        header_delim = defaults["header_delim"]
+        header_line = kargs.pop("header_line", self._defaults["header_line"])
+        data_line = kargs.pop("data_line", self._defaults["data_line"])
+        data_delim = kargs.pop("data_delim", self._defaults["data_delim"])
+        header_delim = kargs.pop("header_delim", self._defaults["header_delim"])
+
         if filename is None or not filename:
             self.get_filename("r")
         else:
             self.filename = filename
-        if header_line is not None:
-            try:
-                header_string = linecache.getline(self.filename, header_line + 1)
-                header_string = re.sub(r'["\n]', "", header_string)
-                header_string.index(header_delim)
-            except (ValueError, SyntaxError) as err:
-                linecache.clearcache()
-                raise StonerLoadError("No Delimiters in header line") from err
-            column_headers = [x.strip() for x in header_string.split(header_delim)]
-        else:
-            column_headers = ["Column" + str(x) for x in range(np.shape(self.data)[1])]
-            try:
-                data_test = linecache.getline(self.filename, data_line + 1)
-            except SyntaxError as err:
-                raise StonerLoadError("linecache fell over - not a text file?") from err
-            if data_delim is None:
-                for data_delim in ["\t", ",", ";", " "]:
-                    if data_delim in data_test:
+
+        if data_delim is None or header_delim is None:  #
+            with FileManager(self.filename, "r") as datafile:
+                lines = datafile.readlines()
+            if header_line is not None and header_delim is None:
+                header_delim = _delim_detect(lines[header_line])
+            if data_line is not None and data_delim is None:
+                data_delim = _delim_detect(lines[data_line])
+
+        with FileManager(self.filename, "r") as datafile:
+            if header_line is not None:
+                for ix, line in enumerate(datafile):
+                    if ix == header_line:
                         break
                 else:
-                    raise StonerLoadError("No delimiters in data lines")
-            elif data_delim not in data_test:
-                linecache.clearcache()
-                raise StonerLoadError("No delimiters in data lines")
+                    raise StonerLoadError("Ran out of file before readching header")
+                header = line.strip()
+                try:
+                    column_headers = next(csv.reader(io.StringIO(header), delimiter=header_delim))
+                    data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line - header_line)
+                except (TypeError, ValueError, csv.Error) as err:
+                    raise StonerLoadError("Header and data on the same line") from err
+            else:  # Generate
+                try:
+                    data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line)
+                except (TypeError, ValueError) as err:
+                    raise StonerLoadError("Failed to open file as CSV File") from err
+                column_headers = ["Column" + str(x) for x in range(np.shape(data)[1])]
 
-        self.data = np.genfromtxt(self.filename, dtype="float", delimiter=data_delim, skip_header=data_line)
+        self.data = data
         self.column_headers = column_headers
-        linecache.clearcache()
         self._kargs = kargs
         return self
 
@@ -112,7 +140,7 @@ class CSVFile(DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog("w")
-        with open(filename, "w") as outfile:
+        with FileManager(filename, "w") as outfile:
             spamWriter = csv.writer(outfile, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
             i = 0
             spamWriter.writerow(self.column_headers)
