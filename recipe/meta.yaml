@@ -37,6 +37,7 @@ requirements:
     - imreg_dft>=2.0
     - multiprocess>=0.70
     - dill>=0.2.8
+    - urllib3>=1.26
   run:
     - python
     - scipy>1.4
@@ -56,6 +57,7 @@ requirements:
     - imreg_dft>=2.0
     - multiprocess>=0.70
     - dill>=0.2.8
+    - urllib3>1.26
 
 about:
   home: https://github.com/gb119/Stoner-PythonCode/

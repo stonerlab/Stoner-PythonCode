@@ -11,3 +11,4 @@ statsmodels
 multiprocess
 asteval
 lmfit
+urllib3>=1.26
