@@ -180,7 +180,11 @@ def auto_load_classes(
 
 def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Optional[str]:
     """Get the mime type of the file if filemagic is available."""
-    if filemagic is not None and isinstance(filename, path_types) and urllib.parse.urlparse(filename) in URL_SCHEMES:
+    if (
+        filemagic is not None
+        and isinstance(filename, path_types)
+        and urllib.parse.urlparse(str(filename)).scheme in URL_SCHEMES
+    ):
         with filemagic(flags=MAGIC_MIME_TYPE) as m:
             mimetype = m.id_filename(str(filename))
         if debug:
