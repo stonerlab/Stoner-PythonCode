@@ -247,7 +247,7 @@ class DiskBasedFolderMixin:
             tmp = self.type(self.loader(fname, **self.extra_args))
         except StonerUnrecognisedFormat:
             return None
-        if not isinstance(getattr(tmp, "filename", None), string_types):
+        if not isinstance(getattr(tmp, "filename", None), path_types) or len(getattr(tmp, "filename", "")) == 0:
             tmp.filename = path.basename(fname)
         # Process file hooks
         tmp = self.on_load_process(tmp)

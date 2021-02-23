@@ -890,7 +890,7 @@ class ImageFile(metadataObject):
         """Pass through to ImageArray."""
         try:
             ret = self.image.__getitem__(n)
-            if isinstance(ret, ImageArray):
+            if isinstance(ret, ImageArray) and ret.ndim == 2:
                 retval = self.clone
                 retval.image = ret
                 return retval
