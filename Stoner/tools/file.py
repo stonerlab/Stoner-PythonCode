@@ -183,7 +183,7 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
     if (
         filemagic is not None
         and isinstance(filename, path_types)
-        and urllib.parse.urlparse(str(filename)).scheme in URL_SCHEMES
+        and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES
     ):
         with filemagic(flags=MAGIC_MIME_TYPE) as m:
             mimetype = m.id_filename(str(filename))

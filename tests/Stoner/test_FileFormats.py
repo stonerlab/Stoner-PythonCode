@@ -136,7 +136,6 @@ def test_arb_class_load():
 
 def test_url_load():
     """Test URL scheme openers."""
-
     assert Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/hairboRaman.spc")==Data(__datapath__/"hairboRaman.spc")
     assert Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql")==Data(__datapath__/"New-XRay-Data.dql")
 
