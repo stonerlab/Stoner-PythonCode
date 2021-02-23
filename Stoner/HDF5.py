@@ -13,6 +13,7 @@ __all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage"]
 import importlib
 import os.path as path
 import os
+import pathlib
 
 import h5py
 import numpy as np
@@ -65,7 +66,7 @@ def confirm_hdf5(filename, raises=True):
         StonerLoadError:
             If the file does npt have the hdf5 magic bytes.
     """
-    if not os.path.exists(filename):
+    if isinstance(filename, path_types) and not os.path.exists(filename):
         if raises:
             raise StonerLoadError(f"{filename} not found!")
         return False
@@ -209,6 +210,7 @@ class HDF5File(DataFile):
         else:
             self.filename = filename
         if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
+            confirm_hdf5(self.filename, raises=True)
             f = _open_filename(filename)
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
