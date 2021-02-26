@@ -731,9 +731,11 @@ class SLS_STXMFile(DataFile):
             self.metadata[f"{root}.{attr}"] = group.attrs[attr]
 
 
-class STXMImage(ImageFile):  # pylint: disable=no-member
+class STXMImage(ImageFile):
 
     """An instance of KerrArray that will load itself from a Swiss Light Source STXM image."""
+
+    # pylint: disable=no-member
 
     _reduce_metadata = False
 

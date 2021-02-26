@@ -691,7 +691,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 )
 @class_modifier(imagefuncs, overload=True, adaptor=image_file_adaptor)
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
-class ImageFile(metadataObject):  # pylint: disable=no-member
+class ImageFile(metadataObject):
 
     """An Image file type that is analagous to :py:class:`Stoner.Data`.
 
@@ -761,6 +761,8 @@ class ImageFile(metadataObject):  # pylint: disable=no-member
 
             np.abs(imarray) #returns ImageArray type
     """
+
+    # pylint: disable=no-member
 
     _image = None
     _protected_attrs = ["_fromstack"]  # these won't be passed through to self.image attrs
