@@ -255,7 +255,7 @@ class MaskProxy:
         """Access the draw proxy opbject."""
         return DrawProxy(self._mask, self._imagefolder)
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args):
         """Keep track of the underlying objects."""
         self._imagefolder = args[0]
 

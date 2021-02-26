@@ -673,7 +673,7 @@ class metadataObject(MutableMapping):
             so as to aid import and export from CM group LabVIEW code.
     """
 
-    def __new__(cls, *args, **kargs):
+    def __new__(cls, *args):
         """Pre initialisation routines."""
         self = super().__new__(cls)
         self._public_attrs_real = dict()

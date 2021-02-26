@@ -574,9 +574,13 @@ class FilteringOpsMixin:
             raise SyntaxError("Can only have action_args and action_kargs keywords in action is callable")
         action_args = kargs.pop("action_args", ())
         action_kargs = kargs.pop("action_kargs", {})
+        kargs["shape"] = shape
+        for k in list(kargs.keys()):
+            if k not in params:
+                kargs.pop(k)
         index = np.zeros(len(self), dtype=bool)
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
-            index[i] = func(self.data[i], t, metric=certainty, shape=shape, **kargs)
+            index[i] = func(self.data[i], t, metric=certainty, **kargs)
         self["outliers"] = np.arange(len(self))[index]  # add outlier indecies to metadata
         if action == "mask" or action == "mask row":
             if action == "mask":

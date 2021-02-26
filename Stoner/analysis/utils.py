@@ -38,7 +38,7 @@ def outlier(row, window, metric, ycol=None, shape="bopxcar"):
     return abs(row[ycol] - av) > metric * std
 
 
-def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=None, shape=None):
+def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=None):
     """Alternative outlier detection function that fits a polynomial locally over the window.
 
     Args:

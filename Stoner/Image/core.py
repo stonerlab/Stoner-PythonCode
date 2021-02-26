@@ -316,7 +316,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 ret.metadata.update(meta)
 
             # merge the results of __new__ from emtadataObject
-            tmp = metadataObject.__new__(metadataObject, *args, **kargs)
+            tmp = metadataObject.__new__(metadataObject, *args)
             for k, v in tmp.__dict__.items():
                 if k not in ret.__dict__:
                     ret.__dict__[k] = v

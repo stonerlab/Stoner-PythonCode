@@ -20,7 +20,6 @@ h = d.clone
 h.outlier_detection(window=3, action="delete", shape="hanning")
 h.plot(color="orange", label="Default Outliers removed with Hanning window")
 f = d.clone
-
 f.outlier_detection(
     window=21, order=3, certainty=2, width=3, action="delete", func=poly_outlier
 )
