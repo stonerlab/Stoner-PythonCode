@@ -203,6 +203,7 @@ class FileManager:
         self.filename = filename
         self.args = args
         self.kargs = kargs
+        self.binary = True if len(args) > 0 and args[0][-1] == "b" else False
         if isinstance(filename, path_types):
             parsed = urllib.parse.urlparse(str(filename))
             if parsed.scheme not in URL_SCHEMES:
@@ -211,22 +212,29 @@ class FileManager:
                 filename = urllib.request.urlopen(filename)
         if isinstance(filename, path_types):
             self.mode = "open"
-        elif isinstance(filename, io.TextIOBase):
-            self.mode = "textio"
         elif isinstance(filename, io.IOBase):
-            if len(args) > 0 and args[0][-1] == "b":
-                self.mode = "bytesio"
-                self.filename = io.BytesIO(str2bytes(filename.read()))
+            if not hasattr(filename, "response"):
+                if self.binary:
+                    self.mode = "bytes"
+                    self.filename = str2bytes(filename.read())
+                else:
+                    self.filename = bytes2str(filename.read())
+                    self.mode = "text"
+                filename.response = self.filename
             else:
-                self.filename = io.StringIO(bytes2str(filename.read()))
-                self.mode = "textio"
+                if self.binary:
+                    self.mode = "bytes"
+                    self.filename = str2bytes(filename.response)
+                else:
+                    self.filename = bytes2str(filename.response)
+                    self.mode = "text"
         elif isinstance(filename, bytes):
             if len(args) > 0 and args[0][-1] == "b":
-                self.filename = io.BytesIO(filename)
-                self.mode = "bytesio"
+                self.filename = filename
+                self.mode = "bytes"
             else:
-                self.filename = io.StringIO(bytes2str(filename))
-                self.mode = "textio"
+                self.filename = bytes2str(filename)
+                self.mode = "text"
         else:
             raise TypeError(f"Unrecognised filename type {type(filename)}")
 
@@ -234,11 +242,11 @@ class FileManager:
         """Either open the file or reset the buffer."""
         if self.mode == "open":
             self.file = open(self.filename, *self.args, **self.kargs)
+        elif self.mode == "text":
+            self.file = io.StringIO(self.filename)
+        elif self.mode == "bytes":
+            self.file = io.BytesIO(self.filename)
         elif self.mode in ["bytesio", "textio"]:
-            try:
-                self.filename.seek(0)
-            except io.UnsupportedOperation:
-                pass
             self.file = self.filename
         else:
             raise TypeError(f"Unrecognised filename type {type(self.filename)}")
@@ -246,15 +254,7 @@ class FileManager:
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Close the open file, or reset the buffer position."""
-        if self.mode == "open":
-            self.file.close()
-        elif self.mode in ["textio", "bytesio"]:
-            try:
-                self.file.seek(0)
-            except (ValueError, io.UnsupportedOperation):
-                pass
-        else:
-            raise TypeError(f"Unrecognised filename type {type(self.filename)}")
+        self.file.close()
 
 
 class SizedFileManager(FileManager):
@@ -274,6 +274,8 @@ class SizedFileManager(FileManager):
                 self.file.seek(pos)
             else:
                 length = -1
+        elif self.mode in ["text", "bytes"]:
+            length = len(self.filename)
         else:
             length = len(self.file)
         return self.file, length

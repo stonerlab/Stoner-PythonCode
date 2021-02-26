@@ -214,7 +214,7 @@ def joy_division(x, y, z, **kargs):
             Colour of the lines on the plot (default 'white')
         axes_colour (matplotlib colour):
             Coulour of the frame, ticks, labels on the plot (default, same as *colour*)
-        lw (float):
+        linewidth (float):
             Width of lines to use on the plot (default 2)
         legend_fmt (str):
             String to use to format the elgend text. Should include one place holder {}. Default "{}"
@@ -229,7 +229,7 @@ def joy_division(x, y, z, **kargs):
     bg_colour = kargs.pop("bg_color", "k")
     color = kargs.pop("color", kargs.pop("colour", "w"))
     axes_colour = kargs.pop("axes_color", color)
-    lw = kargs.pop("lw", 2)
+    lw = kargs.pop("linewidth", 2)
     legend_fmt = kargs.pop("legend_fmt", "{}")
 
     ax.figure.set_facecolor(bg_colour)
@@ -258,7 +258,6 @@ def joy_division(x, y, z, **kargs):
     ax.set_xlabel(ax.get_xlabel(), color=axes_colour)
     ax.set_ylabel(ax.get_ylabel(), color=axes_colour)
 
-    # plt.legend(ncol=int(np.floor(np.sqrt(yvals.size))),fontsize="x-small")
     # plt.draw()
 
     # for t in ax.get_legend().get_texts():

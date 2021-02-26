@@ -50,7 +50,10 @@ class MaximusSpectra(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
-        pth = Path(self.filename)
+        try:
+            pth = Path(self.filename)
+        except (TypeError, ValueError):
+            raise StonerLoadError("Can only open things that can be converted to paths!")
         if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
             pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
         stem = pth.parent / pth.stem

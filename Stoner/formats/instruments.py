@@ -265,28 +265,20 @@ class RigakuFile(Core.DataFile):
         """
         from ast import literal_eval
 
-        pos = 0
-        reopen = False
-        filetype = io.IOBase
         if filename is None or not filename:
             self.get_filename("rb")
-        elif isinstance(filename, filetype):
-            self.filename = filename.name
-            pos = filename.tell()
-            reopen = True
         else:
             self.filename = filename
         sh = re.compile(r"^\*([^\s]+)\s+(.*)$")  # Regexp to grab the keys
         ka = re.compile(r"(.*)\-(\d+)$")
         header = dict()
         i = 0
-        with FileManager(self.filename, "rb") as f:
-            f.seek(pos)
+        with SizedFileManager(self.filename, "rb") as (f, end):
             for i, line in enumerate(f):
                 line = bytes2str(line).strip()
-                if pos == 0 and (i == 0 and line != "*RAS_DATA_START"):
+                if i == 0 and not line.startswith("*RAS_"):
                     raise StonerLoadError("Not a Rigaku file!")
-                if pos != 0 or line == "*RAS_HEADER_START":
+                if line == "*RAS_HEADER_START":
                     break
             for line in f:
                 line = bytes2str(line).strip()
@@ -369,9 +361,11 @@ class RigakuFile(Core.DataFile):
                         self[key] = np.array(self[key])
                 self.setas = "xy"
                 self.column_headers = column_headers
-        if reopen:
-            filename.seek(endpos)
-            self["_endpos"] = endpos
+            pos = f.tell()
+        if pos < end:  # Trap for Rigaku files with multiple scans in them.
+            self["_endpos"] = pos
+            if hasattr(filename, "seekable") and filename.seekable():
+                filename.seek(pos)
         return self
 
     def to_Q(self, wavelength=1.540593):

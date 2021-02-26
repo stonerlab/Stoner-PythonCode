@@ -2,6 +2,7 @@
 # pylint: disable=invalid-name
 """Demonstrate a waterfall plot styled after the famous album cover from Joy Division."""
 from numpy import log10
+from pathlib import Path
 
 from Stoner import Data, DataFolder
 from Stoner.formats.instruments import RigakuFile
@@ -15,13 +16,17 @@ class RigakuFolder(DataFolder):
     def load_files(self, filename):
         """Open the ras file and keep reading files."""
 
+        filename = Path(filename)
+
         with open(filename, "rb") as data:
-            data.read()
-            end = data.tell()
-            data.seek(0)
-            while data.tell() < end:
+            data = data.read()
+            ix = 0
+            while len(data) > 0:
                 d = RigakuFile()
                 d._load(data)
+                d.filename = f"{filename.stem}-{ix}{filename.suffix}"
+                data = data[d.get("endpos", len(data)) :]
+                ix += 1
                 self += Data(d)
 
         return self
@@ -58,4 +63,6 @@ total.column_headers = [
     r"$\log_{10}(Counts)$",
 ]
 # Do the plot
-total.plot(plotter=joy_division, griddata=False, projection=None)
+total.figure(figsize=(12, 9))
+total.plot(plotter=joy_division, griddata=False, projection=None, linewidth=1)
+total.legend(ncol=3, labelcolor="white", fontsize="xx-small")

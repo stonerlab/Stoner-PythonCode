@@ -8,6 +8,8 @@ Created on Tue Jan 07 22:05:55 2014
 
 import sys
 import pathlib
+import io
+import urllib
 
 from Stoner import Data,__homepath__, __datapath__, ImageFile
 from Stoner.Core import DataFile
@@ -140,6 +142,21 @@ def test_url_load():
     assert t1==Data(__datapath__/"hairboRaman.spc")
     t2 = Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql")
     assert t2 ==Data(__datapath__/"New-XRay-Data.dql")
+    resp = urllib.request.urlopen("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql")
+    t3=Data(resp)
+    assert t3==t2
+
+def test_from_bytes():
+    """Test loading a binary file as bytes."""
+    with open(__datapath__/"harribo.spc","rb") as data:
+        d=Data(data.read())
+    assert d==Data(__datapath__/"harribo.spc")
+
+def test_from_StringIO():
+    """Test loading a binary file as bytes."""
+    with open(__datapath__/"RASOR.dat","r") as data:
+        buffer=io.StringIO(data.read())
+    assert Data(buffer)==Data(__datapath__/"RASOR.dat")
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

@@ -6,6 +6,8 @@ __all__ = ["GenXFile", "OVFFile"]
 import re
 import io
 
+from http.client import HTTPResponse
+
 import numpy as np
 
 from ..Core import DataFile
@@ -141,10 +143,12 @@ class OVFFile(DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-
         self._ptr = 0
         with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
-            line = next(data)
+            try:
+                line = next(data)
+            except StopIteration:
+                raise StonerLoadError("Ran out of data for the file")
             self._ptr += len(line)
             line = line.strip()
             if "OOMMF: rectangular mesh" in line:
@@ -174,6 +178,8 @@ class OVFFile(DataFile):
                     else:
                         raise StonerLoadError("Failed to understand metadata")
             fmt = re.match(r".*Data\s+(.*)", line).group(1).strip()
+            if fmt is None:
+                raise StonerLoadError("Not a recognised format of OOMFF file.")
             assertion(
                 (self["meshtype"] == "rectangular"),
                 "Sorry only OVF files with rectnagular meshes are currently supported.",
