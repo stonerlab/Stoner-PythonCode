@@ -203,7 +203,8 @@ class FileManager:
         self.filename = filename
         self.args = args
         self.kargs = kargs
-        self.binary = True if len(args) > 0 and args[0][-1] == "b" else False
+        self.file = None
+        self.binary = len(args) > 0 and args[0][-1] == "b"
         if isinstance(filename, path_types):
             parsed = urllib.parse.urlparse(str(filename))
             if parsed.scheme not in URL_SCHEMES:

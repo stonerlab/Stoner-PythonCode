@@ -691,7 +691,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 )
 @class_modifier(imagefuncs, overload=True, adaptor=image_file_adaptor)
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
-class ImageFile(metadataObject):
+class ImageFile(metadataObject):  # pylint: disable=no-member
 
     """An Image file type that is analagous to :py:class:`Stoner.Data`.
 

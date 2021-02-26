@@ -10,7 +10,7 @@ import re
 import numpy as np
 
 from .. import Core
-from ..compat import str2bytes, path_types
+from ..compat import str2bytes
 from ..core.base import string_to_type
 from ..tools.file import FileManager
 

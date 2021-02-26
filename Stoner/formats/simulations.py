@@ -6,8 +6,6 @@ __all__ = ["GenXFile", "OVFFile"]
 import re
 import io
 
-from http.client import HTTPResponse
-
 import numpy as np
 
 from ..Core import DataFile
@@ -147,8 +145,8 @@ class OVFFile(DataFile):
         with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
             try:
                 line = next(data)
-            except StopIteration:
-                raise StonerLoadError("Ran out of data for the file")
+            except StopIteration as err:
+                raise StonerLoadError("Ran out of data for the file") from err
             self._ptr += len(line)
             line = line.strip()
             if "OOMMF: rectangular mesh" in line:

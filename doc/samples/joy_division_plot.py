@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name
 """Demonstrate a waterfall plot styled after the famous album cover from Joy Division."""
-from numpy import log10
 from pathlib import Path
+
+from numpy import log10
 
 from Stoner import Data, DataFolder
 from Stoner.formats.instruments import RigakuFile
@@ -15,7 +16,6 @@ class RigakuFolder(DataFolder):
 
     def load_files(self, filename):
         """Open the ras file and keep reading files."""
-
         filename = Path(filename)
 
         with open(filename, "rb") as data:
