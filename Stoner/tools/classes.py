@@ -104,7 +104,9 @@ def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-a
         cls = DataFile
 
     tmp = itersubclasses(cls)
-    if _subclasses is None or cls not in _subclasses or _subclasses[cls][0] != len(tmp):  # pylint: disable=E1136
+    if (
+        _subclasses is None or cls not in _subclasses or _subclasses[cls][0] != len(tmp)
+    ):  # pylint: disable=E1136, E1135
         tmp = {
             x: (getattr(x, "priority", 256), x.__name__)
             for x in sorted(tmp, key=lambda c: (getattr(c, "priority", 256), getattr(c, "__name__", "None")))

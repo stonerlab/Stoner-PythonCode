@@ -292,6 +292,7 @@ class baseFolder(MutableSequence):
                     self.__setattr__(k, value)
                     if self.debug:
                         print(f"Setting self.{k} to {value}")
+        self.directory = getattr(self, "directory", None)  # pointless hack for pylint
         super().__init__()
 
     ###########################################################################
@@ -306,7 +307,7 @@ class baseFolder(MutableSequence):
     def defaults(self):
         """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
         if getattr(self, "_default_store", None) is None:
-            self._default_store = dict()
+            self._default_store = dict()  # pylint: disable=attribute-defined-outside-init
             for cls in reversed(type(self).__mro__):
                 if hasattr(cls, "_defaults"):
                     self._default_store.update(cls._defaults)

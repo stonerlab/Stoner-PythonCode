@@ -3,7 +3,6 @@
 """Implement DataFile like classes for Various experimental rigs."""
 
 __all__ = ["BigBlueFile", "BirgeIVFile", "MokeFile", "FmokeFile", "EasyPlotFile", "PinkLibFile"]
-import io
 import re
 import csv
 

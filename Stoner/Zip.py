@@ -12,7 +12,7 @@ import os.path as path
 from traceback import format_exc
 import fnmatch
 
-from .compat import string_types, bytes2str, str2bytes, get_filedialog, _pattern_type, path_types
+from .compat import string_types, str2bytes, get_filedialog, _pattern_type, path_types
 from .Core import DataFile, StonerLoadError
 from .Folders import DiskBasedFolderMixin
 from .folders.core import baseFolder

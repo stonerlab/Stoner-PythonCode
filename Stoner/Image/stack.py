@@ -195,7 +195,7 @@ class ImageStackMixin:
         value = ImageFile(value)  # ensure we have some metadata
         self._names.insert(ix, name)
         self._metadata[name] = value.metadata
-        self._sizes = np.insert(self._sizes, ix, value.shape, axis=0)  # pylint: disable=bo-member
+        self._sizes = np.insert(self._sizes, ix, value.shape, axis=0)  # pylint: disable=no-member
         new_size = self.max_size + (len(self._names),)
         if new_size[2] == 1:
             dtype = value.dtype

@@ -5,8 +5,6 @@ __all__ = ["LSTemperatureFile", "QDFile", "RigakuFile", "SPCFile", "XRDFile"]
 
 # Standard Library imports
 from datetime import datetime
-import io
-import os
 import re
 import struct
 

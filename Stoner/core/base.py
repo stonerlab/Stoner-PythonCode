@@ -692,7 +692,7 @@ class metadataObject(MutableMapping):
         try:
             return self._public_attrs_real  # pylint: disable=no-member
         except AttributeError:
-            self._public_attrs_real = dict()
+            self._public_attrs_real = dict()  # pylint: disable=attribute-defined-outside-init
             return self._public_attrs_real
 
     @_public_attrs.setter

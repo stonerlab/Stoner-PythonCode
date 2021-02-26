@@ -213,7 +213,7 @@ class KerrStackMixin:
         masks.each.threshold_minmax(threshmin=thresh, threshmax=np.max(masks.imarray))
         masks = MaskStack(masks)
         if invert:
-            masks.stack = ~masks.stack
+            masks.stack = ~masks.stack  # pylint: disable=attribute-defined-outside-init
         return masks
 
     def find_threshold(self, testim=None, mask=None):
