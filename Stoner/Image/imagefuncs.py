@@ -670,7 +670,7 @@ def imshow(im, **kwargs):
         plt.sca(ax)
     else:
         ax = plt.gca()
-    image = ax.imshow(im_data.view(np.ndarray), cmap=cmap, **kwargs)
+    ax.imshow(im_data.view(np.ndarray), cmap=cmap, **kwargs)
     if np.ma.is_masked(im):
         mask_col = list(to_rgba(mask_col))
         mask_col[-1] = mask_alpha

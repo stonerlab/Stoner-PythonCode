@@ -290,7 +290,7 @@ def test_other_funcs():
 
 def test_attrs():
     attrs=[x for x in dir(ImageArray([])) if not x.startswith("_")]
-    expected=1053 if spv[1]<6 else 1053
+    expected=1053 if spv[1]<6 else 1055
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
@@ -362,7 +362,7 @@ def test_methods():
     with pytest.raises(TypeError):
         i2-"Gobble"
     attrs=[x for x in dir(i2) if not x.startswith("_")]
-    expected=1058 if spv[1]<6 else 1058
+    expected=1058 if spv[1]<6 else 1060
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 

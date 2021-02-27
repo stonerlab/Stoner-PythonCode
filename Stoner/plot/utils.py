@@ -292,7 +292,6 @@ def auto_fit_fontsize(text, width, height, scale_down=True, scale_up=False):
             scaling factor applied.
     """
     fig = text.axes.figure
-    ax = text.axes
 
     # get text bounding box in figure coordinates
     renderer = fig.canvas.get_renderer()
