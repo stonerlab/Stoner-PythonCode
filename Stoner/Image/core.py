@@ -63,7 +63,7 @@ dtype_range = {
 }
 
 
-def __add_core__(result, other):
+def _add_core_(result, other):
     """Actually do result=result-other."""
     if isinstance(other, type(result)) and result.shape == other.shape:
         result.image += other.image
@@ -76,7 +76,7 @@ def __add_core__(result, other):
     return result
 
 
-def __floor_div_core__(result, other):
+def _floor_div_core_(result, other):
     """Actually do result=result/other."""
     # Cheat and pass through to ImageArray
 
@@ -87,7 +87,7 @@ def __floor_div_core__(result, other):
     return result
 
 
-def __div_core__(result, other):
+def _div_core_(result, other):
     """Actually do result=result/other."""
     # Cheat and pass through to ImageArray
 
@@ -98,7 +98,7 @@ def __div_core__(result, other):
     return result
 
 
-def __sub_core__(result, other):
+def _sub_core_(result, other):
     """Actually do result=result-other."""
     if isinstance(other, type(result)) and result.shape == other.shape:
         result.image -= other.image
@@ -949,13 +949,13 @@ class ImageFile(metadataObject):
     def __add__(self, other):
         """Implement the subtract operator."""
         result = self.clone
-        result = __add_core__(result, other)
+        result = _add_core_(result, other)
         return result
 
     def __iadd__(self, other):
         """Implement the inplace subtract operator."""
         result = self
-        result = __add_core__(result, other)
+        result = _add_core_(result, other)
         return result
 
     def __floordiv__(self, other):
@@ -984,30 +984,30 @@ class ImageFile(metadataObject):
             ret.image = polarization * (plus.image - minus.image) / (plus.image + minus.image)
             return ret
         result = self
-        return __floor_div_core__(result, other)
+        return _floor_div_core_(result, other)
 
     def __truediv__(self, other):
         """Implement the divide operator."""
         result = self.clone
-        result = __div_core__(result, other)
+        result = _div_core_(result, other)
         return result
 
     def __itruediv__(self, other):
         """Implement the inplace divide operator."""
         result = self
-        result = __div_core__(result, other)
+        result = _div_core_(result, other)
         return result
 
     def __sub__(self, other):
         """Implement the subtract operator."""
         result = self.clone
-        result = __sub_core__(result, other)
+        result = _sub_core_(result, other)
         return result
 
     def __isub__(self, other):
         """Implement the inplace subtract operator."""
         result = self
-        result = __sub_core__(result, other)
+        result = _sub_core_(result, other)
         return result
 
     def __neg__(self):

@@ -25,7 +25,7 @@ from .groups import GroupsDict
 regexp_type = (_pattern_type,)
 
 
-def __add_core__(result, other):
+def _add_core_(result, other):
     """Implement the core logic of the addition operator.
 
     Note:
@@ -50,7 +50,7 @@ def __add_core__(result, other):
     return result
 
 
-def __div_core__(result, other):
+def _div_core_(result, other):
     """Implement the divide operator as a grouping function."""
     if isinstance(other, string_types + (list, tuple)):
         result.group(other)
@@ -67,7 +67,7 @@ def __div_core__(result, other):
     return NotImplemented
 
 
-def __sub_core__(result, other):
+def _sub_core_(result, other):
     """Implemenet the core logic of the subtraction operator.
 
     Note:
@@ -75,11 +75,11 @@ def __sub_core__(result, other):
 
     """
     calls = [
-        (int_types, __sub_core_int__),
-        (string_types, __sub_core_string__),
-        (metadataObject, __sub_core_data__),
-        (baseFolder, __sub_core_folder__),
-        (Iterable, __sub_core_iterable__),
+        (int_types, _sub_core_int_),
+        (string_types, _sub_core_string_),
+        (metadataObject, _sub_core_data_),
+        (baseFolder, _sub_core_folder_),
+        (Iterable, _sub_core_iterable_),
     ]
     for typ, func in calls:
         if isinstance(other, typ):
@@ -91,14 +91,14 @@ def __sub_core__(result, other):
     return result
 
 
-def __sub_core_int__(result, other):
+def _sub_core_int_(result, other):
     """Remove indexed file."""
     delname = result.__names__()[other]
     result.__deleter__(delname)
     return result
 
 
-def __sub_core_string__(result, other):
+def _sub_core_string_(result, other):
     """Remove named file."""
     if other in result.__names__():
         result.__deleter__(other)
@@ -107,7 +107,7 @@ def __sub_core_string__(result, other):
     return result
 
 
-def __sub_core_data__(result, other):
+def _sub_core_data_(result, other):
     """Remove a data object."""
     othername = getattr(other, "filename", getattr(other, "title", None))
     if othername in result.__names__():
@@ -117,7 +117,7 @@ def __sub_core_data__(result, other):
     return result
 
 
-def __sub_core_folder__(result, other):
+def _sub_core_folder_(result, other):
     """Remove a folder."""
     if isclass(other.type) and issubclass(other.type, result.type):
         for othername in other.ls:
@@ -133,10 +133,10 @@ def __sub_core_folder__(result, other):
     return result
 
 
-def __sub_core_iterable__(result, other):
+def _sub_core_iterable_(result, other):
     """Iterate to remove iterables."""
     for c in sorted(other):
-        __sub_core__(result, c)
+        _sub_core_(result, c)
     return result
 
 
@@ -841,24 +841,24 @@ class baseFolder(MutableSequence):
     def __add__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = deepcopy(self)
-        result = __add_core__(result, other)
+        result = _add_core_(result, other)
         return result
 
     def __iadd__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = self
-        result = __add_core__(result, other)
+        result = _add_core_(result, other)
         return result
 
     def __truediv__(self, other):
         """Implement the divide operator as a grouping function for a :py:class:`baseFolder`."""
         result = deepcopy(self)
-        return __div_core__(result, other)
+        return _div_core_(result, other)
 
     def __itruediv__(self, other):
         """Implement the divide operator as an in-place a grouping function for a :py:class:`baseFolder`."""
         result = self
-        return __div_core__(result, other)
+        return _div_core_(result, other)
 
     def __eq__(self, other):
         """Test whether two objectFolders are the same."""
@@ -915,13 +915,13 @@ class baseFolder(MutableSequence):
     def __sub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = deepcopy(self)
-        result = __sub_core__(result, other)
+        result = _sub_core_(result, other)
         return result
 
     def __isub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = self
-        result = __sub_core__(result, other)
+        result = _sub_core_(result, other)
         return result
 
     def __deepcopy__(self, memo):

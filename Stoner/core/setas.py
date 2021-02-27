@@ -470,7 +470,7 @@ class setas(MutableMapping):
     #################################################################################################################
     #############################   Operator Methods ################################################################
 
-    def __add_core__(self, new, other):
+    def _add_core_(self, new, other):
         """Allow the user to add a dictionary to setas to add extra columns."""
         if not isinstance(other, dict):
             try:
@@ -495,14 +495,14 @@ class setas(MutableMapping):
     def __add__(self, other):
         """Jump to the core."""
         new = self.clone
-        return self.__add_core__(new, other)
+        return self._add_core_(new, other)
 
     def __iadd__(self, other):
         """Jump to the core."""
         new = self
-        return self.__add_core__(new, other)
+        return self._add_core_(new, other)
 
-    def __sub_core__(self, new, other):
+    def _sub_core_(self, new, other):
         """Implement subtracting either column indices or x,y,z,d,e,f,u,v,w for the current setas."""
         if isinstance(other, string_types) and len(other) == 1 and other in "xyzuvwdef":
             while True:
@@ -541,7 +541,7 @@ class setas(MutableMapping):
             return new
         if isIterable(other):
             for o in other:
-                new = self.__sub_core__(new, o)
+                new = self._sub_core_(new, o)
                 if new is NotImplemented:
                     return NotImplemented
             return new
@@ -550,12 +550,12 @@ class setas(MutableMapping):
     def __sub__(self, other):
         """Jump to the core."""
         new = self.clone
-        return self.__sub_core__(new, other)
+        return self._sub_core_(new, other)
 
     def __isub__(self, other):
         """Jump to the core."""
         new = self
-        return self.__sub_core__(new, other)
+        return self._sub_core_(new, other)
 
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.

@@ -19,7 +19,7 @@ from Stoner.tools import isIterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
 from ..core.base import metadataObject, string_to_type
 from ..core.exceptions import StonerUnrecognisedFormat
-from .core import baseFolder, __add_core__ as _base__add_core__, __sub_core__ as _base__sub_core__
+from .core import baseFolder, _add_core_ as _base_add_core_, _sub_core_ as _base_sub_core_
 from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
 from ..core.exceptions import assertion
 
@@ -27,7 +27,7 @@ from ..core.exceptions import assertion
 regexp_type = (_pattern_type,)
 
 
-def __add_core__(result, other):
+def _add_core_(result, other):
     """Additional logic for the add operator."""
     if isinstance(other, path_types):
         othername = path.join(result.directory, other)
@@ -36,18 +36,18 @@ def __add_core__(result, other):
         else:
             raise RuntimeError(f"{othername} either does not exist of is already in the folder.")
     else:
-        return _base__add_core__(result, other)
+        return _base_add_core_(result, other)
     return result
 
 
-def __sub_core__(result, other):
+def _sub_core_(result, other):
     """Additional logic to check for match to basenames."""
     if isinstance(other, path_types):
         if str(other) in list(result.basenames) and path.join(result.directory, other) in list(result.ls):
             other = path.join(result.directory, other)
             result.__deleter__(other)
             return result
-    return _base__sub_core__(result, other)
+    return _base_sub_core_(result, other)
 
 
 def _loader(name, loader=None, typ=None, directory=None):
@@ -259,25 +259,25 @@ class DiskBasedFolderMixin:
     def __add__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = deepcopy(self)
-        result = __add_core__(result, other)
+        result = _add_core_(result, other)
         return result
 
     def __iadd__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = self
-        result = __add_core__(result, other)
+        result = _add_core_(result, other)
         return result
 
     def __sub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = deepcopy(self)
-        result = __sub_core__(result, other)
+        result = _sub_core_(result, other)
         return result
 
     def __isub__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result = self
-        result = __sub_core__(result, other)
+        result = _sub_core_(result, other)
         return result
 
     @property
