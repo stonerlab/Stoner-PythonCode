@@ -335,7 +335,13 @@ class ImageFolderMixin:
 
         fig_num = kargs.pop("figure", getattr(self, "_figure", None))
         if isinstance(fig_num, Figure):
+            kargs.setdefault("figsize", fig_num.get_size_inches())
+            kargs.setdefault("facecolor", fig_num.get_facecolor())
+            kargs.setdefault("edgecolor", fig_num.get_edgecolor())
+            kargs.setdefault("frameon", fig_num.get_frameon())
+            kargs.setdefault("FigureClass", fig_num.__class__)
             fig_num = fig_num.number
+
         fig_args = getattr(self, "_fig_args", [])
         fig_kargs = getattr(self, "_fig_kargs", {})
         for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
@@ -346,8 +352,8 @@ class ImageFolderMixin:
         else:
             fig = figure(fig_num, **fig_kargs)
         w, h = fig.get_size_inches()
-        plt_y = int(np.floor(np.sqrt(plts * w / h)))
-        plt_x = int(np.ceil(plts / plt_y))
+        plt_x = int(np.floor(np.sqrt(plts) * w / h))
+        plt_y = int(np.ceil(plts / plt_x))
 
         kargs["figure"] = fig
         ret = []
@@ -374,7 +380,8 @@ class ImageFolderMixin:
                     plt_kargs["title"] = kargs["title"](d)
             ret.append(d.imshow(*args, **plt_kargs))
             extra(i, j, d)
-        tight_layout()
+            if isinstance(tight, dict):
+                tight_layout(**tight)
         return ret
 
     def stddev(self, weights=None, _box=False, _metadata="first"):

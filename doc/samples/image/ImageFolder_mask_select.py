@@ -5,6 +5,7 @@ import threading
 import time
 
 import numpy as np
+from matplotlib import pyplot as plt
 
 from Stoner import ImageFolder, __datapath__
 from Stoner.HDF5 import STXMImage
@@ -49,4 +50,8 @@ fake_user = threading.Thread(target=fake_user_action, args=(fldr[0],))
 fake_user.start()
 
 fldr.mask_select()
-fldr.montage()
+for i in range(4):
+    fldr += fldr[0]
+    fldr += fldr[1]
+fig = plt.figure(figsize=(8, 4))
+fldr.montage(figure=fig, plots_per_page=4)

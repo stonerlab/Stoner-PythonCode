@@ -68,6 +68,7 @@ from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, 
 from ..tools.decorators import changes_size, keep_return_type
 from .widgets import LineSelect
 from ..compat import string_types, get_filedialog  # Some things to help with Python2 and Python3 compatibility
+from ..plot.utils import auto_fit_fontsize
 
 try:
     from PyQt5.QtGui import QImage
@@ -634,8 +635,12 @@ def imshow(im, **kwargs):
         figure (int, str or matplotlib.figure):
             if int then use figure number given, if figure is 'new' then create a new figure, if None then use
             whatever default figure is available
+        show_axis (bool):
+            If True, show the axis otherwise don't (default)'
         title (str,None,False):
             Title for plot - defaults to False (no title). None will take the title from the filename if present
+        title_args (dict):
+            Arguments to pass to the title function to control formatting.
         cmap (str,matplotlib.cmap):
             Colour scheme for plot, defaults to gray
 
@@ -646,6 +651,7 @@ def imshow(im, **kwargs):
     # Get a title - from keyword argument, from title attr or filename attr
     title = os.path.split(getattr(im, "title", getattr(im, "filename", "")))[-1]
     title = kwargs.pop("title", title)
+    title_args = kwargs.pop("title_args", {})
     cmap = kwargs.pop("cmap", "gray")
     mask_alpha = kwargs.pop("mask_alpha", getattr(im, "_mask_alpha", 0.5))
     mask_col = kwargs.pop("mask_color", getattr(im, "_mask_color", "red"))
@@ -662,26 +668,33 @@ def imshow(im, **kwargs):
         fig = plt.figure()
     if ax is not None:
         plt.sca(ax)
-    ax = plt.gca().imshow(im_data.view(np.ndarray), cmap=cmap, **kwargs)
+    else:
+        ax = plt.gca()
+    image = ax.imshow(im_data.view(np.ndarray), cmap=cmap, **kwargs)
     if np.ma.is_masked(im):
         mask_col = list(to_rgba(mask_col))
         mask_col[-1] = mask_alpha
         mask_data = np.zeros(im.shape + (4,))
         mask_data[im.mask] = mask_col
-        plt.gca().imshow(mask_data)
+        ax.imshow(mask_data)
 
     if title is None:
         if "filename" in im.metadata.keys():
-            plt.title(os.path.split(im["filename"])[1])
+            title = os.path.split(im["filename"])[1]
         elif hasattr(im, "filename"):
-            plt.title(os.path.split(im.filename)[1])
+            title = os.path.split(im.filename)[1]
         else:
-            plt.title(" ")
+            title = " "
     elif isinstance(title, bool) and not title:
-        pass
-    else:
-        plt.title(title)
-    plt.axis("off")
+        title = ""
+
+    txt = ax.set_title(title, **title_args)
+    if not title_args.get("fontdict", {}).get("fontsize", False):
+        gs = ax.get_gridspec()
+        width = 0.9 / gs.ncols
+        height = 0.09 / gs.nrows
+        auto_fit_fontsize(txt, width, height)
+    ax.axis("on" if kwargs.get("show_axis", False) else "off")
 
     if QImage is None:  # No Qt5
         return fig

@@ -31,13 +31,22 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-__all__ = ["errorfill", "extrema_from_error_input", "fill_between", "fill_between_x", "hsl2rgb", "joy_division"]
+__all__ = [
+    "errorfill",
+    "extrema_from_error_input",
+    "fill_between",
+    "fill_between_x",
+    "hsl2rgb",
+    "joy_division",
+    "auto_fit_fontsize",
+]
 import warnings
 from distutils.version import LooseVersion
 from colorsys import hls_to_rgb
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.transforms import Bbox
 
 from Stoner.compat import mpl_version
 
@@ -263,3 +272,44 @@ def joy_division(x, y, z, **kargs):
     # for t in ax.get_legend().get_texts():
     #     t.set_color(axes_colour)
     # plt.draw()
+
+
+def auto_fit_fontsize(text, width, height, scale_down=True, scale_up=False):
+    """Resale the font size of a matplotlib text object to fit within a box.
+
+    Arguments:
+        text (matplotlib.text.Text):
+            Text object to be scaled in Figure units.
+        width,height (float):
+            Target width and height to scale to.
+
+    Keyword Arguments:
+        scale_down, scale_up (bool):
+            Whether to reduce the font size to fit (default True), or increase it to fit (default False)
+
+    Returns:
+        (float):
+            scaling factor applied.
+    """
+    fig = text.axes.figure
+    ax = text.axes
+
+    # get text bounding box in figure coordinates
+    renderer = fig.canvas.get_renderer()
+    bbox_text = text.get_window_extent(renderer=renderer)
+
+    # transform bounding box to data coordinates
+    bbox_text = Bbox(fig.transFigure.inverted().transform(bbox_text))
+    text_width, text_height = bbox_text.width, bbox_text.height
+
+    scale_w = abs(width / text_width)
+    scale_h = abs(height / text_height)
+
+    scale = 1.0
+    if scale_down:
+        scale = min(scale_w, scale_h, scale)
+    if scale_up:
+        scale = max(scale_w, scale_h, scale)
+    if not np.isclose(scale, 1.0):
+        text.set_fontsize(text.get_fontsize() * scale)
+    return scale
