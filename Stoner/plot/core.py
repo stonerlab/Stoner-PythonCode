@@ -37,22 +37,22 @@ except ImportError:
     _3D = False
 
 
-def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
-    """P}lot vector fields using mpltoolkit.quiver.
+def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
+    """Plot vector fields using mpltoolkit.quiver.
 
     Args:
-        X (array):
-            X data co-ordinates
-        Y (array):
-            Y data co-ordinates
-        Z (array):
-            Z data co-ordinates
-        U (array):
-            U data vector field component
-        V (array):
-            V data vector field component
-        W (array):
-            W data vector field component
+        x_coord_coord_coord (array):
+            x data co-ordinates
+        y_coord (array):
+            y data co-ordinates
+        z_coord (array):
+            z data co-ordinates
+        u_comp (array):
+            u data vector field component
+        v_comp (array):
+            v data vector field component
+        w_comp (array):
+            w data vector field component
 
     Return:
         matpltolib.pyplot.figure with a quiver plot.
@@ -60,7 +60,7 @@ def __mpl3DQuiver(X, Y, Z, U, V, W, **kargs):
     if not _3D:
         raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
     ax = kargs.pop("ax", plt.gca(projection="3d"))
-    vector_field = ax.quiver(X, Y, Z, U, V, W, **kargs)
+    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs)
 
     return vector_field
 
@@ -284,16 +284,12 @@ class PlotMixin:
         for ax in figure.axes:
             self.template.customise_axes(ax, self)
 
-    def __SurfPlotter(self, X, Y, Z, **kargs):
+    def _surface_plotter(self, x_coord, y_coord, z_coord, **kargs):
         """Plot a 3D color mapped surface.
 
         Args:
-            X (array):
-                X-data
-            Y (array):
-                Y-data
-            Z (arrau):
-                Z-data
+            x_coord, y_coord, z_coord (array):
+                Data point co-ordinates
             kargs (dict):
                 Other keywords to pass through
 
@@ -304,8 +300,8 @@ class PlotMixin:
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
         ax = plt.gca(projection="3d")
-        Z = np.nan_to_num(Z)
-        surf = ax.plot_surface(X, Y, Z, **kargs)
+        z_coord = np.nan_to_num(z_coord)
+        surf = ax.plot_surface(x_coord, y_coord, z_coord, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
 
         return surf
@@ -337,22 +333,14 @@ class PlotMixin:
             v2 = v2 + delta / 2
         return slice(v1, v2, delta)
 
-    def _VectorFieldPlot(self, X, Y, Z, U, V, W, **kargs):
+    def _vector_field_plotter(self, x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
         """Plot vector fields using mayavi.mlab.
 
         Args:
-            X (array):
-                X data co-ordinates
-            Y (array):
-                Y data co-ordinates
-            Z (array):
-                Z data co-ordinates
-            U (array):
-                U data vector field component
-            V (array):
-                V data vector field component
-            W (array):
-                W data vector field component
+            x_coord, y_coord, z_coord (array):
+                Data point co-ordinates
+            u_comp, v_comp, w_comp (array):
+                U,V,W vector field component
 
         Returns:
             An mlab figure reference.
@@ -369,11 +357,11 @@ class PlotMixin:
             kargs["scalars"] = np.arange(len(self))
             colors = self._vector_color() * 255
             colors = np.column_stack((colors, np.ones(len(self)) * 255))
-            quiv = mlab.quiver3d(X, Y, Z, U, V, W, **kargs)
+            quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs)
             quiv.glyph.color_mode = col_mode
             quiv.module_manager.scalar_lut_manager.lut.table = colors
         else:
-            quiv = mlab.quiver3d(X, Y, Z, U, V, W, **kargs)
+            quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs)
             quiv.glyph.color_mode = col_mode
         return quiv
 
@@ -1233,7 +1221,7 @@ class PlotMixin:
         if show_plot:
             plt.ion()
         if plotter is None:
-            plotter = self.__SurfPlotter
+            plotter = self._surface_plotter
         plotter(xdata, ydata, zdata, cmap=cmap, **kwords)
         labels = {"xlabel": (xlabel, "X Data"), "ylabel": (ylabel, "Y Data"), "zlabel": (zlabel, "Z Data")}
         for label in labels:
@@ -1248,7 +1236,7 @@ class PlotMixin:
 
         plt.xlabel(str(labels["xlabel"]))
         plt.ylabel(str(labels["ylabel"]))
-        if plotter is self.__SurfPlotter:
+        if plotter is self._surface_plotter:
             self.axes[0].set_zlabel(str(labels["zlabel"]))
         if title == "":
             title = self.filename
@@ -1571,7 +1559,7 @@ class PlotMixin:
             self.template = kargs.pop("template")
 
         defaults = {
-            "plotter": self.__SurfPlotter,
+            "plotter": self._surface_plotter,
             "show_plot": True,
             "figure": self.__figure,
             "title": os.path.basename(self.filename),
@@ -1587,7 +1575,7 @@ class PlotMixin:
                 if isinstance(label, list):
                     label = ",".join(label)
                 defaults[k] = label
-        if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] is self.__SurfPlotter):
+        if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] is self._surface_plotter):
             otherkargs = [
                 "rstride",
                 "cstride",
@@ -1611,7 +1599,7 @@ class PlotMixin:
         if isinstance(plotter, string_types):
             plotter = ax.__getattribute__(plotter)
         self.plot3d = plotter(xdata, ydata, zdata, **kargs)
-        if plotter is not self.__SurfPlotter:
+        if plotter is not self._surface_plotter:
             del nonkargs["zlabel"]
         self._fix_titles(0, "none", **nonkargs)
         return self.showfig
@@ -1723,7 +1711,7 @@ class PlotMixin:
         if mayavi:
             defaults = {
                 "figure": self.__figure,
-                "plotter": self._VectorFieldPlot,
+                "plotter": self._vector_field_plotter,
                 "show_plot": True,
                 "mode": "cone",
                 "scale_factor": 1.0,
