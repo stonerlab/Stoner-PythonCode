@@ -52,7 +52,10 @@ class DataFilePropertyMixin:
     @property
     def basename(self):
         """Return the basename of the current filename."""
-        return os.path.basename(self.filename)
+        try:
+            return os.path.basename(self.filename)
+        except TypeError:
+            return ""
 
     @property
     def clone(self):
