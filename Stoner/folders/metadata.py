@@ -8,10 +8,10 @@ from collections.abc import MutableMapping
 from lmfit import Model
 import numpy as np
 
-from Stoner.core import typeHintedDict, metadataObject
-from Stoner.compat import string_types
-from Stoner.tools import isLikeList, isIterable, make_Data
-from Stoner.Core import DataFile
+from ..core import typeHintedDict, metadataObject
+from ..compat import string_types
+from ..tools import isLikeList, isIterable, make_Data
+from ..Core import DataFile
 
 
 def _fmt_as_list(results):

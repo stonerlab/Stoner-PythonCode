@@ -8,12 +8,8 @@ import numpy as np
 from scipy.integrate import quad
 from scipy.special import digamma
 
-try:
-    from lmfit import Model
-    from lmfit.models import update_param_vals
-except ImportError:
-    Model = object
-    update_param_vals = None
+from lmfit import Model
+from lmfit.models import update_param_vals
 
 try:  # numba is an optional dependency
     from numba import jit, float64, int64

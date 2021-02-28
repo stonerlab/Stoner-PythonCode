@@ -3,14 +3,6 @@
 """:py:class:`lmfit.Model` model classes and functions for various superconductivity related models."""
 # pylint: disable=invalid-name
 # This module can be used with Stoner v.0.9.0 asa standalone module
-from functools import partial
-
-import numpy as np
-from scipy.special import jv
-from scipy.constants import physical_constants
-from scipy.integrate import quad
-
-
 __all__ = [
     "RSJ_Noiseless",
     "RSJ_Simple",
@@ -21,18 +13,23 @@ __all__ = [
     "strijkers",
     "ic_B_airy",
 ]
+
+from functools import partial
+
+import numpy as np
+from scipy.special import jv
+from scipy.constants import physical_constants
+from scipy.integrate import quad
+
+from lmfit import Model
+from lmfit.models import update_param_vals
+
 hbar = physical_constants["Planck constant over 2 pi"]
 kb = physical_constants["Boltzmann constant"]
 Phi_0 = physical_constants["mag. flux quantum"][0]
 
 J1 = partial(jv, 1)
 
-try:
-    from lmfit import Model
-    from lmfit.models import update_param_vals
-except ImportError:
-    Model = object
-    update_param_vals = None
 
 try:  # numba is an optional dependency
     from numba import jit, float64

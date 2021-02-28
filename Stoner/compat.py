@@ -1,24 +1,5 @@
 # -*- coding: utf-8 -*-
 """Ensure a consistent namespace for the rest of the package irrespective of Python language version."""
-from sys import version_info as __vi__
-from os import walk, makedirs
-from os.path import join, commonpath
-import fnmatch
-from inspect import signature, getfullargspec
-from shutil import which
-from pathlib import PurePath
-
-import numpy as np
-from matplotlib import __version__ as mpl_version
-
-try:
-    from lmfit import Model  # pylint: disable=unused-import
-
-    _lmfit = True
-except ImportError:
-    Model = object
-    _lmfit = False
-
 __all__ = [
     "str2bytes",
     "bytes2str",
@@ -38,6 +19,22 @@ __all__ = [
     "which",
     "commonpath",
 ]
+
+from sys import version_info as __vi__
+from os import walk, makedirs
+from os.path import join, commonpath
+import fnmatch
+from inspect import signature, getfullargspec
+from shutil import which
+from pathlib import PurePath
+
+import numpy as np
+from matplotlib import __version__ as mpl_version
+
+from lmfit import Model  # pylint: disable=unused-import
+
+_lmfit = True
+
 
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages

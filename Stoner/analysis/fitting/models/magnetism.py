@@ -21,14 +21,10 @@ from scipy.special import zeta, gamma
 from scipy.constants import k, mu_0, e, electron_mass, hbar
 from scipy.signal import savgol_filter
 
-mu_B = cnst.physical_constants["Bohr magneton"][0]
+from lmfit import Model
+from lmfit.models import update_param_vals
 
-try:
-    from lmfit import Model
-    from lmfit.models import update_param_vals
-except ImportError:
-    Model = object
-    update_param_vals = None
+mu_B = cnst.physical_constants["Bohr magneton"][0]
 
 
 def blochLaw(T, Ms, Tc):

@@ -18,18 +18,11 @@ __all__ = [
 
 import numpy as np
 
-try:
-    from lmfit import Model
-    from lmfit.models import LinearModel as _Linear  # NOQA pylint: disable=unused-import
-    from lmfit.models import PowerLawModel as _PowerLaw  # NOQA pylint: disable=unused-import
-    from lmfit.models import QuadraticModel as _Quadratic  # NOQA pylint: disable=unused-import
-    from lmfit.models import update_param_vals
-except ImportError:
-    Model = object
-    _Linear = object
-    _PowerLaw = object
-    _Quadratic = object
-    update_param_vals = None
+from lmfit import Model
+from lmfit.models import LinearModel as _Linear  # NOQA pylint: disable=unused-import
+from lmfit.models import PowerLawModel as _PowerLaw  # NOQA pylint: disable=unused-import
+from lmfit.models import QuadraticModel as _Quadratic  # NOQA pylint: disable=unused-import
+from lmfit.models import update_param_vals
 
 
 def linear(x, intercept, slope):

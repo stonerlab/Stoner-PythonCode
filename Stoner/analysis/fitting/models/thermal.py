@@ -20,12 +20,8 @@ import numpy as np
 import scipy.constants as consts
 from scipy.optimize import curve_fit
 
-try:
-    from lmfit import Model
-    from lmfit.models import update_param_vals
-except ImportError:
-    Model = object
-    update_param_vals = None
+from lmfit import Model
+from lmfit.models import update_param_vals
 
 
 def arrhenius(x, A, DE):

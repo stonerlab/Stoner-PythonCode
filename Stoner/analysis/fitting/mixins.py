@@ -15,22 +15,13 @@ import scipy as sp
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
+import lmfit
+from lmfit.model import Model
+
 from ...compat import string_types, index_types, get_func_params
 from ...tools import isnone, isIterable, isLikeList, AttributeStore, ordinal
 
-
-try:  # Allow lmfit to be optional
-    import lmfit
-
-    if LooseVersion(lmfit.__version__) < LooseVersion("0.9.0"):
-        from lmfit.model import Model
-    else:
-        from lmfit.model import Model
-    _lmfit = True
-except ImportError:
-    Model = None
-    Parameters = None
-    _lmfit = False
+_lmfit = True
 
 
 class odr_Model(odrModel):
