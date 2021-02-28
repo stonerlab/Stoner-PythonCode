@@ -72,7 +72,6 @@ def _sub_core_(result, other):
 
     Note:
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
-
     """
     calls = [
         (int_types, _sub_core_int_),
