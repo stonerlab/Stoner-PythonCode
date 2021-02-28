@@ -13,7 +13,6 @@ __all__ = [
     "mpl_version",
     "_lmfit",
     "makedirs",
-    "cmp",
     "Hyperspy_ok",
     "hs",
     "which",
@@ -31,10 +30,7 @@ from pathlib import PurePath
 import numpy as np
 from matplotlib import __version__ as mpl_version
 
-from lmfit import Model  # pylint: disable=unused-import
-
 _lmfit = True
-
 
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
@@ -57,13 +53,10 @@ except ImportError:
     Hyperspy_ok = False
     hs = None
 
-
 if __vi__[1] < 7:
     from re import _pattern_type  # pylint: disable = E0611
 else:
     from re import Pattern as _pattern_type  # pylint: disable = E0611
-
-cmp = None
 
 
 def getargspec(*args, **kargs):
@@ -113,7 +106,12 @@ def get_filedialog(what="file", **opts):
     """
     from .tools.widgets import fileDialog
 
-    funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
+    funcs = {
+        "file": "OpenFile",
+        "directory": "SelectDirectory",
+        "files": "OpenFiles",
+        "save": "SaveFile",
+    }
     if what not in funcs:
         raise RuntimeError(f"Unable to recognise required file dialog type:{what}")
     return fileDialog.openDialog(mode=funcs[what], **opts)
