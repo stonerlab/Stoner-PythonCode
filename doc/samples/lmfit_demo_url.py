@@ -1,20 +1,18 @@
-"""Demo of new Stoner.Analysis.AnalyseFile.lmfit"""
+"""Demo of new Stoner.Analysis.AnalyseFile.lmfit."""
 # pylint: disable=invalid-name
-from os.path import join
 import urllib
 import io
 
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
-from Stoner import __home__
 
 config = io.StringIO(
-    urllib.request.urlopen(
+    urllib.request.urlopen(  # pylint: disable=urllib_urlopen
         "https://raw.githubusercontent.com/stonerlab/Stoner-PythonCode/master/scripts/PCAR-chi%5E2.ini"
     )
     .read()
     .decode()
 )
-datafile = io.StringIO(
+datafile = io.StringIO(  # pylint: disable=urllib_urlopen
     urllib.request.urlopen(
         "https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/PCAR%20Co%20Data.csv"
     )
