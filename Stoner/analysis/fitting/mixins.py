@@ -58,19 +58,18 @@ class odr_Model(odrModel):
         if isinstance(model, Model):
             self.model = model
             self.func = model.func
-            model = lambda beta, x, **kargs: self.model.func(x, *beta, **kargs)
+            modelfunc = lambda beta, x, **kargs: self.func(x, *beta, **kargs)
             meta["param_names"] = self.model.param_names
             meta["param_hints"] = self.model.param_hints
             meta["name"] = type(self.model).__name__
         elif isinstance(model, odrModel):
             self.model = model
-
-            def _func(x, *beta):
-                return model.fcn(beta, x)
-
-            self.func = _func
+            meta.update(model.meta)
             meta["param_names"] = model.meta.pop("param_names", [f"Param_{ix}" for ix, p in enumerate(p0)])
             meta["name"] = model.fcn.__name__
+
+            modelfunc = model.fcn
+            self.model.meta.update(meta)
         elif callable(model):
             self.model = None
             meta["name"] = model.__name__
@@ -78,12 +77,11 @@ class odr_Model(odrModel):
             meta["param_names"] = list(arguments[1:])
             meta["param_hints"] = {x: {"value": 1.0} for x in arguments[1:]}
             # print(arguments,carargs,jeywords,defaults)
-            func = model
             self.func = model
 
-            def model(beta, x, **_):  # pylint: disable=E0102
+            def modelfunc(beta, x, **_):  # pylint: disable=E0102
                 """Warapper for model function."""
-                return func(x, *beta)
+                return model(x, *beta)
 
             meta["__name__"] = meta["name"]
         else:
@@ -91,7 +89,7 @@ class odr_Model(odrModel):
                 "".join(
                     [
                         f"Cannot construct a model instance from a {model} - ",
-                        f"need a callable, lmfit.Model or scipy.odr.Model",
+                        "need a callable, lmfit.Model or scipy.odr.Model",
                     ]
                 )
             )
@@ -107,7 +105,7 @@ class odr_Model(odrModel):
 
         kargs["meta"] = meta
 
-        super().__init__(model, *args, **kargs)
+        super().__init__(modelfunc, *args, **kargs)
 
     @property
     def p0(self):
@@ -431,16 +429,19 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
     """
     single_fit = True
     if p0 is None:  # First guess the p0 values using the model
-        for p_name in model.param_names:
-            if p_name in kargs:
-                model.set_param_hint(p_name, value=kargs.get(p_name))
-        try:
-            p0 = model.guess(ydata, x=xdata)
-        except Exception:  # pylint: disable=W0703  Don't be fussy here
-            p0 = lmfit.Parameters()
+        if isinstance(model, odrModel):
+            p0 = model.estimate
+        else:
             for p_name in model.param_names:
                 if p_name in kargs:
-                    p0[p_name] = lmfit.Parameter(name=p_name, value=kargs.get(p_name))
+                    model.set_param_hint(p_name, value=kargs.get(p_name))
+            try:
+                p0 = model.guess(ydata, x=xdata)
+            except Exception:  # pylint: disable=W0703  Don't be fussy here
+                p0 = lmfit.Parameters()
+                for p_name in model.param_names:
+                    if p_name in kargs:
+                        p0[p_name] = lmfit.Parameter(name=p_name, value=kargs.get(p_name))
         single_fit = True
 
     if callable(p0):
@@ -463,7 +464,7 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
         p0 = p_new
         for p_name in model.param_names:
             if p_name in kargs:
-                p0[p_name] = lmfit.Parameter(value=kargs.pop(p_name))
+                p0[p_name] = lmfit.Parameter(p_name, value=kargs.pop(p_name))
     elif isinstance(p0, np.ndarray) and p0.ndim == 2:  # chi^2 mapping
         single_fit = False
         return p0, single_fit
@@ -785,28 +786,47 @@ class FittingMixin:
             labels = getattr(type(func), "labels", None)
             units = getattr(type(func), "units", None)
             func = func.func
+            args = getfullargspec(func)[0]  # pylint: disable=W1505
+            if args[0] == "self":
+                del args[0]
+            if len(args) > 0:
+                del args[0]
+
         elif isclass(func) and issubclass(func, lmfit.Model):
             f_name = func.__name__
             labels = getattr(func, "labels", None)
             units = getattr(func, "units", None)
+            args = getfullargspec(func)[0]  # pylint: disable=W1505
             func = func.func
+            if args[0] == "self":
+                del args[0]
+            if len(args) > 0:
+                del args[0]
+
         elif isinstance(func, (sp.odr.Model)):
             f_name = func.meta["name"]
             labels = getattr(func, "labels", None)
             units = getattr(func, "units", None)
-            func = func.func
+            args = func.meta["param_names"]
+            model = func
+
+            def _func(x, *beta):
+                return model.fcn(beta, x)
+
+            func = _func
         else:
             f_name = func.__name__
             labels = getattr(func, "labels", None)
             units = getattr(func, "units", None)
+            args = getfullargspec(func)[0]  # pylint: disable=W1505
+            if args[0] == "self":
+                del args[0]
+            if len(args) > 0:
+                del args[0]
+
         if prefix is not None:
             f_name = prefix
 
-        args = getfullargspec(func)[0]  # pylint: disable=W1505
-        if args[0] == "self":
-            del args[0]
-        if len(args) > 0:
-            del args[0]
         if labels is None:
             labels = args
         if units is None:
@@ -1614,7 +1634,10 @@ class FittingMixin:
         bounds = kargs.pop("boinds", lambda x, r: True)
         p0 = kargs.pop("p0", None)
         data, scale_covar, _ = self._assemnle_data_to_fit(xcol, ycol, sigma, bounds, scale_covar, sigma_x=sigma_x)
-        model, prefix = _prep_lmfit_model(model, kargs)
+        if not isinstance(model, odrModel):
+            model, prefix = _prep_lmfit_model(model, kargs)
+        else:
+            prefix = kargs.pop("prefix", getattr(model, "name", model.fcn.__name__))
         p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
         kargs["p0"] = p0
         model = odr_Model(model, p0=p0)
