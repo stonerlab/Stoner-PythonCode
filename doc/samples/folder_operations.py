@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Example of Folder operations."""
 import re
+from pathlib import Path
 
 from Stoner import __datapath__, DataFolder, Data
 
@@ -21,10 +22,10 @@ print(
     fldr2.count(fldr2[1]),
 )
 # baseFolders implement a mapping interface to thier contents
-oneQD = fldr2.get("QD", Data())
-twoQD = fldr2.pop("QD", Data())
+one_qd = fldr2.get("QD", Data())
+two_qd = fldr2.pop("QD", Data())
 # These should be the same
-print(oneQD.metadata == twoQD.metadata)
+print(one_qd == two_qd)
 # Search for a particular name
 print(
     fldr2.index("**/QD*.dat"),
@@ -33,3 +34,23 @@ print(
 )
 # Because we shpuld plot something
 fldr2[5].plot()
+
+
+def print_filename(data):
+    """Print the filename for the data object."""
+    print(data.filename, data.shape)
+
+
+(print_filename @ fldr2)()
+
+# Remove groups without DataFiles
+del fldr["attocube_scan"]
+del fldr["maximus_scan"]
+
+fldr3 = fldr.filter(
+    lambda d: Path(d.filename).stem.startswith("QD"), copy=True, recurse=True
+)
+fldr4 = fldr3.clone
+fldr4.update(fldr)
+fldr4.sort(lambda d: Path(d.filename).stem)
+print(list(fldr4.ls))

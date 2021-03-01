@@ -323,7 +323,7 @@ class baseFolder(MutableSequence):
 
     @debug.setter
     def debug(self, value):
-        """recursely set the debug value."""
+        """Recursely set the debug value."""
         self._debug = value
         self._object_attrs["debug"] = value
         for _, member in self.loaded:
@@ -1718,9 +1718,15 @@ class baseFolder(MutableSequence):
                 self[k] = other[k]
         elif isinstance(other, baseFolder):
             for k in other.groups:
-                self.groups[k] = other.groups[k]
-            for k in self.__names__():
-                self.__setter__(self.__lookup__(k), other.__getter__(other.__lookup__(k)))
+                if k in self.groups:
+                    self.groups[k].update(other.groups[k])
+                else:
+                    self.groups[k] = other.groups[k].clone
+            for k in other.__names__():
+                if k in self.__names__():
+                    self.__setter__(self.__lookup__(k), other.__getter__(other.__lookup__(k)).clone)
+                else:
+                    self.append(other.__getter__(other.__lookup__(k)).clone)
 
     def values(self):
         """Return the sub-groups of this folder."""

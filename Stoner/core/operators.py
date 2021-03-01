@@ -126,7 +126,9 @@ class DataFileOperatorsMixin:
         """
         if not isinstance(other, DataFileOperatorsMixin):  # Start checking we're all DataFile's
             return False
-        if self.data.shape != other.data.shape or not np.all(self.data == other.data):  # Check we have the same data
+        if self.data.shape != other.data.shape:  # Check we have the same data
+            return False
+        if not np.all(self.data[~np.isnan(self.data)] == other.data[~np.isnan(other.data)]):  # Don't compare nan!
             return False
         if len(self.column_headers) != len(other.column_headers) or np.any(
             [c1 != c2 for c1, c2 in zip(self.column_headers, other.column_headers)]
