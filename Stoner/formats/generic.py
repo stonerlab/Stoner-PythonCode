@@ -100,16 +100,16 @@ class CSVFile(DataFile):
 
         with FileManager(self.filename, "r") as datafile:
             if header_line is not None:
-                for ix, line in enumerate(datafile):
-                    if ix == header_line:
-                        break
-                else:
-                    raise StonerLoadError("Ran out of file before readching header")
-                header = line.strip()
                 try:
+                    for ix, line in enumerate(datafile):
+                        if ix == header_line:
+                            break
+                    else:
+                        raise StonerLoadError("Ran out of file before readching header")
+                    header = line.strip()
                     column_headers = next(csv.reader(io.StringIO(header), delimiter=header_delim))
                     data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line - header_line)
-                except (TypeError, ValueError, csv.Error) as err:
+                except (TypeError, ValueError, csv.Error, StopIteration, UnicodeDecodeError) as err:
                     raise StonerLoadError("Header and data on the same line") from err
             else:  # Generate
                 try:

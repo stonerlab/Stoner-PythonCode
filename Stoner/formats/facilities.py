@@ -13,6 +13,7 @@ from .. import Core
 from ..compat import str2bytes
 from ..core.base import string_to_type
 from ..tools.file import FileManager
+from ..core.exceptions import StonerLoadError
 
 
 class BNLFile(Core.DataFile):
@@ -122,7 +123,10 @@ class BNLFile(Core.DataFile):
             a new method below.
         """
         self.filename = filename
-        self.__parse_BNL_data()  # call an internal function rather than put it in load function
+        try:
+            self.__parse_BNL_data()  # call an internal function rather than put it in load function
+        except (IndexError, TypeError, ValueError, StonerLoadError) as err:
+            raise StonerLoadError("Not parseable as a NFLS file!") from err
         linecache.clearcache()
         return self
 

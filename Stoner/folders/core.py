@@ -36,7 +36,7 @@ def _add_core_(result, other):
             result.extend(list(other.files))
             for grp in other.groups:
                 if grp in result.groups:
-                    result.groups[grp] += other.groups[grp]  # recursively merge groups
+                    result.groups[grp] += other.groups[grp]  # recursely merge groups
                 else:
                     result.groups[grp] = copy(other.groups[grp])
         else:
@@ -323,7 +323,7 @@ class baseFolder(MutableSequence):
 
     @debug.setter
     def debug(self, value):
-        """Recursively set the debug value."""
+        """recursely set the debug value."""
         self._debug = value
         self._object_attrs["debug"] = value
         for _, member in self.loaded:
@@ -742,7 +742,7 @@ class baseFolder(MutableSequence):
                     item.filename = iname
                 other.append(item)
             return other
-        if isinstance(name, tuple):  # Recursive indexing through tree with a tuple
+        if isinstance(name, tuple):  # recurse indexing through tree with a tuple
             item = self[name[0]]
             if len(name) > 2:
                 name = tuple(name[1:])
@@ -1110,7 +1110,7 @@ class baseFolder(MutableSequence):
         return self
 
     def all(self):
-        """Iterate over all the files in the Folder and all it's sub Folders recursively.
+        """Iterate over all the files in the Folder and all it's sub Folders recursely.
 
         Yields:
             (path/filename,file)
@@ -1155,7 +1155,7 @@ class baseFolder(MutableSequence):
                 return len(fnmatch.filter(self.__names__(), name))
             return self.__names__().count(self.__lookup__(name))
         if isinstance(name, _pattern_type):
-            match = [1 for n in self.__names__() if name.match(n)]
+            match = [1 for n in self.__names__() if name.search(n)]
             return len(match)
         if isinstance(name, metadataObject):
             match = [1 for d in self if d == name]
@@ -1170,7 +1170,7 @@ class baseFolder(MutableSequence):
         return self
 
     def file(self, name, value, create=True, pathsplit=None):
-        """Recursively add groups in order to put the named value into a virtual tree of :py:class:`baseFolder`.
+        """recursely add groups in order to put the named value into a virtual tree of :py:class:`baseFolder`.
 
         Args:
             name(str):
@@ -1218,7 +1218,9 @@ class baseFolder(MutableSequence):
                 raise KeyError(f"No group {section} exists and not creating groups.")
         return tmp
 
-    def filter(self, filter=None, invert=False, copy=False):  # pylint: disable=redefined-builtin
+    def filter(
+        self, filter=None, invert=False, copy=False, recurse=False, prune=True
+    ):  # pylint: disable=redefined-builtin
         r"""Filter the current set of files by some criterion.
 
         Args:
@@ -1232,6 +1234,10 @@ class baseFolder(MutableSequence):
             copy (bool):
                 If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False -
                 work in place.
+            recurse (bool):
+                If True, apply the filter recursely to all groups. Default False
+            prune (bool):
+                If True, execute a :py:meth:`baseFolder.prune` to remove empty groups after filering
 
         Returns:
             The current objectFolder object
@@ -1247,7 +1253,7 @@ class baseFolder(MutableSequence):
                     names.append(result.__getter__(f))
         elif isinstance(filter, _pattern_type):
             for f in result.__names__():
-                if filter.search(f) is not None:
+                if (filter.search(f) is not None) ^ invert:
                     names.append(result.__getter__(f))
         elif filter is None:
             raise ValueError("A filter must be defined !")
@@ -1257,9 +1263,14 @@ class baseFolder(MutableSequence):
                     names.append(x)
         result.__clear__()
         result.extend(names)
+        if recurse:
+            for g in result.groups.values():
+                g.filter(filter=filter, invert=invert, copy=False, recurse=True)
+        if prune:
+            result.prune()
         return result
 
-    def filterout(self, filter, copy=False):  # pylint: disable=redefined-builtin
+    def filterout(self, filter, copy=False, recurse=False, prune=True):  # pylint: disable=redefined-builtin
         """Synonym for self.filter(filter,invert=True).
 
         Args:
@@ -1271,11 +1282,15 @@ class baseFolder(MutableSequence):
             copy (bool):
                 If set True then the :py:class:`DataFolder` is copied before being filtered. Default is False -
                 work in place.
+            recurse (bool):
+                If True, apply the filter recursely to all groups. Default False
+            prune (bool):
+                If True, execute a :py:meth:`baseFolder.prune` to remove empty groups after filering
 
         Returns:
             The current objectFolder object with the files in the file list filtered.
         """
-        return self.filter(filter, invert=True, copy=copy)
+        return self.filter(filter, invert=True, copy=copy, recurse=recurse, prune=prune)
 
     def flatten(self, depth=None):
         """Compresses all the groups and sub-groups iunto a single flat file list.
@@ -1333,7 +1348,7 @@ class baseFolder(MutableSequence):
                 Either a simple string or callable function or a list. If a string then it is interpreted as an item of
                 metadata in each file. If a callable function then takes a single argument x which should be an
                 instance of a metadataObject and returns some vale. If key is a list then the grouping is
-                done recursively for each element in key.
+                done recursely for each element in key.
 
         Returns:
             A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder
@@ -1393,12 +1408,12 @@ class baseFolder(MutableSequence):
             if "*" in name or "?" in name:  # globbing pattern
                 m = fnmatch.filter(search, name)
                 if len(m) > 0:
-                    return search.index(m[0] + start)
+                    return search.index(m[0]) + start
                 raise ValueError(f"{name} is not a name of a metadataObject in this baseFolder.")
             return search.index(self.__lookup__(name)) + start
         if isinstance(name, _pattern_type):
             for i, n in enumerate(search):
-                if name.match(n):
+                if name.search(n):
                     return i + start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
         if isinstance(name, metadataObject):
@@ -1627,7 +1642,7 @@ class baseFolder(MutableSequence):
         """
         return self.metadata.slice(key, output=output)
 
-    def sort(self, key=None, reverse=False, recursive=True):
+    def sort(self, key=None, reverse=False, recurse=True):
         """Sort the files by some key.
 
         Keyword Arguments:
@@ -1638,15 +1653,15 @@ class baseFolder(MutableSequence):
                 If key is not specified (default), then a sort is performed on the filename
             reverse (bool):
                 Optionally sort in reverse order
-            recursive (bool):
+            recurse (bool):
                 If True (default) sort the sub-groups as well.
 
         Returns:
             A copy of the current objectFolder object
         """
-        if recursive:
+        if recurse:
             for grp in self.groups.values():
-                grp.sort(key=key, reverse=reverse, recursive=recursive)
+                grp.sort(key=key, reverse=reverse, recurse=recurse)
         tmp = self.clone
         if isinstance(key, string_types):
             k = [(x.get(key), i) for i, x in enumerate(tmp)]
