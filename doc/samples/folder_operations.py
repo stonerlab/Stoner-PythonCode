@@ -53,4 +53,4 @@ fldr3 = fldr.filter(
 fldr4 = fldr3.clone
 fldr4.update(fldr)
 fldr4.sort(lambda d: Path(d.filename).stem)
-print(list(fldr4.ls))
+print(fldr4.layout)

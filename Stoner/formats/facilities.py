@@ -9,11 +9,16 @@ import re
 
 import numpy as np
 
-from .. import Core
+from .. import Core, Image
 from ..compat import str2bytes
 from ..core.base import string_to_type
 from ..tools.file import FileManager
 from ..core.exceptions import StonerLoadError
+
+try:
+    import fabio
+except ImportError:
+    fabio = None
 
 
 class BNLFile(Core.DataFile):
@@ -333,3 +338,50 @@ class SNSFile(Core.DataFile):
                         self[key.strip()] = value.strip()
         self.column_headers = column_headers
         return self
+
+
+if fabio:
+
+    class ESRF_DataFile(Core.DataFile):
+
+        """Utilise the fabIO library to read an edf file has a DataFile."""
+
+        priority = 16
+        patterns = ["*.edf"]
+        mime_type = ["application/octet-stream", "text/plain"]
+
+        def _load(self, filename=None, *args, **kargs):
+            """Load function. File format has space delimited columns from row 3 onwards."""
+            if filename is None or not filename:
+                self.get_filename("r")
+            else:
+                self.filename = filename
+            try:
+                img = fabio.edfimage.edfimage().read(self.filename)
+                self.data = img.data
+                self.metadata.update(img.header)
+                return self
+            except (OSError, ValueError, TypeError, IndexError):
+                raise StonerLoadError("Not an ESRF data file !")
+
+    class ESRF_ImageFile(Image.ImageFile):
+
+        """Utilise the fabIO library to read an edf file has a DataFile."""
+
+        priority = 16
+        patterns = ["*.edf"]
+        mime_type = ["application/octet-stream", "text/plain"]
+
+        def _load(self, filename=None, *args, **kargs):
+            """Load function. File format has space delimited columns from row 3 onwards."""
+            if filename is None or not filename:
+                self.get_filename("r")
+            else:
+                self.filename = filename
+            try:
+                img = fabio.edfimage.edfimage().read(self.filename)
+                self.image = img.data
+                self.metadata.update(img.header)
+                return self
+            except (OSError, ValueError, TypeError, IndexError):
+                raise StonerLoadError("Not an ESRF data file !")

@@ -133,22 +133,23 @@ def auto_load_classes(
     args = args if args is not None else ()
     kargs = kargs if kargs is not None else {}
     for cls in subclasses(baseclass).values():  # pylint: disable=E1136, E1101
+        cls_name = cls.__name__
         if debug:
-            print(cls.__name__)
+            print(cls_name)
         try:
             if mimetype is not None and mimetype not in cls.mime_type:  # short circuit for non-=matching mime-types
                 if debug:
-                    print(f"Skipping {cls.__name__} due to mismatcb mime type {cls.mime_type}")
+                    print(f"Skipping {cls_name} due to mismatcb mime type {cls.mime_type}")
                 continue
             test = cls()
             if "_load" not in cls.__dict__:  # No local _load method
                 continue
             if debug and filemagic is not None:
-                print(f"Trying: {cls.__name__} =mimetype {test.mime_type}")
+                print(f"Trying: {cls_name} =mimetype {test.mime_type}")
 
             test = test._load(filename, auto_load=False, *args, **kargs)
             if test is None:
-                raise SyntaxError(f"Class {cls.__name__}'s _load returned None !!")
+                raise SyntaxError(f"Class {cls_name}'s _load returned None !!")
             try:
                 kargs = test._kargs
                 delattr(test, "_kargs")
@@ -158,7 +159,7 @@ def auto_load_classes(
             if debug:
                 print("Passed Load")
             if isinstance(test, metadataObject):
-                test["Loaded as"] = cls.__name__
+                test["Loaded as"] = cls_name
             if debug:
                 print(f"Test matadata: {test.metadata}")
 
