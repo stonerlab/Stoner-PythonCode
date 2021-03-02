@@ -310,7 +310,10 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
             continue
         try:
             setattr(dest, attr, copy.deepcopy(getattr(source, attr)))
-        except (NotImplementedError, TypeError):  # Deepcopying failed, so just copy a reference instead
-            setattr(dest, attr, getattr(source, attr))
+        except (NotImplementedError, TypeError, ValueError):  # Deepcopying failed, so just copy a reference instead
+            try:
+                setattr(dest, attr, getattr(source, attr))
+            except ValueError:
+                pass
     dest._punlic_attrs = source._public_attrs
     return dest

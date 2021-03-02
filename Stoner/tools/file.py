@@ -256,7 +256,10 @@ class FileManager:
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Close the open file, or reset the buffer position."""
-        self.file.close()
+        if not self.file.closed and self.file.seekable():
+            self.file.seek(0)
+        if self.mode == "open":
+            self.file.close()
 
 
 class SizedFileManager(FileManager):
@@ -269,7 +272,7 @@ class SizedFileManager(FileManager):
         if self.mode == "open":
             length = os.stat(self.filename).st_size
         elif self.mode in ["textio", "bytesio"]:
-            if self.file.seekable:
+            if self.file.seekable():
                 pos = self.file.tell()
                 self.file.seek(0, 2)
                 length = self.file.tell()
