@@ -125,6 +125,9 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
     overwrites the attributes that represent the data in the ImageFile.
     """
     dest.image = source.image.clone
+    for k in source._public_attrs:
+        if hasattr(source, k):
+            setattr(dest, k, deepcopy(getattr(source, k)))
     return dest
 
 

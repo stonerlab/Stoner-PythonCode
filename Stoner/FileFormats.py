@@ -20,6 +20,8 @@ __all__ = [
     "BirgeIVFile",
     "CSVFile",
     "EasyPlotFile",
+    "ESRF_DataFile",
+    "ESRF_ImageFile",
     "FmokeFile",
     "GenXFile",
     "HyperSpyFile",
@@ -41,7 +43,15 @@ __all__ = [
 ]
 # pylint: disable=unused-argument
 from Stoner.formats.instruments import LSTemperatureFile, QDFile, RigakuFile, SPCFile, VSMFile, XRDFile
-from Stoner.formats.facilities import BNLFile, MDAASCIIFile, OpenGDAFile, RasorFile, SNSFile
+from Stoner.formats.facilities import (
+    BNLFile,
+    MDAASCIIFile,
+    OpenGDAFile,
+    RasorFile,
+    SNSFile,
+    ESRF_DataFile,
+    ESRF_ImageFile,
+)
 from Stoner.formats.generic import CSVFile, KermitPNGFile, TDMSFile, HyperSpyFile
 from Stoner.formats.rigs import BigBlueFile, BirgeIVFile, MokeFile, FmokeFile, EasyPlotFile, PinkLibFile
 from Stoner.formats.simulations import GenXFile, OVFFile

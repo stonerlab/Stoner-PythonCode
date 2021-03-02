@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Implements DataFile like classes for various large scale facilities."""
 
-__all__ = ["BNLFile", "MDAASCIIFile", "OpenGDAFile", "RasorFile", "SNSFile"]
+__all__ = ["BNLFile", "MDAASCIIFile", "OpenGDAFile", "RasorFile", "SNSFile", "ESRF_DataFile", "ESRF_ImageFile"]
 # Standard Library imports
 import linecache
 import re
@@ -385,3 +385,8 @@ if fabio:
                 return self
             except (OSError, ValueError, TypeError, IndexError):
                 raise StonerLoadError("Not an ESRF data file !")
+
+
+else:
+    ESRF_DataFile = None
+    ESRF_ImageFile = None

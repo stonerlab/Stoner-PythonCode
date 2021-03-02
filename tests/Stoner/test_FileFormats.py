@@ -158,6 +158,14 @@ def test_from_StringIO():
         buffer=io.StringIO(data.read())
     assert Data(buffer)==Data(__datapath__/"RASOR.dat")
 
+def test_ImageAutoLoad():
+    """Test ImageFile autoloading"""
+    img=ImageFile(__datapath__/"kermit.png")
+    assert img.shape==(479, 359)
+    img=ImageFile(__datapath__/"working"/"hydra_0017.edf")
+    assert img.shape==(512, 768)
+    img=ImageFile(__datapath__/"working"/"Sample_Image_2017-06-03_035.hdf5")
+    assert img.shape==(80, 300)
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb", __file__])
