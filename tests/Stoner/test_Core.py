@@ -237,7 +237,7 @@ def test_iterators():
 def test_dir():
     global selfd, selfd1, selfd2, selfd3, selfd4
     assert selfd.dir("S")==["Stoner.class"],f"Dir method failed: dir was {selfd.dir()}"
-    bad_keys=set(['__metaclass__', 'iteritems', 'iterkeys', 'itervalues','__ge__', '__gt__', '__init_subclass__',
+    bad_keys=set(['__class_getitem__', '__metaclass__', 'iteritems', 'iterkeys', 'itervalues','__ge__', '__gt__', '__init_subclass__',
                   '__le__', '__lt__', '__reversed__', '__slots__',"_abc_negative_cache","_abc_registry",
                   "_abc_negative_cache_version","_abc_cache","_abc_impl"])
     attrs=set(dir(selfd))-bad_keys
@@ -395,4 +395,4 @@ def test_metadata_save():
     #os.remove(path.join(local, "mixedmetatest2.txt"))
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    pytest.main(["--pdb","--profile",__file__])
+    pytest.main(["--pdb",__file__])

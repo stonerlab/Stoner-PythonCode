@@ -14,20 +14,7 @@ from lmfit.models import update_param_vals
 try:  # numba is an optional dependency
     from numba import jit, float64, int64
 except ImportError:
-
-    def jit(func, *_):
-        """Null decorator function."""
-        return func
-
-    class _dummy:
-
-        """A class that does nothing so that float64 can be an instance of it safely."""
-
-        def __call__(self, *args):
-            return self
-
-        def __getitem__(self, *args):
-            return self
+    from ....compat import _dummy, _jit as jit
 
     float64 = _dummy()
     int64 = _dummy()

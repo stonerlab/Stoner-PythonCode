@@ -17,6 +17,8 @@ __all__ = [
     "hs",
     "which",
     "commonpath",
+    "_jit",
+    "_dummy",
 ]
 
 from sys import version_info as __vi__
@@ -155,3 +157,23 @@ def classproperty(func):
         func = classmethod(func)
 
     return ClassPropertyDescriptor(func)
+
+
+def _jit(func, *_, **__):
+    """Null decorator function."""
+    return func
+
+
+class _dummy:
+
+    """A class that does nothing so that float64 can be an instance of it safely."""
+
+    def jit(self, func, *_, **__):
+        """Null decorator function."""
+        return func
+
+    def __call__(self, *args, **kargs):
+        return self.jit
+
+    def __getitem__(self, *args, **kargs):
+        return self

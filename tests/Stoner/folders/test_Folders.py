@@ -36,8 +36,9 @@ datadir=pth/"sample-data"
 
 def test_Folders():
     fldr=DataFolder(datadir,debug=False,recursive=False)
+    if not Hyperspy_ok: del fldr[".*emd$"]
     fl=len(fldr)
-    skip=1
+    skip=1 if Hyperspy_ok else 2
     datfiles=fnmatch.filter(os.listdir(datadir),"*.dat")
     length = len([i for i in os.listdir(datadir) if path.isfile(os.path.join(datadir,i))])-skip # don't coiunt TDMS index
     assert length==fl,"Failed to initialise DataFolder from sample data {} {} {} {}".format(fl,length,skip,Hyperspy_ok)
@@ -64,6 +65,7 @@ def test_loader_opts():
 
 def test_groups_methods():
     fldr=DataFolder(datadir,debug=False,recursive=False)
+    if not Hyperspy_ok: del fldr[".*emd$"]
     fldr.group("Loaded as")
     fldr.groups.keep(["QDFile","OpenGDAFile"])
     assert fldr.shape==(0, {'OpenGDAFile': (1, {}), 'QDFile': (4, {})}),"groups.keep method failed on folder"
@@ -79,6 +81,7 @@ def test_discard_earlier():
 
 def test_clear_and_attrs():
     fldr=DataFolder(datadir,debug=False,recursive=False)
+    if not Hyperspy_ok: del fldr[".*emd$"]
     fldr2=fldr.clone
     fldr2.clear()
     assert fldr2.shape==(0, {}), "Failed to clear"
@@ -96,6 +99,7 @@ def test_clear_and_attrs():
 
 def test_Operators():
     fldr=DataFolder(datadir,debug=False,recursive=False)
+    if not Hyperspy_ok: del fldr[".*emd$"]
     fl=len(fldr)
     d=Data(np.ones((100,5)))
     fldr+=d
@@ -136,6 +140,7 @@ def test_Operators():
 
 def test_Base_Operators():
     fldr=DataFolder(datadir,debug=False,recursive=False)
+    if not Hyperspy_ok: del fldr[".*emd$"]
     for d in fldr:
         _=d["Loaded as"]
     fldr=baseFolder(fldr)
@@ -149,7 +154,8 @@ def test_Base_Operators():
     assert len(fldr)==fl,"Failed to remove Untitled-0 from DataFolder by name."
     fldr-="New-XRay-Data.dql"
     assert fl-1==len(fldr),"Failed to remove NEw Xray data by name."
-    del fldr["1449 37.0 kx.emd"]
+    if Hyperspy_ok:
+        del fldr["1449 37.0 kx.emd"]
     fldr/="Loaded as"
     assert len(fldr["QDFile"])==4,"Failoed to group folder by Loaded As metadata with /= opeator."
     fldr=DataFolder(datadir,debug=False,recursive=False)
@@ -181,6 +187,7 @@ def test_Base_Operators():
 
 def test_Properties():
     fldr=DataFolder(datadir,debug=False,recursive=False)
+    if not Hyperspy_ok: del fldr[".*emd$"]
     assert fldr.mindepth==0,"Minimum depth of flat group n ot equal to zero."
     fldr/="Loaded as"
     grps=list(fldr.lsgrp)
@@ -214,7 +221,7 @@ def test_methods():
     sliced=np.array(['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile', 'DataFile', 'DataFile', 'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile', 'DataFile', 'DataFile'],
       dtype='<U12')
     fldr=DataFolder(datadir, pattern='*.txt', recursive=False).sort()
-    fldr=fldr
+
     test_sliced=fldr.slice_metadata("Loaded as")
     assert len(sliced)==len(test_sliced),"Test slice not equal length - sample-data changed? {}".format(test_sliced)
     assert np.all(test_sliced==sliced),"Slicing metadata failed to work."

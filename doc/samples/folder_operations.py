@@ -4,8 +4,11 @@ import re
 from pathlib import Path
 
 from Stoner import __datapath__, DataFolder, Data
+from Stoner.compat import Hyperspy_ok
 
 fldr = DataFolder(__datapath__)
+if not Hyperspy_ok:
+    del fldr[".*emd$"]
 # .all() will recursely iterate all files and groups, depth first.
 for ix, (fname, data) in enumerate(fldr.all()):
     print(ix, fname)

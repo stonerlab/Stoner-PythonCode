@@ -364,13 +364,13 @@ if fabio:
             except (OSError, ValueError, TypeError, IndexError):
                 raise StonerLoadError("Not an ESRF data file !")
 
-    class ESRF_ImageFile(Image.ImageFile):
+    class FabioImageFile(Image.ImageFile):
 
         """Utilise the fabIO library to read an edf file has a DataFile."""
 
-        priority = 16
-        patterns = ["*.edf"]
-        mime_type = ["application/octet-stream", "text/plain"]
+        priority = 64
+        patterns = ["*.*"]
+        mime_type = ["application/octet-stream", "image/png", "image/tiff"]
 
         def _load(self, filename=None, *args, **kargs):
             """Load function. File format has space delimited columns from row 3 onwards."""
@@ -379,12 +379,12 @@ if fabio:
             else:
                 self.filename = filename
             try:
-                img = fabio.edfimage.edfimage().read(self.filename)
+                img = fabio.open(self.filename)
                 self.image = img.data
                 self.metadata.update(img.header)
                 return self
             except (OSError, ValueError, TypeError, IndexError):
-                raise StonerLoadError("Not an ESRF data file !")
+                raise StonerLoadError("Not a Fabio Image file !")
 
 
 else:

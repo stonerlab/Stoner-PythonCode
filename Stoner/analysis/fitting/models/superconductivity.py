@@ -34,20 +34,7 @@ J1 = partial(jv, 1)
 try:  # numba is an optional dependency
     from numba import jit, float64
 except ImportError:
-
-    def jit(func, *_, **__):
-        """Null decorator function."""
-        return func
-
-    class _dummy:
-
-        """A class that does nothing so that float64 can be an instance of it safely."""
-
-        def __call__(self, *args):
-            return self
-
-        def __getitem__(self, *args):
-            return self
+    from ....compat import _dummy, _jit as jit
 
     float64 = _dummy()
 
