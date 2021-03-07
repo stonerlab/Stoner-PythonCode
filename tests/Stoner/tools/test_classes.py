@@ -128,17 +128,8 @@ def test_Options():
  'short_img_repr',
  'short_repr',
  'threading'], "Directory of Options failed"
-    opt_repr='Stoner Package Options\n~~~~~~~~~~~~~~~~~~~~~~\nmultiprocessing : False\nno_figs : True\nshort_data_repr : False\nshort_folder_rrepr : True\nshort_img_repr : True\nshort_repr : False\nthreading : False\n'
-    assert repr(Options)==opt_repr,"Representation of Options failed"
-
-
-
-
-
-
-
-
-
+    opt_repr='Stoner Package Options\n~~~~~~~~~~~~~~~~~~~~~~\nmultiprocessing : '
+    assert repr(Options).startswith(opt_repr),"Representation of Options failed"
 
 if __name__ == "__main__":
-    pytest.main()
+    pytest.main(["--pdb",__file__])

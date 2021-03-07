@@ -5,14 +5,10 @@ Created on Sun Dec  9 19:56:38 2018
 
 @author: phygbu
 """
-import unittest
 import sys
 import os.path as path
 import os
 import numpy as np
-import re
-import fnmatch
-from numpy import ceil
 from Stoner.compat import *
 from Stoner import DataFolder
 import pytest

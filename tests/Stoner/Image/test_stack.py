@@ -12,6 +12,7 @@ import os
 import Stoner
 import pytest
 Stoner.Options.multiprocessing=False
+Stoner.Options.threading=True
 
 testdir=os.path.join(os.path.dirname(__file__),"coretestdata","testims")
 

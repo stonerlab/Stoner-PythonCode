@@ -356,9 +356,11 @@ class Item:
         _byname = kargs.pop("_byname", False)
         _serial = kargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        p, imap = get_pool(_serial)
+        self._folder.executor = get_pool(self._folder, _serial)
         for ix, (f, ret) in enumerate(
-            imap(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder)
+            self._folder.executor.map(
+                partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder
+            )
         ):
             new_d = f
             if self._folder.debug:
@@ -377,6 +379,3 @@ class Item:
             name = self._folder.__names__()[ix]
             self._folder.__setter__(name, new_d)
             yield ret
-        if p is not None:
-            p.close()
-            p.join()

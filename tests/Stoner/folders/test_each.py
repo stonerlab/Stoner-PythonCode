@@ -10,7 +10,7 @@ import os.path as path
 import os
 import pytest
 
-from Stoner import DataFolder
+from Stoner import DataFolder, Options
 from Stoner.Util import hysteresis_correct
 
 pth=path.dirname(__file__)
@@ -18,6 +18,8 @@ pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 datadir=path.join(pth,"sample-data")
 
+Options.multiprocessing = False
+Options.threading = True
 
 def test_each_call():
     os.chdir(datadir)

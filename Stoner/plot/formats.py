@@ -482,10 +482,10 @@ class DefaultPlotStyle(MutableMapping):
             In the DefaultPlotStyle class this method is used to set SI units
             plotting mode for all axes.
         """
-        ax.xaxis.set_major_locator(self.xlocater())
-        ax.yaxis.set_major_locator(self.ylocater())
         ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick__labelsize)
         ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick__labelsize)
+        ax.xaxis.set_major_locator(self.xlocater())
+        ax.yaxis.set_major_locator(self.ylocater())
         if isinstance(self.xformatter, Formatter):
             xformatter = self.xformatter
         else:

@@ -325,16 +325,13 @@ class DiskBasedFolderMixin:
 
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
-        p, imap = get_pool()
-        for (f, name) in imap(
+        self.executor = get_pool(self)
+        for (f, name) in self.executor.map(
             partial(_loader, loader=self.loader, typ=self._type, directory=self.directory), self.not_loaded
         ):
             self.__setter__(
                 name, self.on_load_process(f)
             )  # This doesn't run on_load_process in parallel, but it's not expensive enough to make it worth it.
-        if p is not None:
-            p.close()
-            p.join()
         return self
 
     def getlist(self, **kargs):

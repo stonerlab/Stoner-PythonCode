@@ -101,11 +101,5 @@ def test_outlier_detect():
     d1.outlier_detection(certainty=20,action="mask row")
     assert not np.any(d1.mask)
 
-
-
-
-
-
-
 if __name__ == "__main__":
     pytest.main(["--pdb",__file__])
