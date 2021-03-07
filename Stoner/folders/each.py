@@ -7,7 +7,7 @@ from traceback import format_exc
 
 import numpy as np
 
-from ..tools import isIterable
+from ..tools import isiterable
 from ..compat import string_types
 from .utils import get_pool
 
@@ -265,7 +265,7 @@ class Item:
         elif name in dir(self._folder.instance) or (
             len(self._folder) and hasattr(self._folder[0], name)
         ):  # This is an instance attribute
-            if isIterable(value) and len(value) == len(self._folder):
+            if isiterable(value) and len(value) == len(self._folder):
                 force_load = True
             else:
                 force_load = False

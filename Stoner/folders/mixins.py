@@ -15,7 +15,7 @@ from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 
-from Stoner.tools import isIterable, make_Data
+from Stoner.tools import isiterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
 from ..core.base import metadataObject, string_to_type
 from ..core.exceptions import StonerUnrecognisedFormat
@@ -315,7 +315,7 @@ class DiskBasedFolderMixin:
             self._pattern = (value,)
         elif isinstance(value, _pattern_type):
             self._pattern = (value,)
-        elif isIterable(value):
+        elif isiterable(value):
             self._pattern = [x for x in value]
         else:
             raise ValueError(f"pattern should be a string, regular expression or iterable object not a {value}")
@@ -518,7 +518,7 @@ class DataMethodsMixin:
         for m in metadata:
             if isinstance(m, string_types):
                 args.append(m)
-            elif isIterable(m):
+            elif isiterable(m):
                 args.extend(m)
             else:
                 raise TypeError(f"Metadata values should be strings, or lists of strings, not {type(m)}")
@@ -534,7 +534,7 @@ class DataMethodsMixin:
             for m in metadata:  # Sanity check the metadata to include
                 try:
                     test = results[m]
-                    if not isIterable(test) or isinstance(test, string_types):
+                    if not isiterable(test) or isinstance(test, string_types):
                         test = array([test])
                     else:
                         test = array(test)

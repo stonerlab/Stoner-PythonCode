@@ -9,7 +9,7 @@ from collections.abc import MutableMapping, Mapping
 import numpy as np
 
 from ..compat import string_types, int_types, index_types, _pattern_type
-from ..tools import AttributeStore, isIterable, typedList, isLikeList
+from ..tools import AttributeStore, isiterable, typedList, isLikeList
 from .utils import decode_string
 
 
@@ -285,7 +285,7 @@ class setas(MutableMapping):
         if len(args) == 1 and isinstance(args[0], setas):
             args = list(args)
             args[0] = args[0].to_list()
-        if len(args) == 1 and not (isinstance(args[0], string_types + (setas,)) or isIterable(args[0])):
+        if len(args) == 1 and not (isinstance(args[0], string_types + (setas,)) or isiterable(args[0])):
             raise SyntaxError(
                 f"setas should be called with eother a string, iterable object or setas object, not a {type(args[0])}"
             )
@@ -308,7 +308,7 @@ class setas(MutableMapping):
                     self._setas[k] = v
                 else:
                     raise IndexError(f"Unable to workout what do with {k}:{v} when setting the setas attribute.")
-        elif isIterable(value):
+        elif isiterable(value):
             if len(value) > self._size:
                 value = value[: self._size]
             elif len(value) < self._size:
@@ -349,7 +349,7 @@ class setas(MutableMapping):
         if isinstance(other, string_types):  # Expand strings and convert to list
             other = [c for c in decode_string(other)]
         if not isinstance(other, setas):  # Ok, need to check whether items match
-            if isIterable(other) and len(other) <= self._size:
+            if isiterable(other) and len(other) <= self._size:
                 for m in self.setas[len(other) :]:  # Check that if other is short we don't have assignments there
                     if m != ".":
                         return False
@@ -402,7 +402,7 @@ class setas(MutableMapping):
             indices = name.indices(len(self.setas))
             name = range(*indices)
             ret = [self[x] for x in name]
-        elif isIterable(name):
+        elif isiterable(name):
             ret = [self[x] for x in name]
         else:
             raise IndexError(f"{name} was not found in the setas attribute.")
@@ -539,7 +539,7 @@ class setas(MutableMapping):
             new.clear()
             new(me)
             return new
-        if isIterable(other):
+        if isiterable(other):
             for o in other:
                 new = self._sub_core_(new, o)
                 if new is NotImplemented:
@@ -615,7 +615,7 @@ class setas(MutableMapping):
             indices = col.indices(self.shape[1])
             col = range(*indices)
             col = self.find_col(col)
-        elif isIterable(col):
+        elif isiterable(col):
             col = [self.find_col(x) for x in col]
         else:
             raise TypeError(f"Column index must be an integer, string, list or slice, not a {type(col)}")

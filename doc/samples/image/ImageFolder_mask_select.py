@@ -42,7 +42,7 @@ def fake_user_action(image):
 
 
 fldr = ImageFolder(
-    __datapath__, pattern="Sample*.hdf5", type=STXMImage, recursive=False,
+    __datapath__, pattern="Sample*.hdf5", type=STXMImage, recursive=False
 )
 
 # Start the scripted control

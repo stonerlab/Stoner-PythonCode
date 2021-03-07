@@ -8,7 +8,7 @@ import numpy as np
 from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import index_types, int_types
-from ..tools import operator, isIterable, all_type
+from ..tools import operator, isiterable, all_type
 from ..tools.widgets import RangeSelect
 
 
@@ -490,7 +490,7 @@ class DataFileSearchMixin:
         elif isinstance(order, index_types):
             order = [recs.dtype.names[self.find_col(order)]]
             d = np.sort(recs, order=order)
-        elif isIterable(order):
+        elif isiterable(order):
             order = [recs.dtype.names[self.find_col(x)] for x in order]
             d = np.sort(recs, order=order)
         else:
@@ -558,11 +558,11 @@ class DataFileSearchMixin:
         elif callable(xcol):
             try:  # Try to call function with all data in one go
                 keys = xcol(self.data)
-                if not isIterable(keys):
+                if not isiterable(keys):
                     keys = [keys] * len(self)
             except Exception:  # pylint: disable=W0703  # Ok try instead to do it row by row
                 keys = [xcol(r) for r in self]
-            if not isIterable(keys) or len(keys) != len(self):
+            if not isiterable(keys) or len(keys) != len(self):
                 raise RuntimeError("Not returning an index of keys")
             keys = np.array(keys)
             for key in np.unique(keys):

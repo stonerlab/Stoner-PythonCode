@@ -4,9 +4,9 @@
 __all__ = [
     "all_size",
     "all_type",
-    "isAnyNone",
+    "isanynone",
     "isComparable",
-    "isIterable",
+    "isiterable",
     "isLikeList",
     "isnone",
     "isproperty",
@@ -71,7 +71,7 @@ def all_type(iterator: IterableType, typ: type) -> bool:
             return iterator.dtype == dtype(typ)
         except TypeError:
             pass
-    if isIterable(iterator):
+    if isiterable(iterator):
         for i in iterator:
             if not isinstance(i, typ):
                 break
@@ -80,7 +80,7 @@ def all_type(iterator: IterableType, typ: type) -> bool:
     return ret
 
 
-def isAnyNone(*args: Any) -> bool:
+def isanynone(*args: Any) -> bool:
     """Intelligently check whether any of the inputs are None."""
     for arg in args:
         if arg is None:
@@ -109,7 +109,7 @@ def isComparable(v1: NumericArray, v2: NumericArray) -> bool:
             return False
 
 
-def isIterable(value: Any) -> bool:
+def isiterable(value: Any) -> bool:
     """Chack to see if a value is iterable.
 
     Args:
@@ -125,7 +125,7 @@ def isIterable(value: Any) -> bool:
 
 def isLikeList(value: Any) -> bool:
     """Return True if value is an iterable but not a string."""
-    return isIterable(value) and not isinstance(value, string_types)
+    return isiterable(value) and not isinstance(value, string_types)
 
 
 def isnone(iterator: Optional[IterableType]) -> bool:
@@ -139,7 +139,7 @@ def isnone(iterator: Optional[IterableType]) -> bool:
     """
     if iterator is None:
         ret = True
-    elif isIterable(iterator) and not isinstance(iterator, string_types):
+    elif isiterable(iterator) and not isinstance(iterator, string_types):
         try:
             l = len(iterator)
         except TypeError:

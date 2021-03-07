@@ -12,7 +12,7 @@ from numpy import ma
 from scipy.interpolate import interp1d, UnivariateSpline
 from scipy.signal import get_window, convolve, savgol_filter
 
-from Stoner.tools import isIterable, isnone
+from Stoner.tools import isiterable, isnone
 from Stoner.compat import int_types, string_types, get_func_params
 
 from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
@@ -284,7 +284,7 @@ class FilteringOpsMixin:
             errsf = errs[kind]
         else:
             raise RuntimeError(f"Failed to recognise extrpolation function '{kind}'")
-        scalar_x = not isIterable(new_x)
+        scalar_x = not isiterable(new_x)
         if scalar_x:
             new_x = [new_x]
         if isinstance(new_x, ma.MaskedArray):
@@ -773,7 +773,7 @@ class FilteringOpsMixin:
 
         window = get_window(window, size)
         # Handle multiple or single y columns
-        if not isIterable(_.ycol):
+        if not isiterable(_.ycol):
             _.ycol = [_.ycol]
 
         # Do the convolution itself

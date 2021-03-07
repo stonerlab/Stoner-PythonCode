@@ -33,7 +33,7 @@ except ImportError:
     pd = None
 
 from ..compat import string_types, int_types, _pattern_type
-from ..tools import isIterable, isComparable
+from ..tools import isiterable, isComparable
 from .exceptions import StonerAssertionError
 from .Typing import String_Types, RegExp, Filename
 
@@ -171,7 +171,7 @@ class regexpDict(sorteddict):
                 if not ret:
                     ret = [n for n in self.keys() if isinstance(n, string_types) and nm.search(n)]
 
-        if ret is None or isIterable(ret) and not ret:
+        if ret is None or isiterable(ret) and not ret:
             raise KeyError(f"{name} is not a match to any key.")
         if multiple:  # sort out returing multiple entries or not
             if not isinstance(ret, list):
@@ -712,7 +712,7 @@ class metadataObject(MutableMapping):
     @metadata.setter
     def metadata(self, value: IterableType) -> None:
         """Update the metadata object with type checking."""
-        if not isinstance(value, typeHintedDict) and isIterable(value):
+        if not isinstance(value, typeHintedDict) and isiterable(value):
             self._metadata = typeHintedDict(value)
         elif isinstance(value, typeHintedDict):
             self._metadata = value

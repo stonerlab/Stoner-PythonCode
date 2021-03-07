@@ -16,7 +16,7 @@ import copy
 from typing import Optional, Dict, Any, List, Iterable as IterableType, Union
 from collections.abc import MutableSequence
 
-from .tests import all_type, isIterable
+from .tests import all_type, isiterable
 
 _options = {
     "short_repr": False,
@@ -144,7 +144,7 @@ class typedList(MutableSequence):
 
     def __add__(self, other: IterableType) -> "typedList":
         """Add operator works like ordinary lists."""
-        if isIterable(other):
+        if isiterable(other):
             new = copy.deepcopy(self)
             new.extend(other)
             return new
@@ -152,7 +152,7 @@ class typedList(MutableSequence):
 
     def __iadd__(self, other: IterableType) -> "typedList":
         """Inplace-add works like a list."""
-        if isIterable(other):
+        if isiterable(other):
             self.extend(other)
             return self
         return NotImplemented
@@ -185,8 +185,8 @@ class typedList(MutableSequence):
 
     def __setitem__(self, name: Union[int, IterableType, slice], value: Any) -> None:
         """Sett an item and do some type checks."""
-        if isIterable(name) or isinstance(name, slice):
-            if not isIterable(value) or not all_type(value, self._type):
+        if isiterable(name) or isinstance(name, slice):
+            if not isiterable(value) or not all_type(value, self._type):
                 raise TypeError(
                     f"Elelements of this list should be of type {self._type} and must set "
                     + "the correct number of elements"
@@ -197,7 +197,7 @@ class typedList(MutableSequence):
 
     def extend(self, other: IterableType) -> None:  # pylint:  disable=arguments-differ
         """Extend the list and do some type checking."""
-        if not isIterable(other) or not all_type(other, self._type):
+        if not isiterable(other) or not all_type(other, self._type):
             raise TypeError(f"Elelements of this list should be of type {self._type}")
         self._store.extend(other)
 

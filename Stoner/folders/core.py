@@ -13,7 +13,7 @@ import os.path as path
 import numpy as np
 
 from ..compat import int_types, string_types, commonpath, _pattern_type
-from ..tools import operator, isIterable, all_type, get_option
+from ..tools import operator, isiterable, all_type, get_option
 from ..core.base import regexpDict, typeHintedDict
 from ..core.base import metadataObject
 
@@ -167,7 +167,7 @@ def _build_select_function(kargs, arg):
     else:
         if isinstance(kargs[arg], tuple) and len(kargs[arg] == 2):
             op = "between"  # Assume two length tuples are testing for range
-        elif not isinstance(kargs[arg], string_types) and isIterable(kargs[arg]):
+        elif not isinstance(kargs[arg], string_types) and isiterable(kargs[arg]):
             op = "in"  # Assume other iterables are testing for memebership
         else:  # Everything else is exact matches
             op = "eq"
@@ -357,7 +357,7 @@ class baseFolder(MutableSequence):
     @files.setter
     def files(self, value):
         """Just a wrapper to clear and then set the objects."""
-        if isIterable(value):
+        if isiterable(value):
             self.__clear__()
             for i, v in enumerate(value):
                 self.insert(i, v)

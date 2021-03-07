@@ -21,7 +21,7 @@ from matplotlib import figure as mplfig
 from matplotlib import cm, colors
 
 from Stoner.compat import string_types, index_types, int_types, getargspec
-from Stoner.tools import AttributeStore, isnone, isAnyNone, all_type, isIterable, typedList, get_option, fix_signature
+from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, typedList, get_option, fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 from .utils import hsl2rgb
@@ -196,7 +196,7 @@ class PlotMixin:
         """Set the labels for the plot columns."""
         if value is None:
             self._labels = typedList(string_types, self.column_headers)
-        elif isIterable(value) and all_type(value, string_types):
+        elif isiterable(value) and all_type(value, string_types):
             self._labels = typedList(string_types, value)
         else:
             raise TypeError(f"labels should be iterable and all strings, or None, not {type(value)}")
@@ -401,7 +401,7 @@ class PlotMixin:
             if k in kargs and kargs[k] is None:
                 kargs[k] = c[k]
         for k in ["ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"]:
-            if k in kargs and kargs[k] is None and isIterable(c[k]) and len(c[k]) > 0:
+            if k in kargs and kargs[k] is None and isiterable(c[k]) and len(c[k]) > 0:
                 if kargs.get("multi_y", not scalar):
                     kargs[k] = c[k]
                 else:
@@ -627,7 +627,7 @@ class PlotMixin:
         if isinstance(value, string_types) and "$" not in value:
             value = value.format(**self)
 
-        if not isIterable(value) or isinstance(value, string_types):
+        if not isiterable(value) or isinstance(value, string_types):
             value = (value,)
         if isinstance(value, Mapping):
             func(**value)
@@ -832,7 +832,7 @@ class PlotMixin:
         """
         startx = kargs.pop("startx", 0)
         cols = self.setas._get_cols(startx=startx)
-        if isAnyNone(xcol, ycol, zcol):
+        if isanynone(xcol, ycol, zcol):
             if xcol is None:
                 xcol = cols["xcol"]
             if ycol is None:
@@ -1424,7 +1424,7 @@ class PlotMixin:
 
             elif isinstance(kargs[err], index_types):
                 kargs[err] = self.column(kargs[err])
-            elif isIterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) <= len(c.ycol):
+            elif isiterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) <= len(c.ycol):
                 # Ok, so it's a list, so redo the check for each  item.
                 kargs[err].extend([None] * (len(c.ycol) - len(kargs[err])))
                 for i in range(len(kargs[err])):
@@ -1432,7 +1432,7 @@ class PlotMixin:
                         kargs[err][i] = self.column(kargs[err][i])
                     else:
                         kargs[err][i] = np.zeros(len(self))
-            elif isIterable(kargs[err]) and len(kargs[err]) == len(self):
+            elif isiterable(kargs[err]) and len(kargs[err]) == len(self):
                 kargs[err] = np.array(kargs[err])
             elif isinstance(kargs[err], float):
                 kargs[err] = np.ones(len(self)) * kargs[err]

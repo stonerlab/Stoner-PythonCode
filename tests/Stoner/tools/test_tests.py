@@ -25,7 +25,7 @@ def test_all_type():
 def test_is_AnyNone():
     x1=[1]*5
     x1[3]=None
-    assert tests.isAnyNone(*x1),"is_AbyNione failed."
+    assert tests.isanynone(*x1),"is_AbyNione failed."
 
 def test_is_Comparable():
     x1=np.ones(10)
@@ -39,7 +39,7 @@ def test_is_Comparable():
     assert tests.isComparable(x1,x2), "is_Comparable failed with integers"
 
 def test_is_Iterable():
-    assert tests.isIterable(list()),"Is Iterable failed"
+    assert tests.isiterable(list()),"Is Iterable failed"
 
 def test_is_like_list():
     assert tests.isLikeList(tuple()),"isLikeList failed."

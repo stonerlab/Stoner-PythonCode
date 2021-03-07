@@ -108,12 +108,7 @@ def get_filedialog(what="file", **opts):
     """
     from .tools.widgets import fileDialog
 
-    funcs = {
-        "file": "OpenFile",
-        "directory": "SelectDirectory",
-        "files": "OpenFiles",
-        "save": "SaveFile",
-    }
+    funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
     if what not in funcs:
         raise RuntimeError(f"Unable to recognise required file dialog type:{what}")
     return fileDialog.openDialog(mode=funcs[what], **opts)

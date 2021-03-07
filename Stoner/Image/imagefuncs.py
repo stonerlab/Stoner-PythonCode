@@ -60,7 +60,7 @@ from matplotlib import pyplot as plt
 from skimage import feature, measure, transform, filters
 from PIL import Image, PngImagePlugin
 
-from Stoner.tools import isTuple, isIterable, make_Data
+from Stoner.tools import isTuple, isiterable, make_Data
 
 # from .core import ImageArray
 from ..core.base import metadataObject
@@ -114,7 +114,7 @@ def _scale(coord, scale=1.0, to_pixel=True):
     elif isinstance(coord, float):
         if to_pixel:
             coord = int(round(coord / scale))
-    elif isIterable(coord):
+    elif isiterable(coord):
         coord = tuple([_scale(c, scale, to_pixel) for c in coord])
     else:
         raise ValueError("coord should be an integer or a float or an iterable of integers and floats")
@@ -254,7 +254,7 @@ def align(im, ref, method="scharr", **kargs):
 
     if "box" in kargs or "_box" in kargs:
         box = kargs.pop("box", kargs.pop("_box"))
-        if not isIterable(box):
+        if not isiterable(box):
             box = [box]
         working = im.crop(*box, copy=True)
         if ref.shape != working.shape:

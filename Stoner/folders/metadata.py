@@ -10,7 +10,7 @@ import numpy as np
 
 from ..core import typeHintedDict, metadataObject
 from ..compat import string_types
-from ..tools import isLikeList, isIterable, make_Data
+from ..tools import isLikeList, isiterable, make_Data
 from ..Core import DataFile
 
 
@@ -100,7 +100,7 @@ def _slice_keys(args, possible=None):
                     if sub_k not in possible:
                         raise KeyError(f"No matching keys for {sub_k} in metadata")
                     keys.append(sub_k)
-        elif isIterable(k):
+        elif isiterable(k):
             keys.extend(_slice_keys(k, possible))
         else:
             raise KeyError(f"{type(k)} cannot be used as a key name or set of key names")

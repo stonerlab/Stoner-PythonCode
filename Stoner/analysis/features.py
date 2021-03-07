@@ -8,7 +8,7 @@ import numpy as np
 from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
 
-from Stoner.tools import isIterable, isTuple
+from Stoner.tools import isiterable, isTuple
 from Stoner.core.exceptions import assertion
 from .utils import threshold
 
@@ -75,7 +75,7 @@ class FeatureOpsMixin:
         full_data = kargs.pop("full_data", True)
         _ = self._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
         xcol, ycol = _.xcol, _.ycol
-        if isIterable(ycol):
+        if isiterable(ycol):
             ycol = ycol[0]
         if isinstance(width, float):  # Convert a floating point width unto an integer.
             xmin, xmax = self.span(xcol)
@@ -220,7 +220,7 @@ class FeatureOpsMixin:
         full_data = kargs.pop("full_data", True)
         _ = self._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
         xcol, ycol = _.xcol, _.ycol
-        if isIterable(ycol):
+        if isiterable(ycol):
             ycol = ycol[0]
 
         if isinstance(width, float):  # Convert a floating point width unto an integer.

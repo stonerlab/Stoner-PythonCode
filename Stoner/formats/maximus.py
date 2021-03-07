@@ -396,7 +396,7 @@ def hdr_to_dict(filename, to_python=True):
     if to_python:
         ret = _process_key(json.loads(stage5))
     else:  # orettyify the json
-        ret = json.dumps(json.loads(stage5), indent=4,)
+        ret = json.dumps(json.loads(stage5), indent=4)
 
     return ret
 

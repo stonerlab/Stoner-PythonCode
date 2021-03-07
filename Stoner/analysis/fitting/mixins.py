@@ -19,7 +19,7 @@ import lmfit
 from lmfit.model import Model
 
 from ...compat import string_types, index_types, get_func_params
-from ...tools import isnone, isIterable, isLikeList, AttributeStore, ordinal
+from ...tools import isnone, isiterable, isLikeList, AttributeStore, ordinal
 
 _lmfit = True
 
@@ -365,7 +365,7 @@ def _curve_fit_p0_list(p0, model):
         for x in _get_model_parnames(model):
             ret.append(p_new.get(x, None))
         return ret
-    if isIterable(p0):
+    if isiterable(p0):
         return [float(x) for x in p0]
     raise RuntimeError("Shouldn't have returned None from _curve_fit_p0_list!")
 
@@ -596,7 +596,7 @@ class FittingMixin:
             sigma = None
         if isinstance(xcol, string_types):
             xdat = working[:, self.find_col(xcol)]
-        elif isIterable(xcol):
+        elif isiterable(xcol):
             for ix, c in enumerate(xcol):
                 if ix == 0:
                     xdat = working[:, self.find_col(c)]
@@ -1523,7 +1523,7 @@ class FittingMixin:
         _ = self._col_args(xcol=xcol, ycol=ycol, scalar=False)
 
         working = self.search(_.xcol, bounds)
-        if not isIterable(_.ycol):
+        if not isiterable(_.ycol):
             _.ycol = [_.ycol]
         p = np.zeros((len(_.ycol), polynomial_order + 1))
         if isinstance(result, bool) and result:

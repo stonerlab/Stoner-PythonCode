@@ -6,7 +6,7 @@ __all__ = ["DataFileInterfacesMixin"]
 import numpy as np
 
 from ..compat import string_types, _pattern_type
-from ..tools import isIterable
+from ..tools import isiterable
 
 
 class DataFileInterfacesMixin:
@@ -132,7 +132,7 @@ class DataFileInterfacesMixin:
         if isinstance(name, string_types) or str(name) in self.metadata:
             self.metadata[name] = value
         elif isinstance(name, tuple):
-            if isinstance(name[0], string_types) and name[0] in self.metadata and isIterable(self.metadata[name[0]]):
+            if isinstance(name[0], string_types) and name[0] in self.metadata and isiterable(self.metadata[name[0]]):
                 if len(name) == 2:
                     key = name[0]
                     name = name[1]

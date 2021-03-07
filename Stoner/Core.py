@@ -29,7 +29,7 @@ from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
 from .compat import string_types, int_types, index_types, _pattern_type, path_types
-from .tools import all_type, isIterable, isLikeList, get_option, make_Data
+from .tools import all_type, isiterable, isLikeList, get_option, make_Data
 from .tools.file import get_file_name_type, auto_load_classes
 
 from .core.exceptions import StonerLoadError, StonerSetasError
@@ -284,7 +284,7 @@ class DataFile(
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__."""
         (arg0, arg1) = args
-        if isinstance(arg1, dict) or (isIterable(arg1) and all_type(arg1, string_types)):
+        if isinstance(arg1, dict) or (isiterable(arg1) and all_type(arg1, string_types)):
             self._init_single(arg0, **kargs)
             self._init_single(arg1, **kargs)
         elif (
@@ -354,7 +354,7 @@ class DataFile(
         for ix, col in enumerate(arg):
             if isinstance(col, string_types):
                 ch.append(col)
-            elif isIterable(col):
+            elif isiterable(col):
                 for ch_i in col:
                     if isinstance(ch_i, string_types):
                         ch.append(ch_i)
@@ -957,7 +957,7 @@ class DataFile(
         # Make setas
         setas = "." * cw if setas is None else setas
 
-        if isIterable(setas) and len(setas) == cw:
+        if isiterable(setas) and len(setas) == cw:
             for s in setas:
                 if s not in ".-xyzuvwdefpqr":
                     raise TypeError(
@@ -1105,7 +1105,7 @@ class DataFile(
             self.data = self.data[:, self.setas.set]
             self.setas = setas
             self.column_headers = ch
-        elif isIterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
+        elif isiterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
             col = ~np.array(col)
             new_setas = np.array(self.setas)[col]
             new_column_headers = np.array(self.column_headers)[col]
@@ -1203,12 +1203,12 @@ class DataFile(
                 col = list(range(*indices))
             elif callable(col) and val is None:  # Delete rows usinga callalble taking the whole row
                 col = [r.i for r in self.rows() if col(r)]
-            elif isIterable(col) and all_type(col, bool):  # Delete rows by a list of booleans
+            elif isiterable(col) and all_type(col, bool):  # Delete rows by a list of booleans
                 if len(col) < len(self):
                     col.extend([False] * (len(self) - len(col)))
                 self.data = self.data[col]
                 return self
-            if isIterable(col) and all_type(col, int_types) and val is None and not invert:
+            if isiterable(col) and all_type(col, int_types) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:
                     self.del_rows(c)
@@ -1233,7 +1233,7 @@ class DataFile(
                     )[0]
                 elif isinstance(val, float):
                     rows = np.nonzero([bool(x == val) != invert for x in d])[0]
-                elif isIterable(val) and len(val) == 2:
+                elif isiterable(val) and len(val) == 2:
                     (upper, lower) = (max(list(val)), min(list(val)))
                     rows = np.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
                 else:

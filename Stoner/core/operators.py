@@ -5,7 +5,7 @@ __all__ = ["DataFileOperatorsMixin"]
 import numpy as np
 
 from ..compat import index_types, string_types
-from ..tools import isIterable
+from ..tools import isiterable
 from .utils import add_core, and_core, mod_core, sub_core
 from . import _setas, DataArray
 
@@ -166,7 +166,7 @@ class DataFileOperatorsMixin:
         if isinstance(other, string_types):
             lines = map(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
-        elif isIterable(other):
+        elif isiterable(other):
             newdata.__read_iterable(other)
         else:
             return NotImplemented
@@ -248,7 +248,7 @@ class DataFileOperatorsMixin:
 
     def __read_iterable(self, reader):
         """Read a string representation of py:class:`DataFile` in line by line."""
-        if isIterable(reader):
+        if isiterable(reader):
             reader = iter(reader)
         if "readline" in dir(reader):  # Filelike iterator
             readline = reader.readline

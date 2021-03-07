@@ -8,7 +8,7 @@ import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.optimize import curve_fit
 
-from .tools import isIterable, isTuple
+from .tools import isiterable, isTuple
 from .compat import string_types
 from .core.exceptions import assertion
 from .analysis.utils import threshold as _threshold, ApplyAffineTransform, GetAffineTransform
@@ -73,14 +73,14 @@ class AnalysisMixin:
             next(self.rows(reset=True))
         except (RuntimeError, StopIteration):
             pass
-        if isIterable(ret):
+        if isiterable(ret):
             nc = np.zeros((len(self), len(ret)))
         else:
             nc = np.zeros(len(self))
         # Evaluate the data row by row
         for ix, r in enumerate(self.rows()):
             ret = func(r, **kargs)
-            if isIterable(ret) and not isinstance(ret, np.ndarray):
+            if isiterable(ret) and not isinstance(ret, np.ndarray):
                 ret = np.ma.MaskedArray(ret)
             nc[ix] = ret
         # Work out how to handle the result
@@ -436,7 +436,7 @@ class AnalysisMixin:
         else:
             assertion(callable(func), "Keyword func should be callable if given")
             args = getfullargspec(func)[0]  # pylint: disable=W1505
-            assertion(isIterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
+            assertion(isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
             assertion(
                 len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func"
             )
@@ -517,7 +517,7 @@ class AnalysisMixin:
         current = self.column(col)
 
         # Recursively call if we've got an iterable threshold
-        if isIterable(threshold):
+        if isiterable(threshold):
             if isinstance(xcol, bool) and not xcol:
                 ret = np.zeros((len(threshold), self.shape[1]))
             else:
