@@ -361,8 +361,8 @@ if fabio:
                 self.data = img.data
                 self.metadata.update(img.header)
                 return self
-            except (OSError, ValueError, TypeError, IndexError):
-                raise StonerLoadError("Not an ESRF data file !")
+            except (OSError, ValueError, TypeError, IndexError) as err:
+                raise StonerLoadError("Not an ESRF data file !") from err
 
     class FabioImageFile(Image.ImageFile):
 
@@ -383,8 +383,8 @@ if fabio:
                 self.image = img.data
                 self.metadata.update(img.header)
                 return self
-            except (OSError, ValueError, TypeError, IndexError):
-                raise StonerLoadError("Not a Fabio Image file !")
+            except (OSError, ValueError, TypeError, IndexError) as err:
+                raise StonerLoadError("Not a Fabio Image file !") from err
 
 
 else:

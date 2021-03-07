@@ -168,12 +168,14 @@ class _dummy:
 
     """A class that does nothing so that float64 can be an instance of it safely."""
 
-    def jit(self, func, *_, **__):
+    def jit(self, func, *_, **__):  # pylint: disable=no-self-use
         """Null decorator function."""
         return func
 
     def __call__(self, *args, **kargs):
+        """Handle jit lines that call the type."""
         return self.jit
 
     def __getitem__(self, *args, **kargs):
+        """Hande jit calls to array types."""
         return self

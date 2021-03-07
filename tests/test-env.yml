@@ -4,7 +4,9 @@ channels:
     - phygbu
     - conda-forge
 dependencies:
-    - anaconda
+    - scipy>1.4
+    - numpy>=1.18
+    - matplotlib>=3.0
     - hyperspy
     - pytest-xdist
     - pytest-cov
