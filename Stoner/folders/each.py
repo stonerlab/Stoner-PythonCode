@@ -15,7 +15,7 @@ from .utils import get_pool
 def _worker(d, **kwargs):
     """Support function to run an arbitary function over a :py:class:`Stoner.Data` object."""
     byname = kwargs.get("byname", False)
-    func = kwargs.get("func", lambda x: x)
+    func = kwargs.get("_func", lambda x: x)
     if byname:
         func = getattr(d, func, lambda x: x)
     args = kwargs.get("args", tuple())
@@ -357,11 +357,9 @@ class Item:
         _serial = kargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
         self._folder.executor = get_pool(self._folder, _serial)
-        for ix, (f, ret) in enumerate(
-            self._folder.executor.map(
-                partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder
-            )
-        ):
+        futures=[self._folder.executor.submit(_worker,d,_func=func, args=args, kargs=kargs, byname=_byname) for d in self._folder]
+
+        for ix, (f, ret) in enumerate([future.result() for future in futures]):
             new_d = f
             if self._folder.debug:
                 print(ix, type(ret))

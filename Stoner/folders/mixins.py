@@ -320,15 +320,19 @@ class DiskBasedFolderMixin:
         else:
             raise ValueError(f"pattern should be a string, regular expression or iterable object not a {value}")
 
-    def fetch(self):
+    def fetch(self, futures=False):
         """Preload the contents of the DiskBasedFolderMixin.
+
+        Keyword Arguments:
+            futures (bool):
+                If True, then return te concurrent.futures object otherwise return the folder.
 
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
         self.executor = get_pool(self)
-        for (f, name) in self.executor.map(
-            partial(_loader, loader=self.loader, typ=self._type, directory=self.directory), self.not_loaded
-        ):
+        _futures=[self.executor.submit(_loader,fname, loader=self.loader, typ=self._type, directory=path.realpath(self.directory)) for fname in self.not_loaded]
+        if futures: return _futures
+        for (f, name) in [future.result() for future in _futures]:
             self.__setter__(
                 name, self.on_load_process(f)
             )  # This doesn't run on_load_process in parallel, but it's not expensive enough to make it worth it.

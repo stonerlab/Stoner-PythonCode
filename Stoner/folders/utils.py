@@ -124,6 +124,8 @@ def get_pool(folder=None, _serial=False):
         (futures.Executor):
             Executor on which to run the distributed job.
     """
+    if getattr(folder, "executor", False):
+        return folder.executor
     if get_option("multiprocessing") and not _serial:
         try:
             if get_option("threading"):
