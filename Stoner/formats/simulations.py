@@ -111,6 +111,8 @@ class OVFFile(DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.ovf"]  # Recognised filename patterns
 
+    mime_type = ["text/plain", "application/octet-stream"]
+
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards.
 
