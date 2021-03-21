@@ -957,6 +957,7 @@ class PlotMixin:
             "figure": self.__figure,
             "xlabel": self._col_label(self.find_col(xcol)),
             "ylabel": self._col_label(self.find_col(ycol)),
+            "extents": [self.x.min(), self.x.max(), self.y.min(), self.y.max()],
         }
         kargs, nonkargs, _ = self._fix_kargs(None, defaults, **kargs)
         plotter = nonkargs["plotter"]
@@ -1648,6 +1649,7 @@ class PlotMixin:
             del kargs["save_filename"]
         else:
             save = None
+        kargs.setdefault("alpha", 0.75)
         fig = self.image_plot(c.xcol, c.ycol, Z, **kargs)
         if save is not None:  # stop saving file twice
             kargs["save_filename"] = save
@@ -1940,7 +1942,7 @@ class PlotMixin:
         locals().update(self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, **kargs))
         defaults = {
             "pivot": "mid",
-            "color": (0, 0, 0, 0.5),
+            "color": (0, 0, 0),
             "headlength": 5,
             "headaxislength": 5,
             "headwidth": 4,

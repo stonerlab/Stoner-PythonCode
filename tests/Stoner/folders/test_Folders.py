@@ -119,7 +119,7 @@ def test_Operators():
     fldr2=DataFolder(path.join(datadir,"NLIV"),pattern="*.txt")
     fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
     fldr3=fldr+fldr2
-    assert fldr3.shape==(50, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
+    assert fldr3.shape==(53, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
     fldr4=fldr3-fldr2
     fldr4.prune()
     assert fldr4.shape==fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
@@ -130,7 +130,7 @@ def test_Operators():
     fldr=DataFolder(datadir,debug=False,recursive=False)
     names=list(fldr.ls)[::2]
     fldr-=names
-    assert len(fldr)==25,"Failed to delete from a sequence"
+    assert len(fldr)==26,"Failed to delete from a sequence"
     with pytest.raises(TypeError):
         fldr-0.34
     with pytest.raises(RuntimeError):
@@ -165,7 +165,7 @@ def test_Base_Operators():
     fldr2=DataFolder(path.join(datadir,"NLIV"),pattern="*.txt")
     fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
     fldr3=fldr+fldr2
-    assert fldr3.shape==(50, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
+    assert fldr3.shape==(53, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
     fldr4=fldr3-fldr2
     fldr4.prune()
     assert fldr4.shape==fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
@@ -176,7 +176,7 @@ def test_Base_Operators():
     fldr=DataFolder(datadir,debug=False,recursive=False)
     names=list(fldr.ls)[::2]
     fldr-=names
-    assert len(fldr)==25,"Failed to delete from a sequence"
+    assert len(fldr)==26,"Failed to delete from a sequence"
     with pytest.raises(TypeError):
         fldr-0.34
     with pytest.raises(RuntimeError):

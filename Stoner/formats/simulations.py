@@ -14,6 +14,25 @@ from ..core.base import string_to_type
 from ..tools.file import FileManager
 
 
+def _read_line(data, metadata):
+    """Read a single line and add to a metadata dictionary."""
+    line = data.readline().decode("utf-8", errors="ignore").strip("#\n \t\r")
+    if line == "" or ":" not in line:
+        return True
+    parts = line.split(":")
+    field = parts[0].strip()
+    value = ":".join(parts[1:]).strip()
+    if field == "Begin" and value.startswith("Data "):
+        value = value.split(" ")
+        metadata["representation"] = value[1]
+        if value[1] == "Binary":
+            metadata["representation size"] = value[2]
+        return False
+    if field not in ["Begin", "End"]:
+        metadata[field] = value
+    return True
+
+
 class GenXFile(DataFile):
 
     """Extends DataFile for GenX Exported data."""
@@ -92,108 +111,71 @@ class OVFFile(DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.ovf"]  # Recognised filename patterns
 
-    def __init__(self, *args, **kargs):
-        """Set some instance attributes."""
-        super().__init__(*args, **kargs)
-        self._ptr = None
-
-    def _read_uvwdata(self, filename, fmt, lineno):
-        """Read the numerical data taking account of the format."""
-        if fmt == "Text":
-            uvwdata = np.genfromtxt(self.filename, skip_header=lineno + 2)
-        elif fmt == "Binary 4":
-            if self["version"] == 1:
-                dt = np.dtype(">f4")
-            else:
-                dt = np.dtype("<f4")
-            with io.open(filename, "rb") as bindata:
-                bindata.seek(self._ptr)
-                uvwdata = np.fromfile(
-                    bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
-                )
-                assertion(
-                    uvwdata[0] == 1234567.0, f"Binary 4 format check value incorrect ! Actual Value was {uvwdata[0]}"
-                )
-            uvwdata = uvwdata[1:]
-            uvwdata = np.reshape(uvwdata, (-1, self["valuedim"]))
-        elif fmt == "Binary 8":
-            if self["version"] == 1:
-                dt = np.dtype(">f8")
-            else:
-                dt = np.dtype("<f8")
-            with io.open(filename, "rb") as bindata:
-                bindata.seek(self._ptr)
-                uvwdata = np.fromfile(
-                    bindata, dtype=dt, count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"]
-                )
-                assertion(
-                    (uvwdata[0] == 123456789012345.0),
-                    f"Binary 4 format check value incorrect ! Actual Value was {uvwdata[0]}",
-                )
-            uvwdata = np.reshape(uvwdata, (-1, self["valuedim"]))
-        else:
-            raise StonerLoadError(f"Unknow OVF Format {fmt}")
-        return uvwdata
-
     def _load(self, filename=None, *args, **kargs):
-        """Load function. File format has space delimited columns from row 3 onwards."""
+        """Load function. File format has space delimited columns from row 3 onwards.
+
+        Notes:
+            This code can handle only the first segment in the data file.
+        """
         if filename is None or not filename:
             self.get_filename("r")
         else:
             self.filename = filename
-        self._ptr = 0
-        with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
-            try:
-                line = next(data)
-            except StopIteration as err:
-                raise StonerLoadError("Ran out of data for the file") from err
-            self._ptr += len(line)
-            line = line.strip()
-            if "OOMMF: rectangular mesh" in line:
-                if "v1.0" in line:
-                    self["version"] = 1
-                elif "v2.0" in line:
-                    self["version"] = 2
-                else:
-                    raise StonerLoadError("Cannot determine version of OOMMFF file")
-            else:  # bug out oif we don't like the header
-                raise StonerLoadError(f"Not n OOMMF OVF File: opening line eas {line}")
-            pattern = re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
-            i = None
-            for i, line in enumerate(data):
-                self._ptr += len(line)
-                line.strip()
-                if line.startswith("# Begin: Data"):  # marks the start of the trext
-                    break
-                elif line.startswith("# Begin:") or line.startswith("# End:"):
-                    continue
-                else:
-                    res = pattern.match(line)
-                    if res is not None:
-                        key = res.group(1)
-                        val = res.group(2)
-                        self[key] = string_to_type(val)
-                    else:
-                        raise StonerLoadError("Failed to understand metadata")
-            fmt = re.match(r".*Data\s+(.*)", line).group(1).strip()
-            if fmt is None:
-                raise StonerLoadError("Not a recognised format of OOMFF file.")
-            assertion(
-                (self["meshtype"] == "rectangular"),
-                "Sorry only OVF files with rectnagular meshes are currently supported.",
-            )
-            if self["version"] == 1:
-                if self["meshtype"] == "rectangular":
-                    self["valuedim"] = 3
-                else:
-                    self["valuedim"] = 6
-            uvwdata = self._read_uvwdata(filename, fmt, i)
+        # Reading in binary, converting to utf-8 where we should be in the text header
+        with FileManager(self.filename, "rb") as data:
+            line = data.readline().decode("utf-8", errors="ignore").strip("#\n \t\r")
+            if line not in ["OOMMF: rectangular mesh v1.0", "OOMMF OVF 2.0"]:
+                raise StonerLoadError("Not an OVF 1.0 or 2.0 file.")
+            while _read_line(data, self.metadata):
+                pass  # Read the file until we reach the start of the data block.
+            if self.metadata["representation"] == "Binary":
+                size = (  # Work out the size of the data block to read
+                    self.metadata["xnodes"]
+                    * self.metadata["ynodes"]
+                    * self.metadata["znodes"]
+                    * self.metadata["valuedim"]
+                    + 1
+                ) * self.metadata["representation size"]
+                bin_data = data.read(size)
+                numbers = np.frombuffer(bin_data, dtype=f"<f{self.metadata['representation size']}")
+                chk = numbers[0]
+                if (
+                    chk != [1234567.0, 123456789012345.0][self.metadata["representation size"] // 4 - 1]
+                ):  # If we have a good check number we can carry on, otherwise try the other endianess
+                    numbers = np.frombuffer(bin_data, dtype=f">f{self.metadata['representation size']}")
+                    chk = numbers[0]
+                    if chk != [1234567.0, 123456789012345.0][self.metadata["representation size"] // 4 - 1]:
+                        raise StonerLoadError("Bad binary data for ovf gile.")
 
-        x = (np.linspace(self["xmin"], self["xmax"], self["xnode"] + 1)[:-1] + self["xbase"]) * 1e9
-        y = (np.linspace(self["ymin"], self["ymax"], self["ynode"] + 1)[:-1] + self["ybase"]) * 1e9
-        z = (np.linspace(self["zmin"], self["zmax"], self["znode"] + 1)[:-1] + self["zbase"]) * 1e9
-        (y, z, x) = (np.ravel(i) for i in np.meshgrid(y, z, x))
-        self.data = np.column_stack((x, y, z, uvwdata))
+                data = np.reshape(
+                    numbers[1:], (self.metadata["xnodes"] * self.metadata["ynodes"] * self.metadata["znodes"], 3),
+                )
+            else:
+                data = np.genfromtxt(
+                    data, max_rows=self.metadata["xnodes"] * self.metadata["ynodes"] * self.metadata["znodes"],
+                )
+        xmin, xmax, xstep = (
+            self.metadata["xmin"],
+            self.metadata["xmax"],
+            self.metadata["xstepsize"],
+        )
+        ymin, ymax, ystep = (
+            self.metadata["ymin"],
+            self.metadata["ymax"],
+            self.metadata["ystepsize"],
+        )
+        zmin, zmax, zstep = (
+            self.metadata["zmin"],
+            self.metadata["zmax"],
+            self.metadata["zstepsize"],
+        )
+        X, Y, Z = np.meshgrid(
+            np.arange(xmin + xstep / 2, xmax, xstep) * 1e9,
+            np.arange(ymin + ystep / 2, ymax, ystep) * 1e9,
+            np.arange(zmin + zstep / 2, zmax, zstep) * 1e9,
+        )
+        self.data = np.column_stack((X.ravel(), Y.ravel(), Z.ravel(), data))
+
         column_headers = ["X (nm)", "Y (nm)", "Z (nm)", "U", "V", "W"]
         self.setas = "xyzuvw"
         self.column_headers = column_headers
