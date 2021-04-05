@@ -52,6 +52,10 @@ from Stoner.compat import mpl_version
 
 __all__ = ["errorfill"]
 
+ONE_SIXTH = 1 / 6
+ONE_THIRD = 1 / 3
+TWO_THIRD = 2 / 3
+
 
 def errorfill(
     x,
@@ -181,11 +185,11 @@ def hsl2rgb(hue, sat, lum):
     """Convert from hsl colourspace to rgb colour space with numpy arrays for speed.
 
     Args:
-        h (array):
+        hue (array):
             Hue value
-        s (array):
+        sat (array):
             Saturation value
-        l (array):
+        lum (array):
             Luminence value
 
     Returns:
@@ -195,14 +199,22 @@ def hsl2rgb(hue, sat, lum):
     sat = np.atleast_1d(sat)
     lum = np.atleast_1d(lum)
 
-    if hue.shape != lum.shape or hue.shape != sat.shape:
-        raise RuntimeError("Must have equal shaped arrays for h, s and l")
-
-    rgb = np.zeros((hue.size, 3))
-    hls = np.column_stack([hue, lum, sat])
-    for i in range(hue.size):
-        rgb[i, :] = np.array(hls_to_rgb(*hls[i]))
-    return (255 * rgb).astype("u1")
+    Hp = hue * 6 % 6
+    C = (1 - np.abs(2 * lum - 1)) * sat
+    X = C * (1 - np.abs(Hp % 2 - 1))
+    output = np.ones((hue.size, 3))
+    zero = np.zeros_like(X)
+    select = np.column_stack([Hp, Hp, Hp])
+    m = np.column_stack([lum - C / 2, lum - C / 2, lum - C / 2])
+    output = np.where(select > 0, np.column_stack([C, X, zero]), output)
+    output = np.where(select > 1, np.column_stack([X, C, zero]), output)
+    output = np.where(select > 2, np.column_stack([zero, C, X]), output)
+    output = np.where(select > 3, np.column_stack([zero, X, C]), output)
+    output = np.where(select > 4, np.column_stack([X, zero, C]), output)
+    output = np.where(select > 5, np.column_stack([C, zero, X]), output)
+    output += m
+    output = (output * 255).astype("u8")
+    return output
 
 
 def joy_division(x, y, z, **kargs):

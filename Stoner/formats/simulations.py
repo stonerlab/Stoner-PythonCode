@@ -171,10 +171,11 @@ class OVFFile(DataFile):
             self.metadata["zmax"],
             self.metadata["zstepsize"],
         )
-        X, Y, Z = np.meshgrid(
-            np.arange(xmin + xstep / 2, xmax, xstep) * 1e9,
-            np.arange(ymin + ystep / 2, ymax, ystep) * 1e9,
+        Z, Y, X = np.meshgrid(
             np.arange(zmin + zstep / 2, zmax, zstep) * 1e9,
+            np.arange(ymin + ystep / 2, ymax, ystep) * 1e9,
+            np.arange(xmin + xstep / 2, xmax, xstep) * 1e9,
+            indexing="ij",
         )
         self.data = np.column_stack((X.ravel(), Y.ravel(), Z.ravel(), data))
 

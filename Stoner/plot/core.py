@@ -844,11 +844,10 @@ class PlotMixin:
             ucol = cols["ucol"][0]
 
         dims = 3 if cols["axes"] == 3 and cols["has_ucol"] else 2
-        edge = int(np.floor(len(self) ** (1 / dims)))
-        if dims == 2 and (shape is None or not (isinstance(shape, tuple) and len(shape) == 2)):
-            shape = (edge, edge)
-        elif dims == 3 and (shape is None or not (isinstance(shape, tuple) and len(shape) == 3)):
-            shape = (edge, edge, edge)
+        if getattr(zcol, "size", 0) != 0:
+            shape = [np.unique(self.column(x)).size for x in [xcol, ycol]]
+        else:
+            shape = [np.unique(self.column(x)).size for x in [xcol, ycol, zcol]]
 
         lims = [xlim, ylim, zlim]
         extents = [xlim, ylim, zlim]
@@ -976,7 +975,7 @@ class PlotMixin:
         ymax = np.max(Y.ravel())
         aspect = (xmax - xmin) / (ymax - ymin)
         extent = [xmin, xmax, ymin, ymax]
-        fig = plotter(Z, extent=extent, aspect=aspect, **kargs)
+        fig = plotter(Z, extent=extent, aspect="auto", **kargs)
         self._fix_titles(0, "none", **nonkargs)
         return fig
 
@@ -1633,6 +1632,8 @@ class PlotMixin:
                 Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False
                 then a new figure is always used, otherwise it will default to using the last figure used by this
                 DataFile object.
+            no_quiver (bool):
+                Do not overlay quiver plot (in cases of dense meshes of points)
             plotter (callable):
                 Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter,
                 but contour plot and pcolormesh also work.
@@ -1643,6 +1644,7 @@ class PlotMixin:
         Z = self._vector_color(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol)
         if "template" in kargs:  # Catch template in kargs
             self.template = kargs.pop("template")
+        no_quiver = kargs.pop("no_quiver", False)
 
         if "save_filename" in kargs:
             save = kargs["save_filename"]
@@ -1653,7 +1655,8 @@ class PlotMixin:
         fig = self.image_plot(c.xcol, c.ycol, Z, **kargs)
         if save is not None:  # stop saving file twice
             kargs["save_filename"] = save
-        fig = self.quiver_plot(c.xcol, c.ycol, c.ucol, c.vcol, **kargs)
+        if not no_quiver:
+            fig = self.quiver_plot(c.xcol, c.ycol, c.ucol, c.vcol, **kargs)
 
         return fig
 
@@ -1975,13 +1978,9 @@ class PlotMixin:
         kargs, nonkargs, _ = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, _ = self._fix_fig(nonkargs["figure"])
-        fig = plotter(
-            self.column(self.find_col(xcol)),
-            self.column(self.find_col(ycol)),
-            self.column(self.find_col(ucol)),
-            self.column(self.find_col(vcol)),
-            **kargs,
-        )
+        data = np.column_stack([self // xcol, self // ycol, self // ucol, self // vcol])
+
+        fig = plotter(data[:, 0], data[:, 1], data[:, 2], data[:, 3], **kargs,)
         self._fix_titles(0, "non", **nonkargs)
         return fig
 
