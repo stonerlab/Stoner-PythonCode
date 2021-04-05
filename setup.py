@@ -6,14 +6,15 @@ from os import environ as env
 
 
 def get_version():
-    with open("Stoner/__init__.py","r") as init:
+    init_name=os.path.join(os.path.dirname(__file__),"Stoner","__init__.py")
+    with open(init_name,"r") as init:
         for line in init:
             line=line.strip()
             if line.startswith("__version_info__"):
                 parts=line.split("=")
                 __version_info__=eval(parts[1].strip())
                 return '.'.join(__version_info__)
-    return None
+    raise ValueError(f"Failed to get version info from {init_name}")
 
 def yield_sphinx_only_markup(lines):
     """
