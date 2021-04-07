@@ -1,5 +1,5 @@
-{% set name = "Stoner" %}
 {% set data = load_setup_py_data() %}
+{% set name = "Stoner" %}
 {% set file_ext = "tar.gz" %}
 
 
@@ -8,8 +8,8 @@ package:
   version: {{ data.get('version') }}
 
 source:
-  git_tag: v{{ data.get('version') }}
-  git_url: https://github.com/stonerlab/Stoner-PythonCode.git
+  path: ..
+
 build:
   number: 1
   script: {{ PYTHON }} setup.py install --single-version-externally-managed --record=record.txt
