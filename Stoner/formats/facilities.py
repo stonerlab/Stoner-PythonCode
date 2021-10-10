@@ -368,7 +368,7 @@ if fabio:
 
         """Utilise the fabIO library to read an edf file has a DataFile."""
 
-        priority = 64
+        priority = 32
         patterns = ["*.*"]
         mime_type = ["application/octet-stream", "image/png", "image/tiff"]
 
