@@ -425,7 +425,11 @@ class DefaultPlotStyle(MutableMapping):
             plt.sca(ax)
             figure = plt.gcf().number
         if isinstance(figure, bool) and not figure:
-            ret = None
+            ret = plt.figure(figure, figsize=self.template_figure__figsize)
+            if projection == "3d":
+                ax = ret.add_subplot(111, projection="3d")
+            else:
+                ax = ret.add_subplot(111)
         elif figure is not None:
             fig = plt.figure(figure, figsize=self.template_figure__figsize)
             if len(fig.axes) == 0:
@@ -455,7 +459,10 @@ class DefaultPlotStyle(MutableMapping):
         """Update matplotlib rc parameters from any attributes starting template_."""
         plt.style.use(self.stylesheet)
         for attr in dir(self):
-            v = getattr(self, attr)
+            try:
+                v = getattr(self, attr)
+            except TypeError:
+                continue
             if not attr.startswith("template_"):
                 continue
             attr = _add_dots(attr[9:])

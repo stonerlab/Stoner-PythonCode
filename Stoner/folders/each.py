@@ -7,6 +7,8 @@ from traceback import format_exc
 
 import numpy as np
 
+from dask import bag
+
 from ..tools import isiterable
 from ..compat import string_types
 from .utils import get_pool
@@ -356,9 +358,9 @@ class Item:
         _byname = kargs.pop("_byname", False)
         _serial = kargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        p, imap = get_pool(_serial)
+        bg = bag.from_sequence(self._folder)
         for ix, (f, ret) in enumerate(
-            imap(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder)
+            bg.map(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname)).compute()
         ):
             new_d = f
             if self._folder.debug:
@@ -377,6 +379,3 @@ class Item:
             name = self._folder.__names__()[ix]
             self._folder.__setter__(name, new_d)
             yield ret
-        if p is not None:
-            p.close()
-            p.join()

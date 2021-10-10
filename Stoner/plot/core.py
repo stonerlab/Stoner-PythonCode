@@ -25,6 +25,7 @@ from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 from .utils import hsl2rgb
+from .classes import PlotAttr
 
 
 try:  # Check we've got 3D plotting
@@ -107,6 +108,7 @@ class PlotMixin:
         self.__figure = None
         self._showfig = kargs.pop("showfig", True)  # Retains previous behaviour
         self._subplots = []
+        self.newplot = PlotAttr(self)
         self._public_attrs = {
             "fig": (int, mplfig.Figure),
             "labels": list,
@@ -117,6 +119,7 @@ class PlotMixin:
             "xlabel": string_types,
             "ylabel": string_types,
             "_showfig": bool,
+            "newplot": PlotAttr,
         }
         super().__init__(*args, **kargs)
         self._labels = typedList(string_types, [])
