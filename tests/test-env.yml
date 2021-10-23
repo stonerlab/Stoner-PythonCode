@@ -30,5 +30,4 @@ dependencies:
     - urllib3>=1.26
     - fabio>=0.10
     - hyperspy
-
-
+    - coveralls
