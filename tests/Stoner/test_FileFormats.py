@@ -56,7 +56,7 @@ def test_one_file(tmpdir, filename):
     if "save" in subclasses()[loaded["Loaded as"]].__dict__:
         pth = pathlib.Path(tmpdir)/filename.name
         parent, name,ext=pth.parent, pth.stem, pth.suffix
-        pth2=pathlib.Path(parent)/f"{name}-2{ext}"
+        pth2=pathlib.Path(tmpdir)/f"{name}-2{ext}"
         loaded.save(pth,as_loaded=True)
         assert pth.exists() or pathlib.Path(loaded.filename).exists(),f"Failed to save as {pth}"
         pathlib.Path(loaded.filename).unlink()

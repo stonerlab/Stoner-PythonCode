@@ -398,6 +398,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 v = img.info[k]
                 if v.startswith("b'"):
                     v = v.strip(" b'")
+                    v = bytes(v)
                 k = k.split("{")[0]
                 image.metadata[k] = v
         image.metadata["Loaded from"] = os.path.realpath(filename)
