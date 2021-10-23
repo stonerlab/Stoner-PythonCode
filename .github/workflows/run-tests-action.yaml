@@ -26,6 +26,8 @@ jobs:
           allow-softlinks: true
       - name: Conda info
         run: conda info
+      - install package
+        run pip install --no-deps .
       - name: Run pytest
         run: pytest --cov-report= --cov=Stoner
       - name: Run coveralls
