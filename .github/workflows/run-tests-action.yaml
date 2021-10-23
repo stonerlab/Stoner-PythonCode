@@ -31,9 +31,10 @@ jobs:
       - name: install package
         run: pip install --no-deps .
       - name: Run headless test
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: pytest --cov=Stoner
+        run: sudo apt-get install xvfb
+      - name: Test with xvfb
+        run: vfb-run --auto-servernum pytest --cov=Stoner
+      - uses: bcomnes/cleanup-xvfb@v1
       - uses: AndreMiras/coveralls-python-action@v20201129
         with:
           parallel: true
