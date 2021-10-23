@@ -1,0 +1,33 @@
+jobs:
+  run-pytest:
+    name:run-tests (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.8"]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge,phygbu
+          channel-priority: strict
+          activate-environment: test-environment
+          environment-file: tests/test-env.yml
+          allow-softlinks: true
+      - name: Conda info
+        run: conda info
+      - name: Install coverall
+        run install coveralls
+      - name: Run pytest
+        run pytest -n 2 --cov-report= --cov=Stoner
+      - name: Run coveralls
+        run coveralls
