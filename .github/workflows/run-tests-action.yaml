@@ -27,7 +27,7 @@ jobs:
       - name: Conda info
         run: conda info
       - name: install package
-        run pip install --no-deps .
+        run: pip install --no-deps .
       - name: Run pytest
         run: pytest --cov-report= --cov=Stoner
       - name: Run coveralls
