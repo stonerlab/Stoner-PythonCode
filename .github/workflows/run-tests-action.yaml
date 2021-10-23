@@ -33,7 +33,7 @@ jobs:
       - name: Run headless test
         run: sudo apt-get install xvfb
       - name: Test with xvfb
-        run: xvfb-run --auto-servernum pytest --cov=Stoner
+        run: xvfb-run --auto-servernum pytest -v --cov-report= --cov=Stoner
       - uses: bcomnes/cleanup-xvfb@v1
       - uses: AndreMiras/coveralls-python-action@v20201129
         with:
