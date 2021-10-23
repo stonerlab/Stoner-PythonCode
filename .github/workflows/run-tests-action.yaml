@@ -27,7 +27,7 @@ jobs:
       - name: Conda info
         run: conda info
       - name: Install coverall
-        run: install coveralls
+        run: pip install coveralls
       - name: Run pytest
         run: pytest -n 2 --cov-report= --cov=Stoner
       - name: Run coveralls
