@@ -1,5 +1,5 @@
 name: Tests_and_report
-3on: push
+on: push
 jobs:
   run_pytest:
     name: run-tests (${{ matrix.python-version }}, ${{ matrix.os }})
