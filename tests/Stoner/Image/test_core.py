@@ -86,7 +86,7 @@ def test_load_save_all():
     for fmt in fmts:
         iml=ImageFile(path.join(tmpdir,"kermit-{}.tiff".format(fmt)))
         del iml["Loaded from"]
-        assert ims[fmt]==iml,f"Round tripping tiff with format {fmt} failed - metadata diff={ims[fmt].metadata-iml.metadata}"
+        assert ims[fmt]==iml,f"Round tripping tiff with format {fmt} failed - metadata diff={ims[fmt].metadata^iml.metadata}"
         iml=ImageFile(path.join(tmpdir,"kermit-{}.npy".format(fmt)))
         del iml["Loaded from"]
         assert np.all(ims[fmt].data==iml.data),"Round tripping npy with format {} failed".format(fmt)
