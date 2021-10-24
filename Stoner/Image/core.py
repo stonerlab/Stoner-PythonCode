@@ -771,7 +771,6 @@ class ImageFile(metadataObject):
     _patterns = ["*.png", "*.tif", "*.jpeg", "*.jpg"]
     mime_type = ["image/png", "image/jpeg", "image/tiff", "application/octet-stream"]
     priority = 32
-    _image = None
 
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
