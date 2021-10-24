@@ -13,7 +13,7 @@ dependencies:
     - pytest-runner
     - pytest
     - pytest-forked
-    - scikit-image=0.17
+    - scikit-image=0.18
     - h5py
     - cycler>=0.10.0
     - filemagic>=1.6

@@ -242,7 +242,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     fmts = ["png", "npy", "tiff", "tif"]
 
     # These will be overriden with isntance attributes, but setting here allows ImageFile properties to be defined.
-    filename = None
     debug = False
     filename = ""
 
@@ -768,11 +767,11 @@ class ImageFile(metadataObject):
 
     # pylint: disable=no-member
 
-    _image = None
     _protected_attrs = ["_fromstack"]  # these won't be passed through to self.image attrs
     _patterns = ["*.png", "*.tif", "*.jpeg", "*.jpg"]
     mime_type = ["image/png", "image/jpeg", "image/tiff", "application/octet-stream"]
     priority = 32
+    _image = None
 
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
