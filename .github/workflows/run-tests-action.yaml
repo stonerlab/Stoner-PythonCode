@@ -1,4 +1,4 @@
-name: Tests_and_report
+name: pytest
 on: push
 jobs:
   run_pytest:
@@ -33,7 +33,7 @@ jobs:
       - name: Run headless test
         run: sudo apt-get install xvfb
       - name: Test with xvfb
-        run: xvfb-run --auto-servernum pytest  --cov-report= --cov=Stoner
+        run: xvfb-run --auto-servernum pytest  -n `python -c 'import os;print(min(12,os.cpu_count()))'` --cov-report= --cov=Stoner
       - uses: bcomnes/cleanup-xvfb@v1
       - uses: AndreMiras/coveralls-python-action@v20201129
         with:
