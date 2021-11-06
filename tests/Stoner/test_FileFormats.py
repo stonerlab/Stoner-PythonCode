@@ -119,7 +119,7 @@ def test_maximus_image():
     for pth in pths:
         img=ImageFile.load(pth)
         assert img.shape==(1000,1000)
-        assert len(img.metadata)==210
+        assert len(img.metadata)==196
 
 def test_maximus_stack(tmpdir):
     tmpdir=pathlib.Path(tmpdir)

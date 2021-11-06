@@ -357,15 +357,14 @@ class Item:
         _serial = kargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
         p, imap = get_pool(_serial)
-        for ix, (f, ret) in enumerate(
+        for ix, (new_d, ret) in enumerate(
             imap(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder)
         ):
-            new_d = f
             if self._folder.debug:
                 print(ix, type(ret))
             if isinstance(ret, self._folder._type) and _return is None:
                 try:  # Check if ret has same data type, otherwise will not overwrite well
-                    if ret.data.dtype != f.data.dtype:
+                    if ret.data.dtype != new_d.data.dtype:
                         continue
                     new_d = ret
                 except AttributeError:

@@ -234,7 +234,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     _func_proxy = None
 
     # extra attributes for class beyond standard numpy ones
-    _extra_attributes_default = {"metadata": typeHintedDict({}), "filename": ""}
 
     # Default values for when we can't find the attribute already
     _defaults = {"debug": False, "_hardmask": False}
@@ -270,13 +269,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if len(args) == 0:
             ret = np.empty((0, 0), dtype=float).view(cls)
             # merge the results of __new__ from emtadataObject
-            tmp = metadataObject.__new__(metadataObject, *args, **kargs)
-            for k, v in tmp.__dict__.items():
-                if k not in ret.__dict__:
-                    ret.__dict__[k] = v
-
         else:
-
             # 1 args initialisation
             arg = args[0]
             loadfromfile = False
@@ -299,7 +292,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 # Filename- load datafile
                 if not os.path.exists(arg):
                     raise ValueError(f"File path does not exist {arg}")
-                ret = ret = np.empty((0, 0), dtype=float).view(cls)
+                ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(arg, **array_args)  # pylint: disable=no-member
             elif isinstance(arg, ImageFile):
                 # extract the image
@@ -317,16 +310,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 ret = ret.convert(np.float64)
                 ret.metadata.update(meta)
 
-            # merge the results of __new__ from emtadataObject
-            tmp = metadataObject.__new__(metadataObject, *args)
-            for k, v in tmp.__dict__.items():
-                if k not in ret.__dict__:
-                    ret.__dict__[k] = v
+        # merge the results of __new__ from emtadataObject
+        tmp = metadataObject.__new__(metadataObject, *args)
+        tmp.__dict__.update(ret.__dict__)
+        ret.__dict__ = tmp.__dict__
 
         # all constructors call array_finalise so metadata is now initialised
-        if "Loaded from" not in ret.metadata.keys():
-            ret.metadata["Loaded from"] = ""
-        ret.filename = ret.metadata["Loaded from"]
+        ret.filename = ret.metadata.setdefault("Loaded from", "")
         ret.metadata.update(user_metadata)
         ret.debug = _debug
         ret._title = _title
@@ -349,14 +339,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
             print(curframe, calframe)
-        _extra_attributes = getattr(obj, "_optinfo", ImageArray._extra_attributes_default)
-        setattr(self, "_optinfo", copy(_extra_attributes))
-        for k, v in list(_extra_attributes.items()):
-            try:
-                setattr(self, k, getattr(obj, k, v))
-            except AttributeError:  # Some versions of  python don't like this
-                pass
-        super().__array_finalize__(obj)
+        if not hasattr(self, "_optinfo"):
+            setattr(self, "_optinfo", {"metadata": typeHintedDict({}), "filename": ""})
+        self._optinfo.update(getattr(obj, "_optinfo", {}))
+        super().__array_finalize__(self)
 
     def _load(self, filename, *args, **kargs):
         """Load an image from a file and return as a ImageArray."""
@@ -539,11 +525,15 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """
         ret = self.copy().view(type(self))
         self._optinfo["mask"] = self.mask  # Make sure we've updated our mask record
+        self._optinfo["metadata"] = self.metadata  # Update metadata record
         for k, v in self._optinfo.items():
             try:
                 setattr(ret, k, deepcopy(v))
             except (TypeError, ValueError, RecursionError):
-                setattr(ret, k, copy(v))
+                if isinstance(v, np.ndarray):
+                    setattr(self, k, np.copy(v).view(v.__class__))
+                else:
+                    setattr(ret, k, copy(v))
         return ret
 
     @property
@@ -867,11 +857,14 @@ class ImageFile(metadataObject):
             and self._image.shape == v.shape
             and self._image.dtype == v.dtype
         ):
-            self._image[:] = v
+            self._image[:] = np.copy(v)
+        elif isinstance(v, np.ndarray):
+            self._image = np.copy(v).view(ImageArray)
         else:
             self._image = ImageArray(v)
         self.filename = filename
-        self.image.metadata.update(metadata)
+        self._image.metadata.update(metadata)
+        self._image.metadata.update(getattr(v, "metadata", {}))
 
     @property
     def mask(self):

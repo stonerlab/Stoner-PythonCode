@@ -233,7 +233,7 @@ class MaskProxy:
     @property
     def colour(self):
         """Get the colour of the mask."""
-        return self._imagearray._mask_color
+        return getattr(self._imagearray, "_mask_color", None)
 
     @colour.setter
     def colour(self, value):

@@ -13,6 +13,7 @@ __all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage"]
 import importlib
 import os.path as path
 import os
+from copy import deepcopy
 
 import h5py
 import numpy as np
@@ -757,7 +758,7 @@ class STXMImage(ImageFile):
             args = args[1:]
             super().__init__(*args, **kargs)
             self.image = d.data
-            self.metadata.update(d.metadata)
+            self.metadata = deepcopy(d.metadata)
             self.filename = d.filename
         elif len(args) > 0 and isinstance(args[0], ImageFile):
             src = args[0]
