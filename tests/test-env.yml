@@ -31,3 +31,5 @@ dependencies:
     - fabio>=0.10
     - hyperspy
     - coveralls
+    - importlib_resources #Bad pyface conda package
+    - importlib_metadata
