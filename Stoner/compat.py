@@ -36,6 +36,9 @@ _lmfit = True
 
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
+    from traits.etsconfig.api import ETSConfig
+
+    ETSConfig.toolkit = "qt5"
 
     try:
         load = hs.load
