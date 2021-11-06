@@ -38,7 +38,7 @@ try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
     from traits.etsconfig.api import ETSConfig
 
-    ETSConfig.toolkit = "qt5"
+    ETSConfig.toolkit = "qt"
 
     try:
         load = hs.load
