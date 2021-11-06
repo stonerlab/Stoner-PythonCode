@@ -31,7 +31,7 @@ jobs:
       - name: install package
         run: pip install --no-deps .
       - name: Run headless test
-        run:sudo apt-get install xvfb
+        run: sudo apt-get install xvfb
       - name: Test with xvfb
         run: |
           export QT_API=pyqt5
