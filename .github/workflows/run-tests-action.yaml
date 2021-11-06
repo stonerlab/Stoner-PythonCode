@@ -31,9 +31,10 @@ jobs:
       - name: install package
         run: pip install --no-deps .
       - name: Run headless test
-        run: sudo apt-get install xvfb
-        run: export QT_API=pyqt5
-        run: export ETS_TOOLKIT=qt5
+        run: |
+          sudo apt-get install xvfb
+          export QT_API=pyqt5
+          export ETS_TOOLKIT=qt5
       - name: Test with xvfb
         run: xvfb-run --auto-servernum pytest  --cov-report= --cov=Stoner
       - uses: bcomnes/cleanup-xvfb@v1
