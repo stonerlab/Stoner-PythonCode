@@ -33,11 +33,7 @@ jobs:
       - name: Run headless test
         run: sudo apt-get install xvfb
       - name: Test with xvfb
-        run: |
-          export QT_API=pyqt5
-          export ETS_TOOLKIT=qt5
-          echo $ETS_TOOLKIT
-          xvfb-run --auto-servernum pytest  --cov-report= --cov=Stoner
+        run: xvfb-run --auto-servernum pytest  --cov-report= --cov=Stoner
       - uses: bcomnes/cleanup-xvfb@v1
       - uses: AndreMiras/coveralls-python-action@v20201129
         with:
