@@ -60,7 +60,8 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
     if not _3D:
         raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
     ax = kargs.pop("ax", plt.gca(projection="3d"))
-    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs)
+    C = kargs.pop("color", None)
+    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, C, **kargs)
 
     return vector_field
 
@@ -1751,7 +1752,8 @@ class PlotMixin:
                 "cmap": cm.jet,
                 "scale": 1.0,
                 "units": "xy",
-                "color": hsl2rgb((1 + self.q / np.pi) / 2, self.r / np.max(self.r), (1 + self.w) / 2) / 255.0,
+                "color": hsl2rgb((1 + self.q / np.pi) / 2, self.r / np.max(self.r), (1 + self.w) / 2, alpha=True)
+                / 255.0,
             }
             projection = kargs.pop("projection", "3d")
             coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
