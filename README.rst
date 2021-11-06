@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.com/stonerlab/Stoner-PythonCode.svg?branch=master
-    :target: https://travis-ci.com/stonerlab/Stoner-PythonCode
+.. image:: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml/badge.svg?branch=stable
+    :target: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml
 
 .. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
     :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
@@ -42,7 +42,7 @@ Getting this Code
     :width: 320
 
 The *Stoner* package requires h5py>=2.7.0, lmfit>=0.9.7, matplotlib>=2.0,numpy>=1.13, Pillow>=4.0,
-scikit-image>=0.13.0 & scipy>=1.0.0 and also optional depends on  filemagic, npTDMS, imreg_dft and numba.
+scikit-image>=0.13.0 & scipy>=1.0.0 and also optional depends on  filemagic, npTDMS, imreg_dft and numba, fabio, hyperspy.
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
 dependencies are collected together in the **phygbu** repositry on anaconda cloud. The easiest way to install the Stoner package is,
@@ -52,7 +52,7 @@ Compatibility
 --------------
 
 Versions 0.9.x (stable branch) are compatible with Python 2.7, 3.5, 3.6 and 3.7. The latest 0.9.6 version is also compatible with Python 3.8
-The development verstion (0.10, master branch) is compatible with Python 3.6, 3.7 and 3.8 but not 2.7.
+The current stable verstion (0.10, stable branch) is compatible with Python 3.6-3.9
 
 Conda packages are prepared for the stable branch and when the development branch enters beta testing. Pip wheels are prepared for selected stable releases only.
 
@@ -181,20 +181,9 @@ making beta packages available.
 Development Version
 -------------------
 
-The current development version is hosted in the master branch of the repository and will become version 0.10.
+The current development version is hosted in the master branch of the repository and will become version 0.11.
 
-New Features in 0.10-dev include:
-
-    *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
-    *   Start implementing PEP484 Type hinting
-    *   Support pathlib for paths
-    *   Switch from Tk based dialogs to Qt5 ones
-    *   Refactoring the **baseFolder** class so that sub-groups are stored in an attribute that is an instance of a custom
-        dictionary with methods to prune and filter in the virtual tree of sub-folders.
-    *   Refactoring of the **ImageArray** and **ImageFile** so that binding of external functions as methods is done at
-        class definition time rather than at runtime with overly complex __getattr__ methods. The longer term goal is to
-        depricate the use of ImageArray in favour of just using ImageFile.
-    *   Introduce interactive selection of boxes, lines and mask regions for interactive Matplotlib backends.
+At the moment the development version is maily broen....
 
 Build Status
 ~~~~~~~~~~~~
@@ -203,7 +192,7 @@ Version 0.7 onwards are tested using the Travis-CI services with unit test cover
 
 Version 0.9 is tested with Python 2.7, 3.5, 3.6 using the standard unittest module.
 
-The development version - which will be 0.10 is tested using **pytest** with Python 3.6, Python 3.7 and Python 3.8.
+Version 0.10 is tested using **pytest** with Python 3.6-3.9 using a github action.
 
 
 Citing the Stoner Package
@@ -215,9 +204,24 @@ encourage any users to cite this package via that doi.
 Stable Versions
 ---------------
 
+
+New Features in 0.10 include:
+
+    *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
+    *   Start implementing PEP484 Type hinting
+    *   Support pathlib for paths
+    *   Switch from Tk based dialogs to Qt5 ones
+    *   Refactoring the **baseFolder** class so that sub-groups are stored in an attribute that is an instance of a custom
+        dictionary with methods to prune and filter in the virtual tree of sub-folders.
+    *   Refactoring of the **ImageArray** and **ImageFile** so that binding of external functions as methods is done at
+        class definition time rather than at runtime with overly complex __getattr__ methods. The longer term goal is to
+        depricate the use of ImageArray in favour of just using ImageFile.
+    *   Introduce interactive selection of boxes, lines and mask regions for interactive Matplotlib backends.
+    *   Fix some long standing bugs which could lead to shared metadata dictionaries and race conditions
+
 Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
 
-Version 0.9 is the current stable version. This is the last version to support Python 2 and 3<3.6. Features of this release are:
+Version 0.9 is the old stable version. This is the last version to support Python 2 and 3<3.6. Features of this release are:
 
     *   Refactoring of the package into a more granual core, plot, formats, folders packages with submodules
     *   Overhaul of the documentation and user guide
@@ -226,7 +230,9 @@ Version 0.9 is the current stable version. This is the last version to support P
     *   Support for Python 3.7 (and 3.8 from 0.9.6)
     *   Unit tests now > 80% coverage across the package.
 
-Version 0.8 is the previous stable release. The main new features were:
+Version 0.9.8 was the final version of the 0.9 branch
+
+Version 0.8 is the very old stable release. The main new features were:
 
     *   Reworking of the ImageArray, ImageFile and ImageFolder with many updates and new features.
     *   New mixin based ImageStack2 that can manipulate a large number of images in a 3D numpy array
@@ -237,7 +243,7 @@ Version 0.8 is the previous stable release. The main new features were:
 
 0.8.2 was the final release of the 0.8.0 branch
 
-The old stable version is 0.7.2. Features of 0.7.2 include
+The ancient stable version is 0.7.2. Features of 0.7.2 include
 
     *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
     *   Addition of Stoner.Image package to handle image analysis
