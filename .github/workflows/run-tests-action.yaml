@@ -15,6 +15,7 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
+      - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
@@ -32,6 +33,7 @@ jobs:
       - name: Test with xvfb
         run: xvfb-run --auto-servernum $CONDA/bin/pytest  -n `python -c 'import os;print(min(12,os.cpu_count()))'` --cov-report=. --cov=Stoner
       - uses: bcomnes/cleanup-xvfb@v1
+      - name: Run Coveralls
       - uses: AndreMiras/coveralls-python-action@v20201129
         with:
           parallel: true
