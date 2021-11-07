@@ -44,6 +44,7 @@ jobs:
     needs: run_pytest
     runs-on: ubuntu-latest
     steps:
-      - uses: AndreMiras/coveralls-python-action@v20201129
+      - name: Finish colveralls
+        uses: AndreMiras/coveralls-python-action@v20201129
         with:
           parallel-finished: true
