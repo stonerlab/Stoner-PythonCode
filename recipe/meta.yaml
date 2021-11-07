@@ -21,44 +21,44 @@ requirements:
     - pytest-runner
   host:
     - python
-    - scipy>1.4
-    - numpy>=1.18
-    - matplotlib>=3.0
-    - scikit-image=0.17
-    - h5py
-    - cycler>=0.10.0
-    - filemagic>=1.6
-    - image-registration>=0.2.1
-    - lmfit>=0.9.7
-    - memoization>=0.1.4
-    - npTDMS>=0.11
-    - python-dateutil>=2.7.0
-    - statsmodels
-    - tabulate>=0.8
-    - imreg_dft>=2.0
-    - multiprocess>=0.70
-    - dill>=0.2.8
-    - urllib3>=1.26
+    - cycler >= 0.10.0
+    - dill >= 0.3.0
+    - fabio >= 0.11.0
+    - filemagic >= 1.6
+    - h5py >= 3.3.0
+    - hyperspy >= 1.6.0
+    - image-registration >= 0.2.0
+    - imreg_dft >= 2.0.0
+    - lmfit >= 1.0.0
+    - matplotlib >= 3.4.0
+    - nptdms => 1.1.0
+    - numpy >= 1.21.0
+    - scikit-image >= 0.18.0
+    - scipy >= 1.7.0
+    - seaborn >= 0.11.0
+    - statsmodels >= 0.13.0
+    - tabulate >= 0.8.0
+    - urllib3 >= 1.26.0
   run:
     - python
-    - scipy>1.4
-    - numpy>=1.18
-    - matplotlib>=3.0
-    - scikit-image=0.17
-    - h5py
-    - cycler>=0.10.0
-    - filemagic>=1.6
-    - image-registration>=0.2.1
-    - lmfit>=0.9.7
-    - memoization>=0.1.4
-    - npTDMS>=0.11
-    - python-dateutil>=2.7.0
-    - statsmodels
-    - tabulate>=0.8
-    - imreg_dft>=2.0
-    - multiprocess>=0.70
-    - dill>=0.2.8
-    - urllib3>1.26
+    - cycler >= 0.10.0
+    - dill >= 0.3.0
+    - fabio >= 0.11.0
+    - filemagic >= 1.6
+    - h5py >= 3.3.0
+    - hyperspy >= 1.6.0
+    - image-registration >= 0.2.0
+    - imreg_dft >= 2.0.0
+    - lmfit >= 1.0.0
+    - matplotlib >= 3.4.0
+    - nptdms => 1.1.0
+    - numpy >= 1.21.0
+    - scikit-image >= 0.18.0
+    - scipy >= 1.7.0
+    - seaborn >= 0.11.0
+    - statsmodels >= 0.13.0
+    - tabulate >= 0.8.0
+    - urllib3 >= 1.26.0
 
 about:
   home: https://github.com/gb119/Stoner-PythonCode/
