@@ -31,6 +31,6 @@ jobs:
         with:
           meta_yaml_dir: recipe
           python-version: ${{ matrix.python-version }} # Values previously defined in `matrix`
-          user:phygbu
+          user: phygbu
           label: auto
           token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
