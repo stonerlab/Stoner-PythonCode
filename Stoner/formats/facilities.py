@@ -370,7 +370,7 @@ if fabio:
 
         priority = 32
         patterns = ["*.*"]
-        mime_type = ["application/octet-stream", "image/png", "image/tiff"]
+        mime_type = ["text/plain"]
 
         def _load(self, filename=None, *args, **kargs):
             """Load function. File format has space delimited columns from row 3 onwards."""

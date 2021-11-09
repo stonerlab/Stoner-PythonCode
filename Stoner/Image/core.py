@@ -1142,6 +1142,8 @@ class ImageFile(metadataObject):
                 load the file
             filetype (:py:class:`ImageFile`, str):
                 If not none then tries using filetype as the loader.
+            debug (bool):
+                Turn on debugging when running autoload. Default *False*
 
         Returns:
             (ImageFile):
@@ -1164,11 +1166,12 @@ class ImageFile(metadataObject):
         filename = kargs.pop("filename", args.pop(0) if len(args) > 0 else None)
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
+        debug = kargs.pop("debug", False)
 
         filename, filetype = get_file_name_type(filename, filetype, DataFile)
         if auto_load:  # We're going to try every subclass we canA
             try:
-                ret = auto_load_classes(filename, ImageFile, debug=False, args=args, kargs=kargs)
+                ret = auto_load_classes(filename, ImageFile, debug=debug, args=args, kargs=kargs)
             except StonerUnrecognisedFormat:
                 ret = ImageFile()
                 ret = ret._load(filename, *args, **kargs)

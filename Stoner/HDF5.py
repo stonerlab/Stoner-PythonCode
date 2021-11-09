@@ -9,7 +9,7 @@ It is only necessary to import this module for the subclasses of :py:class:`Ston
 to :py:class:`Stoner.Core.Data`.
 
 """
-__all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage"]
+__all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage", "HDFFileManager"]
 import importlib
 import os.path as path
 import os
@@ -25,74 +25,6 @@ from .Image.core import ImageFile, ImageArray
 from .core.utils import copy_into
 
 
-def _raise_error(f, message="Not a valid hdf5 file."):
-    """Try to close the filehandle f and raise a StonerLoadError."""
-    try:
-        f.file.close()
-    except Exception:  # pylint:disable=W0703 # nosec
-        pass
-    raise StonerLoadError(message)
-
-
-def close_file(f, filename):
-    """Ensure the HDF5 file is closed if we opened it."""
-    if isinstance(f, h5py.File):
-        ret = f.filename
-    elif isinstance(f, h5py.Group):
-        ret = f.file.filename
-    else:
-        ret = filename
-    if isinstance(filename, string_types):
-        f.file.close()
-    return ret
-
-
-def confirm_hdf5(filename, raises=True):
-    """Sniff a file to look for the HDF5 signature.
-
-    Args:
-        filename)str):
-           File to open.
-
-    Keyword Args:
-        raise (bool):
-            (default True) If True, function raises a StonerLoadError, if false, returns False
-
-    Returns:
-        (bool):
-            True if this has the hdf5 magic bytes.
-
-    Raises:
-        StonerLoadError:
-            If the file does npt have the hdf5 magic bytes.
-    """
-    if isinstance(filename, (h5py.File, h5py.Group)):
-        return True
-    if not isinstance(filename, path_types) or not os.path.exists(filename):
-        if raises:
-            raise StonerLoadError(f"{filename} not found!")
-        return False
-
-    with open(filename, "rb") as sniff:  # Some code to manaully look for the HDF5 format magic numbers
-        sniff.seek(0, 2)
-        size = sniff.tell()
-        sniff.seek(0)
-        blk = sniff.read(8)
-        if not blk == b"\x89HDF\r\n\x1a\n":
-            c = 0
-            while sniff.tell() < size and len(blk) == 8:
-                sniff.seek(512 * 2 ** c)
-                c += 1
-                blk = sniff.read(8)
-                if blk == b"\x89HDF\r\n\x1a\n":
-                    break
-            else:
-                if raises:
-                    raise StonerLoadError(f"Couldn't find the HD5 format singature block in {filename}")
-                return False
-    return True
-
-
 def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
     """Look inside the open hdf file for details of what class to use to read this group.
 
@@ -105,11 +37,11 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
             Callable function that can produce an object of an appropriate class.
     """
     if "type" not in f.attrs:
-        _raise_error(f, message="HDF5 Group does not specify the type attribute used to check we can load it.")
-    typ = bytes2str(f.attrs["type"])
+        StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
+    typ = bytes2str(f.attrs.get("type", ""))
     if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
-        _raise_error(
-            f, message="HDF5 Group does not speicify a recongized type and does not specify a module to use to load."
+        raise StonerLoadError(
+            "HDF5 Group does not speicify a recongized type and does not specify a module to use to load."
         )
 
     if "module" in f.attrs:
@@ -119,39 +51,66 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
     return getattr(globals()[typ], "read_hdf5", default_loader)
 
 
-def _open_filename(filename):
-    """Examine a file to see if it is an HDF5 file and open it if so.
+class HDFFileManager:
+    def __init__(self, filename, mode="r", **kargs):
+        """Initialise context handler.
 
-    Args:
-        filename (str): Name of the file to open
+        Works out the filename and group in cases the input flename includes a path to a sub group.
 
-    Returns:
-        (f5py.Group): Valid h5py.Group containg data/
+        Checks the file is actually an h4py file that is openable with the given mode.
+        """
+        self.mode = mode
+        self.handle = None
+        self.file = None
+        self.close = True
+        self.group = ""
+        # Handle the case we're passed an already open h5py object
+        if not isinstance(filename, path_types) or mode == "w":  # passed an already open h5py object
+            self.filename = filename
+            return
+        # Here we deal with a string or path filename
+        parts = str(filename).split(os.path.sep)
+        bits = len(parts)
+        for ix in range(bits):
+            testname = "/".join(parts[: bits - ix])
+            if ix > 0:
+                groupname = "/".join(parts[bits - ix :])
+            if path.exists(testname):
+                filename = testname
+                break
 
-    Raises:
-        StonerLoadError if not a valid file.
-    """
-    parts = str(filename).split(os.pathsep)
-    filename = parts.pop(0)
-    group = ""
-    while len(parts) > 0:
-        if not path.exists(path.join(filename, parts[0])):
-            group = "/".join(parts)
+        try:
+            if not mode.startswith("w"):
+                with h5py.File(filename, "r"):
+                    pass
+        except (IOError, OSError):
+            raise StonerLoadError(f"{filename} not at HDF5 File")
+        self.filename = filename
+
+    def __enter__(self):
+        """Open the hdf file with given mode and navigate to the group."""
+        if isinstance(self.filename, (h5py.File, h5py.Group)):  # passed an already open h5py object
+            self.handle = self.filename
+            if isinstance(self.filename, h5py.Group):
+                self.file = self.filename.file
+            else:
+                self.file = self.filename
+            self.close = False
+        elif isinstance(self.filename, path_types):  # Passed something to open
+            handle = h5py.File(self.filename, self.mode)
+            self.file = handle
+            for grp in self.group.split("/"):
+                if grp.strip() != "":
+                    handle = handle[grp]
+            self.handle = handle
         else:
-            path.join(filename, parts.pop(0))
+            raise StonerLoadError("Note a resource that can be handled with HDF")
+        return self.handle
 
-    confirm_hdf5(filename)
-    try:
-        f = None
-        f = h5py.File(filename, "r+")
-        for grp in group.split("/"):
-            if grp.strip() != "":
-                f = f[grp]
-    except IOError:
-        _raise_error(f, message=f"Failed to open {filename} as a n hdf5 file")
-    except KeyError:
-        _raise_error(f, message="Could not find group {group} in file {filename}")
-    return f
+    def __exit__(self, type, value, traceback):
+        """Ensure we close the hdf file no matter what."""
+        if self.file is not None and self.close:
+            self.file.close()
 
 
 class HDF5File(DataFile):
@@ -211,19 +170,13 @@ class HDF5File(DataFile):
             filename = self.filename
         else:
             self.filename = filename
-        if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
-            confirm_hdf5(self.filename, raises=True)
-            f = _open_filename(filename)
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
-            f = filename
-        else:
-            _raise_error(None, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
-        loader = get_hdf_loader(f, default_loader=HDF5File.read_hdf)
-        ret = loader(f, *args, instance=self, **kargs)
-        if isinstance(ret, DataFile):
-            copy_into(ret, self)
-            return self
-        return ret
+        with HDFFileManager(self.filename, "r") as f:
+            loader = get_hdf_loader(f, default_loader=HDF5File.read_hdf)
+            ret = loader(f, *args, instance=self, **kargs)
+            if isinstance(ret, DataFile):
+                copy_into(ret, self)
+                return self
+            return ret
 
     @classmethod
     def read_hdf(cls, filename, *args, **kargs):  # pylint: disable=unused-argument
@@ -232,52 +185,41 @@ class HDF5File(DataFile):
         if filename is None or not filename:
             self.get_filename("r")
             filename = self.filename
-        if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
-            f = _open_filename(filename)
-            self.filename = filename
-        elif isinstance(filename, h5py.File):
-            f = filename
-            self.filename = f.filename
-        elif isinstance(filename, h5py.Group):
-            f = filename
-            self.filename = f.file.filename
-        else:
-            _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
-
-        data = f["data"]
-        if np.product(np.array(data.shape)) > 0:
-            self.data = data[...]
-        else:
-            self.data = [[]]
-        metadata = f.require_group("metadata")
-        typehints = f.get("typehints", None)
-        if not isinstance(typehints, h5py.Group):
-            typehints = dict()
-        else:
-            typehints = typehints.attrs
-        if "column_headers" in f.attrs:
-            self.column_headers = [bytes2str(x) for x in f.attrs["column_headers"]]
-            if isinstance(self.column_headers, string_types):
-                self.column_headers = self.metadata.string_to_type(self.column_headers)
-            self.column_headers = [bytes2str(x) for x in self.column_headers]
-        else:
-            raise StonerLoadError("Couldn't work out where my column headers were !")
-        for i in sorted(metadata.attrs):
-            v = metadata.attrs[i]
-            t = typehints.get(i, "Detect")
-            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-                self.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+        with HDFFileManager(filename, "r") as f:
+            data = f["data"]
+            if np.product(np.array(data.shape)) > 0:
+                self.data = data[...]
             else:
-                self[i] = metadata.attrs[i]
-        if isinstance(f, h5py.Group):
-            if f.name != "/":
-                self.filename = os.path.join(f.file.filename, f.name)
+                self.data = [[]]
+            metadata = f.require_group("metadata")
+            typehints = f.get("typehints", None)
+            if not isinstance(typehints, h5py.Group):
+                typehints = dict()
             else:
-                self.filename = os.path.realpath(f.file.filename)
-        else:
-            self.filename = os.path.realpath(f.filename)
-        if isinstance(filename, path_types):
-            f.file.close()
+                typehints = typehints.attrs
+            if "column_headers" in f.attrs:
+                self.column_headers = [bytes2str(x) for x in f.attrs["column_headers"]]
+                if isinstance(self.column_headers, string_types):
+                    self.column_headers = self.metadata.string_to_type(self.column_headers)
+                self.column_headers = [bytes2str(x) for x in self.column_headers]
+            else:
+                raise StonerLoadError("Couldn't work out where my column headers were !")
+            for i in sorted(metadata.attrs):
+                v = metadata.attrs[i]
+                t = typehints.get(i, "Detect")
+                if (
+                    isinstance(v, string_types) and t != "Detect"
+                ):  # We have typehints and this looks like it got exported
+                    self.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+                else:
+                    self[i] = metadata.attrs[i]
+            if isinstance(f, h5py.Group):
+                if f.name != "/":
+                    self.filename = os.path.join(f.file.filename, f.name)
+                else:
+                    self.filename = os.path.realpath(f.file.filename)
+            else:
+                self.filename = os.path.realpath(f.filename)
         return self
 
     def save(self, filename=None, **kargs):
@@ -315,10 +257,9 @@ class HDF5File(DataFile):
             self.filename = filename
         if isinstance(filename, path_types):
             mode = "r+" if os.path.exists(filename) else "w"
-            f = h5py.File(filename, mode)
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
-            f = filename
-        try:
+        else:
+            mode = ""
+        with HDFFileManager(filename, mode) as f:
             f.require_dataset(
                 "data",
                 data=self.data,
@@ -341,10 +282,6 @@ class HDF5File(DataFile):
             f.attrs["filename"] = self.filename
             f.attrs["type"] = type(self).__name__
             f.attrs["module"] = type(self).__module__
-        finally:
-            if isinstance(filename, str):
-                f.file.close()
-        self.filename = close_file(f, filename)
         return self
 
 
@@ -375,17 +312,17 @@ class HGXFile(DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-        confirm_hdf5(filename)
-        try:
-            with h5py.File(filename, "r") as f:
+
+        with HDFFileManager(self.filename, "r") as f:
+            try:
                 if "current" in f and "config" in f["current"]:
                     pass
                 else:
                     raise StonerLoadError("Looks like an unexpected HDF layout!.")
                 self.scan_group(f["current"], "")
                 self.main_data(f["current"]["data"])
-        except IOError as err:
-            raise StonerLoadError("Looks like an unexpected HDF layout!.") from err
+            except IOError as err:
+                raise StonerLoadError("Looks like an unexpected HDF layout!.") from err
         return self
 
     def scan_group(self, grp, pth):
