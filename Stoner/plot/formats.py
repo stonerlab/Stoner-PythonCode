@@ -438,7 +438,14 @@ class DefaultPlotStyle(MutableMapping):
                     ax = fig.add_axes(rect)
             else:
                 if projection == "3d":
-                    ax = kargs.pop("ax", fig.gca(projection="3d"))
+                    if "ax" in kargs:
+                        ax = kargs.pop("ax")
+                    else:
+                        for ax in plt.gcf().axes:
+                            if "zaxis" in ax.properties():
+                                break
+                        else:
+                            ax = plt.axes(projection="3d")
                 else:
                     ax = kargs.pop("ax", fig.gca())
 

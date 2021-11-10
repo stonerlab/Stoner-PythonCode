@@ -16,6 +16,9 @@ clean:
 test:
 	pytest -n `python -c 'import os;print(min(12,os.cpu_count()))'`
 
+test-single:
+	pytest --pdb
+
 check:
 	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
 
