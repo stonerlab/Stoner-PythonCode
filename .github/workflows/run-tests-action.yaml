@@ -49,7 +49,7 @@ jobs:
 
   publish-test-results:
     name: "Publish Unit Tests Results"
-    needs: pytest
+    needs: run_pytest
     runs-on: ubuntu-latest
     if: always()
 
