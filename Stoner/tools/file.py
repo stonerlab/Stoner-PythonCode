@@ -173,7 +173,7 @@ def auto_load_classes(
             continue
     else:
         raise StonerUnrecognisedFormat(
-            f"Ran out of subclasses to try and load {filename} as."
+            f"Ran out of subclasses to try and load {filename} (mimetype={mimetype}) as."
             + f" Recognised filetype are:{list(subclasses(baseclass).keys())}"  # pylint: disable=E1101
         )
     return test
