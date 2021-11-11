@@ -31,7 +31,7 @@ jobs:
       - name: Run headless test
         run: sudo apt-get install xvfb
       - name: Test with xvfb
-        run: xvfb-run --auto-servernum $CONDA/bin/pytest --cov-report= --cov=Stoner --xml pytest.xml
+        run: xvfb-run --auto-servernum $CONDA/bin/pytest --cov-report= --cov=Stoner --junitxml pytest.xml
       - name: Cleanup X11 server
         uses: bcomnes/cleanup-xvfb@v1
       - name: Run Coveralls
