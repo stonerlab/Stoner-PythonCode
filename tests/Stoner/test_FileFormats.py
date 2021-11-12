@@ -23,6 +23,7 @@ from Stoner.tools.classes import subclasses
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from traceback import format_exc
 from Stoner.HDF5 import HDF5File
+from Stoner.formats.facilities import FabioImageFile
 
 pth=__homepath__/".."
 datadir=__datapath__
@@ -166,6 +167,12 @@ def test_ImageAutoLoad():
     assert img.shape==(512, 768)
     img=ImageFile(__datapath__/"working"/"Sample_Image_2017-06-03_035.hdf5")
     assert img.shape==(80, 300)
+
+def test_FabioImageFle():
+    loader=FabioImageFile()
+    loader._load(datadir/"working"/"hydra_0017.edf")
+    assert loader.shape==(512,768)
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb", __file__])
