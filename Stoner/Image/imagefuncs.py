@@ -57,7 +57,7 @@ from scipy import signal
 from matplotlib.colors import to_rgba
 import matplotlib.cm as cm
 from matplotlib import pyplot as plt
-from skimage import feature, measure, transform, filters
+from skimage import feature, measure, transform, filters, registration
 from PIL import Image, PngImagePlugin
 
 from Stoner.tools import isTuple, isiterable, make_Data
@@ -491,7 +491,11 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=False, do_sh
     imed = imed > imed.threshold_otsu()
     imed = imed.corner_fast(threshold=threshold)
 
-    shift = feature.register_translation(refed, imed, upsample_factor=upsample_factor)[0]
+    refed = refed.view(np.ndarray)
+    imed = imed.view(np.ndarray)
+    if np.any(np.isnan(refed)) or np.any(np.isnan(imed)):
+        raise ValueError("NaNs found in image data")
+    shift = registration.phase_cross_correlation(refed, imed, upsample_factor=upsample_factor)[0]
     if do_shift:
         im = im.translate(translation=(-shift[1], -shift[0]))  # x,y
     im.metadata["correct_drift"] = (-shift[1], -shift[0])
