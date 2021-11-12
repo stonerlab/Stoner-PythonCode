@@ -369,8 +369,8 @@ if fabio:
         """Utilise the fabIO library to read an edf file has a DataFile."""
 
         priority = 32
-        patterns = ["*.*"]
-        mime_type = ["text/plain"]
+        patterns = ["*.edf"]
+        mime_type = ["text/plain", "application/octet-stream"]
 
         def _load(self, filename=None, *args, **kargs):
             """Load function. File format has space delimited columns from row 3 onwards."""

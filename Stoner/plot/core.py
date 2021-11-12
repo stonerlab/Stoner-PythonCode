@@ -64,6 +64,9 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
     else:
         ax = kargs["ax"]
     C = kargs.pop("color", None)
+    if isinstance(C, np.ndarray) and C.ndim == 1:  # replace colours with a colour mapped array
+        cmap = kargs.get("cmap", cm.viridis)
+        C = cmap(C)
     vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, colors=C, **kargs)
 
     return vector_field
