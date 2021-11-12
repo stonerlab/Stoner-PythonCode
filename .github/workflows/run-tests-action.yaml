@@ -21,6 +21,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
+          echo "  - python = ${{ matrix.python-version }}" >> tests/test-env.yml
           $CONDA/bin/conda env update --file tests/test-env.yml --name base
       - name: Conda info
         run: $CONDA/bin/conda info
