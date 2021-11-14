@@ -32,7 +32,7 @@ jobs:
       - name: Run headless test
         run: sudo apt-get install xvfb
       - name: Test with xvfb
-        run: xvfb-run --auto-servernum $CONDA/bin/pytest --cov-report= --cov=Stoner --junitxml pytest.xml
+        run: xvfb-run --auto-servernum $CONDA/bin/pytest --cov-report=xml:cov.xml --cov=Stoner --junitxml pytest.xml
       - name: Cleanup X11 server
         uses: bcomnes/cleanup-xvfb@v1
       - name: Run Coveralls
@@ -47,6 +47,10 @@ jobs:
         with:
           name: Unit Test Results (Python ${{ matrix.python-version }})
           path: pytest.xml
+      = name: Post Coveraage result to Codacy
+        run: |
+          export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r cov.xml
 
   publish-test-results:
     name: "Publish Unit Tests Results"
