@@ -495,7 +495,7 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=False, do_sh
     imed = imed.view(np.ndarray)
 
     shift = registration.phase_cross_correlation(
-        refed, imed, upsample_factor=upsample_factor, reference_mask=~np.isnan(refered), moving_mask=~np.isnan(imed)
+        refed, imed, upsample_factor=upsample_factor, reference_mask=~np.isnan(refed), moving_mask=~np.isnan(imed)
     )[0]
     if do_shift:
         im = im.translate(translation=(-shift[1], -shift[0]))  # x,y
