@@ -35,4 +35,5 @@ jobs:
           python-version: ${{ matrix.python-version }} # Values previously defined in `matrix`
           user: phygbu
           label: auto
+          overwrite: true
           token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
