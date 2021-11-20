@@ -254,6 +254,16 @@ class PlotMixin:
             raise ValueError(f"Template is not of the right class:{type(value)}")
         self._template.apply()
 
+    def __getstate__(self):
+        """Cleanup state before pickle for folder operations."""
+        state=self.__dict__.copy()
+        state.pop("newplot",None)
+        return state
+
+    def __setstate__(self,state):
+        """Restore state after pickle."""
+        self.__dict__.update(state)
+
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
 

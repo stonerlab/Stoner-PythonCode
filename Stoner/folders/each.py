@@ -4,6 +4,7 @@ __all__ = ["Item"]
 from collections.abc import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
+import os
 
 import numpy as np
 
@@ -357,24 +358,46 @@ class Item:
         _return = kargs.pop("_return", None)
         _byname = kargs.pop("_byname", False)
         _serial = kargs.pop("_serial", False)
+        partitions=1 if _serial else max(1,os.cpu_count()-2)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        bg = bag.from_sequence(self._folder)
-        for ix, (f, ret) in enumerate(
-            bg.map(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname)).compute()
-        ):
-            if self._folder.debug:
-                print(ix, type(ret))
-            if isinstance(ret, self._folder._type) and _return is None:
-                try:  # Check if ret has same data type, otherwise will not overwrite well
-                    if ret.data.dtype != new_d.data.dtype:
-                        continue
-                    new_d = ret
-                except AttributeError:
-                    pass
-            elif _return is not None:
-                if isinstance(_return, bool) and _return:
-                    _return = func.__name__
-                new_d[_return] = ret
-            name = self._folder.__names__()[ix]
-            self._folder.__setter__(name, new_d)
-            yield ret
+        if not _serial:
+            bg = bag.from_sequence(self._folder)
+            for ix, (new_d, ret) in enumerate(
+                bg.map(partial(_worker, _func=func, args=args, kargs=kargs, byname=_byname)).compute()
+            ):
+                if self._folder.debug:
+                    print(ix, type(ret))
+                if isinstance(ret, self._folder._type) and _return is None:
+                    try:  # Check if ret has same data type, otherwise will not overwrite well
+                        if ret.data.dtype != new_d.data.dtype:
+                            continue
+                        new_d = ret
+                    except AttributeError:
+                        pass
+                elif _return is not None:
+                    if isinstance(_return, bool) and _return:
+                        _return = func.__name__
+                    new_d[_return] = ret
+                name = self._folder.__names__()[ix]
+                self._folder.__setter__(name, new_d)
+                yield ret
+        else:
+            for ix, (new_d, ret) in enumerate(
+                map(partial(_worker, _func=func, args=args, kargs=kargs, byname=_byname), self._folder)
+            ):
+                if self._folder.debug:
+                    print(ix, type(ret))
+                if isinstance(ret, self._folder._type) and _return is None:
+                    try:  # Check if ret has same data type, otherwise will not overwrite well
+                        if ret.data.dtype != new_d.data.dtype:
+                            continue
+                        new_d = ret
+                    except AttributeError:
+                        pass
+                elif _return is not None:
+                    if isinstance(_return, bool) and _return:
+                        _return = func.__name__
+                    new_d[_return] = ret
+                name = self._folder.__names__()[ix]
+                self._folder.__setter__(name, new_d)
+                yield ret
