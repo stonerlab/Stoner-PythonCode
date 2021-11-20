@@ -23,6 +23,7 @@ from Stoner.tools.classes import subclasses
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from traceback import format_exc
 from Stoner.HDF5 import HDF5File
+from Stoner.formats.facilities import FabioImageFile
 
 pth=__homepath__/".."
 datadir=__datapath__
@@ -56,7 +57,7 @@ def test_one_file(tmpdir, filename):
     if "save" in subclasses()[loaded["Loaded as"]].__dict__:
         pth = pathlib.Path(tmpdir)/filename.name
         parent, name,ext=pth.parent, pth.stem, pth.suffix
-        pth2=pathlib.Path(parent)/f"{name}-2{ext}"
+        pth2=pathlib.Path(tmpdir)/f"{name}-2{ext}"
         loaded.save(pth,as_loaded=True)
         assert pth.exists() or pathlib.Path(loaded.filename).exists(),f"Failed to save as {pth}"
         pathlib.Path(loaded.filename).unlink()
@@ -119,7 +120,7 @@ def test_maximus_image():
     for pth in pths:
         img=ImageFile.load(pth)
         assert img.shape==(1000,1000)
-        assert len(img.metadata)==210
+        assert len(img.metadata)==196
 
 def test_maximus_stack(tmpdir):
     tmpdir=pathlib.Path(tmpdir)
@@ -166,6 +167,12 @@ def test_ImageAutoLoad():
     assert img.shape==(512, 768)
     img=ImageFile(__datapath__/"working"/"Sample_Image_2017-06-03_035.hdf5")
     assert img.shape==(80, 300)
+
+def test_FabioImageFle():
+    loader=FabioImageFile()
+    loader._load(datadir/"working"/"hydra_0017.edf")
+    assert loader.shape==(512,768)
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb", __file__])

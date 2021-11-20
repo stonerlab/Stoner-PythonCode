@@ -202,8 +202,13 @@ class ImageFolderMixin:
         """
         if not self.size:
             raise RuntimeError("Cannot average Imagefolder if images have different sizes")
-        stack = np.stack(list(self.images), axis=0)
-        average = np.average(stack, axis=0, weights=weights)
+        if hasattr(self, "_stack"):
+            stack = self._stack.view(np.ndarray)
+            axis = -1
+        else:
+            stack = np.stack(list(self.images), axis=0)
+            axis = 0
+        average = np.average(stack, axis=axis, weights=weights)
         ret = average.view(ImageArray)
         if _metadata == "common":
             ret.metadata = self.metadata.common_metadata
@@ -398,14 +403,19 @@ class ImageFolderMixin:
 
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
-        weights = np.ones(len(self)) if weights is None else weights
-        avs = self.average(weights=weights)
-        if not isinstance(avs, np.ndarray) and hasattr(avs, "image"):
-            avs = avs.image
-        sumsqdev = np.zeros_like(avs)
-        for ix, img in enumerate(self.images):
-            sumsqdev += weights[ix] * (img - avs) ** 2
-        sumsqdev = np.sqrt(sumsqdev) / np.sum(weights, axis=0)
+        if weights is None:  # shortcircuit
+            if hasattr(self, "_stack"):
+                sumsqdev = np.std(self._stack.view(np.ndarray), axis=-1)
+            else:
+                sumsqdev = np.stack(list(self.images), axis=0).std(axis=0)
+        else:
+            avs = self.average(weights=weights)
+            if not isinstance(avs, np.ndarray) and hasattr(avs, "image"):
+                avs = avs.image
+            sumsqdev = np.zeros_like(avs)
+            for ix, img in enumerate(self.images):
+                sumsqdev += weights[ix] * (img - avs) ** 2
+            sumsqdev = np.sqrt(sumsqdev) / np.sum(weights, axis=0)
         ret = sumsqdev.view(ImageArray)
         ret.metadata = self.metadata.common_metadata
         return self._type(ret[ret._box(_box)])

@@ -70,7 +70,8 @@ def image_file_adaptor(workingfunc):
                 return self
             r = r.view(type(im))
             if r.shape == self.shape:
-                self.image = self.image.clone.astype(r.dtype)  # Ensure we're replacing out own image
+                if im.metadata is not r.metadata:
+                    self.image = r.clone  # We're going to need to clone the return data because we can do fast copies.
                 self.image[...] = r[...]
                 self.metadata.update(r.metadata)
                 return self

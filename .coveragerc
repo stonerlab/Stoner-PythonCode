@@ -1,5 +1,4 @@
 [run]
  branch = True
  source = Stoner
- omit =
-    */widgets.py # Skip gui files that are difficult to test
+ relative_files = True

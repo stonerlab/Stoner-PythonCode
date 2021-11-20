@@ -39,7 +39,7 @@ try:
 
     try:
         load = hs.load
-    except AttributeError:
+    except (RuntimeError, AttributeError):
         try:
             from hyperspy import api
 

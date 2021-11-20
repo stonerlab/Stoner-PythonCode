@@ -28,8 +28,6 @@ _options = {
     "threading": False,
 }
 
-_subclasses: Optional[Dict] = None  # Cache for DataFile Subclasses
-
 
 class attributeStore(dict):
 
@@ -98,14 +96,16 @@ def itersubclasses(cls: type, _seen: Optional[set] = None) -> List[type]:
 def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-argument
     """Return a list of all in memory subclasses of this DataFile."""
     # pylint: disable=E1136, E1135
-    global _subclasses  # pylint: disable=global-statement
     if cls is None:
         from ..Core import DataFile  # pylint: disable=import-outside-toplevel
 
         cls = DataFile
 
+    _subclasses = getattr(cls, "_subclasses", None)
+    if _subclasses is None:
+        _subclasses = dict()
     tmp = itersubclasses(cls)
-    if _subclasses is None or cls not in _subclasses or _subclasses[cls][0] != len(tmp):
+    if len(_subclasses) < 1 or _subclasses[0] != len(tmp):  # Rebuild index
         tmp = {
             x: (getattr(x, "priority", 256), x.__name__)
             for x in sorted(tmp, key=lambda c: (getattr(c, "priority", 256), getattr(c, "__name__", "None")))
@@ -115,9 +115,10 @@ def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-a
         ret[cls.__name__] = cls
         ret.update(tmp)
         _subclasses = dict()
-        _subclasses[cls] = (len(tmp), ret)
+        _subclasses = (len(tmp), ret)
     else:
-        ret = dict(_subclasses[cls][1])
+        ret = dict(_subclasses[1])
+    setattr(cls, "_subclasses", _subclasses)
     return ret
 
 

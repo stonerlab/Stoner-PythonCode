@@ -16,7 +16,7 @@ import h5py
 from ..compat import string_types, bytes2str
 from ..core.base import typeHintedDict
 from ..Image import ImageStack, ImageFile, ImageArray
-from ..HDF5 import close_file, _open_filename, _raise_error
+from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
@@ -120,30 +120,24 @@ class AttocubeScanMixin:
             filename = self.filename
         else:
             self.filename = filename
-        if isinstance(filename, pathlib.PurePath):
-            filename = str(filename)
-        if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
-            f = _open_filename(filename)
-        elif isinstance(filename, (h5py.File, h5py.Group)):
-            f = filename
-        else:
-            _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
-        if "type" not in f.attrs:
-            _raise_error(f, message="HDF5 Group does not specify the type attribute used to check we can load it.")
-        typ = bytes2str(f.attrs["type"])
-        if typ != type(self).__name__ and "module" not in f.attrs:
-            _raise_error(
-                f, message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load."
-            )
-        loader = None
-        if typ == type(self).__name__:
-            loader = getattr(type(self), "read_hdf5")
-        else:
-            mod = importlib.import_module(bytes2str(f.attrs["module"]))
-            cls = getattr(mod, typ)
-            loader = getattr(cls, "read_hdf5")
-        if loader is None:
-            _raise_error(f, message="Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
+        with HDFFileManager(self.filename, "r") as f:
+            if "type" not in f.attrs:
+                _raise_error(f, message="HDF5 Group does not specify the type attribute used to check we can load it.")
+            typ = bytes2str(f.attrs["type"])
+            if typ != type(self).__name__ and "module" not in f.attrs:
+                _raise_error(
+                    f,
+                    message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load.",
+                )
+            loader = None
+            if typ == type(self).__name__:
+                loader = getattr(type(self), "read_hdf5")
+            else:
+                mod = importlib.import_module(bytes2str(f.attrs["module"]))
+                cls = getattr(mod, typ)
+                loader = getattr(cls, "read_hdf5")
+            if loader is None:
+                raise StonerLoadError("Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
 
         return loader(f, *args, **kargs)
 
@@ -253,7 +247,7 @@ class AttocubeScanMixin:
     def _read_signal(self, g):
         """Read a signal array and return a member of the image stack."""
         if "signal" not in g:
-            _raise_error(g.parent, message=f"{g.name} does not have a signal dataset !")
+            raise StonerLoadError(f"{g.name} does not have a signal dataset !")
         tmp = self.type()  # pylint: disable=E1102
         data = g["signal"]
         if product(array(data.shape)) > 0:
@@ -354,66 +348,63 @@ class AttocubeScanMixin:
 
     def to_hdf5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
+        mode = ""
         if filename is None:
             filename = path.join(self.directory, f"SC_{self.scan_no:03d}.hdf5")
         if isinstance(filename, pathlib.PurePath):
             filename = str(filename)
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog("w")
-            self.filename = filename
         if isinstance(filename, string_types):
             mode = "r+" if path.exists(filename) else "w"
-            f = h5py.File(filename, mode)
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
-            f = filename
+        self.filename = filename
+        with HDFFileManager(self.filename, mode=mode) as f:
 
-        f.attrs["type"] = type(self).__name__
-        f.attrs["module"] = type(self).__module__
-        f.attrs["scan_no"] = self.scan_no
-        f.attrs["groups"] = list(self.groups.keys())
-        f.attrs["channels"] = list(self.channels)
-        if "common_metadata" in f.parent and "common_metadata" not in f:
-            f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
-            f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)
-        else:
-            metadata = f.require_group("common_metadata")
-            typehints = f.require_group("common_typehints")
-            for k in self._common_metadata:
-                try:
-                    typehints.attrs[k] = self._common_metadata._typehints[k]
-                    metadata.attrs[k] = self._common_metadata[k]
-                except TypeError:
-                    # We get this for trying to store a bad data type - fallback to metadata export to string
-                    parts = self._common_metadata.export(k).split("=")
-                    metadata.attrs[k] = "=".join(parts[1:])
+            f.attrs["type"] = type(self).__name__
+            f.attrs["module"] = type(self).__module__
+            f.attrs["scan_no"] = self.scan_no
+            f.attrs["groups"] = list(self.groups.keys())
+            f.attrs["channels"] = list(self.channels)
+            if "common_metadata" in f.parent and "common_metadata" not in f:
+                f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
+                f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)
+            else:
+                metadata = f.require_group("common_metadata")
+                typehints = f.require_group("common_typehints")
+                for k in self._common_metadata:
+                    try:
+                        typehints.attrs[k] = self._common_metadata._typehints[k]
+                        metadata.attrs[k] = self._common_metadata[k]
+                    except TypeError:
+                        # We get this for trying to store a bad data type - fallback to metadata export to string
+                        parts = self._common_metadata.export(k).split("=")
+                        metadata.attrs[k] = "=".join(parts[1:])
 
-        for g in self.groups:  # Recurse to save groups
-            grp = f.require_group(g)
-            self.groups[g].to_hdf5(grp)
+            for g in self.groups:  # Recurse to save groups
+                grp = f.require_group(g)
+                self.groups[g].to_hdf5(grp)
 
-        for ch in self.channels:
-            signal = f.require_group(ch)
-            data = self[ch]
-            signal.require_dataset(
-                "signal",
-                data=data.data,
-                shape=data.shape,
-                dtype=data.dtype,
-                compression=self.compression,
-                compression_opts=self.compression_opts,
-            )
-            metadata = signal.require_group("metadata")
-            typehints = signal.require_group("typehints")
-            for k in [x for x in data.metadata if x not in self._common_metadata]:
-                try:
-                    typehints.attrs[k] = data.metadata._typehints[k]
-                    metadata.attrs[k] = data.metadata[k]
-                except TypeError:
-                    # We get this for trying to store a bad data type - fallback to metadata export to string
-                    parts = data.metadata.export(k).split("=")
-                    metadata.attrs[k] = "=".join(parts[1:])
-
-        self.filename = close_file(f, filename)
+            for ch in self.channels:
+                signal = f.require_group(ch)
+                data = self[ch]
+                signal.require_dataset(
+                    "signal",
+                    data=data.data,
+                    shape=data.shape,
+                    dtype=data.dtype,
+                    compression=self.compression,
+                    compression_opts=self.compression_opts,
+                )
+                metadata = signal.require_group("metadata")
+                typehints = signal.require_group("typehints")
+                for k in [x for x in data.metadata if x not in self._common_metadata]:
+                    try:
+                        typehints.attrs[k] = data.metadata._typehints[k]
+                        metadata.attrs[k] = data.metadata[k]
+                    except TypeError:
+                        # We get this for trying to store a bad data type - fallback to metadata export to string
+                        parts = data.metadata.export(k).split("=")
+                        metadata.attrs[k] = "=".join(parts[1:])
         return self
 
     @classmethod
@@ -426,52 +417,43 @@ class AttocubeScanMixin:
             filename = self.filename
         else:
             self.filename = filename
-        if isinstance(filename, pathlib.PurePath):
-            filename = str(filename)
-        if isinstance(filename, string_types):  # We got a string, so we'll treat it like a file...
-            f = _open_filename(filename)
-            close_me = True
-        elif isinstance(filename, (h5py.File, h5py.Group)):
-            f = filename
-        else:
-            _raise_error(f, message=f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
-        self.scan_no = f.attrs["scan_no"]
-        if "groups" in f.attrs:
-            sub_grps = f.attrs["groups"]
-        else:
-            sub_grps = None
-        if "channels" in f.attrs:
-            channels = f.attrs["channels"]
-        else:
-            channels = []
-        grps = list(f.keys())
-        if "common_metadata" not in grps or "common_typehints" not in grps:
-            _raise_error(f, message="Couldn;t find common metadata groups, something is not right here!")
-        metadata = f["common_metadata"].attrs
-        typehints = f["common_typehints"].attrs
-        for i in sorted(metadata):
-            v = metadata[i]
-            t = typehints.get(i, "Detect")
-            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-                self._common_metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+        with HDFFileManager(filename, "r") as f:
+            self.scan_no = f.attrs["scan_no"]
+            if "groups" in f.attrs:
+                sub_grps = f.attrs["groups"]
             else:
-                self._common_metadata[i] = metadata[i]
-        grps.remove("common_metadata")
-        grps.remove("common_typehints")
-        if sub_grps is None:
-            sub_grps = grps
-        for grp in sub_grps:
-            if "type" in f[grp].attrs:
-                self.groups[grp] = cls.read_hdf5(f[grp], *args, **kargs)
-                continue
-            g = f[grp]
-            self.append(self._read_signal(g))
-        for grp in channels:
-            g = f[grp]
-            self.append(self._read_signal(g))
-
-        if close_me:
-            f.close()
+                sub_grps = None
+            if "channels" in f.attrs:
+                channels = f.attrs["channels"]
+            else:
+                channels = []
+            grps = list(f.keys())
+            if "common_metadata" not in grps or "common_typehints" not in grps:
+                _raise_error(f, message="Couldn;t find common metadata groups, something is not right here!")
+            metadata = f["common_metadata"].attrs
+            typehints = f["common_typehints"].attrs
+            for i in sorted(metadata):
+                v = metadata[i]
+                t = typehints.get(i, "Detect")
+                if (
+                    isinstance(v, string_types) and t != "Detect"
+                ):  # We have typehints and this looks like it got exported
+                    self._common_metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+                else:
+                    self._common_metadata[i] = metadata[i]
+            grps.remove("common_metadata")
+            grps.remove("common_typehints")
+            if sub_grps is None:
+                sub_grps = grps
+            for grp in sub_grps:
+                if "type" in f[grp].attrs:
+                    self.groups[grp] = cls.read_hdf5(f[grp], *args, **kargs)
+                    continue
+                g = f[grp]
+                self.append(self._read_signal(g))
+            for grp in channels:
+                g = f[grp]
+                self.append(self._read_signal(g))
         return self
 
 

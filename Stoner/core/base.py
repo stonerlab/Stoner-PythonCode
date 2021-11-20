@@ -677,13 +677,14 @@ class metadataObject(MutableMapping):
         """Pre initialisation routines."""
         self = super().__new__(cls)
         self._public_attrs_real = dict()
+        self._metadata = typeHintedDict()
         return self
 
     def __init__(self, *args: Any, **kargs: Any) -> None:  # pylint: disable=unused-argument
         """Initialise the current metadata attribute."""
-        metadata = kargs.pop("metadata", None)
-        if metadata is not None:
-            self.metadata.update(metadata)
+        metadata = kargs.pop("metadata", {})
+        self._metadata = getattr(self, "_metadata", typeHintedDict())
+        self.metadata.update(metadata)
         super().__init__()
 
     @property

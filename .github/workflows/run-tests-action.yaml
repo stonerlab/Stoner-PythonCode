@@ -1,0 +1,79 @@
+name: pytest
+on: push
+jobs:
+  run_pytest:
+    name: run-tests (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.7","3.8","3.9"]
+        os: ["ubuntu-latest"]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          echo "  - python = ${{ matrix.python-version }}" >> tests/test-env.yml
+          $CONDA/bin/conda env update --file tests/test-env.yml --name base
+      - name: Conda info
+        run: $CONDA/bin/conda info
+      - name: Conda list
+        run: $CONDA/bin/conda list
+      - name: install package
+        run: $CONDA/bin/pip install --no-deps .
+      - name: Run headless test
+        run: sudo apt-get install xvfb
+      - name: Test with xvfb
+        run: xvfb-run --auto-servernum $CONDA/bin/pytest --cov-report=xml:cov.xml --cov=Stoner --junitxml pytest.xml
+      - name: Cleanup X11 server
+        uses: bcomnes/cleanup-xvfb@v1
+      - name: Run Coveralls
+        uses: AndreMiras/coveralls-python-action@v20201129
+        with:
+          parallel: true
+          flag-name: python-${{ matrix.python-version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results (Python ${{ matrix.python-version }})
+          path: pytest.xml
+      - name: Post Coveraage result to Codacy
+        run: |
+          export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r cov.xml
+
+  publish-test-results:
+    name: "Publish Unit Tests Results"
+    needs: run_pytest
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: artifacts/**/*.xml
+
+  coverage-finish:
+    needs: run_pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finish colveralls
+        uses: AndreMiras/coveralls-python-action@v20201129
+        with:
+          parallel-finished: true

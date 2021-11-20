@@ -99,12 +99,13 @@ class KerrImageFile(ImageFile):
         self._image = self.image.view(KerrArray)
 
     @ImageFile.image.getter
-    def image_get(self):
+    def image(self):
         """Access the image data."""
+        breakpoint()
         return self._image.view(KerrArray)
 
     @ImageFile.image.setter
-    def image_set(self, v):
+    def image(self, v):
         """Ensure stored image is always an ImageArray."""
         filename = self.filename
         v = KerrArray(v)

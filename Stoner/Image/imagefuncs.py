@@ -57,7 +57,7 @@ from scipy import signal
 from matplotlib.colors import to_rgba
 import matplotlib.cm as cm
 from matplotlib import pyplot as plt
-from skimage import feature, measure, transform, filters
+from skimage import feature, measure, transform, filters, registration
 from PIL import Image, PngImagePlugin
 
 from Stoner.tools import isTuple, isiterable, make_Data
@@ -453,7 +453,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
     return image.astype(dtype)
 
 
-def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=False, do_shift=True):
+def correct_drift(im, ref, **kargs):
     """Align images to correct for image drift.
 
     Args:
@@ -476,25 +476,15 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50, box=False, do_sh
     Adds 'drift_shift' to the metadata as the (x,y) vector that translated the
     image back to it's origin.
     """
-    if isinstance(box, bool) and not box:
-        im = im.clone.crop(box=box)
-    cls = type(im)
+    do_shift = kargs.pop("do_shift", True)
+    kargs["scale"] = kargs.pop("upscale", kargs.get("scale", 5.0))
+    kargs.setdefault("meothd", "scharr")
 
-    refed = cls(ref, get_metadata=False)
-    refed = refed.crop(box=box)
-    refed = refed.filter_image(sigma=1)
-    refed = refed > refed.threshold_otsu()
-    refed = refed.corner_fast(threshold=threshold)
-
-    imed = im.clone
-    imed = imed.filter_image(sigma=1)
-    imed = imed > imed.threshold_otsu()
-    imed = imed.corner_fast(threshold=threshold)
-
-    shift = feature.register_translation(refed, imed, upsample_factor=upsample_factor)[0]
+    ret = align(im, ref, **kargs)
     if do_shift:
-        im = im.translate(translation=(-shift[1], -shift[0]))  # x,y
-    im.metadata["correct_drift"] = (-shift[1], -shift[0])
+        im = ret
+    im["correct_drift"] = -np.array(ret["tvec"])[::-1]
+
     return im
 
 

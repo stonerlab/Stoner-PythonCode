@@ -361,13 +361,13 @@ class Item:
         bg = bag.from_sequence(self._folder)
         for ix, (f, ret) in enumerate(
             bg.map(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname)).compute()
+
         ):
-            new_d = f
             if self._folder.debug:
                 print(ix, type(ret))
             if isinstance(ret, self._folder._type) and _return is None:
                 try:  # Check if ret has same data type, otherwise will not overwrite well
-                    if ret.data.dtype != f.data.dtype:
+                    if ret.data.dtype != new_d.data.dtype:
                         continue
                     new_d = ret
                 except AttributeError:

@@ -60,8 +60,15 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
     """
     if not _3D:
         raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-    ax = kargs.pop("ax", plt.gca(projection="3d"))
-    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs)
+    if "ax" not in kargs:
+        ax = plt.axes(projection="3d")
+    else:
+        ax = kargs["ax"]
+    C = kargs.pop("color", None)
+    if isinstance(C, np.ndarray) and C.ndim == 1:  # replace colours with a colour mapped array
+        cmap = kargs.get("cmap", cm.viridis)
+        C = cmap(C)
+    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, colors=C, **kargs)
 
     return vector_field
 
@@ -302,7 +309,7 @@ class PlotMixin:
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-        ax = plt.gca(projection="3d")
+        ax = plt.axes(projection="3d")
         z_coord = np.nan_to_num(z_coord)
         surf = ax.plot_surface(x_coord, y_coord, z_coord, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
@@ -459,7 +466,7 @@ class PlotMixin:
                 projection = kargs["projection"]
             else:
                 projection = "rectilinear"
-            function = plt.gca(projection=projection).__getattribute__(function)
+            function = plt.axes(projection=projection).__getattribute__(function)
             if self.__figure is not plt.gcf():
                 plt.close(plt.gcf())
 
@@ -1754,7 +1761,8 @@ class PlotMixin:
                 "cmap": cm.jet,
                 "scale": 1.0,
                 "units": "xy",
-                "color": hsl2rgb((1 + self.q / np.pi) / 2, self.r / np.max(self.r), (1 + self.w) / 2) / 255.0,
+                "color": hsl2rgb((1 + self.q / np.pi) / 2, self.r / np.max(self.r), (1 + self.w) / 2, alpha=True)
+                / 255.0,
             }
             projection = kargs.pop("projection", "3d")
             coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}

@@ -103,7 +103,7 @@ def test_mask_select():
     thread.start()
     img.mask.select()
     result = img.mean()
-    assert np.isclose(result,15731.6096)
+    assert np.isclose(result,15731.6096,100.0)
     img.mask=False
     thread=threading.Thread(target=_trigger5,args=(img,"c"))
     thread.start()
@@ -115,15 +115,14 @@ def test_mask_select():
     thread.start()
     img.mask.select()
     result = img.mean()
-    assert np.isclose(result,15745.5853061)
+    assert np.isclose(result,15745.5853061,100.0)
     img.mask=False
     thread=threading.Thread(target=_trigger6,args=(img,"c"))
     thread.start()
     img.mask.select()
     result = img.mean()
-    assert np.isclose(result,27715.3245)
+    assert np.isclose(result,27715.3245,100.0)
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb",__file__])
-

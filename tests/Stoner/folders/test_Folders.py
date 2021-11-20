@@ -119,7 +119,7 @@ def test_Operators():
     fldr2=DataFolder(path.join(datadir,"NLIV"),pattern="*.txt")
     fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
     fldr3=fldr+fldr2
-    assert fldr3.shape==(53, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
+    assert fldr3.shape==(52, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
     fldr4=fldr3-fldr2
     fldr4.prune()
     assert fldr4.shape==fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
@@ -165,7 +165,7 @@ def test_Base_Operators():
     fldr2=DataFolder(path.join(datadir,"NLIV"),pattern="*.txt")
     fldr2.group(lambda x:"zero" if x["iterator"]%2==0 else "one")
     fldr3=fldr+fldr2
-    assert fldr3.shape==(53, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
+    assert fldr3.shape==(52, {'one': (9, {}), 'zero': (7, {})}),"Adding two DataFolders with groups failed"
     fldr4=fldr3-fldr2
     fldr4.prune()
     assert fldr4.shape==fldr.shape,"Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
@@ -192,7 +192,7 @@ def test_Properties():
     fldr/="Loaded as"
     grps=list(fldr.lsgrp)
     skip=0 if Hyperspy_ok else 1
-    assert len(grps)==27-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps))
+    assert len(grps)==26-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps))
     fldr.debug=True
     fldr=fldr
     assert fldr["XRDFile"][0].debug,"Setting debug on folder failed!"

@@ -20,8 +20,13 @@ for fname in [
 ]:
     # Load the image
     img = STXMImage(join(thisdir, "..", "..", "..", "sample-data", fname))
-    img.gridimage().crop(5, -15, 5, -5, _=True)  # regularise grid and crop
+    a1 = id(img.metadata)
+    img.gridimage()
+    a2 = id(img.metadata)
+    img.crop(5, -15, 5, -5, _=True)  # regularise grid and crop
+    a3 = id(img.metadata)
     imgs += img
+    a4 = [id(i.metadata) for i in imgs]
 
 # Align the two images
 imgs.align(method="imreg_dft", scale=10)

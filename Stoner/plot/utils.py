@@ -182,7 +182,7 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
 
-def hsl2rgb(hue, sat, lum):
+def hsl2rgb(hue, sat, lum, alpha=False):
     """Convert from hsl colourspace to rgb colour space with numpy arrays for speed.
 
     Args:
@@ -215,6 +215,8 @@ def hsl2rgb(hue, sat, lum):
     output = np.where(select > 5, np.column_stack([C, zero, X]), output)
     output += m
     output = (output * 255).astype("u8")
+    if alpha:
+        output = np.append(output, [1.0])
     return output
 
 

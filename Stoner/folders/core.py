@@ -938,7 +938,10 @@ class baseFolder(MutableSequence):
             try:
                 setattr(result, k, deepcopy(v, memo))
             except (TypeError, ValueError, RecursionError):
-                setattr(result, k, copy(v))
+                try:
+                    setattr(result, k, copy(v))
+                except (TypeError, ValueError, RecursionError):
+                    setattr(result, k, v)  # Fallback to just assign the original value if no copy possible
         return result
 
     def __repr__(self):

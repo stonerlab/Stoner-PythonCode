@@ -121,7 +121,7 @@ else:
             patterns = ";;".join([f"{v} ({k})" for k, v in patterns.items()])
             options = QFileDialog.Options()
 
-            kwargs = {"caption": title, "directory": start, "filter": patterns, "options": options, "modal": True}
+            kwargs = {"caption": title, "directory": str(start), "filter": patterns, "options": options, "modal": True}
             kwargs = {k: kwargs[k] for k in (set(kwargs.keys()) & set(self.modes[mode]["arg"]))}
 
             ret = method(self.dialog, **kwargs)

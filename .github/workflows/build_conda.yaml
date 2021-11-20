@@ -1,0 +1,39 @@
+
+name: Conda
+
+on:
+  release:
+    types: ['released', 'prereleased']
+
+# workflow_dispatch:        # Un comment line if you also want to trigger action manually
+
+jobs:
+  conda_deployment_with_new_tag:
+    name: Conda deployment of package for platform ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macOS-latest, ubuntu-latest, windows-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Conda environment creation and activation
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          environment-file: recipe/build-env.yml    # Path to the build conda environment
+          activate-environment: build-environment
+          auto-update-conda: true
+          auto-activate-base: false
+          show-channel-urls: true
+      - name: Build and upload the conda packages
+        uses: uibcdf/action-build-and-upload-conda-packages@v1.1-beta.1
+        with:
+          meta_yaml_dir: recipe
+          python-version: ${{ matrix.python-version }} # Values previously defined in `matrix`
+          user: phygbu
+          label: auto
+          overwrite: true
+          token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
