@@ -11,8 +11,6 @@ from Stoner.Core import typeHintedDict
 from Stoner import Data,__home__
 import numpy as np
 import pytest
-import sys
-from os import path
 import os
 import matplotlib.pyplot as plt
 
@@ -20,6 +18,8 @@ import warnings
 
 import Stoner
 Stoner.Options.multiprocessing = False
+Stoner.Options.threading = True
+
 
 #data arrays for testing - some useful small images for tests
 

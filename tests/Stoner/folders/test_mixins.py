@@ -5,12 +5,9 @@ Created on Tue Dec 11 09:33:08 2018
 @author: phygbu
 """
 
-import unittest
+import pytest
 import sys
 import os, os.path as path
-import numpy as np
-import re
-from numpy import any,all,sqrt,nan
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../../"))
@@ -21,41 +18,33 @@ from Stoner.Folders import PlotFolder
 from Stoner.plot.formats import TexEngFormatter,DefaultPlotStyle
 import matplotlib.pyplot as plt
 
+datadir=path.join(pth,"sample-data")
+
 def extra(i,j,d):
     """Cleanup plot window."""
     d.title="{},{}".format(i,j)
     d.xlabel("$V$")
     d.ylabel("$I$")
 
-class folders_mixins_test(unittest.TestCase):
 
-    """Path to sample Data File"""
-    datadir=path.join(pth,"sample-data")
+def test_plotting():
+    sfldr=PlotFolder(path.join(datadir,"NLIV"),pattern="*.txt",setas="yx")
+    sfldr.template=DefaultPlotStyle()
+    sfldr.template.xformatter=TexEngFormatter
+    sfldr.template.yformatter=TexEngFormatter
+    Options.multiprocessing=False
+    sfldr.plots_per_page=len(sfldr)
+    sfldr.plot(figsize=(18,12),title="{iterator}")
+    assert len(plt.get_fignums())==1,"Plotting to a single figure in PlotFolder failed."
+    sfldr.figure(figsize=(18,12))
+    sfldr.plot(extra=extra)
+    assert len(plt.get_fignums())==2,"Plotting to a single figure in PlotFolder failed."
+    sax=sfldr[0].subplots
+    assert len(sax)==16,"Subplots check failed."
 
-    def setUp(self):
-        self.fldr=PlotFolder(path.join(self.datadir,"NLIV"),pattern="*.txt",setas="yx")
-        self.fldr.template=DefaultPlotStyle()
-        self.fldr.template.xformatter=TexEngFormatter
-        self.fldr.template.yformatter=TexEngFormatter
-
-
-    def test_plotting(self):
-        Options.multiprocessing=False
-        self.fldr.plots_per_page=len(self.fldr)
-        self.fldr.plot(figsize=(18,12),title="{iterator}")
-        self.assertEqual(len(plt.get_fignums()),1,"Plotting to a single figure in PlotFolder failed.")
-        self.fldr.figure(figsize=(18,12))
-        self.fldr.plot(extra=extra)
-        self.assertEqual(len(plt.get_fignums()),2,"Plotting to a single figure in PlotFolder failed.")
-        self.ax=self.fldr[0].subplots
-        self.assertEqual(len(self.ax),16,"Subplots check failed.")
-
-        plt.close("all")
-        Options.multiprocessing=False
+    plt.close("all")
+    Options.multiprocessing=False
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=folders_mixins_test("test_plotting")
-    test.setUp()
-    #test.test_plotting()
-    unittest.main()
+    pytest.main(["--pdb",__file__])

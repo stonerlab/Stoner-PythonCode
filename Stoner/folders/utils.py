@@ -10,17 +10,29 @@ __all__ = [
     "removeDisallowedFilenameChars",
 ]
 import os.path as path
+from os import cpu_count
 import re
 import string
 import fnmatch
 import pathlib
-from multiprocessing.pool import ThreadPool
+from concurrent import futures
 
 from numpy import array
-import multiprocess as multiprocessing
 
 from Stoner.compat import string_types, _pattern_type
 from Stoner.tools import get_option
+
+
+class _fake_executor:
+
+    """Minimal class to fake the bits of the executor protocol that we need."""
+
+    def __init__(self, *args, **kargs):
+        """Fake constructor."""
+        self.map = map  # set the map method
+
+    def shutdown(self):
+        """Fake shutdown method."""
 
 
 def pathsplit(pth):
@@ -105,27 +117,29 @@ def filter_files(files, patterns, keep=True):
     return files
 
 
-def get_pool(_serial=False):
-    """Get a Pool and map implementation depending on options.
+def get_pool(folder=None, _serial=False):
+    """Get a concurrent.futures compatible executor.
 
     Returns:
-        Pool(),map: Pool object if possible and map implementation.
+        (futures.Executor):
+            Executor on which to run the distributed job.
     """
+    if getattr(folder, "executor", False):
+        return folder.executor
     if get_option("multiprocessing") and not _serial:
         try:
             if get_option("threading"):
-                p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))
+                executor = futures.ThreadPoolExecutor(max_workers=cpu_count())
             else:
-                p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))
-            imap = p.imap
+                executor = futures.ProcessPoolExecutor(max_workers=cpu_count())
         except (ArithmeticError, AttributeError, LookupError, RuntimeError, NameError, OSError, TypeError, ValueError):
             # Fallback to non-multiprocessing if necessary
-            p = None
-            imap = map
+            executor = None
     else:
-        p = None
-        imap = map
-    return p, imap
+        executor = _fake_executor()
+    if getattr(folder, "executor", False):
+        folder.executor.shutdown()
+    return executor
 
 
 def removeDisallowedFilenameChars(filename):

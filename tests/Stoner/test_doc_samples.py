@@ -1,4 +1,3 @@
-import unittest
 import sys
 import os.path as path
 import os
@@ -49,4 +48,4 @@ def test_scripts(script):
         assert False,f"Script {script} failed with {error}"
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    pytest.main([__file__])
+    pytest.main(["--pdb","-s",__file__])

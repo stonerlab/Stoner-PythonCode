@@ -17,7 +17,7 @@ from .utils import get_pool
 def _worker(d, **kwargs):
     """Support function to run an arbitary function over a :py:class:`Stoner.Data` object."""
     byname = kwargs.get("byname", False)
-    func = kwargs.get("func", lambda x: x)
+    func = kwargs.get("_func", lambda x: x)
     if byname:
         func = getattr(d, func, lambda x: x)
     args = kwargs.get("args", tuple())
