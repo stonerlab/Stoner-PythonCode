@@ -16,13 +16,16 @@ from ..core.exceptions import StonerAssertionError, assertion, StonerLoadError
 from ..core.base import string_to_type
 from ..tools.file import FileManager, SizedFileManager
 
-def _r_float(f,length=4):
+
+def _r_float(f, length=4):
     """Read 4 bytes and convert to float."""
-    return struct.unpack('<f',f.read(length))[0]
+    return struct.unpack("<f", f.read(length))[0]
+
 
 def _r_int(f):
     """Read 2 bytes and convert to int."""
-    return int(struct.unpack('<H',f.read(2))[0])
+    return int(struct.unpack("<H", f.read(2))[0])
+
 
 class LSTemperatureFile(Core.DataFile):
 
@@ -838,14 +841,16 @@ class BrukerRawFile(Core.DataFile):
 
     """Reads Bruker's RAW (v1-3) files - based on code from the GSAS-2 project."""
 
-    patterns=["*.raw"]
+    patterns = ["*.raw"]
     priority = 16
     mime_type = ["application/octet-stream"]
 
-    header={'RAW ':('Bruker RAW ver. 1',"_read_1"),
-             'RAW2':('Bruker RAW ver. 2',"_read_2"),
-             'RAW1.01':('Bruker RAW ver. 3',"_read_3"),
-             'RAW4.00':('Bruker RAW ver. 4',"_read_4")}
+    header = {
+        "RAW ": ("Bruker RAW ver. 1", "_read_1"),
+        "RAW2": ("Bruker RAW ver. 2", "_read_2"),
+        "RAW1.01": ("Bruker RAW ver. 3", "_read_3"),
+        "RAW4.00": ("Bruker RAW ver. 4", "_read_4"),
+    }
 
     def _load(self, filename=None, *args, **kargs):
         """Read an XRD Core.DataFile as produced by the Brucker diffractometer.
@@ -865,128 +870,122 @@ class BrukerRawFile(Core.DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-        self.block = kargs.get('block',1)
+        self.block = kargs.get("block", 1)
         with FileManager(self.filename, "rb") as f:  # Read filename linewise
-            header=f.read(7).decode("latin1")
-            val=("","_read_4")
-            for pat,val in self.header.items():
+            header = f.read(7).decode("latin1")
+            val = ("", "_read_4")
+            for pat, val in self.header.items():
                 if header.startswith(pat):
-                    self.metadata["Version"]=val[0]
+                    self.metadata["Version"] = val[0]
                     break
             else:
                 raise StonerLoadError("Doesn't match a known RAW file format version.")
-            reader=getattr(self,val[1])
+            reader = getattr(self, val[1])
             reader(f)
         return self
 
-    def _read_1(self,f):
+    def _read_1(self, f):
         """"RAW v1 file reader."""
         raise StonerLoadError("Unable to handle version 1 RAW files")
 
-    def _read_2(self,f):
+    def _read_2(self, f):
         """RAW v2 file reader."""
         f.seek(4)
-        n_blocks = int(struct.unpack('<i',f.read(4))[0])
+        n_blocks = int(struct.unpack("<i", f.read(4))[0])
         f.seek(168)
-        self.metadata['Date/Time']=f.read(20).decode("latin1")
-        self.metadata['Anode']=f.read(2).decode("latin1")
-        self.metadata['Ka1']=_r_float(f)
-        self.metadata['Ka2']=_r_float(f)
-        self.metadata['Ka2/Ka1']=_r_float(f)
+        self.metadata["Date/Time"] = f.read(20).decode("latin1")
+        self.metadata["Anode"] = f.read(2).decode("latin1")
+        self.metadata["Ka1"] = _r_float(f)
+        self.metadata["Ka2"] = _r_float(f)
+        self.metadata["Ka2/Ka1"] = _r_float(f)
         f.seek(206)
-        self.metadata['Kb']=_r_float(f)
+        self.metadata["Kb"] = _r_float(f)
         pos = 256
         f.seek(pos)
         blockNum = self.block
-        self.metadata["block"]=blockNum
-        if blockNum>=n_blocks:
+        self.metadata["block"] = blockNum
+        if blockNum >= n_blocks:
             raise StonerLoadError("Tried reading an out of range block!")
         for iBlock in range(blockNum):
-            headLen =_r_int(f)
+            headLen = _r_int(f)
             nSteps = _r_int(f)
-            if iBlock<blockNum:
-                pos += headLen+4*nSteps
+            if iBlock < blockNum:
+                pos += headLen + 4 * nSteps
                 f.seek(pos)
                 continue
-            f.seek(pos+12)
+            f.seek(pos + 12)
             step = _r_float(f)
             start2Th = _r_float(f)
-            pos += headLen      #position at start of data block
+            pos += headLen  # position at start of data block
             f.seek(pos)
-            x=np.arange(start2Th, start2Th+step*(nSteps+1),step)
-            y = np.array([max(1.,_r_float(f)) for i in range(nSteps)])
-            self.data=np.column_stack((x,y))
-            self.column_headers=["Two Theta","Counts"]
-        self.metadata["repeats"]=blockNum!=n_blocks
+            x = np.arange(start2Th, start2Th + step * (nSteps + 1), step)
+            y = np.array([max(1.0, _r_float(f)) for i in range(nSteps)])
+            self.data = np.column_stack((x, y))
+            self.column_headers = ["Two Theta", "Counts"]
+        self.metadata["repeats"] = blockNum != n_blocks
 
-    def _read_3(self,f):
+    def _read_3(self, f):
         """RAW v3 file reader."""
         f.seek(12)
         n_blocks = _r_int(f)
-        self.metadata['Date/Time']=f.read(20).decode("latin1")
+        self.metadata["Date/Time"] = f.read(20).decode("latin1")
         f.seek(326)
-        self.metadta['Sample=']=self.Read(f,60).decode("latin1")
+        self.metadta["Sample="] = self.Read(f, 60).decode("latin1")
         f.seek(564)
         radius = _r_float(f)
-        self.metadata['Gonio. radius']=radius
-        self.metadata['Gonio. radius'] = radius
+        self.metadata["Gonio. radius"] = radius
+        self.metadata["Gonio. radius"] = radius
         f.seek(608)
-        self.metadata['Anode']=f.read(2).decode("latin1")
+        self.metadata["Anode"] = f.read(2).decode("latin1")
         f.seek(616)
-        self.metadata['Ka_mean']=_r_float(f,8)
-        self.metadata['Ka1']=_r_float(f,8)
-        self.metadata['Ka2']=_r_float(f,8)
-        self.metadata['Kb']=_r_float(f,8)
-        self.metadata['Ka2/Ka1']=_r_float(f,8)
+        self.metadata["Ka_mean"] = _r_float(f, 8)
+        self.metadata["Ka1"] = _r_float(f, 8)
+        self.metadata["Ka2"] = _r_float(f, 8)
+        self.metadata["Kb"] = _r_float(f, 8)
+        self.metadata["Ka2/Ka1"] = _r_float(f, 8)
         pos = 712
-        f.seek(pos)      #position at 1st block header
+        f.seek(pos)  # position at 1st block header
         blockNum = self.block
-        self.metadata["block"]=blockNum
-        if blockNum>=n_blocks:
+        self.metadata["block"] = blockNum
+        if blockNum >= n_blocks:
             raise StonerLoadError("Tried reading an out of range block!")
         for iBlock in range(blockNum):
-            headLen =_r_int(f)
+            headLen = _r_int(f)
             nSteps = _r_int(f)
-            if not nSteps: break
+            if not nSteps:
+                break
             if n_blocks > 1:
-                f.seek(pos+256)
+                f.seek(pos + 256)
                 headLen += _r_float(f)
             else:
                 headLen += 40
-            if iBlock+1 != blockNum:
-                pos += headLen+4*nSteps
+            if iBlock + 1 != blockNum:
+                pos += headLen + 4 * nSteps
                 f.seek(pos)
                 continue
-            f.seek(pos+8)
-            _r_float(f,8)
-            start2Th = _r_float(f,8)
-            f.seek(pos+212)
+            f.seek(pos + 8)
+            _r_float(f, 8)
+            start2Th = _r_float(f, 8)
+            f.seek(pos + 212)
             temp = _r_float(f)
-            if temp > 0.:
-                self.Sample['Temperature'] = temp
-            f.seek(pos+176)
-            step = _r_float(f,8)
-            pos += headLen      #position at start of data block
+            if temp > 0.0:
+                self.Sample["Temperature"] = temp
+            f.seek(pos + 176)
+            step = _r_float(f, 8)
+            pos += headLen  # position at start of data block
             f.seek(pos)
-            x=np.arange(start2Th, start2Th+step*(nSteps+1),step)
+            x = np.arange(start2Th, start2Th + step * (nSteps + 1), step)
             try:
-                y = np.array([max(1.,_r_float(f)) for i in range(nSteps)])
-            except: #this is absurd
-                f.seek(pos-40)
-                y = np.array([max(1.,_r_float(f)) for i in range(nSteps)])
-            w = 1./y
-            self.data = np.column_stack((x,y,w))
+                y = np.array([max(1.0, _r_float(f)) for i in range(nSteps)])
+            except:  # this is absurd
+                f.seek(pos - 40)
+                y = np.array([max(1.0, _r_float(f)) for i in range(nSteps)])
+            w = 1.0 / y
+            self.data = np.column_stack((x, y, w))
             break
 
-        self.metadata["repeats"]=blockNum!=n_blocks
+        self.metadata["repeats"] = blockNum != n_blocks
 
-    def _read_4(self,f):
+    def _read_4(self, f):
         """"RAW v1 file reader."""
         raise StonerLoadError("Unable to handle version 4 RAW files")
-
-
-
-
-
-
-

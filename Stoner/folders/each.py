@@ -361,7 +361,6 @@ class Item:
         bg = bag.from_sequence(self._folder)
         for ix, (f, ret) in enumerate(
             bg.map(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname)).compute()
-
         ):
             if self._folder.debug:
                 print(ix, type(ret))

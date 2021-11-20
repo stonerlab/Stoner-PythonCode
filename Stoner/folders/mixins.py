@@ -330,8 +330,14 @@ class DiskBasedFolderMixin:
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
         self.executor = get_pool(self)
-        _futures=[self.executor.submit(_loader,fname, loader=self.loader, typ=self._type, directory=path.realpath(self.directory)) for fname in self.not_loaded]
-        if futures: return _futures
+        _futures = [
+            self.executor.submit(
+                _loader, fname, loader=self.loader, typ=self._type, directory=path.realpath(self.directory)
+            )
+            for fname in self.not_loaded
+        ]
+        if futures:
+            return _futures
         for (f, name) in [future.result() for future in _futures]:
             self.__setter__(
                 name, self.on_load_process(f)
