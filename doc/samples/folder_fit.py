@@ -7,7 +7,7 @@ from Stoner import __home__, DataFolder, Data
 from Stoner.plot.formats import TexEngFormatter
 from Stoner.analysis.fitting.models.generic import Quadratic
 
-if __name__=="__main__":
+if __name__ in ["__main__", "folder_fit"]:
     # Set up the directory with our data
     datafiles = join(__home__, "..", "sample-data", "NLIV")
 
@@ -18,7 +18,7 @@ if __name__=="__main__":
 
     # Another Data object to keep the results in
     result = Data()
-    result.title="Non-local Resistances"
+    result.title = "Non-local Resistances"
 
     # Loop over the files in the DataFolder
     for d in fldr:
@@ -42,13 +42,14 @@ if __name__=="__main__":
 
     # Run the fitt for each file in the fldr. Set the outpout to "data" to
     # Have the amended results replace the existing data files
-    fldr.each.odr(Quadratic, output="data", result=True, header="fit", _serial=True)
+    fldr.each.odr(
+        Quadratic, output="data", result=True, header="fit", _parallel=True
+    )
     fig = figure()
     fldr.each.setas(Current="x", Voltage="y")
     fldr.each.setas[3] = "y"
 
-
-    fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig, _serial=True)
+    fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig)
     fldr[0].legend(ncol=2, fontsize="xx-small")
     fldr[0].title = "Non-local IV Curves"
 
@@ -58,4 +59,4 @@ if __name__=="__main__":
     # Set the columns assignments and plot
     result_2.setas = "x..ye"
     result_2.plot(fmt="r.", figure=result.fig, capsize=2)
-    result_2.title="Non-local Resistances"
+    result_2.title = "Non-local Resistances"

@@ -336,7 +336,7 @@ class DiskBasedFolderMixin:
             )
             for fname in self.not_loaded
         ]
-        if futures:
+        if not futures:
             return _futures
         for (f, name) in [future.result() for future in _futures]:
             self.__setter__(

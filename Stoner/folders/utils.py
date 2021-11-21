@@ -34,6 +34,10 @@ class _fake_executor:
     def shutdown(self):
         """Fake shutdown method."""
 
+    def submit(self, fn, *args, **kwargs):
+        """Execute a function."""
+        return fn(*args, **kwargs)
+
 
 def pathsplit(pth):
     """Split pth into a sequence of individual parts with path.split."""

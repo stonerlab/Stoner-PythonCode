@@ -256,11 +256,11 @@ class PlotMixin:
 
     def __getstate__(self):
         """Cleanup state before pickle for folder operations."""
-        state=self.__dict__.copy()
-        state.pop("newplot",None)
+        state = self.__dict__.copy()
+        state.pop("newplot", None)
         return state
 
-    def __setstate__(self,state):
+    def __setstate__(self, state):
         """Restore state after pickle."""
         self.__dict__.update(state)
 
