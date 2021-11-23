@@ -5,9 +5,11 @@
 from Stoner import Data
 from Stoner.Image import ImageArray, ImageFolder, ImageStack
 import numpy as np
+import matplotlib.pyplot as plt
 import pytest
 from os import path
 import os
+import re
 
 knownkeys = ['Averaging', 'Comment:', 'Contrast Shift', 'HorizontalFieldOfView',
              'Lens', 'Loaded from', 'Magnification', 'MicronsPerPixel', 'field: units',
@@ -36,10 +38,21 @@ def test_properties():
         assert isinstance(im,ImageArray),"fldr.images returned something that wasn't an image array"
 
 def test_methods():
-    fldr=ImageFolder(testdir, pattern="*.png")
+    fldr=ImageFolder(testdir, pattern=re.compile(r"000_field(?P<Field>\d+)_run0.*png"))
     assert len(list(fldr.loaded))==0,"ImageFolder got loaded unexpectedly!"
     fldr.loadgroup()
     assert len(list(fldr.loaded))==8,"ImageFolder.looadgroup() failed to load!"
+    fldr.montage(title="Image {Field}mT")
+    assert len(plt.get_fignums())==1,"Failed to create correct number of figures with fldr.montage"
+    plt.close("all")
+    av=fldr.average(_metadata="common")
+    std=fldr.stddev(weights=np.ones(8))
+    assert av.max()==65535.0
+    assert av.min()==0
+    assert std.max()>449
+    assert std.min()==0
+
+
 
 
 

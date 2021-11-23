@@ -43,13 +43,15 @@ if __name__ in ["__main__", "folder_fit"]:
     # Run the fitt for each file in the fldr. Set the outpout to "data" to
     # Have the amended results replace the existing data files
     fldr.each.odr(
-        Quadratic, output="data", result=True, header="fit", _parallel=True
+        Quadratic, output="data", result=True, header="fit", _mode="ThreadPool"
     )
     fig = figure()
     fldr.each.setas(Current="x", Voltage="y")
     fldr.each.setas[3] = "y"
 
-    fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig)
+    fldr.each.plot(
+        fmt=["+", "-"], label="Field = {y}mT", figure=fig, _mode="serial"
+    )
     fldr[0].legend(ncol=2, fontsize="xx-small")
     fldr[0].title = "Non-local IV Curves"
 

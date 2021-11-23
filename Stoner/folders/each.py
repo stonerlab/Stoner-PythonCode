@@ -11,8 +11,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from dask import bag
-
 from ..tools import isiterable
 from ..compat import string_types
 from .utils import get_pool
@@ -20,7 +18,7 @@ from .utils import get_pool
 if TYPE_CHECKING:
     from ..core import metadataObject
     from .core import baseFolder
-    from typing import Tuple, List, Any, Union, Optiuonal, Callable
+    from typing import Tuple, List, Any, Union, Optional, Callable
 
 
 def _worker(d: metadataObject, **kwargs) -> Tuple[metadataObject, Any]:
@@ -349,9 +347,12 @@ class Item:
                 Controls how the return value from *func* is added to the DataFolder
             _byname (bool):
                 Whether to look func up as the name of a function. Defaults to True if func is a string.
-            _serial, _parallel (bool):
-                Controls whether to execute using dask.bag to allow parallel processing. _serial overrides
-                _parallel, the default if neither is set is to run in serial (sbingle thread/process) mode.
+            _mode (str):
+                Whether to iterate using a parallel iteration scheme. Possible values are:
+                    "serial","SingleProcess": In the same process as the main script
+                    "ThreadPool": Uses a concurrent.futures ThreadPool
+                    "ProcessPool": Uses a concurrent.futures ProcessPool
+                    "Dask": Uses a dask.distributed.Client to distribute the task over an DASK cluster.
 
         Returns:
             A list of the results of evaluating *func* for each item in the folder.
@@ -365,47 +366,28 @@ class Item:
         """
         _return = kargs.pop("_return", None)
         _byname = kargs.pop("_byname", isinstance(func, string_types))
-        _serial = kargs.pop("_serial", not kargs.pop("_parallel", False))
-        partitions = 1 if _serial else max(1, os.cpu_count() - 2)
+        _model = kargs.pop("_mode", "serial")
+        if _model.lower() not in ["serial", "singleprocess", "threadpool", "processpool", "dask"]:
+            raise ValueError(f"Unknown folder iteration model {_model}")
+
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        if not _serial:
-            bg = bag.from_sequence(self._folder)
-            for ix, (new_d, ret) in enumerate(
-                bg.map(partial(_worker, _func=func, args=args, kargs=kargs, byname=_byname)).compute()
-            ):
-                if self._folder.debug:
-                    print(ix, type(ret))
-                if isinstance(ret, self._folder._type) and _return is None:
-                    try:  # Check if ret has same data type, otherwise will not overwrite well
-                        if ret.data.dtype != new_d.data.dtype:
-                            continue
-                        new_d = ret
-                    except AttributeError:
-                        pass
-                elif _return is not None:
-                    if isinstance(_return, bool) and _return:
-                        _return = func.__name__
-                    new_d[_return] = ret
-                name = self._folder.__names__()[ix]
-                self._folder.__setter__(name, new_d)
-                yield ret
-        else:
-            for ix, (new_d, ret) in enumerate(
-                map(partial(_worker, _func=func, args=args, kargs=kargs, byname=_byname), self._folder)
-            ):
-                if self._folder.debug:
-                    print(ix, type(ret))
-                if isinstance(ret, self._folder._type) and _return is None:
-                    try:  # Check if ret has same data type, otherwise will not overwrite well
-                        if ret.data.dtype != new_d.data.dtype:
-                            continue
-                        new_d = ret
-                    except AttributeError:
-                        pass
-                elif _return is not None:
-                    if isinstance(_return, bool) and _return:
-                        _return = func.__name__
-                    new_d[_return] = ret
-                name = self._folder.__names__()[ix]
-                self._folder.__setter__(name, new_d)
-                yield ret
+        executor = get_pool(folder=self._folder, _model=_model)
+        for ix, (new_d, ret) in enumerate(
+            executor.map(partial(_worker, _func=func, args=args, kargs=kargs, byname=_byname), self._folder)
+        ):
+            if self._folder.debug:
+                print(ix, type(ret))
+            if isinstance(ret, self._folder._type) and _return is None:
+                try:  # Check if ret has same data type, otherwise will not overwrite well
+                    if ret.data.dtype != new_d.data.dtype:
+                        return ret
+                    new_d = ret
+                except AttributeError:
+                    pass
+            elif _return is not None:
+                if isinstance(_return, bool) and _return:
+                    _return = func.__name__
+                new_d[_return] = ret
+            name = self._folder.__names__()[ix]
+            self._folder.__setter__(name, new_d)
+            yield ret

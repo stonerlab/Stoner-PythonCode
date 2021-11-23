@@ -41,10 +41,13 @@ def test_each_call_or_operator():
     os.chdir(datadir)
     fldr4=DataFolder(datadir,pattern="QD-SQUID-VSM.dat")
     fldr5=fldr4.clone
-    (hysteresis_correct@fldr4)(setas="3.xy",saturated_fraction=0.25)
+    (hysteresis_correct@fldr4)(setas="3.xy",saturated_fraction=0.25,_mode="ThreadPool")
     assert "Hc" in fldr4[0],"Matrix multiplication of callable by DataFolder failed test."
-    fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25)
+    fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25,_mode="ThreadPool")
     assert "Hc" in fldr5[0],"Call on DataFolder.each() failed to apply function to folder"
+    with pytest.raises(ValueError):
+        fldr5.each(hysteresis_correct,setas="3.xy",saturated_fraction=0.25,_mode="BadPool")
+
 
 def test_each_setas():
     os.chdir(datadir)

@@ -167,21 +167,6 @@ class ImageFolderMixin:
         self.metadata["align_box"] = tuple(stack_limits.astype(int))
         return self
 
-    def apply_all(self, func, *args, **kargs):
-        """Apply function to all images in the stack.
-
-        Args:
-            func(string or callable):
-                if string it must be a function reachable by ImageArray
-            quiet(bool):
-                if False print '.' for every iteration
-
-        Note:
-            Further args, kargs are passed through to the function
-        """
-        warn("apply_all is depricated and will be removed in a future version. Use ImageFolder.each() instead")
-        return self.each(func, *args, **kargs)
-
     def average(self, weights=None, _box=False, _metadata="first"):
         """Get an array of average pixel values for the stack.
 
@@ -375,7 +360,7 @@ class ImageFolderMixin:
             else:
                 j += 1
             fig = figure(fignum)
-            ax = subplot(plt_y, plt_x, j)
+            ax = fig.add_subplot(plt_y, plt_x, j)
             plt_kargs["figure"] = fig
             plt_kargs["ax"] = ax
             if "title" in kargs:

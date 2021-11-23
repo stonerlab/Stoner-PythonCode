@@ -16,11 +16,29 @@ import string
 import fnmatch
 import pathlib
 from concurrent import futures
+from dask.distributed import Client
 
 from numpy import array
 
 from Stoner.compat import string_types, _pattern_type
 from Stoner.tools import get_option
+
+
+class _fake_future:
+
+    """Minimal class that behaves like a simple future.
+
+    This simply stores the function that should be exectured and its arguments and then delays executing it until
+    the result() method is called.
+    """
+
+    def __init__(self, fn, *args, **kargs):
+        self.fn = fn
+        self.args = args
+        self.kargs = kargs
+
+    def result(self):
+        return self.fn(*self.args, **self.kargs)
 
 
 class _fake_executor:
@@ -29,14 +47,27 @@ class _fake_executor:
 
     def __init__(self, *args, **kargs):
         """Fake constructor."""
-        self.map = map  # set the map method
+
+    def map(self, fn, *iterables):
+        """Map over the results, yields each result in turn."""
+        for item in zip(*iterables):
+            yield fn(*item)
 
     def shutdown(self):
         """Fake shutdown method."""
 
     def submit(self, fn, *args, **kwargs):
         """Execute a function."""
-        return fn(*args, **kwargs)
+        return _fake_future(fn(*args, **kwargs))
+
+
+executor_map = {
+    "singleprocess": (_fake_executor, {}),
+    "serial": (_fake_executor, {}),
+    "threadpool": (futures.ThreadPoolExecutor, {"max_workers": cpu_count()}),
+    "processpool": (futures.ProcessPoolExecutor, {"max_workers": cpu_count()}),
+    "dask": (Client, {}),
+}
 
 
 def pathsplit(pth):
@@ -121,28 +152,35 @@ def filter_files(files, patterns, keep=True):
     return files
 
 
-def get_pool(folder=None, _serial=False):
+def get_pool(folder=None, _model=None):
     """Get a concurrent.futures compatible executor.
 
     Returns:
         (futures.Executor):
             Executor on which to run the distributed job.
     """
+    if isinstance(_model, str):
+        _model = _model.lower()
     if getattr(folder, "executor", False):
-        return folder.executor
-    if get_option("multiprocessing") and not _serial:
-        try:
+        if folder.executor.name == _model:
+            return folder.executor
+
+    if _model is None:
+        if get_option("multiprocessing"):
             if get_option("threading"):
-                executor = futures.ThreadPoolExecutor(max_workers=cpu_count())
+                _model = "threadpool"
             else:
-                executor = futures.ProcessPoolExecutor(max_workers=cpu_count())
-        except (ArithmeticError, AttributeError, LookupError, RuntimeError, NameError, OSError, TypeError, ValueError):
-            # Fallback to non-multiprocessing if necessary
-            executor = None
-    else:
-        executor = _fake_executor()
+                _model = "processpool"
+        else:
+            _model = "singleprocess"
+    executor_class, kwargs = executor_map[_model]
+    executor = executor_class(**kwargs)
+    executor.name = _model
+
     if getattr(folder, "executor", False):
         folder.executor.shutdown()
+    if folder:
+        setattr(folder, "executor", executor)
     return executor
 
 

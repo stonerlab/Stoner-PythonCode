@@ -4,8 +4,8 @@
 .. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
     :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
 
-.. image:: https://api.codacy.com/project/badge/Grade/372f2f9227134fab9c6c2f2ba83962ba
-    :target: https://www.codacy.com/app/stonerlab/Stoner-PythonCode?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=stonerlab/Stoner-PythonCode&amp;utm_campaign=Badge_Grade
+.. image:: https://app.codacy.com/project/badge/Grade/a9069a1567114a22b25d63fd4c50b228
+    :target: https://www.codacy.com/gh/stonerlab/Stoner-PythonCode/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=stonerlab/Stoner-PythonCode&amp;utm_campaign=Badge_Grade
 
 .. image:: https://badge.fury.io/py/Stoner.svg
    :target: https://badge.fury.io/py/Stoner
