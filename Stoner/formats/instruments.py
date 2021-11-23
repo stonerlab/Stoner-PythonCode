@@ -977,7 +977,7 @@ class BrukerRawFile(Core.DataFile):
             x = np.arange(start2Th, start2Th + step * (nSteps + 1), step)
             try:
                 y = np.array([max(1.0, _r_float(f)) for i in range(nSteps)])
-            except:  # this is absurd
+            except (ValueError, TypeError, IOError):  # this is absurd
                 f.seek(pos - 40)
                 y = np.array([max(1.0, _r_float(f)) for i in range(nSteps)])
             w = 1.0 / y

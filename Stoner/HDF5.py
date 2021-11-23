@@ -107,7 +107,7 @@ class HDFFileManager:
             raise StonerLoadError("Note a resource that can be handled with HDF")
         return self.handle
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, typ, value, traceback):
         """Ensure we close the hdf file no matter what."""
         if self.file is not None and self.close:
             self.file.close()

@@ -38,6 +38,7 @@ class _fake_future:
         self.kargs = kargs
 
     def result(self):
+        """Execute the stored function call and return the result."""
         return self.fn(*self.args, **self.kargs)
 
 
@@ -48,15 +49,15 @@ class _fake_executor:
     def __init__(self, *args, **kargs):
         """Fake constructor."""
 
-    def map(self, fn, *iterables):
+    def map(self, fn, *iterables):  # pylint: disable=no-self-use
         """Map over the results, yields each result in turn."""
         for item in zip(*iterables):
             yield fn(*item)
 
-    def shutdown(self):
+    def shutdown(self):  # pylint: disable=no-self-use
         """Fake shutdown method."""
 
-    def submit(self, fn, *args, **kwargs):
+    def submit(self, fn, *args, **kwargs):  # pylint: disable no-self-use
         """Execute a function."""
         return _fake_future(fn(*args, **kwargs))
 
