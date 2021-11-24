@@ -126,7 +126,7 @@ intersphinx_mapping = {
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
     'seaborn': ('https://seaborn.pydata.org/', None),
     'astropy': ('http://docs.astropy.org/en/stable/', None),
-    'h5py': ('http://docs.h5py.org/en/latest/', None),
+    'h5py': (' https://docs.h5py.org/en/latest/', None),
     'lmfit': ('https://lmfit.github.io/lmfit-py/', None),
     'skimage': ('https://scikit-image.org/docs/stable', None)
     }
