@@ -25,8 +25,12 @@ from skimage import (
     morphology,
     segmentation,
     transform,
-    viewer,
 )
+
+if "READTHEDOCS" not in os.environ:
+    from skimage import viewer
+else:
+    viewer = None
 
 from ..core.base import typeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
