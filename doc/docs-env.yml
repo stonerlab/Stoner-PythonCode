@@ -26,6 +26,6 @@ dependencies:
   - sphinx >=1.7.5
   - sphinx-automodapi >=0.3
   - sphinx-better-theme >=0.1.3
-  - python >=3.8
+  - python >=3.7
   - pip
 prefix: docs-build
