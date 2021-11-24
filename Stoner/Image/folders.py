@@ -7,7 +7,6 @@ from os import path
 from json import loads, dumps
 from copy import deepcopy, copy
 
-from skimage.viewer import CollectionViewer
 import numpy as np
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 from PIL.TiffImagePlugin import ImageFileDirectory_v2
@@ -470,6 +469,8 @@ class ImageFolderMixin:
 
     def view(self):
         """Create a matplotlib animated view of the contents."""
+        from skimage.viewer import CollectionViewer  # defer import until we needit
+
         cv = CollectionViewer(list(self.images))
         cv.show()
         return cv
