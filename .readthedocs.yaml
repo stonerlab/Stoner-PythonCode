@@ -25,4 +25,4 @@ sphinx:
 #    - pdf
 
 conda:
-  environment: doc/do`cs-env.yml
+  environment: doc/docs-env.yml
