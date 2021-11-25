@@ -8,7 +8,7 @@ from importlib import import_module
 from io import BytesIO as StreamIO
 from warnings import warn
 
-from PIL import Image
+from PIL import Image, PngImagePlugin
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage as ndi
@@ -26,12 +26,6 @@ from skimage import (
     segmentation,
     transform,
 )
-
-if "READTHEDOCS" not in os.environ:
-    from skimage import viewer
-else:
-    viewer = None
-
 from ..core.base import typeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..Core import DataFile
@@ -43,10 +37,16 @@ from ..compat import (
     get_filedialog,
     int_types,
     path_types,
+    str2bytes,
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
 from .widgets import RegionSelect
 from . import imagefuncs
+
+if "READTHEDOCS" not in os.environ:
+    from skimage import viewer
+else:
+    from ..tools import null as viewer
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -660,6 +660,34 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             del self.metadata[index]
         else:
             super().__delitem__(index)
+
+    def save(self, filename=None, **kargs):
+        """Save ImageArray to disc as a png file with embedded metadata.
+
+        Args:
+            filename (string): Filename to save as (using the same rules as for the load routines)
+
+        Keyword Arguments:
+            deliminator (string): Record deliniminator (defaults to a comma)
+
+        Returns:
+            A copy of itself.
+        """
+        if filename is None:
+            filename = self.filename
+        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+            filename = self.__file_dialog("w")
+
+        metadata = PngImagePlugin.PngInfo()
+        for k in self.metadata:
+            parts = self.metadata.export(k).split("=")
+            key = parts[0]
+            val = str2bytes("=".join(parts[1:]))
+            metadata.add_text(key, val)
+        img = Image.fromarray(self.data)
+        img.save(filename, "png", pnginfo=metadata)
+        self.filename = filename
+        return self
 
 
 @class_modifier(

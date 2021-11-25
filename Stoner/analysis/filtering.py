@@ -118,7 +118,7 @@ class FilteringOpsMixin:
             return self
         return r
 
-    def bin(self, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
+    def bin(self, bins=0.03, mode="log", **kargs):
         """Bin x-y data into new values of x with an error bar.
 
         Args:
@@ -157,28 +157,22 @@ class FilteringOpsMixin:
             User Guide section :ref:`binning_guide`
         """
 
-        if None in (xcol, ycol):
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"]
-        yerr = kargs.pop("yerr", cols["yerr"] if cols["has_yerr"] else None)
+        _ = self.data._col_args(
+            scalar=False,
+            force_list=True,
+            xcol=kargs.pop("xcol", None),
+            ycol=kargs.pop("ycol", None),
+            yerr=kargs.pop("yerr", None),
+        )
+        bin_left, bin_right, bin_centres = self.make_bins(_.xcol, bins, mode, **kargs)
 
-        bin_left, bin_right, bin_centres = self.make_bins(xcol, bins, mode, **kargs)
-
-        ycol = self.find_col(ycol)
-        if yerr is not None:
-            yerr = self.find_col(yerr)
-
-        ybin = np.zeros((len(bin_left), len(ycol)))
-        ebin = np.zeros((len(bin_left), len(ycol)))
-        nbins = np.zeros((len(bin_left), len(ycol)))
-        xcol = self.find_col(xcol)
+        ybin = np.zeros((len(bin_left), len(_.ycol)))
+        ebin = np.zeros((len(bin_left), len(_.ycol)))
+        nbins = np.zeros((len(bin_left), len(_.ycol)))
         i = 0
 
         for limits in zip(bin_left, bin_right):
-            data = self.search(xcol, limits)
+            data = self.search(_.xcol, limits)
             if len(data) > 1:
                 ok = np.logical_not(np.isnan(data.y))
                 data = data[ok]
@@ -186,34 +180,36 @@ class FilteringOpsMixin:
                 shape = list(data.shape)
                 shape[0] = 0
                 data = np.zeros(shape)
-            if yerr is not None:
-                w = 1.0 / data[:, yerr] ** 2
+            if _.yerr is not None and _.yerr != []:
+                w = 1.0 / data[:, _.yerr] ** 2
                 W = np.sum(w, axis=0)
                 if data.shape[0] > 3:
-                    e = max(np.std(data[:, ycol], axis=0) / np.sqrt(data.shape[0]), (1.0 / np.sqrt(W)) / data.shape[0])
+                    e = max(
+                        np.std(data[:, _.ycol], axis=0) / np.sqrt(data.shape[0]), (1.0 / np.sqrt(W)) / data.shape[0]
+                    )
                 else:
                     e = 1.0 / np.sqrt(W)
             else:
-                w = np.ones((data.shape[0], len(ycol)))
+                w = np.ones((data.shape[0], len(_.ycol)))
                 W = data.shape[0]
-                if data[:, ycol].size > 1:
-                    e = np.std(data[:, ycol], axis=0) / np.sqrt(W)
+                if data[:, _.ycol].size > 1:
+                    e = np.std(data[:, _.ycol], axis=0) / np.sqrt(W)
                 else:
                     e = np.nan
             if data.shape[0] == 0 and self.debug:
                 warn(f"Empty bin at {limits}")
-            y = np.sum(data[:, ycol] * (w / W), axis=0)
-            ybin[i, :] = y
-            ebin[i, :] = e
+            y = np.sum(data[:, _.ycol] * (w / W), axis=0)
+            ybin[i, :] = np.atleast_1d(y)
+            ebin[i, :] = np.atleast_1d(e)
             nbins[i, :] = data.shape[0]
             i += 1
-        if clone:
+        if kargs.get("clone", True):
             ret = self.clone
             ret.data = np.atleast_2d(bin_centres).T
-            ret.column_headers = [self.column_headers[xcol]]
+            ret.column_headers = [self.column_headers[_.xcol]]
             ret.setas = ["x"]
             for i in range(ybin.shape[1]):
-                head = str(self.column_headers[ycol[i]])
+                head = str(self.column_headers[_.ycol[i]])
 
                 ret.add_column(ybin[:, i], header=head)
                 ret.add_column(ebin[:, i], header=f"d{head}")
