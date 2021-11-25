@@ -198,7 +198,7 @@ class ImageStackMixin:
         self._sizes = np.insert(self._sizes, ix, value.shape, axis=0)  # pylint: disable=no-member
         new_size = self.max_size + (len(self._names),)
         if new_size[2] == 1:
-            dtype = value.dtype
+            dtype = value.dtype  # pylint: disable=no-member
         else:
             dtype = None
         self._resize_stack(new_size, dtype=dtype)

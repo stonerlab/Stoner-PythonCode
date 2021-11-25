@@ -367,7 +367,7 @@ def add_properties(*srcclasses):
             attr, fset = setters[k]
             fget = wrap_prop(attr, fget)
             fset = wrap_prop(attr, fset)
-            setattr(destcls, k, property(fget=fget, fset=fset, fdel=lambda: fset()))
+            setattr(destcls, k, property(fget=fget, fset=fset, fdel=lambda self: fset()))
         for k in set(getters.keys()) - set(setters.keys()):  # Read only Proerpties
             if hasattr(destcls, k):
                 continue  # Don't overwrite existing attributes
@@ -379,7 +379,7 @@ def add_properties(*srcclasses):
                 continue  # Don't overwrite existing attributes
             attr, fset = setters[k]
             fset = wrap_prop(attr, fset)
-            setattr(destcls, k, property(fset=fset, fdel=lambda: fset()))
+            setattr(destcls, k, property(fset=fset, fdel=lambda self: fset()))
         return destcls
 
     return real_add_properties
