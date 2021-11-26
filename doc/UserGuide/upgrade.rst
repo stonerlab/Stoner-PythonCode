@@ -46,11 +46,11 @@ should now do::
 Most of the functionality of the  **Stoner.Plot** module was in the **PlotFile** subclass and is now accessed via the :py:class:`Stoner.Data`
 class. A few additional functions that used to be in **Stoner.Plot** are now in :py:mod:`Stoner.plot.utils`.
 
-Stoner.Folders Module depricated
-================================
+Stoner.folders Module Removed
+=============================
 
 The code around :py:class:`Stoner.DataFolder` has been exte nsively rewritten and cleaned up in versions 0.9 onwards. Firstly, theold
-**Stoner.Folders** module is replaced with the :py:mod:`Stoner.forlders` package, and the :py:class:`Stoner.DataFolder` class is
+**Stoner.folders** module is replaced with the :py:mod:`Stoner.forlders` package, and the :py:class:`Stoner.DataFolder` class is
 now directly importable from the root :py:mod:`Stoner` package. Thus::
 
     from Stoner.Folders import DataFolder
@@ -151,5 +151,3 @@ The new :py:attr:`Stoner.DataFolder.metadata` attribute and :py:meth:`Stoner.fol
 allow this to be done directly::
 
     result=fldr.metadata.slice(["thing_1","thing_2"], output="Data")
-
-

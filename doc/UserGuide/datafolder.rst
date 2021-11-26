@@ -1,16 +1,16 @@
 **************************
 Working with Lots of Files
 **************************
-.. currentmodule:: Stoner.Folders
+.. currentmodule:: Stoner.folders
 
 
 A common case is that you have measured lots of data and now have a large stack of data
 files sitting in a tree of directories on disc and need to process all of them with some code.
-The :py:mod:`Stoner.Folders` contains classes to make this job much easier.
+The :py:mod:`Stoner.folders` contains classes to make this job much easier.
 
 For the end-user, the top level classes are :py:class:`DataFolder` for :py:class:`Stoner.Data` and :py:class:`Stoner.Image.ImageFolder` doe xollections of
 :py:class:`Stoner.Image.ImageFile` s. These are designed to complement the corresponding data classes :py:class:`Stoner.Data` and :py:class:`Stoner.ImageFile`.
-Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is exported directly from the :py:mod:`Stoner` package, whilst the
+Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.folders.DataFolder` is exported directly from the :py:mod:`Stoner` package, whilst the
 :py:class:`Stoner.Image.ImageFolder` is exported from the :py:mod:`Stoner.Image` sub-paclkage.
 
 :py:class:`DataFolder` and it's friends are essentially containers for :py:class:`Stoner.Data` (or similar classes from the
@@ -347,7 +347,7 @@ of even (!)::
 
 This last example illustrates a special ability of a :py:class:`DataFolder` to use the methods of the
 type of :py:class:`Stoner.Data` inside the DataFolder. The special :py:attr:`DataFolder.each` attribute (which is actually a
-:py:class:`Stoner.Folders.each_item instance) provides special hooks to let you call methods of the underlying :py:attr:`DataFolder.type` class on each
+:py:class:`Stoner.folders.each_item instance) provides special hooks to let you call methods of the underlying :py:attr:`DataFolder.type` class on each
 file in the :py:class:`DataFolder` in turn. When you access a method on :py:attr:`DataFolder.each` that
 is actually a method of the DataFile, they call a method that wraps a call to each :py:class:`Stoner.Data` in turn. If the method
 on :py:class:`Stoner.Data` returns the :py:class:`Stoner.Data` back, then this is stored in the :py:class:`DataFolder`. In this case the result back`

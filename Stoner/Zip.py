@@ -4,7 +4,7 @@
 Classes Include
 
 * ZippedFile - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from a zip files
-* ZipFolder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single zip file
+* ZipFolder - A :py:class:`Stoner.folders.DataFolder` subclass that can save and load data from a single zip file
 """
 __all__ = ["test_is_zip", "ZippedFile", "ZipFolderMixin", "ZipFolder"]
 import zipfile as zf
@@ -231,7 +231,7 @@ class ZipFolderMixin:
 
     """Provides methods to load and save data from a single Zip file.
 
-    See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
+    See :py:class:`Stoner.folders.DataFolder` for documentation on constructor.
 
     Note:
         As this mixin class provides both read and write storage, it cannot be mixed in with another class that
@@ -489,7 +489,7 @@ class ZipFolderMixin:
         :py:meth:`Stoner.Zip.ZipFile.save`
 
         This routine is used by a walk_groups call - hence the prototype matches that required for
-        :py:meth:`Stoner.Folders.DataFolder.walk_groups`.
+        :py:meth:`Stoner.folders.DataFolder.walk_groups`.
 
         """
         if not isinstance(f, DataFile):
