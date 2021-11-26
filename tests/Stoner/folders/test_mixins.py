@@ -14,7 +14,7 @@ pth=path.realpath(path.join(pth,"../../../"))
 sys.path.insert(0,pth)
 
 from Stoner import Data,__home__,Options
-from Stoner.Folders import PlotFolder
+from Stoner.folders import PlotFolder
 from Stoner.plot.formats import TexEngFormatter,DefaultPlotStyle
 import matplotlib.pyplot as plt
 

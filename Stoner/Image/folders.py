@@ -13,7 +13,7 @@ from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from PIL import Image
 
 from .core import ImageArray
-from ..Folders import DiskBasedFolderMixin, baseFolder
+from ..folders import DiskBasedFolderMixin, baseFolder
 from ..compat import string_types, int_types
 from . import ImageFile
 
