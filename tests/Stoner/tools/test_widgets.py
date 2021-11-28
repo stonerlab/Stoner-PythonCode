@@ -67,6 +67,8 @@ def test_filedialog():
     assert widgets.fileDialog.openDialog(mode="SelectDirectory")== ret_pth.parent
     with pytest.raises(ValueError):
         widgets.fileDialog.openDialog(mode="Whateve")
+    d=Data.load(None)
+    assert Path(d.filename).name=='TDI_Format_RT.txt',"Failed to open correct file when using a file dialog!"
 
 def test_loader():
     d=Data(False)

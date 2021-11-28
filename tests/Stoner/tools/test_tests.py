@@ -65,6 +65,5 @@ def test_is_tuple():
     assert not tests.isTuple((4,"Hi"),str,int),"isTuple failed to match types as bad"
 
 
-
 if __name__ == "__main__":
-    pytest.main()
+    pytest.main(["--pdb",__file__])

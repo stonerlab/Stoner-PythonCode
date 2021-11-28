@@ -395,7 +395,7 @@ class SPCFile(Core.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority = 16  # Can't make a positive ID of itself
+    priority = 24  # Can't make a positive ID of itself
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns = ["*.spc"]  # Recognised filename patterns
@@ -630,12 +630,12 @@ class SPCFile(Core.DataFile):
 
             self._header = dict(zip(keys, spchdr))
             n = self._header["fnsub"]
-
             if self._header["ftflgs"] & 64 == 64 or not (
                 75 <= self._header["fversn"] <= 77
             ):  # This is the multiple XY curves in file flag.
                 raise Core.StonerLoadError(
                     "Filetype not implemented yet ! ftflgs={ftflgs}, fversn={fversn}".format(**self._header)
+                    + f"{self._header}"
                 )
             # Read the xdata and add it to the file.
             xdata = self._read_xdata(f)

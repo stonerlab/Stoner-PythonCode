@@ -257,6 +257,8 @@ class OpenGDAFile(Core.DataFile):
                 key = parts[0]
                 value = parts[1].strip()
                 self.metadata[key] = string_to_type(value)
+            if i == 0:
+                raise StonerLoadError("Empty fiule processed by OpenGDAFile!")
             column_headers = f.readline().strip().split("\t")
             self.data = np.genfromtxt([str2bytes(l) for l in f], dtype="float", invalid_raise=False)
         self.column_headers = column_headers
@@ -384,6 +386,10 @@ if fabio:
                 self.metadata.update(img.header)
                 return self
             except (OSError, ValueError, TypeError, IndexError) as err:
+                try:
+                    filename.seek(0)
+                except AttributeError:
+                    pass
                 raise StonerLoadError("Not a Fabio Image file !") from err
 
 

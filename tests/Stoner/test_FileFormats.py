@@ -136,28 +136,40 @@ def test_fail_to_load():
 
 def test_arb_class_load():
     d=Data(datadir/"TDI_Format_RT.txt", filetype="dummy.ArbClass")
+    with pytest.raises(ValueError):
+        d=Data.load(datadir/"TDI_Format_RT.txt", filetype="bad.FileCalss")
+    with pytest.raises(ValueError):
+        d=Data.load(datadir/"kermit.ong", filetype="Stoner.ImageFile")
 
 def test_url_load():
     """Test URL scheme openers."""
-    t1 =  Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/hairboRaman.spc")
-    assert t1==Data(__datapath__/"hairboRaman.spc")
-    t2 = Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql")
-    assert t2 ==Data(__datapath__/"New-XRay-Data.dql")
-    resp = urllib.request.urlopen("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql")
-    t3=Data(resp)
-    assert t3==t2
+    for fname in ["hairboRaman.spc","New-XRay-Data.dql"]:
+        t1 =  Data(f"https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/{fname}")
+        resp = urllib.request.urlopen(f"https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/{fname}")
+        t2=Data(resp)
+        t3=Data(__datapath__/fname)
+        assert t1==t3,f"Direct load and load from URL different: {fname}"
+        assert t2==t3,f"Direct load and load via URLLib different: {fname}"
+
 
 def test_from_bytes():
     """Test loading a binary file as bytes."""
     with open(__datapath__/"harribo.spc","rb") as data:
         d=Data(data.read())
-    assert d==Data(__datapath__/"harribo.spc")
+    assert d==Data(__datapath__/"harribo.spc"),"Failed to read from byte string"
+
+def test_from_BytesIO():
+    """Test loading a binary file as bytes."""
+    with open(__datapath__/"harribo.spc","rb") as data:
+        d=Data(io.BytesIO(data.read()))
+    assert d==Data(__datapath__/"harribo.spc"),"Failed to read from a BytesIO buffer."
+
 
 def test_from_StringIO():
     """Test loading a binary file as bytes."""
     with open(__datapath__/"RASOR.dat","r") as data:
         buffer=io.StringIO(data.read())
-    assert Data(buffer)==Data(__datapath__/"RASOR.dat")
+    assert Data(buffer)==Data(__datapath__/"RASOR.dat"), "Failed to read from a StringIO buffer"
 
 def test_ImageAutoLoad():
     """Test ImageFile autoloading"""
