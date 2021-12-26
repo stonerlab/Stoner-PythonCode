@@ -252,18 +252,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         We're using __new__ rather than __init__ to imitate a numpy array as
         close as possible.
         """
-        if len(args) not in [0, 1]:
-            raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
 
-        # Deal with kwargs
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
         array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
-        user_metadata = kargs.pop("metadata", {})
-        asfloat = kargs.pop("asfloat", False) or kargs.pop(
-            "convert_float", False
-        )  # convert_float for back compatability
-        _debug = kargs.pop("debug", False)
-        _title = kargs.pop("title", None)
+        user_metadata = kargs.get("metadata", {})
+
+        if len(args) not in [0, 1]:
+            raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
 
         # 0 args initialisation
         if len(args) == 0:
@@ -281,7 +276,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     ret = np.atleast_2d(arg).view(ImageArray)
                 else:
                     ret = arg.view(ImageArray)
-                ret.metadata = getattr(arg, "metadata", typeHintedDict())
+                kargs["metadata"] = getattr(arg, "metadata", typeHintedDict())
+                kargs["metadata"].update(user_metadata)
             elif isinstance(arg, bool) and not arg:
                 patterns = (("png", "*.png"), ("npy", "*.npy"))
                 arg = get_filedialog(what="r", filetypes=patterns)
@@ -294,9 +290,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     raise ValueError(f"File path does not exist {arg}")
                 ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(arg, **array_args)  # pylint: disable=no-member
+                kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
+                kargs["metadata"].update(user_metadata)
             elif isinstance(arg, ImageFile):
                 # extract the image
                 ret = arg.image
+                kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
+                kargs["metadata"].update(user_metadata)
             else:
                 try:  # try converting to a numpy array (eg a list type)
                     ret = np.asarray(arg, **array_args).view(cls)
@@ -305,24 +305,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 except ValueError as err:  # ok couldn't load from iterable, we're done
                     raise ValueError(f"No constructor for {arg}") from err
 
-            if asfloat and ret.dtype.kind != "f":  # convert to float type in place
-                meta = ret.metadata  # preserve any metadata we may already have
-                ret = ret.convert(np.float64)
-                ret.metadata.update(meta)
+        asfloat = kargs.pop("asfloat", False) or kargs.pop(
+            "convert_float", False
+        )  # convert_float for back compatability
+        if asfloat and ret.dtype.kind != "f":  # convert to float type in place
+            ret = ret.convert(np.float64)
 
-        # merge the results of __new__ from emtadataObject
-        tmp = metadataObject.__new__(metadataObject, *args)
-        tmp.__dict__.update(ret.__dict__)
-        ret.__dict__ = tmp.__dict__
-
-        # all constructors call array_finalise so metadata is now initialised
-        ret.filename = ret.metadata.setdefault("Loaded from", "")
-        ret.metadata.update(user_metadata)
-        ret.debug = _debug
-        ret._title = _title
-        ret._public_attrs = {"title": str, "filename": str}
-        ret._mask_color = "red"
-        ret._mask_alpha = 0.5
+        ret.__dict__["kargs"] = kargs
         return ret
 
     def __array_finalize__(self, obj):
@@ -335,14 +324,40 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         attributes are just copied over (plus any other attributes set in
         _optinfo).
         """
+        if not hasattr(self, "_optinfo"):
+            setattr(self, "_optinfo", {"metadata": typeHintedDict({}), "filename": ""})
+
+        kargs = self.__dict__.pop("kargs", {})
+        tmp = metadataObject.__new__(metadataObject)
+        tmp.__dict__.update(self.__dict__)
+        self.__dict__ = tmp.__dict__
+
+        # Deal with kwargs
+        user_metadata = kargs.pop("metadata", {})
+
+        _debug = kargs.pop("debug", False)
+        _title = kargs.pop("title", None)
+
+        self.metadata.update(user_metadata)
+
+        # all constructors call array_finalise so metadata is now initialised
+        self.filename = self.metadata.setdefault("Loaded from", "")
+        self.debug = _debug
+        self._title = _title
+        self._public_attrs = {"title": str, "filename": str}
+        self._mask_color = "red"
+        self._mask_alpha = 0.5
+
+        # merge the results of __new__ from emtadataObject
+
         if getattr(self, "debug", False):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
             print(curframe, calframe)
-        if not hasattr(self, "_optinfo"):
-            setattr(self, "_optinfo", {"metadata": typeHintedDict({}), "filename": ""})
-        self._optinfo.update(getattr(obj, "_optinfo", {}))
-        super().__array_finalize__(self)
+        if obj is not None:
+            self._optinfo.update(getattr(obj, "_optinfo", {}))
+
+        super().__array_finalize__(obj=obj)
 
     def _load(self, filename, *args, **kargs):
         """Load an image from a file and return as a ImageArray."""
@@ -621,7 +636,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         super().__setattr__(name, value)
         # add attribute to those for copying in array_finalize. use value as
         # defualt.
-        circ = ["_optinfo", "mask"]  # circular references
+        circ = ["_optinfo", "mask", "__dict__"]  # circular references
         proxy = ["_funcs"]  # can be reloaded for cloned arrays
         if name in circ + proxy:
             # Ignore these in clone

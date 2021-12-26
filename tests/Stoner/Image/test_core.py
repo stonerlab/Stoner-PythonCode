@@ -290,7 +290,7 @@ def test_other_funcs():
 
 def test_attrs():
     attrs=[x for x in dir(ImageArray([])) if not x.startswith("_")]
-    expected={6:1055,7:1062}.get(spv[1],1053)
+    expected={6:1056,7:1063}.get(spv[1],1054)
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
