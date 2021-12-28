@@ -413,7 +413,7 @@ class DataArray(ma.MaskedArray):
         elif ret.ndim == 1:  # Potentially a single row or single column
             ret.isrow = single_row
             if len(ix) == len(self.setas):
-                tmp = np.array(self.setas)[ix[-1]]
+                tmp = np.array(self.setas)[ix[-1]].ravel()
                 ret.setas(tmp)
                 tmpcol = np.array(self.column_headers)[ix[-1]]
                 ret.column_headers = tmpcol
