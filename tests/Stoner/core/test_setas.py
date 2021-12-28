@@ -188,7 +188,7 @@ def test_setas_metadata():
     d=selfd2.clone
     d.setas="xyz"
     assert d["Column 2",5]==d[5,"Column 2"],"Indexing with mixed integer and string failed."
-    assert selfd.metadata.type(["User","Timestamp"])==['String', 'Timestamp'],f"Metadata reading error {selfds.metadata}"
+    assert selfd2.metadata.type(["User","Timestamp"])==['String', 'Timestamp'],f"Metadata reading error {selfds.metadata}"
     assert d.metadata.type(["User","Timestamp"])==['String', 'Timestamp'],"Metadata.type with slice failed"
     d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
     assert d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing"
