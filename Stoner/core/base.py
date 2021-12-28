@@ -47,6 +47,12 @@ except (StonerAssertionError, ImportError):  # Fail if blist not present or Pyth
 _asteval_interp = None
 
 
+def _parse_date(string: str) -> datetime.datetime:
+    """Run the dateutil parser with a UK sensible date order."""
+    parserinfo = parser.parserinfo(dayfirst=True)
+    return parser.parse(string, parserinfo)
+
+
 def literal_eval(string: str) -> Any:
     """Use the asteval module to interpret arbitary strings slightly safely.
 
@@ -99,7 +105,7 @@ def string_to_type(value: String_Types) -> Any:
             if value.lower() in ["true", "yes", "on", "false", "no", "off"]:
                 ret = value.lower() in ["true", "yes", "on"]  # Boolean
             else:
-                for trial in [int, float, parser.parse, str]:
+                for trial in [int, float, _parse_date, str]:
                     try:
                         ret = trial(value)
                         break
@@ -444,7 +450,7 @@ class typeHintedDict(regexpDict):
                     ret = literal_eval(value)
                     if isinstance(ret, string_types):
                         try:
-                            ret = parser.parse(ret)
+                            ret = _parse_date(ret)
                         except (ValueError, OverflowError):
                             pass
                     break
@@ -454,7 +460,7 @@ class typeHintedDict(regexpDict):
         else:
             ret = str(value)
             try:
-                ret = parser.parse(ret)
+                ret = _parse_date(ret)
             except (ValueError, OverflowError):
                 pass
         return ret
