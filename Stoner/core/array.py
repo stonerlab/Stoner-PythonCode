@@ -412,11 +412,12 @@ class DataArray(ma.MaskedArray):
                 ret.i = self.i
         elif ret.ndim == 1:  # Potentially a single row or single column
             ret.isrow = single_row
-            if len(ix) == len(self.setas):
-                tmp = np.array(self.setas)[ix[-1]].ravel()
-                ret.setas(tmp)
-                tmpcol = np.array(self.column_headers)[ix[-1]]
-                ret.column_headers = tmpcol
+            if not single_row:  # Workoput what the original setas was
+                if isinstance(ix, tuple) and len(ix) >= 2:
+                    tmp = np.array(self.setas)[ix[-1]].ravel()
+                    ret.setas(tmp)
+                    tmpcol = np.array(self.column_headers)[ix[-1]]
+                    ret.column_headers = tmpcol
             else:
                 ret.setas = self.setas.clone
                 ret.column_headers = copy.copy(self.column_headers)
