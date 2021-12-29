@@ -42,7 +42,7 @@ def list_files():
     incfiles=[x for x in incfiles if x.suffix!=".tdms_index"]
     incfiles=[x for x in incfiles if not x.is_dir()]
 
-    if not Hyperspy_ok and "GH_ACTION" not in os.environ:
+    if not Hyperspy_ok:
         print("hyperspy too old, skupping emd file for test")
         incfiles=[x for x in incfiles if not x.name.strip().lower().endswith(".emd")]
 

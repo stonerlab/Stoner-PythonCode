@@ -15,6 +15,7 @@ __all__ = [
     "makedirs",
     "Hyperspy_ok",
     "hs",
+    "hsload",
     "which",
     "commonpath",
     "_jit",
@@ -22,7 +23,7 @@ __all__ = [
 ]
 
 from sys import version_info as __vi__
-from os import walk, makedirs
+from os import walk, makedirs, environ
 from os.path import join, commonpath
 import fnmatch
 from inspect import signature, getfullargspec
@@ -35,15 +36,19 @@ from matplotlib import __version__ as mpl_version
 _lmfit = True
 
 try:
+    if "GH_ACTION" in environ:
+        import time
+
+        time.sleep(np.random.rand() * 5)
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
 
     try:
-        load = hs.load
+        hsload = hs.load
     except (RuntimeError, AttributeError):
         try:
             from hyperspy import api
 
-            load = api.load
+            hsload = api.load
         except (ImportError, AttributeError) as err:
             raise ImportError("Panic over hyperspy") from err
 
@@ -54,6 +59,7 @@ try:
 except ImportError:
     Hyperspy_ok = False
     hs = None
+    hsload = None
 
 if __vi__[1] < 7:
     from re import _pattern_type  # pylint: disable = E0611

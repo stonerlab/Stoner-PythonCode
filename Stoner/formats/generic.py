@@ -11,7 +11,7 @@ import PIL
 import numpy as np
 
 from ..Core import DataFile
-from ..compat import str2bytes, Hyperspy_ok, hs
+from ..compat import str2bytes, Hyperspy_ok, hs, hsload
 from ..core.exceptions import StonerLoadError
 from ..tools.file import FileManager
 
@@ -353,16 +353,7 @@ if Hyperspy_ok:
                 self.filename = filename
             # Open the file and read the main file header and unpack into a dict
             try:
-                load = hs.load
-            except AttributeError:
-                try:
-                    from hyperspy import api
-
-                    load = api.load
-                except (ImportError, AttributeError) as err:
-                    raise ImportError("Panic over hyperspy") from err
-            try:
-                signal = load(self.filename)
+                signal = hsload(self.filename)
                 if not isinstance(signal, hs.signals.Signal2D):
                     raise StonerLoadError("Not a 2D signal object - aborting!")
             except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
