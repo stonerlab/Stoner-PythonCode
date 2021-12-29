@@ -10,6 +10,7 @@ import sys
 import pathlib
 import io
 import urllib
+import os
 
 from Stoner import Data,__homepath__, __datapath__, ImageFile
 from Stoner.Core import DataFile
@@ -41,7 +42,7 @@ def list_files():
     incfiles=[x for x in incfiles if x.suffix!=".tdms_index"]
     incfiles=[x for x in incfiles if not x.is_dir()]
 
-    if not Hyperspy_ok:
+    if not Hyperspy_ok and "GH_ACTION" not is os.environ:
         print("hyperspy too old, skupping emd file for test")
         incfiles=[x for x in incfiles if not x.name.strip().lower().endswith(".emd")]
 
