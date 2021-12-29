@@ -36,10 +36,6 @@ from matplotlib import __version__ as mpl_version
 _lmfit = True
 
 try:
-    if "GH_ACTION" in environ:
-        import time
-
-        time.sleep(np.random.rand() * 5)
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
 
     try:
