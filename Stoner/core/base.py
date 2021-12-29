@@ -50,7 +50,7 @@ _asteval_interp = None
 def _parse_date(string: str) -> datetime.datetime:
     """Run the dateutil parser with a UK sensible date order."""
     parserinfo = parser.parserinfo(dayfirst=True)
-    return parser.parse(string, parserinfo)
+    return parser.parse(string, parserinfo, fuzzy=True)
 
 
 def literal_eval(string: str) -> Any:
@@ -452,7 +452,7 @@ class typeHintedDict(regexpDict):
                         try:
                             ret = _parse_date(ret)
                         except (ValueError, OverflowError):
-                            pass
+                            ret = datetime.datetime.now()
                     break
                 else:
                     ret = valuetype(value)
