@@ -447,12 +447,21 @@ class typeHintedDict(regexpDict):
                         ret = ""
                     break
                 elif issubclass(valuetype, datetime.datetime):
-                    ret = literal_eval(value)
-                    if isinstance(ret, string_types):
+                    if isinstance(ret, datetime.datetime):
+                        break  # Alreadu a datetime object
+                    try:
+                        ret = literal_eval(value)
+                    except ValueError:
+                        ret = str(ret)
+                    if isinstance(ret, datetime.datetime):
+                        break  # Got us a datetime object now
+                    elif isinstance(ret, string_types):  # try parsing as a string now
                         try:
                             ret = _parse_date(ret)
+                            break
                         except (ValueError, OverflowError):
-                            ret = datetime.datetime.now()
+                            pass  # fall back
+                    ret = datetime.datetime(1970, 1, 1)  # unparsable time
                     break
                 else:
                     ret = valuetype(value)
@@ -528,10 +537,7 @@ class typeHintedDict(regexpDict):
                 super().__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
-                try:
-                    super().__setitem__(name, self.__mungevalue(typehint, value))
-                except ValueError:
-                    pass  # Silently fail
+                super().__setitem__(name, self.__mungevalue(typehint, value))
         else:
             if isinstance(value, string_types):
                 value = string_to_type(value)
