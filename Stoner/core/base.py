@@ -50,7 +50,7 @@ _asteval_interp = None
 def _parse_date(string: str) -> datetime.datetime:
     """Run the dateutil parser with a UK sensible date order."""
     parserinfo = parser.parserinfo(dayfirst=True)
-    return parser.parse(string, parserinfo, fuzzy=True)
+    return parser.parse(string, parserinfo)
 
 
 def literal_eval(string: str) -> Any:
