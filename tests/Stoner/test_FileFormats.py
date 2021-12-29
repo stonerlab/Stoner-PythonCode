@@ -48,9 +48,9 @@ def list_files():
 
     return sorted(incfiles)
 
+listed_files=list_files()
 
-
-@pytest.mark.parametrize("filename", list_files(),ids=[x.name for x in list_files()])
+@pytest.mark.parametrize("filename", listed_files,ids=[x.name for x in listed_files])
 def test_one_file(tmpdir, filename):
     loaded=Data(filename,debug=False)
     assert isinstance(loaded,DataFile),f"Failed to load {filename.name} correctly."

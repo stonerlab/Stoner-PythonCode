@@ -28,10 +28,11 @@ def get_scripts():
         if script in skip_scipts:
             continue
         ret.append(script)
-    return ret
+    return sorted(ret)
 
+scripts=get_scripts()
 
-@pytest.mark.parametrize("script", get_scripts(),ids=get_scripts())
+@pytest.mark.parametrize("script",scripts,ids=scripts)
 @pytest.mark.filterwarnings("ignore:.*:RuntimeWarning")
 def test_scripts(script):
     """Import each of the sample scripts in turn and see if they ran without error"""
