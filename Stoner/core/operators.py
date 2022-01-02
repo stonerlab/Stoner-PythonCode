@@ -3,11 +3,12 @@
 
 __all__ = ["DataFileOperatorsMixin"]
 import numpy as np
+import pandas as pd
 
 from ..compat import index_types, string_types
 from ..tools import isiterable
 from .utils import add_core, and_core, mod_core, sub_core
-from . import _setas, DataArray
+from . import Setas
 
 
 class DataFileOperatorsMixin:
@@ -266,8 +267,8 @@ class DataFileOperatorsMixin:
             raise RuntimeError("Not a TDI File")
         col_headers_tmp = [x.strip() for x in row[1:]]
         cols = len(col_headers_tmp)
-        self._data._setas = _setas("." * cols)
-        self.data = DataArray([], setas=self._data._setas)
+        self._setas = Setas("." * cols)
+        self.data = pd.DataFrame()
         for r in reader:
             if r.strip() == "":  # Blank line
                 continue

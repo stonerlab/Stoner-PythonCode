@@ -5,6 +5,7 @@ __all__ = ["DataFileSearchMixin"]
 
 import copy
 import numpy as np
+import pandas as pd
 from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import index_types, int_types
@@ -92,9 +93,11 @@ class DataFileSearchMixin:
             (ndarray):
                 One or more columns of data as a :py:class:`numpy.ndarray`.
         """
-        return self.data[:, self.find_col(col)]
+        if not isinstance(col, pd.Index):
+            col = self.find_col(col)
+        return self.data.loc[:, col]
 
-    def find_col(self, col, force_list=False):
+    def find_col(self, col):
         """Indexes the column headers in order to locate a column of data.shape.
 
         Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
@@ -114,15 +117,11 @@ class DataFileSearchMixin:
             col (int, a string, a re, a slice or a list):
                 Which column(s) to retuirn indices for.
 
-        Keyword Arguments:
-            force_list (bool):
-                Force the output always to be a list. Mainly for internal use only
-
         Returns:
             int, list of ints:
                 The matching column index as an integer or a KeyError
         """
-        return self.data._setas.find_col(col, force_list)
+        return self.setas.find_col(col)
 
     def find_duplicates(self, xcol=None, delta=1e-8):
         """Find rows with duplicated values of the search column(s).

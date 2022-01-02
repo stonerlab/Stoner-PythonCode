@@ -10,14 +10,15 @@ import urllib
 
 import numpy as np
 from numpy import ma
+import pandas as pd
 
-from ..tools import get_option
-from ..compat import classproperty, path_types
+from ..tools import get_option, isiterable
+from ..compat import classproperty, path_types, string_types
 
-from .array import DataArray
 from .utils import copy_into
 from ..tools.classes import subclasses
 from ..tools.file import URL_SCHEMES
+from .setas import Setas
 
 try:
     from tabulate import tabulate
@@ -32,6 +33,15 @@ class DataFilePropertyMixin:
     """Provide the proerties for DataFile Like Objects."""
 
     _subclasses = None
+
+    def __init__(self, *args, **kargs):
+        """Set the attributes that nack the properties defined here."""
+        self._data = pd.DataFrame()
+        self._mask = pd.DataFrame()
+        self._masks = [False]
+        self._mask_value = np.NaN
+        self._setas = Setas(self)
+        super().__init__(*args, **kargs)
 
     @property
     def _repr_html_(self):
@@ -68,46 +78,57 @@ class DataFilePropertyMixin:
     @property
     def column_headers(self):
         """Pass through to the setas attribute."""
-        return self.data._setas.column_headers
+        return self._data.columns
 
     @column_headers.setter
     def column_headers(self, value):
         """Write the column_headers attribute (delagated to the setas object)."""
-        self.data._setas.column_headers = value
+        if isinstance(value, string_types) or not isiterable(value):
+            value = [value]
+        renames = {old: new for old, new in zip(self._data.columns, value)}
+        self._data = self._data.rename(columns=renames)
+        self._mask = self._mask.rename(columns=renames)
+        # Update the setas index labels
+        self.setas._index = self._setas._index.rename(renames)
 
     @property
     def data(self):
         """Property Accessors for the main numerical data."""
-        return np.atleast_2d(self._data)
+        return self._data.mask(self._mask, self._mask_value)
 
     @data.setter
     def data(self, value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
-        nv = value
-        if not nv.shape:  # nv is a scalar - make it a 2D array
-            nv = ma.atleast_2d(nv)
-        elif nv.ndim == 1:  # nv is a vector - make it a 2D array
-            nv = ma.atleast_2d(nv).T
-        elif nv.ndim > 2:  # nv has more than 2D - raise an error # TODO 0.9? Support 3D arrays in DataFile?
-            raise ValueError(f"DataFile.data should be no more than 2 dimensional not shape {nv.shape}")
-        if not isinstance(
-            nv, DataArray
-        ):  # nv isn't a DataArray, so preserve setas (does this preserve column_headers too?)
-            nv = DataArray(nv)
-            nv._setas = getattr(self, "_data")._setas.clone
-        elif (
-            nv.shape[1] == self.shape[1]
-        ):  # nv is a DataArray with the same number of columns - preserve column_headers and setas
-            ch = getattr(self, "_data").column_headers
-            nv._setas = getattr(self, "_data")._setas.clone
-            nv.column_headers = ch
-        nv._setas.shape = nv.shape
-        self._data = nv
+        if hasattr(value, "mask"):
+            mask = value.mask
+            value.mask = False
+        else:
+            mask = False
+        if not isinstance(value, (pd.DataFrame, pd.Series)):
+            column_headers = self._data.columns
+        elif isinstance(value, pd.DataFrame):
+            column_headers = [str(x) for x in value.columns]
+        else:
+            column_headers = [str(x) for x in value.index]
+        data = pd.DataFrame(value)
+        if isinstance(value, pd.Series) or (data.shape[1] == 1 and data.shape[0] > 1):
+            data = data.T
+        # Ensure column names are all strings.
+        data.rename(columns={x: str(x) for x in data.columns}, inplace=True)
+        if np.shape(mask) != data.shape:
+            mask = np.zeros_like(data, dtype=bool)
+        if list(data.columns) != list(column_headers):
+            renames = {old: new for old, new in zip(data.columns, column_headers)}
+            data = data.rename(columns=renames)
+        self._data = data
+        self._mask = pd.DataFrame(mask, columns=self._data.columns)
+        newsetas = {ch: self._setas._index.get(ch, ".") for ch in self._data.columns}
+        self._setas._index = pd.Series(newsetas)
 
     @property
     def dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys."""
-        return np.array([dict(zip(self.column_headers, r)) for r in self.rows()])
+        return self.data.to_records()
 
     @property
     def dims(self):
@@ -115,9 +136,9 @@ class DataFilePropertyMixin:
         return self.data.axes
 
     @property
-    def dtype(self):
+    def dtypes(self):
         """Return the np dtype attribute of the data."""
-        return self.data.dtype
+        return self.data.dtypes
 
     @property
     def filename(self):
@@ -184,16 +205,29 @@ class DataFilePropertyMixin:
     @property
     def mask(self):
         """Return the mask of the data array."""
-        self.data.mask = ma.getmaskarray(self.data)
-        return self.data.mask
+        return self._mask
 
     @mask.setter
     def mask(self, value):
         """Set the mask attribute by setting the data.mask."""
         if callable(value):
-            self._set_mask(value, invert=False)
+            return self._set_mask(value, invert=False)
+        elif np.ndim(value) == 0:
+            value = np.ones_like(self._data, dtype=bool) * value
+        elif np.shape(value) == self._data.shape:
+            value = np.ndarray(value).astype(bool)
+        elif np.ndim(value) == 2:
+            value = np.array(value)
+            r, c = value.shape
+            x, y = self._data.shape
+            r = min(r, x)
+            c = min(c, y)
+            mask = np.zeros_like(self._data)
+            mask[:r, :c] = value
+            value = mask
         else:
-            self.data.mask = value
+            raise ValueError(f"Unable to set mask from {value}")
+        self._mask = pd.DataFrame(value, columns=self._data.columns)
 
     @classproperty
     def patterns(cls):  # pylint: disable=no-self-argument
@@ -239,13 +273,12 @@ class DataFilePropertyMixin:
     @property
     def setas(self):
         """Get the list of column assignments."""
-        setas = self._data._setas
-        return setas
+        return self._setas
 
     @setas.setter
     def setas(self, value):
         """Set a new setas assignment by calling the setas object."""
-        self._data._setas(value)
+        self._setas(value)
 
     @property
     def T(self):
@@ -256,3 +289,61 @@ class DataFilePropertyMixin:
     def T(self, value):
         """Write directly to the transposed data."""
         self.data = value.T
+
+    #################################################################################
+    ############## Methods for manipulating properties
+
+    def _set_mask(self, func, invert=False, cumulative=False, col=0):
+        """Apply func to each row in self.data and uses the result to set the mask for the row.
+
+        Args:
+            func (callable):
+                A Callable object of the form lambda x:True where x is a row of data (numpy
+            invert (bool):
+                Optionally invert te reult of the func test so that it unmasks data instead
+            cumulative (bool):
+                if tru, then an unmask value doesn't unmask the data, it just leaves it as it is.
+        """
+        args = len(_inspect_.getargs(func.__code__)[0])
+        for i, r in self.data.iterrows():
+            if args == 2:
+                t = func(r[self.setas.x], r)
+            else:
+                t = func(r)
+            if isinstance(t, (bool, np.bool_)) or (isiterable(t) and len(t) == self._data.shape[1]):
+                t = t ^ invert
+                if cummulative:
+                    self._mask.iloc[i] = t
+                else:
+                    self.mask.iloc[i, t] = ~invert
+            else:
+                raise ValueError(
+                    f"Mask function {func} should return either a single boolean value or an aray of the same length as the input not {t}"
+                )
+
+    def _push_mask(self, mask=None):
+        """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
+
+        Args:
+            mask (:py:class:numpy.array of bool or bool or None):
+                The new data mask to apply (defaults to None = unmask the data
+
+        Returns:
+            Nothing
+        """
+        self._masks.append(self.mask)
+        if mask is None:
+            self.mask = False
+        else:
+            self.mask = mask
+
+    def _pop_mask(self):
+        """Replace the mask on the data with the last one stored by _push_mask().
+
+        Returns:
+            The previous mask
+        """
+        ret = self.mask
+        self.mask = self._masks.pop()
+        if not self._masks:
+            self._masks = [False]

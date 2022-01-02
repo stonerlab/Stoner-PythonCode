@@ -6,7 +6,7 @@ __all__ = ["DataFileInterfacesMixin"]
 import numpy as np
 
 from ..compat import string_types, _pattern_type
-from ..tools import isiterable
+from ..tools import isiterable, all_type
 
 
 class DataFileInterfacesMixin:
@@ -75,23 +75,28 @@ class DataFileInterfacesMixin:
                 ret = self.metadata[name]
             except KeyError:
                 try:
+                    name = self.find_col(name)  # Column lookup
                     ret = self.data[name]
                 except KeyError as err:
                     raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.") from err
-        elif isinstance(name, tuple) and isinstance(name[0], string_types):
+        elif isinstance(name, tuple) and isinstance(name[0], string_types + (_pattern_type,)):
             try:
                 rest = name[1:]
                 ret = self.metadata[name[0]]
                 ret = ret.__getitem__(*rest)
             except KeyError:
                 try:
-                    ret = self.data[name]
+                    name = self.find_col(name[0])
+                    new_name = tuple(rest) + (name,)
+                    ret = self.data.loc[new_name]
                 except KeyError as err:
                     raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.") from err
         elif isinstance(name, tuple) and name in self.metadata:
             ret = self.metadata[name]
+        elif isinstance(name, tuple) and all_type(name, int):
+            ret = self.data.iloc[name]
         else:
-            ret = self.data[name]
+            ret = self.data.loc[name]
         return ret
 
     def __iter__(self):
@@ -140,10 +145,13 @@ class DataFileInterfacesMixin:
                     key = name[0]
                     name = tuple(name[1:])
                 self.metadata[key][name] = value
-            else:
-                self.data[name] = value
+            elif isinstance(name[0], string_types):
+                name = tuple(name[1:]) + (self.find_col(name[0]),)
+                self._data.loc[name] = value
+            elif all_type(name, int):
+                self._data.iloc[name] = value
         else:
-            self.data[name] = value
+            self._data.loc[name] = value
 
     def count(self, value=None, axis=0, col=None):
         """Count the number of un-masked elements in the :py:class:`DataFile`.

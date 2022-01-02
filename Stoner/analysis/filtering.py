@@ -157,7 +157,7 @@ class FilteringOpsMixin:
             User Guide section :ref:`binning_guide`
         """
 
-        _ = self.data._col_args(
+        _ = self.setas._col_args(
             scalar=False,
             force_list=True,
             xcol=kargs.pop("xcol", None),

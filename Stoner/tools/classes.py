@@ -16,6 +16,8 @@ import copy
 from typing import Optional, Dict, Any, List, Iterable as IterableType, Union
 from collections.abc import MutableSequence
 
+import pandas as pd
+
 from .tests import all_type, isiterable
 
 _options = {
@@ -304,17 +306,21 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
     Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
     overwrites the attributes that represent the data in the DataFile.
     """
-    dest.data = source.data.copy()
-    dest.setas = source.setas
+    dest._data = source._data.copy()
+    dest._mask = source._mask.copy()
+
+    newsetas = {ch: dest._setas._index.get(ch, ".") for ch in dest._data.columns}
+    dest._setas._index = pd.Series(newsetas)
+
     for attr in source._public_attrs:
-        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data"]:
+        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "setas", "_data", "_mask"]:
             continue
         try:
             setattr(dest, attr, copy.deepcopy(getattr(source, attr)))
         except (NotImplementedError, TypeError, ValueError):  # Deepcopying failed, so just copy a reference instead
             try:
                 setattr(dest, attr, getattr(source, attr))
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
     dest._punlic_attrs = source._public_attrs
     return dest

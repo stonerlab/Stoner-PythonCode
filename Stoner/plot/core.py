@@ -14,14 +14,25 @@ from functools import wraps
 import copy
 
 import numpy as np
+import pandas as pd
 from scipy.interpolate import griddata
 
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
 from matplotlib import cm, colors
 
-from Stoner.compat import string_types, index_types, int_types, getargspec
-from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, typedList, get_option, fix_signature
+from ..compat import string_types, index_types, int_types, getargspec
+from ..tools import (
+    AttributeStore,
+    isnone,
+    isanynone,
+    all_type,
+    isiterable,
+    typedList,
+    get_option,
+    fix_signature,
+    isLikeList,
+)
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 from .utils import hsl2rgb
@@ -129,7 +140,7 @@ class PlotMixin:
             "newplot": PlotAttr,
         }
         super().__init__(*args, **kargs)
-        self._labels = typedList(string_types, [])
+        self._labels = pd.Series([])
         if self.debug:
             print("Done PlotMixin init")
 
@@ -195,21 +206,25 @@ class PlotMixin:
     @property
     def labels(self):
         """Return the labels for the plot columns."""
-        if len(self._labels) == 0:
-            return self.column_headers
-        if len(self._labels) < len(self.column_headers):
-            self._labels.extend(copy.deepcopy(self.column_headers[len(self._labels) :]))
-        return self._labels
+        self._labels.drop(self._labels.index.difference(self._data.columns), inplace=True)
+        extras = self._data.columns.difference(self._labels.index)
+        for extra in extras:
+            self._labels[extra] = extra
+        return self._labels.to_dict()
 
     @labels.setter
     def labels(self, value):
         """Set the labels for the plot columns."""
         if value is None:
-            self._labels = typedList(string_types, self.column_headers)
-        elif isiterable(value) and all_type(value, string_types):
-            self._labels = typedList(string_types, value)
-        else:
-            raise TypeError(f"labels should be iterable and all strings, or None, not {type(value)}")
+            self._labels = pd.Series([])
+        if isLikeList(value) and len(value) == self._labels.size:  # Transform a list to a dict
+            value = {k: v for k, v in zip(self._lables.index, value)}
+        if isinstance(value, Mapping):  # Map the column name to the label
+            _ = self.labels  # Ensure we've got labels matched to our columns
+            for k, v in value.items():
+                if k not in self._data.columns:
+                    raise KeyError(f"Column {k} not found")
+                self._labels[k] = str(v)
 
     @property
     def showfig(self):
@@ -287,9 +302,7 @@ class PlotMixin:
             kwords["label"] = self._col_label(iy)
         x = self.column(ix)
         y = self.column(iy)
-        mask = x.mask | y.mask
-        x = x[~mask]
-        y = y[~mask]
+
         if plotter in self.positional_fmt:  # plots with positional fmt
             if fmt is None:
                 plotter(x, y, figure=figure, **kwords)
@@ -395,12 +408,12 @@ class PlotMixin:
         Returns:
             String type representing the column label.
         """
-        ix = self.find_col(index)
-        if isinstance(ix, list):
-            if join:
-                return ",".join([self._col_label(i) for i in ix])
-            return [self._col_label(i) for i in ix]
-        return self.labels[ix]
+        ret = [self.lables.get(i, i) for i in self.find_col(index)]
+        if join:
+            return ",".join(ret)
+        if len(ret) == 1:
+            ret = ret[0]
+        return ret
 
     def __dir__(self):
         """Handle the local attributes as well as the inherited ones."""
@@ -686,17 +699,8 @@ class PlotMixin:
         """
         # Call the parent method and then update this label
         super().add_column(column_data, header=header, index=index, **kargs)
-        # Mostly this is duplicating the parent method
-        if index is None:
-            index = len(self.column_headers) - 1
-        else:
-            index = self.find_col(index)
-
-        self.labels = (
-            self.labels[:index]
-            + self.column_headers[index : len(self.column_headers) - len(self.labels) + index]
-            + self.labels[index:]
-        )
+        # Resync column labels
+        _ = self.lables
         return self
 
     def colormap_xyz(self, xcol=None, ycol=None, zcol=None, **kargs):
