@@ -12,13 +12,14 @@ import numpy as np
 from numpy import ma
 import pandas as pd
 
-from ..tools import get_option, isiterable
+from ..tools import get_option, isiterable, isLikeList
 from ..compat import classproperty, path_types, string_types
 
 from .utils import copy_into
 from ..tools.classes import subclasses
 from ..tools.file import URL_SCHEMES
 from .setas import Setas
+from .columns import Column_Headers
 
 try:
     from tabulate import tabulate
@@ -41,6 +42,7 @@ class DataFilePropertyMixin:
         self._masks = [False]
         self._mask_value = np.NaN
         self._setas = Setas(self)
+        self._column_headers = Column_Headers(self)
         super().__init__(*args, **kargs)
 
     @property
@@ -78,18 +80,14 @@ class DataFilePropertyMixin:
     @property
     def column_headers(self):
         """Pass through to the setas attribute."""
-        return self._data.columns
+        return self._column_headers
 
     @column_headers.setter
     def column_headers(self, value):
         """Write the column_headers attribute (delagated to the setas object)."""
-        if isinstance(value, string_types) or not isiterable(value):
-            value = [value]
-        renames = {old: new for old, new in zip(self._data.columns, value)}
-        self._data = self._data.rename(columns=renames)
-        self._mask = self._mask.rename(columns=renames)
-        # Update the setas index labels
-        self.setas._index = self._setas._index.rename(renames)
+        if not isLikeList(value):
+            raise ValueError(f"Value assigned to column headers must be a sequence not a {type(value)}")
+        self._column_headers.set_all(value)
 
     @property
     def data(self):
@@ -105,7 +103,7 @@ class DataFilePropertyMixin:
         else:
             mask = False
         if not isinstance(value, (pd.DataFrame, pd.Series)):
-            column_headers = self._data.columns
+            column_headers = self.column_headers
         elif isinstance(value, pd.DataFrame):
             column_headers = [str(x) for x in value.columns]
         else:
@@ -215,7 +213,7 @@ class DataFilePropertyMixin:
         elif np.ndim(value) == 0:
             value = np.ones_like(self._data, dtype=bool) * value
         elif np.shape(value) == self._data.shape:
-            value = np.ndarray(value).astype(bool)
+            value = value.astype(bool)
         elif np.ndim(value) == 2:
             value = np.array(value)
             r, c = value.shape

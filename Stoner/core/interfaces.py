@@ -136,7 +136,9 @@ class DataFileInterfacesMixin:
         """
         if isinstance(name, string_types) or str(name) in self.metadata:
             self.metadata[name] = value
-        elif isinstance(name, tuple):
+            return None
+
+        if isinstance(name, tuple):
             if isinstance(name[0], string_types) and name[0] in self.metadata and isiterable(self.metadata[name[0]]):
                 if len(name) == 2:
                     key = name[0]
@@ -145,13 +147,36 @@ class DataFileInterfacesMixin:
                     key = name[0]
                     name = tuple(name[1:])
                 self.metadata[key][name] = value
-            elif isinstance(name[0], string_types):
+                return None
+
+            if isinstance(name[0], string_types):
                 name = tuple(name[1:]) + (self.find_col(name[0]),)
+                if isinstance(value, np.ma.MaskedArray):
+                    mask = value.mask
+                    value = value.a.data
+                else:
+                    mask = False
                 self._data.loc[name] = value
-            elif all_type(name, int):
+                self._mask.loc[name] = mask
+                return None
+
+            if all_type(name, int):
+                if isinstance(value, np.ma.MaskedArray):
+                    mask = value.mask
+                    value = value.a.data
+                else:
+                    mask = False
                 self._data.iloc[name] = value
+                self._mask.iloc[name] = mask
+                return None
+
+        if isinstance(value, np.ma.MaskedArray):
+            mask = value.mask
+            value = value.a.data
         else:
-            self._data.loc[name] = value
+            mask = False
+        self._data.loc[name] = value
+        self._mask.loc[name] = mask
 
     def count(self, value=None, axis=0, col=None):
         """Count the number of un-masked elements in the :py:class:`DataFile`.

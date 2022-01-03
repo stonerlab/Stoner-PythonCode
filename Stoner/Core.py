@@ -531,7 +531,7 @@ class DataFile(
         try:
             return self._repr_table_()
         except (ImportError, ValueError, TypeError):
-            return self.__repr_core__(256)
+            return self.__repr_core__(64)
 
     def __setattr__(self, name, value):
         """Handle attempts to set attributes not covered with class attribute variables.
@@ -695,40 +695,12 @@ class DataFile(
             self.column_headers = col_headers_tmp
         return self
 
-    def __repr_core__(self, shorten=1000):
+    def __repr_core__(self, shorten=100):
         """Actuall do the repr work, but allow for a shorten parameter to save printing big files out to disc."""
-        outp = "TDI Format 1.5\t" + "\t".join(self.column_headers) + "\n"
-        m = len(self.metadata)
-        r = np.shape(self.data)[0]
-        md = self.metadata.export_all()
-        for x in range(min(r, m)):
-            if self.data.ndim != 2 or self.shape[1] == 1:
-                outp += f"{md[x]}\t{self.data[x]}\n"
-            else:
-                outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data.iloc[x]]) + "\n"
-        if m > r:  # More metadata
-            for x in range(r, m):
-                outp = outp + md[x] + "\n"
-        elif r > m:  # More data than metadata
-            if shorten is not None and shorten and r - m > shorten:
-                for x in range(m, m + shorten - 100):
-                    if self.data.ndim != 2 or self.shape[1] == 1:
-                        outp += "\t" + f"\t{self.data[x]}\n"
-                    else:
-                        outp += "\t" + "\t".join([str(y) for y in self.data.iloc[x]]) + "\n"
-                outp += f"... {r - m - shorten + 100} lines skipped...\n"
-                for x in range(-100, -1):
-                    if self.data.ndim != 2 or self.shape[1] == 1:
-                        outp += f"\t\t{self.data[x]}\n"
-                    else:
-                        outp += "\t" + "\t".join([str(y) for y in self.data.iloc[x]]) + "\n"
-            else:
-                for x in range(m, r):
-                    if self.data.ndim != 2 or self.shape[1] == 1:
-                        outp += f"\t\t{self.data[x]}\n"
-                    else:
-                        outp = outp + "\t" + "\t".join([str(y) for y in self.data.iloc[x]]) + "\n"
-        return outp
+        md = pd.Series(sorted(self.metadata.export_all()), name="TDI Format 1.5")
+        outp = pd.concat([md, self.data], axis=1)
+        outp.loc[outp.index[len(md)] :, "TDI Format 1.5"] = ""
+        return outp.to_string(max_rows=shorten, max_cols=5, index=False)
 
     def _repr_html_private(self):
         """Version of repr_core that does and html output."""
@@ -938,13 +910,13 @@ class DataFile(
         Yields:
             1D array: Returns the next column of data.
         """
-        for ix, col in enumerate(self.data.T):
-            if not_masked and ma.is_masked(col):
+        for ix, col in enumerate(self.data):
+            if not_masked and np.all(self._mask[col]):
                 continue
             if reset:
                 return
             else:
-                yield self.column(ix)
+                yield self.data.iloc[:, ix]
 
     def del_column(self, col=None, duplicates=False):
         """Delete a column from the current :py:class:`DataFile` object.
@@ -972,52 +944,28 @@ class DataFile(
                     will be deleted
         """
         if duplicates:
-            ch = self.column_headers
-            dups = []
             if col is None:
-                for i, chi in enumerate(ch):
-                    if chi in ch[i + 1 :]:
-                        dups.append(ch.index(chi, i + 1))
+                drop = ~self._data.columns.duplicated()
             else:
-                col = ch[self.find_col(col)]
-                i = ch.index(col)
-                while True:
-                    try:
-                        i = ch.index(col, i + 1)
-                        dups.append(i)
-                    except ValueError:
-                        break
-            return self.del_column(dups, duplicates=False)
+                started = False
+                col = self.find_col(col)
+                drop = np.ones_like(self.column_headers, dtype=bool)
+                for ix, c in enumerate(self.column_headers):
+                    if c in col:
+                        drop[ix] = not started
+                        started = True
+            self._mask = self._mask.loc[:, drop]
+            self.data = self._data.loc[:, drop]
+            return self
         if col is None or (isinstance(col, bool) and not col):  # Without defining col we just compress by the mask
-            self.data = ma.mask_cols(self.data)
-            t = DataArray(self.column_headers)
-            t.mask = self.mask[0]
-            self.column_headers = list(ma.compressed(t))
-            self.data = ma.compress_cols(self.data)
-        elif isinstance(col, bool) and col:  # Without defining col we just compress by the mask
-            ch = [self.column_headers[ix] for ix, v in enumerate(self.setas.set) if v]
-            setas = [self.setas[ix] for ix, v in enumerate(self.setas.set) if v]
-            self.data = self.data[:, self.setas.set]
-            self.setas = setas
-            self.column_headers = ch
-        elif isiterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
-            col = ~np.array(col)
-            new_setas = np.array(self.setas)[col]
-            new_column_headers = np.array(self.column_headers)[col]
-            self.data = self.data[:, col]
-            self.setas = new_setas
-            self.column_headers = new_column_headers
-        else:  # Otherwise find individual columns
-            c = self.find_col(col)
-            ch = self.column_headers
-            self.data = DataArray(np.delete(self.data, c, 1), mask=np.delete(self.data.mask, c, 1))
-            if isinstance(c, list):
-                c.sort(reverse=True)
-            else:
-                c = [c]
-            for cl in c:
-                del ch[cl]
-            self.column_headers = ch
+            masked = [not np.all(data) for header, data in self._mask.items()]
+            self._mask = self._mask.loc[:, masked]
+            self.data = self._data.loc[:, masked]
+            return self
+        col = self.find_col(col)
+        drop = [c not in col for c in self.column_headers]
+        self._mask = self._mask.loc[:, drop]
+        self.data = self._data.loc[:, drop]
         return self
 
     def del_nan(self, col=None, clone=False):
@@ -1039,17 +987,13 @@ class DataFile(
             ret = self
 
         if col is None:  # If col is still None, use all columsn that are set to any value in self.setas
-            col = [ix for ix, col in enumerate(self.setas) if col != "."]
-        if not isLikeList(col):  # If col isn't a list, make it one now
-            col = [col]
-        col = [ret.find_col(c) for c in col]  # Normalise col to be a list of integers
+            col = ret.setas.set
+        col = ret.find_col(col)  # Normalise col to be a list of integers
         dels = np.zeros(len(ret)).astype(bool)
         for ix in col:
             dels = np.logical_or(
-                dels, np.isnan(ret.data[:, ix])
+                dels, np.isnan(ret._data.loc[:, ix])
             )  # dels contains True if any row contains a NaN in columns col
-        not_masked = np.logical_not(ma.mask_rows(ret.data).mask[:, 0])  # Get rows wqhich are not masked
-        dels = np.logical_and(not_masked, dels)  # And make dels just be unmasked rows with NaNs
 
         ret.del_rows(np.logical_not(dels))  # Del the those rows
         return ret
@@ -1091,55 +1035,42 @@ class DataFile(
             Implement val is a tuple for deletinging in a range of values.
         """
         if col is None:
-            self.data = ma.compress_rows(self.data)
-        else:
-            if isinstance(col, slice) and val is None:  # delete rows with a slice to make a list of indices
-                indices = col.indices(len(self))
-                col = list(range(*indices))
-            elif callable(col) and val is None:  # Delete rows usinga callalble taking the whole row
-                col = [r.i for r in self.rows() if col(r)]
-            elif isiterable(col) and all_type(col, bool):  # Delete rows by a list of booleans
-                if len(col) < len(self):
-                    col.extend([False] * (len(self) - len(col)))
-                self.data = self.data[col]
-                return self
-            if isiterable(col) and all_type(col, int_types) and val is None and not invert:
-                col.sort(reverse=True)
-                for c in col:
-                    self.del_rows(c)
-            elif isinstance(col, list) and all_type(col, int_types) and val is None and invert:
-                for i in range(len(self) - 1, -1, -1):
-                    if i not in col:
-                        self.del_rows(i)
-            elif isinstance(col, int_types) and val is None and not invert:
-                tmp_mask = self.mask
-                tmp_setas = self.setas.clone
-                self.data = np.delete(self.data, col, 0)
-                self.data.mask = np.delete(tmp_mask, col, 0)
-                self.setas = tmp_setas
-            elif isinstance(col, int_types) and val is None and invert:
-                self.del_rows([c], invert=invert)
+            col = np.any(self._mask, axis=1)
+
+        if isinstance(col, slice) and val is None:  # delete rows with a slice to make a list of indices
+            indices = col.indices(len(self))
+            col = list(range(*indices))
+        elif callable(col) and val is None:  # Delete rows usinga callalble taking the whole row
+            col = [r.i for r in self.rows() if col(r)]
+
+        if isiterable(col) and all_type(col, bool):  # Delete rows by a list of booleans
+            drop = self._data.index[~(col ^ invert)]
+            self._mask = self._mask.drop(labels=drop)
+            self._data = self._data.drop(labels=drop)
+            return self
+
+        if not isLikeList(col):
+            col = [col]
+        if isiterable(col) and all_type(col, self._data.index[0].__class__) and val is None:
+            if invert:
+                drop = list(set(self._data.index) - set(col))
             else:
-                col = self.find_col(col)
-                d = self.column(col)
-                if callable(val):
-                    rows = np.nonzero(
-                        [(bool(val(x[col], x) and bool(x[col] is not ma.masked)) != invert) for x in self]
-                    )[0]
-                elif isinstance(val, float):
-                    rows = np.nonzero([bool(x == val) != invert for x in d])[0]
-                elif isiterable(val) and len(val) == 2:
-                    (upper, lower) = (max(list(val)), min(list(val)))
-                    rows = np.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
-                else:
-                    raise SyntaxError(
-                        "If val is specified it must be a float,callable, or iterable object of length 2"
-                    )
-                tmp_mask = self.mask
-                tmp_setas = self.setas.clone
-                self.data = np.delete(self.data, rows, 0)
-                self.data.mask = np.delete(tmp_mask, rows, 0)
-                self.setas = tmp_setas
+                drop = cols
+                self._mask
+            self._mask = self._mask.drop(labels=drop)
+            self._data = self._data.drop(labels=drop)
+            return self
+
+        col = self.find_col(col)
+        data = self.data[col]
+        if not callable(val):
+            if isinstance(val, tuple):
+                val = lambda row: np.any(np.isclose(row, *val))
+            else:
+                val = lambda row: np.any(np.isclose(row, val))
+        drop = data.apply(val, axis=1) ^ invert
+        self._mask = self._mask.drop(labels=drop)
+        self._data = self._data.drop(labels=drop)
         return self
 
     def dir(self, pattern=None):
@@ -1193,7 +1124,7 @@ class DataFile(
 
         Args:
             func (callable):
-                is a callable object that should take a single list as a p[arameter representing one row.
+                is a callable object that should take a single list as a parameter representing one row.
             cols (list):
                 a list of column indices that are used to form the list of values passed to func.
             reset (bool):
@@ -1206,13 +1137,13 @@ class DataFile(
         """
         if cols is not None:
             cols = [self.find_col(c) for c in cols]
+            data = self.data
+        else:
+            data = self.data[cols]
         if reset:
-            self.data.mask = False
-        for r in self.rows():
-            if cols is None:
-                self.mask[r.i, :] = not func(r)
-            else:
-                self.mask[r.i, :] = not func(r[cols])
+            self.mask = False
+        self.mask = data.apply(func, axis=1)
+
         return self
 
     def get_filename(self, mode):
@@ -1232,7 +1163,7 @@ class DataFile(
         self.filename = file_dialog(mode, self.filename, type(self), DataFile)
         return self.filename
 
-    def insert_rows(self, row, new_data):
+    def insert_rows(self, row, new_data, reindex=True):
         """Insert new_data into the data array at position row. This is a wrapper for numpy.insert.
 
         Args:
@@ -1246,7 +1177,22 @@ class DataFile(
             self:
                 A copy of the modified :py:class:`DataFile` object
         """
-        self.data = np.insert(self.data, row, new_data, 0)
+        part1 = (self._data.loc[:row] / iloc[:-1], self._mask.loc[:row] / iloc[:-1])
+        part2 = (self._data.loc[row:], self._mask.loc[row:])
+        if hasattr(newdata, "mask") and not callable(newdata.mask):
+            mask = newdata.mask
+        else:
+            mask = np.zeros_like(newdata, dtype=bool)
+        if isinstance(newdata, list) or (ininstance(newdata, np.ndarray) and newdata.ndim == 1):
+            newdata = pd.Series(newdata, index=[h for h, _ in zip(self.column_headers, newdata)])
+        if isinstance(newdata, pd.Series):
+            newdata = pd.DataFrame(newdata).T
+        if isinstance(newdata, np.ndarry):
+            if newdata.ndim != 2:
+                raise VsalueError(f"Cannot add {newdata.ndim}D data to a DataFile")
+            newdata = pd.DataFrame(newdata, columns=[h for h, _ in zip(self.column_headers, newdata)])
+        self._data = pd.concat([part1[0], newdata, part2[0]], axis=0, join="inner")
+        self._mask = pd.concat([part1[1], mask, part2[1]], axis=0, join="inner")
         return self
 
     @classmethod
@@ -1321,19 +1267,27 @@ class DataFile(
             self.filetype = filetype
         return self
 
-    def rename(self, old_col, new_col):
+    def rename(self, old_col, new_col=None):
         """Rename columns without changing the underlying data.
 
         Args:
-            old_col (string, int, re):
+            old_col (string, int, re, dict):
                 Old column index or name (using standard rules)
-            new_col (string):
+            new_col (string, None):
                 New name of column
 
         Returns:
             self:
                 A copy of the modified :py:class:`DataFile` instance
         """
+        if isinstance(old_col, Mapping):
+            for old, new in old_col.items():
+                self.rename(old, new)
+            return self
+        if new_col is None:
+            raise ValueError(
+                "You must specify a new column name unless the old column name is a Mappoing of old_name:new_name."
+            )
         old_col = self.find_col(old_col)
         self.column_headers[old_col] = new_col
         return self
@@ -1353,21 +1307,17 @@ class DataFile(
             self:
                 A copy of the modified :py:class:`DataFile` object
         """
+        cols = self.find_col(cols)
         if headers_too:
-            column_headers = [self.column_headers[self.find_col(x)] for x in cols]
+            column_headers = [self.column_headers[self.find_col(x, as_int=True)] for x in cols]
         else:
-            column_headers = self.column_headers
-        if setas_too:
-            setas = [self.setas[self.find_col(x)] for x in cols]
-        else:
-            setas = self.setas.clone
-
-        newdata = np.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
-        for col in cols:
-            newdata = np.append(newdata, np.atleast_2d(self.data[:, self.find_col(col)]), axis=0)
-        self.data = DataArray(np.transpose(newdata))
-        self.setas = setas
-        self.column_headers = column_headers
+            column_headers = self.column_headers[: len(cols)]
+        self._data.reindex(cols, inplace=True)
+        self._data.columns = colum_headers
+        self._mask.reindex(cols, inplace=True)
+        self._mask.columns = column_headers
+        self.setas._index.reindex(cols, inplace=True)
+        self.setas._index.index = column_headers
         return self
 
     def rows(self, not_masked=False, reset=False):
@@ -1382,17 +1332,8 @@ class DataFile(
         Yields:
             1D array: Returns the next row of data
         """
-        for ix, row in enumerate(self.data):
-            if not isinstance(row, DataArray):
-                row = DataArray([row])
-                row.i = ix
-                row.setas = self.setas
-            if ma.is_masked(row) and not_masked:
-                continue
-            if reset:
-                return
-            else:
-                yield row
+        for _, row in self.data.iterrows():
+            yield row
 
     def save(self, filename=None, **kargs):
         """Save a string representation of the current DataFile object into the file 'filename'.
@@ -1484,7 +1425,16 @@ class DataFile(
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples
         """
-        self.data.swap_column(*swp, **kargs)
+        column_headers = list(self.column_headers)
+        if len(swp) == 2:
+            swp = ((*swp),)
+        for one, two in swp:
+            one = self.find_col(one, as_int=True)
+            two = self.find_col(two, as_int=True)
+            column_headers[one], column_headers[two] = column_headers[two], column_headers[one]
+        self._data.reindex(column_headers, inplace=True)
+        self._mask.reindex(column_headers, inplace=True)
+        self.setas._index.reindex(column_headers, inplace=True)
         return self
 
     def to_pandas(self):
@@ -1503,9 +1453,8 @@ class DataFile(
         Raises:
             **NotImplementedError** if pandas didn't import correctly.
         """
-        if pd is None:
-            raise NotImplementedError("Pandas not available")
         idx = pd.MultiIndex.from_tuples(zip(*[self.column_headers, self.setas]), names=("Headers", "Setas"))
-        df = pd.DataFrame(self.data, columns=idx)
+        df = self.data
+        df.columns = idx
         df.metadata.update(self.metadata)
         return df

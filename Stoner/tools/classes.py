@@ -13,6 +13,7 @@ __all__ = [
 ]
 
 import copy
+import contextlib
 from typing import Optional, Dict, Any, List, Iterable as IterableType, Union
 from collections.abc import MutableSequence
 
@@ -306,11 +307,9 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
     Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
     overwrites the attributes that represent the data in the DataFile.
     """
-    dest._data = source._data.copy()
+    dest.data = source._data.copy()
     dest._mask = source._mask.copy()
-
-    newsetas = {ch: dest._setas._index.get(ch, ".") for ch in dest._data.columns}
-    dest._setas._index = pd.Series(newsetas)
+    dest.setas = source.setas.to_list()
 
     for attr in source._public_attrs:
         if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "setas", "_data", "_mask"]:

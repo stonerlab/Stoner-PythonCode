@@ -454,7 +454,8 @@ class Setas(MutableMapping):
     @property
     def clone(self) -> "Setas":
         """Minimal clone method."""
-        return copy.deepcopy(self)
+        breakpoint()
+        return self.copy(self._datafile)
 
     @property
     def cols(self) -> Dict:
@@ -469,12 +470,12 @@ class Setas(MutableMapping):
     @property
     def not_set(self) -> pd.Series:
         """Return a boolean array if not set."""
-        return self._index == "."
+        return self._index.index[self._index == "."]
 
     @property
     def set(self) -> pd.Series:
         """Return a boolean array if column is set."""
-        return self._index != "."
+        return self._index.index[self._index != "."]
 
     def find_col(
         self, col: Union[str, int, _pattern_type, List[Union[str, int, _pattern_type]]], as_int: bool = False
@@ -672,6 +673,31 @@ class Setas(MutableMapping):
                     pass
                 self[k] = keys[vals.index(k)]
         return self
+
+    def copy(self, ref, adapt=True):
+        """Create a copy of the atribute and reassign to the new reference.
+
+        Args:
+            ref (DataFile):
+                The new DataFile instance that this setas is attached to.
+
+        Keyword Args:
+            adapt (bool):
+                If True, rename the columns in this object to adapt to, if
+                False, rename the columns in the newly refernce object.
+
+        Returns:
+            (Setas):
+                A new setas object.
+        """
+        new = Setas(ref)
+        if not adapt:
+            mapping = {c: v for c, v in zip(ref._data.columns, self._index.index) if c != v}
+            new._data.rename(columns=mapping, inplace=True)
+            new._maske.rename(columns=mapping, inplace=True)
+            new._index.rename(index=mapping, inplace=True)
+        new._datafile.setas = self.to_list()
+        return new
 
     def from_dict(self, dictionary):
         """Set from a dictionary."""
