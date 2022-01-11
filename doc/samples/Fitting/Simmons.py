@@ -4,7 +4,7 @@ from numpy import linspace, ones_like
 from numpy.random import normal
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.tunnelling import simmons, Simmons
+from Stoner.analysis.fitting.models.tunnelling import Simmons, simmons
 
 # Make some data
 V = linspace(-4, 4, 101)

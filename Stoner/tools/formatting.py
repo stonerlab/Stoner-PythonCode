@@ -4,9 +4,11 @@
 __all__ = ["format_error", "format_val", "quantize", "tex_escape", "ordinal"]
 
 import re
-from typing import Optional, Any
 from html import escape as html_escape
-from numpy import log10, floor, abs, isnan, round  # pylint: disable=redefined-builtin
+from typing import Any, Optional
+
+from numpy import abs, floor, isnan, log10, round  # pylint: disable=redefined-builtin
+
 from ..compat import bytes2str
 from ..core.Typing import Numeric, NumericArray
 

@@ -7,14 +7,14 @@ __all__ = ["DrawProxy", "MaskProxy"]
 from functools import wraps
 from io import BytesIO as StreamIO
 
+import matplotlib.pyplot as plt
 import numpy as np
 from skimage import draw
-import matplotlib.pyplot as plt
 
 from ..tools import fix_signature
 from ..tools.decorators import class_modifier
-from .widgets import ShapeSelect
 from .imagefuncs import imshow
+from .widgets import ShapeSelect
 
 
 def _draw_apaptor(func):

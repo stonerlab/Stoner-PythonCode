@@ -1,6 +1,6 @@
 """Simple use of lmfit to fit data."""
 # pylint: disable=invalid-name
-from numpy import linspace, exp, random
+from numpy import exp, linspace, random
 from scipy.odr import Model as odrModel
 
 from Stoner import Data

@@ -3,7 +3,7 @@
 import re
 from pathlib import Path
 
-from Stoner import __datapath__, DataFolder, Data
+from Stoner import Data, DataFolder, __datapath__
 from Stoner.compat import Hyperspy_ok
 
 fldr = DataFolder(__datapath__)

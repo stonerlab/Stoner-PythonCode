@@ -12,7 +12,7 @@ import os
 
 import numpy as np
 
-from ..Image import ImageArray, ImageStack, ImageFile
+from ..Image import ImageArray, ImageFile, ImageStack
 from ..tools import make_Data
 from ..tools.decorators import class_modifier, image_file_adaptor
 from . import kerrfuncs

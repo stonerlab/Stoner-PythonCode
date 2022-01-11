@@ -5,8 +5,8 @@ from numpy.random import normal
 
 from Stoner import Data
 from Stoner.analysis.fitting.models.tunnelling import (
-    fowlerNordheim,
     FowlerNordheim,
+    fowlerNordheim,
 )
 
 # Make some data

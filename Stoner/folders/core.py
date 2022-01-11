@@ -2,25 +2,23 @@
 """Provide the base classes and functions for the :py:class:`Stoner.DataFolder` class."""
 __all__ = ["baseFolder"]
 
-from collections.abc import Iterable, MutableSequence
 import fnmatch
+import os.path as path
 import re
-from itertools import islice
+from collections.abc import Iterable, MutableSequence
 from copy import copy, deepcopy
 from inspect import isclass
-import os.path as path
+from itertools import islice
 
 import numpy as np
 
-from ..compat import int_types, string_types, commonpath, _pattern_type
-from ..tools import operator, isiterable, all_type, get_option
-from ..core.base import regexpDict, typeHintedDict
-from ..core.base import metadataObject
-
-from .utils import pathjoin
+from ..compat import _pattern_type, commonpath, int_types, string_types
+from ..core.base import metadataObject, regexpDict, typeHintedDict
+from ..tools import all_type, get_option, isiterable, operator
 from .each import Item as EachItem
-from .metadata import MetadataProxy
 from .groups import GroupsDict
+from .metadata import MetadataProxy
+from .utils import pathjoin
 
 regexp_type = (_pattern_type,)
 

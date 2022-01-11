@@ -3,39 +3,30 @@
 """Base classes for the Stoner package."""
 
 __all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
-from collections.abc import MutableMapping, Mapping
-import re
 import copy
 import datetime
-from typing import (
-    Union,
-    Optional,
-    Any,
-    Dict,
-    Mapping as MappingType,
-    Tuple,
-    List,
-    Set,
-    Callable,
-    Sequence,
-    Iterable as IterableType,
-    Generator,
-)
+import re
+from collections.abc import Mapping, MutableMapping
+from typing import Any, Callable, Dict, Generator
+from typing import Iterable as IterableType
+from typing import List
+from typing import Mapping as MappingType
+from typing import Optional, Sequence, Set, Tuple, Union
 
-from dateutil import parser
-import numpy as np
-from numpy import NaN
 import asteval
+import numpy as np
+from dateutil import parser
+from numpy import NaN
 
 try:
     import pandas as pd
 except ImportError:
     pd = None
 
-from ..compat import string_types, int_types, _pattern_type
-from ..tools import isiterable, isComparable
+from ..compat import _pattern_type, int_types, string_types
+from ..tools import isComparable, isiterable
 from .exceptions import StonerAssertionError
-from .Typing import String_Types, RegExp, Filename
+from .Typing import Filename, RegExp, String_Types
 
 try:
     from blist import sorteddict

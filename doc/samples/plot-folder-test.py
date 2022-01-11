@@ -8,10 +8,10 @@ from scipy.constants import mu_0
 from scipy.stats import gmean
 
 from Stoner import Data, __home__
-from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel
 from Stoner.analysis.fitting.models.generic import Linear
-from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
+from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel
 from Stoner.folders import PlotFolder
+from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 
 # Customise a plot template
 template = DefaultPlotStyle()

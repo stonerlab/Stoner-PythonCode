@@ -12,14 +12,13 @@ __all__ = [
     "SketchPlot",
     "SeabornPlotStyle",
 ]
-from os.path import join, dirname, realpath, exists
+from collections.abc import Mapping, MutableMapping
 from inspect import getfile
-from collections.abc import MutableMapping, Mapping
+from os.path import dirname, exists, join, realpath
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import EngFormatter, Formatter
-from matplotlib.ticker import AutoLocator
 import numpy as np
+from matplotlib.ticker import AutoLocator, EngFormatter, Formatter
 from numpy.random import normal
 
 try:

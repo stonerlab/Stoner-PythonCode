@@ -22,7 +22,12 @@ test-single:
 check:
 	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
 
-black:
+isort:
+	find Stoner -name '*.py' | xargs -d "\n" isort --profile black
+	find doc/samples -name '*.py' | xargs  -d "\n" isort --profile black
+	find scripts -name '*.py' | xargs -d "\n" isort --profile black
+
+black: isort
 	find Stoner -name '*.py' | xargs -d "\n" black -l 119
 	find doc/samples -name '*.py' | xargs  -d "\n" black -l 80
 	find scripts -name '*.py' | xargs -d "\n" black -l 80

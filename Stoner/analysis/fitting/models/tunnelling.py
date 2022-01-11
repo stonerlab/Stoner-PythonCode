@@ -15,7 +15,6 @@ __all__ = [
 ]
 
 import numpy as np
-
 from lmfit import Model
 from lmfit.models import update_param_vals
 

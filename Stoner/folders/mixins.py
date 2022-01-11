@@ -7,22 +7,30 @@ __all__ = ["DiskBasedFolderMixin", "DataMethodsMixin", "PlotMethodsMixin"]
 
 import os
 import os.path as path
-from functools import partial
 from copy import deepcopy
+from functools import partial
 from importlib import import_module
 
-from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
+from matplotlib.pyplot import Figure, figure, subplot, tight_layout
+from numpy import any as np_any
+from numpy import append, array, ceil, floor, mean, sqrt, std
 from numpy.ma import masked_invalid
-from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 
 from Stoner.tools import isiterable, make_Data
-from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
-from ..core.base import metadataObject, string_to_type
-from ..core.exceptions import StonerUnrecognisedFormat
-from .core import baseFolder, _add_core_ as _base_add_core_, _sub_core_ as _base_sub_core_
-from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
-from ..core.exceptions import assertion
 
+from ..compat import _pattern_type, get_filedialog, makedirs, path_types, string_types
+from ..core.base import metadataObject, string_to_type
+from ..core.exceptions import StonerUnrecognisedFormat, assertion
+from .core import _add_core_ as _base_add_core_
+from .core import _sub_core_ as _base_sub_core_
+from .core import baseFolder
+from .utils import (
+    discard_earlier,
+    filter_files,
+    get_pool,
+    removeDisallowedFilenameChars,
+    scan_dir,
+)
 
 regexp_type = (_pattern_type,)
 

@@ -4,7 +4,7 @@ from numpy import linspace
 from numpy.random import normal
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.thermal import modArrhenius, ModArrhenius
+from Stoner.analysis.fitting.models.thermal import ModArrhenius, modArrhenius
 
 # Make some data
 T = linspace(200, 350, 101)

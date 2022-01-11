@@ -18,4 +18,4 @@ provide a :py:attr:`Stoner.Core.DataFile.mime_type` attribute which gives a list
 be able to open. This helps identify classes that could be use to load particular file types.
 """
 __all__ = ["instruments", "generic", "rigs", "facilities", "simulations", "attocube", "maximus"]
-from . import instruments, generic, rigs, facilities, simulations, attocube, maximus
+from . import attocube, facilities, generic, instruments, maximus, rigs, simulations

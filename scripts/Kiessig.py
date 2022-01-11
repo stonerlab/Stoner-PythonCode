@@ -8,8 +8,8 @@ TODO: Implement an error bar on the uncertainity by understanding the significan
 import sys
 from copy import copy
 
-import numpy as np
 import matplotlib.pyplot as pyplot
+import numpy as np
 from lmfit.models import ExponentialModel
 
 from Stoner import Data

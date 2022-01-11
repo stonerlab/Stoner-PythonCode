@@ -7,8 +7,8 @@ import pandas as pd
 
 from ..compat import index_types, string_types
 from ..tools import isiterable
-from .utils import add_core, and_core, mod_core, sub_core
 from . import Setas
+from .utils import add_core, and_core, mod_core, sub_core
 
 
 class DataFileOperatorsMixin:

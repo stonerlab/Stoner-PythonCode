@@ -14,4 +14,4 @@ __all__ = [
 ]
 
 from .core import baseFolder
-from .mixins import DataFolder, PlotFolder, DiskBasedFolderMixin
+from .mixins import DataFolder, DiskBasedFolderMixin, PlotFolder

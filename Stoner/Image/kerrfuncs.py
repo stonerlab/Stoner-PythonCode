@@ -8,9 +8,9 @@ import tempfile
 import numpy as np
 from skimage import exposure, io, transform
 
-from ..core.base import typeHintedDict
 from ..compat import which
-from ..core.exceptions import assertion, StonerAssertionError
+from ..core.base import typeHintedDict
+from ..core.exceptions import StonerAssertionError, assertion
 
 GRAY_RANGE = (0, 65535)  # 2^16
 IM_SIZE = (512, 672)  # Standard Kerr image size

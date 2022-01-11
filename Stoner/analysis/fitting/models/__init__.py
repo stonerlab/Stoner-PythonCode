@@ -21,10 +21,11 @@ import numpy as np
 from lmfit import Model
 from lmfit.models import update_param_vals
 
+import Stoner.Core as _SC_
 from Stoner.compat import string_types
 from Stoner.tools import make_Data
-import Stoner.Core as _SC_
-from . import generic, thermal, magnetism, tunnelling, e_transport, superconductivity
+
+from . import e_transport, generic, magnetism, superconductivity, thermal, tunnelling
 
 
 def _get_model_(model):

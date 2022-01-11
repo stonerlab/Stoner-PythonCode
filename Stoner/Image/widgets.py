@@ -2,14 +2,13 @@
 """Line and Box selection Tools for Images."""
 
 import time
-import numpy as np
 
 import matplotlib.pyplot as plt
-from scipy.optimize import minimize
-from matplotlib.widgets import Cursor, RectangleSelector
-from matplotlib.colors import to_rgba
+import numpy as np
 from matplotlib.backend_bases import Event
-
+from matplotlib.colors import to_rgba
+from matplotlib.widgets import Cursor, RectangleSelector
+from scipy.optimize import minimize
 from skimage import draw
 
 

@@ -7,13 +7,13 @@ __all__ = ["FeatureOpsMixin"]
 from inspect import getfullargspec
 
 import numpy as np
-from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
+from scipy.signal import find_peaks
 
 from ..compat import string_types
-from ..tools import isiterable, isTuple
 from ..core.exceptions import assertion
+from ..tools import isiterable, isTuple
 from .utils import threshold as _threshold
 
 

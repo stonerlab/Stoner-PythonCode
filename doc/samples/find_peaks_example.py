@@ -1,10 +1,10 @@
 """Detect peaks in a dataset."""
 # pylint: disable=invalid-name
-from Stoner import Data
-from Stoner.analysis.fitting.models.generic import Linear
-
 from matplotlib.cm import jet
 from numpy import linspace, log10
+
+from Stoner import Data
+from Stoner.analysis.fitting.models.generic import Linear
 
 d = Data("../../sample-data/New-XRay-Data.dql")
 d.y = log10(d.y)

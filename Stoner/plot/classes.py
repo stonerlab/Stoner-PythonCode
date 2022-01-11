@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """Class that knows how to plot data."""
-from functools import partial
 import weakref
+from functools import partial
 
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+import numpy as np
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 
-from ..tools import isiterable, AttributeStore
 from ..Core import DataFile
-from .formats import DefaultPlotStyle
+from ..tools import AttributeStore, isiterable
 from . import plotters
+from .formats import DefaultPlotStyle
 from .utils import add_properties
 
 

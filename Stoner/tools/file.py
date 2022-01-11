@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 """General fle related tools."""
-from importlib import import_module
 import io
 import os
 import pathlib
 import urllib
+from importlib import import_module
 from traceback import format_exc
-from typing import Union, Sequence, Dict, Type, Tuple, Optional
+from typing import Callable, Dict, Optional, Sequence, Tuple, Type, Union
 
-from ..compat import string_types, path_types, bytes2str, str2bytes
-from .widgets import fileDialog
-from .classes import subclasses
+from ..compat import bytes2str, path_types, str2bytes, string_types
+from ..core.base import metadataObject, regexpDict
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..core.base import regexpDict, metadataObject
-from .null import null
-
 from ..core.Typing import Filename
+from .classes import subclasses
+from .decorators import lookup_loader_index, lookup_loaders
+from .null import null
+from .widgets import fileDialog
 
 __all__ = [
     "file_dialog",
@@ -29,15 +29,64 @@ __all__ = [
 ]
 
 try:
-    from magic import Magic as filemagic, MAGIC_MIME_TYPE
+    from magic import MAGIC_MIME_TYPE
+    from magic import Magic as filemagic
 except ImportError:
     filemagic = None
-
 URL_SCHEMES = ["http", "https"]
 
 
+def file_dialog_registry(
+    mode: str, filename: Filename, filetype: Union[None, Callable]
+) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
+    """Create a file dialog box for loading or saving ~b DataFile objects using the registry.
+
+    Args:
+        mode (string):
+            The mode of the file operation  'r' or 'w'
+        filename (str, Path, bool):
+            Tje starting filename
+        filetype (string or Callable Loader):
+            The filetype to open with - used to selectr file patterns
+
+    Returns:
+        (pathlib.PurePath or None):
+            A filename to be used for the file operation.
+    """
+    # Wildcard pattern to be used in file dialogs.
+
+    descs: Dict = {"*.*": "All Files"}
+    if filetype is not None:  # specific filetype passed in
+        record = lookup_loader_index(filetype)
+        for p in record["patterns"]:
+            descs[p] = record["description"]
+    else:  # All registered filetypes
+        for filetype in lookup_loaders():
+            record = lookup_loader_index(filetype)
+            for p in record["patterns"]:
+                descs[p] = record["description"]
+    patterns = descs
+
+    if isinstance(filename, string_types):
+        filename = pathlib.Path(filename)
+    if filename is not None and not isinstance(filename, bool):
+        dirname = filename.parent
+        filename = filename.name
+    else:
+        filename = ""
+        dirname = ""
+    if "r" in mode:
+        mode = "OpenFile"
+    elif "w" in mode:
+        mode = "SaveFile"
+    else:
+        mode = "SelectDirectory"
+    filename = fileDialog.openDialog(start=dirname, mode=mode, patterns=patterns)
+    return filename if filename else None
+
+
 def file_dialog(
-    mode: str, filename: Filename, filetype: Union[Type[metadataObject], str], baseclass: Type[metadataObject]
+    mode: str, filename: Filename, filetype: Union[Type[metadataObject], str], baseclass: Type[metadataObject],
 ) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
     """Create a file dialog box for loading or saving ~b DataFile objects.
 
@@ -68,12 +117,10 @@ def file_dialog(
                 )  # pylint: disable=unsubscriptable-object
             else:
                 descs[p] = subclasses(baseclass)[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
-
     patterns = descs
 
     if isinstance(filename, string_types):
         filename = pathlib.Path(filename)
-
     if filename is not None and not isinstance(filename, bool):
         dirname = filename.parent
         filename = filename.name
@@ -90,8 +137,26 @@ def file_dialog(
     return filename if filename else None
 
 
+def get_file_name(
+    filename: Filename, filetype: Optional[Union[Callable, str]] = None
+) -> Tuple[pathlib.PurePath, Type[metadataObject]]:
+    """Rationalise a filename and filetype."""
+    if isinstance(filename, string_types):
+        filename = pathlib.Path(filename)
+    if filename is None or (isinstance(filename, bool) and not filename):
+        filename = file_dialog_registry("r", filename, filetype,)
+    elif isinstance(filename, io.IOBase):  # Opened file
+        filename = filename.name
+    try:
+        if not filename.exists():
+            raise IOError(f"Cannot find {filename} to load")
+    except AttributeError as err:
+        raise IOError(f"Unable to tell if file exists - {type(filename)}") from err
+    return filename
+
+
 def get_file_name_type(
-    filename: Filename, filetype: Union[Type[metadataObject], str], parent: Type[metadataObject]
+    filename: Filename, filetype: Union[Type[metadataObject], str], parent: Type[metadataObject],
 ) -> Tuple[pathlib.PurePath, Type[metadataObject]]:
     """Rationalise a filename and filetype."""
     if isinstance(filename, string_types):
@@ -201,7 +266,6 @@ def auto_load_classes(
                 continue
             if debug and filemagic is not None:
                 print(f"Trying: {cls_name} =mimetype {test.mime_type}")
-
             test = test._load(filename, auto_load=False, *args, **kargs)
             if test is None:
                 raise SyntaxError(f"Class {cls_name}'s _load returned None !!")
@@ -210,14 +274,12 @@ def auto_load_classes(
                 delattr(test, "_kargs")
             except AttributeError:
                 pass
-
             if debug:
                 print("Passed Load")
             if isinstance(test, metadataObject):
                 test["Loaded as"] = cls_name
             if debug:
                 print(f"Test matadata: {test.metadata}")
-
             break
         except StonerLoadError as e:
             if debug:

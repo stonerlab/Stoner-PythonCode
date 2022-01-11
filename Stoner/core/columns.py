@@ -37,7 +37,7 @@ class Column_Headers(MutableSequence):
         oldname = self._obj._data.columns[name]
         self._obj._data.rename(columns={oldname: value}, inplace=True)
         self._obj._mask.rename(columns={oldname: value}, inplace=True)
-        self._obj._setas.index.rename(index={oldname: value}, inplace=True)
+        self._obj._setas._index.rename(index={oldname: value}, inplace=True)
 
     def __delitem__(self, name):
         """Deletions are not supported!"""

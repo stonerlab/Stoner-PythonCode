@@ -3,7 +3,6 @@
 __all__ = ["AnalysisMixin"]
 import numpy as np
 import numpy.ma as ma
-
 from scipy.integrate import cumtrapz
 
 from .tools import isiterable, isTuple

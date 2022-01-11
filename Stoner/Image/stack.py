@@ -5,12 +5,10 @@ import warnings
 
 import numpy as np
 
-from ..compat import string_types, int_types
-from ..core.exceptions import assertion
-
+from ..compat import int_types, string_types
 from ..Core import regexpDict, typeHintedDict
+from ..core.exceptions import assertion
 from ..folders import DiskBasedFolderMixin, baseFolder
-
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
 

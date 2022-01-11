@@ -1,6 +1,7 @@
 """Simple XMCD Data reduction example."""
 # pylint: disable=invalid-name, redefined-outer-name
 import re
+
 import numpy as np
 import scipy
 

@@ -20,6 +20,8 @@ __all__ = [
     "isproperty",
     "isTuple",
     "copy_into",
+    "register_loader",
+    "lookup_loaders",
     "make_Data",
     "quantize",
     "tex_escape",
@@ -31,20 +33,46 @@ __all__ = [
     "file",
     "decorators",
 ]
-from collections.abc import Iterable, MutableSequence
 import inspect
+from collections.abc import Iterable, MutableSequence
 from copy import deepcopy
 from importlib import import_module
 
-from numpy import log10, floor, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
-
+from numpy import (  # pylint: disable=redefined-builtin
+    dtype,
+    floor,
+    isnan,
+    log10,
+    logical_and,
+    ndarray,
+    round,
+)
 
 from ..compat import bytes2str
-from .classes import attributeStore as AttributeStore, typedList, Options, get_option, set_option, copy_into
-from .tests import all_size, all_type, isanynone, isComparable, isiterable, isLikeList, isnone, isproperty, isTuple
-from .formatting import format_error, format_val, quantize, html_escape, tex_escape, ordinal
 from . import decorators
-from .decorators import make_Data, fix_signature
+from .classes import Options
+from .classes import attributeStore as AttributeStore
+from .classes import copy_into, get_option, set_option, typedList
+from .decorators import fix_signature, lookup_loaders, make_Data, register_loader
+from .formatting import (
+    format_error,
+    format_val,
+    html_escape,
+    ordinal,
+    quantize,
+    tex_escape,
+)
+from .tests import (
+    all_size,
+    all_type,
+    isanynone,
+    isComparable,
+    isiterable,
+    isLikeList,
+    isnone,
+    isproperty,
+    isTuple,
+)
 
 operator = {
     "eq": lambda k, v: k == v,

@@ -54,16 +54,16 @@ def list_files():
 def test_one_file(tmpdir, filename):
     loaded=Data(filename,debug=False)
     assert isinstance(loaded,DataFile),f"Failed to load {filename.name} correctly."
-    if "save" in subclasses()[loaded["Loaded as"]].__dict__:
-        pth = pathlib.Path(tmpdir)/filename.name
-        parent, name,ext=pth.parent, pth.stem, pth.suffix
-        pth2=pathlib.Path(tmpdir)/f"{name}-2{ext}"
-        loaded.save(pth,as_loaded=True)
-        assert pth.exists() or pathlib.Path(loaded.filename).exists(),f"Failed to save as {pth}"
-        pathlib.Path(loaded.filename).unlink()
-        loaded.save(pth2,as_loaded=loaded["Loaded as"])
-        assert pth2.exists() or pathlib.Path(loaded.filename).exists(),"Failed to save as {}".format(pth)
-        pathlib.Path(loaded.filename).unlink()
+    # if "save" in subclasses()[loaded["Loaded as"]].__dict__:
+    #     pth = pathlib.Path(tmpdir)/filename.name
+    #     parent, name,ext=pth.parent, pth.stem, pth.suffix
+    #     pth2=pathlib.Path(tmpdir)/f"{name}-2{ext}"
+    #     loaded.save(pth,as_loaded=True)
+    #     assert pth.exists() or pathlib.Path(loaded.filename).exists(),f"Failed to save as {pth}"
+    #     pathlib.Path(loaded.filename).unlink()
+    #     loaded.save(pth2,as_loaded=loaded["Loaded as"])
+    #     assert pth2.exists() or pathlib.Path(loaded.filename).exists(),"Failed to save as {}".format(pth)
+    #     pathlib.Path(loaded.filename).unlink()
 
 
 def test_csvfile():

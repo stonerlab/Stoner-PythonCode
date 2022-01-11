@@ -9,18 +9,18 @@ __all__ = [
     "get_pool",
     "removeDisallowedFilenameChars",
 ]
+import fnmatch
 import os.path as path
-from os import cpu_count
+import pathlib
 import re
 import string
-import fnmatch
-import pathlib
 from concurrent import futures
-from dask.distributed import Client
+from os import cpu_count
 
+from dask.distributed import Client
 from numpy import array
 
-from Stoner.compat import string_types, _pattern_type
+from Stoner.compat import _pattern_type, string_types
 from Stoner.tools import get_option
 
 

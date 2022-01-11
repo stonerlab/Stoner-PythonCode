@@ -1,6 +1,7 @@
 """Example of Arrhenius Fit."""
 # pylint: disable=invalid-name
-from numpy import linspace, ceil, log10, abs as np_abs
+from numpy import abs as np_abs
+from numpy import ceil, linspace, log10
 from numpy.random import normal
 
 from Stoner import Data

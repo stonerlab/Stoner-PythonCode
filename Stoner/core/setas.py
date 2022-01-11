@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 """setas module provides the setas class for DataFile and friends."""
 __all__ = ["Setas"]
-import re
 import copy
-from collections.abc import MutableMapping, Mapping, Iterable
-from warnings import warn
 import fnmatch
-from typing import List, Union, Any, Optional, Dict, Tuple
+import re
+from collections.abc import Iterable, Mapping, MutableMapping
+from typing import Any, Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 import numpy as np
 import pandas as pd
 
-from ..compat import string_types, int_types, index_types, _pattern_type
-from ..tools import AttributeStore, isiterable, typedList, isLikeList, make_Data, isnone
+from ..compat import _pattern_type, index_types, int_types, string_types
+from ..tools import AttributeStore, isiterable, isLikeList, isnone, make_Data, typedList
 from .utils import decode_string
 
 _col_defaults: dict = {

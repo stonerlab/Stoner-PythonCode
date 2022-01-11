@@ -10,38 +10,45 @@ __all__ = [
     "DataFile",
 ]
 
-import re
-import os
-import io
 import copy
-import pathlib
-import warnings
-import urllib
-
-from collections.abc import MutableSequence, Mapping, Iterable
+import csv
 import inspect as _inspect_
+import io
+import os
+import pathlib
+import re
+import urllib
+import warnings
+from collections.abc import Iterable, Mapping, MutableSequence
 from importlib import import_module
 from textwrap import TextWrapper
-import csv
-from typing import Union, Any, List, Dict, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
-from .compat import string_types, int_types, index_types, _pattern_type, path_types
-from .tools import all_type, isiterable, isLikeList, get_option, make_Data
-from .tools.file import get_file_name_type, auto_load_classes, get_file_type
-
-from .core.exceptions import StonerLoadError, StonerSetasError
-from .core import Setas, regexpDict, typeHintedDict, metadataObject
-from .core.operators import DataFileOperatorsMixin
-from .core.property import DataFilePropertyMixin
+from .compat import _pattern_type, index_types, int_types, path_types, string_types
+from .core import Setas, metadataObject, regexpDict, typeHintedDict
+from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
 from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
-from .core.utils import copy_into, tab_delimited, decode_string
+from .core.operators import DataFileOperatorsMixin
+from .core.property import DataFilePropertyMixin
+from .core.utils import copy_into, decode_string, tab_delimited
+from .tools import all_type, get_option, isiterable, isLikeList, make_Data
 from .tools.classes import subclasses
-from .tools.file import file_dialog, FileManager, URL_SCHEMES
+from .tools.decorators import lookup_loader_index, lookup_loaders
+from .tools.file import (
+    URL_SCHEMES,
+    FileManager,
+    auto_load_classes,
+    file_dialog,
+    get_file_name,
+    get_file_name_type,
+    get_file_type,
+    get_mime_type,
+)
 
 try:
     from tabulate import tabulate
@@ -233,6 +240,7 @@ class DataFile(
         except AttributeError:
             pass
         self.metadata["Stoner.class"] = type(self).__name__
+        kargs.pop("instance", None)
         if kargs:  # set public attributes from keywords
             to_go = []
             for k in kargs:
@@ -384,7 +392,7 @@ class DataFile(
                 raise ValueError("Cannot construct a DataFile with a single argument of True")
         elif isinstance(arg, pathlib.PurePath):
             arg = str(arg)
-        copy_into(self.__class__.load(filename=arg, **kargs), self)
+        self.__class__.load(filename=arg, instance=self, **kargs)
 
     def _init_list(self, arg, **kargs):
         """Initialise from a list or other ioterable."""
@@ -621,79 +629,6 @@ class DataFile(
             else:
                 col_assignments.append("")
         return interesting, col_assignments, cols
-
-    def _load(self, filename, *args, **kargs):
-        """Actually load the data from disc assuming a .tdi file format.
-
-        Args:
-            filename (str):
-                Path to filename to be loaded. If None or False, a dialog bax is raised to ask for the filename.
-
-        Returns:
-            DataFile:
-                A copy of the newly loaded :py:class`DataFile` object.
-
-        Exceptions:
-            StonerLoadError:
-                Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
-
-        Note:
-            The *_load* methods shouldbe overidden in each child class to handle the process of loading data from
-            disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
-            the loading class can try a different sub-class instead.
-        """
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-        with FileManager(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
-            line = datafile.readline()
-            if line.startswith("TDI Format 1.5"):
-                fmt = 1.5
-            elif line.startswith("TDI Format=Text 1.0"):
-                fmt = 1.0
-            else:
-                raise StonerLoadError("Not a TDI File")
-
-            datafile.seek(0)
-            reader = csv.reader(datafile, dialect=tab_delimited())
-            cols = 0
-            for ix, metadata in enumerate(reader):
-                if ix == 0:
-                    row = metadata
-                    continue
-                if len(metadata) < 1:
-                    continue
-                if cols == 0:
-                    cols = len(metadata)
-                if len(metadata) > 1:
-                    max_rows = ix + 1
-                if "=" in metadata[0]:
-                    self.metadata.import_key(metadata[0])
-            col_headers_tmp = [x.strip() for x in row[1:]]
-            with warnings.catch_warnings():
-                datafile.seek(0)
-                warnings.filterwarnings("ignore", "Some errors were detected !")
-                data = np.genfromtxt(
-                    datafile,
-                    skip_header=1,
-                    usemask=True,
-                    delimiter="\t",
-                    usecols=range(1, cols),
-                    invalid_raise=False,
-                    comments="\0",
-                    missing_values=[""],
-                    filling_values=[np.nan],
-                    max_rows=max_rows,
-                )
-        if data.ndim < 2:
-            data = np.ma.atleast_2d(data)
-        retain = np.all(np.isnan(data), axis=1)
-        self.data = data[~retain]
-        self["TDI Format"] = fmt
-        if self.data.ndim == 2 and self.data.shape[1] > 0:
-            self.column_headers = col_headers_tmp
-        return self
 
     def __repr_core__(self, shorten=100):
         """Actuall do the repr work, but allow for a shorten parameter to save printing big files out to disc."""
@@ -1055,7 +990,7 @@ class DataFile(
             if invert:
                 drop = list(set(self._data.index) - set(col))
             else:
-                drop = cols
+                drop = col
                 self._mask
             self._mask = self._mask.drop(labels=drop)
             self._data = self._data.drop(labels=drop)
@@ -1163,7 +1098,7 @@ class DataFile(
         self.filename = file_dialog(mode, self.filename, type(self), DataFile)
         return self.filename
 
-    def insert_rows(self, row, new_data, reindex=True):
+    def insert_rows(self, row, newdata, reindex=True):
         """Insert new_data into the data array at position row. This is a wrapper for numpy.insert.
 
         Args:
@@ -1177,19 +1112,19 @@ class DataFile(
             self:
                 A copy of the modified :py:class:`DataFile` object
         """
-        part1 = (self._data.loc[:row] / iloc[:-1], self._mask.loc[:row] / iloc[:-1])
+        part1 = (self._data.loc[:row], self._mask.loc[:row])
         part2 = (self._data.loc[row:], self._mask.loc[row:])
         if hasattr(newdata, "mask") and not callable(newdata.mask):
             mask = newdata.mask
         else:
             mask = np.zeros_like(newdata, dtype=bool)
-        if isinstance(newdata, list) or (ininstance(newdata, np.ndarray) and newdata.ndim == 1):
+        if isinstance(newdata, list) or (isinstance(newdata, np.ndarray) and newdata.ndim == 1):
             newdata = pd.Series(newdata, index=[h for h, _ in zip(self.column_headers, newdata)])
         if isinstance(newdata, pd.Series):
             newdata = pd.DataFrame(newdata).T
         if isinstance(newdata, np.ndarry):
             if newdata.ndim != 2:
-                raise VsalueError(f"Cannot add {newdata.ndim}D data to a DataFile")
+                raise ValueError(f"Cannot add {newdata.ndim}D data to a DataFile")
             newdata = pd.DataFrame(newdata, columns=[h for h, _ in zip(self.column_headers, newdata)])
         self._data = pd.concat([part1[0], newdata, part2[0]], axis=0, join="inner")
         self._mask = pd.concat([part1[1], mask, part2[1]], axis=0, join="inner")
@@ -1209,9 +1144,6 @@ class DataFile(
                 load the file
             filetype (:py:class:`DataFile`, str):
                 If not none then tries using filetype as the loader.
-            loaded_class (bool):
-                If True, the return object is kept as the class that managed to load it, otherwise it is copied into a
-                :py:class:`Stoner.Data` object. (Default False)
 
         Returns:
             (Data):
@@ -1232,40 +1164,44 @@ class DataFile(
         filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
-        loaded_class = kargs.pop("loaded_class", False)
+
         if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
-            filename, filetype = get_file_name_type(filename, filetype, DataFile)
+            filename = get_file_name(filename, filetype)
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
-        else:
-            filetype = get_file_type(filetype, DataFile)
+        if filetype is not None:  # Makesure if we have a filetype that it is a loader function.
+            filetype = lookup_loader_index(filetype)["func"]
         if auto_load:  # We're going to try every subclass we canA
-            ret = auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs)
-            if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!
-                return ret
-        else:
-            if filetype is None or isinstance(filetype, DataFile):  # set fieltype to DataFile
-                filetype = DataFile
-            if issubclass(filetype, DataFile):
-                ret = filetype()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = filetype.__name__
+            loaders = []
+            key = get_mime_type(filename)
+            if not key:
+                key = f"*{filename.suffix}"
+            for ky in [key, "*.*"]:  # Fall back on *.* if suffix not good enough
+                loaders.extend(lookup_loaders(ky))
+                if len(loaders) == 0:
+                    loaders = lookup_loaders("*.*")
+                for loader in loaders:
+                    try:
+                        ret = loader(filename, **kargs)
+                        break
+                    except (StonerLoadError, UnicodeError):
+                        continue
+                else:
+                    continue
+                break
             else:
+                raise StonerUnrecognisedFormat(f"Ran out of subclasses to try and load {filename} as.")
+        else:
+            try:
+                ret = filetype(filename, **kargs)
+            except StonerLoadError:
                 raise ValueError(f"Unable to load {filename}")
 
         for k, i in kargs.items():
             if not callable(getattr(ret, k, lambda x: False)):
                 setattr(ret, k, i)
         ret._kargs = kargs
-        filetype = ret.__class__.__name__
-        if loaded_class:
-            self = ret
-        else:
-            self = make_Data()
-            self._public_attrs.update(ret._public_attrs)
-            copy_into(ret, self)
-            self.filetype = filetype
-        return self
+        return ret
 
     def rename(self, old_col, new_col=None):
         """Rename columns without changing the underlying data.

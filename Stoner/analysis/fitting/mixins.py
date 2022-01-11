@@ -4,22 +4,21 @@
 
 __all__ = ["odr_Model", "FittingMixin"]
 
-from copy import deepcopy as copy
-from inspect import isclass, getfullargspec
 from collections.abc import Mapping
+from copy import deepcopy as copy
 from distutils.version import LooseVersion
+from inspect import getfullargspec, isclass
 
+import lmfit
 import numpy as np
 import numpy.ma as ma
 import scipy as sp
+from lmfit.model import Model
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit, differential_evolution
 
-import lmfit
-from lmfit.model import Model
-
-from ...compat import string_types, index_types, get_func_params
-from ...tools import isnone, isiterable, isLikeList, AttributeStore, ordinal
+from ...compat import get_func_params, index_types, string_types
+from ...tools import AttributeStore, isiterable, isLikeList, isnone, ordinal
 
 _lmfit = True
 

@@ -1,10 +1,10 @@
 """Test langevin fitting."""
 # pylint: disable=invalid-name
-from numpy import linspace, ones_like, where, nan, isnan
+from numpy import isnan, linspace, nan, ones_like, where
 from numpy.random import normal
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.magnetism import blochLaw, BlochLaw
+from Stoner.analysis.fitting.models.magnetism import BlochLaw, blochLaw
 
 T = linspace(10, 1000, 100)
 Ms = 1714

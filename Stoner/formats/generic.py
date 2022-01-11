@@ -5,15 +5,98 @@ __all__ = ["CSVFile", "HyperSpyFile", "KermitPNGFile", "TDMSFile"]
 import csv
 import io
 import re
+import warnings
 from collections.abc import Mapping
 
-import PIL
 import numpy as np
+import PIL
 
+from ..compat import Hyperspy_ok, hs, str2bytes
 from ..Core import DataFile
-from ..compat import str2bytes, Hyperspy_ok, hs
 from ..core.exceptions import StonerLoadError
+from ..core.utils import tab_delimited
+from ..tools.decorators import make_Data, register_loader
 from ..tools.file import FileManager
+
+
+@register_loader(patterns=["*.txt", "*.tdi", "*.dat"], priority=1, description="Stoner native Tagged Data file format")
+def TDIFileLoader(filename, **kargs):
+    """Actually load the data from disc assuming a .tdi file format.
+
+    Args:
+        filename (str):
+            Path to filename to be loaded. If None or False, a dialog bax is raised to ask for the filename.
+
+    Returns:
+        DataFile:
+            A copy of the newly loaded :py:class`DataFile` object.
+
+    Exceptions:
+        StonerLoadError:
+            Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
+
+    Note:
+        The *_load* methods shouldbe overidden in each child class to handle the process of loading data from
+        disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
+        the loading class can try a different sub-class instead.
+    """
+    instance = kargs.pop("instance", make_Data())
+    instance.filename = filename
+    with FileManager(instance.filename, "r", encoding="utf-8", errors="ignore") as datafile:
+        line = datafile.readline()
+        if line.startswith("TDI Format 1.5"):
+            fmt = 1.5
+        elif line.startswith("TDI Format=Text 1.0"):
+            fmt = 1.0
+        else:
+            raise StonerLoadError("Not a TDI File")
+
+        datafile.seek(0)
+        reader = csv.reader(datafile, dialect=tab_delimited())
+        cols = 0
+        for ix, metadata in enumerate(reader):
+            if ix == 0:
+                row = metadata
+                continue
+            if len(metadata) < 1:
+                continue
+            if cols == 0:
+                cols = len(metadata)
+            if len(metadata) > 1:
+                max_rows = ix + 1
+            if "=" in metadata[0]:
+                instance.metadata.import_key(metadata[0])
+        col_headers_tmp = [x.strip() for x in row[1:]]
+        for ix, c in enumerate(col_headers_tmp):
+            header = c
+            i = 1
+            while header in col_headers_tmp[:ix]:
+                header = f"{c}_{i}"
+                i += 1
+            col_headers_tmp[ix] = header
+        with warnings.catch_warnings():
+            datafile.seek(0)
+            warnings.filterwarnings("ignore", "Some errors were detected !")
+            data = np.genfromtxt(
+                datafile,
+                skip_header=1,
+                usemask=True,
+                delimiter="\t",
+                usecols=range(1, cols),
+                invalid_raise=False,
+                comments="\0",
+                missing_values=[""],
+                filling_values=[np.nan],
+                max_rows=max_rows,
+            )
+    if data.ndim < 2:
+        data = np.ma.atleast_2d(data)
+    retain = np.all(np.isnan(data), axis=1)
+    instance.data = data[~retain]
+    instance["TDI Format"] = fmt
+    if instance.data.ndim == 2 and instance.data.shape[1] > 0:
+        instance.column_headers = col_headers_tmp
+    return instance
 
 
 def _delim_detect(line):
@@ -46,348 +129,274 @@ def _delim_detect(line):
     return current[0]
 
 
-class CSVFile(DataFile):
+@register_loader(
+    patterns=["*.csv", "*.txt"], mime_types=["application/csv", "text/plain"], priority=128, description="csv file",
+)
+def CSVFile(filename, **kargs):
+    """Load generic deliminated files.
 
-    """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
+    Args:
+        filename (string or bool): File to load. If None then the existing filename is used,
+            if False, then a file dialog will be used.
 
-    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-    #   .. note::
-    #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.
-    priority = 128  # Rather generic file format so make it a low priority
-    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-    # the file load/save dialog boxes.
-    patterns = ["*.csv", "*.txt"]  # Recognised filename patterns
+    Keyword Arguments:
+        header_line (int): The line in the file that contains the column headers.
+            If None, then column headers are auotmatically generated.
+        data_line (int): The line on which the data starts
+        data_delim (string): Thge delimiter used for separating data values
+        header_delim (strong): The delimiter used for separating header values
 
-    _defaults = {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","}
+    Returns:
+        A copy of the current object after loading the data.
+    """
+    _defaults = kargs.pop("_defaults", {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","},)
+    header_line = kargs.pop("header_line", _defaults["header_line"])
+    data_line = kargs.pop("data_line", _defaults["data_line"])
+    data_delim = kargs.pop("data_delim", _defaults["data_delim"])
+    header_delim = kargs.pop("header_delim", _defaults["header_delim"])
+    instance = kargs.pop("instance", make_Data())
 
-    mime_type = ["application/csv", "text/plain"]
-
-    def _load(self, filename, *args, **kargs):
-        """Load generic deliminated files.
-
-        Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
-
-        Keyword Arguments:
-            header_line (int): The line in the file that contains the column headers.
-                If None, then column headers are auotmatically generated.
-            data_line (int): The line on which the data starts
-            data_delim (string): Thge delimiter used for separating data values
-            header_delim (strong): The delimiter used for separating header values
-
-        Returns:
-            A copy of the current object after loading the data.
-        """
-        header_line = kargs.pop("header_line", self._defaults["header_line"])
-        data_line = kargs.pop("data_line", self._defaults["data_line"])
-        data_delim = kargs.pop("data_delim", self._defaults["data_delim"])
-        header_delim = kargs.pop("header_delim", self._defaults["header_delim"])
-
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-
-        if data_delim is None or header_delim is None:  #
-            with FileManager(self.filename, "r") as datafile:
-                lines = datafile.readlines()
-            if header_line is not None and header_delim is None:
-                header_delim = _delim_detect(lines[header_line])
-            if data_line is not None and data_delim is None:
-                data_delim = _delim_detect(lines[data_line])
-
-        with FileManager(self.filename, "r") as datafile:
-            if header_line is not None:
-                try:
-                    for ix, line in enumerate(datafile):
-                        if ix == header_line:
-                            break
-                    else:
-                        raise StonerLoadError("Ran out of file before readching header")
-                    header = line.strip()
-                    column_headers = next(csv.reader(io.StringIO(header), delimiter=header_delim))
-                    data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line - header_line)
-                except (TypeError, ValueError, csv.Error, StopIteration, UnicodeDecodeError) as err:
-                    try:
-                        filename.seek(0)
-                    except AttributeError:
-                        pass
-                    raise StonerLoadError("Header and data on the same line") from err
-            else:  # Generate
-                try:
-                    data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line)
-                except (TypeError, ValueError) as err:
-                    try:
-                        filename.seek(0)
-                    except AttributeError:
-                        pass
-                    raise StonerLoadError("Failed to open file as CSV File") from err
-                column_headers = ["Column" + str(x) for x in range(np.shape(data)[1])]
-
-        self.data = data
-        self.column_headers = column_headers
-        self._kargs = kargs
-        return self
-
-    def save(self, filename=None, **kargs):
-        """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
-
-        Args:
-            filename (string): Fielname to save as (using the same rules as for the load routines)
-
-        Keyword Arguments:
-            deliminator (string): Record deliniminator (defaults to a comma)
-
-        Returns:
-            A copy of itself.
-        """
-        delimiter = kargs.pop("deliminator", ",")
-        if filename is None:
-            filename = self.filename
-        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog("w")
-        with FileManager(filename, "w") as outfile:
-            spamWriter = csv.writer(outfile, delimiter=delimiter, quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            i = 0
-            spamWriter.writerow(self.column_headers)
-            while i < self.data.shape[0]:
-                spamWriter.writerow(self.data[i, :])
-                i += 1
-        self.filename = filename
-        return self
-
-
-class JustNumbersFile(CSVFile):
-
-    """A reader format for things which are just a block of numbers with no headers or metadata."""
-
-    priority = 256  # Rather generic file format so make it a low priority
-    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-    # the file load/save dialog boxes.
-    patterns = ["*.csv", "*.txt"]  # Recognised filename patterns
-
-    _defaults = {"header_line": None, "data_line": 0, "header_delim": None, "data_delim": None}
-
-
-class KermitPNGFile(DataFile):
-
-    """Loads PNG files with additional metadata embedded in them and extracts as metadata."""
-
-    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-    #   .. note::
-    #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.
-    priority = 16  # We're checking for a the specoific PNG signature
-    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-    # the file load/save dialog boxes.
-    patterns = ["*.png"]  # Recognised filename patterns
-
-    mime_type = "image/png"
-
-    def _check_signature(self, filename):
-        """Check that this is a PNG file and raie a StonerLoadError if not."""
-        try:
-            with FileManager(filename, "rb") as test:
-                sig = test.read(8)
-            sig = [x for x in sig]
-            if self.debug:
-                print(sig)
-            if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
-                raise StonerLoadError("Signature mismatrch")
-        except (StonerLoadError, IOError) as err:
-            from traceback import format_exc
-
-            raise StonerLoadError(f"Not a PNG file!>\n{format_exc()}") from err
-        return True
-
-    def _load(self, filename=None, *args, **kargs):
-        """PNG file loader routine.
-
-        Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
-
-        Returns:
-            A copy of the itself after loading the data.
-        """
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-        self._check_signature(filename)
-        try:
-            with PIL.Image.open(self.filename, "r") as img:
-                for k in img.info:
-                    self.metadata[k] = img.info[k]
-                self.data = np.asarray(img)
-        except IOError as err:
+    if filename is None or not filename:
+        instance.get_filename("r")
+    else:
+        instance.filename = filename
+    if data_delim is None or header_delim is None:  #
+        with FileManager(instance.filename, "r") as datafile:
+            lines = datafile.readlines()
+        if header_line is not None and header_delim is None:
+            header_delim = _delim_detect(lines[header_line])
+        if data_line is not None and data_delim is None:
+            data_delim = _delim_detect(lines[data_line])
+    with FileManager(instance.filename, "r") as datafile:
+        if header_line is not None:
             try:
-                filename.seek(0)
-            except AttributeError:
-                pass
-            raise StonerLoadError("Unable to read as a PNG file.") from err
+                for ix, line in enumerate(datafile):
+                    if ix == header_line:
+                        break
+                else:
+                    raise StonerLoadError("Ran out of file before readching header")
+                header = line.strip()
+                column_headers = next(csv.reader(io.StringIO(header), delimiter=header_delim))
+                data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line - header_line)
+            except (TypeError, ValueError, csv.Error, StopIteration, UnicodeDecodeError,) as err:
+                try:
+                    filename.seek(0)
+                except AttributeError:
+                    pass
+                raise StonerLoadError("Header and data on the same line") from err
+        else:  # Generate
+            try:
+                data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line)
+            except (TypeError, ValueError) as err:
+                try:
+                    filename.seek(0)
+                except AttributeError:
+                    pass
+                raise StonerLoadError("Failed to open file as CSV File") from err
+            column_headers = ["Column" + str(x) for x in range(np.shape(data)[1])]
+    instance.data = data
+    instance.column_headers = column_headers
+    instance._kargs = kargs
+    return instance
 
-        return self
 
-    def save(self, filename=None, **kargs):
-        """Override the save method to allow KermitPNGFiles to be written out to disc.
+@register_loader(
+    patterns=["*.csv", "*.txt"],
+    mime_types=["application/csv", "text/plain"],
+    priority=256,
+    description="just numbers",
+)
+def JustNumbers(filename, **kargs):
+    kargs.setdefault(
+        "_defaults", {"header_line": None, "data_line": 0, "header_delim": None, "data_delim": None},
+    )
+    return CSVFile(filename, **kargs)
 
-        Args:
-            filename (string): Filename to save as (using the same rules as for the load routines)
 
-        Keyword Arguments:
-            deliminator (string): Record deliniminator (defaults to a comma)
+def _png_check_signature(instance, filename):
+    """Check that this is a PNG file and raie a StonerLoadError if not."""
+    try:
+        with FileManager(filename, "rb") as test:
+            sig = test.read(8)
+        sig = [x for x in sig]
+        if getattr(instance, "debug", False):
+            print(sig)
+        if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
+            raise StonerLoadError("Signature mismatrch")
+    except (StonerLoadError, IOError) as err:
+        from traceback import format_exc
 
-        Returns:
-            A copy of itself.
-        """
-        if filename is None:
-            filename = self.filename
-        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog("w")
+        raise StonerLoadError(f"Not a PNG file!>\n{format_exc()}") from err
+    return True
 
-        metadata = PIL.PngImagePlugin.PngInfo()
-        for k in self.metadata:
-            parts = self.metadata.export(k).split("=")
-            key = parts[0]
-            val = str2bytes("=".join(parts[1:]))
-            metadata.add_text(key, val)
-        img = PIL.Image.fromarray(self.data)
-        img.save(filename, "png", pnginfo=metadata)
-        self.filename = filename
-        return self
+
+@register_loader(
+    patterns=["*.png"], mime_types=["image/png"], priority=16, description="Kerr Microscope PNG File",
+)
+def KermitPNGFile(filename, **kargs):
+    """PNG file loader routine.
+
+    Args:
+        filename (string or bool): File to load. If None then the existing filename is used,
+            if False, then a file dialog will be used.
+
+    Returns:
+        A copy of the itinstance after loading the data.
+    """
+    instance = kargs.pop("instance", make_Data())
+    instance.filename = filename
+    _png_check_signature(instance, filename)
+    try:
+        with PIL.Image.open(instance.filename, "r") as img:
+            for k in img.info:
+                instance.metadata[k] = img.info[k]
+            instance.data = np.asarray(img)
+    except IOError as err:
+        try:
+            filename.seek(0)
+        except AttributeError:
+            pass
+        raise StonerLoadError("Unable to read as a PNG file.") from err
+    return instance
+
+
+def to_png(instance, filename=None, **kargs):
+    """Override the save method to allow KermitPNGFiles to be written out to disc.
+
+    Args:
+        filename (string): Filename to save as (using the same rules as for the load routines)
+
+    Keyword Arguments:
+        deliminator (string): Record deliniminator (defaults to a comma)
+
+    Returns:
+        A copy of itinstance.
+    """
+    if filename is None:
+        filename = instance.filename
+    if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+        filename = instance.__file_dialog("w")
+    metadata = PIL.PngImagePlugin.PngInfo()
+    for k in instance.metadata:
+        parts = instance.metadata.export(k).split("=")
+        key = parts[0]
+        val = str2bytes("=".join(parts[1:]))
+        metadata.add_text(key, val)
+    img = PIL.Image.fromarray(instance.data)
+    img.save(filename, "png", pnginfo=metadata)
+    instance.filename = filename
+    return instance
 
 
 try:  # Optional tdms support
     from nptdms import TdmsFile
 
-    class TDMSFile(DataFile):
+    @register_loader(
+        patterns=["*.tdms"], mime_types=["application/octet-stream"], priority=16, description="NI TDMS File",
+    )
+    def TDMSFile(filename, **kargs):
+        """TDMS file loader routine.
 
-        """First stab at writing a file that will import TDMS files."""
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
 
-        #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-        #   .. note::
-        #      Subclasses with priority<=32 should make some positive identification that they have the right
-        #      file type before attempting to read data.
-        priority = 16  # Makes a positive ID of its file contents
-        #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-        # the file load/save dialog boxes.
-        patterns = ["*.tdms"]  # Recognised filename patterns
+        Returns:
+            A copy of the itinstance after loading the data.
+        """
+        instance = kargs.pop("instance", make_Data())
+        instance.filename = filename
+        # Open the file and read the main file header and unpack into a dict
+        try:
+            f = TdmsFile(instance.filename)
+            for grp in f.groups():
+                if grp.path == "/":
+                    pass  # skip the rooot group
+                elif grp.path == "/'TDI Format 1.5'":
+                    tmp = DataFile(grp.as_dataframe())
+                    instance.data = tmp.data
+                    instance.column_headers = tmp.column_headers
+                    instance.metadata.update(grp.properties)
+                else:
+                    tmp = DataFile(grp.as_dataframe())
+                    instance.data = tmp.data
+                    instance.column_headers = tmp.column_headers
+        except (IOError, ValueError, TypeError, StonerLoadError) as err:
+            from traceback import format_exc
 
-        mime_type = "application/octet-stream"
-
-        def _load(self, filename=None, *args, **kargs):
-            """TDMS file loader routine.
-
-            Args:
-                filename (string or bool): File to load. If None then the existing filename is used,
-                    if False, then a file dialog will be used.
-
-            Returns:
-                A copy of the itself after loading the data.
-            """
-            if filename is None or not filename:
-                self.get_filename("r")
-            else:
-                self.filename = filename
-            # Open the file and read the main file header and unpack into a dict
-            try:
-                f = TdmsFile(self.filename)
-                for grp in f.groups():
-                    if grp.path == "/":
-                        pass  # skip the rooot group
-                    elif grp.path == "/'TDI Format 1.5'":
-                        tmp = DataFile(grp.as_dataframe())
-                        self.data = tmp.data
-                        self.column_headers = tmp.column_headers
-                        self.metadata.update(grp.properties)
-                    else:
-                        tmp = DataFile(grp.as_dataframe())
-                        self.data = tmp.data
-                        self.column_headers = tmp.column_headers
-            except (IOError, ValueError, TypeError, StonerLoadError) as err:
-                from traceback import format_exc
-
-                raise StonerLoadError(f"Not a TDMS File \n{format_exc()}") from err
-
-            return self
+            raise StonerLoadError(f"Not a TDMS File \n{format_exc()}") from err
+        return instance
 
 
 except ImportError:
-    TDMSFile = DataFile
-
+    TDMSFile = make_Data()
 if Hyperspy_ok:
 
-    class HyperSpyFile(DataFile):
+    def _unpack_meta(instance, root, value):
+        """Recursively unpack a nested dict of metadata and append keys to instance.metadata."""
+        if isinstance(value, Mapping):
+            for item in value.keys():
+                if root != "":
+                    _unpack_meta(instance, f"{root}.{item}", value[item])
+                else:
+                    _unpack_meta(instance, f"{item}", value[item])
+        else:
+            instance.metadata[root] = value
 
-        """Wrap the HyperSpy file to map to DataFile."""
+    def _unpack_axes(instance, ax_manager):
+        """Unpack the axes managber as metadata."""
+        for ax in ax_manager.signal_axes:
+            for k in instance._axes_keys:
+                instance.metadata[f"{ax.name}.{k}"] = getattr(ax, k)
 
-        priority = 64  # Makes an ID check but is quite generic
+    @register_loader(
+        patterns=["*.emd", "*.dm4"], mime_types=["application/x-hdf"], priority=64, description="Hyperspy file",
+    )
+    def HyperSpyFile(filename, **kargs):
+        """Load HyperSpy file loader routine.
 
-        patterns = ["*.emd", "*.dm4"]
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
 
-        mime_type = "application/x-hdf"  # Really an HDF5 file
-
-        _axes_keys = ["name", "scale", "low_index", "low_value", "high_index", "high_value"]
-
-        def _unpack_meta(self, root, value):
-            """Recursively unpack a nested dict of metadata and append keys to self.metadata."""
-            if isinstance(value, Mapping):
-                for item in value.keys():
-                    if root != "":
-                        self._unpack_meta(f"{root}.{item}", value[item])
-                    else:
-                        self._unpack_meta(f"{item}", value[item])
-            else:
-                self.metadata[root] = value
-
-        def _unpack_axes(self, ax_manager):
-            """Unpack the axes managber as metadata."""
-            for ax in ax_manager.signal_axes:
-                for k in self._axes_keys:
-                    self.metadata[f"{ax.name}.{k}"] = getattr(ax, k)
-
-        def _load(self, filename=None, *args, **kargs):
-            """Load HyperSpy file loader routine.
-
-            Args:
-                filename (string or bool): File to load. If None then the existing filename is used,
-                    if False, then a file dialog will be used.
-
-            Returns:
-                A copy of the itself after loading the data.
-            """
-            if filename is None or not filename:
-                self.get_filename("r")
-            else:
-                self.filename = filename
-            # Open the file and read the main file header and unpack into a dict
+        Returns:
+            A copy of the itinstance after loading the data.
+        """
+        _axes_keys = [
+            "name",
+            "scale",
+            "low_index",
+            "low_value",
+            "high_index",
+            "high_value",
+        ]
+        instance = kargs.pop("instance", make_Data())
+        instance.filename = filename
+        # Open the file and read the main file header and unpack into a dict
+        try:
+            load = hs.load
+        except AttributeError:
             try:
-                load = hs.load
+                from hyperspy import api
+
+                load = api.load
+            except (ImportError, AttributeError) as err:
+                raise ImportError("Panic over hyperspy") from err
+        try:
+            signal = load(instance.filename)
+            if not isinstance(signal, hs.signals.Signal2D):
+                raise StonerLoadError("Not a 2D signal object - aborting!")
+        except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
+            try:
+                filename.seek(0)
             except AttributeError:
-                try:
-                    from hyperspy import api
+                pass
+            raise StonerLoadError(f"Not readable by HyperSpy error was {err}") from err
+        instance.data = signal.data
+        _unpack_meta(instance, "", signal.metadata.as_dictionary())
+        _unpack_axes(instance, signal.axes_manager)
 
-                    load = api.load
-                except (ImportError, AttributeError) as err:
-                    raise ImportError("Panic over hyperspy") from err
-            try:
-                signal = load(self.filename)
-                if not isinstance(signal, hs.signals.Signal2D):
-                    raise StonerLoadError("Not a 2D signal object - aborting!")
-            except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
-                try:
-                    filename.seek(0)
-                except AttributeError:
-                    pass
-                raise StonerLoadError(f"Not readable by HyperSpy error was {err}") from err
-            self.data = signal.data
-            self._unpack_meta("", signal.metadata.as_dictionary())
-            self._unpack_axes(signal.axes_manager)
-
-            return self
+        return instance
 
 
 else:

@@ -1,12 +1,30 @@
 # -*- coding: utf-8 -*-
 """Provide some decorators and associated functions for modifying package classes and functions."""
+__all__ = [
+    "image_file_adaptor",
+    "image_file_raw_adaptor",
+    "array_file_property",
+    "array_file_attr",
+    "image_array_adaptor",
+    "class_modifier",
+    "class_wrapper",
+    "changes_size",
+    "keep_return_type",
+    "clones",
+    "fix_signature",
+    "register_loader",
+    "lookup_loader_index",
+    "lookup_loaders",
+    "make_Data",
+]
 
-from functools import wraps
 import inspect
-from importlib import import_module
 from collections.abc import Iterable
 from copy import copy
+from functools import wraps
+from importlib import import_module
 from os import environ
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import numpy as np
 
@@ -14,8 +32,11 @@ from .tests import isproperty
 
 _RTD = "READTHEDOCS" in environ
 
+_DataFile_loaders = dict()
+_DataFile_loader_index = dict()
 
-def image_file_adaptor(workingfunc):
+
+def image_file_adaptor(workingfunc: Callable) -> Callable:
     """Make wrappers for ImageFile functions.
 
     Notes:
@@ -35,7 +56,7 @@ def image_file_adaptor(workingfunc):
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kargs) -> Any:
         """Wrap a called method to capture the result back into the calling object."""
         box = kargs.pop("_box", False)
         transpose = getattr(workingfunc, "transpose", False)
@@ -49,7 +70,6 @@ def image_file_adaptor(workingfunc):
         for ix, a in enumerate(args):
             if isinstance(a, type(self)):
                 args[ix] = a.image
-
         if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
             # special case for common function crop which will change the array shape
             force = True
@@ -87,7 +107,7 @@ def image_file_adaptor(workingfunc):
     return fix_signature(gen_func, workingfunc)
 
 
-def image_file_raw_adaptor(workingfunc):
+def image_file_raw_adaptor(workingfunc: Callable) -> Callable:
     """Make wrappers for ImageFile functions.
 
     Notes:
@@ -107,7 +127,7 @@ def image_file_raw_adaptor(workingfunc):
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kargs) -> Any:
         """Wrap a called method to capture the result back into the calling object."""
         box = kargs.pop("_box", False)
         transpose = getattr(workingfunc, "transpose", False)
@@ -122,7 +142,6 @@ def image_file_raw_adaptor(workingfunc):
         for ix, a in enumerate(args):
             if isinstance(a, type(self)):
                 args[ix] = a.image
-
         if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
             # special case for common function crop which will change the array shape
             force = True
@@ -157,7 +176,7 @@ def image_file_raw_adaptor(workingfunc):
     return fix_signature(gen_func, workingfunc)
 
 
-def array_file_property(workingfunc):
+def array_file_property(workingfunc: Callable) -> Callable:
     """Wrap an arbitary callbable to make it a bound method of this class.
 
     Args:
@@ -185,7 +204,6 @@ def array_file_property(workingfunc):
         for ix, a in enumerate(args):
             if isinstance(a, type(self)):
                 args[ix] = a.image
-
         ret = workingfunc(im, *args, **kargs)
         # This shouldn't in fact be returning anything
         return ret
@@ -193,8 +211,8 @@ def array_file_property(workingfunc):
     return fix_signature(gen_func, workingfunc)
 
 
-def array_file_attr(name):
-    """Construct a property that will handle getting setting ande deleting the name attribute."""
+def array_file_attr(name: str) -> property:
+    """Construct a property that will handle getting setting ande deleting the name attribute"""
 
     def getter(self):
         return getattr(self._image, name)
@@ -313,7 +331,7 @@ def class_modifier(
             for fname in dir(mod):
                 if not fname.startswith("_"):
                     func = getattr(mod, fname)
-                    fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""))
+                    fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""),)
                     if callable(func) and isinstance(fmod, str) and fmod[:5] in ["Stone", "scipy", "skima"]:
                         if transpose:
                             func.transpose = transpose
@@ -409,6 +427,91 @@ def fix_signature(proxy_func, wrapped_func):
     if hasattr(wrapped_func, "changes_size"):
         proxy_func.changes_size = wrapped_func.changes_size
     return proxy_func
+
+
+def register_loader(
+    patterns: List[str] = None, mime_types: List[str] = None, priority: int = 128, description: str = "",
+) -> Callable:
+    """Register a function as a loader of DataFile like objects.
+
+    Keyword Arguments:
+        pattern (List[str]):
+            filename extensions that are likely to be loadable by this function
+        mime_types (List[str]):
+            mime-types that are likely to be loadable by this function
+        priority (int):
+            Sort ordcer for the priority in which to try the loader. Lower priority number is
+            tried first, but functions with lower priority number should raise a StonerLoadError more
+            cheaply if they cannot handle the file.
+        description (str):
+            A name or short description of the type of data file this uses.
+    """
+    if patterns is None:
+        patterns = [".txt", ".dat"]
+    if mime_types is None:
+        mime_types = ["text/plain"]
+    if "*.*" not in patterns:
+        patterns.append("*.*")
+
+    def real_decortator(func):
+        """The real decorator that records func in the registry."""
+        for p in patterns:
+            if p not in _DataFile_loaders:
+                _DataFile_loaders[p] = [(priority, func)]
+            else:
+                for ix, (loader_priority, _) in enumerate(_DataFile_loaders[p]):
+                    if loader_priority > priority:
+                        _DataFile_loaders[p].insert(ix, (priority, func))
+                        break
+                else:
+                    _DataFile_loaders[p].append((priority, func))
+        for p in mime_types:
+            if p not in _DataFile_loaders:
+                _DataFile_loaders[p] = [(priority, func)]
+            else:
+                for ix, (loader_priority, _) in enumerate(_DataFile_loaders[p]):
+                    if loader_priority > priority:
+                        _DataFile_loaders[p].insert(ix, (priority, func))
+                        break
+                else:
+                    _DataFile_loaders[p].append((priority, func))
+        func.patterns = patterns
+        func.mime_types = mime_types
+        func.description = description
+
+        _DataFile_loader_index[func.__name__] = {
+            "func": func,
+            "patterns": patterns,
+            "mime_types": mime_types,
+            "description": description,
+        }
+        return func
+
+    return real_decortator
+
+
+def lookup_loader_index(key: Union[str, Callable]) -> Dict:
+    """Lookups the index of loaders to return the matching function and loader information."""
+    if callable(key):
+        key = key.__name__
+    return _DataFile_loader_index[key]
+
+
+def lookup_loaders(key: Optional[str] = None) -> List[Callable]:
+    """Return a list of loader functions that matches a given extension or mime-type.
+
+    Keyword Arguments:
+        key (str, None):
+            The name to look up, if None, then the wildcard key "*.*" is used.
+
+    Returns:
+        (list of callables):
+            A list of loader functions in prority order to try.
+    """
+    if key is None:
+        key = "*.*"
+    entries = _DataFile_loaders.get(key, [])
+    return [func for _, func in entries]
 
 
 def make_Data(*args, **kargs):

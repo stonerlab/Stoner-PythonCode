@@ -5,76 +5,69 @@ __all__ = ["hdr_to_dict", "read_scan", "MaximusImage"]
 
 import json
 import re
-from pathlib import Path
-from os import path
 from copy import deepcopy
+from os import path
+from pathlib import Path
+from typing import Dict
 
-import numpy as np
 import h5py
+import numpy as np
+
+from ..compat import string_types
+from ..Core import DataFile
+from ..core.base import typeHintedDict
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
-from ..core.base import typeHintedDict
-from ..Image import ImageFile, ImageStack, ImageArray
-from ..Core import DataFile
-from ..compat import string_types
 from ..HDF5 import HDFFileManager
+from ..Image import ImageArray, ImageFile, ImageStack
+from ..tools.decorators import make_Data, register_loader
 from ..tools.file import FileManager
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
 
 
-class MaximusSpectra(DataFile):
+@register_loader(
+    patterns=["*.hdr", "*.xsp"], mime_types=["text/plain"], priority=16, description="Scans from Maximumus at Bessy"
+)
+def MaximusSpectra(filename: str, **kargs) -> DataFile:
+    """Maximus xsp file loader routine.
 
-    """Provides a :py:class:`Stoner.DataFile` subclass for loading Point spectra from Maximus."""
+    Args:
+        filename (string or bool): File to load. If None then the existing filename is used,
+            if False, then a file dialog will be used.
 
-    # We treat the hdr file as the key file type
-    _patterns = ["*.hdr", "*.xsp"]
-    mime_type = ["text/plain"]
+    Returns:
+        A copy of the itself after loading the data.
+    """
+    instance = kargs.pop("instance", make_Data())
+    instance.filename = filename
+    # Open the file and read the main file header and unpack into a dict
+    try:
+        pth = Path(instance.filename)
+    except (TypeError, ValueError) as err:
+        raise StonerLoadError("Can only open things that can be converted to paths!") from err
+    if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
+        pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
+    stem = pth.parent / pth.stem
 
-    priority = 16
-
-    def _load(self, *args, **kargs):
-        """Maximus xsp file loader routine.
-
-        Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
-
-        Returns:
-            A copy of the itself after loading the data.
-        """
-        filename = kargs.get("filename", args[0])
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-        # Open the file and read the main file header and unpack into a dict
-        try:
-            pth = Path(self.filename)
-        except (TypeError, ValueError) as err:
-            raise StonerLoadError("Can only open things that can be converted to paths!") from err
-        if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
-            pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
-        stem = pth.parent / pth.stem
-
-        try:
-            hdr = _flatten_header(hdr_to_dict(pth))
-            if "Point Scan" not in hdr["ScanDefinition.Type"]:
-                raise StonerLoadError("Not an Maximus Single Image File")
-        except (StonerLoadError, ValueError, TypeError, IOError) as err:
-            raise StonerLoadError("Error loading as Maximus File") from err
-        header, data, dims = read_scan(stem)
-        self.metadata.update(_flatten_header(header))
-        self.data = np.column_stack((dims[0], data))
-        headers = [self.metadata["ScanDefinition.Regions.PAxis.Name"]]
-        if len(dims) == 2:
-            headers.extend([str(x) for x in dims[1]])
-        else:
-            headers.append(self.metadata["ScanDefinition.Channels.Name"])
-        self.column_headers = headers
-        self.setas = "xy"
-        return self
+    try:
+        hdr = _flatten_header(hdr_to_dict(pth))
+        if "Point Scan" not in hdr["ScanDefinition.Type"]:
+            raise StonerLoadError("Not an Maximus Single Image File")
+    except (StonerLoadError, ValueError, TypeError, IOError) as err:
+        raise StonerLoadError("Error loading as Maximus File") from err
+    header, data, dims = read_scan(stem)
+    instance.metadata.update(_flatten_header(header))
+    instance.data = np.column_stack((dims[0], data))
+    headers = [instance.metadata["ScanDefinition.Regions.PAxis.Name"]]
+    if len(dims) == 2:
+        headers.extend([str(x) for x in dims[1]])
+    else:
+        headers.append(instance.metadata["ScanDefinition.Channels.Name"])
+    instance.column_headers = headers
+    instance.setas = "xy"
+    return instance
 
 
 class MaximusImage(ImageFile):
@@ -347,7 +340,7 @@ class MaximusStack(MaximusStackMixin, ImageStack):
     """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
 
-def hdr_to_dict(filename, to_python=True):
+def hdr_to_dict(filename: str, to_python: bool = True) -> Dict:
     """Convert .hdr metadata file to  json or python dictionary.
 
     Args:

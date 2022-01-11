@@ -9,12 +9,16 @@ import csv
 import re
 import sys
 from collections.abc import Mapping
-from typing import Union, List, Mapping as MappingType, Callable
+from typing import Callable, List
+from typing import Mapping as MappingType
+from typing import Union
+
 import numpy as np
 import pandas as pd
+
 from ..compat import index_types, int_types
 from ..tools import all_type, copy_into
-from .Typing import Numeric, Column_Index, Int_Types
+from .Typing import Column_Index, Int_Types, Numeric
 
 
 def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], newdata: "DataFile") -> "DataFile":
@@ -31,7 +35,7 @@ def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], n
             A modified newdata
     """
     if isinstance(other, (list, tuple)):  # Lists and tuples are converted to numpy arrays
-        other = bp.array(other)
+        other = np.array(other)
     if isinstance(other, np.ndarray):  # Numpy array to DataFrtame
         if other.ndim == 1:  # 1D arrays are treated as rows
             other = pd.DataFrame(other).T
@@ -131,3 +135,24 @@ def decode_string(value: str) -> str:
         count = int(count)
         value = value.replace(total, code * count, 1)
     return value
+
+
+def unique_strings(strings: List[str]) -> List[str]:
+    """Ensure that a list of string contains no duplicate values.
+
+    Args:
+        strings (list of str):
+            The strings to check are unique
+
+    Returns:
+        (list of str):
+            The same strings, but with a _# added to ensure each entry in sunuqye where # is a digit.
+    """
+    for ix, string in enumerate(strings):
+        new = string
+        i = 1
+        while new in strings[:ix]:
+            new = f"{string}_{i}"
+            i += 1
+        strings[ix] = new
+    return strings

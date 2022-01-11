@@ -20,7 +20,6 @@ __all__ = [
     "Typing",
 ]
 
-from .base import regexpDict, typeHintedDict, metadataObject, string_to_type
+from . import Typing, exceptions, utils
+from .base import metadataObject, regexpDict, string_to_type, typeHintedDict
 from .setas import Setas
-from . import utils, exceptions
-from . import Typing

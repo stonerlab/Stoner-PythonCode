@@ -3,23 +3,22 @@
 
 __all__ = ["DataFilePropertyMixin"]
 
-import os
 import copy
+import os
 import pathlib
 import urllib
 
 import numpy as np
-from numpy import ma
 import pandas as pd
+from numpy import ma
 
-from ..tools import get_option, isiterable, isLikeList
 from ..compat import classproperty, path_types, string_types
-
-from .utils import copy_into
+from ..tools import get_option, isiterable, isLikeList
 from ..tools.classes import subclasses
 from ..tools.file import URL_SCHEMES
-from .setas import Setas
 from .columns import Column_Headers
+from .setas import Setas
+from .utils import copy_into
 
 try:
     from tabulate import tabulate

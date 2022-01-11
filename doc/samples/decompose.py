@@ -1,6 +1,6 @@
 """Decompose Into symmetric and antisymmetric parts example."""
 # pylint: disable=invalid-name
-from numpy import linspace, reshape, array
+from numpy import array, linspace, reshape
 
 from Stoner import Data
 from Stoner.tools import format_val

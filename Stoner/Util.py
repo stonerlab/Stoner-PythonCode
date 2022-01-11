@@ -2,15 +2,14 @@
 """Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes."""
 __all__ = ["split_up_down", "ordinal", "hysteresis_correct"]
 import numpy as np
-from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
-from scipy.stats import sem
+from numpy import argmax, max, mean  # pylint: disable=redefined-builtin
 from scipy.optimize import fsolve
+from scipy.stats import sem
 
-from .Core import DataFile
-
-from .tools import format_error, make_Data, ordinal
 from . import DataFolder
 from .analysis.fitting.models.generic import linear
+from .Core import DataFile
+from .tools import format_error, make_Data, ordinal
 
 
 def _step(x, m, c, h):

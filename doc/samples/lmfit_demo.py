@@ -2,8 +2,8 @@
 # pylint: disable=invalid-name
 from os.path import join
 
-from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 from Stoner import __home__
+from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 
 config = join(__home__, "..", "scripts", "PCAR-New.ini")
 datafile = join(__home__, "..", "sample-data", "PCAR Co Data.csv")

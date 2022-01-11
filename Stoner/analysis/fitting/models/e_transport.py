@@ -5,16 +5,16 @@
 __all__ = ["BlochGrueneisen", "FluchsSondheimer", "WLfit", "blochGrueneisen", "fluchsSondheimer", "wlfit"]
 
 import numpy as np
+from lmfit import Model
+from lmfit.models import update_param_vals
 from scipy.integrate import quad
 from scipy.special import digamma
 
-from lmfit import Model
-from lmfit.models import update_param_vals
-
 try:  # numba is an optional dependency
-    from numba import jit, float64, int64
+    from numba import float64, int64, jit
 except ImportError:
-    from ....compat import _dummy, _jit as jit
+    from ....compat import _dummy
+    from ....compat import _jit as jit
 
     float64 = _dummy()
     int64 = _dummy()

@@ -8,6 +8,7 @@ from numpy.random import normal
 from Stoner import Data
 from Stoner.analysis.fitting.models import make_model
 
+
 # Make our model
 @make_model
 def simple_model(x, m, c):

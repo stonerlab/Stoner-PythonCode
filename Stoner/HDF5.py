@@ -11,18 +11,19 @@ to :py:class:`Stoner.Core.Data`.
 """
 __all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage", "HDFFileManager"]
 import importlib
-import os.path as path
 import os
+import os.path as path
 from copy import deepcopy
 
 import h5py
 import numpy as np
 
-from .compat import string_types, bytes2str, get_filedialog, path_types, str2bytes
-from .Core import StonerLoadError, DataFile
+from .compat import bytes2str, get_filedialog, path_types, str2bytes, string_types
+from .Core import DataFile, StonerLoadError
+from .core.utils import unique_strings
 from .folders import DataFolder
-from .Image.core import ImageFile, ImageArray
-from .core.utils import copy_into
+from .Image.core import ImageArray, ImageFile
+from .tools.decorators import make_Data, register_loader
 
 
 def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
@@ -113,261 +114,172 @@ class HDFFileManager:
             self.file.close()
 
 
-class HDF5File(DataFile):
+@register_loader(
+    patterns=["*.hdf", "*.hf5"],
+    mime_types=["application/x-hdf"],
+    priority=16,
+    description="DataFile storage in HDF format",
+)
+def HDF5File(filename, **kargs):  # pylint: disable=unused-argument
+    """Create a new HDF5File from an actual HDF file."""
+    instance = kargs.pop("instance", make_Data())
+    instance.filename = filename
+    with HDFFileManager(filename, "r") as f:
+        if "type" not in f.attrs and "module" not in f.attrs:
+            raise StonerLoadError("Not an JDF 5 filew that is readable by JDF5File")
+        data = f["data"]
+        if np.product(np.array(data.shape)) > 0:
+            instance.data = data[...]
+        else:
+            instance.data = [[]]
+        metadata = f.require_group("metadata")
+        typehints = f.get("typehints", None)
+        if not isinstance(typehints, h5py.Group):
+            typehints = dict()
+        else:
+            typehints = typehints.attrs
+        if "column_headers" in f.attrs:
+            columns = f.attrs["column_headers"]
+            if isinstance(columns, string_types):
+                columns = instance.metadata.string_to_type(columns)
+            instance.column_headers = unique_strings([bytes2str(x) for x in columns])
+        else:
+            raise StonerLoadError("Couldn't work out where my column headers were !")
+        for i in sorted(metadata.attrs):
+            v = metadata.attrs[i]
+            t = typehints.get(i, "Detect")
+            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
+                instance.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+            else:
+                instance[i] = metadata.attrs[i]
+        if isinstance(f, h5py.Group):
+            if f.name != "/":
+                instance.filename = os.path.join(f.file.filename, f.name)
+            else:
+                instance.filename = os.path.realpath(f.file.filename)
+    return instance
 
-    """A sub class of DataFile that sores itself in a HDF5File or group.
+
+def to_hdf(instance, filename=None, **kargs):  # pylint: disable=unused-argument
+    """Write the current object into  an hdf5 file or group within a file.
+
+    Writes the data in afashion that is compatible with being loaded in again.
 
     Args:
-        args (tuple):
-            Supplied arguments, only recognises one though !
-        kargs (dict):
-            Dictionary of keyword arguments
+        filename (string or h5py.Group):
+            Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
+            the corresponding file is opened for writing, written to and save again.
 
-    If the first non-keyword arguement is not an h5py File or Group then
-    initialises with a blank parent constructor and then loads data, otherwise,
-    calls parent constructor.
-
-    Datalayout is dead simple, the numerical data is in a dataset called *data*,
-    metadata are attribtutes of a group called *metadata* with the keynames being the
-    full name + typehint of the stanard DataFile metadata dictionary
-    *column_headers* are an attribute of the root file/group
-    *filename* is set from either an attribute called filename, or from the
-    group name or from the hdf5 filename.
-    The root has an attribute *type* that must by 'HDF5File' otherwise the load routine
-    will refuse to load it. This is to try to avoid loading rubbish from random hdf files.
+    Returns
+        A copy of the object
     """
-
-    priority = 16
-    compression = "gzip"
-    compression_opts = 6
-    patterns = ["*.hdf", "*.hf5"]
-    mime_type = ["application/x-hdf"]
-
-    def __init__(self, *args, **kargs):
-        """Initialise with an h5py.File or h5py.Group."""
-        if args and isinstance(args[0], (h5py.File, h5py.Group)):
-            args = list(args)
-            grp = args.pop(0)
-        else:
-            grp = None
-        super().__init__(*args, **kargs)
-        if grp is not None:
-            self._load(grp, **kargs)
-
-    def _load(self, filename, *args, **kargs):
-        """Load data from a hdf5 file.
-
-        Args:
-            h5file (string or h5py.Group):
-                Either a string or an h5py Group object to load data from
-
-        Returns:
-            self:
-                This object after having loaded the data
-        """
-        if filename is None or not filename:
-            self.get_filename("r")
-            filename = self.filename
-        else:
-            self.filename = filename
-        with HDFFileManager(self.filename, "r") as f:
-            loader = get_hdf_loader(f, default_loader=HDF5File.read_hdf)
-            ret = loader(f, *args, instance=self, **kargs)
-            if isinstance(ret, DataFile):
-                copy_into(ret, self)
-                return self
-            return ret
-
-    @classmethod
-    def read_hdf(cls, filename, *args, **kargs):  # pylint: disable=unused-argument
-        """Create a new HDF5File from an actual HDF file."""
-        self = kargs.pop("instance", cls())
-        if filename is None or not filename:
-            self.get_filename("r")
-            filename = self.filename
-        with HDFFileManager(filename, "r") as f:
-            data = f["data"]
-            if np.product(np.array(data.shape)) > 0:
-                self.data = data[...]
-            else:
-                self.data = [[]]
-            metadata = f.require_group("metadata")
-            typehints = f.get("typehints", None)
-            if not isinstance(typehints, h5py.Group):
-                typehints = dict()
-            else:
-                typehints = typehints.attrs
-            if "column_headers" in f.attrs:
-                self.column_headers = [bytes2str(x) for x in f.attrs["column_headers"]]
-                if isinstance(self.column_headers, string_types):
-                    self.column_headers = self.metadata.string_to_type(self.column_headers)
-                self.column_headers = [bytes2str(x) for x in self.column_headers]
-            else:
-                raise StonerLoadError("Couldn't work out where my column headers were !")
-            for i in sorted(metadata.attrs):
-                v = metadata.attrs[i]
-                t = typehints.get(i, "Detect")
-                if (
-                    isinstance(v, string_types) and t != "Detect"
-                ):  # We have typehints and this looks like it got exported
-                    self.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
-                else:
-                    self[i] = metadata.attrs[i]
-            if isinstance(f, h5py.Group):
-                if f.name != "/":
-                    self.filename = os.path.join(f.file.filename, f.name)
-                else:
-                    self.filename = os.path.realpath(f.file.filename)
-            else:
-                self.filename = os.path.realpath(f.filename)
-        return self
-
-    def save(self, filename=None, **kargs):
-        """Write the current object into  an hdf5 file or group within a file.
-
-        The data is written in afashion that is compatible with being loaded in again.
-
-        Args:
-            filename (string or h5py.Group):
-                Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
-                the corresponding file is opened for writing, written to and save again.
-
-        Returns
-            A copy of the object
-        """
-        return self.to_hdf(filename, **kargs)  # Just a pass through to our own to_hdf method
-
-    def to_hdf(self, filename=None, **kargs):  # pylint: disable=unused-argument
-        """Write the current object into  an hdf5 file or group within a file.
-
-        Writes the data in afashion that is compatible with being loaded in again.
-
-        Args:
-            filename (string or h5py.Group):
-                Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
-                the corresponding file is opened for writing, written to and save again.
-
-        Returns
-            A copy of the object
-        """
-        if filename is None:
-            filename = self.filename
-        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog("w")
-            self.filename = filename
-        if isinstance(filename, path_types):
-            mode = "r+" if os.path.exists(filename) else "w"
-        else:
-            mode = ""
-        with HDFFileManager(filename, mode) as f:
-            f.require_dataset(
-                "data",
-                data=self.data,
-                shape=self.data.shape,
-                dtype=self.data.dtype,
-                compression=self.compression,
-                compression_opts=self.compression_opts,
-            )
-            metadata = f.require_group("metadata")
-            typehints = f.require_group("typehints")
-            for k in self.metadata:
-                try:
-                    typehints.attrs[k] = self.metadata._typehints[k]
-                    metadata.attrs[k] = self[k]
-                except TypeError:
-                    # We get this for trying to store a bad data type - fallback to metadata export to string
-                    parts = self.metadata.export(k).split("=")
-                    metadata.attrs[k] = "=".join(parts[1:])
-            f.attrs["column_headers"] = [str2bytes(x) for x in self.column_headers]
-            f.attrs["filename"] = self.filename
-            f.attrs["type"] = type(self).__name__
-            f.attrs["module"] = type(self).__module__
-        return self
-
-
-class HGXFile(DataFile):
-
-    """A subclass of DataFile for reading GenX HDF Files.
-
-    These files typically have an extension .hgx. This class has been based on a limited sample
-    of hgx files and so may not be sufficiently general to handle all cases.
-    """
-
-    priority = 16
-    pattern = ["*.hgx"]
-    mime_type = ["application/x-hdf"]
-
-    def _load(self, filename, *args, **kargs):
-        """Load a GenX HDF file.
-
-        Args:
-            filename (string or bool):
-                File to load. If None then the existing filename is used, if False, then a file dialog will be used.
-
-        Returns:
-            A copy of the itself after loading the data.
-        """
-        self.seen = []
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-
-        with HDFFileManager(self.filename, "r") as f:
+    if filename is None:
+        filename = instance.filename
+    if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+        filename = instance.__file_dialog("w")
+        instance.filename = filename
+    if isinstance(filename, path_types):
+        mode = "r+" if os.path.exists(filename) else "w"
+    else:
+        mode = ""
+    with HDFFileManager(filename, mode) as f:
+        f.require_dataset(
+            "data",
+            data=instance.data,
+            shape=instance.data.shape,
+            dtype=instance.data.dtype,
+            compression=instance.compression,
+            compression_opts=instance.compression_opts,
+        )
+        metadata = f.require_group("metadata")
+        typehints = f.require_group("typehints")
+        for k in instance.metadata:
             try:
-                if "current" in f and "config" in f["current"]:
-                    pass
-                else:
-                    raise StonerLoadError("Looks like an unexpected HDF layout!.")
-                self.scan_group(f["current"], "")
-                self.main_data(f["current"]["data"])
-            except IOError as err:
-                raise StonerLoadError("Looks like an unexpected HDF layout!.") from err
-        return self
+                typehints.attrs[k] = instance.metadata._typehints[k]
+                metadata.attrs[k] = instance[k]
+            except TypeError:
+                # We get this for trying to store a bad data type - fallback to metadata export to string
+                parts = instance.metadata.export(k).split("=")
+                metadata.attrs[k] = "=".join(parts[1:])
+        f.attrs["column_headers"] = [str2bytes(x) for x in instance.column_headers]
+        f.attrs["filename"] = instance.filename
+        f.attrs["type"] = type(instance).__name__
+        f.attrs["module"] = type(instance).__module__
+    return instance
 
-    def scan_group(self, grp, pth):
-        """Recursively list HDF5 Groups."""
-        if pth in self.seen:
-            return None
-        self.seen.append(pth)
-        if not isinstance(grp, h5py.Group):
-            return None
-        if self.debug:
-            if self.debug:
-                print(f"Scanning in {pth}")
-        for x in grp:
-            if pth == "":
-                new_pth = x
+
+def _hgx_scan_group(instance, grp, pth, seen):
+    """Recursively list HDF5 Groups."""
+    if pth in seen:
+        return instance, seen
+    seen.append(pth)
+    if not isinstance(grp, h5py.Group):
+        return instance, seen
+    if instance.debug:
+        print(f"Scanning in {pth}")
+    for x in grp:
+        if pth == "":
+            new_pth = x
+        else:
+            new_pth = pth + "." + x
+        if pth == "" and x == "data":  # Special case for main data
+            continue
+        if isinstance(grp[x], type(grp)):
+            _hgx_scan_group(instance, grp[x], new_pth, seen)
+        elif isinstance(grp[x], h5py.Dataset):
+            y = grp[x][...]
+            instance[new_pth] = y
+    return instance, seen
+
+
+def _hgx_main_data(instance, data_grp):
+    """Work through the main data group and build something that looks like a numpy 2D array."""
+    if not isinstance(data_grp, h5py.Group) or data_grp.name != "/current/data":
+        raise StonerLoadError("HDF5 file not in expected format")
+    root = data_grp["datasets"]
+    for ix in root:  # Hack - iterate over all items in root, but actually data is in Groups not DataSets
+        dataset = root[ix]
+        if isinstance(dataset, h5py.Dataset):
+            continue
+        x = dataset["x"][...]
+        y = dataset["y"][...]
+        e = dataset["error"][...]
+        instance &= x
+        instance &= y
+        instance &= e
+        instance.column_headers[-3] = bytes2str(dataset["x_command"][()])
+        instance.column_headers[-2] = bytes2str(dataset["y_command"][()])
+        instance.column_headers[-1] = bytes2str(dataset["error_command"][()])
+        instance.column_headers = unique_strings([str(ix) for ix in instance.column_headers])
+    return instance
+
+
+@register_loader(patterns=["*.hgx"], mime_types=["application/x-hdf"], priority=16, description="GenX HDF file")
+def HGXFile(filename, **kargs):
+    """Load a GenX HDF file.
+
+    Args:
+        filename (string or bool):
+            File to load. If None then the existing filename is used, if False, then a file dialog will be used.
+
+    Returns:
+        A copy of the itinstance after loading the data.
+    """
+    instance = kargs.pop("instance", make_Data())
+    instance.filename = filename
+    seen = []
+
+    with HDFFileManager(instance.filename, "r") as f:
+        try:
+            if "current" in f and "config" in f["current"]:
+                pass
             else:
-                new_pth = pth + "." + x
-            if pth == "" and x == "data":  # Special case for main data
-                continue
-            if isinstance(grp[x], type(grp)):
-                self.scan_group(grp[x], new_pth)
-            elif isinstance(grp[x], h5py.Dataset):
-                y = grp[x][...]
-                self[new_pth] = y
-        return None
-
-    def main_data(self, data_grp):
-        """Work through the main data group and build something that looks like a numpy 2D array."""
-        if not isinstance(data_grp, h5py.Group) or data_grp.name != "/current/data":
-            raise StonerLoadError("HDF5 file not in expected format")
-        root = data_grp["datasets"]
-        for ix in root:  # Hack - iterate over all items in root, but actually data is in Groups not DataSets
-            dataset = root[ix]
-            if isinstance(dataset, h5py.Dataset):
-                continue
-            x = dataset["x"][...]
-            y = dataset["y"][...]
-            e = dataset["error"][...]
-            self &= x
-            self &= y
-            self &= e
-            self.column_headers[-3] = bytes2str(dataset["x_command"][()])
-            self.column_headers[-2] = bytes2str(dataset["y_command"][()])
-            self.column_headers[-1] = bytes2str(dataset["error_command"][()])
-            self.column_headers = [str(ix) for ix in self.column_headers]
+                raise StonerLoadError("Looks like an unexpected HDF layout!.")
+            instance, seen = _hgx_scan_group(instance, f["current"], "", seen)
+            instance = _hgx_main_data(instance, f["current"]["data"])
+        except IOError as err:
+            raise StonerLoadError("Looks like an unexpected HDF layout!.") from err
+    return instance
 
 
 class HDF5FolderMixin:
@@ -576,97 +488,87 @@ class HDF5Folder(HDF5FolderMixin, DataFolder):
         super().__init__(*args, **kargs)
 
 
-class SLS_STXMFile(DataFile):
-
-    """Load images from the Swiss Light Source Pollux beamline."""
-
-    priority = 16
-    compression = "gzip"
-    compression_opts = 6
-    patterns = ["*.hdf"]
-    mime_type = ["application/x-hdf"]
-
-    def _load(self, filename, *args, **kargs):
-        """Load data from the hdf5 file produced by Pollux.
-
-        Args:
-            h5file (string or h5py.Group):
-                Either a string or an h5py Group object to load data from
-
-        Returns:
-            itself after having loaded the data
-        """
-        if filename is None or not filename:
-            self.get_filename("r")
-            filename = self.filename
-        else:
-            self.filename = filename
-        if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
-            try:
-                f = h5py.File(filename, "r+")
-            except IOError as err:
-                raise StonerLoadError(f"Failed to open {filename} as a n hdf5 file") from err
-        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
-            f = filename
-        else:
-            raise StonerLoadError(f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
-        items = [x for x in f.items()]
-        if len(items) == 1 and items[0][0] == "entry1":
-            group1 = [x for x in f["entry1"]]
-            if "definition" in group1 and bytes2str(f["entry1"]["definition"][0]) == "NXstxm":  # Good HDF5
-                pass
+def _sls_scan_meta(instance, group):
+    """Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata."""
+    root = ".".join(group.name.split("/")[2:])
+    for name, thing in group.items():
+        parts = thing.name.split("/")
+        name = ".".join(parts[2:])
+        if isinstance(thing, h5py.Group):
+            instance = _sls_scan_meta(instance, thing)
+        elif isinstance(thing, h5py.Dataset):
+            if thing.ndim > 1:
+                continue
+            if np.product(thing.shape) == 1:
+                instance[name] = thing[0]
             else:
-                raise StonerLoadError("HDF5 file lacks single top level group called entry1")
+                instance[name] = thing[...]
+    for attr in group.attrs:
+        instance[f"{root}.{attr}"] = group.attrs[attr]
+    return instance
+
+
+@register_loader(patterns=["*.hdf"], mime_types=["application/x-hdf"], priority=16, description="SLS STXM File")
+def SLS_STXMFile(filename, **kargs):
+    """Load data from the hdf5 file produced by Pollux.
+
+    Args:
+        h5file (string or h5py.Group):
+            Either a string or an h5py Group object to load data from
+
+    Returns:
+        itself after having loaded the data
+    """
+    instance = kargs.pop("instance", make_Data())
+    instance.filename = filename
+    if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
+        try:
+            f = h5py.File(filename, "r+")
+        except IOError as err:
+            raise StonerLoadError(f"Failed to open {filename} as a n hdf5 file") from err
+    elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+        f = filename
+    else:
+        raise StonerLoadError(f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
+    items = [x for x in f.items()]
+    if len(items) == 1 and items[0][0] == "entry1":
+        group1 = [x for x in f["entry1"]]
+        if "definition" in group1 and bytes2str(f["entry1"]["definition"][0]) == "NXstxm":  # Good HDF5
+            pass
         else:
             raise StonerLoadError("HDF5 file lacks single top level group called entry1")
-        root = f["entry1"]
-        data = root["counter0"]["data"]
-        if np.product(np.array(data.shape)) > 0:
-            self.data = data[...]
-        else:
-            self.data = [[]]
-        self.scan_meta(root)
-        if "file_name" in f.attrs:
-            self["original filename"] = f.attrs["file_name"]
-        elif isinstance(f, h5py.Group):
-            self["original filename"] = f.name
-        else:
-            self["original filename"] = f.file.filename
+    else:
+        raise StonerLoadError("HDF5 file lacks single top level group called entry1")
+    root = f["entry1"]
+    data = root["counter0"]["data"]
+    if np.product(np.array(data.shape)) > 0:
+        instance.data = data[...]
+    else:
+        instance.data = [[]]
+    instance = _sls_scan_meta(instance, root)
+    if "file_name" in f.attrs:
+        instance["original filename"] = f.attrs["file_name"]
+    elif isinstance(f, h5py.Group):
+        instance["original filename"] = f.name
+    else:
+        instance["original filename"] = f.file.filename
 
-        if isinstance(filename, path_types):
-            f.file.close()
-        self["Loaded from"] = self.filename
+    if isinstance(filename, path_types):
+        f.file.close()
+    instance["Loaded from"] = instance.filename
 
-        if "instrument.sample_x.data" in self.metadata:
-            self.metadata["actual_x"] = self.metadata["instrument.sample_x.data"].reshape(self.shape)
-        if "instrument.sample_y.data" in self.metadata:
-            self.metadata["actual_y"] = self.metadata["instrument.sample_y.data"].reshape(self.shape)
-        self.metadata["sample_x"], self.metadata["sample_y"] = np.meshgrid(
-            self.metadata["counter0.sample_x"], self.metadata["counter0.sample_y"]
-        )
-        if "control.data" in self.metadata:
-            self.metadata["beam current"] = ImageArray(self.metadata["control.data"].reshape(self.data.shape))
-            self.metadata["beam current"].metadata = self.metadata
-        self.data = self.data[::-1]
-        return self
-
-    def scan_meta(self, group):
-        """Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata."""
-        root = ".".join(group.name.split("/")[2:])
-        for name, thing in group.items():
-            parts = thing.name.split("/")
-            name = ".".join(parts[2:])
-            if isinstance(thing, h5py.Group):
-                self.scan_meta(thing)
-            elif isinstance(thing, h5py.Dataset):
-                if thing.ndim > 1:
-                    continue
-                if np.product(thing.shape) == 1:
-                    self.metadata[name] = thing[0]
-                else:
-                    self.metadata[name] = thing[...]
-        for attr in group.attrs:
-            self.metadata[f"{root}.{attr}"] = group.attrs[attr]
+    if "instrument.sample_x.data" in instance.metadata:
+        instance["actual_x"] = instance["instrument.sample_x.data"].reshape(instance.shape)
+    if "instrument.sample_y.data" in instance.metadata:
+        instance["actual_y"] = instance["instrument.sample_y.data"].reshape(instance.shape)
+    instance["sample_x"], instance["sample_y"] = np.meshgrid(
+        instance["counter0.sample_x"], instance["counter0.sample_y"]
+    )
+    if "control.data" in instance.metadata:
+        instance["beam current"] = ImageArray(instance["control.data"].reshape(instance.data.shape))
+        instance["beam current"].metadata = instance.metadata
+    instance.data = instance.data[::-1]
+    return instance
 
 
 class STXMImage(ImageFile):

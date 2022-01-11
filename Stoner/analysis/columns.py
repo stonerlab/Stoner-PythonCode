@@ -6,8 +6,8 @@ __all__ = ["ColumnOpsMixin"]
 
 import numpy as np
 
-from Stoner.tools import isiterable, all_type
 from Stoner.compat import index_types
+from Stoner.tools import all_type, isiterable
 
 
 class ColumnOpsMixin:

@@ -6,7 +6,6 @@ import numpy as np
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import linear
 
-
 filename = (
     "../sample-data/6221-Lockin-DAQ Temperature Control -30.0Deg 0.004T.txt"
 )

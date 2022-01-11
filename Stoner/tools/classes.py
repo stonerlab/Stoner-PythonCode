@@ -12,10 +12,12 @@ __all__ = [
     "copy_into",
 ]
 
-import copy
 import contextlib
-from typing import Optional, Dict, Any, List, Iterable as IterableType, Union
+import copy
 from collections.abc import MutableSequence
+from typing import Any, Dict
+from typing import Iterable as IterableType
+from typing import List, Optional, Union
 
 import pandas as pd
 
@@ -310,9 +312,14 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
     dest.data = source._data.copy()
     dest._mask = source._mask.copy()
     dest.setas = source.setas.to_list()
+    breakpoint()
 
     for attr in source._public_attrs:
-        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "setas", "_data", "_mask"]:
+        if (
+            not hasattr(source, attr)
+            or callable(getattr(source, attr))
+            or attr in ["data", "mask", "column_headers", "setas", "_data", "_mask"]
+        ):
             continue
         try:
             setattr(dest, attr, copy.deepcopy(getattr(source, attr)))

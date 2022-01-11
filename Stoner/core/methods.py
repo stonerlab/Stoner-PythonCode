@@ -4,12 +4,13 @@
 __all__ = ["DataFileSearchMixin"]
 
 import copy
+
 import numpy as np
 import pandas as pd
 from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import index_types, int_types
-from ..tools import operator, isiterable, all_type
+from ..tools import all_type, isiterable, operator
 from ..tools.widgets import RangeSelect
 
 

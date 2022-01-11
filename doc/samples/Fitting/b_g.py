@@ -7,8 +7,8 @@ from numpy.random import normal
 
 from Stoner import Data
 from Stoner.analysis.fitting.models.e_transport import (
-    blochGrueneisen,
     BlochGrueneisen,
+    blochGrueneisen,
 )
 
 T = linspace(4.2, 300, 101)

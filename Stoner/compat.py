@@ -21,13 +21,13 @@ __all__ = [
     "_dummy",
 ]
 
-from sys import version_info as __vi__
-from os import walk, makedirs
-from os.path import join, commonpath
 import fnmatch
-from inspect import signature, getfullargspec
-from shutil import which
+from inspect import getfullargspec, signature
+from os import makedirs, walk
+from os.path import commonpath, join
 from pathlib import PurePath
+from shutil import which
+from sys import version_info as __vi__
 
 import numpy as np
 from matplotlib import __version__ as mpl_version

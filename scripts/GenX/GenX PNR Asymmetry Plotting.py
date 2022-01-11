@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Script to produce plots from GenX output."""
 # pylint: disable=invalid-name
-import numpy as np
 import matplotlib.pyplot as plt
-from Stoner import DataFolder, Data
+import numpy as np
 
+from Stoner import Data, DataFolder
 
 f = DataFolder(directory=False, pattern="*.dat", type=Data)
 f.sort("dataset")

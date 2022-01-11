@@ -46,29 +46,35 @@ __all__ = [
     "do_nothing",
     "denoise",
 ]
-import warnings
-import os
 import io
+import os
+import warnings
 
+import matplotlib.cm as cm
 import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.colors import to_rgba
+from PIL import Image, PngImagePlugin
+from scipy import signal
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
-from scipy import signal
-from matplotlib.colors import to_rgba
-import matplotlib.cm as cm
-from matplotlib import pyplot as plt
-from skimage import feature, measure, transform, filters, registration
-from PIL import Image, PngImagePlugin
+from skimage import feature, filters, measure, registration, transform
 
-from Stoner.tools import isTuple, isiterable, make_Data
+from Stoner.tools import isiterable, isTuple, make_Data
+
+from ..compat import (  # Some things to help with Python2 and Python3 compatibility
+    get_filedialog,
+    string_types,
+)
 
 # from .core import ImageArray
 from ..core.base import metadataObject
-from .util import sign_loss, _dtype2, _supported_types, prec_loss, dtype_range, _dtype, _scale as im_scale
-from ..tools.decorators import changes_size, keep_return_type
-from .widgets import LineSelect
-from ..compat import string_types, get_filedialog  # Some things to help with Python2 and Python3 compatibility
 from ..plot.utils import auto_fit_fontsize
+from ..tools.decorators import changes_size, keep_return_type
+from .util import _dtype, _dtype2
+from .util import _scale as im_scale
+from .util import _supported_types, dtype_range, prec_loss, sign_loss
+from .widgets import LineSelect
 
 try:
     from PyQt5.QtGui import QImage
@@ -1610,8 +1616,9 @@ def save_tiff(self, filename, forcetype=False):
         The type name is added as a string to the metadata before saving.
 
     """
-    from PIL.TiffImagePlugin import ImageFileDirectory_v2
     import json
+
+    from PIL.TiffImagePlugin import ImageFileDirectory_v2
 
     dtype = np.dtype(self.dtype).name  # string representation of dtype we can save
     self["ImageArray.dtype"] = dtype  # add the dtype to the metadata for saving.

@@ -5,13 +5,13 @@ __all__ = ["MetadataProxy"]
 import fnmatch
 from collections.abc import MutableMapping
 
-from lmfit import Model
 import numpy as np
+from lmfit import Model
 
-from ..core import typeHintedDict, metadataObject
 from ..compat import string_types
-from ..tools import isLikeList, isiterable, make_Data
+from ..core import metadataObject, typeHintedDict
 from ..Core import DataFile
+from ..tools import isiterable, isLikeList, make_Data
 
 
 def _fmt_as_list(results):
@@ -146,7 +146,7 @@ class MetadataProxy(MutableMapping):
             keys = set()
         ret = typeHintedDict()
         for k in sorted(list(keys)):
-            ret[k] = self[k].view(np.ndarray)
+            ret[k] = self[k].values
         return ret
 
     @property

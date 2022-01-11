@@ -7,17 +7,20 @@ Classes Include
 * ZipFolder - A :py:class:`Stoner.folders.DataFolder` subclass that can save and load data from a single zip file
 """
 __all__ = ["test_is_zip", "ZippedFile", "ZipFolderMixin", "ZipFolder"]
-import zipfile as zf
-import os.path as path
-from traceback import format_exc
 import fnmatch
+import io
+import os.path as path
+import zipfile as zf
+from traceback import format_exc
 
-from .compat import string_types, str2bytes, get_filedialog, _pattern_type, path_types
+from .compat import _pattern_type, get_filedialog, path_types, str2bytes, string_types
 from .Core import DataFile, StonerLoadError
 from .folders import DiskBasedFolderMixin
 from .folders.core import baseFolder
 from .folders.utils import pathjoin
+from .formats.generic import TDIFileLoader
 from .tools import copy_into, make_Data
+from .tools.decorators import make_Data, register_loader
 
 
 def test_is_zip(filename, member=""):
@@ -53,178 +56,128 @@ def test_is_zip(filename, member=""):
     return test_is_zip(newfile, newmember)
 
 
-class ZippedFile(DataFile):
+def _zip_extract(instance, archive, member):
+    """Responsible for actually reading the zip file archive.
 
-    """A sub class of DataFile that sores itself in a zip file.
+    Args:
+        archive (zipfile.ZipFile):
+            An open zip archive
+        member (string):
+            The name of one member of the zip file
 
-    If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
-    initialises with a blank parent constructor and then loads data, otherwise,
-    calls parent constructor.
-
+    Return:
+        A datafile like instance
     """
+    info = archive.getinfo(member)
+    data = archive.read(info)  # In Python 3 this would be a bytes
+    data = io.BytesIO(data)
+    instance = TDIFileLoader(data, instance=instance)
+    instance.filename = archive.filename + "/" + member
+    return instance
 
-    priority = 32
-    patterns = ["*.zip"]
 
-    mime_type = ["application/zip"]
-
-    def __init__(self, *args, **kargs):
-        """Catch initialising with an open zf.ZipFile."""
-        if len(args) > 0:
-            other = args[0]
-            if isinstance(other, zf.ZipFile):
-                otherdir = other.namelist()
-                if len(args) == 2 and isinstance(args[1], string_types):  # ZippedFile(open_zip,"filename")
-                    kargs["filename"] = args[1].replace("\\", "/")
-                elif "filename" not in kargs:  # ZippedFile(open_zip) - assume we use tyhe first zipped file in there
-                    kargs["filename"] = other.namelist()[0]
-                # Attempt to normalise start of path
-                if kargs["filename"].startswith("./") and not (
-                    otherdir[0].startswith("/") or otherdir[0].startswith("./")
-                ):
-                    kargs["filename"] = kargs["filename"][2:]
-                if kargs["filename"] not in other.namelist():  # New file not in the zip file yet
-                    raise StonerLoadError(f"File {kargs['filename']} not found in zip file {other.filename}")
-                # Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
-                super().__init__(**kargs)
-                self._extract(other, kargs["filename"])
-            elif isinstance(other, path_types):  # Passed a string - so try as a zipfile
-                if zf.is_zipfile(other):
-                    other = zf.ZipFile(other, "a")
-                    args = args = list(args)
-                    args[0] = other
-                elif test_is_zip(other):
-                    args = test_is_zip(other)
-                self.__init__(*args, **kargs)
-            else:
-                super().__init__(*args, **kargs)
-        else:
-            super().__init__(*args, **kargs)
-
-    def _extract(self, archive, member):
-        """Responsible for actually reading the zip file archive.
-
-        Args:
-            archive (zipfile.ZipFile):
-                An open zip archive
-            member (string):
-                The name of one member of the zip file
-
-        Return:
-            A datafile like instance
-        """
-        info = archive.getinfo(member)
-        data = archive.read(info)  # In Python 3 this would be a bytes
-        tmp = make_Data(data)
-        copy_into(tmp, self)
-        # self.__init__(tmp << data)
-        self.filename = path.join(archive.filename, member)
-        return self
-
-    def _load(self, filename=None, *args, **kargs):
-        """Load a file from the zip file, openining it as necessary."""
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-        try:
-            if isinstance(self.filename, zf.ZipFile):  # Loading from an ZipFile
-                if not self.filename.fp:  # Open zipfile if necessarry
-                    other = zf.ZipFile(self.filename.filename, "r")
-                    close_me = True
-                else:  # Zip file is already open
-                    other = self.filename
-                    close_me = False
-                member = kargs.get("member", other.namelist()[0])
-                solo_file = len(other.namelist()) == 1
-            elif isinstance(self.filename, path_types) and zf.is_zipfile(
-                self.filename
-            ):  # filename is a string that is a zip file
-                other = zf.ZipFile(self.filename, "a")
-                member = kargs.get("member", other.namelist()[0])
+@register_loader(patterns=["*.zip"], mime_types=["application/zip"], priority=32, description="Data in a zip file")
+def ZippedFile(filename, **kargs):
+    """Load a file from the zip file, openining it as necessary."""
+    instance = kargs.pop("instance", make_Data())
+    instance.filename = filename
+    try:
+        if isinstance(instance.filename, zf.ZipFile):  # Loading from an ZipFile
+            if not instance.filename.fp:  # Open zipfile if necessarry
+                other = zf.ZipFile(instance.filename.filename, "r")
                 close_me = True
-                solo_file = len(other.namelist()) == 1
-            else:
-                raise StonerLoadError(f"{self.filename} does  not appear to be a real zip file")
-        except StonerLoadError:
-            raise
-        except Exception as err:  # pylint: disable=W0703 # Catching everything else here
-            try:
-                exc = format_exc()
-                other.close()
-            except (AttributeError, NameError, ValueError, TypeError, zf.BadZipFile, zf.LargeZipFile):
-                pass
-            raise StonerLoadError(f"{self.filename} threw an error when opening\n{exc}") from err
-        # Ok we can try reading now
-        self._extract(other, member)
-        if close_me:
-            other.close()
-        if solo_file:
-            self.filename = str(filename)
-        return self
-
-    def save(self, filename=None, **kargs):
-        """Override the save method to allow ZippedFile to be written out to disc (as a mininmalist output).
-
-        Args:
-            filename (string or zipfile.ZipFile instance):
-                Filename to save as (using the same rules as for the load routines)
-
-        Returns:
-            A copy of itself.
-        """
-        if filename is None:
-            filename = self.filename
-        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog("w")
-        compression = kargs.pop("compression", zf.ZIP_DEFLATED)
+            else:  # Zip file is already open
+                other = instance.filename
+                close_me = False
+            member = kargs.get("member", other.namelist()[0])
+            solo_file = len(other.namelist()) == 1
+        elif isinstance(instance.filename, path_types) and zf.is_zipfile(
+            instance.filename
+        ):  # filename is a string that is a zip file
+            other = zf.ZipFile(instance.filename, "a")
+            member = kargs.get("member", other.namelist()[0])
+            close_me = True
+            solo_file = len(other.namelist()) == 1
+        else:
+            raise StonerLoadError(f"{instance.filename} does  not appear to be a real zip file")
+    except StonerLoadError:
+        raise
+    except Exception as err:  # pylint: disable=W0703 # Catching everything else here
         try:
-            if isinstance(filename, path_types):  # We;ve got a string filename
-                if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename
-                    zipfile, member = test_is_zip(filename)
-                    zipfile = zf.ZipFile(zipfile, "a")
-                    close_me = True
-                elif path.exists(filename):  # The fiule exists but isn't a zip file
-                    raise IOError(f"{filename} Should either be a zip file or a new zip file")
-                else:  # Path doesn't exist, use extension of file part to find where the zip file should be
-                    parts = path.split(filename)
-                    for i, part in enumerate(parts):
-                        if path.splitext(part)[1].lower() == ".zip":
-                            break
-                    else:
-                        raise IOError(f"Can't figure out where the zip file is in {filename}")
-                    zipfile = zf.ZipFile(path.join(*parts[: i + 1]), "w", compression, True)
-                    close_me = True
-                    member = path.join("/", *parts[i + 1 :])
-            elif isinstance(filename, zf.ZipFile):  # Handle\ zipfile instance, opening if necessary
-                if not filename.fp:
-                    filename = zf.ZipFile(filename.filename, "a")
-                    close_me = True
-                else:
-                    close_me = False
-                zipfile = filename
-                member = ""
+            exc = format_exc()
+            other.close()
+        except (AttributeError, NameError, ValueError, TypeError, zf.BadZipFile, zf.LargeZipFile):
+            pass
+        raise StonerLoadError(f"{instance.filename} threw an error when opening\n{exc}") from err
+    # Ok we can try reading now
+    instance = _zip_extract(instance, other, member)
+    if close_me:
+        other.close()
+    if solo_file:
+        instance.filename = str(filename)
+    return instance
 
-            if (
-                member == "" or member == "/"
-            ):  # Is our file object a bare zip file - if so create a default member name
-                if len(zipfile.namelist()) > 0:
-                    member = zipfile.namelist()[-1]
-                    self.filename = path.join(filename, member)
-                else:
-                    member = "DataFile.txt"
-                    self.filename = filename
 
-            zipfile.writestr(member, str2bytes(str(self)))
-            if close_me:
-                zipfile.close()
-        except (zipfile.BadZipFile, IOError, TypeError, ValueError) as err:
-            error = format_exc()
-            try:
-                zipfile.close()
-            finally:
-                raise IOError(f"Error saving zipfile\n{error}") from err
-        return self
+def to_zip(instance, filename=None, **kargs):
+    """Override the save method to allow ZippedFile to be written out to disc (as a mininmalist output).
+
+    Args:
+        filename (string or zipfile.ZipFile instance):
+            Filename to save as (using the same rules as for the load routines)
+
+    Returns:
+        A copy of itinstance.
+    """
+    if filename is None:
+        filename = instance.filename
+    if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+        filename = instance.__file_dialog("w")
+    compression = kargs.pop("compression", zf.ZIP_DEFLATED)
+    try:
+        if isinstance(filename, path_types):  # We;ve got a string filename
+            if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename
+                zipfile, member = test_is_zip(filename)
+                zipfile = zf.ZipFile(zipfile, "a")
+                close_me = True
+            elif path.exists(filename):  # The fiule exists but isn't a zip file
+                raise IOError(f"{filename} Should either be a zip file or a new zip file")
+            else:  # Path doesn't exist, use extension of file part to find where the zip file should be
+                parts = path.split(filename)
+                for i, part in enumerate(parts):
+                    if path.splitext(part)[1].lower() == ".zip":
+                        break
+                else:
+                    raise IOError(f"Can't figure out where the zip file is in {filename}")
+                zipfile = zf.ZipFile(path.join(*parts[: i + 1]), "w", compression, True)
+                close_me = True
+                member = path.join("/", *parts[i + 1 :])
+        elif isinstance(filename, zf.ZipFile):  # Handle\ zipfile instance, opening if necessary
+            if not filename.fp:
+                filename = zf.ZipFile(filename.filename, "a")
+                close_me = True
+            else:
+                close_me = False
+            zipfile = filename
+            member = ""
+
+        if member == "" or member == "/":  # Is our file object a bare zip file - if so create a default member name
+            if len(zipfile.namelist()) > 0:
+                member = zipfile.namelist()[-1]
+                instance.filename = path.join(filename, member)
+            else:
+                member = "DataFile.txt"
+                instance.filename = filename
+
+        zipfile.writestr(member, str2bytes(str(instance)))
+        if close_me:
+            zipfile.close()
+    except (zipfile.BadZipFile, IOError, TypeError, ValueError) as err:
+        error = format_exc()
+        try:
+            zipfile.close()
+        finally:
+            raise IOError(f"Error saving zipfile\n{error}") from err
+    return instance
 
 
 class ZipFolderMixin:

@@ -9,13 +9,14 @@ from warnings import warn
 
 import numpy as np
 from numpy import ma
-from scipy.interpolate import interp1d, UnivariateSpline
-from scipy.signal import get_window, convolve, savgol_filter
+from scipy.interpolate import UnivariateSpline, interp1d
+from scipy.signal import convolve, get_window, savgol_filter
 
+from Stoner.compat import get_func_params, int_types, string_types
 from Stoner.tools import isiterable, isnone
-from Stoner.compat import int_types, string_types, get_func_params
 
-from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
+from .utils import GetAffineTransform, _twoD_fit
+from .utils import outlier as _outlier
 
 
 class FilteringOpsMixin:

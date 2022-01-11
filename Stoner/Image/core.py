@@ -1,47 +1,48 @@
 # -*- coding: utf-8 -*-
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
 __all__ = ["ImageArray", "ImageFile"]
+import inspect
 import os
 from copy import copy, deepcopy
-import inspect
 from importlib import import_module
 from io import BytesIO as StreamIO
 from warnings import warn
 
-from PIL import Image, PngImagePlugin
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image, PngImagePlugin
 from scipy import ndimage as ndi
 from skimage import (
     color,
     exposure,
     feature,
-    io,
-    measure,
     filters,
     graph,
-    util,
-    restoration,
+    io,
+    measure,
     morphology,
+    restoration,
     segmentation,
     transform,
+    util,
 )
-from ..core.base import typeHintedDict, metadataObject
-from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..Core import DataFile
-from ..tools import isTuple, isLikeList, make_Data
-from ..tools.file import file_dialog, get_file_name_type, auto_load_classes
-from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones
-from ..compat import (
-    string_types,
+
+from ..compat import (  # Some things to help with Python2 and Python3 compatibility
     get_filedialog,
     int_types,
     path_types,
     str2bytes,
-)  # Some things to help with Python2 and Python3 compatibility
+    string_types,
+)
+from ..Core import DataFile
+from ..core.base import metadataObject, typeHintedDict
+from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
+from ..tools import isLikeList, isTuple, make_Data
+from ..tools.decorators import class_modifier, class_wrapper, clones, image_file_adaptor
+from ..tools.file import auto_load_classes, file_dialog, get_file_name_type
+from . import imagefuncs
 from .attrs import DrawProxy, MaskProxy
 from .widgets import RegionSelect
-from . import imagefuncs
 
 if "READTHEDOCS" not in os.environ:
     from skimage import viewer

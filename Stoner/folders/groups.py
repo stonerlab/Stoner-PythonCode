@@ -3,8 +3,8 @@
 
 __all__ = ["GroupsDict"]
 
-from collections.abc import Iterable
 import fnmatch
+from collections.abc import Iterable
 from os import path
 
 from Stoner.core.base import regexpDict

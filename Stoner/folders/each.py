@@ -3,22 +3,23 @@
 from __future__ import annotations
 
 __all__ = ["Item"]
-from collections.abc import MutableSequence
-from functools import wraps, partial
-from traceback import format_exc
 import os
+from collections.abc import MutableSequence
+from functools import partial, wraps
+from traceback import format_exc
 from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ..tools import isiterable
 from ..compat import string_types
+from ..tools import isiterable
 from .utils import get_pool
 
 if TYPE_CHECKING:
+    from typing import Any, Callable, List, Optional, Tuple, Union
+
     from ..core import metadataObject
     from .core import baseFolder
-    from typing import Tuple, List, Any, Union, Optional, Callable
 
 
 def _worker(d: metadataObject, **kwargs) -> Tuple[metadataObject, Any]:
