@@ -35,9 +35,9 @@ from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
 from .core.operators import DataFileOperatorsMixin
 from .core.property import DataFilePropertyMixin
-from .core.utils import copy_into, decode_string, tab_delimited
+from .core.utils import decode_string, tab_delimited
 from .tools import all_type, get_option, isiterable, isLikeList, make_Data
-from .tools.classes import subclasses
+from .tools.classes import subclasses, copy_into
 from .tools.decorators import lookup_loader_index, lookup_loaders
 from .tools.file import (
     URL_SCHEMES,

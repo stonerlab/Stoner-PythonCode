@@ -23,9 +23,9 @@ check:
 	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
 
 isort:
-	find Stoner -name '*.py' | xargs -d "\n" isort --profile black
-	find doc/samples -name '*.py' | xargs  -d "\n" isort --profile black
-	find scripts -name '*.py' | xargs -d "\n" isort --profile black
+	find Stoner -name '*.py' | xargs -d "\n" isort --profile black --nis
+	find doc/samples -name '*.py' | xargs  -d "\n" isort --profile black --nis
+	find scripts -name '*.py' | xargs -d "\n" isort --profile black --nis
 
 black: isort
 	find Stoner -name '*.py' | xargs -d "\n" black -l 119

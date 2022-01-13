@@ -7,7 +7,7 @@ from pathlib import PurePath
 
 from numpy import ndarray
 
-from ..compat import _pattern_type
+from re import Pattern as _pattern_type
 
 # Types used in compat code
 RegExp = _pattern_type

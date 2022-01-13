@@ -10,15 +10,13 @@ import urllib
 
 import numpy as np
 import pandas as pd
-from numpy import ma
 
-from ..compat import classproperty, path_types, string_types
+from ..compat import classproperty, path_types
 from ..tools import get_option, isiterable, isLikeList
-from ..tools.classes import subclasses
+from ..tools.classes import subclasses, copy_into
 from ..tools.file import URL_SCHEMES
 from .columns import Column_Headers
 from .setas import Setas
-from .utils import copy_into
 
 try:
     from tabulate import tabulate

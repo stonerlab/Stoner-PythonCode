@@ -22,5 +22,5 @@ __all__ = [
 from . import attrs, widgets
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder
-from .kerr import KerrArray, KerrStack, MaskStack
 from .stack import ImageStack
+from .kerr import KerrArray, KerrStack, MaskStack

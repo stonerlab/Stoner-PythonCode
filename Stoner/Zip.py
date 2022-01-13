@@ -8,6 +8,7 @@ Classes Include
 """
 __all__ = ["test_is_zip", "ZippedFile", "ZipFolderMixin", "ZipFolder"]
 import fnmatch
+import os
 import io
 import os.path as path
 import zipfile as zf
@@ -56,6 +57,64 @@ def test_is_zip(filename, member=""):
     return test_is_zip(newfile, newmember)
 
 
+class ZIPFileManager:
+    def __init__(self, filename, mode="r", **kargs):
+        """Initialise context handler.
+
+        Works out the filename and member in cases the input flename includes a path to a member.
+
+        Checks the file is actually a zip file that is openable with the given mode.
+        """
+        self.mode = mode
+        self.handle = None
+        self.file = None
+        self.close = True
+        self.member = ""
+        # Handle the case we're passed an already open h5py object
+        if not isinstance(filename, path_types) or mode == "w":  # passed an already open zip object
+            self.filename = filename
+            return
+        # Here we deal with a string or path filename
+        parts = str(filename).split(os.path.sep)
+        bits = len(parts)
+        for ix in range(bits):
+            testname = "/".join(parts[: bits - ix])
+            if ix > 0:
+                membername = "/".join(parts[bits - ix :])
+            if path.exists(testname):
+                filename = testname
+                break
+        self.member = membername
+
+        try:
+            if not mode.startswith("w"):
+                with zf.ZipFile(filename, "r"):
+                    pass
+        except (IOError, OSError):
+            raise StonerLoadError(f"{filename} not a  ZipFile")
+        self.filename = filename
+
+    def __enter__(self):
+        """Open the hdf file with given mode and navigate to the group."""
+        if isinstance(self.filename, (zf.ZipFile, zf.Path)):  # passed an already open h5py object
+            self.handle = self.filename
+            self.file = self.filename
+            self.close = False
+        elif isinstance(self.filename, path_types):  # Passed something to open
+            handle = zf.ZIPFile(self.filename, self.mode)
+            self.file = handle
+            path=zf.Path(handle)
+            self.handle=path.open(self.member)
+        else:
+            raise StonerLoadError("Note a resource that can be handled with HDF")
+        return self.handle
+
+    def __exit__(self, typ, value, traceback):
+        """Ensure we close the hdf file no matter what."""
+        if self.file is not None and self.close:
+            self.file.close()
+
+
 def _zip_extract(instance, archive, member):
     """Responsible for actually reading the zip file archive.
 
@@ -81,40 +140,13 @@ def ZippedFile(filename, **kargs):
     """Load a file from the zip file, openining it as necessary."""
     instance = kargs.pop("instance", make_Data())
     instance.filename = filename
-    try:
-        if isinstance(instance.filename, zf.ZipFile):  # Loading from an ZipFile
-            if not instance.filename.fp:  # Open zipfile if necessarry
-                other = zf.ZipFile(instance.filename.filename, "r")
-                close_me = True
-            else:  # Zip file is already open
-                other = instance.filename
-                close_me = False
-            member = kargs.get("member", other.namelist()[0])
-            solo_file = len(other.namelist()) == 1
-        elif isinstance(instance.filename, path_types) and zf.is_zipfile(
-            instance.filename
-        ):  # filename is a string that is a zip file
-            other = zf.ZipFile(instance.filename, "a")
-            member = kargs.get("member", other.namelist()[0])
-            close_me = True
-            solo_file = len(other.namelist()) == 1
-        else:
-            raise StonerLoadError(f"{instance.filename} does  not appear to be a real zip file")
-    except StonerLoadError:
-        raise
-    except Exception as err:  # pylint: disable=W0703 # Catching everything else here
-        try:
-            exc = format_exc()
-            other.close()
-        except (AttributeError, NameError, ValueError, TypeError, zf.BadZipFile, zf.LargeZipFile):
-            pass
-        raise StonerLoadError(f"{instance.filename} threw an error when opening\n{exc}") from err
-    # Ok we can try reading now
-    instance = _zip_extract(instance, other, member)
-    if close_me:
-        other.close()
-    if solo_file:
-        instance.filename = str(filename)
+    if not test_is_zip(filename):
+        raise StonerLoadError("Not a zip file !")
+    with ZIPFileManager(filename, "r") as  archive:
+        if isinstance(archive,zf.ZipFile): # Select the first file from the filelist
+            member=archive.filelist()[0]
+            archive=zf.Path(archive).open(member,"r")
+        instance = instance.load(archive)
     return instance
 
 
