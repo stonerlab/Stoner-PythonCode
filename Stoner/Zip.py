@@ -8,9 +8,10 @@ Classes Include
 """
 __all__ = ["test_is_zip", "ZippedFile", "ZipFolderMixin", "ZipFolder"]
 import fnmatch
-import os
 import io
+import os
 import os.path as path
+import pathlib
 import zipfile as zf
 from traceback import format_exc
 
@@ -19,7 +20,7 @@ from .Core import DataFile, StonerLoadError
 from .folders import DiskBasedFolderMixin
 from .folders.core import baseFolder
 from .folders.utils import pathjoin
-from .formats.generic import TDIFileLoader
+from .formats.generic import TDIFile
 from .tools import copy_into, make_Data
 from .tools.decorators import make_Data, register_loader
 
@@ -41,7 +42,7 @@ def test_is_zip(filename, member=""):
             member within that
         zipfile.
     """
-    if not filename or str(filename) == "":
+    if not filename or str(filename) == "" or not isinstance(filename, path_types):
         return False
     if zf.is_zipfile(filename):
         return filename, member
@@ -57,6 +58,30 @@ def test_is_zip(filename, member=""):
     return test_is_zip(newfile, newmember)
 
 
+def find_zip_and_member(filename, mode):
+    """Workout which part of a filename is a zip file and which is the membername."""
+    filename = pathlib.Path(filename).absolute()
+    parts = filename.parts
+    for ix in range(len(parts), 0, -1):
+        if pathlib.Path("/".join(parts[:ix])).exists:
+            break
+    else:
+        raise IOError(f"{filename} appears to be a non-existant directory !")
+    if pathlib.Path("/".join(parts[:ix])).is_dir():
+        filename = pathlib.Path("/".join(parts[: ix + 1]))
+        if mode[0] != "w":
+            raise IOError(f"{filename} does not exist, but mode ({mode}) is not write!")
+    else:
+        filename = pathlib.Path("/".join(parts[:ix]))
+    if ix + 1 >= len(parts):
+        membername = "/"
+        if mode[0] == "w":
+            raise IOError("Cannot work out member of archive and the mode is to write!")
+    else:
+        membername = "/".join(parts[ix + 1 :])
+    return filename, membername
+
+
 class ZIPFileManager:
     def __init__(self, filename, mode="r", **kargs):
         """Initialise context handler.
@@ -66,52 +91,51 @@ class ZIPFileManager:
         Checks the file is actually a zip file that is openable with the given mode.
         """
         self.mode = mode
+        self.closeme = []
         self.handle = None
-        self.file = None
-        self.close = True
-        self.member = ""
-        # Handle the case we're passed an already open h5py object
-        if not isinstance(filename, path_types) or mode == "w":  # passed an already open zip object
-            self.filename = filename
-            return
-        # Here we deal with a string or path filename
-        parts = str(filename).split(os.path.sep)
-        bits = len(parts)
-        for ix in range(bits):
-            testname = "/".join(parts[: bits - ix])
-            if ix > 0:
-                membername = "/".join(parts[bits - ix :])
-            if path.exists(testname):
-                filename = testname
-                break
-        self.member = membername
+        self.as_dir = kargs.pop("as_dir", False)
+        if isinstance(filename, path_types):
+            self.filename, self.membername = find_zip_and_member(filename, mode)
+            self.file = None
+            self.member = None
+        elif isinstance(filename, zf.ZipFile):
+            self.filename = filename.filename
+            self.file = filename
+            self.membername = filename.namelist()[0]
+            self.member = zf.Path(self.file, self.membername)
+        elif isinstance(filename, zf.Path):
+            self.filename = filename.root.filename
+            self.file = filename.root
+            if filename.is_dir():
+                filename = next(filename.iterdir())
 
-        try:
-            if not mode.startswith("w"):
-                with zf.ZipFile(filename, "r"):
-                    pass
-        except (IOError, OSError):
-            raise StonerLoadError(f"{filename} not a  ZipFile")
-        self.filename = filename
+            self.membername = pathlib.Path(str(filename)).relative_to(self.filename)
+            self.member = filename
 
     def __enter__(self):
         """Open the hdf file with given mode and navigate to the group."""
-        if isinstance(self.filename, (zf.ZipFile, zf.Path)):  # passed an already open h5py object
-            self.handle = self.filename
-            self.file = self.filename
-            self.close = False
-        elif isinstance(self.filename, path_types):  # Passed something to open
-            handle = zf.ZIPFile(self.filename, self.mode)
-            self.file = handle
-            path=zf.Path(handle)
-            self.handle=path.open(self.member)
-        else:
-            raise StonerLoadError("Note a resource that can be handled with HDF")
+        if self.file is None:
+            self.file = zf.ZipFile(self.filename, self.mode)
+            self.closeme.append("File")
+        if self.member is None:
+            self.member = zf.Path(self.file, self.membername)
+            if self.member.is_dir:
+                if not self.as_dir and self.mode[0] != "w":
+                    self.member = next(self.member.iterdir())
+                elif not self.as_dir():
+                    raise IOError(
+                        f"Openned {self.filename}{self.membername} as a file for writing, but it is a directory!"
+                    )
+            elif self.as_dir:
+                raise IOError(f"Opening {self.filename}{self.membername} as directory when it isn't!")
+        self.handle = self.member.open(self.mode)
         return self.handle
 
     def __exit__(self, typ, value, traceback):
         """Ensure we close the hdf file no matter what."""
-        if self.file is not None and self.close:
+        if self.handle is not None:
+            self.handle.close()
+        if "File" in self.closeme:
             self.file.close()
 
 
@@ -130,7 +154,7 @@ def _zip_extract(instance, archive, member):
     info = archive.getinfo(member)
     data = archive.read(info)  # In Python 3 this would be a bytes
     data = io.BytesIO(data)
-    instance = TDIFileLoader(data, instance=instance)
+    instance = TDIFile(data, instance=instance)
     instance.filename = archive.filename + "/" + member
     return instance
 
@@ -142,10 +166,10 @@ def ZippedFile(filename, **kargs):
     instance.filename = filename
     if not test_is_zip(filename):
         raise StonerLoadError("Not a zip file !")
-    with ZIPFileManager(filename, "r") as  archive:
-        if isinstance(archive,zf.ZipFile): # Select the first file from the filelist
-            member=archive.filelist()[0]
-            archive=zf.Path(archive).open(member,"r")
+    with ZIPFileManager(filename, "r") as archive:
+        if isinstance(archive, zf.ZipFile):  # Select the first file from the filelist
+            member = archive.filelist()[0]
+            archive = zf.Path(archive).open(member, "r")
         instance = instance.load(archive)
     return instance
 

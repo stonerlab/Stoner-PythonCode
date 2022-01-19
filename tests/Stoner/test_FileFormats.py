@@ -19,11 +19,13 @@ import pytest
 
 from Stoner.formats.attocube import AttocubeScan
 from Stoner.formats.maximus import MaximusStack
-from Stoner.tools.classes import subclasses
+from Stoner.tools.decorators import lookup_index
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from traceback import format_exc
 from Stoner.HDF5 import HDF5File
 from Stoner.formats.facilities import FabioImageFile
+
+import dummy
 
 pth=__homepath__/".."
 datadir=__datapath__
@@ -54,16 +56,19 @@ def list_files():
 def test_one_file(tmpdir, filename):
     loaded=Data(filename,debug=False)
     assert isinstance(loaded,DataFile),f"Failed to load {filename.name} correctly."
-    # if "save" in subclasses()[loaded["Loaded as"]].__dict__:
-    #     pth = pathlib.Path(tmpdir)/filename.name
-    #     parent, name,ext=pth.parent, pth.stem, pth.suffix
-    #     pth2=pathlib.Path(tmpdir)/f"{name}-2{ext}"
-    #     loaded.save(pth,as_loaded=True)
-    #     assert pth.exists() or pathlib.Path(loaded.filename).exists(),f"Failed to save as {pth}"
-    #     pathlib.Path(loaded.filename).unlink()
-    #     loaded.save(pth2,as_loaded=loaded["Loaded as"])
-    #     assert pth2.exists() or pathlib.Path(loaded.filename).exists(),"Failed to save as {}".format(pth)
-    #     pathlib.Path(loaded.filename).unlink()
+    if "Loaded as" not in loaded:
+        return
+    item = lookup_index(loaded["Loaded as"])
+    if item.writer is not None:
+        pth = pathlib.Path(tmpdir)/filename.name
+        parent, name,ext=pth.parent, pth.stem, pth.suffix
+        pth2=pathlib.Path(tmpdir)/f"{name}-2{ext}"
+        loaded.save(pth,as_loaded=True)
+        assert pth.exists() or pathlib.Path(loaded.filename).exists(),f"Failed to save as {pth}"
+        pathlib.Path(loaded.filename).unlink()
+        loaded.save(pth2,as_loaded=loaded["Loaded as"])
+        assert pth2.exists() or pathlib.Path(loaded.filename).exists(),"Failed to save as {}".format(pth)
+        pathlib.Path(loaded.filename).unlink()
 
 
 def test_csvfile():
@@ -135,10 +140,10 @@ def test_fail_to_load():
         d=Data(datadir/"TDMS_File.tdms_index")
 
 def test_arb_class_load():
-    d=Data(datadir/"TDI_Format_RT.txt", filetype="dummy.ArbClass")
-    with pytest.raises(ValueError):
+    d=Data(datadir/"TDI_Format_RT.txt", filetype="dummyLoader")
+    with pytest.raises(StonerUnrecognisedFormat):
         d=Data.load(datadir/"TDI_Format_RT.txt", filetype="bad.FileCalss")
-    with pytest.raises(ValueError):
+    with pytest.raises(IOError):
         d=Data.load(datadir/"kermit.ong", filetype="Stoner.ImageFile")
 
 def test_url_load():
@@ -158,10 +163,16 @@ def test_from_bytes():
         d=Data(data.read())
     assert d==Data(__datapath__/"harribo.spc"),"Failed to read from byte string"
 
+def fake_close():
+    assert False
+    pass
+
 def test_from_BytesIO():
     """Test loading a binary file as bytes."""
     with open(__datapath__/"harribo.spc","rb") as data:
-        d=Data(io.BytesIO(data.read()))
+        data_buf=io.BytesIO(data.read())
+        data_buf.close=fake_close
+        d=Data(data_buf)
     assert d==Data(__datapath__/"harribo.spc"),"Failed to read from a BytesIO buffer."
 
 

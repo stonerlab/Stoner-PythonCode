@@ -25,12 +25,18 @@ from textwrap import TextWrapper
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
+import requests
 from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
 from .compat import _pattern_type, index_types, int_types, path_types, string_types
 from .core import Setas, metadataObject, regexpDict, typeHintedDict
-from .core.exceptions import StonerLoadError, StonerSetasError, StonerUnrecognisedFormat
+from .core.exceptions import (
+    StonerLoadError,
+    StonerSetasError,
+    StonerUnrecognisedFormat,
+    StonerSaveError,
+)
 from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
 from .core.operators import DataFileOperatorsMixin
@@ -38,7 +44,7 @@ from .core.property import DataFilePropertyMixin
 from .core.utils import decode_string, tab_delimited
 from .tools import all_type, get_option, isiterable, isLikeList, make_Data
 from .tools.classes import subclasses, copy_into
-from .tools.decorators import lookup_loader_index, lookup_loaders
+from .tools.decorators import lookup_index, lookup_loaders, lookup_savers
 from .tools.file import (
     URL_SCHEMES,
     FileManager,
@@ -48,6 +54,7 @@ from .tools.file import (
     get_file_name_type,
     get_file_type,
     get_mime_type,
+    get_loader_key,
 )
 
 try:
@@ -1165,17 +1172,24 @@ class DataFile(
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
 
-        if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
-            filename = get_file_name(filename, filetype)
-        elif not auto_load and not filetype:
-            raise StonerLoadError("Cannot read data from non-path like filenames !")
+        if isinstance(filename, path_types):
+            scheme = urllib.parse.urlparse(str(filename)).scheme
+            if scheme not in URL_SCHEMES:
+                filename = get_file_name(filename, filetype)
+            else:
+                filename = requests.get(filename)
+
+        if not auto_load and not filetype:
+            raise StonerLoadError("Must specify a filetype to load if not using auto detection!")
         if filetype is not None:  # Makesure if we have a filetype that it is a loader function.
-            filetype = lookup_loader_index(filetype)["func"]
+            try:
+                filetype = lookup_index(filetype).reader
+            except KeyError:
+                raise StonerUnrecognisedFormat(f"Unable to find a matching file type for {filetype}")
         if auto_load:  # We're going to try every subclass we canA
             loaders = []
-            key = get_mime_type(filename)
-            if not key:
-                key = f"*{filename.suffix}"
+            key = get_loader_key(filename)
+            print(key)
             for ky in [key, "*.*"]:  # Fall back on *.* if suffix not good enough
                 loaders.extend(lookup_loaders(ky))
                 if len(loaders) == 0:
@@ -1183,6 +1197,7 @@ class DataFile(
                 for loader in loaders:
                     try:
                         ret = loader(filename, **kargs)
+                        ret["Loaded as"] = loader.name
                         break
                     except (StonerLoadError, UnicodeError):
                         continue
@@ -1249,7 +1264,7 @@ class DataFile(
         else:
             column_headers = self.column_headers[: len(cols)]
         self._data.reindex(cols, inplace=True)
-        self._data.columns = colum_headers
+        self._data.columns = column_headers
         self._mask.reindex(cols, inplace=True)
         self._mask.columns = column_headers
         self.setas._index.reindex(cols, inplace=True)
@@ -1299,44 +1314,31 @@ class DataFile(
             if (
                 isinstance(as_loaded, bool) and "Loaded as" in self
             ):  # Use the Loaded as key to find a different save routine
-                cls = subclasses(DataFile)[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
-            elif isinstance(as_loaded, string_types) and as_loaded in subclasses(
-                DataFile
-            ):  # pylint: disable=E1136, E1135
-                cls = subclasses(DataFile)[as_loaded]  # pylint: disable=unsubscriptable-object
+                saver = lookup_index(self["Loaded as"]).writer
+                if saver is None:
+                    raise ValueError(f"Sorry no saving funtion defined for {self['Loaded as']} files.")
+            elif isinstance(as_loaded, string_types):
+                saver = lookup_index(as_loaded).saver
+                if saver is None:
+                    raise ValueError(f"Sorry no saving funtion defined for {self['Loaded as']} files.")
             else:
                 raise ValueError(
-                    f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)}"
-                    + f" so cannot be used to save this data"
+                    f"{as_loaded} cannot be interpreted as a valid loader for {type(self)}"
+                    + " so cannot be used to save this data"
                 )
-            ret = cls(self).save(filename)
-            self.filename = ret.filename
+            ret = saver(self, filename)
             return self
         # Normalise the extension to ensure it's something we like...
-        filename, ext = os.path.splitext(filename)
-        if f"*.{ext}" not in DataFile.patterns:  # pylint: disable=unsupported-membership-test
-            ext = DataFile.patterns[0][2:]  # pylint: disable=unsubscriptable-object
-        filename = f"{filename}.{ext}"
-        header = ["TDI Format 1.5"]
-        header.extend(self.column_headers[: self.data.shape[1]])
-        header = "\t".join(header)
-        mdkeys = sorted(self.metadata)
-        if len(mdkeys) > len(self):
-            mdremains = mdkeys[len(self) :]
-            mdkeys = mdkeys[0 : len(self)]
+        _, ext = os.path.splitext(filename)
+        savers = lookup_savers(f"*.{ext}")
+        for saver in savers:
+            try:
+                saver(self, filename)
+                break
+            except StonerSaveError:
+                continue
         else:
-            mdremains = []
-        mdtext = np.array([self.metadata.export(k) for k in mdkeys])
-        if len(mdtext) < len(self):
-            mdtext = np.append(mdtext, np.zeros(len(self) - len(mdtext), dtype=str))
-        data_out = np.column_stack([mdtext, self.data])
-        fmt = ["%s"] * data_out.shape[1]
-        with io.open(filename, "w", errors="replace") as f:
-            np.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
-            for k in mdremains:
-                f.write(self.metadata.export(k) + "\n")  # (str2bytes(self.metadata.export(k) + "\n"))
-
-        self.filename = filename
+            raise StonerUnrecognisedFormat(f"Unable to locate a  save routine for *.{ext} files")
         return self
 
     def swap_column(self, *swp, **kargs):

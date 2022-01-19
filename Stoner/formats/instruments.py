@@ -246,6 +246,8 @@ def RigakuFile(filename: str, **kargs) -> Core.DataFile:
                 raise StonerLoadError("Not a Rigaku file!")
             if line == "*RAS_HEADER_START":
                 break
+        else:
+            raise StonerLoadError("Not a Rigaku file")
         for line in f:
             line = bytes2str(line).strip()
             m = sh.match(line)
@@ -458,7 +460,10 @@ def SPCFile(filename, **kargs):
     # Open the file and read the main file header and unpack into a dict
     with SizedFileManager(filename, "rb") as (f, length):
         _filesize = length
-        spchdr = struct.unpack(b"BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s", f.read(512))
+        try:
+            spchdr = struct.unpack(b"BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s", f.read(512))
+        except struct.error:
+            raise StonerLoadError("Not enough data for an spc file")
         keys = (
             "ftflgs",
             "fversn",
@@ -621,10 +626,10 @@ def VSMFile(filename, **kargs):
             for i, line in enumerate(f):
                 if i == 0:
                     first = line.strip()
-                    instance["Timestamp"] = first
                     check = datetime.strptime(first, "%a %b %d %H:%M:%S %Y")
                     if check is None:
                         raise Core.StonerLoadError("Not a VSM file ?")
+                    instance["Timestamp"] = first
                 elif i == 1:
                     assertion(line.strip() == "")
                 elif i == 2:
@@ -637,6 +642,8 @@ def VSMFile(filename, **kargs):
                     ]
                 elif i > 3:
                     break
+            else:
+                raise StonerLoadError("Not a VSM File")
     except (StonerAssertionError, ValueError, AssertionError, TypeError) as err:
         raise Core.StonerLoadError(f"Not a VSM File {err}") from err
     instance.data = np.genfromtxt(
@@ -857,13 +864,12 @@ def BrukerRawFile(filename, **kargs):
     }
     instance = kargs.pop("instance", make_Data())
     instance.filename = filename
-    instance["block"] = kargs.get("block", 1)
     with FileManager(instance.filename, "rb") as f:  # Read filename linewise
         header = f.read(7).decode("latin1")
-        val = ("", "_read_4")
         for pat, val in _header.items():
             if header.startswith(pat):
                 instance["Version"] = val[0]
+                instance["block"] = kargs.get("block", 1)
                 break
         else:
             raise StonerLoadError("Doesn't match a known RAW file format version.")

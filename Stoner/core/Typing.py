@@ -4,10 +4,9 @@
 # pylint: disable-all
 import typing
 from pathlib import PurePath
+from re import Pattern as _pattern_type
 
 from numpy import ndarray
-
-from re import Pattern as _pattern_type
 
 # Types used in compat code
 RegExp = _pattern_type

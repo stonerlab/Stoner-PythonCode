@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """General fle related tools."""
+import http
 import io
 import os
 import pathlib
@@ -8,19 +9,21 @@ from importlib import import_module
 from traceback import format_exc
 from typing import Callable, Dict, Optional, Sequence, Tuple, Type, Union
 
+import requests
+
 from ..compat import bytes2str, path_types, str2bytes, string_types
 from ..core.base import metadataObject, regexpDict
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..core.Typing import Filename
 from .classes import subclasses
-from .decorators import lookup_loader_index, lookup_loaders
+from .decorators import lookup_index, lookup_loaders, lookup_savers
 from .null import null
 from .widgets import fileDialog
 
 __all__ = [
     "file_dialog",
     "get_file_name_type",
-    "get_filee_type",
+    "get_file_type",
     "auto_load_classes",
     "get_mime_type",
     "FileManager",
@@ -55,16 +58,18 @@ def file_dialog_registry(
     """
     # Wildcard pattern to be used in file dialogs.
 
-    descs: Dict = {"*.*": "All Files"}
+    descs: Dict = {"*.*": "All Files"} if mode == "r" else {}
     if filetype is not None:  # specific filetype passed in
-        record = lookup_loader_index(filetype)
-        for p in record["patterns"]:
-            descs[p] = record["description"]
+        record = lookup_index(filetype)
+        if (mode == "r" and record.loader is not None) or (mode == "w" and record.savers is not None):
+            for p in record.patterns:
+                descs[p] = record.description
     else:  # All registered filetypes
-        for filetype in lookup_loaders():
-            record = lookup_loader_index(filetype)
-            for p in record["patterns"]:
-                descs[p] = record["description"]
+        lookup = lookup_loaders if mode == "r" else lookup_savers
+        for filetype in lookup():
+            record = lookup_index(filetype)
+            for p in record.patterns:
+                descs[p] = record.description
     patterns = descs
 
     if isinstance(filename, string_types):
@@ -135,6 +140,27 @@ def file_dialog(
         mode = "SelectDirectory"
     filename = fileDialog.openDialog(start=dirname, mode=mode, patterns=patterns)
     return filename if filename else None
+
+
+def get_loader_key(filename):
+    """Get something  that might be used as a key to lookup a file loader."""
+    if isinstance(filename, pathlib.Path):
+        key = get_mime_type(filename)
+        if not key:
+            key = f"*{filename.suffix}"
+        return key
+
+    if isinstance(filename, requests.Response):
+        return filename.headers["Content-type"]
+
+    if isinstance(filename, io.IOBase):  # file-like object
+        try:
+            key = f"*{pathlib.Path(filename.name).suffix}"
+        except (AttributeError, ValueError):
+            key = "*.*"
+        return key
+
+    return "*.*"
 
 
 def get_file_name(
@@ -210,9 +236,17 @@ def get_file_type(filetype: Union[Type[metadataObject], str], parent: Type[metad
     return filetype
 
 
-def _handle_urllib_response(resp):
+def _handle_url_response(resp):
     """Decode a response object to either a bytes or str depending on the context type."""
-    data = resp.read()
+    # See if we already have a buffer of data or not
+    if hasattr(resp, "buffer"):
+        data = resp.buffer
+    elif isinstance(resp, http.client.HTTPResponse):
+        data = resp.read()
+        resp.buffer = data
+    else:
+        data = resp.content
+        resp.buffer = data
     content_type = [x.strip() for x in resp.headers.get("Content-Type", "text/plain; charset=utf-8").split(";")]
     typ, substyp = content_type[0].split("/")
     if len(content_type) > 1 and "charset" in content_type[1] and typ == "text":
@@ -220,7 +254,7 @@ def _handle_urllib_response(resp):
         data = data.decode(charset)
     elif typ == "text":
         data = bytes2str(data)
-    return data
+    return data, typ != "text"
 
 
 def auto_load_classes(
@@ -237,7 +271,7 @@ def auto_load_classes(
     debug = kargs.get("debug", False)
     if isinstance(filename, io.IOBase):  # We need to stop the autoloading classes closing the file
         if not filename.seekable():  # Replace the filename with a seekable buffer
-            data = _handle_urllib_response(filename)
+            data = _handle_url_response(filename)
             if isinstance(data, bytes):
                 filename = io.BytesIO(data)
                 if debug:
@@ -331,26 +365,36 @@ class FileManager:
             if parsed.scheme not in URL_SCHEMES:
                 filename = pathlib.Path(filename)
             else:
-                resp = urllib.request.urlopen(filename)
-                data = _handle_urllib_response(resp)
-                if isinstance(data, bytes):
-                    filename = io.BytesIO(data)
-                else:
-                    filename = io.StringIO(data)
+                filename = requests.get(filename)
         if isinstance(filename, path_types):
             self.mode = "open"
+        elif isinstance(filename, (http.client.HTTPResponse, requests.Response)):
+            self.mode = "buffer"
+            self.buffer, self.binary = _handle_url_response(filename)
         elif isinstance(filename, io.IOBase):
             self.mode = "buffer"
-            pos = filename.tell()
-            self.buffer = filename.read()
+            try:
+                pos = filename.tell()
+            except (ValueError, io.UnsupportedOperation, AttributeError):
+                pos = 0
+            self.buffer = getattr(filename, "buffer", filename.read())
             if len(args) == 0:
                 self.binary = isinstance(self.buffer, bytes)
-            filename.seek(0)
+            if filename.seekable():
+                filename.seek(pos)
         elif isinstance(filename, bytes):
             self.mode = "bytes"
             self.buffer = filename
         else:
             raise TypeError(f"Unrecognised filename type {type(filename)}")
+        if len(args) > 0:
+            mode = kargs.get("mode", args[0])
+        else:
+            mode = kargs.get("mode", "r" + ("b" if self.binary else ""))
+        if self.binary and mode[-1] != "b":
+            raise StonerLoadError("Binary stream opened when mode was not a binary mode")
+        if not self.binary and mode[-1] == "b":
+            raise StonerLoadError("Text stream opened when mode was a binary mode")
 
     def __enter__(self):
         """Either open the file or reset the buffer."""

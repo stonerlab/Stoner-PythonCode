@@ -4,6 +4,7 @@
 __all__ = ["CSVFile", "HyperSpyFile", "KermitPNGFile", "TDMSFile"]
 import csv
 import io
+import os
 import re
 import warnings
 from collections.abc import Mapping
@@ -15,12 +16,12 @@ from ..compat import Hyperspy_ok, hs, str2bytes
 from ..Core import DataFile
 from ..core.exceptions import StonerLoadError
 from ..core.utils import tab_delimited
-from ..tools.decorators import make_Data, register_loader
+from ..tools.decorators import make_Data, register_loader, register_saver, lookup_index
 from ..tools.file import FileManager
 
 
 @register_loader(patterns=["*.txt", "*.tdi", "*.dat"], priority=1, description="Stoner native Tagged Data file format")
-def TDIFileLoader(filename, **kargs):
+def TDIFile(filename, **kargs):
     """Actually load the data from disc assuming a .tdi file format.
 
     Args:
@@ -96,6 +97,54 @@ def TDIFileLoader(filename, **kargs):
     instance["TDI Format"] = fmt
     if instance.data.ndim == 2 and instance.data.shape[1] > 0:
         instance.column_headers = col_headers_tmp
+    return instance
+
+
+@register_saver(name="TDIFile", priority=1)
+def TDISaver(instance, filename=None, **kargs):
+    """Save a string representation of the current DataFile object into the file 'filename'.
+
+    Args:
+        filename (string, bool or None):
+            Filename to save data as, if this is None then the current filename for the object is used. If this
+            is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
+        as_loaded (bool,str):
+            If True, then the *Loaded as* key is inspected to see what the original class of the DataFile was
+            and then this class' save method is used to save the data. If a str then
+            the keyword value is interpreted as the name of a subclass of the the current DataFile.
+
+    Returns:
+        instance:
+            The current :py:class:`DataFile` object
+    """
+    if filename is None:
+        filename = instance.filename
+    # Normalise the extension to ensure it's something we like...
+    info = lookup_index("TDIFile")
+    filename, ext = os.path.splitext(filename)
+    if f"*.{ext}" not in info.patterns:  # pylint: disable=unsupported-membership-test
+        ext = info.patterns[0][2:]  # pylint: disable=unsubscriptable-object
+    filename = f"{filename}.{ext}"
+    header = ["TDI Format 1.5"]
+    header.extend(instance.column_headers[: instance.data.shape[1]])
+    header = "\t".join(header)
+    mdkeys = sorted(instance.metadata)
+    if len(mdkeys) > len(instance):
+        mdremains = mdkeys[len(instance) :]
+        mdkeys = mdkeys[0 : len(instance)]
+    else:
+        mdremains = []
+    mdtext = np.array([instance.metadata.export(k) for k in mdkeys])
+    if len(mdtext) < len(instance):
+        mdtext = np.append(mdtext, np.zeros(len(instance) - len(mdtext), dtype=str))
+    data_out = np.column_stack([mdtext, instance.data.values])
+    fmt = ["%s"] * data_out.shape[1]
+    with io.open(filename, "w", errors="replace") as f:
+        np.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
+        for k in mdremains:
+            f.write(instance.metadata.export(k) + "\n")  # (str2bytes(instance.metadata.export(k) + "\n"))
+
+    instance.filename = filename
     return instance
 
 
@@ -223,10 +272,8 @@ def _png_check_signature(instance, filename):
             print(sig)
         if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
             raise StonerLoadError("Signature mismatrch")
-    except (StonerLoadError, IOError) as err:
-        from traceback import format_exc
-
-        raise StonerLoadError(f"Not a PNG file!>\n{format_exc()}") from err
+    except (StonerLoadError, IOError, io.UnsupportedOperation) as err:
+        raise StonerLoadError("Not a PNG file!")
     return True
 
 
@@ -260,6 +307,7 @@ def KermitPNGFile(filename, **kargs):
     return instance
 
 
+@register_saver(name="KermitPNGFile", priority=16)
 def to_png(instance, filename=None, **kargs):
     """Override the save method to allow KermitPNGFiles to be written out to disc.
 
@@ -274,8 +322,6 @@ def to_png(instance, filename=None, **kargs):
     """
     if filename is None:
         filename = instance.filename
-    if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-        filename = instance.__file_dialog("w")
     metadata = PIL.PngImagePlugin.PngInfo()
     for k in instance.metadata:
         parts = instance.metadata.export(k).split("=")
@@ -307,8 +353,22 @@ try:  # Optional tdms support
         instance = kargs.pop("instance", make_Data())
         instance.filename = filename
         # Open the file and read the main file header and unpack into a dict
+
         try:
-            f = TdmsFile(instance.filename)
+            if isinstance(filename, io.IOBase):  # We need to clone this into a spare buffer to stop it being closed:
+                if filename.seekable():
+                    pos = filename.tell()
+                buffer = getattr(filename, "buffer", filename.read())
+                filename.buffer = buffer
+                if isinstance(filename, io.TextIOBase):
+                    buffer = io.StringIO(buffer)
+                else:
+                    buffer = io.BytesIO(buffer)
+                if filename.seekable():
+                    filename.seek(pos)
+            else:
+                buffer = filename
+            f = TdmsFile(buffer)
             for grp in f.groups():
                 if grp.path == "/":
                     pass  # skip the rooot group
@@ -322,9 +382,7 @@ try:  # Optional tdms support
                     instance.data = tmp.data
                     instance.column_headers = tmp.column_headers
         except (IOError, ValueError, TypeError, StonerLoadError) as err:
-            from traceback import format_exc
-
-            raise StonerLoadError(f"Not a TDMS File \n{format_exc()}") from err
+            raise StonerLoadError("Not a TDMS File") from err
         return instance
 
 
@@ -389,7 +447,7 @@ if Hyperspy_ok:
         except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
             try:
                 filename.seek(0)
-            except AttributeError:
+            except (io.UnsupportedOperation, AttributeError):
                 pass
             raise StonerLoadError(f"Not readable by HyperSpy error was {err}") from err
         instance.data = signal.data

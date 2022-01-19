@@ -13,13 +13,15 @@ __all__ = [
     "clones",
     "fix_signature",
     "register_loader",
-    "lookup_loader_index",
+    "register_saver",
+    "lookup_index",
     "lookup_loaders",
+    "lookup_savers",
     "make_Data",
 ]
 
 import inspect
-from collections.abc import Iterable
+from collections.abc import Iterable, MutableMapping
 from copy import copy
 from functools import wraps
 from importlib import import_module
@@ -32,8 +34,83 @@ from .tests import isproperty
 
 _RTD = "READTHEDOCS" in environ
 
-_DataFile_loaders = dict()
-_DataFile_loader_index = dict()
+
+class MultiValueOrderedDict(MutableMapping):
+
+    """A dictionary that stores multiple items per key with a preferred sort order.
+
+    This class is intended to be used to cache things.
+    """
+
+    def __init__(self, *args, **kargs):
+        """Setup the backend storage dictionaries."""
+        self._data = dict()
+
+    def __setitem__(self, key, value):
+        """Add value to the dictionary and index.
+
+        Args:
+            key (str):
+                Primary search key
+            value (tuple of int,value):
+                The first element defines the priority order of the value. The second element is the actual
+                value to store.
+        """
+        if not isinstance(value, tuple) or len(value) != 2 or not isinstance(value[0], int):
+            raise ValueError(f"Value to be added must be a tuple of (int,data) not {type(value)}")
+        store = self._data.setdefault(key, [])
+        priority, item = value
+        for ix, (loader_priority, _) in enumerate(store):
+            if loader_priority > priority:
+                store.insert(ix, value)
+                break
+        else:
+            store.append(value)
+        try:
+            item = item.__name__
+        except AttributeError:
+            item = str(item)
+
+    def __getitem__(self, key):
+        """Return a list of values sorted by their priority."""
+        if key not in self._data:
+            raise KeyError(f"Key {key} not in store")
+        return [x[1] for x in self._data[key]]
+
+    def __delitem__(self, key):
+        """Wrapper to locate which item we're getting rid ff."""
+        if not isinstance(key, tuple):
+            key = (key, None)
+        if key[0] not in self._data:
+            raise KeyError(f"Key {key} not in store")
+        if key[1] is None:
+            del self._data[key[0]]
+        else:
+            self._data[key[0]] = [x for x in self._data[key[0]] if x[1] != key[1]]
+
+    def __len__(self):
+        """Pass through for length."""
+        return len(self.data)
+
+    def __iter__(self):
+        """Basic iteration method."""
+        yield from self._data
+
+
+class CacheEntry:
+    """Stores infromation about a file loader/saver functions."""
+
+    def __init__(self, **kargs):
+        self.description = kargs.get("description", "")
+        self.reader = kargs.get("loader", None)
+        self.writer = kargs.get("loader", None)
+        self.patterns = kargs.get("patterns", [])
+        self.mime_types = kargs.get("mime_types", [])
+
+
+_DataFile_loaders = MultiValueOrderedDict()
+_DataFile_savers = MultiValueOrderedDict()
+_DataFile_index = dict()
 
 
 def image_file_adaptor(workingfunc: Callable) -> Callable:
@@ -430,7 +507,11 @@ def fix_signature(proxy_func, wrapped_func):
 
 
 def register_loader(
-    patterns: List[str] = None, mime_types: List[str] = None, priority: int = 128, description: str = "",
+    patterns: List[str] = None,
+    mime_types: List[str] = None,
+    priority: int = 128,
+    description: str = "",
+    name: str = "",
 ) -> Callable:
     """Register a function as a loader of DataFile like objects.
 
@@ -445,6 +526,8 @@ def register_loader(
             cheaply if they cannot handle the file.
         description (str):
             A name or short description of the type of data file this uses.
+        name (str):
+            Name of format (if not set, use the function name)
     """
     if patterns is None:
         patterns = [".txt", ".dat"]
@@ -455,46 +538,71 @@ def register_loader(
 
     def real_decortator(func):
         """The real decorator that records func in the registry."""
-        for p in patterns:
-            if p not in _DataFile_loaders:
-                _DataFile_loaders[p] = [(priority, func)]
-            else:
-                for ix, (loader_priority, _) in enumerate(_DataFile_loaders[p]):
-                    if loader_priority > priority:
-                        _DataFile_loaders[p].insert(ix, (priority, func))
-                        break
-                else:
-                    _DataFile_loaders[p].append((priority, func))
-        for p in mime_types:
-            if p not in _DataFile_loaders:
-                _DataFile_loaders[p] = [(priority, func)]
-            else:
-                for ix, (loader_priority, _) in enumerate(_DataFile_loaders[p]):
-                    if loader_priority > priority:
-                        _DataFile_loaders[p].insert(ix, (priority, func))
-                        break
-                else:
-                    _DataFile_loaders[p].append((priority, func))
-        func.patterns = patterns
-        func.mime_types = mime_types
-        func.description = description
-
-        _DataFile_loader_index[func.__name__] = {
-            "func": func,
-            "patterns": patterns,
-            "mime_types": mime_types,
-            "description": description,
-        }
+        funcname = name if name != "" else func.__name__
+        for p in patterns + mime_types:
+            _DataFile_loaders[p] = (priority, func)
+        index = _DataFile_index.get(funcname, CacheEntry())
+        index.reader = func
+        index.patterns = list(set(index.patterns) | set(patterns))
+        index.mime_types = list(set(index.mime_types) | set(mime_types))
+        if description != "":
+            index.description = description
+        _DataFile_index[funcname] = index
+        func.patterns = index.patterns
+        func.mime_types = index.mime_types
+        func.description = index.description
+        func.name = funcname
         return func
 
     return real_decortator
 
 
-def lookup_loader_index(key: Union[str, Callable]) -> Dict:
+def register_saver(patterns: List[str] = None, priority: int = 128, description: str = "", name: str = "") -> Callable:
+    """Register a function as a saver of DataFile like objects.
+
+    Keyword Arguments:
+        pattern (List[str]):
+            filename extensions that are likely to be loadable by this function
+        priority (int):
+            Sort ordcer for the priority in which to try the loader. Lower priority number is
+            tried first, but functions with lower priority number should raise a StonerLoadError more
+            cheaply if they cannot handle the file.
+        description (str):
+            A name or short description of the type of data file this uses.
+        name (str):
+            Name of format (if not set, use the function name)
+    """
+    if patterns is None:
+        patterns = [".txt", ".dat"]
+
+    def real_decortator(func):
+        """The real decorator that records func in the registry."""
+        funcname = name if name != "" else func.__name__
+        for p in patterns:
+            _DataFile_savers[p] = (priority, func)
+        index = _DataFile_index.get(funcname, CacheEntry())
+        index.saver = func
+        index.patterns = list(set(index.patterns) | set(patterns))
+        if description != "":
+            index.description = description
+        _DataFile_index[funcname] = index
+        func.patterns = index.patterns
+        func.description = index.description
+        func.name = funcname
+        return func
+
+    return real_decortator
+
+
+def lookup_index(key: Union[str, Callable]) -> Dict:
     """Lookups the index of loaders to return the matching function and loader information."""
     if callable(key):
         key = key.__name__
-    return _DataFile_loader_index[key]
+    if key is None:
+        return _DataFile_index.keys()
+    if not isinstance(key, str) or key not in _DataFile_index:
+        raise KeyError(f"Cannot use {key} as a lookup in the index.")
+    return _DataFile_index[key]
 
 
 def lookup_loaders(key: Optional[str] = None) -> List[Callable]:
@@ -510,8 +618,23 @@ def lookup_loaders(key: Optional[str] = None) -> List[Callable]:
     """
     if key is None:
         key = "*.*"
-    entries = _DataFile_loaders.get(key, [])
-    return [func for _, func in entries]
+    return _DataFile_loaders.get(key, [])
+
+
+def lookup_savers(key: Optional[str] = None) -> List[Callable]:
+    """Return a list of saver functions that matches a given extension or mime-type.
+
+    Keyword Arguments:
+        key (str, None):
+            The name to look up, if None, then the wildcard key "*.*" is used.
+
+    Returns:
+        (list of callables):
+            A list of loader functions in prority order to try.
+    """
+    if key is None:
+        key = "*.*"
+    return _DataFile_savers.get(key, [])
 
 
 def make_Data(*args, **kargs):

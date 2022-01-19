@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 """Implements DataFile like classes for various large scale facilities."""
 
-__all__ = ["BNLFile", "MDAASCIIFile", "OpenGDAFile", "RasorFile", "SNSFile", "ESRF_DataFile", "ESRF_ImageFile"]
+__all__ = ["BNLFile", "MDAASCIIFile", "OpenGDAFile", "SNSFile", "ESRF_DataFile", "ESRF_ImageFile"]
 # Standard Library imports
+import io
 import linecache
 import re
 
@@ -277,7 +278,20 @@ if fabio:
         instance = kargs.pop("isntance", make_Data())
         instance.filename = filename
         try:
-            img = fabio.edfimage.edfimage().read(instance.filename)
+            if isinstance(filename, io.IOBase):  # We need to clone this into a spare buffer to stop it being closed:
+                if filename.seekable():
+                    pos = filename.tell()
+                buffer = getattr(filename, "buffer", filename.read())
+                filename.buffer = buffer
+                if isinstance(filename, io.TextIOBase):
+                    buffer = io.StringIO(buffer)
+                else:
+                    buffer = io.BytesIO(buffer)
+                if filename.seekable():
+                    filename.seek(pos)
+            else:
+                buffer = filename
+            img = fabio.edfimage.edfimage().read(buffer)
             instance.data = img.data
             instance.metadata.update(img.header)
             return instance
