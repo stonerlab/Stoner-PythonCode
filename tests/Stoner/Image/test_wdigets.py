@@ -72,7 +72,7 @@ def test_profile_line():
     assert len(result)==142
     assert result.x.min()==0.0
     assert np.isclose(result.x.max(),140,atol=0.01)
-    assert np.isclose(result.y.mean(),26407.86,atol=0.01)
+    assert np.isclose(result.y.mean(),26548.72,atol=0.01)
     thread=threading.Thread(target=_trigger2,args=(img,))
     thread.start()
     result = img.profile_line()
