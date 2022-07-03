@@ -102,30 +102,26 @@ def test_mask_select():
     thread=threading.Thread(target=_trigger5,args=(img,"p"))
     thread.start()
     img.mask.select()
-    time.sleep(5)
-    result = img.mean()
-    assert np.isclose(result,15731.6096,100.0)
+    result = img.mask.sum()
+    assert result==9324,f"Mask selection by polygon failed result={result}"
     img.mask=False
     thread=threading.Thread(target=_trigger5,args=(img,"c"))
     thread.start()
     img.mask.select()
-    time.sleep(5)
-    result = img.mean()
-    assert np.isclose(result,17380.52688172043)
+    result = img.mask.sum()
+    assert result==7489,f"Mask selection by circle failed result={result}"
     img.mask=False
     thread=threading.Thread(target=_trigger5,args=(img,"r"))
     thread.start()
     img.mask.select()
-    time.sleep(5)
-    result = img.mean()
-    assert np.isclose(result,15745.5853061,100.0)
+    result = img.mask.sum()
+    assert result==8699, f"Mask selection by reverse failed result={result}"
     img.mask=False
     thread=threading.Thread(target=_trigger6,args=(img,"c"))
     thread.start()
     img.mask.select()
-    time.sleep(5)
-    result = img.mean()
-    assert np.isclose(result,27715.3245,100.0)
+    result = img.mask.sum()
+    assert result==0,f"Cancelling selkection failed with result={result}"
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
