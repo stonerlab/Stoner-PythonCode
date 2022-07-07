@@ -312,7 +312,10 @@ def class_modifier(
                 continue  # Do not bind all the external functions if we're in ReadTheDocs
             for fname in dir(mod):
                 if not fname.startswith("_"):
-                    func = getattr(mod, fname)
+                    try:
+                        func = getattr(mod, fname)
+                    except AttributeError: # This shouldn't happen, but it did for scipy.ndimage!
+                        continue
                     fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""))
                     if callable(func) and isinstance(fmod, str) and fmod[:5] in ["Stone", "scipy", "skima"]:
                         if transpose:

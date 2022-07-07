@@ -31,9 +31,12 @@ from shutil import which
 from pathlib import PurePath
 
 import numpy as np
+import scipy as sp
 from matplotlib import __version__ as mpl_version
 
 _lmfit = True
+np_version=[int(x) for x in np.__version__.split(".")]
+sp_version=[int(x) for x in sp.__version__.split(".")]
 
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
@@ -115,8 +118,10 @@ def get_filedialog(what="file", **opts):
         raise RuntimeError(f"Unable to recognise required file dialog type:{what}")
     return fileDialog.openDialog(mode=funcs[what], **opts)
 
-
-int_types += (np.int, np.int0, np.int8, np.int16, np.int32, np.int64)
+if np_version[1]>=20:
+    int_types += (int, np.int0, np.int8, np.int16, np.int32, np.int64)
+else:
+    int_types += (np.int, np.int0, np.int8, np.int16, np.int32, np.int64)
 
 index_types = string_types + int_types + (_pattern_type,)
 

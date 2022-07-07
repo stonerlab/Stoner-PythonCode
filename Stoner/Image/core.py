@@ -149,7 +149,7 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
         viewer,
     ]
 )
-@class_modifier([ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier], transpose=True)
+@class_modifier([ndi], transpose=True)
 @class_modifier(imagefuncs, overload=True)
 class ImageArray(np.ma.MaskedArray, metadataObject):
 
@@ -693,7 +693,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     adaptor=image_file_adaptor,
 )
 @class_modifier(
-    [ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier],
+    [ndi],
     transpose=True,
     adaptor=image_file_adaptor,
 )

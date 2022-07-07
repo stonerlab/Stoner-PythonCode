@@ -93,12 +93,33 @@ class DrawProxy:
             fill = 1.0
             bg = 0.0
         radius1, radius2 = min(radius1, radius2), max(radius1, radius2)
-        rr, cc = draw.circle(r, c, radius2, shape=shape)
+        rr, cc = draw.disk((r, c), radius2, shape=shape)
         buf[rr, cc] = fill
-        rr, cc = draw.circle(r, c, radius1, shape=shape)
+        rr, cc = draw.disk((r, c), radius1, shape=shape)
         buf[rr, cc] = bg
         self._img[:, :] = (self._img * buf + value * (1.0 - buf)).astype(self._img.dtype)
         return self._parent
+
+    if "circle" not in dir(draw):
+        def circle(self, r,c, radius, shape=None, value=1.0):
+            """"Generate coordinates of pixels within circle.
+
+            Args:
+                r,c (int): co-ordinates of the centre of the circle to be drawn.
+                radius (float): Radius of the circle
+
+            Keyword arguments:
+                shape (tuple): Image shape as a tuple of size 2. Determines the maximum extent of output
+                    pixel coordinates. This is useful for disks that exceed the image size. If None, the full
+                    extent of the disk is used. The shape might result in negative coordinates and wraparound
+                    behaviour.
+                value (float): pixel value to write with.
+
+
+            Notes:
+                This is actually just a proxy for disk
+            """
+            return self.disk((r,c),radius,shape=shape, value=value)
 
     def rectangle(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
         """Draw a rectangle on an image.
