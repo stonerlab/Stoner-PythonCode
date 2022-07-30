@@ -1,5 +1,12 @@
+.eggs
+untitled*.py
+.pytest_cache
+.ipynb_checkpoints 
+.spyproject
 *.py[cod]
 __pycache__
+*.lock
+*.dirlock
 
 # sphinx
 _build
