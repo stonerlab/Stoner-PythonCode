@@ -150,11 +150,11 @@ class DataArray(ma.MaskedArray):
         m = [
             lambda d: None,
             lambda d: None,
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2),
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: np.sqrt(d.u ** 2 + d.v ** 2),
-            lambda d: np.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2),
+            lambda d: np.sqrt(d.x**2 + d.y**2),
+            lambda d: np.sqrt(d.x**2 + d.y**2 + d.z**2),
+            lambda d: np.sqrt(d.x**2 + d.y**2 + d.z**2),
+            lambda d: np.sqrt(d.u**2 + d.v**2),
+            lambda d: np.sqrt(d.u**2 + d.v**2 + d.w**2),
         ]
         ret = m[axes](self)
         if ret is None:

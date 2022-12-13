@@ -15,10 +15,10 @@ dtype_range = {
     np.uint16: (0, 65535),
     np.int8: (-128, 127),
     np.int16: (-32768, 32767),
-    np.int64: (-(2 ** 63), 2 ** 63 - 1),
-    np.uint64: (0, 2 ** 64 - 1),
-    np.int32: (-(2 ** 31), 2 ** 31 - 1),
-    np.uint32: (0, 2 ** 32 - 1),
+    np.int64: (-(2**63), 2**63 - 1),
+    np.uint64: (0, 2**64 - 1),
+    np.int32: (-(2**31), 2**31 - 1),
+    np.uint32: (0, 2**32 - 1),
     np.float32: (-1.0, 1.0),
     np.float64: (-1.0, 1.0),
 }
@@ -79,7 +79,7 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
     Numbers can be represented exactly only if m is a multiple of n
     Output array is of same kind as input."""
     kind = a.dtype.kind
-    if n > m and a.max() <= 2 ** m:
+    if n > m and a.max() <= 2**m:
         mnew = int(np.ceil(m / 2) * 2)
         if mnew > m:
             dtype = "int%s" % mnew
@@ -109,10 +109,10 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
         # exact upscale to a multiple of n bits
         if copy:
             b = np.empty(a.shape, _dtype2(kind, m))
-            np.multiply(a, (2 ** m - 1) // (2 ** n - 1), out=b, dtype=b.dtype)
+            np.multiply(a, (2**m - 1) // (2**n - 1), out=b, dtype=b.dtype)
             return b
         a = np.array(a, _dtype2(kind, m, a.dtype.itemsize), copy=False)
-        a *= (2 ** m - 1) // (2 ** n - 1)
+        a *= (2**m - 1) // (2**n - 1)
         return a
     # upscale to a multiple of n bits,
     # then downscale with precision loss
@@ -120,10 +120,10 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
     o = (m // n + 1) * n
     if copy:
         b = np.empty(a.shape, _dtype2(kind, o))
-        np.multiply(a, (2 ** o - 1) // (2 ** n - 1), out=b, dtype=b.dtype)
+        np.multiply(a, (2**o - 1) // (2**n - 1), out=b, dtype=b.dtype)
         b //= 2 ** (o - m)
         return b
     a = np.array(a, _dtype2(kind, o, a.dtype.itemsize), copy=False)
-    a *= (2 ** o - 1) // (2 ** n - 1)
+    a *= (2**o - 1) // (2**n - 1)
     a //= 2 ** (o - m)
     return a

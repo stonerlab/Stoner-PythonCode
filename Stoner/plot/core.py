@@ -324,7 +324,7 @@ class PlotMixin:
             phidata = np.ones(len(self)) * 0.5
             wdata = phidata - 0.5
         qdata = 0.5 + (np.arctan2(self.column(c.ucol), self.column(c.vcol)) / (2 * np.pi))
-        rdata = np.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata ** 2)
+        rdata = np.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata**2)
         rdata = rdata / rdata.max()
         Z = hsl2rgb(qdata, rdata, phidata).astype("f") / 255.0
         return Z
@@ -1597,7 +1597,7 @@ class PlotMixin:
                 "ax",
             ]
         else:
-            otherkargs = ["vmin", "vmax", "shade", "color", "linewidth"]
+            otherkargs = ["vmin", "vmax", "shade", "color", "linewidth", "marker"]
         kargs, nonkargs, _ = self._fix_kargs(
             kargs.get("plotter", None), defaults, otherkargs=otherkargs, projection=projection, **kargs
         )
@@ -1988,7 +1988,13 @@ class PlotMixin:
         self.__figure, _ = self._fix_fig(nonkargs["figure"])
         data = np.column_stack([self // xcol, self // ycol, self // ucol, self // vcol])
 
-        fig = plotter(data[:, 0], data[:, 1], data[:, 2], data[:, 3], **kargs,)
+        fig = plotter(
+            data[:, 0],
+            data[:, 1],
+            data[:, 2],
+            data[:, 3],
+            **kargs,
+        )
         self._fix_titles(0, "non", **nonkargs)
         return fig
 

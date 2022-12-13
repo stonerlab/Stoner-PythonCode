@@ -435,11 +435,11 @@ class SPCFile(Core.DataFile):
         if self._header["ftflgs"] & 1:
             y_width = 2
             y_fmt = "h"
-            divisor = 2 ** 16
+            divisor = 2**16
         else:
             y_width = 4
             y_fmt = "i"
-            divisor = 2 ** 32
+            divisor = 2**32
         if n * (y_width * self._pts + 32) > self._filesize - f.tell():
             raise Core.StonerLoadError("No good, going to read too much data!")
         for j in range(n):  # We have n sub-scans
@@ -453,7 +453,7 @@ class SPCFile(Core.DataFile):
                 ydata = np.array(struct.unpack(str2bytes(str(self._pts) + "f"), f.read(self._pts * y_width)))
             else:  # Data is scaled by exponent
                 yvals = struct.unpack(str2bytes(str(self._pts) + y_fmt), f.read(self._pts * y_width))
-                ydata = np.array(yvals, dtype="float64") * (2 ** exponent) / divisor
+                ydata = np.array(yvals, dtype="float64") * (2**exponent) / divisor
             data[:, j + 1] = ydata
             self._header = dict(self._header, **subheader)
             column_headers.append("Scan" + str(j) + ":" + self._yvars[self._header["fytype"]])

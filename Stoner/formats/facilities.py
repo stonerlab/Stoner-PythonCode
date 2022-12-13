@@ -386,7 +386,6 @@ if fabio:
             except (OSError, ValueError, TypeError, IndexError) as err:
                 raise StonerLoadError("Not a Fabio Image file !") from err
 
-
 else:
     ESRF_DataFile = None
     ESRF_ImageFile = None

@@ -176,7 +176,7 @@ class KermitPNGFile(DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.png"]  # Recognised filename patterns
 
-    mime_type = "image/png"
+    mime_type = ["image/png"]
 
     def _check_signature(self, filename):
         """Check that this is a PNG file and raie a StonerLoadError if not."""
@@ -264,7 +264,7 @@ try:  # Optional tdms support
         # the file load/save dialog boxes.
         patterns = ["*.tdms"]  # Recognised filename patterns
 
-        mime_type = "application/octet-stream"
+        mime_type = ["application/octet-stream"]
 
         def _load(self, filename=None, *args, **kargs):
             """TDMS file loader routine.
@@ -302,7 +302,6 @@ try:  # Optional tdms support
 
             return self
 
-
 except ImportError:
     TDMSFile = DataFile
 
@@ -316,7 +315,7 @@ if Hyperspy_ok:
 
         patterns = ["*.emd", "*.dm4"]
 
-        mime_type = "application/x-hdf"  # Really an HDF5 file
+        mime_type = ["application/x-hdf"]  # Really an HDF5 file
 
         _axes_keys = ["name", "scale", "low_index", "low_value", "high_index", "high_value"]
 
@@ -363,7 +362,6 @@ if Hyperspy_ok:
             self._unpack_axes(signal.axes_manager)
 
             return self
-
 
 else:
     HyperSpyFile = DataFile

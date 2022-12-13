@@ -85,7 +85,7 @@ class FilteringOpsMixin:
 
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
-            offset = int(np.ceil(points * order ** 2 / 8))
+            offset = int(np.ceil(points * order**2 / 8))
             padv = np.mean(ddata[:, offset:-offset], axis=1)
             pad = np.ones((ddata.shape[0], offset))
             for ix, v in enumerate(padv):
@@ -263,14 +263,14 @@ class FilteringOpsMixin:
         _ = self._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
         kinds = {
             "linear": lambda x, m, c: m * x + c,
-            "quadratic": lambda x, a, b, c: a * x ** 2 + b * x + c,
-            "cubic": lambda x, a, b, c, d: a * x ** 3 + b * x ** 2 + c * x + d,
+            "quadratic": lambda x, a, b, c: a * x**2 + b * x + c,
+            "cubic": lambda x, a, b, c, d: a * x**3 + b * x**2 + c * x + d,
         }
         errs = {
-            "linear": lambda x, me, ce, popt: np.sqrt((me * x) ** 2 + ce ** 2),
-            "quadratic": lambda x, ae, be, ce, popt: np.sqrt((2 * x ** 2 * ae) ** 2 + (x * be) ** 2 + ce ** 2),
+            "linear": lambda x, me, ce, popt: np.sqrt((me * x) ** 2 + ce**2),
+            "quadratic": lambda x, ae, be, ce, popt: np.sqrt((2 * x**2 * ae) ** 2 + (x * be) ** 2 + ce**2),
             "cubic": lambda x, ae, be, ce, de, popt: np.sqrt(
-                (3 * ae * x ** 3) ** 2 + (2 * x ** 2 * be) ** 2 + (x * ce) ** 2 + de ** 2
+                (3 * ae * x**3) ** 2 + (2 * x**2 * be) ** 2 + (x * ce) ** 2 + de**2
             ),
         }
 

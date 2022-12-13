@@ -18,22 +18,23 @@ from Stoner import Data
 
 def transform(r, q, p):
     """Converts from spherical to cartesian co-ordinates."""
-    x = r * sin(q) * cos(p)
-    y = r * sin(q) * sin(p)
-    z = r * cos(q)
+    x = r * cos(q) * cos(p)
+    y = r * cos(q) * sin(p)
+    z = r * sin(q)
     return x, y, z
 
 
 def sphere(coords, a, b, c, r):
     """Returns zero if (x,y,z) lies on a sphere centred at (a,b,c) with radius r."""
     x, y, z = coords.T
-    return (x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2 - r ** 2
+    return (x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2 - r**2
 
 
 # Create some points approximately spherical distribution
-p = uniform(low=-pi / 2, high=pi / 2, size=250)
-q = uniform(low=-pi, high=pi, size=250)
-r = normal(loc=3.0, size=250, scale=0.5)
+num = 25
+q = uniform(low=-pi / 2, high=pi / 2, size=num)
+p = uniform(low=0, high=2 * pi, size=num)
+r = normal(loc=3.0, size=num, scale=0.1)
 
 x, y, z = transform(r, q, p)
 
@@ -50,8 +51,7 @@ d = Data(
 )
 d.template.fig_width = 5.2
 d.template.fig_height = 5.0  # Square aspect ratio
-d.plot_xyz(plotter="scatter")
-
+d.plot_xyz(plotter="scatter", marker=",", griddata=False)
 # curve_fit does the hard work
 popt, pcov = d.curve_fit(sphere, (0, 1, 2), zeros_like(d.x))
 
@@ -66,7 +66,7 @@ x += a
 y += b
 z += c
 
-ax = plt.gca(projection="3d")
+ax = d.axes[0]
 ax.plot_surface(
     x, y, z, rstride=1, cstride=1, color=(1.0, 0.0, 0.0, 0.25), linewidth=0
 )

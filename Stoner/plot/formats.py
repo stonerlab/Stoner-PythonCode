@@ -65,7 +65,7 @@ class TexFormatter(Formatter):
             if np.abs(power) < 4:
                 ret = f"${round(value)}$"
             else:
-                v = _round(value / (10 ** power))
+                v = _round(value / (10**power))
                 ret = f"${v}\\times 10^{{{power:.0f}}}$"
         else:
             ret = "$0.0$"
@@ -121,7 +121,7 @@ class TexEngFormatter(EngFormatter):
                 ret = f"${round(value, 4)}\\,\\mathrm{{{self.unit}}}$"
             else:
                 power = power % 3
-                v = _round(value / (10 ** pre), 4)
+                v = _round(value / (10**pre), 4)
                 if np.abs(v) < 0.1:
                     v *= 1000
                     pre -= 3
@@ -737,7 +737,6 @@ if SEABORN:  # extra classes if we have seaborn available
             sns.set_context(context=self.context)
             sns.set_palette(sns.color_palette(self._palette))
             self.customise()
-
 
 else:
     SeabornPlotStyle = DefaultPlotStyle

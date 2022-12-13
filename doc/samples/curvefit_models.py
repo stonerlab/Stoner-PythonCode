@@ -53,4 +53,4 @@ d.annotate_fit(PowerLaw, x=0.1, y=0.25, fontdict={"size": "x-small"})
 d.annotate_fit(
     ODRModel, x=0.65, y=0.15, fontdict={"size": "x-small"}, prefix="ODRModel"
 )
-d.title = u"curve_fit with models"
+d.title = "curve_fit with models"

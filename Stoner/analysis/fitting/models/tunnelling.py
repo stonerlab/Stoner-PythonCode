@@ -44,7 +44,7 @@ def simmons(V, A, phi, d):
     I = (
         6.2e2
         * A
-        / d ** 2
+        / d**2
         * (
             (phi - V / 2) * np.exp(-1.025 * d * np.sqrt(phi - V / 2))
             - (phi + V / 2) * np.exp(-1.025 * d * np.sqrt(phi + V / 2))
@@ -80,11 +80,11 @@ def bdr(V, A, phi, dphi, d, mass):
     d = abs(d)
     I = (
         3.16e10
-        * A ** 2
+        * A**2
         * np.sqrt(phi)
         / d
         * np.exp(-1.028 * np.sqrt(phi) * d)
-        * (V - 0.0214 * np.sqrt(mass) * d * dphi / phi ** 1.5 * V ** 2 + 0.0110 * mass * d ** 2 / phi * V ** 3)
+        * (V - 0.0214 * np.sqrt(mass) * d * dphi / phi**1.5 * V**2 + 0.0110 * mass * d**2 / phi * V**3)
     )
     return I
 
@@ -106,7 +106,7 @@ def fowlerNordheim(V, A, phi, d):
             :include-source:
             :outname: fowlernordheim
     """
-    I = V / np.abs(V) * 3.38e6 * A * V ** 2 / (d ** 2 * phi) * np.exp(-0.689 * phi ** 1.5 * d / np.abs(V))
+    I = V / np.abs(V) * 3.38e6 * A * V**2 / (d**2 * phi) * np.exp(-0.689 * phi**1.5 * d / np.abs(V))
     return I
 
 

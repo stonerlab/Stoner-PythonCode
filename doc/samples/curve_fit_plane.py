@@ -38,6 +38,5 @@ txt += "\n".join(
     [d.format("plane:{}".format(k), latex=True) for k in ["a", "b", "c"]]
 )
 
-ax = plt.gca(projection="3d")
+ax = d.axes[0]
 ax.text(15, 5, -50, txt)
-d.draw()

@@ -2,6 +2,7 @@ import unittest
 import sys
 import os.path as path
 import os
+import runpy
 from Stoner.compat import listdir_recursive
 from importlib import import_module
 import matplotlib.pyplot as plt
@@ -21,14 +22,11 @@ if datadir not in sys.path:
 
 def get_scripts():
     skip_scipts=["plot-folder-test"]
-    scripts=[path.relpath(x,datadir).replace(path.sep,".") for x in listdir_recursive(datadir,"*.py") if not x.endswith("__init__.py")]
-    ret=[]
-    for ix,filename in enumerate(scripts):
-        script=filename[:-3]
-        if script in skip_scipts:
-            continue
-        ret.append(script)
-    return sorted(ret)
+    scripts=[path.realpath(x) for x in listdir_recursive(datadir,"*.py") if not x.endswith("__init__.py")]
+    scripts={path.splitext(path.basename(x))[0]:x for x in scripts}
+    for x in skip_scipts:
+        scripts.pop(x,None)
+    return list(dict(sorted(scripts.items())).values())
 
 scripts=get_scripts()
 
@@ -39,7 +37,7 @@ def test_scripts(script):
     print(f"Trying script {script}")
     try:
         os.chdir(datadir)
-        code=import_module(script)
+        runpy.run_path(script)
         fignum=len(plt.get_fignums())
         assert fignum>=1,f"{script} Did not produce any figures !"
         print("Done")

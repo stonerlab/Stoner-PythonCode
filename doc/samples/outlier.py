@@ -6,7 +6,7 @@ from Stoner import Data
 from Stoner.analysis.utils import poly_outlier
 
 x = np.linspace(0, 100, 201)
-y = 0.01 * x ** 2 + 5 * np.sin(x / 10.0)
+y = 0.01 * x**2 + 5 * np.sin(x / 10.0)
 
 i = np.random.randint(len(x) - 20, size=20) + 10
 y[i] += np.random.normal(size=len(i), scale=20)

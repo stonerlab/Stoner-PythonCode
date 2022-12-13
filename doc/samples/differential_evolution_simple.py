@@ -46,4 +46,4 @@ d.xlabel = ""
 d.annotate_fit(func, prefix="Model", x=0.7, y=0.3, fontdict={"size": "x-small"})
 text = r"$y=A+Be^{-x/C}$" + "\n\n"
 d.text(7.2, 3.9, text, fontdict={"size": "x-small"})
-d.title = u"Differential Evolution  Fit"
+d.title = "Differential Evolution  Fit"

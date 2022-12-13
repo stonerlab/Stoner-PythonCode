@@ -62,7 +62,7 @@ def _strijkers_core(V, omega, delta, P, Z):
 
     mv = np.max(np.abs(V))  # Limit for evaluating the integrals
     E = np.linspace(-2 * mv, 2 * mv, V.size * 20)  # Energy range in meV - we use a mesh 20x denser than data points
-    gauss = np.exp(-(E ** 2 / (2 * omega ** 2)))
+    gauss = np.exp(-(E**2 / (2 * omega**2)))
     gauss /= gauss.sum()  # Normalised gaussian for the convolution
 
     # Conductance calculation
@@ -74,17 +74,17 @@ def _strijkers_core(V, omega, delta, P, Z):
     #    Ap is always zero as the polarised current has 0 prob for an Andreev
     #    event
 
-    Au1 = (delta ** 2) / ((E ** 2) + (((delta ** 2) - (E ** 2)) * (1 + 2 * (Z ** 2)) ** 2))
-    Au2 = (((np.abs(E) / (np.sqrt((E ** 2) - (delta ** 2)))) ** 2) - 1) / (
-        ((np.abs(E) / (np.sqrt((E ** 2) - (delta ** 2)))) + (1 + 2 * (Z ** 2))) ** 2
+    Au1 = (delta**2) / ((E**2) + (((delta**2) - (E**2)) * (1 + 2 * (Z**2)) ** 2))
+    Au2 = (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) ** 2) - 1) / (
+        ((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2
     )
-    Bu2 = (4 * (Z ** 2) * (1 + (Z ** 2))) / (
-        ((np.abs(E) / (np.sqrt((E ** 2) - (delta ** 2)))) + (1 + 2 * (Z ** 2))) ** 2
+    Bu2 = (4 * (Z**2) * (1 + (Z**2))) / (
+        ((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2
     )
     Bp2 = Bu2 / (1 - Au2)
 
-    unpolarised_prefactor = (1 - P) * (1 + (Z ** 2))
-    polarised_prefactor = 1 * (P) * (1 + (Z ** 2))
+    unpolarised_prefactor = (1 - P) * (1 + (Z**2))
+    polarised_prefactor = 1 * (P) * (1 + (Z**2))
     # Optimised for a single use of np.where
     G = (
         unpolarised_prefactor
@@ -164,8 +164,8 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
             :include-source:
             :outname: rsj_noiseless_func
     """
-    normal_p = np.sign(I) * np.real(np.sqrt(I ** 2 - Ic_p ** 2)) * Rn
-    normal_n = np.sign(I) * np.real(np.sqrt(I ** 2 - Ic_n ** 2)) * Rn
+    normal_p = np.sign(I) * np.real(np.sqrt(I**2 - Ic_p**2)) * Rn
+    normal_n = np.sign(I) * np.real(np.sqrt(I**2 - Ic_n**2)) * Rn
     p_branch = np.where(I > Ic_p, normal_p, np.zeros_like(I))
     n_branch = np.where(I < Ic_n, normal_n, p_branch)
     return n_branch + V_offset
@@ -198,7 +198,7 @@ def rsj_simple(I, Ic, Rn, V_offset):
             :include-source:
             :outname: rsj_simple_func
     """
-    normal = Rn * np.sign(I) * np.real(np.sqrt(I ** 2 - Ic ** 2))
+    normal = Rn * np.sign(I) * np.real(np.sqrt(I**2 - Ic**2))
     ic_branch = np.zeros_like(I)
     return np.where(np.abs(I) < Ic, ic_branch, normal) + V_offset
 
@@ -298,7 +298,7 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
     w_m = lambda m: (2 * m + 1) * T * np.pi * kb
     k_m = lambda m: (1 + 2 * np.abs(w_m(m)) * t) + (0 - 2j) * E_x * t
     integrad = lambda mu, m: np.real(mu / (np.sinh(d_f * k_m(m) / (mu * L))))
-    prefactor = lambda m: delta ** 2 / (delta ** 2 + w_m(m) ** 2)
+    prefactor = lambda m: delta**2 / (delta**2 + w_m(m) ** 2)
 
     term = lambda m: prefactor(m) * quad(integrad, -1, 1, (m,))  # pylint: disable=W0612
 

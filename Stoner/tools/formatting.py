@@ -129,8 +129,8 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
                 suffix_val = rf"\,\mathrm{{{{{prefixes[v_mag]}}}}}"
             else:
                 suffix_val = " " + prefixes[v_mag]
-            value /= 10 ** v_mag
-            error /= 10 ** v_mag
+            value /= 10**v_mag
+            error /= 10**v_mag
         else:  # Implies 10^-3<x<10^3
             suffix_val = ""
     elif mode == "sci":  # Scientific mode - raise to common power of 10
@@ -141,18 +141,18 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
             suffix_val = f"&times; 10<sup>{int(v_mag)}</sup> "
         else:
             suffix_val = f"E{int(v_mag)} "
-        value /= 10 ** v_mag
-        error /= 10 ** v_mag
+        value /= 10**v_mag
+        error /= 10**v_mag
     else:  # Bad mode
         raise RuntimeError(f"Unrecognised mode: {mode} in format_error")
 
     # Now do the rounding of the value based on error to 1 s.f.
     e2 = error
     u_mag = floor(log10(abs(error)))  # work out the scale of the error
-    error = round(error / 10 ** u_mag) * 10 ** u_mag  # round the error, but this could round to 0.x0
+    error = round(error / 10**u_mag) * 10**u_mag  # round the error, but this could round to 0.x0
     u_mag = floor(log10(error))  # so go round the loop again
-    error = round(e2 / 10 ** u_mag) * 10 ** u_mag  # and get a new error magnitude
-    value = round(value / 10 ** u_mag) * 10 ** u_mag
+    error = round(e2 / 10**u_mag) * 10**u_mag  # and get a new error magnitude
+    value = round(value / 10**u_mag) * 10**u_mag
     u_mag = min(0, u_mag)  # Force integer results to have no dp
 
     # Protect {} in units string
@@ -236,7 +236,7 @@ def format_val(value: Numeric, **kargs: Any) -> str:
                 suffix_val = rf"\mathrm{{{{{prefixes[v_mag]}}}}}"
             else:
                 suffix_val = prefixes[v_mag]
-            value /= 10 ** v_mag
+            value /= 10**v_mag
         else:  # Implies 10^-3<x<10^3
             suffix_val = ""
     elif mode == "sci":  # Scientific mode - raise to common power of 10
@@ -247,7 +247,7 @@ def format_val(value: Numeric, **kargs: Any) -> str:
             suffix_val = f"&times; 10<sup>{int(v_mag)}</sup> "
         else:
             suffix_val = f"E{int(v_mag)} "
-        value /= 10 ** v_mag
+        value /= 10**v_mag
     else:  # Bad mode
         raise RuntimeError(f"Unrecognised mode: {mode} in format_error")
 
