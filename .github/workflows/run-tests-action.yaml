@@ -19,10 +19,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install mamba
+        run: |
+          $CONDA/bin/conda install -c conda-forge mamba
       - name: Install dependencies
         run: |
           echo "  - python = ${{ matrix.python-version }}" >> tests/test-env.yml
-          $CONDA/bin/conda env update --file tests/test-env.yml --name base
+          $CONDA/bin/mamba env update --file tests/test-env.yml --name base
       - name: Conda info
         run: $CONDA/bin/conda info
       - name: Conda list
