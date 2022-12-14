@@ -4,6 +4,7 @@ Created on Mon Jun 20 19:21:48 2016
 
 @author: phyrct
 """
+from types import MethodType
 from Stoner.Image import ImageArray,ImageFile
 from Stoner.HDF5 import STXMImage
 from Stoner import __homepath__, __datapath__
@@ -17,6 +18,32 @@ thisdir=dirname(__file__)
 
 def mag(x):
     return np.sqrt(np.dot(x,x))
+
+def guess(self, data, **kwargs):
+    """Function to guess the parameters of two Lorentzian peaks."""
+    x = kwargs.get("x")
+    l = len(data)
+    i1 = np.argmax(data[: l // 2])  # Location of first peak
+    i2 = np.argmax(data[l // 2 :]) + l // 2
+
+    params = self.make_params()
+    for k, p in zip(
+        params,
+        [
+            data[i1] / np.sqrt(2),
+            x[i1],
+            0.25,
+            0.5,
+            data[i1],
+            data[i2] / np.sqrt(2),
+            x[i2],
+            0.25,
+            0.5,
+            data[i2],
+        ],
+    ):
+        params[k].value = p
+    return params
 
 def test_extra():
     img=ImageFile(__datapath__/"kermit.png")
@@ -54,18 +81,18 @@ def test_imagefile_ops():
     hist=b.hist(bins=200)
     hist.column_headers=["XMCD Signal","Frequency"]
     hist.labels=None
-    g1=LorentzianModel(prefix="g1_")
-    g2=LorentzianModel(prefix="g2_")
-    params=g1.make_params()
-    params.update(g2.make_params())
-    double_peak=g1+g2
-    g1=np.argmax(hist.y[:100]) # Location of first peak
-    g2=np.argmax(hist.y[100:])+100
-    for k, p in zip(params,[0.25,hist.x[g1],hist.y[g1]/np.sqrt(2),0.5,hist.y[g1],
-        0.25,hist.x[g2],hist.y[g2]/np.sqrt(2),0.5,hist.y[g2]]):
-        params[k].value=p
-    print(g1,g2,params)
-    res=hist.lmfit(double_peak,p0=params,output="report")
+
+    # Construct a two Lorentzian peak model
+    peak1 = LorentzianModel(prefix="peak1_")
+    peak2 = LorentzianModel(prefix="peak2_")
+    params = peak1.make_params()
+    params.update(peak2.make_params())
+    double_peak = peak1 + peak2
+    # This shows how to replace the default guess (which is useless) with our function guess
+    double_peak.guess = MethodType(guess, double_peak)
+
+    print(peak1,peak2,params)
+    res=hist.lmfit(double_peak,output="report")
     hist.add_column(res.init_fit,header="Initial Fit")
     hist.add_column(res.best_fit,header="Best Fit")
     hist.setas="xyyy"
@@ -108,7 +135,7 @@ def test_imagefuncs():
     X,Y=np.meshgrid(x,x)
     i=ImageFile(np.sin(X)*np.cos(Y))
     i2=i.clone
-    j=i.fft(window="hanning", remove_dc=True)
+    j=i.fft(window="hamming", remove_dc=True)
     assert j.image[47,47]>583.0
     j.imshow()
     assert len(plt.get_fignums())==1,"Imshow didn't open one window"

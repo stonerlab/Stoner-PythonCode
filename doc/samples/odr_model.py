@@ -58,4 +58,4 @@ d.annotate_fit(
 )
 text = r"$y=A+Be^{-x/C}$" + "\n\n"
 d.text(7.2, 3.9, text, fontdict={"size": "x-small"})
-d.title = u"Orthogonal Distance Regression  Fit"
+d.title = "Orthogonal Distance Regression  Fit"

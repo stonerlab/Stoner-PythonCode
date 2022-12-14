@@ -306,8 +306,9 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
     """
     dest.data = source.data.copy()
     dest.setas = source.setas
+    dest.fig = getattr(source, "fig", None)
     for attr in source._public_attrs:
-        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data"]:
+        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "fig"]:
             continue
         try:
             setattr(dest, attr, copy.deepcopy(getattr(source, attr)))

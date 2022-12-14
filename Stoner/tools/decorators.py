@@ -314,7 +314,7 @@ def class_modifier(
                 if not fname.startswith("_"):
                     try:
                         func = getattr(mod, fname)
-                    except AttributeError: # This shouldn't happen, but it did for scipy.ndimage!
+                    except AttributeError:  # This shouldn't happen, but it did for scipy.ndimage!
                         continue
                     fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""))
                     if callable(func) and isinstance(fmod, str) and fmod[:5] in ["Stone", "scipy", "skima"]:

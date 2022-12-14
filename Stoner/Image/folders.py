@@ -273,9 +273,7 @@ class ImageFolderMixin:
         return self
 
     def mask_select(self):
-        """Run the ImageFile.mask.select() on each image.
-
-        """
+        """Run the ImageFile.mask.select() on each image."""
         sel = []
         for img in self:
             img.mask.select(_selection=sel)

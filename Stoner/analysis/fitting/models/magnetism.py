@@ -128,7 +128,7 @@ def inverse_kittel(f, g, M_s, H_k):
     return (
         -H_k
         - M_s / 2
-        + np.sqrt(M_s ** 2 * gamma ** 2 * cnst.mu_0 ** 2 + 16 * np.pi ** 2 * f ** 2) / (2 * gamma * cnst.mu_0)
+        + np.sqrt(M_s**2 * gamma**2 * cnst.mu_0**2 + 16 * np.pi**2 * f**2) / (2 * gamma * cnst.mu_0)
     )
 
 
@@ -149,8 +149,8 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
     \left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     return (
-        4 * Delta_H * K_1 * (H - H_res) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
-        - K_2 * (Delta_H ** 2 - 4 * (H - H_res) ** 2) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
+        4 * Delta_H * K_1 * (H - H_res) / (Delta_H**2 + 4 * (H - H_res) ** 2) ** 2
+        - K_2 * (Delta_H**2 - 4 * (H - H_res) ** 2) / (Delta_H**2 + 4 * (H - H_res) ** 2) ** 2
     )
 
 
@@ -190,7 +190,7 @@ class BlochLaw(Model):
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
-        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_bulk(self, T, g, A, Ms):
         r"""Bloch's Law in bulk systems.
@@ -274,7 +274,7 @@ class BlochLawThin(Model):
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
-        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_thinfilm(self, T, D, Bz, S, v_ws, a, nz):
         """Thin film version of Blopch's Law.
@@ -398,8 +398,8 @@ class KittelEquation(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * np.pi ** 2 * data ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (x ** 2 + 2 * x * H_k + H_k ** 2)) / (
-            gamma ** 2 * cnst.mu_0 ** 2 * (x + H_k)
+        M_s = (4 * np.pi**2 * data**2 - gamma**2 * cnst.mu_0**2 * (x**2 + 2 * x * H_k + H_k**2)) / (
+            gamma**2 * cnst.mu_0**2 * (x + H_k)
         )
         M_s = np.mean(M_s)
 
@@ -439,8 +439,8 @@ class Inverse_Kittel(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * np.pi ** 2 * x ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (data ** 2 + 2 * data * H_k + H_k ** 2)) / (
-            gamma ** 2 * cnst.mu_0 ** 2 * (data + H_k)
+        M_s = (4 * np.pi**2 * x**2 - gamma**2 * cnst.mu_0**2 * (data**2 + 2 * data * H_k + H_k**2)) / (
+            gamma**2 * cnst.mu_0**2 * (data + H_k)
         )
         M_s = np.mean(M_s)
 
@@ -488,7 +488,7 @@ class FMR_Power(Model):
         y1 = np.max(data)
         y2 = np.min(data)
         dy = y1 - y2
-        K_2 = dy * (4 * np.pi * Delta_H ** 2) / (3 * np.sqrt(3))
+        K_2 = dy * (4 * np.pi * Delta_H**2) / (3 * np.sqrt(3))
         ay = (y1 + y2) / 2
         K_1 = ay * np.pi / Delta_H
 

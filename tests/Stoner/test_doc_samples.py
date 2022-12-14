@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 import os.path as path
 import os
+import runpy
 from Stoner.compat import listdir_recursive
 from importlib import import_module
 import matplotlib.pyplot as plt
@@ -15,35 +16,21 @@ pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 datadir=path.join(pth,"doc","samples")
 
-if datadir not in sys.path:
-    sys.path.insert(0,datadir)
-
 def get_scripts():
-    skip_scipts=["plot-folder-test"]
-    scripts=[x for x in listdir_recursive(datadir,"*.py") if not x.endswith("__init__.py")]
-    ret=[]
-    for ix,filename in enumerate(scripts):
-        script=filename[:-3]
-        if script in skip_scipts:
-            continue
-        ret.append(filename)
-    return sorted(ret)
+    skip_scipts=['plot_folder_demo']
+    scripts=[path.realpath(x) for x in listdir_recursive(datadir,"*.py") if not x.endswith("__init__.py")]
+    scripts={path.splitext(path.basename(x))[0]:x for x in scripts if path.splitext(path.basename(x))[0].lower() not in skip_scipts}
+    scripts= list(dict(sorted(scripts.items())).values())
+    return scripts
 
-scripts=get_scripts()
-
-@pytest.mark.parametrize("script",scripts)
+@pytest.mark.parametrize("script",get_scripts())
 @pytest.mark.filterwarnings("ignore:.*:RuntimeWarning")
 def test_scripts(script,monkeypatch):
     """Import each of the sample scripts in turn and see if they ran without error"""
     print(f"Trying script {script}")
     try:
-        script=Path(script)
-        modname=script.name[:-3]
-        os.chdir(script.parent)
-        code=import_module(modname)
-
-
-
+        os.chdir(datadir)
+        runpy.run_path(script)
         fignum=len(plt.get_fignums())
         assert fignum>=1,f"{script} Did not produce any figures !"
         print("Done")

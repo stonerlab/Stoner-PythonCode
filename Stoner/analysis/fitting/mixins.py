@@ -164,7 +164,7 @@ class MimizerAdaptor:
                 sigma = np.ones_like(x)
             sigma = sigma / sigma.sum()  # normalise uncertainties
             sigma += np.finfo(float).eps
-            weights = 1.0 / sigma ** 2
+            weights = 1.0 / sigma**2
             variance = ((y - self.func(x, *beta)) ** 2) * weights
             return np.sum(variance) / (len(x) - len(beta))
 
@@ -837,7 +837,7 @@ class FittingMixin:
             perr = fit.sd_beta
             delta, eps = fit.delta, fit.eps
             nfree = len(delta) - len(popt)
-            chisq = np.sum((delta ** 2 + eps ** 2)) / nfree
+            chisq = np.sum((delta**2 + eps**2)) / nfree
             nfev = None
         elif isinstance(fit, sp.optimize.OptimizeResult):
             popt = fit.popt
@@ -1193,7 +1193,7 @@ class FittingMixin:
                 report.p0 = p0
             report.data = self
             report.residual_vals = ydata - report.fvec
-            report.chisq = (report.residual_vals ** 2).sum()
+            report.chisq = (report.residual_vals**2).sum()
             report.nfree = len(self) - len(report.popt)
             report.chisq /= report.nfree
 
@@ -1312,7 +1312,7 @@ class FittingMixin:
         polish.p0 = p0
         polish.data = self
         polish.residual_vals = data[1] - polish.fvec
-        polish.chisq = (polish.residual_vals ** 2).sum()
+        polish.chisq = (polish.residual_vals**2).sum()
         polish.nfree = len(self) - len(polish.popt)
         polish.chisq /= polish.nfree
 

@@ -10,15 +10,17 @@ from collections.abc import Mapping
 import sys
 import warnings
 
+
 @contextlib.contextmanager
 def catch_sysout(*args, **kargs):
     """Temporarily redirect sys.stdout and.sys.stdin."""
-    stdout,stderr=sys.stdout,sys.stderr
-    out=io.StringIO()
-    sys.stdout,sys.stderr=out,out
+    stdout, stderr = sys.stdout, sys.stderr
+    out = io.StringIO()
+    sys.stdout, sys.stderr = out, out
     yield None
-    sys.stdout,sys.stderr=stdout,stderr
+    sys.stdout, sys.stderr = stdout, stderr
     return
+
 
 import PIL
 import numpy as np
@@ -189,7 +191,7 @@ class KermitPNGFile(DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.png"]  # Recognised filename patterns
 
-    mime_type = "image/png"
+    mime_type = ["image/png"]
 
     def _check_signature(self, filename):
         """Check that this is a PNG file and raie a StonerLoadError if not."""
@@ -277,7 +279,7 @@ try:  # Optional tdms support
         # the file load/save dialog boxes.
         patterns = ["*.tdms"]  # Recognised filename patterns
 
-        mime_type = "application/octet-stream"
+        mime_type = ["application/octet-stream"]
 
         def _load(self, filename=None, *args, **kargs):
             """TDMS file loader routine.
@@ -315,7 +317,6 @@ try:  # Optional tdms support
 
             return self
 
-
 except ImportError:
     TDMSFile = DataFile
 
@@ -329,7 +330,7 @@ if Hyperspy_ok:
 
         patterns = ["*.emd", "*.dm4"]
 
-        mime_type = "application/x-hdf"  # Really an HDF5 file
+        mime_type = ["application/x-hdf"]  # Really an HDF5 file
 
         _axes_keys = ["name", "scale", "low_index", "low_value", "high_index", "high_value"]
 
@@ -368,10 +369,10 @@ if Hyperspy_ok:
             try:
                 with catch_sysout():
                     signal = hsload(self.filename)
-                if hasattr(hs,"signals"):
-                    Signal2D=hs.signals.Signal2D
+                if hasattr(hs, "signals"):
+                    Signal2D = hs.signals.Signal2D
                 else:
-                    Signal2D=hs.api.signals.Signal2D
+                    Signal2D = hs.api.signals.Signal2D
                 if not isinstance(signal, Signal2D):
                     raise StonerLoadError("Not a 2D signal object - aborting!")
             except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
@@ -381,7 +382,6 @@ if Hyperspy_ok:
             self._unpack_axes(signal.axes_manager)
 
             return self
-
 
 else:
     HyperSpyFile = DataFile

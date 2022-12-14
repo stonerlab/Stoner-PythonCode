@@ -6,7 +6,7 @@ from Stoner import Data
 from Stoner.analysis.utils import poly_outlier
 
 x = np.linspace(0, 100, 201)
-y = 0.01 * x ** 2 + 5 * np.sin(x / 10.0)
+y = 0.01 * x**2 + 5 * np.sin(x / 10.0)
 
 i = np.random.randint(len(x) - 20, size=20) + 10
 y[i] += np.random.normal(size=len(i), scale=20)
@@ -17,8 +17,8 @@ e = d.clone
 e.outlier_detection(window=5, action="delete")
 e.plot(fmt="r-", label="Default Outliers removed")
 h = d.clone
-h.outlier_detection(window=3, action="delete", shape="hanning")
-h.plot(color="orange", label="Default Outliers removed with Hanning window")
+h.outlier_detection(window=5, action="delete", shape="hamming")
+h.plot(color="orange", label="Default Outliers removed with Hamming window")
 f = d.clone
 f.outlier_detection(
     window=21, order=3, certainty=2, width=3, action="delete", func=poly_outlier

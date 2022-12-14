@@ -33,7 +33,7 @@ def _draw_apaptor(func):
             im = type(self._img)(np.zeros(self._img.shape, dtype="uint32"))
             im += coords[0][:, :, 0]
             im += coords[0][:, :, 1] * 256
-            im += coords[0][:, :, 2] * 256 ** 2
+            im += coords[0][:, :, 2] * 256**2
             im[im == 16777215] = 0
             im.convert(self._img.dtype)
             self._img[im != 0] = im[im != 0]
@@ -101,8 +101,9 @@ class DrawProxy:
         return self._parent
 
     if "circle" not in dir(draw):
-        def circle(self, r,c, radius, shape=None, value=1.0):
-            """"Generate coordinates of pixels within circle.
+
+        def circle(self, r, c, radius, shape=None, value=1.0):
+            """ "Generate coordinates of pixels within circle.
 
             Args:
                 r,c (int): co-ordinates of the centre of the circle to be drawn.
@@ -119,7 +120,7 @@ class DrawProxy:
             Notes:
                 This is actually just a proxy for disk
             """
-            return self.disk((r,c),radius,shape=shape, value=value)
+            return self.disk((r, c), radius, shape=shape, value=value)
 
     def rectangle(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
         """Draw a rectangle on an image.

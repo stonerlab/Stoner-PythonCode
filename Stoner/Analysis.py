@@ -160,7 +160,7 @@ class AnalysisMixin:
         ycol = self.find_col(ycol)
         if isinstance(ycol, list):
             ycol = ycol[0]  # FIXME should work with multiple output columns
-        if np.abs((self//xcol).min())<np.abs((self//xcol).max()):
+        if np.abs((self // xcol).min()) < np.abs((self // xcol).max()):
             pxdata = self.search(xcol, lambda x, r: x < 0, xcol)
         else:
             pxdata = self.search(xcol, lambda x, r: x > 0, xcol)

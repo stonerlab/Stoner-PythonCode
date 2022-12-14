@@ -389,10 +389,10 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             if kind == "u":
                 image *= imax
             elif itemsize_in <= itemsize and itemsize == 8:  # f64->int64 needs care to avoid overruns!
-                image *= 2 ** 54  # float64 has 52bits of mantissa, so this will avoid precission loss for a +/-1 range
+                image *= 2**54  # float64 has 52bits of mantissa, so this will avoid precission loss for a +/-1 range
                 np.rint(image, out=image)
                 image = image.astype(dtype)
-                np.clip(image, -(2 ** 54), 2 ** 54 - 1, out=image)
+                np.clip(image, -(2**54), 2**54 - 1, out=image)
                 image *= 512
             else:
                 image *= imax - imin
@@ -904,7 +904,7 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
     x, y = points
     x -= x[0]
     y -= y[0]
-    ret &= np.sqrt(x ** 2 + y ** 2) * scale
+    ret &= np.sqrt(x**2 + y**2) * scale
     ret &= result
     ret.column_headers = ["X", "Y", "Distance", "Intensity"]
     ret.setas = "..xy"
@@ -1177,7 +1177,7 @@ def sgolay2d(img, points=15, poly=1, derivative=None):
     if points % 2 == 0:
         raise ValueError("window_size must be odd")
 
-    if points ** 2 < n_terms:
+    if points**2 < n_terms:
         raise ValueError("order is too high for the window size")
 
     half_size = points // 2
@@ -1193,10 +1193,10 @@ def sgolay2d(img, points=15, poly=1, derivative=None):
     # coordinates of points
     ind = np.arange(-half_size, half_size + 1, dtype=np.float64)
     dx = np.repeat(ind, points)
-    dy = np.tile(ind, [points, 1]).reshape(points ** 2)
+    dy = np.tile(ind, [points, 1]).reshape(points**2)
 
     # build matrix of system of equation
-    A = np.empty((points ** 2, len(exps)))
+    A = np.empty((points**2, len(exps)))
     for i, exp in enumerate(exps):
         A[:, i] = (dx ** exp[0]) * (dy ** exp[1])
 

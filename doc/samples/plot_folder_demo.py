@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
     # Get alpha
     result.subplot(212)
-    result.setas(y="Delta_H", e="Delta_H.stderr", x="Freq")
+    result.setas(y="Delta_H", e="Delta_H err", x="Freq")
     result.y /= mu_0
     result.e /= mu_0
     result.lmfit(Linear, result=True, header="Width", output="report")

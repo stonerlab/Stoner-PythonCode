@@ -31,7 +31,6 @@ except ImportError:
             """Raise and error because PyQT5 not present."""
             raise ValueError("Cammpt open a dialog box because PqQt5 library missing!")
 
-
 else:
 
     class App(QApplication):

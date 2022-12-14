@@ -65,7 +65,7 @@ class TexFormatter(Formatter):
             if np.abs(power) < 4:
                 ret = f"${round(value)}$"
             else:
-                v = _round(value / (10 ** power))
+                v = _round(value / (10**power))
                 ret = f"${v}\\times 10^{{{power:.0f}}}$"
         else:
             ret = "$0.0$"
@@ -121,7 +121,7 @@ class TexEngFormatter(EngFormatter):
                 ret = f"${round(value, 4)}\\,\\mathrm{{{self.unit}}}$"
             else:
                 power = power % 3
-                v = _round(value / (10 ** pre), 4)
+                v = _round(value / (10**pre), 4)
                 if np.abs(v) < 0.1:
                     v *= 1000
                     pre -= 3
@@ -491,6 +491,8 @@ class DefaultPlotStyle(MutableMapping):
         """
         ax.xaxis.set_major_locator(self.xlocater())
         ax.yaxis.set_major_locator(self.ylocater())
+        ax.set_xticks(ax.get_xticks())
+        ax.set_yticks(ax.get_yticks())
         ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick__labelsize)
         ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick__labelsize)
         if isinstance(self.xformatter, Formatter):
@@ -737,7 +739,6 @@ if SEABORN:  # extra classes if we have seaborn available
             sns.set_context(context=self.context)
             sns.set_palette(sns.color_palette(self._palette))
             self.customise()
-
 
 else:
     SeabornPlotStyle = DefaultPlotStyle

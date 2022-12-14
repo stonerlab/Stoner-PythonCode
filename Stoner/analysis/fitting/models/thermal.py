@@ -68,7 +68,7 @@ def nDimArrhenius(x, A, DE, n):
             :include-source:
             :outname: nDimarrehenius
     """
-    return arrhenius(x ** n, A, DE)
+    return arrhenius(x**n, A, DE)
 
 
 def modArrhenius(x, A, DE, n):
@@ -91,7 +91,7 @@ def modArrhenius(x, A, DE, n):
             :include-source:
             :outname: modarrhenius
     """
-    return (x ** n) * arrhenius(x, A, DE)
+    return (x**n) * arrhenius(x, A, DE)
 
 
 def vftEquation(x, A, DE, x_0):

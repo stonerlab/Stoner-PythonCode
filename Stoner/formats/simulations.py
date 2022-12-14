@@ -150,11 +150,13 @@ class OVFFile(DataFile):
                         raise StonerLoadError("Bad binary data for ovf gile.")
 
                 data = np.reshape(
-                    numbers[1:], (self.metadata["xnodes"] * self.metadata["ynodes"] * self.metadata["znodes"], 3),
+                    numbers[1:],
+                    (self.metadata["xnodes"] * self.metadata["ynodes"] * self.metadata["znodes"], 3),
                 )
             else:
                 data = np.genfromtxt(
-                    data, max_rows=self.metadata["xnodes"] * self.metadata["ynodes"] * self.metadata["znodes"],
+                    data,
+                    max_rows=self.metadata["xnodes"] * self.metadata["ynodes"] * self.metadata["znodes"],
                 )
         xmin, xmax, xstep = (
             self.metadata["xmin"],

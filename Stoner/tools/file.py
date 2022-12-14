@@ -205,7 +205,7 @@ class FileManager:
         self.args = args
         self.kargs = kargs
         self.file = None
-        self.binary = len(args) > 0 and args[0][-1] == "b"
+        self.binary = len(args) > 0 and args[0].endswith("b")
         if isinstance(filename, path_types):
             parsed = urllib.parse.urlparse(str(filename))
             if parsed.scheme not in URL_SCHEMES:
@@ -231,7 +231,7 @@ class FileManager:
                     self.filename = bytes2str(filename.response)
                     self.mode = "text"
         elif isinstance(filename, bytes):
-            if len(args) > 0 and args[0][-1] == "b":
+            if (len(args) > 0 and args[0][-1] == "b") or self.kargs.pop("mode", "").endswith("b"):
                 self.filename = filename
                 self.mode = "bytes"
             else:

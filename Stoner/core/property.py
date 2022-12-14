@@ -15,8 +15,7 @@ from ..tools import get_option
 from ..compat import classproperty, path_types
 
 from .array import DataArray
-from .utils import copy_into
-from ..tools.classes import subclasses
+from ..tools.classes import subclasses, copy_into
 from ..tools.file import URL_SCHEMES
 
 try:

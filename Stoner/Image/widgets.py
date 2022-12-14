@@ -30,8 +30,8 @@ def _straight_ellipse(p, data):
     """A non-rotated ellipse."""
     xc, yc, a, b = p
     x, y = data.T
-    t1 = (x - xc) ** 2 / a ** 2
-    t2 = (y - yc) ** 2 / b ** 2
+    t1 = (x - xc) ** 2 / a**2
+    t2 = (y - yc) ** 2 / b**2
     return np.abs(np.sum(t1 + t2 - 1.0))
 
 
@@ -39,8 +39,8 @@ def _rotated_ellipse(p, data):
     """A non-rotated ellipse."""
     xc, yc, a, b, phi = p
     x, y = data.T
-    t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a ** 2
-    t2 = ((x - xc) * np.sin(phi) - (y - yc) * np.cos(phi)) ** 2 / b ** 2
+    t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a**2
+    t2 = ((x - xc) * np.sin(phi) - (y - yc) * np.cos(phi)) ** 2 / b**2
     return np.abs(np.sum(t1 + t2 - 1.0))
 
 
