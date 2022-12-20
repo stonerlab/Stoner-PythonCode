@@ -141,7 +141,7 @@ class HDF5File(DataFile):
     compression = "gzip"
     compression_opts = 6
     patterns = ["*.hdf", "*.hf5"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
 
     def __init__(self, *args, **kargs):
         """Initialise with an h5py.File or h5py.Group."""
@@ -295,7 +295,7 @@ class HGXFile(DataFile):
 
     priority = 16
     pattern = ["*.hgx"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
 
     def _load(self, filename, *args, **kargs):
         """Load a GenX HDF file.
@@ -584,7 +584,7 @@ class SLS_STXMFile(DataFile):
     compression = "gzip"
     compression_opts = 6
     patterns = ["*.hdf"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
 
     def _load(self, filename, *args, **kargs):
         """Load data from the hdf5 file produced by Pollux.
@@ -678,7 +678,7 @@ class STXMImage(ImageFile):
     _reduce_metadata = False
 
     _patterns = ["*.hdf5", "*.hdf"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
     priority = 16
 
     def __init__(self, *args, **kargs):

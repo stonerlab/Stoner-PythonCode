@@ -330,7 +330,7 @@ if Hyperspy_ok:
 
         patterns = ["*.emd", "*.dm4"]
 
-        mime_type = ["application/x-hdf"]  # Really an HDF5 file
+        mime_type = ["application/x-hdf", "application/x-hdf5"]  # Really an HDF5 file
 
         _axes_keys = ["name", "scale", "low_index", "low_value", "high_index", "high_value"]
 
