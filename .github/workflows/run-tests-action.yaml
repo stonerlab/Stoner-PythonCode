@@ -21,6 +21,8 @@ jobs:
           environment-file: tests/test-env.yml
           extra-specs: |
             python=${{ matrix.python-version }}
+          channels: conda-forge, phygbu
+          channel-priority: flexible
       - name: Conda info
         run: mamba info
       - name: Conda list
