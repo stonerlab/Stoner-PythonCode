@@ -24,9 +24,9 @@ jobs:
           channels: conda-forge, phygbu
           channel-priority: flexible
       - name: Conda info
-        run: mamba info
+        run: /home/runner/micromamba-bin/micromamba info
       - name: Conda list
-        run: mamba list
+        run: /home/runner/micromamba-bin/micromamba list
       - name: install package
         run: pip install --no-deps .
       - name: Run headless test
