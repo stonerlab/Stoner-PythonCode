@@ -76,7 +76,7 @@ class CSVFile(DataFile):
 
     _defaults = {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","}
 
-    mime_type = ["application/csv", "text/plain"]
+    mime_type = ["application/csv", "text/plain", "text/csv"]
 
     def _load(self, filename, *args, **kargs):
         """Load generic deliminated files.
