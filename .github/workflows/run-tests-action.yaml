@@ -33,7 +33,6 @@ jobs:
         run: |
            sudo apt-get install xvfb
            sudo apt-get install qtbase5-dev
-           python -c 'import Stoner'
       - name: Test with xvfb
         run: xvfb-run --auto-servernum ${MAMBA_ROOT_PREFIX}/envs/test-environment/bin/pytest  --cov-report=xml:cov.xml --cov=Stoner --junitxml pytest.xml
         env:
