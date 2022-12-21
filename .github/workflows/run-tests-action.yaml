@@ -32,7 +32,7 @@ jobs:
       - name: Install headless server
         run: |
            sudo apt-get install xvfb
-           sudo apt-get install libxcb-glx0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-present0 libxcb-randr0 libxcb-render0 libxcb-shape0 libxcb-shm0 libxcb-sync1 libxcb-util1 libxcb-xfixes0 libxcb-xinerama0 libxcb1-dev libxcb1
+           sudo apt-get install qtbase5-dev
            python -c 'import Stoner'
       - name: Test with xvfb
         run: xvfb-run --auto-servernum ${MAMBA_ROOT_PREFIX}/envs/test-environment/bin/pytest  --cov-report=xml:cov.xml --cov=Stoner --junitxml pytest.xml
