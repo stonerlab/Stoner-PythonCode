@@ -1,11 +1,12 @@
 """Demonstrate Channel math operations."""
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like, sin, cos, pi
-from numpy.random import normal
+from numpy.random import normal, seed
 
 from Stoner import Data
 from Stoner.plot.utils import errorfill
 
+seed(12345)  # Ensure consistent random numbers!
 x = linspace(0, 10 * pi, 101)
 e = 0.01 * ones_like(x)
 y = 0.1 * sin(x) + normal(size=len(x), scale=0.01) + 0.1

@@ -1,11 +1,13 @@
 """Use curve_fit to fit a plane to some data."""
 # pylint: disable=invalid-name
-from numpy.random import normal
+from numpy.random import normal, seed
 from numpy import linspace, meshgrid, column_stack, array
 import matplotlib.cm as cmap
 import matplotlib.pyplot as plt
 
 from Stoner import Data
+
+seed(12345)  # Ensire consistent random numbers!
 
 
 def plane(coord, a, b, c):

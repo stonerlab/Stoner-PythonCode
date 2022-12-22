@@ -10,10 +10,12 @@ from numpy import (
     meshgrid,
     linspace,
 )
-from numpy.random import normal, uniform
+from numpy.random import normal, uniform, seed
 import matplotlib.pyplot as plt
 
 from Stoner import Data
+
+seed(12345)  # Ensure consistent random numbers!
 
 
 def transform(r, q, p):

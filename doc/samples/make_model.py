@@ -3,10 +3,12 @@
 """Demo of the make_model decorator."""
 # pylint: disable=invalid-name, redefined-outer-name
 from numpy import linspace
-from numpy.random import normal
+from numpy.random import normal, seed
 
 from Stoner import Data
 from Stoner.analysis.fitting.models import make_model
+
+seed(12345)  # Ensure consistent random numbers
 
 # Make our model
 @make_model

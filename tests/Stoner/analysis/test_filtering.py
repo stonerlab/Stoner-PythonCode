@@ -7,8 +7,7 @@ import scipy as sp
 from Stoner import Data
 
 testd = None
-
-
+np.random.seed(12345)
 
 def setup_function(function):
     global testd
@@ -38,7 +37,7 @@ def test_sgfilter():
     testd.SG_Filter(col=3,order=0,points=51,replace=True, result=True,pad=1.0)
     testd.del_column(3)
     testd.setas="xyyy"
-    assert np.abs(testd//3-1.0).max()<0.07
+    assert np.abs(testd//3-1.0).max()<0.075
 
 def test_extrapolate():
     global testd

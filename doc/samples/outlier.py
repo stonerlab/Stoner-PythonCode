@@ -5,6 +5,7 @@ import numpy as np
 from Stoner import Data
 from Stoner.analysis.utils import poly_outlier
 
+np.random.seed(12345)
 x = np.linspace(0, 100, 201)
 y = 0.01 * x**2 + 5 * np.sin(x / 10.0)
 

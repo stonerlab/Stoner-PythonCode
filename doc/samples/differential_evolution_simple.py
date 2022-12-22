@@ -4,6 +4,7 @@ from numpy import linspace, exp, random
 
 from Stoner import Data
 
+random.seed(12345)  # Ensure consistent random numbers!
 # Make some data
 x = linspace(0, 10.0, 101)
 y = 2 + 4 * exp(-x / 1.7) + random.normal(scale=0.2, size=101)
