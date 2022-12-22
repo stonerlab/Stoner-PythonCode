@@ -16,24 +16,24 @@ import Stoner
 from Stoner.Image.widgets import send_event as _event
 
 def _trigger(image):
-    time.sleep(3)
+    time.sleep(5)
     _event(image,"on_click",xdata=1,ydata=1,button=1)
     for coord in np.linspace(1,100,51):
         _event(image,"draw_line",xdata=coord,ydata=coord)
     _event(image,"on_click",xdata=coord,ydata=coord,button=1)
 
 def _trigger2(image):
-    time.sleep(3)
+    time.sleep(5)
     _event(image,"keypress",xdata=50,ydata=75,key="x")
     _event(image,"on_click",xdata=50,ydata=75,button=1)
 
 def _trigger3(image):
-    time.sleep(3)
+    time.sleep(5)
     _event(image,"keypress",xdata=50,ydata=75,key="y")
     _event(image,"on_click",xdata=50,ydata=75,button=1)
 
 def _trigger4(image):
-    time.sleep(3)
+    time.sleep(5)
     select=image._image._select
     event1=Event("fake",select.fig.canvas)
     event1.xdata=25
@@ -46,20 +46,29 @@ def _trigger4(image):
 
 
 def _trigger5(image,mode):
-    time.sleep(3)
+    time.sleep(5)
     _event(image,["draw","on_click"],xdata=50,ydata=25,button=1,dblclick=False)
+    time.sleep(1)
     _event(image,["draw","on_click"],xdata=75,ydata=50,button=1,dblclick=False)
+    time.sleep(1)
     _event(image,"keypress",xdata=50,ydata=75,key=mode.lower()[0])
+    time.sleep(1)
     if mode=="c": # add some extra points:
+        time.sleep(1)
         _event(image,["draw","on_click"],xdata=30,ydata=40,button=1,dblclick=False)
+        time.sleep(1)
         _event(image,["draw","on_click"],xdata=30,ydata=30,button=1,dblclick=False)
+    time.sleep(1)
     _event(image,"keypress",xdata=50,ydata=75,key="i")
+    time.sleep(1)
     _event(image,"keypress",xdata=50,ydata=75,key="enter")
 
 def _trigger6(image,mode):
-    time.sleep(3)
+    time.sleep(5)
     _event(image,["draw","on_click"],xdata=50,ydata=25,button=1,dblclick=False)
+    time.sleep(1)
     _event(image,["draw","on_click"],xdata=75,ydata=50,button=1,dblclick=False)
+    time.sleep(1)
     _event(image,"keypress",xdata=50,ydata=75,key="escape")
 
 

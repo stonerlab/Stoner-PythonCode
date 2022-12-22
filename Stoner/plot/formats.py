@@ -420,7 +420,7 @@ class DefaultPlotStyle(MutableMapping):
         plt.rcParams.update(params)  # Apply these parameters
         projection = kargs.pop("projection", "rectilinear")
         self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)  # pylint: disable=W0201
-        if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as out figure
+        if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as our figure
             ax = kargs.get("ax")
             plt.sca(ax)
             figure = plt.gcf().number
@@ -433,9 +433,15 @@ class DefaultPlotStyle(MutableMapping):
                 rect[2] = rect[2] - rect[0]
                 rect[3] = rect[3] - rect[1]
                 if projection == "3d":
-                    ax = fig.add_subplot(111, projection="3d")
+                    if not kargs.get("no_axes", False):
+                        ax = fig.add_subplot(111, projection="3d")
+                    else:
+                        ax = None
                 else:
-                    ax = fig.add_axes(rect)
+                    if not kargs.get("no_axes", False):
+                        ax = fig.add_axes(rect)
+                    else:
+                        ax = None
             else:
                 if projection == "3d":
                     if "ax" in kargs:
@@ -451,11 +457,20 @@ class DefaultPlotStyle(MutableMapping):
 
             ret = fig
         else:
+            no_axes = kargs.pop("no_axes", False)
             if projection == "3d":
                 ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
-                ax = ret.add_subplot(111, projection="3d")
+                if not no_axes:
+                    ax = ret.add_subplot(111, projection="3d")
+                else:
+                    ax = None
             else:
-                ret, ax = plt.subplots(figsize=self.template_figure__figsize, **kargs)
+                if no_axes:
+                    ret, ax = plt.subplots(figsize=self.template_figure__figsize, **kargs)
+                else:
+                    ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
+                    ax = None
+
         return ret, ax
 
     def apply(self):

@@ -159,7 +159,7 @@ class LineSelect:
         if not self.started:  # Do nothing until we start
             return
         if len(self.ax.lines) > 2:  # Rremove the old line
-            del self.ax.lines[2]
+            self.ax.lines[2].remove()
 
         self.kargs.setdefault("linewidth", 2)
         self.kargs.setdefault("linestyle", "dash")

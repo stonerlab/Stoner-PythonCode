@@ -20,7 +20,7 @@ def test_all_type():
     x1=[1]*5
     assert tests.all_type(x1,int), "Failed all_type with list"
     x1=np.array(x1)
-    assert tests.all_type(x1,np.int), "Failed all type with array"
+    assert tests.all_type(x1,int), "Failed all type with array"
 
 def test_is_AnyNone():
     x1=[1]*5

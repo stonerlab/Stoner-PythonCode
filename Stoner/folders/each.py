@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
 __all__ = ["Item"]
 from collections.abc import MutableSequence
@@ -224,7 +223,11 @@ class Item:
                 elif len(self._folder):
                     ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
                     mask, values = zip(*ret)
-                    ret = np.ma.MaskedArray(values)
+                    lens = np.unique([len(v) if isiterable(v) else 0 for v in values])
+                    if lens.size == 1:
+                        ret = np.ma.MaskedArray(values)
+                    else:
+                        ret = np.ma.MaskedArray(values, dtype=object)
                     ret.mask = mask
                 else:
                     ret = getattr(instance, name, None)

@@ -1343,7 +1343,7 @@ def threshold_minmax(im, threshmin=0.1, threshmax=0.9):
 
     (ie True if value is between threshmin and threshmax)
     """
-    im = im.convert(np.float)
+    im = im.convert(float)
     return np.logical_and(im > threshmin, im < threshmax)
 
 

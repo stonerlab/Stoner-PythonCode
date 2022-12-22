@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import SpanSelector
 from matplotlib.patches import Rectangle
 
+from ..compat import mpl_version
+
 try:
     from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
 except ImportError:
@@ -173,12 +175,16 @@ class RangeSelect:
         self.data.plot(self.xcol, self.ycol, figure=fig)
         self.data.title = "Select Data and press Enter to confirm\nEsc to cancel, i to invert selection."
         self.ax = self.data.axes[-1]
+        if mpl_version.minor >= 5:
+            kargs = {"props": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
+        else:
+            kargs = {"rectprops": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
         self.selector = SpanSelector(
             self.ax,
             self.onselect,
             "horizontal",
             useblit=True,
-            rectprops={"edgecolor": col, "facecolor": col, "alpha": 0.5},
+            **kargs,
         )
         fig.canvas.mpl_connect("key_press_event", self.keypress)
         while not self.finished:
@@ -224,7 +230,7 @@ class RangeSelect:
         elif event.key.lower() == "backspace":  # Delete last selection
             if len(self.selection) > 0:
                 del self.selection[-1]
-                del self.ax.patches[-1]
+                self.ax.patches[-1].remove()
                 self.data.fig.canvas.draw()
         elif event.key.lower() == "i":  # Invert selection
             self.invert = ~self.invert

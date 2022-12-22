@@ -13,7 +13,7 @@ from importlib import import_module
 
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
-from matplotlib.pyplot import figure, Figure, subplot, tight_layout
+from matplotlib.pyplot import figure, Figure, subplot, tight_layout, subplots
 
 from Stoner.tools import isiterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
@@ -706,41 +706,34 @@ class PlotMethodsMixin:
         extra = kargs.pop("extra", lambda i, j, d: None)
         tight = kargs.pop("tight_layout", {})
 
-        fig_num = kargs.pop("figure", getattr(self, "_figure", None))
-        if isinstance(fig_num, Figure):
-            fig_num = fig_num.number
         fig_args = getattr(self, "_fig_args", [])
         fig_kargs = getattr(self, "_fig_kargs", {})
         for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
             if arg in kargs:
                 fig_kargs[arg] = kargs.pop(arg)
-        if fig_num is None:
-            fig = figure(*fig_args, **fig_kargs)
-        else:
-            fig = figure(fig_num, **fig_kargs)
-        w, h = fig.get_size_inches()
+        w, h = fig_kargs.setdefault("figsize", (18, 12))
         plt_x = int(floor(sqrt(plts * w / h)))
         plt_y = int(ceil(plts / plt_x))
-
-        kargs["figure"] = fig
         ret = []
-        j = 0
+        j = -1
+        fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
         fignum = fig.number
         for i, d in enumerate(self):
             if i % plts == 0 and i != 0:
                 if isinstance(tight, dict):
                     tight_layout(**tight)
-                fig = figure(*fig_args, **fig_kargs)
+                fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
                 fignum = fig.number
-                j = 1
+                j = 0
             else:
                 j += 1
             fig = figure(fignum)
-            ax = subplot(plt_y, plt_x, j)
             kargs["fig"] = fig
-            kargs["ax"] = ax
+            kargs["ax"] = axs.ravel()[j]
             ret.append(d.plot(*args, **kargs))
             extra(i, j, d)
+        for n in range(j + 1, plt_x * plt_y):
+            axs.ravel()[n].remove()
         tight_layout()
         return ret
 

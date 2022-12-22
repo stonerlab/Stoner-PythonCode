@@ -2020,7 +2020,8 @@ class PlotMixin:
         As well as passing through to the plyplot routine of the same name, this
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """
-        self.template.new_figure(self.__figure.number)
+        self.template.new_figure(self.__figure.number, no_axes=True)
+
         sp = plt.subplot(*args, **kargs)
         if len(args) == 1:
             rows = args[0] // 100
@@ -2040,7 +2041,7 @@ class PlotMixin:
         if self.__figure is None:
             self.figure()
 
-        figure = self.template.new_figure(self.__figure.number)[0]
+        figure = self.template.new_figure(self.__figure.number, no_axes=True)[0]
 
         plt.figure(figure.number)
         ret = plt.subplot2grid(*args, **kargs)
