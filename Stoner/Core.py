@@ -416,10 +416,10 @@ class DataFile(
                 Modified clone of the current object.
         """
         new_d = self.clone
-        i = len(args) if len(args) < 2 else 2
-        handler = [None, new_d._init_single, new_d._init_double, new_d._init_many][i]
-        if handler is not None:
-            handler(*args, **kargs)
+        handler = [lambda *args, **kargs: None, new_d._init_single, new_d._init_double, new_d._init_many][
+            min(len(args), 2)
+        ]
+        handler(*args, **kargs)
         if kargs:  # set public attributes from keywords
             myattrs = new_d._public_attrs
             for k in kargs:
