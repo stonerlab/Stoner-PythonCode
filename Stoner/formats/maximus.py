@@ -20,8 +20,20 @@ from ..Core import DataFile
 from ..compat import string_types
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager
+from ..core.exceptions import StonerLoadError
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
+
+
+def _raise_error(openfile, message=""):
+    """Raise a StonerLoadError after trying to close file."""
+    try:
+        raise StonerLoadError(message)
+    finally:
+        try:
+            openfile.close()
+        except (AttributeError, TypeError, ValueError, IOError):
+            pass
 
 
 class MaximusSpectra(DataFile):

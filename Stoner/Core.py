@@ -222,12 +222,12 @@ class DataFile(
             "mask": (np.ndarray, bool),
         }
         self._repr_limits = (256, 6)
-        i = len(args) if len(args) < 3 else 3
-        handler = [None, self._init_single, self._init_double, self._init_many][i]
+        handler = [lambda *args, **kargs: None, self._init_single, self._init_double, self._init_many][
+            min(len(args), 3)
+        ]
         self.mask = False
         self.data._setas._get_cols()
-        if handler is not None:
-            handler(*args, **kargs)
+        handler(*args, **kargs)
         try:
             kargs = self._kargs
             delattr(self, "_kargs")

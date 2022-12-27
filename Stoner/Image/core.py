@@ -327,9 +327,9 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if not hasattr(self, "_optinfo"):
             setattr(self, "_optinfo", {"metadata": typeHintedDict({}), "filename": ""})
 
-        kargs = self.__dict__.pop("kargs", {})
+        kargs = self.__dict__.pop("kargs", {})  # pylint: disable=access-member-before-definition
         tmp = metadataObject.__new__(metadataObject)
-        tmp.__dict__.update(self.__dict__)
+        tmp.__dict__.update(self.__dict__)  # pylint: disable=access-member-before-definition
         self.__dict__ = tmp.__dict__
 
         # Deal with kwargs

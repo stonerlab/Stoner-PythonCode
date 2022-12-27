@@ -18,6 +18,7 @@ from ..core.base import typeHintedDict
 from ..Image import ImageStack, ImageFile, ImageArray
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager
+from ..core.exceptions import StonerLoadError
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
@@ -33,6 +34,17 @@ def plane(X, a, b, c):
     """Plane equation for levelling an image."""
     x, y = X
     return a * x + b * y + c
+
+
+def _raise_error(openfile, message=""):
+    """Raise a StonerLoadError after trying to close file."""
+    try:
+        raise StonerLoadError(message)
+    finally:
+        try:
+            openfile.close()
+        except (AttributeError, TypeError, ValueError, IOError):
+            pass
 
 
 class AttocubeScanMixin:

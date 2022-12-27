@@ -48,12 +48,6 @@ docbuild: FORCE
 	( cd ../gh-pages; git pull )
 	rsync -rcm --perms --chmod=ugo=rwX --delete  --filter="P .git" --filter="P .nojekyll" doc/_build/html/ ../gh-pages/
 
-conda:
-	conda build --python=3.6 recipe &
-	conda build --python=3.7 recipe &
-	conda build --python 3.8 recipe &
-
-
 rtdbuild: export READTHEDOCS=1
 rtdbuild: docbuild
 

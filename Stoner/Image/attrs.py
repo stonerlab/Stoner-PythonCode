@@ -120,7 +120,7 @@ class DrawProxy:
             Notes:
                 This is actually just a proxy for disk
             """
-            return self.disk((r, c), radius, shape=shape, value=value)
+            return self.disk((r, c), radius, shape=shape, value=value)  # pylint disable=no-member
 
     def rectangle(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
         """Draw a rectangle on an image.

@@ -2,8 +2,6 @@
 :mod:`Stoner` Package
 ==========================
 
-.. module:: Stoner
-
 ----------------
 Primary Classes
 ----------------
@@ -12,21 +10,21 @@ Primary Classes
    :toctree: classes
    :template: classdocs.rst
 
-    Data
-    DataFolder
+    Stoner.Data
+    Stoner.DataFolder
     Stoner.Image.ImageFile
     Stoner.Image.ImageFolder
 
 Inheritance Diagrams
 ^^^^^^^^^^^^^^^^^^^^
 
-.. inheritance-diagram:: Data
+.. inheritance-diagram:: Stoner.Data
 
-.. inheritance-diagram:: DataFolder
+.. inheritance-diagram:: Stoner.DataFolder
 
-.. inheritance-diagram:: ImageFile
+.. inheritance-diagram:: Stoner.ImageFile
 
-.. inheritance-diagram:: ImageFolder
+.. inheritance-diagram:: Stoner.ImageFolder
 
 
 -----------------------
@@ -57,8 +55,6 @@ Core Package and Modules
    :no-main-docstr:
     :headings: -~
 
-.. module:: Stoner.Core
-
 Stoner.Core Classes
 -------------------
 
@@ -66,7 +62,7 @@ Stoner.Core Classes
    :toctree: classes
    :template: classdocs.rst
 
-    DataFile
+    Stoner.Core.DataFile
 
 Analysis Package
 ^^^^^^^^^^^^^^^^
@@ -105,8 +101,6 @@ Plot Package and Modules
 File Formats Package Module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. module:: Stoner.formats.generic
-
 Generic Fomats
 ---------------
 
@@ -114,10 +108,9 @@ Generic Fomats
    :toctree: classes
    :template: classdocs.rst
 
-    CSVFile
-    JustNumbersFile
+    Stoner.formats.generic.CSVFile
+    Stoner.formats.generic.JustNumbersFile
 
-.. module:: Stoner.formats.instruments
 
 Instrument Formats
 --------------------
@@ -126,14 +119,11 @@ Instrument Formats
    :toctree: classes
    :template: classdocs.rst
 
-    LSTemperatureFile
-    QDFile
-    QDFile
-    SPCFile
-    VSMFile
-    XRDFile
-
-.. module:: Stoner.formats.facilities
+    Stoner.formats.instruments.LSTemperatureFile
+    Stoner.formats.instruments.QDFile
+    Stoner.formats.instruments.SPCFile
+    Stoner.formats.instruments.VSMFile
+    Stoner.formats.instruments.XRDFile
 
 Facility Outputs
 ------------------
@@ -142,13 +132,11 @@ Facility Outputs
    :toctree: classes
    :template: classdocs.rst
 
-    BNLFile
-    MDAASCIIFile
-    OpenGDAFile
-    RasorFile
-    SNSFile
-
-.. module:: Stoner.formats.rigs
+    Stoner.formats.facilities.BNLFile
+    Stoner.formats.facilities.MDAASCIIFile
+    Stoner.formats.facilities.OpenGDAFile
+    Stoner.formats.facilities.RasorFile
+    Stoner.formats.facilities.SNSFile
 
 Measurement Rig Files
 ---------------------
@@ -157,14 +145,12 @@ Measurement Rig Files
    :toctree: classes
    :template: classdocs.rst
 
-    BigBlueFile
-    BirgeIVFile
-    MokeFile
-    FmokeFile
-    EasyPlotFile
-    PinkLibFile
-
-.. module:: Stoner.formats.simulations
+    Stoner.formats.rigs.BigBlueFile
+    Stoner.formats.rigs.BirgeIVFile
+    Stoner.formats.rigs.MokeFile
+    Stoner.formats.rigs.FmokeFile
+    Stoner.formats.rigs.EasyPlotFile
+    Stoner.formats.rigs.PinkLibFile
 
 Simulation Package Files
 -------------------------
@@ -173,8 +159,8 @@ Simulation Package Files
    :toctree: classes
    :template: classdocs.rst
 
-    GenXFile
-    OVFFile
+    Stoner.formats.simulations.GenXFile
+    Stoner.formats.simulations.OVFFile
 
 
 .. automodapi:: Stoner.analysis.fitting
@@ -272,8 +258,6 @@ Main Image Classes
     :inherited-members:
     :headings: -~
 
-.. module:: Stoner.formats.generic
-
 Generic Fomats
 ---------------
 
@@ -281,9 +265,7 @@ Generic Fomats
    :toctree: classes
    :template: classdocs.rst
 
-    KermitPNGFile
-
-.. module:: Stoner.formats.attocube
+    Stoner.formats.generic.KermitPNGFile
 
 Attocube SPM Scans
 ------------------
@@ -292,7 +274,7 @@ Attocube SPM Scans
    :toctree: classes
    :template: classdocs.rst
 
-    AttocubeScan
+    Stoner.formats.attocube.AttocubeScan
 
 
 
@@ -320,4 +302,3 @@ Kerr Image Handling
    :no-main-docstr:
    :inherited-members:
     :headings: -~
-
