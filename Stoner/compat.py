@@ -23,7 +23,7 @@ __all__ = [
 ]
 
 from sys import version_info as __vi__
-from os import walk, makedirs, environ
+from os import walk, makedirs
 from os.path import join, commonpath
 import fnmatch
 from inspect import signature, getfullargspec

@@ -42,7 +42,6 @@ __all__ = [
 ]
 import warnings
 from distutils.version import LooseVersion
-from colorsys import hls_to_rgb
 
 import numpy as np
 import matplotlib.pyplot as plt

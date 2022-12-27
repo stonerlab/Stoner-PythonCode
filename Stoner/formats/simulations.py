@@ -4,13 +4,11 @@
 
 __all__ = ["GenXFile", "OVFFile"]
 import re
-import io
 
 import numpy as np
 
 from ..Core import DataFile
-from ..core.exceptions import StonerLoadError, assertion
-from ..core.base import string_to_type
+from ..core.exceptions import StonerLoadError
 from ..tools.file import FileManager
 
 

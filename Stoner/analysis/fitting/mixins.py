@@ -7,7 +7,6 @@ __all__ = ["odr_Model", "FittingMixin"]
 from copy import deepcopy as copy
 from inspect import isclass, getfullargspec
 from collections.abc import Mapping
-from distutils.version import LooseVersion
 
 import numpy as np
 import numpy.ma as ma

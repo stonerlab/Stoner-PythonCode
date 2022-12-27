@@ -3,7 +3,6 @@
 from numpy.random import normal, seed
 from numpy import linspace, meshgrid, column_stack, array
 import matplotlib.cm as cmap
-import matplotlib.pyplot as plt
 
 from Stoner import Data
 

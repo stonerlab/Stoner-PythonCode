@@ -8,7 +8,6 @@ import io
 import re
 from collections.abc import Mapping
 import sys
-import warnings
 
 
 @contextlib.contextmanager

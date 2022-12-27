@@ -13,7 +13,7 @@ from importlib import import_module
 
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
-from matplotlib.pyplot import figure, Figure, subplot, tight_layout, subplots
+from matplotlib.pyplot import figure, tight_layout, subplots
 
 from Stoner.tools import isiterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
