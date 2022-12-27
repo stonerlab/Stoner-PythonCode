@@ -101,7 +101,6 @@ class KerrImageFile(ImageFile):
     @ImageFile.image.getter
     def image(self):
         """Access the image data."""
-        breakpoint()
         return self._image.view(KerrArray)
 
     @ImageFile.image.setter

@@ -117,8 +117,7 @@ def vftEquation(x, A, DE, x_0):
     _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
     X = np.where(np.isclose(x, x_0), 1e-8, x - x_0)
     y = A * np.exp(-DE / (_kb * X))
-    if np.any(np.isnan(y)):
-        breakpoint()
+
     return y
 
 
