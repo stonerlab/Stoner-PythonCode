@@ -37,3 +37,10 @@ jobs:
           label: auto
           overwrite: true
           token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
+      - name: Upload wheel
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          python setup.py sdist bdist_wheel
+          twine upload dist/*

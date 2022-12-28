@@ -20,7 +20,7 @@ while True:
         filename = input(
             "Enter the filename (including extension) for your file\r\n"
         )
-        mainFP = open(filename, "r")
+        mainFP = open(filename, "r", encoding="utf-8")
         break
     except (IOError):
         print("Oops I couldn't find that file.")
@@ -31,14 +31,16 @@ os.chdir("BNLSplitFiles")
 # Main algorithm ###########
 
 # writeName=re.split(r'[.]',filename)
-writeFP = open("title.txt", "w")  # title sequence goes in this file
+writeFP = open(
+    "title.txt", "w", encoding="utf-8"
+)  # title sequence goes in this file
 counter = 1  # this will label the files
 for line in mainFP:
     if line[0:2] == "#S":
         if int(line.split()[1]) != counter:
             raise ValueError  # check for inconsistencies with filenames and scan numbers
         writeFP.close()
-        writeFP = open(str(counter) + ".bnl", "w")
+        writeFP = open(str(counter) + ".bnl", "w", encoding="utf-8")
         counter += 1
     if line[0:2] != "#C":
         writeFP.write(line)

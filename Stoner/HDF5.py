@@ -52,7 +52,7 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
 
 
 class HDFFileManager:
-    def __init__(self, filename, mode="r", **kargs):
+    def __init__(self, filename, mode="r"):
         """Initialise context handler.
 
         Works out the filename and group in cases the input flename includes a path to a sub group.
@@ -73,8 +73,6 @@ class HDFFileManager:
         bits = len(parts)
         for ix in range(bits):
             testname = "/".join(parts[: bits - ix])
-            if ix > 0:
-                groupname = "/".join(parts[bits - ix :])
             if path.exists(testname):
                 filename = testname
                 break

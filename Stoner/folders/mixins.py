@@ -174,6 +174,8 @@ class DiskBasedFolderMixin:
         dlg = get_filedialog(what=mode, title=message)
         if not dlg or len(str(dlg)) == 0:
             raise RuntimeError("No directory or files selected!")
+        if mode == "directory" and new_directory and not path.exists(str(dlg)):
+            os.makedirs(dlg, exists_ok=True)
         if self.multifile:
             self.pattern = [path.basename(name) for name in dlg]
             self.directory = path.dirname(dlg[0]) if len(dlg) == 1 else path.commonprefix(dlg)
@@ -491,7 +493,7 @@ class DataMethodsMixin:
         if not isinstance(sort, bool) or sort:
             if isinstance(sort, bool) or sort is None:
                 sort = self[0].setas.cols["xcol"]
-            self[0].sort(order=sort, reverse=True)
+            self[0].sort(order=sort, reverse=reverse)
 
         return self
 
@@ -524,7 +526,7 @@ class DataMethodsMixin:
                 raise TypeError(f"Metadata values should be strings, or lists of strings, not {type(m)}")
         metadata = args
 
-        def _extractor(group, trail, metadata):
+        def _extractor(group, _, metadata):
 
             results = group.type()
             results.metadata = group[0].metadata
@@ -577,7 +579,7 @@ class DataMethodsMixin:
 
         """
 
-        def _gatherer(group, trail, xcol=None, ycol=None, xerr=None, yerr=None, **kargs):
+        def _gatherer(group, _, xcol=None, ycol=None, xerr=None, yerr=None, **kargs):
             yerr = None
             xerr = None
             cols = group[0]._col_args(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False)

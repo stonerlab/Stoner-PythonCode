@@ -90,6 +90,7 @@ else:
 
 setup(
     name = "Stoner",
+    python_requires='>3.6',
     version = str(get_version()),
     author = "Gavin Burnell",
     author_email = "g.burnell@leeds.ac.uk",
@@ -119,8 +120,10 @@ setup(
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
 )

@@ -243,6 +243,8 @@ class FileManager:
     def __enter__(self):
         """Either open the file or reset the buffer."""
         if self.mode == "open":
+            if len(self.args) > 0 and "b" not in self.args[0]:
+                self.kargs.setdefault("encoding", "utf-8")
             self.file = open(self.filename, *self.args, **self.kargs)
         elif self.mode == "text":
             self.file = io.StringIO(self.filename)

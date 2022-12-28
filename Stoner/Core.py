@@ -1507,7 +1507,7 @@ class DataFile(
             else:
                 raise ValueError(
                     f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)}"
-                    + f" so cannot be used to save this data"
+                    + " so cannot be used to save this data"
                 )
             ret = cls(self).save(filename)
             self.filename = ret.filename
@@ -1531,7 +1531,7 @@ class DataFile(
             mdtext = np.append(mdtext, np.zeros(len(self) - len(mdtext), dtype=str))
         data_out = np.column_stack([mdtext, self.data])
         fmt = ["%s"] * data_out.shape[1]
-        with io.open(filename, "w", errors="replace") as f:
+        with io.open(filename, "w", errors="replace", encoding="utf-8") as f:
             np.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
             for k in mdremains:
                 f.write(self.metadata.export(k) + "\n")  # (str2bytes(self.metadata.export(k) + "\n"))

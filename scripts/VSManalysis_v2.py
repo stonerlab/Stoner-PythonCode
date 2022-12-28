@@ -196,12 +196,12 @@ timeout = 0
 while True:
     path = filenames[fCounter]
     fCounter += 1
-    fr = open(path, "r")
+    fr = open(path, "r", encoding="utf-8")
     data = fr.readlines()  # Get the file into an array
     fr.close()
     pathsplit = splitFileName(path)
     fw = open(
-        "EditedFiles/" + pathsplit[0] + "_edit.txt", "w"
+        "EditedFiles/" + pathsplit[0] + "_edit.txt", "w", enconcoding="utf-8"
     )  # create a new file for the edited data
     data = deleteCorruptLines(data)
     fw.writelines(

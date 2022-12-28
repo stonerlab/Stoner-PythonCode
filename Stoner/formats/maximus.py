@@ -161,7 +161,7 @@ class MaximusStackMixin:
         self.compression = "gzip"
         self.compression_opts = 6
 
-    def _load(self, filename, **kargs):
+    def _load(self, filename):
         """Load an ImageStack from either an hdf file or textfiles."""
         if filename is None or not filename:
             self.get_filename("r")

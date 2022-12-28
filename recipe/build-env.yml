@@ -6,3 +6,6 @@ channels:
 dependencies:
    - conda-build
    - anaconda-client
+   - setuptools
+   - wheel
+   - twine

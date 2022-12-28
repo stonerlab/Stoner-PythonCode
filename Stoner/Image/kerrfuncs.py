@@ -124,7 +124,7 @@ def _tesseract_image(kerr_im, key):
     textfile = os.path.join(tmpdir, "tmpfile.txt")
     stdoutfile = os.path.join(tmpdir, "logfile.txt")
     imagefile = os.path.join(tmpdir, "tmpim.tif")
-    with open(textfile, "w") as tf:  # open a text file to export metadata to temporarily
+    with open(textfile, "w", encoding="utf-8") as tf:  # open a text file to export metadata to temporarily
         pass
 
     # process image to make it easier to read
@@ -139,12 +139,12 @@ def _tesseract_image(kerr_im, key):
     # call tesseract
     if kerr_im.tesseractable:
         tesseract = which("tesseract")
-        with open(stdoutfile, "w") as stdout:
+        with open(stdoutfile, "w", encoding="utf-8") as stdout:
             subprocess.call(  # nosec
                 [tesseract, imagefile, textfile[:-4]], stdout=stdout, stderr=subprocess.STDOUT
             )  # adds '.txt' extension itkerr_im
         os.unlink(stdoutfile)
-    with open(textfile, "r") as tf:
+    with open(textfile, "r", encoding="utf-8") as tf:
         data = tf.readline()
 
     # delete the temp files
