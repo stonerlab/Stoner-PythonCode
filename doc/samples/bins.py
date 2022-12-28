@@ -7,7 +7,7 @@ d = Data("Noisy_Data.txt", setas="xy")
 
 d.template.fig_height = 6
 d.template.fig_width = 8
-d.figure(figsize=(6, 8))
+d.figure(figsize=(6, 8), no_axes=True)
 d.subplot(411)
 
 e = d.bin(bins=0.05, mode="lin")

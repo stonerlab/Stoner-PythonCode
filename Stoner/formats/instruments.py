@@ -346,7 +346,6 @@ class RigakuFile(Core.DataFile):
                 line = bytes2str(line).strip()
                 if "RAS_INT_END" in line:
                     break
-            endpos = f.tell()
             f.seek(pos)
             if max_rows > 0:
                 self.data = np.genfromtxt(

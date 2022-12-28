@@ -196,25 +196,23 @@ class typedList(MutableSequence):
             raise TypeError(f"Elelements of this list should be of type {self._type}")
         self._store[name] = value
 
-    def extend(self, other: IterableType) -> None:  # pylint:  disable=arguments-differ
+    def extend(self, values: IterableType) -> None:  # pylint:  disable=arguments-differ
         """Extend the list and do some type checking."""
-        if not isiterable(other) or not all_type(other, self._type):
+        if not isiterable(values) or not all_type(values, self._type):
             raise TypeError(f"Elelements of this list should be of type {self._type}")
-        self._store.extend(other)
+        self._store.extend(values)
 
-    def index(  # pylint:  disable=arguments-differ
-        self, search: Any, start: int = 0, end: Optional[int] = None
-    ) -> int:
+    def index(self, value: Any, start: int = 0, end: Optional[int] = None) -> int:  # pylint:  disable=arguments-differ
         """Index works like a list except we support Python 3 optional parameters everywhere."""
         if end is None:
             end = len(self._store)
-        return self._store[start:end].index(search) + start
+        return self._store[start:end].index(value) + start
 
-    def insert(self, index: int, obj: Any) -> None:  # pylint:  disable=arguments-differ
+    def insert(self, index: int, value: Any) -> None:  # pylint:  disable=arguments-differ
         """Insert an element and do some type checking."""
-        if not isinstance(obj, self._type):
+        if not isinstance(value, self._type):
             raise TypeError(f"Elelements of this list should be of type {self._type}")
-        self._store.insert(index, obj)
+        self._store.insert(index, value)
 
 
 def get_option(name: str) -> bool:

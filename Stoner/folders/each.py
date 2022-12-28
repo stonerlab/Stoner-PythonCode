@@ -46,7 +46,7 @@ class SetasWrapper(MutableSequence):
     def __call__(self, *args, **kargs):
         """Pass through the calls the setas method of each item in our folder."""
         _ = self._folder._object_attrs.pop("setas", None)
-        for ix, obj in enumerate(self._folder):
+        for obj in self._folder:
             obj.setas(*args, **kargs)
         self._folder._object_attrs["setas"] = self.collapse()
 

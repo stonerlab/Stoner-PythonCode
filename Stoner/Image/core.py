@@ -946,7 +946,7 @@ class ImageFile(metadataObject):
 
     def __setattr__(self, n, v):
         """Handle setting attributes."""
-        obj, attr = self._where_attr(n)
+        obj, _ = self._where_attr(n)
         if obj is None:  # This is a new attribute so note it for preserving
             obj = self
             if self._where_attr("_public_attrs_real")[0] is self:

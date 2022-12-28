@@ -18,7 +18,7 @@ from scipy.interpolate import griddata
 
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
-from matplotlib import cm, colors
+from matplotlib import cm, colors, colormaps
 
 from Stoner.compat import string_types, index_types, int_types, getargspec
 from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, typedList, get_option, fix_signature
@@ -278,8 +278,8 @@ class PlotMixin:
         x = x[~mask]
         y = y[~mask]
         for err in ["xerr", "yerr"]:  # Check whether we need to shorten errors too
-            if "yerr" in kwords and len(kwords["yerr"]) == len(mask):
-                kwords["yerr"] = kwords["yerr"][~mask]
+            if err in kwords and len(kwords[err]) == len(mask):
+                kwords[err] = kwords[err][~mask]
         if plotter in self.positional_fmt:  # plots with positional fmt
             if fmt is None:
                 plotter(x, y, figure=figure, **kwords)
@@ -316,7 +316,7 @@ class PlotMixin:
 
         return surf
 
-    def _vector_color(self, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
+    def _vector_color(self, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Map a vector direction in the data to a value for use with a colormnap."""
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
 
@@ -603,7 +603,10 @@ class PlotMixin:
         """
         if plt.get_fignums():
             tfig = plt.gcf()
-            tax = tfig.gca()  # protect the current axes and figure
+            if len(tfig.axes):
+                tax = tfig.gca()  # protect the current axes and figure
+            else:
+                tax = None
         else:
             tfig = None
             tax = None
@@ -645,7 +648,8 @@ class PlotMixin:
             func(*value)
         if tfig is not None:
             plt.figure(tfig.number)
-            plt.sca(tax)
+            if tax is not None:
+                plt.sca(tax)
 
     def add_column(self, column_data, header=None, index=None, **kargs):
         """Append a column of data or inserts a column to a datafile instance.
@@ -971,10 +975,10 @@ class PlotMixin:
         kargs, nonkargs, _ = self._fix_kargs(None, defaults, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure = self._fix_fig(nonkargs["figure"])[0]
-        if "cmap" in kargs:
-            cmap = cm.get_cmap(kargs["cmap"])
-        elif "cmap" in nonkargs:
-            cmap = cm.get_cmap(nonkargs["cmap"])
+        if "cmap" in kargs and isinstance(kargs["cmap"], str):
+            cmap = colormaps[kargs["cmap"]]
+        elif "cmap" in nonkargs and isinstance(kargs["cmap"], str):
+            cmap = colormaps(nonkargs["cmap"])
         if Z.ndim == 2:
             Z = cmap(Z)
         elif Z.ndim != 3:
@@ -983,7 +987,6 @@ class PlotMixin:
         xmax = np.max(X.ravel())
         ymin = np.min(Y.ravel())
         ymax = np.max(Y.ravel())
-        aspect = (xmax - xmin) / (ymax - ymin)
         extent = [xmin, xmax, ymin, ymax]
         fig = plotter(Z, extent=extent, aspect="auto", **kargs)
         self._fix_titles(0, "none", **nonkargs)
@@ -1899,7 +1902,7 @@ class PlotMixin:
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection="3d")
 
         norm = colors.Normalize(vmin=U.min(), vmax=U.max(), clip=True)
-        mapper = cm.ScalarMappable(norm=norm, cmap=kargs["cmap"])
+        mapper = cm.ScalarMappable(norm=norm, cmap=kargs.get("cmap", cmap))
         cshape = U.shape + (4,)
         facecolors = mapper.to_rgba(U.ravel(), alpha=nonkargs["f_alpha"]).reshape(cshape)
         edgecolors = mapper.to_rgba(U.ravel(), alpha=nonkargs["e_alpha"]).reshape(cshape)
@@ -2020,8 +2023,7 @@ class PlotMixin:
         As well as passing through to the plyplot routine of the same name, this
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """
-        self.template.new_figure(self.__figure.number, no_axes=True)
-
+        fig, ax = self.template.new_figure(self.__figure.number, no_axes=True)
         sp = plt.subplot(*args, **kargs)
         if len(args) == 1:
             rows = args[0] // 100

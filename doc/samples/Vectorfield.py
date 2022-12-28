@@ -10,7 +10,7 @@ e = (
     .select(X__between=(10, 18))
     .select(Y__between=(5, 13))
 )
-e.figure(figsize=(8, 4))
+e.figure(figsize=(8, 4), no_axes=True)
 
 # 2D vectors on a 2D Field
 e.setas = "xy.uv."

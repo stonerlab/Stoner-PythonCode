@@ -400,7 +400,7 @@ class DefaultPlotStyle(MutableMapping):
         """Create a new figure.
 
         This is called by PlotMixin to setup a new figure before we do anything."""
-        plt.rcdefaults()  # Start by resetting to our default settings
+        plt.style.use("default")
         params = dict()
         self.apply()
         if "fig_width_pt" in dir(self):
@@ -417,7 +417,6 @@ class DefaultPlotStyle(MutableMapping):
                 value = self.__getattribute__(attr)
                 if attrname in plt.rcParams.keys():
                     params[attrname] = value
-        plt.rcParams.update(params)  # Apply these parameters
         projection = kargs.pop("projection", "rectilinear")
         self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)  # pylint: disable=W0201
         if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as our figure
@@ -425,7 +424,7 @@ class DefaultPlotStyle(MutableMapping):
             plt.sca(ax)
             figure = plt.gcf().number
         if isinstance(figure, bool) and not figure:
-            ret = None
+            return None, None
         elif figure is not None:
             fig = plt.figure(figure, figsize=self.template_figure__figsize)
             if len(fig.axes) == 0:
@@ -455,23 +454,26 @@ class DefaultPlotStyle(MutableMapping):
                 else:
                     ax = kargs.pop("ax", fig.gca())
 
-            ret = fig
+            return fig, ax
         else:
             no_axes = kargs.pop("no_axes", False)
             if projection == "3d":
                 ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
                 if not no_axes:
                     ax = ret.add_subplot(111, projection="3d")
+                    return ret, ax
                 else:
-                    ax = None
+                    for ax in ret.axes:
+                        ax.remove()
+                    return ret, None
             else:
-                if no_axes:
-                    ret, ax = plt.subplots(figsize=self.template_figure__figsize, **kargs)
+                if not no_axes:
+                    return plt.subplots(figsize=self.template_figure__figsize, **kargs)
                 else:
                     ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
-                    ax = None
-
-        return ret, ax
+                    for ax in ret.axes:
+                        ax.remove()
+                    return ret, None
 
     def apply(self):
         """Update matplotlib rc parameters from any attributes starting template_."""

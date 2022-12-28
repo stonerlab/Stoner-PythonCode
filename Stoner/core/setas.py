@@ -631,14 +631,14 @@ class setas(MutableMapping):
         """
         self.unset()
 
-    def get(self, name, default=None):  # pylint:  disable=arguments-differ
+    def get(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
-            return self[name]
+            return self[key]
         except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.") from err
+            raise KeyError(f"{key} is not in setas and no default was given.") from err
 
     def keys(self):
         """Acess mapping keys.
@@ -661,16 +661,16 @@ class setas(MutableMapping):
         for k, v in zip(self._unique_headers, self.setas):
             yield k, v
 
-    def pop(self, name, default=None):  # pylint:  disable=arguments-differ
+    def pop(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
-            ret = self[name]
-            self.unset(name)
+            ret = self[key]
+            self.unset(key)
             return ret
         except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.") from err
+            raise KeyError(f"{key} is not in setas and no default was given.") from err
 
     def popitem(self):
         """Return and clear a column assignment."""
@@ -681,12 +681,12 @@ class setas(MutableMapping):
                 return (c, v)
         raise KeyError("No columns set in setas!")
 
-    def setdefault(self, name, default=None):  # pylint:  disable=arguments-differ
+    def setdefault(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a setdefault method."""
         try:
-            return self[name]
+            return self[key]
         except (IndexError, KeyError):
-            self[name] = default
+            self[key] = default
             return default
 
     def unset(self, what=None):

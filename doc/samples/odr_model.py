@@ -15,7 +15,6 @@ x += +random.normal(scale=0.1, size=101)
 
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
-d.plot(fmt="ro")  # plot our data
 
 model = odrModel(
     lambda beta, x: beta[0] + beta[1] * exp(-x / beta[2]),

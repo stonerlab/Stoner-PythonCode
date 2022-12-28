@@ -192,7 +192,7 @@ class FilteringOpsMixin:
                 if data.shape[0] > 3:
                     e = max(np.std(data[:, ycol], axis=0) / np.sqrt(data.shape[0]), (1.0 / np.sqrt(W)) / data.shape[0])
                 else:
-                    e = 1.0 / np.sqrt(W)
+                    e = 1.0 / np.sqrt(np.where(W > 0, W, np.nan))
             else:
                 w = np.ones((data.shape[0], len(ycol)))
                 W = data.shape[0]

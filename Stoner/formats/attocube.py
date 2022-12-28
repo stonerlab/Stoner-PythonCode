@@ -423,7 +423,6 @@ class AttocubeScanMixin:
     def read_hdf5(cls, filename, *args, **kargs):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
-        close_me = False
         if filename is None or not filename:
             self.get_filename("r")
             filename = self.filename

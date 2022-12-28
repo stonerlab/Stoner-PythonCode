@@ -175,7 +175,7 @@ class DiskBasedFolderMixin:
         if not dlg or len(str(dlg)) == 0:
             raise RuntimeError("No directory or files selected!")
         if mode == "directory" and new_directory and not path.exists(str(dlg)):
-            os.makedirs(dlg, exists_ok=True)
+            os.makedirs(dlg, exist_ok=True)
         if self.multifile:
             self.pattern = [path.basename(name) for name in dlg]
             self.directory = path.dirname(dlg[0]) if len(dlg) == 1 else path.commonprefix(dlg)

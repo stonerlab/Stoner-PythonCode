@@ -26,7 +26,7 @@ def field_sign(r):
     return where(pos, "pos", "neg")
 
 
-def extra(i, j, d):
+def extra(_, __, d):
     """Customise each individual plot."""
     d.axvline(x=d["cut"], ls="--")
     d.title = r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency") / 1e9)
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     result.template.yformatter = TexEngFormatter
     result.template.xformatter = TexEngFormatter
     result.labels = None
-    result.figure(figsize=(6, 8))
+    result.figure(figsize=(6, 8), no_axes=True)
     result.subplot(211)
     result.plot(fmt=["r.", "b-"])
     result.annotate_fit(Inverse_Kittel, x=7e9, y=1e5, fontdict={"size": 8})

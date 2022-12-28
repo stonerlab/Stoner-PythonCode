@@ -765,7 +765,7 @@ class baseFolder(MutableSequence):
                     return output
                 try:
                     return item[name]
-                except KeyError as e:
+                except KeyError:
                     if name in item.metadata.common_keys:
                         return item.metadata.slice(name, output="Data")
                     if self.debug:
@@ -1138,11 +1138,11 @@ class baseFolder(MutableSequence):
         """
         return self.groups.compress(base=base, key=key, keep_terminal=keep_terminal)
 
-    def count(self, name):  # pylint:  disable=arguments-differ
+    def count(self, value):  # pylint:  disable=arguments-differ
         """Provide a count method like a sequence.
 
         Args:
-            name(str, regexp, or :py:class:`Stoner.Core.metadataObject`): The thing to count matches for.
+            value(str, regexp, or :py:class:`Stoner.Core.metadataObject`): The thing to count matches for.
 
         Returns:
             (int): The number of matching metadataObject instances.
@@ -1153,17 +1153,17 @@ class baseFolder(MutableSequence):
             matches are made on the basis of  the match with the name of the metadataObject. Finally, if *name*
             is a metadataObject, then  it matches for an equyality test.
         """
-        if isinstance(name, string_types):
-            if "*" in name or "?" in name:  # globbing pattern
-                return len(fnmatch.filter(self.__names__(), name))
-            return self.__names__().count(self.__lookup__(name))
-        if isinstance(name, _pattern_type):
-            match = [1 for n in self.__names__() if name.search(n)]
+        if isinstance(value, string_types):
+            if "*" in value or "?" in value:  # globbing pattern
+                return len(fnmatch.filter(self.__names__(), value))
+            return self.__names__().count(self.__lookup__(value))
+        if isinstance(value, _pattern_type):
+            match = [1 for n in self.__names__() if value.search(n)]
             return len(match)
-        if isinstance(name, metadataObject):
-            match = [1 for d in self if d == name]
+        if isinstance(value, metadataObject):
+            match = [1 for d in self if d == value]
             return len(match)
-        raise TypeError(f"Failed to count as name was a {type(name)} which we couldn't use.")
+        raise TypeError(f"Failed to count as value was a {type(value)} which we couldn't use.")
 
     def fetch(self):
         """Preload the contents of the baseFolder.
@@ -1381,11 +1381,11 @@ class baseFolder(MutableSequence):
                 self.groups[g].group(next_keys)
         return self
 
-    def index(self, name, start=None, end=None):  # pylint:  disable=arguments-differ
+    def index(self, value, start=None, end=None):  # pylint:  disable=arguments-differ
         """Provide an index method like a sequence.
 
         Args:
-            name(str, regexp, or :py:class:`Stoner.Core.metadataObject`):
+            value(str, regexp, or :py:class:`Stoner.Core.metadataObject`):
                 The thing to search for.
 
         Keyword Arguments:
@@ -1407,26 +1407,26 @@ class baseFolder(MutableSequence):
         if end is None:
             end = len(self)
         search = self.__names__()[start:end]
-        if isinstance(name, string_types):
-            if "*" in name or "?" in name:  # globbing pattern
-                m = fnmatch.filter(search, name)
+        if isinstance(value, string_types):
+            if "*" in value or "?" in value:  # globbing pattern
+                m = fnmatch.filter(search, value)
                 if len(m) > 0:
                     return search.index(m[0]) + start
-                raise ValueError(f"{name} is not a name of a metadataObject in this baseFolder.")
-            return search.index(self.__lookup__(name)) + start
-        if isinstance(name, _pattern_type):
+                raise ValueError(f"{value} is not a name of a metadataObject in this baseFolder.")
+            return search.index(self.__lookup__(value)) + start
+        if isinstance(value, _pattern_type):
             for i, n in enumerate(search):
-                if name.search(n):
+                if value.search(n):
                     return i + start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
-        if isinstance(name, metadataObject):
+        if isinstance(value, metadataObject):
             for i, n in enumerate(search):
-                if name == n:
+                if value == n:
                     return i + start
             raise ValueError("No match for any name of a metadataObject in this baseFolder.")
-        raise TypeError(f"Could not use name of type {type(name)} for index.")
+        raise TypeError(f"Could not use value of type {type(value)} for index.")
 
-    def insert(self, ix, value):  # pylint:  disable=arguments-differ
+    def insert(self, index, value):  # pylint:  disable=arguments-differ
         """Implement the insert method with the option to append as well."""
         name = self.make_name(value)
         names = self.__names__()
@@ -1435,12 +1435,12 @@ class baseFolder(MutableSequence):
             name, ext = path.splitext(name)
             name = f"{name}({i}).{ext}"
             i += 1
-        if -len(self) < ix < len(self):
-            ix = ix % len(self)
-            self.__inserter__(ix, name, value)
-            name = self.__names__()[ix]
+        if -len(self) < index < len(self):
+            index = index % len(self)
+            self.__inserter__(index, name, value)
+            name = self.__names__()[index]
             self.__setter__(self.__lookup__(name), value)
-        elif ix >= len(self):
+        elif index >= len(self):
             self.__setter__(name, value, force_insert=True)
 
     def append(self, value):

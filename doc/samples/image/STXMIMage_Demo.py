@@ -53,7 +53,7 @@ xmcd.normalise()
 
 # Create a profile and plot it
 profile = xmcd.profile_line((0, 0), (100, 100))
-profile.figure(figsize=(7, 5))
+profile.figure(figsize=(7, 5), no_axes=True)
 profile.subplot(222)
 profile.plot()
 profile.title = "XMCD Cross Section"

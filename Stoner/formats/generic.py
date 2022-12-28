@@ -11,7 +11,7 @@ import sys
 
 
 @contextlib.contextmanager
-def catch_sysout(*args, **kargs):
+def catch_sysout(*args):
     """Temporarily redirect sys.stdout and.sys.stdin."""
     stdout, stderr = sys.stdout, sys.stderr
     out = io.StringIO()
