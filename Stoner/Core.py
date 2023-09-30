@@ -789,7 +789,6 @@ class DataFile(
         for ic, c in enumerate(interesting):
             if c >= 0:
                 if shorten[0]:
-
                     col_out = np.where(self.mask[: r // 2 - 1, c], "#####", self.data[: r // 2 - 1, c].astype(str))
                     outp[1 : r // 2, ic + 1] = col_out
                     col_out = np.where(self.mask[-r // 2 :, c], "#####", self.data[-r // 2 :, c].astype(str))

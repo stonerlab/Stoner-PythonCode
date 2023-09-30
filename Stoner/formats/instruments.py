@@ -67,7 +67,7 @@ class LSTemperatureFile(Core.DataFile):
                 "Number of Breakpoints",
             ]:
                 raise Core.StonerLoadError("Header did not contain recognised keys.")
-            for (k, v) in zip(keys, vals):
+            for k, v in zip(keys, vals):
                 v = v.split()[0]
                 self.metadata[k] = string_to_type(v)
             headers = bytes2str(next(data)).strip().split()

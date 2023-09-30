@@ -328,7 +328,7 @@ class DiskBasedFolderMixin:
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
         p, imap = get_pool()
-        for (f, name) in imap(
+        for f, name in imap(
             partial(_loader, loader=self.loader, typ=self._type, directory=self.directory), self.not_loaded
         ):
             self.__setter__(
@@ -527,7 +527,6 @@ class DataMethodsMixin:
         metadata = args
 
         def _extractor(group, _, metadata):
-
             results = group.type()
             results.metadata = group[0].metadata
             headers = []
@@ -752,7 +751,6 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
     """
 
     def __init__(self, *args, **kargs):
-
         self.type = kargs.pop("type", make_Data(None))
         super().__init__(*args, **kargs)
 

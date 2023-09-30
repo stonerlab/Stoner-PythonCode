@@ -79,7 +79,8 @@ def driftEliminator(data, N):
 def shift(data, N):
     """Translate curve in y so that halfway between the saturated fieldsis zero.
 
-    (uses the average y value of all the saturated points given to determine upper and lower bounds of curve"""
+    (uses the average y value of all the saturated points given to determine upper and lower bounds of curve
+    """
     maxHarg = int(
         np.argmax(data[: len(data[:, 0]) / 2, 1])
     )  # gives the data index of maximum field (in the first half of the data

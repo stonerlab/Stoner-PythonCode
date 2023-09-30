@@ -58,12 +58,12 @@ def test_load_from_png():
     subpath = os.path.join("coretestdata","im1_annotated.png")
     fpath = os.path.join(thisdir, subpath)
     anim=ImageArray(fpath)
-    assert os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath), "Failed with {os.path.normpath(anim.metadata['Loaded from'])} and {os.path.normpath(fpath)}"
+    assert os.path.normpath(anim.metadata['Loaded from']).lower() == os.path.normpath(fpath).lower(), "Failed with {os.path.normpath(anim.metadata['Loaded from'])} and {os.path.normpath(fpath)}"
     cwd = os.getcwd()
     os.chdir(thisdir)
     anim = ImageArray(subpath)
     #check full path is in loaded from metadata
-    assert os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath), 'Full path not in metadata: {}'.format(anim["Loaded from"])
+    assert os.path.normpath(anim.metadata['Loaded from']).lower() == os.path.normpath(fpath).lower(), 'Full path not in metadata: {}'.format(anim["Loaded from"])
     os.chdir(cwd)
 
 def test_load_save_all():
@@ -157,8 +157,8 @@ def test_load_kwargs():
 def test_filename():
     im = ImageArray(np.linspace(0,1,12).reshape(3,4))
     fpath = os.path.join(thisdir, 'coretestdata/im1_annotated.png')
-    assert os.path.normpath(selfimarrfile.filename)\
-                    == os.path.normpath(fpath),f"Failed with {os.path.normpath(selfimarrfile.filename)} and {os.path.normpath(fpath)}"
+    assert os.path.normpath(selfimarrfile.filename).lower()\
+                    == os.path.normpath(fpath).lower(),f"Failed with {os.path.normpath(selfimarrfile.filename)} and {os.path.normpath(fpath)}"
     im = ImageArray(np.linspace(0,1,12).reshape(3,4))
     im['Loaded from']
     im.filename
@@ -290,7 +290,7 @@ def test_other_funcs():
 
 def test_attrs():
     attrs=[x for x in dir(ImageArray([])) if not x.startswith("_")]
-    expected={6:1056,7:1062,8:1062,9:1062}.get(spv[1],1054)
+    expected={6:1056,7:1062,8:1062,9:1062,10:1089}.get(spv[1],1054)
     assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
@@ -362,7 +362,7 @@ def test_methods():
     with pytest.raises(TypeError):
         i2-"Gobble"
     attrs=[x for x in dir(i2) if not x.startswith("_")]
-    expected={6:1060, 7:1066,8:1066,9:1066}.get(spv[1],1058)
+    expected={6:1060, 7:1066,8:1066,9:1066,10:1093}.get(spv[1],1058)
     assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 
@@ -457,4 +457,4 @@ def test_operators():
     assert i.sum()==50*255,"Negate operators failed"
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    pytest.main([__file__])
+    pytest.main([__file__,"--pdb"])

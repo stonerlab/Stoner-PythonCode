@@ -16,3 +16,4 @@ imreg_dft>=2.0
 multiprocess>=0.70
 dill>=0.2.8
 urllib3>=1.26
+dateutil>=2.8

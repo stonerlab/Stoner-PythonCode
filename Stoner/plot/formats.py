@@ -50,7 +50,6 @@ def _remove_dots(key):
 
 
 class TexFormatter(Formatter):
-
     r"""An axis tick label formatter that emits Tex formula mode code.
 
     Formating is set so that large numbers are registered as :math`\times 10^{power}`

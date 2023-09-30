@@ -371,7 +371,6 @@ class AttocubeScanMixin:
             mode = "r+" if path.exists(filename) else "w"
         self.filename = filename
         with HDFFileManager(self.filename, mode=mode) as f:
-
             f.attrs["type"] = type(self).__name__
             f.attrs["module"] = type(self).__module__
             f.attrs["scan_no"] = self.scan_no

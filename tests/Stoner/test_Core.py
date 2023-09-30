@@ -239,7 +239,7 @@ def test_dir():
     assert selfd.dir("S")==["Stoner.class"],f"Dir method failed: dir was {selfd.dir()}"
     bad_keys=set(['__class_getitem__', '__metaclass__', 'iteritems', 'iterkeys', 'itervalues','__ge__', '__gt__', '__init_subclass__',
                   '__le__', '__lt__', '__reversed__', '__slots__',"_abc_negative_cache","_abc_registry",
-                  "_abc_negative_cache_version","_abc_cache","_abc_impl",'__annotations__'])
+                  "_abc_negative_cache_version","_abc_cache","_abc_impl",'__annotations__','__getstate__'])
     attrs=set(dir(selfd))-bad_keys
     assert len(attrs)==247,"DataFile.__dir__ failed."
     selfd.setas.clear()

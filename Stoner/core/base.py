@@ -432,7 +432,7 @@ class typeHintedDict(regexpDict):
         ret = None
         if typ == "Invalid Type":  # Short circuit here
             return repr(value)
-        for (regexp, valuetype) in self.__tests:
+        for regexp, valuetype in self.__tests:
             matched = regexp.search(typ)
             if matched is not None:
                 if isinstance(valuetype, _evaluatable):
@@ -450,18 +450,12 @@ class typeHintedDict(regexpDict):
                     if isinstance(ret, datetime.datetime):
                         break  # Alreadu a datetime object
                     try:
-                        ret = literal_eval(value)
+                        ret = parser.parse(value)
                     except ValueError:
-                        ret = str(ret)
-                    if isinstance(ret, datetime.datetime):
-                        break  # Got us a datetime object now
-                    elif isinstance(ret, string_types):  # try parsing as a string now
                         try:
-                            ret = _parse_date(ret)
-                            break
-                        except (ValueError, OverflowError):
-                            pass  # fall back
-                    ret = datetime.datetime(1970, 1, 1)  # unparsable time
+                            ret = literal_eval(value)
+                        except ValueError:
+                            ret = str(value)
                     break
                 else:
                     ret = valuetype(value)

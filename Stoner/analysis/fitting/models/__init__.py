@@ -95,7 +95,6 @@ def make_model(model_func):
     """
 
     class _ModelDecorator(Model):
-
         __doc__ = model_func.__doc__
 
         def __init__(self, *args, **kargs):

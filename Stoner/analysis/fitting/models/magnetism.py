@@ -155,7 +155,6 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
 
 
 class BlochLaw(Model):
-
     r"""Bloch's law for spontaneous magnetism at low temperatures.
 
     Args:
@@ -242,7 +241,6 @@ class BlochLaw(Model):
 
 
 class BlochLawThin(Model):
-
     r"""Bloch's law for spontaneous magnetism at low temperatures - thin film version.
 
     Args:
@@ -320,7 +318,6 @@ class BlochLawThin(Model):
 
 
 class Langevin(Model):
-
     r"""The Langevin function for paramagnetic M-H loops.
 
     Args:
@@ -367,7 +364,6 @@ class Langevin(Model):
 
 
 class KittelEquation(Model):
-
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -412,7 +408,6 @@ class KittelEquation(Model):
 
 
 class Inverse_Kittel(Model):
-
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -453,7 +448,6 @@ class Inverse_Kittel(Model):
 
 
 class FMR_Power(Model):
-
     r"""Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:

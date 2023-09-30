@@ -73,7 +73,6 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
 
 
 class PlotMixin:
-
     r"""A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
 
     Args:

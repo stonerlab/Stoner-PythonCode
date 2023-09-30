@@ -10,6 +10,7 @@ from Stoner.analysis.fitting.models import make_model
 
 seed(12345)  # Ensure consistent random numbers
 
+
 # Make our model
 @make_model
 def simple_model(x, m, c):

@@ -528,7 +528,6 @@ class FittingMixin:
             raise RuntimeError(f"model should be either an lmfit.Model or a callable function, not a {type(model)}")
 
         if prefix is not None:
-
             if isinstance(prefix, (list, tuple)):
                 prefix = prefix[0]
 
@@ -605,7 +604,6 @@ class FittingMixin:
             xdat = working[:, self.find_col(xcol)]
 
         for i, yc in enumerate(ycol):
-
             if isinstance(yc, index_types):
                 ydat = working[:, self.find_col(yc)]
             elif isinstance(yc, np.ndarray) and yc.ndim == 1 and len(yc) == len(self):
@@ -1172,7 +1170,6 @@ class FittingMixin:
         retvals = []
         i = None
         for i, ydat in enumerate(ydata):
-
             if isinstance(sigma, np.ndarray) and sigma.shape[0] > 1:
                 if sigma.shape[0] == len(ycol):
                     s = sigma[i]

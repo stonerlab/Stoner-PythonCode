@@ -117,7 +117,6 @@ class Linear(_Linear):
 
 
 class Quadratic(_Quadratic):
-
     r"""A Simple quadratic fitting function.
 
     Args:
@@ -139,7 +138,6 @@ class Quadratic(_Quadratic):
 
 
 class PowerLaw(_PowerLaw):
-
     r"""Power Law Fitting Equation.
 
     Args:
@@ -160,7 +158,6 @@ class PowerLaw(_PowerLaw):
 
 
 class StretchedExp(Model):
-
     r"""A stretched exponential fuinction.
 
     Args:
@@ -199,7 +196,6 @@ class StretchedExp(Model):
 
 
 class Lorentzian_diff(Model):
-
     r"""Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.
 
     Args:

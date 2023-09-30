@@ -138,7 +138,15 @@ def strijkers(V, omega, delta, P, Z):
             :include-source:
             :outname: strijkers_func
     """
-    return _strijkers_core(V, omega, delta, P, Z)
+    if isinstance(V, np.ma.MaskedArray):
+        mask = V.mask
+        V = np.array(V)
+    else:
+        mask = False
+    ret = _strijkers_core(V, omega, delta, P, Z)
+    ret = np.ma.MaskedArray(ret)
+    ret.mask = mask
+    return ret
 
 
 def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
@@ -349,7 +357,6 @@ class Strijkers(Model):
 
 
 class RSJ_Noiseless(Model):
-
     r"""Implement a simple noiseless RSJ model.
 
     Args:
@@ -403,7 +410,6 @@ class RSJ_Noiseless(Model):
 
 
 class RSJ_Simple(Model):
-
     r"""Implements a simple noiseless symmetric RSJ model.
 
     Args:
@@ -456,7 +462,6 @@ class RSJ_Simple(Model):
 
 
 class Ic_B_Airy(Model):
-
     r"""Critical Current for a round Josepshon Junction wrt to Field.
 
     Args:

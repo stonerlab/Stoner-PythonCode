@@ -25,7 +25,6 @@ from skimage import (
     morphology,
     segmentation,
     transform,
-    viewer,
 )
 
 from ..core.base import typeHintedDict, metadataObject
@@ -146,7 +145,6 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
         morphology,
         segmentation,
         transform,
-        viewer,
     ]
 )
 @class_modifier([ndi], transpose=True)
@@ -688,7 +686,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         morphology,
         segmentation,
         transform,
-        viewer,
     ],
     adaptor=image_file_adaptor,
 )

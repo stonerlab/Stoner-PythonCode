@@ -7,7 +7,6 @@ from os import path
 from json import loads, dumps
 from copy import deepcopy, copy
 
-from skimage.viewer import CollectionViewer
 import numpy as np
 from matplotlib.pyplot import figure, Figure, subplot, tight_layout
 from PIL.TiffImagePlugin import ImageFileDirectory_v2
@@ -234,7 +233,6 @@ class ImageFolderMixin:
         with Image.open(filename, "r") as img:
             tags = img.tag_v2
             if 270 in tags:
-
                 try:
                     userdata = loads(tags[270])
                     typ = userdata.get("type", cls.__name__)
@@ -480,12 +478,6 @@ class ImageFolderMixin:
         tiffname = path.splitext(filename)[0] + ext
         imlist[0].save(tiffname, save_all=True, append_images=imlist[1:], tiffinfo=ifd)
         return self
-
-    def view(self):
-        """Create a matplotlib animated view of the contents."""
-        cv = CollectionViewer(list(self.images))
-        cv.show()
-        return cv
 
 
 class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):

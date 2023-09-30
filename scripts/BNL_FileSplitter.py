@@ -22,7 +22,7 @@ while True:
         )
         mainFP = open(filename, "r", encoding="utf-8")
         break
-    except (IOError):
+    except IOError:
         print("Oops I couldn't find that file.")
 if "BNLSplitFiles" not in os.listdir(directory):
     os.mkdir("BNLSplitFiles")

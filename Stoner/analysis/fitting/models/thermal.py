@@ -122,7 +122,6 @@ def vftEquation(x, A, DE, x_0):
 
 
 class Arrhenius(Model):
-
     r"""Arrhenius Equation without T dependendent prefactor.
 
     Args:
@@ -160,7 +159,6 @@ class Arrhenius(Model):
 
 
 class NDimArrhenius(Model):
-
     r"""Arrhenius Equation without T dependendent prefactor for various dimensions.
 
     Args:
@@ -199,7 +197,6 @@ class NDimArrhenius(Model):
 
 
 class ModArrhenius(Model):
-
     r"""Arrhenius Equation with a variable T power dependent prefactor.
 
     Args:
@@ -238,7 +235,6 @@ class ModArrhenius(Model):
 
 
 class VFTEquation(Model):
-
     r"""Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.
 
     Args:

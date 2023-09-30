@@ -35,7 +35,7 @@ from .tools import set_option, get_option, Options as _Options
 Options = _Options()
 
 
-__version_info__ = ("0", "10", "6")
+__version_info__ = ("0", "10", "7")
 __version__ = ".".join(__version_info__)
 
 __homepath__ = pathlib.Path(__file__).parent.resolve()

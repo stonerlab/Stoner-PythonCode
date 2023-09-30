@@ -88,6 +88,16 @@ string_types = (str,)
 int_types = (int,)
 path_types = (str, PurePath)
 
+##### Monkey patch numpy for removed attributes as a compatibiliyu hack
+if not hasattr(np, "float"):
+    np.float = float
+
+if not hasattr(np, "bool"):
+    np.bool = bool
+
+if not hasattr(np, "str"):
+    np.str = str
+
 
 def str2bytes(data):
     """Encode a unicode string into UTF-8."""

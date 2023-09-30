@@ -518,7 +518,6 @@ def _read_pointscan(files, header):
 
 
 if __name__ == "__main__":
-
     # Test by reading all files
     for infile in Path(".").glob("*.hdr"):
         hdr, data, dims = read_scan(infile.stem)

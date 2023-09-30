@@ -19,7 +19,6 @@ from .exceptions import StonerSetasError
 
 
 class DataArray(ma.MaskedArray):
-
     r"""A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
