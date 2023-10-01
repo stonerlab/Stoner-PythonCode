@@ -164,9 +164,6 @@ from matplotlib import _pylab_helpers, cbook
 outname_list = set()
 
 matplotlib.use("agg")
-# align = cbook.deprecated(
-#     "3.4", alternative="docutils.parsers.rst.directives.images.Image.align")(
-#         Image.align)
 
 __version__ = 2
 
