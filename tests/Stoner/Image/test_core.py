@@ -13,12 +13,14 @@ import pytest
 from os import path
 import tempfile
 import os
+import sys
 import shutil
 from PIL import Image
 
 from scipy.version import version as spv
 
 spv=[int(x) for x in spv.split(".")]
+
 
 #data arrays for testing - some useful small images for tests
 
@@ -30,6 +32,17 @@ def shares_memory(arr1, arr2):
     ret = np.may_share_memory(arr1, arr2)
     return ret
 
+def _expected():
+    """Return number of image attributes for different versions of python and scipy."""
+    py=sys.version_info.minor
+    scipy=spv[1]
+
+    data={6:{7:1056,7:1058,8:1062,9:1087,10:1089,11:1089},
+          8:{6:1056,7:1058,8:1062,9:1087,10:1089,11:1089},
+          9:{6:1056,7:1058,8:1062,9:1087,10:1089,11:1089},
+          10:{6:1056,7:1062,8:1062,9:1062,10:1089,11:1089},
+          11:{6:1056,7:1062,8:1062,9:1062,10:1089,11:1089}}
+    return data[py][scipy]
 
 #random array shape 3,4
 selfarr = np.array([[ 0.41674764,  0.66100043,  0.91755303,  0.33796703],
@@ -290,8 +303,7 @@ def test_other_funcs():
 
 def test_attrs():
     attrs=[x for x in dir(ImageArray([])) if not x.startswith("_")]
-    expected={6:1056,7:1062,8:1062,9:1062,10:1089,11:1089}.get(spv[1],1054)
-    assert len(attrs)==expected,"Length of ImageArray dir failed. {}".format(len(attrs))
+    assert len(attrs)==_expected(),"Length of ImageArray dir failed. {}".format(len(attrs))
 
 
 
@@ -362,8 +374,7 @@ def test_methods():
     with pytest.raises(TypeError):
         i2-"Gobble"
     attrs=[x for x in dir(i2) if not x.startswith("_")]
-    expected={6:1060, 7:1066,8:1066,9:1066,10:1093,11:1093}.get(spv[1],1058)
-    assert len(attrs)==expected,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
+    assert len(attrs)==_expected()+4,"Length of ImageFile dir failed. {}:{}".format(expected,len(attrs))
     assert image._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do ImageFile png representation"
 
 
