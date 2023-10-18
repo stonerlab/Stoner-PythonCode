@@ -114,7 +114,7 @@ def bytes2str(data):
 
 
 def get_filedialog(what="file", **opts):
-    """Wrap around Tk file dialog to mange creating file dialogs in a cross platform way.
+    """Wrap around Tk file dialog to manage creating file dialogs in a cross platform way.
 
     Args:
         what (str): What sort of a dialog to create - options are 'file','directory','save','files'

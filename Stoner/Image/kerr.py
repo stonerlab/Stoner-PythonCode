@@ -356,7 +356,7 @@ class MaskStackMixin:
                 True if the last image is closest to the fully saturated state.
                 False if you want the first image
             saturation_value(bool):
-                if True then a pixel value True means that switching has occured
+                if True then a pixel value True means that switching has occurred
                 (ie magnetic saturation would be all True)
 
         Returns:

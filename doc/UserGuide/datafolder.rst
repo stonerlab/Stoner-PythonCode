@@ -14,7 +14,7 @@ Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is expo
 :py:class:`Stoner.Image.ImageFolder` is exported from the :py:mod:`Stoner.Image` sub-paclkage.
 
 :py:class:`DataFolder` and it's friends are essentially containers for :py:class:`Stoner.Data` (or similar classes from the
-:py:mod:`Stoner.Image` package) and for other instances of :py:class:`DataFolder` to alow a nested heirarchy to be built up.
+:py:mod:`Stoner.Image` package) and for other instances of :py:class:`DataFolder` to allow a nested hierarchy to be built up.
 The :py:class:`DataFolder` supports both sequence-like and mapping-like interfaces to both the :py:class:`Stoner.Core.Data` objects and the
 'sub'-:py:class:`DataFolder` objects (meaning that they work like both a list or a dictionary).
 :py:class:`DataFolder` is also lazy about loading files from disc - if an operation doesn't need to load a file it generally won't bother to keep memory usage
@@ -124,7 +124,7 @@ More Goodies for :py:class:`DataFolder` s
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Since a :py:class:`Stoner.Data` represents data in named columns, the :py:class:`DataFolder` offers a couple of additional options for actions to take
-when reading the files in from disk. It is possible to have the mean and satandard deviation of each column of data to be calculated and added as
+when reading the files in from disk. It is possible to have the mean and standard deviation of each column of data to be calculated and added as
 metadata as each file is loaded. The *read_means* boolean parameter can enable this.
 
 Other Options
@@ -140,15 +140,15 @@ for example, can allow one to set the default :py:attr:`Stoner.Data.setas` attri
 
     A particularly useful parameter to set in the DataFolder constructor is the *setas* parameter - this will ensure that the Lpy:attr:`Stoner.Data.setas`
     attribute is set to identify columns of data as x, y etc. as the data files are loaded into the folder - thus allowing subsequent calls to
-    :py:class:`Stoner.Data` methods to run without needing to explictly set the columns each time.
+    :py:class:`Stoner.Data` methods to run without needing to explicitly set the columns each time.
 
 All of these keywords to the constructor will set corresponding attributes on the created :py:class:`DataFolder`, so it is possible to redo the
-process of reading the list of files from disk by directly manipulating these attrbutes.
+process of reading the list of files from disk by directly manipulating these attributes.
 
 The current root directory and pattern are set in the *directory* and *pattern* keywords and stored in the similarly named attributes.
 The :py:meth:`DataFolder.getlist` method can be used to force a new listing of files.::
 
-   f.dirctory='/home/phygbu/Data'
+   f.directory='/home/phygbu/Data'
    f.pattern='*.txt'
    f.getlist()
 
@@ -377,15 +377,15 @@ is the :py:class:`Stoner.Data` to be analysed, then the following syntax can be 
 
     (my_analysis@f)(arg1,arg2,karg=False)
 
-*(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above jsut calls this iterating object.
+*(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above just calls this iterating object.
 
 If the return value of the function is another instance of :py:class:`Stoner.Data` (or whatever is being stored as the items in the
 :py:class:`DataFolder`) then it will replace the items inside the :py:class:`DataFolder`. The call to :py:attr:`DataFolder.each` will also return a
-simple list of the return values. If the function retuns something else, then you can have it added to the metadata of each item in the
+simple list of the return values. If the function returns something else, then you can have it added to the metadata of each item in the
 :py:class:`DataFolder` by adding a *_return* keyword that can either be True to use the function name as the metadata name or a string to specify
 the name of the metadata to store the return value explicitly.
 
-Thus, if your analysis function calcualtes some parameter that you want to call *beta* you might use the following::
+Thus, if your analysis function calculates some parameter that you want to call *beta* you might use the following::
 
     f=DataFolder(",",pattern="*.txt")
     f.each(my_analysis,arg1,arg2,karg=False,_return="beta")
@@ -426,7 +426,7 @@ Writing to the contents of the :py:attr:`DataFolder.metadata` will simple set th
     f.metadata["test"]
     >>> array([12.56, 12.56, 12.56, 12.56])
 
-The :py:meth:`combined_metadata_proxy.slice" method procides more control over how the metadata stored in the data folder can be returned.::
+The :py:meth:`combined_metadata_proxy.slice" method provides more control over how the metadata stored in the data folder can be returned.::
 
     f.metadata.slice("Startupaxis-X")
     >>> [{'Startupaxis-X': 2},
@@ -562,8 +562,8 @@ based on metadata values.::
     f.select({"temp:T1":4.2})
 
 The basic pattern of the :py:meth:`DataFolder.select` method is that each keyword argument determines both the name of the metadata to use
-as the asis of the selection and also the operation to be performed. The value of the keyword argument is the value use to check. The oepration is
-seperated from the column name by a double underscore.
+as the asis of the selection and also the operation to be performed. The value of the keyword argument is the value use to check. The operation is
+separated from the column name by a double underscore.
 
 In the first example, only those files with a metadata value "temperature_T1" which is 4.2 will be selected, here there is no operator specified,
 so for a single scalar value it is assumed to be ''__eq'' for equals. For a tuple it would be ''__between'' and for a longer list ''__in''.
@@ -590,7 +590,7 @@ data curves taken at a variety of temperatures and with three different magnetic
    f.groups
 
 The :py:meth:`DataFolder.group` method splits the files in the :py:class:`DataFolder` into several
-groups each of which share a common value of the arguement supplied to the :py:meth:`DataFolder.group`
+groups each of which share a common value of the argument supplied to the :py:meth:`DataFolder.group`
 method. A group is itself another instance of the :py:class:`DataFolder` class. As explained above, each
 :py:class:`DataFolder` object maintains a dictionary called :py:attr:`DataFolder.groups` whose keys
 are the distinct values of the argument of the :py:meth:`DataFolder.group` methods and whose values are
@@ -648,7 +648,7 @@ to a set of metadata values from each file in the :py:class:`DataFolder`. This c
     f.extract(["Temperature","Angle","Other_metadata"])
 
 The argument to the :py:meth:`DataFolder.extract` method is a list of metadata values to be extracted from each file. The
-metadata should be convertable to an array type so that it can be included in the final result matrix. Any metadata that doesn't
+metadata should be convertible to an array type so that it can be included in the final result matrix. Any metadata that doesn't
 appear to be so convertible in the first file in the ;py:class:`DataFolder` is ignored. The column headings of the final results
 table are the names of the metadata that were used in the extraction.
 

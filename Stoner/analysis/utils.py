@@ -146,7 +146,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     represented as a 2 x 3 matrix  of coordinates. The *xmode* and *ymode* parameters control the possible operations
     to align the data in x and y directions, in addition to which the *xmode* parameter can take the value 'affine'
     which allows a full affine transformation. The returned values are the affine transformation matrix, the
-    uncertainities in this and a function to map co-ordinates with the optimal affine transformation.
+    uncertainties in this and a function to map coordinates with the optimal affine transformation.
 
     Note:
         *m0* combines both giving an initial value and fixed values for the transformation. If *m0* is set, then it
@@ -155,9 +155,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
         fixed, however, no scaling is done at all.
     """
     if xy1.shape != xy2.shape or xy1.shape[1] != 2:
-        raise RuntimeError(
-            f"co-ordinate arrays must be equal length with two columns, not {xy1.shape} and {xy2.shape}"
-        )
+        raise RuntimeError(f"coordinate arrays must be equal length with two columns, not {xy1.shape} and {xy2.shape}")
     xvarp = {
         "affine": [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]],
         "linear": [[0, 0], [0, 2]],
@@ -236,7 +234,7 @@ def ApplyAffineTransform(xy, transform):
 
     Returns:
         (n x 2 array).
-        Transformed co-ordinates.
+        Transformed coordinates.
     """
     xyt = np.row_stack((xy.T, np.ones(len(xy))))
     xyt = np.dot(transform, xyt)
@@ -244,13 +242,13 @@ def ApplyAffineTransform(xy, transform):
 
 
 def GetAffineTransform(p, pd):
-    """Calculate an affine transofrm from 2 sets of three points.
+    """Calculate an affine transform from 2 sets of three points.
 
     Args:
         p (3x2 array):
             Coordinates of points to transform from.
         pd (3x2 array):
-            Cooridinates of points to transform to.
+            Coordinates of points to transform to.
 
     Returns:
         (2x3 array):

@@ -66,7 +66,7 @@ def test_metadata():
     assert selfd["Test"]==selfd.metadata["Test"]
     assert selfd.metadata._typehints["Int"]=="I32"
     assert len(selfd.dir())==6,f"Failed meta data directory listing ({selfd.dir()})"
-    assert len(selfd3["Temperature"])==7,"Regular experssion metadata search failed"
+    assert len(selfd3["Temperature"])==7,"Regular expression metadata search failed"
 
 
 def test_len():

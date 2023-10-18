@@ -34,7 +34,7 @@ def quadratic(x, a, b, c):
     r"""Calculate a simple quadratic fitting function.
 
     Args:
-        x (aray): Input data
+        x (array): Input data
         a (float): Quadratic term co-efficient
         b (float): Linear term co-efficient
         c (float): Constant offset term
@@ -58,7 +58,7 @@ def powerLaw(x, A, k):
     Args:
         x (array): Input data
         A (float): Prefactor
-        k (float): Pwoer
+        k (float): Power
 
     Return:
         Power law.
@@ -95,7 +95,7 @@ def lorentzian_diff(x, A, sigma, mu):
 
     Args:
         x (array): x data
-        A (flaot): Peak amplitude
+        A (float): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
 
@@ -120,7 +120,7 @@ class Quadratic(_Quadratic):
     r"""A Simple quadratic fitting function.
 
     Args:
-        x (aray): Input data
+        x (array): Input data
         a (float): Quadratic term co-efficient
         b (float): Linear term co-efficient
         c (float): Constant offset term
@@ -143,7 +143,7 @@ class PowerLaw(_PowerLaw):
     Args:
         x (array): Input data
         A (float): Prefactor
-        k (float): Pwoer
+        k (float): Power
 
     Return:
         Power law.
@@ -200,7 +200,7 @@ class Lorentzian_diff(Model):
 
     Args:
         x (array): x data
-        A (flaot): Peak amplitude
+        A (float): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
 

@@ -41,7 +41,7 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
     typ = bytes2str(f.attrs.get("type", ""))
     if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
         raise StonerLoadError(
-            "HDF5 Group does not speicify a recongized type and does not specify a module to use to load."
+            "HDF5 Group does not specify a recognized type and does not specify a module to use to load."
         )
 
     if "module" in f.attrs:
@@ -121,13 +121,13 @@ class HDF5File(DataFile):
         kargs (dict):
             Dictionary of keyword arguments
 
-    If the first non-keyword arguement is not an h5py File or Group then
+    If the first non-keyword argument is not an h5py File or Group then
     initialises with a blank parent constructor and then loads data, otherwise,
     calls parent constructor.
 
     Datalayout is dead simple, the numerical data is in a dataset called *data*,
-    metadata are attribtutes of a group called *metadata* with the keynames being the
-    full name + typehint of the stanard DataFile metadata dictionary
+    metadata are attributes of a group called *metadata* with the keynames being the
+    full name + typehint of the standard DataFile metadata dictionary
     *column_headers* are an attribute of the root file/group
     *filename* is set from either an attribute called filename, or from the
     group name or from the hdf5 filename.
@@ -392,7 +392,7 @@ class HDF5FolderMixin:
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool):
+            instantiate (bool):
                 If True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 :py:class:`Stoner.Core.Data` object.
@@ -649,7 +649,7 @@ class SLS_STXMFile(DataFile):
         return self
 
     def scan_meta(self, group):
-        """Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata."""
+        """Scan the HDF5 Group for attributes and datasets and sub groups and recursively add them to the metadata."""
         root = ".".join(group.name.split("/")[2:])
         for name, thing in group.items():
             parts = thing.name.split("/")
@@ -684,7 +684,7 @@ class STXMImage(ImageFile):
 
         Keyword Args:
             regrid (bool):
-                If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates.
+                If set True, the gridimage() method is automatically called to re-grid the image to known coordinates.
         """
         regrid = kargs.pop("regrid", False)
         bcn = kargs.pop("bcn", False)

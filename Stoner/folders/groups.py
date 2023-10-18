@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Provides the classes and support functions for the :py:attr:`Stoner.DataFolder.grups` magic attribute."""
+"""Provides the classes and support functions for the :py:attr:`Stoner.DataFolder.groups` magic attribute."""
 
 __all__ = ["GroupsDict"]
 
@@ -47,7 +47,7 @@ class GroupsDict(regexpDict):
                         base.groups[nk].__deleter__(f)
                 if len(base.groups[nk]) == 0 and len(base.groups[nk].groups) == 0:
                     del base.groups[nk]
-        self.base.grups = self
+        self.base.groups = self
         return self.base
 
     def keep(self, name):
@@ -74,7 +74,7 @@ class GroupsDict(regexpDict):
                 g.groups.keep(name)
                 if not len(g.groups):
                     del self[grp]
-        self.base.grups = self
+        self.base.groups = self
         return self.base
 
     def prune(self, name=None):
@@ -92,5 +92,5 @@ class GroupsDict(regexpDict):
                     del self[grp]
             elif not len(g) and not len(g.groups):
                 del self[grp]
-        self.base.grups = self
+        self.base.groups = self
         return self.base

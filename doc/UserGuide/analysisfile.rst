@@ -53,8 +53,8 @@ This is typically used to calculate asymmetry parameters.::
     a.diffsum('I+','I-')
 
 Of course, these elementary operations might look rather pointless given how easy it is to extract single columns of data and then add them to a
-:py:class:`Stoner.Core.Data` object, however if the cahnnels are specified as a **tuple** of two elements, then it is taken as a channel of data and a
-second channel of uncertainities. The uncertainity calculation is then propagated correctly for the maths operations. This is particularly useful for the
+:py:class:`Stoner.Core.Data` object, however if the channels are specified as a **tuple** of two elements, then it is taken as a channel of data and a
+second channel of uncertainties. The uncertainty calculation is then propagated correctly for the maths operations. This is particularly useful for the
 :py:meth:`AnalysisMixin.diffsum` method where the error propagation is not entirely trivial.
 
 .. plot:: samples/channel_math.py
@@ -75,7 +75,7 @@ each row belongs in. The :py:meth:`AnalysisMixin.split` method is useful for thi
 In these examples we assume the :py:class:`AnalysisMixin` has a data column 'Polarisation' that takes two (or more) discrete values
 and a column 'Temperature' that contains numbers above and below 100.
 
-The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalysisMixin`  which
+The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate instances of :py:class:`AnalysisMixin`  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
 produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalysisMixin` objects for the rows with temperature above and below 100.
 The final example will result in a :py:class:`Stoner.Folders.DataFolder` object that has two groups each of which contains
@@ -84,7 +84,7 @@ The final example will result in a :py:class:`Stoner.Folders.DataFolder` object 
 More AnalysisMixin Functions
 ============================
 
-Applying an arbitary function through the data
+Applying an arbitrary function through the data
 ----------------------------------------------
 
 :py:meth:`AnalysisMixin.apply`::
@@ -125,7 +125,7 @@ eg the result of the :py:meth:`AnalysisMixin.span` method, or a complete list as
 float would have the effect of removing all rows where the column didn't equal the float value. This is probably not a good idea...
 
 It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set,
-in which case the mask is temproarily discarded in favour of one generated from the bounds expression. This can be worked around,
+in which case the mask is temporarily discarded in favour of one generated from the bounds expression. This can be worked around,
 however, as the parameter passed to the bounds function is itself a masked array and thus one can include a test of the mask in the
 bounds function::
 
@@ -161,7 +161,7 @@ error bar on the bin bceomes the quadrature sum of the individual error bars on 
 is the standard error in the y points in the bin and the y value is the simple mean of the data.
 
 If **xcol** and/or **ycol** are not specified, then they are looked up from the :py:attr:`Stoner.Core.DataFile.setas` attribute. In this case, the **yerr**
-is also taken from this attribute if not specified spearately.
+is also taken from this attribute if not specified separately.
 
 IF the keyword *clone* is supplied and is False, four 1D numpy arrays are returned, representing the x, y and y-errors for the new bins and the number of
 points averaged into each bin.. If *clone* is True or not provided, :py:meth:`AnalysisMixin.bin` returns a clone of the current data file with its data
@@ -191,9 +191,9 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
 
         In both these examples, the data to be smoothed is determined from the :py:attr:`Stoner.Core.DataFile.setas` attribute.
         The first argument is passed to :py:func:`scipy.signal.get_window` to define the window function. The *size* argument
-        can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
+        can either be an integer to specify the number of rows in the window, or a float to specify the size of the window in
         terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
-        and then smoothed and then reinterpolated back to the original x data co-ordinates.
+        and then smoothed and then reinterpolated back to the original x data coordinates.
 
         .. warning::
 
@@ -215,12 +215,12 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
 
         An alternative approach is to use a smoothing spline to fit the data locally. Depending on the spline smoothing setting
         this will create a function that is continuous in both value and derivative that approaches the data. Unlike Savotzky-
-        Golay fitlering it cannot be used to calculate a derivative easily, but it can handle y data with uncertainities. It is
+        Golay filtering it cannot be used to calculate a derivative easily, but it can handle y data with uncertainties. It is
         implemented as the :py:meth:`AnalysisMixin.spline` method.
 
     - Rebinning
 
-        As ullustrated above, rebinning the data is a common way fof reducing noise by combining several data points. This is simple
+        As ullustrated above, rebinning the data is a common way for reducing noise by combining several data points. This is simple
         and effective, but does reduce the length of the data !
 
 All three approaches are illustrated in the excample below:
@@ -258,7 +258,7 @@ possible match to *scan1*. If *xcol* or *ycol* are not given then the default x 
 :py:attr:`Stoner.Core.DataFile.setas` attribute.
 
 The *mode* keyword can be used to specify the types of scaling operations that are
-to be allowed. Teh defaults are to shoft both x and y by an offset value and to rescale
+to be allowed. The defaults are to shoft both x and y by an offset value and to rescale
 the y data by some factor. If even more control of the transformation is needed,
 the *func* keyword and *p0* keyword can be used to provide an alternative transformation
 function and initial guesses to its parameters. The profotype for the transformation
@@ -269,7 +269,7 @@ function should be::
         return (mapped_x,mapped_y)
 
 In addition to changing the X and Y data in the current :py:class:`AnalysisMixin`
-instance, two new metadata keys, *Stitching Coefficient* and *Stitching Coeffient Errors*,
+instance, two new metadata keys, *Stitching Coefficient* and *Stitching Coefficient Errors*,
 with the co-efficients used to modify the scan data.
 
 Thresholding, Interpolating and Extrapolation of Data
@@ -291,11 +291,11 @@ scipy routine :py:func:`scipy.optimize.interp1d`::
 
    a.interpolate(newX,kind='linear', xcol="X-Data")
 
-The new values of X are set from the mandetory first argument. **kind** can be either "linear" or "cubic" whilst the xcol data can be omitted in which case the
+The new values of X are set from the mandatory first argument. **kind** can be either "linear" or "cubic" whilst the xcol data can be omitted in which case the
 :py:attr:`Stoner.Core.DataFile.setas` attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.
 
 The :py:meth:`AnalysisMixin.interpolate` method will return values that are obtained from 'joining the dots' - which is
-appropriate if the uncertainities (and hence scatter) in the data is small. With more scatter in the data, it is better to
+appropriate if the uncertainties (and hence scatter) in the data is small. With more scatter in the data, it is better to
 use some locally fitted spline function to interpolate with. The :py:meth:`AnalysisMixin.spline` function can be used for this.::
 
     d.spline("X-Data","Y-Data",header="Spline Data",order=3,smoothing=2.0,replace=True)
@@ -305,18 +305,18 @@ use some locally fitted spline function to interpolate with. The :py:meth:`Analy
 
 The *order* keyword gives the polynomial order of the spline function being fitted. The *smoothing* factor determines how
 closely the spline follows the data points, with a *smoothing*=0.0 being a strict interpolation. The *repalce* argument
-controls what the return value from the :py:meth:`AnalysisMixin.spline` method reutrns. IF *replace* is True or a column
+controls what the return value from the :py:meth:`AnalysisMixin.spline` method returns. IF *replace* is True or a column
 index, then the new data is added as a column of the Data, possibly replacing the current y-data. If *replace* is False, then
 the new y-data is returned, but the existing data is unmodified. Finally, if *replace* is None, then the
 :py:meth:`AnalysisMixin.spline` method returns a :py:class:`scipy.interpolate.UnivararateSpline` object that can be used to
-evaluate the spline at arbitary locations, including extrapolating outside the range of the original x data.
+evaluate the spline at arbitrary locations, including extrapolating outside the range of the original x data.
 
 Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially 'inventing' new data.
 Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`AnalysisMixin.extrapolate`
 method is likely to be more successful. :py:meth:`AbnalyseFile.extrapolate` works by fitting a function over a window in the
 data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
 a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As
-the new x-data point  approaches and passes the limits of the exisiting data, the window used to provide the fit function
+the new x-data point  approaches and passes the limits of the existing data, the window used to provide the fit function
 runs up to and stops at the limit of the supplied data. Thus when extrapolating, the new values of data are increasingly less certain
 as one moves further from the end of the data.
 
@@ -325,8 +325,8 @@ as one moves further from the end of the data.
     :outname: extrapolate
 
 
-Extrapolation is of course most succesful if one has a physical model that should describe the data.
-To allow for this, you can pass an arbitary fitting function as the *kind* parameter.
+Extrapolation is of course most successful if one has a physical model that should describe the data.
+To allow for this, you can pass an arbitrary fitting function as the *kind* parameter.
 
 
 Whilst interpolation will tell you the
@@ -339,11 +339,11 @@ Whilst not the most sophisticated algorithm it is reasonably easy to implement a
 
     SG_Filter(col=("X"."Y"), points=15, poly=1, order=0,result=None, replace=False, header=None)
 
-If col is a tuple then it is taken to be specifing both x and y data column indices. Otherwise the data
-indexed by col is differentiated with repsect to the row. *order* specifies the order of differentiation, where 0
+If col is a tuple then it is taken to be specifying both x and y data column indices. Otherwise the data
+indexed by col is differentiated with respect to the row. *order* specifies the order of differentiation, where 0
 means simply smoothing the data. The algorithm works by locally fitting a polynomial over a certain window of points.
 The parameters for this fitting are controlled by the *points* and *poly* parameters. *points*>*poly*>*order* for
-the algorithm to work. *resul;t*, *replace* and *header* specify that the calculated data should also be added to
+the algorithm to work. *result;t*, *replace* and *header* specify that the calculated data should also be added to
 the :py:class:`AnalysisMixin` instance, optionally replacing an existing column indexed by *result* and given a new header
 *header*. The nature of the local fitting means that the first and last *poly*/2 points are not valid.
 
@@ -366,8 +366,8 @@ The algorithm used is to differentiate the data with a Savitsky-Golay filter - w
 Zero crossing values in the derivative are located and then the second derivative is found for these points and are used to identify
 peaks and troughs in the data. The *width* and *poly* keywords are used to control the order of polynomial and the width of the window
 used for calculating the derivative - a lower order  of polynomial and wider width will make the algroithm less sensitive to narrow peaks.
-The *significance* parameter controls which peaks and troughs are returned. If *signficance* is a float, then only peaks and troughs whose
-second derivatives are larger than *significance* are returned. If *significance* is an integer, then maxmium snd derivative in the data is divided
+The *significance* parameter controls which peaks and troughs are returned. If *significance* is a float, then only peaks and troughs whose
+second derivatives are larger than *significance* are returned. If *significance* is an integer, then maximum snd derivative in the data is divided
 by the supplied significance and used as the threshold on which peaks and troughs to return. If *significance* is not provided then a value of 20 is used.
 Finally, if *sort* is True, the peaks are returned in order of their significance. *peaks* and *troughs* select whether to return peaks or troughs.
 

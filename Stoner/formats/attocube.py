@@ -288,7 +288,7 @@ class AttocubeScanMixin:
         Keyword Parameters:
             x_range, y_range (tuple of start, stop, points):
                 Range of x-y co-rdinates to regrid the data to. Used as an argument to :py:func:`np.linspace` to
-                generate the co-ordinate
+                generate the coordinate
                 vector.
             in_place (bool):
                 If True then replace the existing datasets with the regridded data, otherwise create a new copy

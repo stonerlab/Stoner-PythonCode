@@ -467,7 +467,7 @@ def _read_images(files, header):
 
     Returns:
         data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arays): 2 or 3 1D arrays corresponding to the dimensions of data.
+        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
     """
     xims = list(files)
     scandef = header["ScanDefinition"]
@@ -497,7 +497,7 @@ def _read_pointscan(files, header):
 
     Returns:
         data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arays): 2 or 3 1D arrays corresponding to the dimensions of data.
+        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
     """
     xsps = list(files)
     scandef = header["ScanDefinition"]

@@ -12,7 +12,7 @@ from .utils import get_pool
 
 
 def _worker(d, **kwargs):
-    """Support function to run an arbitary function over a :py:class:`Stoner.Data` object."""
+    """Support function to run an arbitrary function over a :py:class:`Stoner.Data` object."""
     byname = kwargs.get("byname", False)
     func = kwargs.get("func", lambda x: x)
     if byname:
@@ -27,7 +27,7 @@ def _worker(d, **kwargs):
     try:
         if byname:  # Ut's an instance bound moethod
             ret = func(*args, **kargs)
-        else:  # It's an arbitary function
+        else:  # It's an arbitrary function
             ret = func(d, *args, **kargs)
     except Exception as e:  # pylint: disable=W0703 # Ok to be broad as user func could do anything
         ret = e, format_exc()
@@ -111,7 +111,7 @@ class Item:
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
 
     Notes:
-        The pupose of this class is to allow it to be explicit that we're calling methods
+        The purpose of this class is to allow it to be explicit that we're calling methods
         on the members of the folder rather than a collective method. This allows us to work
         around nameclashes.
     """
@@ -153,7 +153,7 @@ class Item:
 
         Notes:
             If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
-            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
+            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
             :py:class:`baseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
@@ -249,7 +249,7 @@ class Item:
     def __setattr__(self, name, value):
         """Proxy call to set an attribute.
 
-        Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.
+        Setting the attribute on .each sets it on all instantiated objects and in _object_attrs.
 
         Args:
             name(str): Attribute to set
@@ -288,7 +288,7 @@ class Item:
             item (string): Name of method of metadataObject class to be called
 
         Returns:
-            Either a modifed copy of this objectFolder or a list of return values
+            Either a modified copy of this objectFolder or a list of return values
             from evaluating the method for each file in the Folder.
         """
         meth = getattr(self._folder.instance, item, None)
@@ -350,7 +350,7 @@ class Item:
 
         Notes:
             If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
-            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
+            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
             :py:class:`baseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.

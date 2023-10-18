@@ -54,7 +54,7 @@ TDI Format 1.5                   X-Data    Y-Data
 index                             0 (x)     1 (y)
 =============================  ========  ========"""
     assert selfd.header,header=="Header output changed."
-    assert "\n".join(repr(selfd).split("\n")[:4])==repr_header,"Representation gave unexpcted header."
+    assert "\n".join(repr(selfd).split("\n")[:4])==repr_header,"Representation gave unexpected header."
     assert len(repr(selfd2).split("\n"))==261,"Long file representation failed"
     assert len(selfd2._repr_html_().split("\n"))==263,"Long file representation failed"
 
@@ -131,7 +131,7 @@ def test_deltions():
     global selfd, selfd1, selfd2, selfd3, selfd4
     ch=["{}-Data".format(chr(x)) for x in range(65,91)]
     data=np.zeros((100,26))
-    metadata=dict([("Key 1",True),("Key 2",12),("Key 3","Hellow world")])
+    metadata=dict([("Key 1",True),("Key 2",12),("Key 3","Hello world")])
     selfdd=Data(metadata)
     selfdd.data=data
     selfdd.column_headers=ch
@@ -142,7 +142,7 @@ index                           3 (x)              7 (y)                 24     
 ===========================  ========  =======  ========  =======  ========  ========
 Key 1{Boolean}= True                0                  0                  0         0
 Key 2{I32}= 12                      0  ...             0  ...             0         0
-Key 3{String}= Hellow world         0  ...             0  ...             0         0
+Key 3{String}= Hello world         0  ...             0  ...             0         0
 Stoner.class{String}= Data          0  ...             0  ...             0         0
 ...                                 0  ...             0  ...             0         0"""
     assert "\n".join(repr(selfdd).split("\n")[:9])==selfrepr_string,"Representation with interesting columns failed."
@@ -172,7 +172,7 @@ Stoner.class{String}= Data          0  ...             0  ...             0     
 
 
 def test_attributes():
-    """Test various atribute accesses,"""
+    """Test various attribute accesses,"""
     global selfd, selfd1, selfd2, selfd3, selfd4
     header='==============  ======  ======\nTDI Format 1.5  X-Data  Y-Data\n    index       0 (x)   1 (y)\n==============  ======  ======'
     assert selfd.shape==(100,2),"shape attribute not correct."
@@ -335,7 +335,7 @@ def test_methods():
     d=selfd.clone
     d2=selfd.clone
     d2.data=d2.data[::-1,:]
-    assert d.sort(reverse=True)==d2,"Sorting revserse not the same as manually reversed data."
+    assert d.sort(reverse=True)==d2,"Sorting reverse not the same as manually reversed data."
     d=selfd.clone
     d.mask[::2]=True
     assert d.count()==50

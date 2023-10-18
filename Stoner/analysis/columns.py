@@ -50,7 +50,7 @@ class ColumnOpsMixin:
                     )
 
             else:
-                raise ValueError(f"Unknown error caclulation mode {error_type}")
+                raise ValueError(f"Unknown error calculation mode {error_type}")
 
         adata, aname = self.__get_math_val(col_a)
         bdata, bname = self.__get_math_val(col_b)
@@ -248,7 +248,7 @@ class ColumnOpsMixin:
 
         Keyword Arguments:
             sigma (column index or array):
-                The uncertainity noted for each value in the mean
+                The uncertainty noted for each value in the mean
             bounds (callable):
                 col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
@@ -362,7 +362,7 @@ class ColumnOpsMixin:
         return self
 
     def span(self, column=None, bounds=None):
-        """Return a tuple of the maximum and minumum values within the given column and bounds.
+        """Return a tuple of the maximum and minimum values within the given column and bounds.
 
         Args:
             column (index):
@@ -395,7 +395,7 @@ class ColumnOpsMixin:
 
         Keyword Arguments:
             sigma (column index or array):
-                The uncertainity noted for each value in the mean
+                The uncertainty noted for each value in the mean
             bounds (callable):
                 col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.

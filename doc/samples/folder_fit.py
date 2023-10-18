@@ -38,7 +38,7 @@ result.plot(fmt="k.", capsize=2)
 # An alternative way to run the Analysis - this time with
 # an orthogonal didstance regression algorithm
 
-# Run the fitt for each file in the fldr. Set the outpout to "data" to
+# Run the fitt for each file in the fldr. Set the output to "data" to
 # Have the amended results replace the existing data files
 fldr.each.odr(Quadratic, output="data", result=True, header="fit", _serial=True)
 fig = figure()

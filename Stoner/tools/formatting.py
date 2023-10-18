@@ -73,13 +73,13 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
 
     Args:
         value (float):
-            The value to be formated
+            The value to be formatted
         error (float):
             The uncertainty in the value
 
     Keyword Arguments:
         fmt (str):
-            Specify the output format, opyions are:
+            Specify the output format, options are:
                 -  "text" - plain text output
                 - "latex" - latex output
                 - "html" - html entities
@@ -89,7 +89,7 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
         mode (string):
             If "float" (default) the number is formatted as is, if "eng" the value and error is converted
             to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a
-            scientifc, i.e. mantissa and exponent format is used.
+            scientific, i.e. mantissa and exponent format is used.
         units (string):
             A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
             prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
@@ -98,7 +98,7 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
             inside the math-mode markers, but not embedded in \mathrm.
 
     Returns:
-        String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
+        String containing the formatted number with the eorr to one s.f. and value to no more d.p. than the error.
     """
     mode = kargs.get("mode", "float")
     units = kargs.get("units", "")
@@ -115,7 +115,7 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
         prefix = escape_func(prefix)
         units = escape_func(units)
 
-    # Sort out special fomatting for different modes
+    # Sort out special formatting for different modes
     if mode == "float":  # Standard
         suffix_val = ""
     elif mode == "eng":  # Use SI prefixes
@@ -191,7 +191,7 @@ def format_val(value: Numeric, **kargs: Any) -> str:
 
     Keyword Arguments:
         fmt (str):
-            Specify the output format, opyions are:
+            Specify the output format, options are:
                 -  "text" - plain text output
                 - "latex" - latex output
                 - "html" - html entities
@@ -201,7 +201,7 @@ def format_val(value: Numeric, **kargs: Any) -> str:
         mode (string):
             If "float" (default) the number is formatted as is, if "eng" the value and error is converted
             to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a
-            scientifc, i.e. mantissa and exponent format is used.
+            scientific, i.e. mantissa and exponent format is used.
         units (string):
             A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
             prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
@@ -289,7 +289,7 @@ def quantize(number: NumericArray, quantum: Numeric) -> NumericArray:
 
 
 def tex_escape(text: str) -> str:
-    """Escapes spacecial text charcters in a string.
+    """Escapes spacecial text characters in a string.
 
     Parameters:
         text (str):

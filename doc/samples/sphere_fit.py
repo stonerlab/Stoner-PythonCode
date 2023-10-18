@@ -19,7 +19,7 @@ seed(12345)  # Ensure consistent random numbers!
 
 
 def transform(r, q, p):
-    """Converts from spherical to cartesian co-ordinates."""
+    """Converts from spherical to cartesian coordinates."""
     x = r * cos(q) * cos(p)
     y = r * cos(q) * sin(p)
     z = r * sin(q)

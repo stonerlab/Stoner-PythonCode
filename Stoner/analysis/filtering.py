@@ -55,11 +55,11 @@ class FilteringOpsMixin:
 
         Notes:
             If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
-            to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
+            to set an x and y column. If col is a tuple, then it is assumed to specify and x-column and y-column
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
 
             Padding can help stop wildly wrong artefacts in the data at the start and enf of the data, particularly
-            when the differntial order is >1.
+            when the differential order is >1.
 
         See Also:
             User guide section :ref:`smoothing_guide`
@@ -456,7 +456,7 @@ class FilteringOpsMixin:
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
                 if not 0.0 < bins <= 1.0:
-                    raise ValueError("Bin width must be between 0 ans 1 for log binning")
+                    raise ValueError("Bin width must be between 0 and 1 for log binning")
                 if xmin <= 0:
                     raise ValueError("The start of the binning must be a positive value in log mode.")
                 xp = xmin
@@ -494,12 +494,12 @@ class FilteringOpsMixin:
 
         Args:
             column(column index):
-                specifing column for outlier detection. If not set,
+                specifying column for outlier detection. If not set,
                 defaults to the current y set column.
 
         Keyword Arguments:
             window(int):
-                data window for anomoly detection
+                data window for anomaly detection
             shape(str):
                 The name of a :py:mod:`scipy.signal` windowing function to use when averaging the data.
                 Defaults to 'boxcar' for a flat average.
@@ -520,7 +520,7 @@ class FilteringOpsMixin:
             action_args (tuple):
                 if *action* is callable, then action_args can be used to pass extra arguments to the action callable
             action_kargs (dict):
-                If *action* is callable, then action_kargs can be useed to pass extra keyword arguments to the action
+                If *action* is callable, then action_kargs can be used to pass extra keyword arguments to the action
                 callable.
 
         Returns:
@@ -537,7 +537,7 @@ class FilteringOpsMixin:
 
         The outlier detection function has the signatrure::
 
-            def outlier(row,column,window,certainity,**kargs)
+            def outlier(row,column,window,certainty,**kargs)
                 #code
                 return True # or False
 
@@ -581,7 +581,7 @@ class FilteringOpsMixin:
         index = np.zeros(len(self), dtype=bool)
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
             index[i] = func(self.data[i], t, metric=certainty, **kargs)
-        self["outliers"] = np.arange(len(self))[index]  # add outlier indecies to metadata
+        self["outliers"] = np.arange(len(self))[index]  # add outlier indices to metadata
         if action == "mask" or action == "mask row":
             if action == "mask":
                 self.mask[index, column] = True
@@ -599,7 +599,7 @@ class FilteringOpsMixin:
 
         Args:
             other (DataFile):
-                The other isntance of a datafile to match to
+                The other instance of a datafile to match to
 
         Keyword Arguments:
             xcol (column index):
@@ -619,7 +619,7 @@ class FilteringOpsMixin:
                 Specifies whether to estimate an initial transformation value or to use the provided one, or
                 start with an identity transformation.
             replace (bool):
-                Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true)
+                Whether to map the x,y data to the new coordinates and return a copy of this AnalysisMixin (true)
                 or to just return the results of the scaling.
             headers (2-element list or tuple of strings):
                 new column headers to use if replace is True.
@@ -754,7 +754,7 @@ class FilteringOpsMixin:
         """
         _ = self._col_args(xcol=xcol, ycol=ycol)
         replace = kargs.pop("replace", True)
-        result = kargs.pop("result", True)  # overwirte existing y column data
+        result = kargs.pop("result", True)  # overwrite existing y column data
         header = kargs.pop("header", self.column_headers[_.ycol])
 
         # Sort out window size
@@ -825,7 +825,7 @@ class FilteringOpsMixin:
                 Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of
                 data or an :[y:class:`scipy.interpolate.UniverateSpline` object.
 
-        This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the
+        This is really just a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the
         extrapolate function.
         """
         _ = self._col_args(xcol=xcol, ycol=ycol)
@@ -835,7 +835,7 @@ class FilteringOpsMixin:
             else:
                 sigma = np.ones(len(self))
         replace = kargs.pop("replace", True)
-        result = kargs.pop("result", True)  # overwirte existing y column data
+        result = kargs.pop("result", True)  # overwrite existing y column data
         header = kargs.pop("header", self.column_headers[_.ycol])
         k = kargs.pop("order", 3)
         s = kargs.pop("smoothing", None)

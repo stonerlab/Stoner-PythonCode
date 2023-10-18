@@ -65,7 +65,7 @@ strctural.imshow(figure=profile.fig, title="Structural Image")
 profile.subplot(223)
 xmcd.imshow(figure=profile.fig, title="XMCD Image")
 
-# Make a histogram of the intesity values
+# Make a histogram of the intensity values
 hist = xmcd.hist(bins=200)
 hist.column_headers = ["XMCD Signal", "Frequency"]
 hist.labels = None

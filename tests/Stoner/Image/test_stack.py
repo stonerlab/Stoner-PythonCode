@@ -86,7 +86,7 @@ def test_ImageStack_methods():
     err=istack2.stderr()
 
     assert std.mean()<0.01,"To big a standard deviation in stack after align"
-    assert err.mean()<0.003, "To big a stadnard error in stack after align"
+    assert err.mean()<0.003, "To big a standard error in stack after align"
     assert istack2.shape==(16,80,80),"Stack translation_limits and crop failed."
 
     assert np.abs(m1.mean()-m2.mean())/m1.mean()<1E-2,"Problem calculating means of stacks."

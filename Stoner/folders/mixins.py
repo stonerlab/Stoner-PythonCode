@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""mixin calsses for :py:class:`Stoner.folders.core.baseFoler`."""
+"""mixin classes for :py:class:`Stoner.folders.core.baseFoler`."""
 from __future__ import division
 
 __all__ = ["DiskBasedFolderMixin", "DataMethodsMixin", "PlotMethodsMixin"]
@@ -58,11 +58,11 @@ def _loader(name, loader=None, typ=None, directory=None):
 
 class DiskBasedFolderMixin:
 
-    """A Mixin class that implmenets reading metadataObjects from disc.
+    """A Mixin class that implements reading metadataObjects from disc.
 
     Attributes:
         type (:py:class:`Stoner.Core.metadataObject`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Core.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Core.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -73,13 +73,13 @@ class DiskBasedFolderMixin:
             A filename globbing pattern that matches files to exclude from the folder.  Default is *.tdms_index to
             exclude all tdms index files.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the experimental
             state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
             and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         discard_earlier (bool):
@@ -211,7 +211,7 @@ class DiskBasedFolderMixin:
         return grp.filename
 
     def __lookup__(self, name):
-        """Addional logic for the looking up names."""
+        """Additional logic for the looking up names."""
         if isinstance(name, string_types):
             if list(self.basenames).count(name) == 1:
                 return self.__names__()[list(self.basenames).index(name)]
@@ -227,7 +227,7 @@ class DiskBasedFolderMixin:
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool):
+            instantiate (bool):
                 If True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 :py:class:`Stoner.Core.Data` object.
@@ -395,7 +395,7 @@ class DiskBasedFolderMixin:
     def keep_latest(self):
         """Filter out earlier revisions of files with the same name.
 
-        The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an
+        The CM group LabVIEW software will avoid overwriting files when measuring by inserting !#### where #### is an
         integer revision number just before the filename extension. This method will look for instances of several
         files which differ in name only by the presence of the revision number and will kepp only the highest revision
         number. This is useful if several measurements of the same experiment have been carried out, but only the
@@ -442,7 +442,7 @@ class DiskBasedFolderMixin:
         Args:
             root (string):
                 The root directory to start creating files and subdirectories under. If set to None or not specified,
-                the current folder's diretory attribute will be used.
+                the current folder's directory attribute will be used.
 
         Returns:
             A list of the saved files
@@ -454,7 +454,7 @@ class DiskBasedFolderMixin:
 
         Args:
             name(string,int or None):
-                Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.
+                Specifies the entry to unload from memory. If set to None all loaded entries are unloaded.
 
         Returns:
             (DataFolder): returns a copy of itself.
@@ -470,16 +470,16 @@ class DiskBasedFolderMixin:
 
 class DataMethodsMixin:
 
-    """Methods for wokring with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s."""
+    """Methods for working with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s."""
 
     def concatenate(self, sort=None, reverse=False):
-        """Concatentates all the files in a objectFolder into a single metadataObject like object.
+        """Concatenates all the files in a objectFolder into a single metadataObject like object.
 
         Keyword Arguments:
             sort (column index, None or bool, or clallable function):
                 Sort the resultant metadataObject by this column (if a column index), or by the *x* column if None
                 or True, or not at all if False. *sort* is passed directly to the eponymous method as the
-                *order* paramter.
+                *order* parameter.
             reverse (bool):
                 Reverse the order of the sort (defaults to False)
 
@@ -651,7 +651,7 @@ class PlotMethodsMixin:
     _defaults = {"plots_per_page": 12, "fig_defaults": {"figsize": (8, 6)}}
 
     def figure(self, *args, **kargs):
-        """Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later."""
+        """Pass through for :py:func:`matplotlib.pyplot.figure` but also takes a note of the arguments for later."""
         self._fig_args = args
 
         self._fig_kargs = getattr(self, "fig_defaults", {})
@@ -743,7 +743,7 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
-    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy
+    By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder emplys a lazy
     open strategy, so that files are only read in from disc when actually needed.
 
     .. inheritance-diagram:: DataFolder

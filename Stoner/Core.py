@@ -86,7 +86,7 @@ class DataFile(
             The possible mime-types of data files represented by each matching filename pattern in
             :py:attr:`Datafile.pattern`.
         patterns (list):
-            A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile
+            A list of filename extension glob patterns that matrches the expected filename patterns for a DataFile
             (*.txt and *.dat")
         priority (int):
             Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher
@@ -96,11 +96,11 @@ class DataFile(
         shape (tuple of integers):
             Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
         records (numpy record array):
-            Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
+            Returns the data in the form of a list of yuples where each tuple maps to the columns names.
         clone (DataFile):
             Creates a deep copy of the :py:class`DataFile` object.
         dict_records (array of dictionaries):
-            View the data as an array or dictionaries where each dictionary represnets one row with keys dervied
+            View the data as an array or dictionaries where each dictionary represents one row with keys derived
             from column headers.
         dims (int):
             When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set
@@ -257,7 +257,7 @@ class DataFile(
     # ============================================================================================
 
     def _init_single(self, *args, **kargs):
-        """Handle constructor with 1 arguement - called from __init__."""
+        """Handle constructor with 1 argument - called from __init__."""
         arg = args[0]
         inits = {
             path_types + (bool, bytes, io.IOBase): self._init_load,
@@ -396,7 +396,7 @@ class DataFile(
             raise TypeError(f"Unable to construct DataFile from a {type(arg)}")
 
     # ============================================================================================
-    ############################   Speical Methods ###############################################
+    ############################   Special Methods ###############################################
     # ============================================================================================
 
     def __call__(self, *args, **kargs):
@@ -448,7 +448,7 @@ class DataFile(
         return result
 
     def __dir__(self):
-        """Reeturns the attributes of the current object.
+        """Returns the attributes of the current object.
 
         Augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle."""
         attr = dir(type(self))
@@ -638,7 +638,7 @@ class DataFile(
                 Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
 
         Note:
-            The *_load* methods shouldbe overidden in each child class to handle the process of loading data from
+            The *_load* methods shouldbe overridden in each child class to handle the process of loading data from
             disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
             the loading class can try a different sub-class instead.
         """
@@ -916,7 +916,7 @@ class DataFile(
 
         Returns:
             self:
-                The :py:class:`DataFile` instance with the additonal column inserted.
+                The :py:class:`DataFile` instance with the additional column inserted.
 
         Note:
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
@@ -991,7 +991,7 @@ class DataFile(
 
         # If not replacing, then add extra columns to existing data.
         if not replace:
-            colums = copy.copy(self.column_headers)
+            columns = copy.copy(self.column_headers)
             old_setas = self.setas.clone
             if index == self.data.shape[1]:  # appending column
                 self.data = DataArray(np.append(self.data, np_data, axis=1), setas=self.setas.clone)
@@ -1003,10 +1003,10 @@ class DataFile(
                     setas=self.setas.clone,
                 )
             for ix in range(0, index):
-                self.column_headers[ix] = colums[ix]
+                self.column_headers[ix] = columns[ix]
                 self.setas[ix] = old_setas[ix]
             for ix in range(index, dc):
-                self.column_headers[ix + cw] = colums[ix]
+                self.column_headers[ix + cw] = columns[ix]
                 self.setas[ix + cw] = old_setas[ix]
         # Check that we don't need to expand to overwrite with the new data
         if index + cw > self.shape[1]:
@@ -1069,7 +1069,7 @@ class DataFile(
             - If duplicates is True and col is None then all duplicate columns are removed,
             - if col is not None and duplicates is True then all duplicates of the specified column are removed.
             - If duplicates is False and *col* is either None or False then all masked coplumns are deleeted. If
-                *col* is True, then all columns that are not set i the :py:attr:`setas` attrobute are delted.
+                *col* is True, then all columns that are not set i the :py:attr:`setas` attrobute are deleted.
             - If col is a list (duplicates should not be None) then the all the matching columns are found.
             - If col is an iterable of booleans, then all columns whose elements are False are deleted.
             - If col is None and duplicates is None, then all columns with at least one elelemtn masked
@@ -1142,7 +1142,7 @@ class DataFile(
         else:  # Not cloning so ret is self
             ret = self
 
-        if col is None:  # If col is still None, use all columsn that are set to any value in self.setas
+        if col is None:  # If col is still None, use all columns that are set to any value in self.setas
             col = [ix for ix, col in enumerate(self.setas) if col != "."]
         if not isLikeList(col):  # If col isn't a list, make it one now
             col = [col]
@@ -1163,13 +1163,13 @@ class DataFile(
 
         Args:
             col (list,slice,int,string, re, callable or None):
-                Column containg values to search for.
+                Column containing values to search for.
             val (float or callable):
                 Specifies rows to delete. Maybe:
                     -   None - in which case the *col* argument is used to identify rows to be deleted,
                     -   a float in which case rows whose columncol = val are deleted
                     -   or a function - in which case rows where the function evaluates to be true are deleted.
-                    -   a tuple, in which case rows where column col takes value between the minium and maximum of
+                    -   a tuple, in which case rows where column col takes value between the minimum and maximum of
                         the tuple are deleted.
 
         Keyword Arguments:
@@ -1247,7 +1247,7 @@ class DataFile(
         return self
 
     def dir(self, pattern=None):
-        """Return a list of keys in the metadata, filtering wiht a regular expression if necessary.
+        """Return a list of keys in the metadata, filtering with a regular expression if necessary.
 
         Keyword Arguments:
             pattern (string or re):
@@ -1271,7 +1271,7 @@ class DataFile(
 
         Args:
             func (callable):
-                is a callable object that should take a single list as a p[arameter representing one row.
+                is a callable object that should take a single list as a p[parameter representing one row.
             cols (list):
                 a list of column indices that are used to form the list of values passed to func.
             reset (bool):
@@ -1357,7 +1357,7 @@ class DataFile(
 
             Each subclass is scanned in turn for a class attribute priority which governs the order in which they
             are tried. Subclasses which can make an early positive determination that a file has the correct format
-            can have higher priority levels. Classes should return a suitable expcetion if they fail to load the file.
+            can have higher priority levels. Classes should return a suitable exception if they fail to load the file.
 
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
@@ -1569,7 +1569,7 @@ class DataFile(
         Notes:
             In addition to transferring the numerical data, the DataFrame's columns are set to
             a multi-level index of the :py:attr:`Stoner.Data.column_headers` and :py:attr:`Stoner.Data.setas`
-            calues. A pandas DataFrame extension attribute, *metadata* is registered and is used to store
+            values. A pandas DataFrame extension attribute, *metadata* is registered and is used to store
             the metada from the :py:class:1Stoner.Data` object. This pandas extension attribute is in fact a trivial
             subclass of the :py:class:`Stoner.core.typeHintedDict`.
 

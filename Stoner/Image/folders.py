@@ -27,7 +27,7 @@ class ImageFolderMixin:
 
     Attributes:
         type (:py:class:`Stoner.Image.core.ImageArray`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -35,13 +35,13 @@ class ImageFolderMixin:
             provided then any named groups are used to construct additional metadata entryies from the filename.
             Default is *.* to match all files with an extension.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the
             experimental state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and
             :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):
@@ -120,7 +120,7 @@ class ImageFolderMixin:
 
         Keyword Arguments:
             method (str):
-                The mthod is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
+                The method is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
                 alignment is done. By default the 'Scharr' method is used.
             box (int, float, tuple of ints or floats):
                 Specifies a subset of the images to be used to calculate the alignment with.
@@ -178,7 +178,7 @@ class ImageFolderMixin:
         Note:
             Further args, kargs are passed through to the function
         """
-        warn("apply_all is depricated and will be removed in a future version. Use ImageFolder.each() instead")
+        warn("apply_all is deprecated and will be removed in a future version. Use ImageFolder.each() instead")
         return self.each(func, *args, **kargs)
 
     def average(self, weights=None, _box=False, _metadata="first"):
@@ -489,7 +489,7 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     Attributes:
         type (:py:class:`Stoner.Image.core.ImageArray`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -497,13 +497,13 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
             then any named groups are used to construct additional metadata entryies from the filename. Default is *.*
             to match all files with an extension.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the experimental
             state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
             and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):

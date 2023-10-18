@@ -10,9 +10,9 @@ def test_typedList_create():
     tl=classes.typedList()
     assert tl._type==str,"Empty typedList should default to str"
     tl=classes.typedList(int)
-    assert tl._type==int and len(tl)==0,"typedList with single type constructure failed"
+    assert tl._type==int and len(tl)==0,"typedList with single type constructor failed"
     tl=classes.typedList(int,[1,2,3,4,5])
-    assert tl._type==int and len(tl)==5,"typedList with type and iterator constructure failed"
+    assert tl._type==int and len(tl)==5,"typedList with type and iterator constructor failed"
     try:
         tl=classes.typedList(int,1,2,3)
     except SyntaxError:
@@ -48,7 +48,7 @@ def test_typedList_operators():
     assert [True,2]+tl3==[True,2,1.1,1.2,1.3],"Right adding typedList failed."
     tl1=classes.typedList(int,(1,2,3))
     tl2=classes.typedList(int,(1,2,3))
-    assert tl1==tl2,"typedList eqaulity check failed"
+    assert tl1==tl2,"typedList equality check failed"
 
     del tl1[0]
     assert tl1==[2,3],"Failed to delete and item from the list"

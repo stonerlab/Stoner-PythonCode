@@ -28,7 +28,7 @@ except ImportError:
 
 class DataFilePropertyMixin:
 
-    """Provide the proerties for DataFile Like Objects."""
+    """Provide the properties for DataFile Like Objects."""
 
     _subclasses = None
 
@@ -38,7 +38,7 @@ class DataFilePropertyMixin:
 
         Raises:
             AttributeError:
-                If short representation options are selcted, raise an AttributeError.
+                If short representation options are selected, raise an AttributeError.
 
         Returns:
             str:

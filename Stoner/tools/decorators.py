@@ -158,7 +158,7 @@ def image_file_raw_adaptor(workingfunc):
 
 
 def array_file_property(workingfunc):
-    """Wrap an arbitary callbable to make it a bound method of this class.
+    """Wrap an arbitrary callbable to make it a bound method of this class.
 
     Args:
         workingfunc (callable):
@@ -209,7 +209,7 @@ def array_file_attr(name):
 
 
 def image_array_adaptor(workingfunc):
-    """Wrap an arbitary callbable to make it a bound method of this class.
+    """Wrap an arbitrary callbable to make it a bound method of this class.
 
     Args:
         workingfunc (callable):
@@ -251,7 +251,7 @@ def image_array_adaptor(workingfunc):
             if isinstance(r, type(self)) and np.shares_memory(r, self):  # Assume everything was inplace
                 return r
             r = r.view(type(self))
-            sm = self.metadata.copy()  # Copy the currenty metadata
+            sm = self.metadata.copy()  # Copy the currently metadata
             sm.update(r.metadata)  # merge in any new metadata from the call
             r.metadata = sm  # and put the returned metadata as the merged data
         # NB we might not be returning an ndarray at all here !
@@ -341,7 +341,7 @@ def class_wrapper(
     attr_pass=array_file_attr,
     exclude_below=None,
 ):
-    """Create entries in the current class for all attrbutes of klass that are not already defined.
+    """Create entries in the current class for all attributes of klass that are not already defined.
 
     Keyword Arguments:
         target (type):
@@ -349,7 +349,7 @@ def class_wrapper(
         adaptor (callable):
             A factory function to make methods to the the connection to the underlying attributes.
 
-    Reutrns:
+    Returns:
         class:
             Modified class definition.
 
@@ -395,7 +395,7 @@ def keep_return_type(func):
 
 
 def clones(func):
-    """Mark the mthod as one that expects it's input to be cloned."""
+    """Mark the method as one that expects it's input to be cloned."""
     func.clones = True
     return func
 
@@ -417,7 +417,7 @@ def fix_signature(proxy_func, wrapped_func):
 def make_Data(*args, **kargs):
     """Return an instance of Stoner.Data passig through constructor arguments.
 
-    Calling make_Data(None) is a speical case to return the Data class ratther than an instance
+    Calling make_Data(None) is a special case to return the Data class ratther than an instance
     """
     if len(args) == 1 and args[0] is None:
         return import_module("Stoner.core.data").Data

@@ -189,7 +189,7 @@ class RangeSelect:
         fig.canvas.mpl_connect("key_press_event", self.keypress)
         while not self.finished:
             plt.pause(0.1)
-        # Clean up and resotre the figure settings
+        # Clean up and restore the figure settings
         plt.close(self.data.fig.number)
         if fig_tmp[0] is not None and fig_tmp[0] in plt.get_fignums():
             self.data.fig = fig_tmp[0]

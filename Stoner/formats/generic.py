@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Implement DataFile classes for soem generic file formats."""
+"""Implement DataFile classes for some generic file formats."""
 __all__ = ["CSVFile", "HyperSpyFile", "KermitPNGFile", "TDMSFile"]
 import csv
 import contextlib
@@ -86,9 +86,9 @@ class CSVFile(DataFile):
 
         Keyword Arguments:
             header_line (int): The line in the file that contains the column headers.
-                If None, then column headers are auotmatically generated.
+                If None, then column headers are automatically generated.
             data_line (int): The line on which the data starts
-            data_delim (string): Thge delimiter used for separating data values
+            data_delim (string): The delimiter used for separating data values
             header_delim (strong): The delimiter used for separating header values
 
         Returns:
@@ -141,7 +141,7 @@ class CSVFile(DataFile):
         """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
         Args:
-            filename (string): Fielname to save as (using the same rules as for the load routines)
+            filename (string): Filename to save as (using the same rules as for the load routines)
 
         Keyword Arguments:
             deliminator (string): Record deliniminator (defaults to a comma)

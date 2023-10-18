@@ -27,7 +27,7 @@ def test_setas_basics():
     assert selfd4.setas.x==4,"Failed to set set as from string with numbers."
     tmp=list(selfd4.setas)
     selfd4.setas="..y.x..."
-    assert list(selfd4.setas)==tmp,"Explicit exapnsion of setas not the same as with numbers."
+    assert list(selfd4.setas)==tmp,"Explicit expansion of setas not the same as with numbers."
     selfd4.setas(x="T (K)")
     selfd4.setas(y="rho",reset=False)
     assert list(selfd4.setas)==tmp,"setas from calls with and without reset failed"
@@ -133,7 +133,7 @@ def test_setas_dict_interface():
 
     assert list(selfd.setas.values())==["x","y"],"setas values method fails."
     assert selfd.setas.get("x")=="X-Data","Simple get with key on setas failed."
-    assert selfd.setas.get("e","Help")=="Help","get on setas with non-existant key failed."
+    assert selfd.setas.get("e","Help")=="Help","get on setas with non-existent key failed."
     assert selfd.setas.get("X-Data")=="x","get on setas by column named failed."
     assert selfd.setas.pop("x")=="X-Data","pop on setas failed."
     assert selfd.setas==".y","Residual setas after pop wrong."
@@ -167,7 +167,7 @@ def test_setas_metadata():
     assert d2.setas.to_dict()=={'x': 'Temperature', 'y': 'Resistance'},f"__iadd__ failure {repr(d2.setas.to_dict())}"
     d3=selfd2.clone
     s=d3.setas.clone
-    assert d3.setas+s==s,"Addition operator to itself is not equal to iself in setas."
+    assert d3.setas+s==s,"Addition operator to itself is not equal to itself in setas."
     assert d3.setas-s=="...","Subtraction operator of setas on itself not equal to empty setas."
     d3.setas="..e"
     d2.setas.update(d3.setas)

@@ -72,7 +72,7 @@ class GenXFile(DataFile):
                 raise StonerLoadError("Not a GenXFile")
             for ix, line in enumerate(datafile):
                 line = line.strip()
-                if line in ["# Headers:", "# Column lables:"]:
+                if line in ["# Headers:", "# Column labels:"]:
                     line = next(datafile)[1:].strip()
                     break
             else:
@@ -141,7 +141,7 @@ class OVFFile(DataFile):
                 chk = numbers[0]
                 if (
                     chk != [1234567.0, 123456789012345.0][self.metadata["representation size"] // 4 - 1]
-                ):  # If we have a good check number we can carry on, otherwise try the other endianess
+                ):  # If we have a good check number we can carry on, otherwise try the other endianness
                     numbers = np.frombuffer(bin_data, dtype=f">f{self.metadata['representation size']}")
                     chk = numbers[0]
                     if chk != [1234567.0, 123456789012345.0][self.metadata["representation size"] // 4 - 1]:

@@ -27,7 +27,7 @@ _useful_keys = [
     "Images to Average",
     "Lens",
     "Magnification",
-    "Substraction Std",
+    "Subtraction Std",
 ]
 _test_keys = ["X-B-2d", "field: units"]  # minimum keys in data to assert that it is a standard file output
 
@@ -62,7 +62,7 @@ def _parse_text(text, key=None):
             text = float(text)
         except ValueError:
             pass  # leave it as string
-    # print '{} after processsing: \'{}\''.format(key,data)
+    # print '{} after processing: \'{}\''.format(key,data)
 
     return text
 
@@ -100,8 +100,8 @@ def reduce_metadata(kerr_im):
         if key in kerr_im.keys():
             newmet[key] = kerr_im[key]
     newmet["field"] = newmet.pop("X-B-2d")  # rename
-    if "Substraction Std" in kerr_im.keys():
-        newmet["subtraction"] = newmet.pop("Substraction Std")
+    if "Subtraction Std" in kerr_im.keys():
+        newmet["subtraction"] = newmet.pop("Subtraction Std")
     if "Averaging" in kerr_im.keys():
         if kerr_im["Averaging"]:  # averaging was on
             newmet["Averaging"] = newmet.pop("Images to Average")
@@ -167,7 +167,7 @@ def get_scalebar(kerr_im):
     im = exposure.rescale_intensity(im, in_range=(0.49, 0.5))  # saturate black and white pixels
     im = exposure.rescale_intensity(im)  # make sure they're black and white
     im = np.diff(im[0])  # 1d numpy array, differences
-    lim = [np.where(im > 0.9)[0][0], np.where(im < -0.9)[0][0]]  # first occurance of both cases
+    lim = [np.where(im > 0.9)[0][0], np.where(im < -0.9)[0][0]]  # first occurrence of both cases
     assertion(len(lim) == 2, "Couldn't find scalebar")
     return lim[1] - lim[0]
 

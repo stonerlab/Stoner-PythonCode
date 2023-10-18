@@ -24,7 +24,7 @@ class FeatureOpsMixin:
             ycol (index):
                 the column name or index of the data in which to search for peaks
             width (int or float):
-                the expected minium halalf-width of a peak in terms of the number of data points (int) or distance
+                the expected minimum halalf-width of a peak in terms of the number of data points (int) or distance
                 in x (float). This is used in the differnetiation code to find local maxima. Bigger equals less
                 sensitive to experimental noise, smaller means better eable to see sharp peaks
             poly (int):
@@ -34,10 +34,10 @@ class FeatureOpsMixin:
         Keyword Arguments:
             significance (float):
                 used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-                of the data. Bigger means less sensistive, smaller means more likely to detect noise. Default is the
+                of the data. Bigger means less sensitive, smaller means more likely to detect noise. Default is the
                 maximum curvature/(2*width)
             xcol (index or None):
-                name or index of data column that p[rovides the x-coordinate (default None)
+                name or index of data column that p[provides the x-coordinate (default None)
             peaks (bool):
                 select whether to measure peaks in data (default True)
             troughs (bool):
@@ -55,7 +55,7 @@ class FeatureOpsMixin:
             (various):
                 If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
                 If *modify* is false (default), then the return value depends on *ycol* and *xcol*. If *ycol* is
-                not None and *xcol* is None, then returns conplete rows of data corresponding to the found
+                not None and *xcol* is None, then returns complete rows of data corresponding to the found
                 peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then returns a 1D array
                 of the x positions of the peaks/troughs.
 
@@ -67,7 +67,7 @@ class FeatureOpsMixin:
         troughs = kargs.pop("troughs", False)
         poly = kargs.pop("poly", 2)
         assertion(
-            poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
+            poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or through"
         )
 
         sort = kargs.pop("sort", False)
@@ -137,7 +137,7 @@ class FeatureOpsMixin:
         return ret
 
     def find_peaks(self, **kargs):
-        """Interface to :py:func:`scipy.signal.find_peaks` for loacating peaks in data.
+        """Interface to :py:func:`scipy.signal.find_peaks` for locating peaks in data.
 
         Args:
             ycol (index):
@@ -203,7 +203,7 @@ class FeatureOpsMixin:
             (various):
                 If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
                 If *modify* is false (default), then the return value depends on *ycol* and *xcol*. If *ycol* is
-                not None and *xcol* is None, then returns conplete rows of data corresponding to the found
+                not None and *xcol* is None, then returns complete rows of data corresponding to the found
                 peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then returns a 1D array
                 of the x positions of the peaks/troughs.
 

@@ -238,7 +238,7 @@ def test_save():
         load=ImageArray(testfile+e)
         assert all([k in load.keys() for k in keys]), 'problem saving metadata {} {}'.format(list(load.keys()),e)
         if e=='.npy':
-            #tolerance is really poor for png whcih savees in 8bit format
+            #tolerance is really poor for png which saves in 8bit format
             assert np.allclose(selfimarr, load), 'data not the same for extension {}'.format(e)
         os.remove(testfile+e) #tidy up
 
@@ -258,7 +258,7 @@ def test_savetiff():
         n = ImageArray(testfile)
         assert all([n['a'][i]==im['a'][i] for i in range(len(n['a']))])
         assert n['b']==im['b']
-        assert 'ImageArray.dtype' in n.metadata.keys() #check the dtype metdata got added
+        assert 'ImageArray.dtype' in n.metadata.keys() #check the dtype metadata got added
         assert im.dtype==n.dtype #check the datatype
         assert np.allclose(im, n)  #check the data
 
@@ -271,7 +271,7 @@ def test_crop():
     assert np.array_equal(c,selfimarr[1:4,1:3]),'crop didn\'t work'
     assert not shares_memory(c,selfimarr), 'crop copy failed'
     c2=selfimarr.crop(1,3,1,4,copy=True)
-    assert np.array_equal(c2,c),'crop with seperate arguments didn\'t work'
+    assert np.array_equal(c2,c),'crop with separate arguments didn\'t work'
     c3 = selfimarr.crop(box=(1,3,1,4), copy=False)
     assert np.array_equal(c3,c), 'crop with no arguments failed'
     assert shares_memory(selfimarr, c3), 'crop with no copy failed'
@@ -285,7 +285,7 @@ def test_asint():
     assert np.array_equal(ui,intarr)
 
 def test_other_funcs():
-    """test imagefuncs add ons. the functions themselves are not checked
+    """test imagefuncs add owns. the functions themselves are not checked
     and should include a few examples in the doc strings for testing"""
     assert hasattr(selfimarr,'do_nothing'), 'imagefuncs not being added to dir'
     assert hasattr(selfimarr,'Stoner__Image__imagefuncs__do_nothing'),"Stoner image functions not added with full namke"
@@ -366,9 +366,9 @@ def test_methods():
     i3=i2.CCW
     assert i3.shape==(479,359),"Failed to rotate counter-clockwise"
     i3=i2.flip_h
-    assert np.all(i3[:,0]==i2[:,-1]),"Flip Horizontal failled"
+    assert np.all(i3[:,0]==i2[:,-1]),"Flip Horizontal failed"
     i3=i2.flip_v
-    assert np.all(i3[0,:]==i2[-1,:]),"Flip Horizontal failled"
+    assert np.all(i3[0,:]==i2[-1,:]),"Flip Horizontal failed"
     i2=image.clone
     i3=i2-127
     assert i3.mean()==pytest.approx(33940.72596111909,rel=1E-2),"Subtract integer failed."
@@ -410,7 +410,7 @@ def test_mask():
     i2=i.clone
     i.mask.draw.rectangle(100,100,100,50,angle=np.pi/2)
     i2.mask.draw.rectangle(100,100,50,100)
-    assert np.all(i.mask.image==i2.mask.image),"Drawing rectange with angle failed"
+    assert np.all(i.mask.image==i2.mask.image),"Drawing rectangle with angle failed"
     assert i.mask._repr_png_().startswith(b'\x89PNG\r\n'),"Failed to do mask png representation"
     i=ImageFile(np.zeros((100,100)))
     i2=i.clone

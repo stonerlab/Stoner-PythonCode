@@ -53,7 +53,7 @@ class DrawProxy:
     This class allows access the user to draw simply shapes on an image (or its mask) by specifying the desired shape
     and geometry (centre, length/width etc). Mostly this implemented by pass throughs to the :py:mod:`skimage.draw`
     module, but methods are provided for an annulus, rectangle (and square) and rectangle-perimeter meothdds- the
-    latter offering rotation about the centre pooint in contrast to the :py:mod:`skimage.draw` equivalents.
+    latter offering rotation about the centre point in contrast to the :py:mod:`skimage.draw` equivalents.
 
     No state data is stored with this class so the attribute does not need to be serialised when the parent ImageFile
     is saved.
@@ -68,11 +68,11 @@ class DrawProxy:
         """Use a combination of two circles to draw and annulus.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             radius1,radius2 (float): Inner and outer radius.
 
         Keyword Arguments:
-            shape (2-tuple, None): Confine the co-ordinates to staywith shape
+            shape (2-tuple, None): Confine the coordinates to staywith shape
             value (float): value to draw with
         Returns:
             A copy of the image with the annulus drawn on it.
@@ -106,7 +106,7 @@ class DrawProxy:
             """ "Generate coordinates of pixels within circle.
 
             Args:
-                r,c (int): co-ordinates of the centre of the circle to be drawn.
+                r,c (int): coordinates of the centre of the circle to be drawn.
                 radius (float): Radius of the circle
 
             Keyword arguments:
@@ -126,12 +126,12 @@ class DrawProxy:
         """Draw a rectangle on an image.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             w,h (float): Lengths of the two sides of the rectangle
 
         Keyword Arguments:
             angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            shape (2-tuple or None): Confine the coordinates to this shape.
             value (float): The value to draw with.
 
         Returns:
@@ -158,12 +158,12 @@ class DrawProxy:
         """Draw the perimter of a rectangle on an image.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             w,h (float): Lengths of the two sides of the rectangle
 
         Keyword Arguments:
             angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            shape (2-tuple or None): Confine the coordinates to this shape.
             value (float): The value to draw with.
 
         Returns:
@@ -190,12 +190,12 @@ class DrawProxy:
         """Draw a square on an image.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             w (float): Length of the side of the square
 
         Keyword Arguments:
             angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            shape (2-tuple or None): Confine the coordinates to this shape.
             value (float): The value to draw with.
 
         Returns:
@@ -274,7 +274,7 @@ class MaskProxy:
 
     @property
     def draw(self):
-        """Access the draw proxy opbject."""
+        """Access the draw proxy object."""
         return DrawProxy(self._mask, self._imagefolder)
 
     def __init__(self, *args):
@@ -290,7 +290,7 @@ class MaskProxy:
         self._imagearray.mask.__setitem__(index, value)
 
     def __delitem__(self, index):
-        """Proxy through to underyling mask."""
+        """Proxy through to underlying mask."""
         self._imagearray.mask.__delitem__(index)
 
     def __getattr__(self, name):
@@ -362,7 +362,7 @@ class MaskProxy:
         """Interactive selection mode.
 
         This method allows the user to interactively choose a mask region on the image. It will require the
-        Matplotlib backen to be set to Qt or other non-inline backend that suppports a user vent loop.
+        Matplotlib backen to be set to Qt or other non-inline backend that supports a user vent loop.
 
         The image is displayed in the window and athe user can interact with it with the mouse and keyboard.
 

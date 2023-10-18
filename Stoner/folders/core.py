@@ -68,7 +68,7 @@ def _div_core_(result, other):
 
 
 def _sub_core_(result, other):
-    """Implemenet the core logic of the subtraction operator.
+    """Implement the core logic of the subtraction operator.
 
     Note:
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -168,7 +168,7 @@ def _build_select_function(kargs, arg):
         if isinstance(kargs[arg], tuple) and len(kargs[arg] == 2):
             op = "between"  # Assume two length tuples are testing for range
         elif not isinstance(kargs[arg], string_types) and isiterable(kargs[arg]):
-            op = "in"  # Assume other iterables are testing for memebership
+            op = "in"  # Assume other iterables are testing for membership
         else:  # Everything else is exact matches
             op = "eq"
     func = operator[op]
@@ -195,7 +195,7 @@ class baseFolder(MutableSequence):
         depth (int):
             The maximum number of levels of nested groups in the folder
         files (list of str or metadataObject):
-            The indivdual objects or their names if they are not loaded
+            The individual objects or their names if they are not loaded
         instance (metadataObject):
             An empty instance of the data type stored in the folder
         loaded (generator of (str name, metadataObject value):
@@ -996,7 +996,7 @@ class baseFolder(MutableSequence):
 
         Returns:
             (list or self):
-                If *layout* is defined then returns a copy of the baseFolder with the entires moved around as
+                If *layout* is defined then returns a copy of the baseFolder with the entries moved around as
                 defined in the *layout*. If *layout* is None, then moves the contents into a flat list.
         """
         if layout is None:
@@ -1044,7 +1044,7 @@ class baseFolder(MutableSequence):
             replace_terminal (bool):
                 If group is True and the walker function returns an instance of metadataObject then the return value
                 is appended to the files and the group is removed from the current objectFolder. This will unwind
-                the group heirarchy by one level.
+                the group hierarchy by one level.
             only_terminal (bool):
                 Only iterate over the files in the group if the group has no sub-groups.
             walker_args (dict):
@@ -1168,7 +1168,7 @@ class baseFolder(MutableSequence):
     def fetch(self):
         """Preload the contents of the baseFolder.
 
-        In the base  class this is a NOP becuase the objects are all in memory anyway.
+        In the base  class this is a NOP because the objects are all in memory anyway.
         """
         return self
 
@@ -1233,7 +1233,7 @@ class baseFolder(MutableSequence):
 
         Keyword Arguments:
             invert (bool):
-                Invert the sense of the filter (done by doing an XOR whith the filter condition
+                Invert the sense of the filter (done by doing an XOR with the filter condition
             copy (bool):
                 If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False -
                 work in place.
@@ -1502,7 +1502,7 @@ class baseFolder(MutableSequence):
                 A single positional argument if present is interpreted as follows:
 
                 *   If a callable function is given, the entire metadataObject is presented to it.
-                    If it evaluates True then that metadataObject is selected. This allows arbitary select operations
+                    If it evaluates True then that metadataObject is selected. This allows arbitrary select operations
                 *   If a dict is given, then it and the kargs dictionary are merged and used to select the
                     metadataObjects
 
@@ -1510,7 +1510,7 @@ class baseFolder(MutableSequence):
             recurse (bool):
                 Also recursively slect through the sub groups
             kargs (varuous):
-                Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+                Arbitrary keyword arguments are interpreted as requestion matches against the corresponding
                 metadata values. The keyword argument may have an additional **__operator** appended to it which is
                 interpreted as follows:
 
@@ -1526,7 +1526,7 @@ class baseFolder(MutableSequence):
                 -   *startswith* metadata value startswith argument value
                 -   *endswith* metadata value endwith argument value
                 -   *icontains*,*iin*, *istartswith*,*iendswith* as above but case insensitive
-                -   *between* metadata value lies beween the minimum and maximum values of the arguement
+                -   *between* metadata value lies between the minimum and maximum values of the argument
                     (the default test for 2-length tuple arguments)
                 -   *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
 
@@ -1651,7 +1651,7 @@ class baseFolder(MutableSequence):
         Keyword Arguments:
             key (string, callable or None):
                 Either a string or a callable function. If a string then this is interpreted as a
-                metadata key, if callable then it is assumed that this is a a function of one paramater x
+                metadata key, if callable then it is assumed that this is a a function of one parameter x
                 that is a :py:class:`Stoner.Core.metadataObject` object and that returns a key value.
                 If key is not specified (default), then a sort is performed on the filename
             reverse (bool):
@@ -1736,7 +1736,7 @@ class baseFolder(MutableSequence):
         return self.groups.values()
 
     def walk_groups(self, walker, **kargs):
-        """Walk through a heirarchy of groups and calls walker for each file.
+        """Walk through a hierarchy of groups and calls walker for each file.
 
         Args:
             walker (callable):
@@ -1749,7 +1749,7 @@ class baseFolder(MutableSequence):
             replace_terminal (bool):
                 If group is True and the walker function returns an instance of metadataObject then the return value
                 is appended to the files and the group is removed from the current objectFolder. This will unwind
-                the group heirarchy by one level.
+                the group hierarchy by one level.
             obly_terminal(bool):
                 Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal
                 groups)

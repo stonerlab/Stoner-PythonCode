@@ -48,7 +48,7 @@ class attributeStore(dict):
         self[name] = value
 
     def __getattr__(self, name: str) -> Any:
-        """Get an attrbute (equivalent to getting an item)."""
+        """Get an attribute (equivalent to getting an item)."""
         try:
             return self[name]
         except KeyError as err:
@@ -189,17 +189,17 @@ class typedList(MutableSequence):
         if isiterable(name) or isinstance(name, slice):
             if not isiterable(value) or not all_type(value, self._type):
                 raise TypeError(
-                    f"Elelements of this list should be of type {self._type} and must set "
+                    f"Elements of this list should be of type {self._type} and must set "
                     + "the correct number of elements"
                 )
         elif not isinstance(value, self._type):
-            raise TypeError(f"Elelements of this list should be of type {self._type}")
+            raise TypeError(f"Elements of this list should be of type {self._type}")
         self._store[name] = value
 
     def extend(self, values: IterableType) -> None:  # pylint:  disable=arguments-differ
         """Extend the list and do some type checking."""
         if not isiterable(values) or not all_type(values, self._type):
-            raise TypeError(f"Elelements of this list should be of type {self._type}")
+            raise TypeError(f"Elements of this list should be of type {self._type}")
         self._store.extend(values)
 
     def index(self, value: Any, start: int = 0, end: Optional[int] = None) -> int:  # pylint:  disable=arguments-differ
@@ -211,7 +211,7 @@ class typedList(MutableSequence):
     def insert(self, index: int, value: Any) -> None:  # pylint:  disable=arguments-differ
         """Insert an element and do some type checking."""
         if not isinstance(value, self._type):
-            raise TypeError(f"Elelements of this list should be of type {self._type}")
+            raise TypeError(f"Elements of this list should be of type {self._type}")
         self._store.insert(index, value)
 
 
@@ -294,7 +294,7 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
 
     Args:
         source(DataFile): The DataFile object to be copied from
-        dest (DataFile): The DataFile objrct to be changed by recieving the copiued data.
+        dest (DataFile): The DataFile objrct to be changed by receiving the copiued data.
 
     Returns:
         The modified *dest* DataFile.

@@ -193,7 +193,7 @@ class AnalysisMixin:
         bounds=lambda x, y: True,
         **kargs,
     ):
-        """Inegrate a column of data, optionally returning the cumulative integral.
+        """Integrate a column of data, optionally returning the cumulative integral.
 
         Args:
             xcol (index):
@@ -214,7 +214,7 @@ class AnalysisMixin:
             bounds (callable):
                 A function that evaluates for each row to determine if the data should be integrated over.
             **kargs:
-                Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method
+                Other keyword arguments are fed direct to the scipy.integrate.cumtrapz method
 
         Returns:
             (:py:class:`Stoner.Data`):
@@ -240,7 +240,7 @@ class AnalysisMixin:
             resultdata = cumtrapz(yd, xdat, **kargs)
             resultdata = np.append(np.array([0]), resultdata)
             if result is not None:
-                header = header if header is not None else f"Intergral of {self.column_headers[_.ycol]}"
+                header = header if header is not None else f"Integral of {self.column_headers[_.ycol]}"
                 if isinstance(result, bool) and result:
                     self.add_column(resultdata, header=header, replace=False)
                 else:
@@ -267,7 +267,7 @@ class AnalysisMixin:
 
         Keyword Arguments:
             base (index):
-                The column to normalise to, can be an integer or string. **Depricated** can also be a tuple (low,
+                The column to normalise to, can be an integer or string. **Deprecated** can also be a tuple (low,
                 high) being the output range
             replace (bool):
                 Set True(default) to overwrite  the target data columns
@@ -461,7 +461,7 @@ class AnalysisMixin:
         perr = np.sqrt(np.diagonal(pcov))
         self.data[:, _.xcol], self.data[:, _.ycol] = func(self.data[:, _.xcol], self.data[:, _.ycol], *popt)
         self["Stitching Coefficients"] = list(popt)
-        self["Stitching Coeffient Errors"] = list(perr)
+        self["Stitching Coefficient Errors"] = list(perr)
         self["Stitching overlap"] = (lower, upper)
         self["Stitching Window"] = num_pts
 
@@ -478,7 +478,7 @@ class AnalysisMixin:
             col (index):
                 Column index to look for data in
             rising (bool):
-                look for case where the data is increasing in value (defaukt True)
+                look for case where the data is increasing in value (default True)
             falling (bool):
                 look for case where data is fallinh in value (default False)
             xcol (index, bool or None):
@@ -496,7 +496,7 @@ class AnalysisMixin:
                 Either a sing;le fractional row index, or an in terpolated x value
 
         Note:
-            If you don't sepcify a col value or set it to None, then the assigned columns via the
+            If you don't specify a col value or set it to None, then the assigned columns via the
             :py:attr:`DataFile.setas` attribute will be used.
 
         Warning:

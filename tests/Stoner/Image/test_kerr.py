@@ -41,7 +41,7 @@ selfks = KerrStack(testdir2)
 
 def test_kerr_ops():
     im = selfimage3.clone
-    assert isinstance(im.image,KerrArray),"KerrImageFile not blessing the image proeprty correctly"
+    assert isinstance(im.image,KerrArray),"KerrImageFile not blessing the image property correctly"
     im1=im.float_and_croptext()
     assert isinstance(im1.image,KerrArray),"Calling a crop routine without the _ argument returns a new KerrArray"
     im2=im.float_and_croptext(_=True)
@@ -70,7 +70,7 @@ def test_kerr_ops():
 
 
 def test_tesseract_ocr():
-    #this incidently tests get_metadata too
+    #this incidentally tests get_metadata too
     if not selfimage.tesseractable:
         print("#"*80)
         print("Skipping test that uses tesseract.")
@@ -92,8 +92,8 @@ def test_kerrstack():
     ks.each.normalise(scale=(0,1.0))
     assert np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed min,max: {},{}'.format(np.min(ks.imarray),np.max(ks.imarray))
     d=ks.hysteresis()
-    assert isinstance(d, Data), 'hysteresis didnt return Data'
-    assert d.data.shape==(len(ks),2), 'hysteresis didnt return correct shape'
+    assert isinstance(d, Data), 'hysteresis didn't return Data'
+    assert d.data.shape==(len(ks),2), 'hysteresis didn't return correct shape'
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb",__file__])

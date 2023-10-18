@@ -160,7 +160,7 @@ def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
         V_offset(float): Offset volage in measurement
 
     Returns:
-        (array) Calculated volatages
+        (array) Calculated voltages
 
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
@@ -194,7 +194,7 @@ def rsj_simple(I, Ic, Rn, V_offset):
 
     Returns:
         (array):
-            Calculated volatages
+            Calculated voltages
 
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
@@ -367,7 +367,7 @@ class RSJ_Noiseless(Model):
         V_offset(float): Offset volage in measurement
 
     Returns:
-        (array) Calculated volatages
+        (array) Calculated voltages
 
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:
@@ -419,7 +419,7 @@ class RSJ_Simple(Model):
         V_offset(float): Offset volage in measurement
 
     Returns:
-        (array) Calculated volatages
+        (array) Calculated voltages
 
     Notes:
         Impleemtns a simple form of the RSJ model for a Josephson Junction:

@@ -90,7 +90,7 @@ else:
 
 setup(
     name = "Stoner",
-    python_requires='>3.6',
+    python_requires='>3.7',
     version = str(get_version()),
     author = "Gavin Burnell",
     author_email = "g.burnell@leeds.ac.uk",

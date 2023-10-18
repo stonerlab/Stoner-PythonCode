@@ -13,7 +13,7 @@ from Stoner.Image.widgets import send_event as _event
 
 
 def fake_user_action(image):
-    """Send events to the selection widget to sumulate a user."""
+    """Send events to the selection widget to simulate a user."""
     time.sleep(1)
     _event(
         image,

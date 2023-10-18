@@ -484,7 +484,7 @@ class SPCFile(Core.DataFile):
                 self._header[key] = value
 
     def _load(self, filename=None, *args, **kargs):
-        """Read a .scf file produced by the Renishaw Raman system (amongs others).
+        """Read a .scf file produced by the Renishaw Raman system (among others).
 
         Args:
             filename (string or bool):
@@ -667,7 +667,7 @@ class VSMFile(Core.DataFile):
 
         Keyword Arguments:
             header_line (int):
-                The line in the file that contains the column headers. If None, then column headers are auotmatically
+                The line in the file that contains the column headers. If None, then column headers are automatically
                 generated.
             data_line (int):
                 The line on which the data starts
@@ -776,7 +776,7 @@ class XRDFile(Core.DataFile):
             self.filename = filename
         sh = re.compile(r"\[(.+)\]")  # Regexp to grab section name
         with FileManager(self.filename, errors="ignore", encoding="utf-8") as f:  # Read filename linewise
-            if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
+            if f.readline().strip() != ";RAW4.00":  # Check we have the correct fileformat
                 raise Core.StonerLoadError("File Format Not Recognized !")
             drive = 0
             for line in f:  # for each line

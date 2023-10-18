@@ -97,7 +97,7 @@ class DataFileSearchMixin:
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
 
-        Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
+        Indexing can be by supplying an integer, a string, a regular expression, a slice or a list of any of the above.
 
         -   Integer indices are simply checked to ensure that they are in range
         -   String indices are first checked for an exact match against a column header
@@ -156,9 +156,9 @@ class DataFileSearchMixin:
             row = np.atleast_1d(search_data[ix])
             if tuple(row) in results:
                 continue
-            for iy, (value, delt) in enumerate(zip(row, delta)):
+            for iy, (value, dealt) in enumerate(zip(row, delta)):
                 # Modify all search data that is close to the current row
-                search_data[np.isclose(search_data[:, iy], value, atol=delt), iy] = value
+                search_data[np.isclose(search_data[:, iy], value, atol=dealt), iy] = value
             matches = np.arange(search_data.shape[0])[np.all(search_data == row, axis=1)]
             results[tuple(row)] = matches.tolist()
         return results
@@ -287,7 +287,7 @@ class DataFileSearchMixin:
                 Uncertainty to accept when testing equalities
 
         Returns:
-            ndarray: numpy array of matching rows or column values depending on the arguements.
+            ndarray: numpy array of matching rows or column values depending on the arguments.
 
         Note:
             The value is interpreted as follows:
@@ -314,7 +314,7 @@ class DataFileSearchMixin:
         return data
 
     def section(self, **kargs):
-        """Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.
+        """Assuming data has x,y or x,y,z coordinates, return data from a section of the parameter space.
 
         Keyword Arguments:
             x (float, tuple, list or callable):
@@ -324,7 +324,7 @@ class DataFileSearchMixin:
             z (float, tuple,list  or callable):
                 z values ,atch this condition are included inth e section
             r (callable): a
-            function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section
+            function that takes a tuple (x,y,z) and returns True if the line is to be included in section
 
         Returns:
             (DataFile):
@@ -334,7 +334,7 @@ class DataFileSearchMixin:
         Internally this function is calling :py:meth:`DataFile.search` to pull out matching sections of the data array.
         To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that
         axis. Specifying conditions on two axes will return a line of points along the third axis. The final
-        keyword parameter allows you to select data points that lie in an arbitary plane or line. eg::
+        keyword parameter allows you to select data points that lie in an arbitrary plane or line. eg::
 
             d.section(r=lambda x,y,z:abs(2+3*x-2*y)<0.1 and z==2)
 
@@ -371,12 +371,12 @@ class DataFileSearchMixin:
                 A single positional argument if present is interpreted as follows:
 
                 -   If a callable function is given, the entire row is presented to it. If it evaluates True then that
-                    row is selected. This allows arbitary select operations
+                    row is selected. This allows arbitrary select operations
                 -   If a dict is given, then it and the kargs dictionary are merged and used to select the rows
 
         Keyword Arguments:
             kargs (various):
-                Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+                Arbitrary keyword arguments are interpreted as requestion matches against the corresponding
                 columns. The keyword argument may have an additional *__operator** appended to it which is interpreted
                 as follows:
 
@@ -386,7 +386,7 @@ class DataFileSearchMixin:
                 -   *lt*  value doe less than argument value
                 -   *ge*  value doe greater than or equal to argument value
                 -   *le*  value doe less than or equal to argument value
-                -   *between*  value lies beween the minimum and maximum values of the arguement (the default test
+                -   *between*  value lies between the minimum and maximum values of the argument (the default test
                     for 2-length tuple arguments)
                 -   *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
 
@@ -503,7 +503,7 @@ class DataFileSearchMixin:
         return self
 
     def split(self, *args, final="files"):
-        """Recursively splits the current DataFile into a :py:class:`Stoner.Forlders.DataFolder`.
+        """Recursively splits the current DataFile into a :py:class:`Stoner.Folders.DataFolder`.
 
         Args:
             *args (column index or function):

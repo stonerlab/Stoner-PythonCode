@@ -58,6 +58,6 @@ from Stoner.formats.simulations import GenXFile, OVFFile
 
 warn(
     "*" * 80
-    + "\nStoner.FileFormats is a depricated module - use Stoner.formats and it's sub-modules  now!\n"
+    + "\nStoner.FileFormats is a deprecated module - use Stoner.formats and it's sub-modules  now!\n"
     + "*" * 80
 )

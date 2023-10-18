@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""General fle related tools."""
+"""General file related tools."""
 from importlib import import_module
 import io
 import os
@@ -43,7 +43,7 @@ def file_dialog(
         mode (string):
             The mode of the file operation  'r' or 'w'
         filename (str, Path, bool):
-            Tje starting filename
+            The starting filename
         filetype (submclass of metadataObject, string):
             The filetype to open with - used to selectr file patterns
         basclass (subclass of metadataObject):
@@ -161,7 +161,7 @@ def auto_load_classes(
             if isinstance(test, metadataObject):
                 test["Loaded as"] = cls_name
             if debug:
-                print(f"Test matadata: {test.metadata}")
+                print(f"Test metadata: {test.metadata}")
 
             break
         except StonerLoadError as e:
@@ -197,7 +197,7 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
 
 class FileManager:
 
-    """Simple context manager that allows opening files or working with alreadt open string buffers."""
+    """Simple context manager that allows opening files or working with already open string buffers."""
 
     def __init__(self, filename, *args, **kargs):
         """Store the parameters passed to the context manager."""

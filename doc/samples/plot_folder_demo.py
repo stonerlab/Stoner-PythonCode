@@ -61,7 +61,7 @@ if __name__ == "__main__":
     )
     d.labels = None
 
-    # Deine x and y columns and normalise to a big number
+    # Define x and y columns and normalise to a big number
     d.setas(x="Field", y="FMR")  # pylint: disable=not-callable
     d.normalise(base=(-1e6, 1e6))
     fldr = d.split(field_sign, "Frequency")

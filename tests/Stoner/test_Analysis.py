@@ -67,7 +67,7 @@ def test_apply():
     slfapp.apply(calc,replace=False,header="Sin",_extra={"omega":0.1},k=1.0)
     slfapp.apply(lambda r:r.__class__([r[1],r[0]]),replace=True,header=["Index","Sin"])
     slfapp.setas="xy"
-    assert np.isclose(slfapp.integrate(output="result"),18.87616564214),"Integrate after aplies failed."
+    assert np.isclose(slfapp.integrate(output="result"),18.87616564214),"Integrate after applies failed."
 
 def test_scale():
     x=np.linspace(-5,5,101)

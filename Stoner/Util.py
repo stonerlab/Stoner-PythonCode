@@ -47,7 +47,7 @@ def _h_sat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
     Ms, Ms_err, _ = Ms_vals
     Hsat, Hsat_err = Hsat_vals
 
-    # Fit a striaght line to the central fraction of the data
+    # Fit a straight line to the central fraction of the data
     if i == 1:
         bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
     else:
@@ -60,14 +60,14 @@ def _h_sat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
     Ms_i = Ms if i == 0 else -Ms
     # Find the intercept
     Hsat[1 - i] = fsolve(lambda x: Linear().func(x, *popt) - Ms_i, 0)[0]
-    # Uncertainity is the sum of error in slope * found intercept and error in Ms times slope
+    # Uncertainty is the sum of error in slope * found intercept and error in Ms times slope
     Hsat_err[1 - i] = np.sqrt((Hsat[1 - i] * pferr[1]) ** 2 + (popt[1] * Ms_err) ** 2)
 
     return (Hsat, Hsat_err)
 
 
 def _h_sat_susceptibility(d, i, Ms_vals, Hsat_vals, h_sat_fraction):  # pylint: disable=unused-argument
-    """Determine the saturation field from the change in local sysceptibility in the looop."""
+    """Determine the saturation field from the change in local sysceptibility in the loop."""
     Hsat, Hsat_err = Hsat_vals
     xi = d.SG_Filter(order=1)[0, :]
     m, h = d.SG_Filter()
@@ -124,7 +124,7 @@ def _up_down(data):
     high = data.x > mid + 0.45 * span
     low = data.x < mid - 0.45 * span
 
-    # Locate points where we cross a threhold
+    # Locate points where we cross a threshold
     t = np.zeros((2, len(data) + 2), dtype=bool)
     t[0, 1:-1] = high
     t[1, 1:-1] = low
@@ -228,7 +228,7 @@ Hickeyify = format_error
 
 
 def hysteresis_correct(data, **kargs):
-    """Peform corrections to a hysteresis loop.
+    """Perform corrections to a hysteresis loop.
 
     Args:
         data (Data):
@@ -251,7 +251,7 @@ def hysteresis_correct(data, **kargs):
                 and look at the
                 intercept with the relevant saturation moment.
             -   "delta_M": Look for a field where the moment has changed by *h_sat_fraction* times the error in M_s.
-            -   "susceptibility" - Calcualte H_sat from where the susceptibility changes by 1% of the average
+            -   "susceptibility" - Calculate H_sat from where the susceptibility changes by 1% of the average
                 susceptibility
         h_sat_fraction (float):
             The central fraction of the saturation moment that is used for calculating the saturation field. Defaults

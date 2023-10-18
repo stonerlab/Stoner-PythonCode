@@ -111,9 +111,9 @@ def test_Operators():
     fldr-="New-XRay-Data.dql"
     assert fl-1==len(fldr),"Failed to remove NEw Xray data by name."
     fldr+="New-XRay-Data.dql"
-    assert len(fldr)==fl,"Failed += oeprator with string on DataFolder"
+    assert len(fldr)==fl,"Failed += operator with string on DataFolder"
     fldr/="Loaded as"
-    assert len(fldr["QDFile"])==4,"Failoed to group folder by Loaded As metadata with /= opeator."
+    assert len(fldr["QDFile"])==4,"Failoed to group folder by Loaded As metadata with /= operator."
     assert isinstance(fldr["QDFile","Byapp"],Data),"Indexing group and then common metadata failed"
     fldr=DataFolder(datadir,debug=False,recursive=False)
     fldr2=DataFolder(path.join(datadir,"NLIV"),pattern="*.txt")
@@ -157,7 +157,7 @@ def test_Base_Operators():
     if Hyperspy_ok:
         del fldr["1449 37.0 kx.emd"]
     fldr/="Loaded as"
-    assert len(fldr["QDFile"])==4,"Failoed to group folder by Loaded As metadata with /= opeator."
+    assert len(fldr["QDFile"])==4,"Failoed to group folder by Loaded As metadata with /= operator."
     fldr=DataFolder(datadir,debug=False,recursive=False)
     for d in fldr:
         _=d["Loaded as"]
@@ -215,7 +215,7 @@ def test_Properties():
     fldr.objects=objects
     assert isinstance(fldr.objects,regexpDict),"Setting Folder objects mangled type"
     fldr.type=Data()
-    assert issubclass(fldr.type,Data),"Settin type by instance of class failed"
+    assert issubclass(fldr.type,Data),"Setting type by instance of class failed"
 
 def test_methods():
     sliced=np.array(['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile', 'DataFile', 'DataFile', 'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile', 'DataFile', 'DataFile'],
@@ -235,9 +235,9 @@ def test_clone():
      fldr=DataFolder(datadir, pattern='*.txt')
      fldr.abc = 123 #add an attribute
      t = fldr.__clone__()
-     assert t.pattern==fldr.pattern, 'pattern didnt copy over'
-     assert hasattr(t, "abc") and t.abc==123, 'user attribute didnt copy over'
-     assert isinstance(t['recursivefoldertest'],DataFolder), 'groups didnt copy over'
+     assert t.pattern==fldr.pattern, 'pattern didn't copy over'
+     assert hasattr(t, "abc") and t.abc==123, 'user attribute didn't copy over'
+     assert isinstance(t['recursivefoldertest'],DataFolder), 'groups didn't copy over'
 
 def test_grouping():
     fldr4=DataFolder()
@@ -270,7 +270,7 @@ def test_grouping():
             {'test': (0,
                {'1.4': (0,
                  {'0.25': (1, {}), '0.5': (1, {}), '0.75': (1, {}), '1.0': (1, {})})})})
-    assert fldr5.shape==pruned,"Folder pruning gave an unxpected shape."
+    assert fldr5.shape==pruned,"Folder pruning gave an unexpected shape."
     assert fldr5[("test","1.4","0.5",0,"phase")]==0.5,"Multilevel indexing of tree failed."
     shape=(~(~fldr4).select(amplitude=1.4).select(frequency=1).select(phase__gt=0.2)).shape
     fldr4=fldr4
@@ -291,7 +291,7 @@ def test_grouping():
                            np.ones(5)),"Slice metadata failure."
     d=(~fldr4).extract("phase","frequency","amplitude","params")
     assert d.shape==(150,6),"Extract failed to produce data of correct shape."
-    assert d.column_headers==['phase', 'frequency', 'amplitude', 'params', 'params', 'params'],"Exctract failed to get correct column headers."
+    assert d.column_headers==['phase', 'frequency', 'amplitude', 'params', 'params', 'params'],"Extract failed to get correct column headers."
     p=fldr4["test",1.0,1.0]
     p=PlotFolder(p)
     p.plot()

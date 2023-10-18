@@ -52,7 +52,7 @@ def _remove_dots(key):
 class TexFormatter(Formatter):
     r"""An axis tick label formatter that emits Tex formula mode code.
 
-    Formating is set so that large numbers are registered as :math`\times 10^{power}`
+    Formatting is set so that large numbers are registered as :math`\times 10^{power}`
     rather than using E notation."""
 
     def __call__(self, value, pos=None):
@@ -161,7 +161,7 @@ class DefaultPlotStyle(MutableMapping):
         show_title (bool): show the title
         show_legend (bool): show the legend
         stylename (string): Name of the matplotlib style to use
-        stylesheet (list): Calculated list of stylesheets found by traversing the class heirarchy
+        stylesheet (list): Calculated list of stylesheets found by traversing the class hierarchy
 
     Example
         .. plot:: samples/plotstyles/default.py
@@ -241,7 +241,7 @@ class DefaultPlotStyle(MutableMapping):
                 self.update({_add_dots(k): v})
 
     def __delitem__(self, name):
-        """Clear any setting that overides the default for *name*."""
+        """Clear any setting that overrides the default for *name*."""
         if hasattr(self, name):
             default = getattr(type(self)(), name)
             setattr(self, name, default)
@@ -321,7 +321,7 @@ class DefaultPlotStyle(MutableMapping):
 
     @property
     def stylesheet(self):
-        """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
+        """Horribly hacky method to traverse over the class hierarchy for style sheet names."""
         if (
             self._stylesheet is not None and self._stylesheet[0] == self.stylename
         ):  # Have we cached a copy of our stylesheets ?
@@ -362,7 +362,7 @@ class DefaultPlotStyle(MutableMapping):
     @stylesheet.setter
     def stylesheet(self, value):  # pylint: disable=r0201
         """Just stop the stylesheet from being set."""
-        raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
+        raise AttributeError("Can't set the stylesheet value, this is derived from the stylename aatribute.")
 
     def clear(self):
         """Reset everything back o defaults."""
@@ -491,7 +491,7 @@ class DefaultPlotStyle(MutableMapping):
         """Implement hook to customise plot.
 
         This method is supplied for sub classes to override to provide additional
-        plot customisation after the rc paramaters are updated from the class and
+        plot customisation after the rc parameters are updated from the class and
         instance attributes."""
 
     def customise_axes(self, ax, plot):
@@ -695,7 +695,7 @@ if SEABORN:  # extra classes if we have seaborn available
 
         Attributes:
             stylename (str):
-                The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks
+                The seaborn plot style to use - darkgrid, whitegrid, dark, white, or ticks
             context (str):
                 The seaborn plot context for scaling elements - paper,notebook,talk, or poster
             palette (str):

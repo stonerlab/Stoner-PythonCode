@@ -1,4 +1,4 @@
-"""Simple ploting with a template."""
+"""Simple plotting with a template."""
 # pylint: disable=invalid-name, no-member
 from cycler import cycler
 

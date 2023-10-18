@@ -58,13 +58,13 @@ and any offset in H (e.g. due to trapped flux in the magnetometer). The latter o
 also remove the effect of any eexhange bias that moves the coercive field. As well as performing the corrections, the code
 will add metadata items for:
 
-    * Background susceptibility (from fitting striaght lines to the out part of the data)
+    * Background susceptibility (from fitting straight lines to the out part of the data)
     * Saturation magnetisation and uncertainty (also from fitting lines to the out part of the data)
     * Coervice Fields (H for zero M)
     * Remenance (M for zero H)
     * Saturation Fields (H where M deviates by the standard error from saturation)
     * Maximum BH product (the point where -H * M is maximum)
-    * Loop Area (from integrating the area inside the hysteresis loop - only valide for complete loops)
+    * Loop Area (from integrating the area inside the hysteresis loop - only valid for complete loops)
 
 Some of these parameters are determined by fitting a straight line to the outer portions of the data (i.e. at the
 extrema in H). The keyword parameter *saturation_fraction* controls the extent of the data assumed to be saturated.
@@ -74,7 +74,7 @@ Formatting Error Values
 -----------------------
 
 In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
-a measurement to one signficant figure, and then quote the value to the same number of decimal places. Whilst doing this
+a measurement to one significant figure, and then quote the value to the same number of decimal places. Whilst doing this
 might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the :py:mod:`Stoner.Util` module
 provides the :py:func:`Stoner.Util.format_error` function.::
 
@@ -124,7 +124,7 @@ For example:
     :outname:  curvefit_sphere_2
 
 
-Other Recipies
+Other Recipes
 ==============
 
 Extract X-Y(Z) from X-Y-Z data
@@ -206,7 +206,7 @@ to quickly examine the output data::
     import Stoner.plot
     p=SP.PlotFile('my_simulation.ovf')
     p.setas="xyzuvw"
-    p=p.section(z=10.5) # Take a slice inthe xy plane where z is 10.5 nm
+    p=p.section(z=10.5) # Take a slice in the xy plane where z is 10.5 nm
     p.plot() # A 3D plot with cones
     p.setas="xy.uvw"
     p.plot() # a 2D colour wheel plot with triangular glyphs showing vector direction.

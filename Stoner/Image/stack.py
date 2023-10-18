@@ -109,7 +109,7 @@ class ImageStackMixin:
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool): If True (default) then always return a metadataObject. If False,
+            instantiate (bool): If True (default) then always return a metadataObject. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 metadataObject. If None, then will return whatever is helf in the object cache, either
                 instance or name.
@@ -254,7 +254,7 @@ class ImageStackMixin:
         if self._stack.dtype != other._stack.dtype:
             raise ValueError(
                 "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
-                + "Mimatch is {self._stack.dtype} vs {other._stack.dtype}"
+                + "Mismatch is {self._stack.dtype} vs {other._stack.dtype}"
             )
         if self._stack.dtype.kind != "f":
             ret = self.clone.convert(float)
@@ -295,7 +295,7 @@ class ImageStackMixin:
     def _resize_stack(self, new_size, dtype=None):
         """Create a new stack with a new size."""
         old_size = self._stack.shape
-        assertion(isinstance(self._stack, ImageArray), f"Trying to resize a non-image aray {type(self._stack)}")
+        assertion(isinstance(self._stack, ImageArray), f"Trying to resize a non-image array {type(self._stack)}")
         if old_size == new_size:
             return new_size
         if dtype is None:
@@ -373,14 +373,14 @@ class ImageStackMixin:
                 http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx
             2,  Data Conversions.
                 In "OpenGL ES 2.0 Specification v2.0.25", pp 7-8. Khronos Group, 2010.
-            3,  Proper treatment of pixels as integers. A.W. Paeth.
+            3,  Proper treatment of pixels as integers. A.W. Path.
                 In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
             4,  Dirty Pixels. J. Blinn.
                 In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
         """
         from .imagefuncs import convert
 
-        # Aactually this is just a pass through for the imagefuncs.convert routine
+        # Actually this is just a pass through for the imagefuncs.convert routine
         mask = self._stack.mask
         self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise).view(
             type(self._stack)
@@ -400,7 +400,7 @@ class ImageStackMixin:
                 clip range further to 0,1
 
         Notes:
-            Analagous behaviour to ImageFile.asfloat()
+            Analogous behaviour to ImageFile.asfloat()
 
             If currently an int type and normalise then floats will be normalised
             to the maximum allowed value of the int type.
@@ -440,7 +440,7 @@ class ImageStackMixin:
         return ret
 
     ###########################################################################
-    ################### Depricated Compaibility methods #######################
+    ################### Deprecated Compatibility methods #######################
 
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Align images to correct for image drift.
@@ -456,7 +456,7 @@ class ImageStackMixin:
             box: see ImageArray.correct_drift
 
         """
-        warnings.warn("correct_drift is a depricated method for an image stack - consider using align.")
+        warnings.warn("correct_drift is a deprecated method for an image stack - consider using align.")
         ref = self[refindex]
         self.apply_all("correct_drift", ref, threshold=threshold, upsample_factor=upsample_factor, box=box)
 
@@ -471,12 +471,12 @@ class ImageStackMixin:
             (ImageStack):
                 cropped images
         """
-        warnings.warn("crop_stack is depricated - sam effect can be achieved with crop(box)")
+        warnings.warn("crop_stack is deprecated - sam effect can be achieved with crop(box)")
         self.each.crop(box)
 
     def show(self):
         """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`."""
-        warnings.warn("show() is depricated in favour of ImageFolder.view()")
+        warnings.warn("show() is deprecated in favour of ImageFolder.view()")
         return self.view()
 
 
@@ -500,7 +500,7 @@ class StackAnalysisMixin:
                 The modified image stack.
 
         Notes:
-            Method cahnged for v0.10 to not normalise or clip the data.
+            Method changed for v0.10 to not normalise or clip the data.
             The background image is scaled by the ratio of the mean pixel values of the unmasked
             region in the background image.
         """

@@ -47,7 +47,7 @@ def test_zipfolder():
     szf_2=SZ.ZipFolder(zipname).compress()
     assert szf_2.shape==szf.shape,"ZipFolder loaded from disc not same shape as ZipFolder in memory!"
     fname=path.basename(szf[0].filename)
-    assert szf[fname]==szf_2[fname],"File from loaded ZipFolder not the same as in memeory ZipFolder."
+    assert szf[fname]==szf_2[fname],"File from loaded ZipFolder not the same as in memory ZipFolder."
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

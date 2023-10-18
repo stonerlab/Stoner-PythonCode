@@ -28,7 +28,7 @@ File:Autodel{Boolean}=True	7.093929795E-7	3.443708609E-3	-5.756883262E+1	0E+0
 File:Autosave{Boolean}=True	9.50622177E-7	3.57615894E-3	-1.327921434E+3	2.81410915E-7
 File:Export Config{Boolean}=True	1.236030782E-6	3.708609272E-3	1.422775549E+2	5.886976455E-7
 File:Final Autosave{Boolean}=True	1.450401108E-6	3.841059603E-3	1.659939761E+3	7.897217106E-7
-Filter:Enable{Enum U16 ((None,Analog,Digital,Analog&Digitial))}=None	1.616324712E-6	3.973509934E-3	2.586859298E+2	9.541899657E-7
+Filter:Enable{Enum U16 ((None,Analog,Digital,Analog&Digital))}=None	1.616324712E-6	3.973509934E-3	2.586859298E+2	9.541899657E-7
 Filter:Points{I32}=4	1.75865247E-6	4.105960265E-3	4.149752965E+2	1.098644278E-6
 Filter:Type{U16}=1	1.89307313E-6	4.238410596E-3	3.94431884E+2	1.230155541E-6
 Filter:Type.__text__{String}=Repeat	2.01695099E-6	4.370860927E-3	1.810800338E+3	1.352504606E-6
@@ -47,8 +47,8 @@ Main Screen Path{Path}=C:\\Program Files\\National Instruments\\LabVIEW 2018\\St
 Measurement Mode Paths{1D Array (Path)}=[C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\Measurem_XY_Base_class\\Measurem_XY_Base.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\Source Meter IV_class\\Source Meter IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\DAQ Card IV_class\\DAQ Card IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\Demo_Mode_class\\Demo_Mode.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\6221-Lockin-DAQ_class\\6221-Lockin-DAQ.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\DAQSource-Lockin-NVM-DAQ_class\\DAQSource-Lockin-NVM-DAQ.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\6221 Current Source IV_class\\6221 Current Source IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\6221 Waveform and Scope IV_class\\6221 Waveform and Scope IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\6221 DC Sweep XY_class\\6221 DC Sweep XY.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\6221-Source Meter XY Class\\6221 Source Meter X-Y Class.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\Multi-segment DAQ IV_class\\Multi-segment DAQ IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\Network Analyser Sweep_class\\Network Analyser Sweep.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\FMR(B) Sweep_class\\FMR(B) Sweep.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\Passive DAQ Card IV_class\\Passive DAQ Card IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\SR580 Waveform IV_class\\SR580 Waveform IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\Multi-XY Plugin\\Multi-XY Plugin.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\2400 with 2182 IV_class\\2400 with 2182 IV.lvclass,C:\\Program Files\\National Instruments\\LabVIEW 2018\\Stonerlab\\Programs\\Source Meter IV\\plugins\\X-Y\\2400 with 6514 IV_class\\2400 with 6514 IV.lvclass]	1.524326263E-6	3.907284768E-3	2.785847837E+2	8.75130907E-7
 Measurement Timestamp{Timestamp}=<10:37:22.114 18/10/2019>T	1.348361965E-6	3.774834437E-3	-8.13012757E+2	6.956272839E-7
 Measurement Title{String}=TDI Format 1.5	1.075629714E-6	3.642384106E-3	7.516517679E+1	4.600686682E-7
-Measurment Select{U16}=8	7.759127895E-7	3.509933775E-3	4.456104724E+1	0E+0
-Measurment Select.__text__{String}=6221-2182 DC IV	6.406134325E-7	3.377483444E-3	-7.661085234E+2	0E+0
+Measurement Select{U16}=8	7.759127895E-7	3.509933775E-3	4.456104724E+1	0E+0
+Measurement Select.__text__{String}=6221-2182 DC IV	6.406134325E-7	3.377483444E-3	-7.661085234E+2	0E+0
 Notes{String}=I-V (B) + Ic(B) Now with offset field _4->-8 to get full Ic(B)	6.33459395E-7	3.245033113E-3	1.732071415E+3	0E+0
 Option: 2182 Autozero{Boolean}=True	6.437511685E-7	3.112582781E-3	-9.7164988E+2	0E+0
 Option: 2182 Front Autozero{Boolean}=True	6.5441947E-7	2.98013245E-3	-3.905651337E+2	0E+0
@@ -180,7 +180,7 @@ multi[0]:temperature: ramping{Boolean}=False
 multi[0]:temperature: setpoint{Double Float}=3.000000	
 multi[0]:temperature: setpoint 2{Double Float}=NaN	
 multi[0]:temperature: signal on{1D Array (Boolean)}=[True,True,True,False,False,True,False,True,False,True]	
-multi[0]:temperature: stability script{String}=def is_stable(self):\0A    """Check that error and stablility in band over last 100 readings."""\0A    at_setpoint=max(abs(self.delta_T_hist))<=self.delta_T_window\0A    stable=max(abs(self.rate_hist))<=self.rate_window\0A    ret=0\0A    ret+=1 if at_setpoint else 0\0A    ret+=2 if stable else 0\0A    return ret\0A	
+multi[0]:temperature: stability script{String}=def is_stable(self):\0A    """Check that error and stability in band over last 100 readings."""\0A    at_setpoint=max(abs(self.delta_T_hist))<=self.delta_T_window\0A    stable=max(abs(self.rate_hist))<=self.rate_window\0A    ret=0\0A    ret+=1 if at_setpoint else 0\0A    ret+=2 if stable else 0\0A    return ret\0A	
 multi[0]:temperature: stability settings{Cluster (Double Float,Double Float,Double Float)}={'temperature: stability error':0.050000,'temperature:stability rate':0.050000,'temperature:history window':60.000000}	
 multi[0]:temperature: temp control mode{U16}=2	
 multi[0]:temperature: temp control mode 2{U16}=0	
@@ -267,7 +267,7 @@ multi[1]:temperature: ramping{Boolean}=False
 multi[1]:temperature: setpoint{Double Float}=2.000000	
 multi[1]:temperature: setpoint 2{Double Float}=NaN	
 multi[1]:temperature: signal on{1D Array (Boolean)}=[True,True,True,False,False,True,False,True,False,True]	
-multi[1]:temperature: stability script{String}=def is_stable(self):\0A    """Check that error and stablility in band over last 100 readings."""\0A    at_setpoint=max(abs(self.delta_T_hist))<=self.delta_T_window\0A    stable=max(abs(self.rate_hist))<=self.rate_window\0A    ret=0\0A    ret+=1 if at_setpoint else 0\0A    ret+=2 if stable else 0\0A    return ret\0A	
+multi[1]:temperature: stability script{String}=def is_stable(self):\0A    """Check that error and stability in band over last 100 readings."""\0A    at_setpoint=max(abs(self.delta_T_hist))<=self.delta_T_window\0A    stable=max(abs(self.rate_hist))<=self.rate_window\0A    ret=0\0A    ret+=1 if at_setpoint else 0\0A    ret+=2 if stable else 0\0A    return ret\0A	
 multi[1]:temperature: stability settings{Cluster (Double Float,Double Float,Double Float)}={'temperature: stability error':0.050000,'temperature:stability rate':0.050000,'temperature:history window':60.000000}	
 multi[1]:temperature: temp control mode{U16}=2	
 multi[1]:temperature: temp control mode 2{U16}=0	
@@ -336,7 +336,7 @@ temperature: ramping{Boolean}=False
 temperature: setpoint{Double Float}=2.800000	
 temperature: setpoint 2{Double Float}=NaN	
 temperature: signal on{1D Array (Boolean)}=[True,True,True,False,False,True,False,True,False,True]	
-temperature: stability script{String}=def is_stable(self):\0A    """Check that error and stablility in band over last 100 readings."""\0A    at_setpoint=max(abs(self.delta_T_hist))<=self.delta_T_window\0A    stable=max(abs(self.rate_hist))<=self.rate_window\0A    ret=0\0A    ret+=1 if at_setpoint else 0\0A    ret+=2 if stable else 0\0A    return ret\0A	
+temperature: stability script{String}=def is_stable(self):\0A    """Check that error and stability in band over last 100 readings."""\0A    at_setpoint=max(abs(self.delta_T_hist))<=self.delta_T_window\0A    stable=max(abs(self.rate_hist))<=self.rate_window\0A    ret=0\0A    ret+=1 if at_setpoint else 0\0A    ret+=2 if stable else 0\0A    return ret\0A	
 temperature: stability settings{Cluster (Double Float,Double Float,Double Float)}={'temperature: stability error':0.050000,'temperature:stability rate':0.050000,'temperature:history window':60.000000}	
 temperature: temp control mode{U16}=2	
 temperature: temp control mode 2{U16}=0	
