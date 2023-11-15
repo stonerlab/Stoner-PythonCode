@@ -10,7 +10,6 @@ import numpy as np
 
 dtype_range = {
     np.bool_: (False, True),
-    np.bool8: (False, True),
     np.uint8: (0, 255),
     np.uint16: (0, 65535),
     np.int8: (-128, 127),
@@ -23,11 +22,13 @@ dtype_range = {
     np.float64: (-1.0, 1.0),
 }
 
+if float(np.version.version.split(".")[1]) < 1.24:
+    dtype_range[np.bool8] = (False, True)
+
 integer_types = (np.uint8, np.uint16, np.int8, np.int16)
 
 _supported_types = (
     np.bool_,
-    np.bool8,
     np.uint8,
     np.uint16,
     np.uint32,

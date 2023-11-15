@@ -88,15 +88,14 @@ string_types = (str,)
 int_types = (int,)
 path_types = (str, PurePath)
 
-##### Monkey patch numpy for removed attributes as a compatibiliyu hack
-if not hasattr(np, "float"):
+# #### Monkey patch numpy for removed attributes as a compatibiliyu hack
+if np_version.minor >= 20:
     np.float = float
-
-if not hasattr(np, "bool"):
-    np.bool = bool
-
-if not hasattr(np, "str"):
+    np.bool = np.bool_
     np.str = str
+    np.bool8 = np.bool_
+    np.int0 = np.intp
+    
 
 
 def str2bytes(data):

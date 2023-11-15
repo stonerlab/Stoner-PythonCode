@@ -192,7 +192,7 @@ def test_Properties():
     fldr/="Loaded as"
     grps=list(fldr.lsgrp)
     skip=0 if Hyperspy_ok else 1
-    assert len(grps)==26-skip,"Length of lsgrp not as expected: {} not 25".format(len(grps))
+    assert len(grps)==27-skip,f"Length of lsgrp not as expected: {len(grps)} not {27-skip}"
     fldr.debug=True
     fldr=fldr
     assert fldr["XRDFile"][0].debug,"Setting debug on folder failed!"
@@ -235,9 +235,9 @@ def test_clone():
      fldr=DataFolder(datadir, pattern='*.txt')
      fldr.abc = 123 #add an attribute
      t = fldr.__clone__()
-     assert t.pattern==fldr.pattern, 'pattern didn't copy over'
-     assert hasattr(t, "abc") and t.abc==123, 'user attribute didn't copy over'
-     assert isinstance(t['recursivefoldertest'],DataFolder), 'groups didn't copy over'
+     assert t.pattern==fldr.pattern, "pattern didn't copy over"
+     assert hasattr(t, "abc") and t.abc==123, "user attribute didn't copy over"
+     assert isinstance(t['recursivefoldertest'],DataFolder), "groups didn't copy over"
 
 def test_grouping():
     fldr4=DataFolder()

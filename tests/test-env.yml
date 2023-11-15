@@ -1,8 +1,8 @@
 name: test-environment
 channels:
-    - defaults
-    - phygbu
-    - conda-forge
+  - defaults
+  - phygbu
+  - conda-forge
 dependencies:
   - coveralls >= 3.2.0
   - cycler >= 0.10.0
@@ -11,9 +11,9 @@ dependencies:
   - filemagic >= 1.6
   - h5py >= 3.3.0
   - hyperspy >= 1.6.4
-  - image-registration >= 0.2.4
   - importlib_resources >= 5.2.0
   - imreg_dft >= 2.0.0
+  - image-registration >= 0.2.7
   - lmfit >= 1.0.0
   - matplotlib >= 3.4.3
   - memoization >= 0.3.1
@@ -30,5 +30,5 @@ dependencies:
   - scipy >= 1.7.1
   - seaborn >= 0.11.2
   - statsmodels >= 0.13.0
-  - tabulate >= 0.8.9
+  - tabulate >= 0.8.10
   - urllib3 >= 1.26.7

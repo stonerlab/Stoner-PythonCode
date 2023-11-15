@@ -136,15 +136,7 @@ def test_deltions():
     selfdd.data=data
     selfdd.column_headers=ch
     selfdd.setas="3.x3.y3.z"
-    selfrepr_string="""===========================  ========  =======  ========  =======  ========  ========
-TDI Format 1.5                 D-Data   ....      H-Data   ....      Y-Data    Z-Data
-index                           3 (x)              7 (y)                 24        25
-===========================  ========  =======  ========  =======  ========  ========
-Key 1{Boolean}= True                0                  0                  0         0
-Key 2{I32}= 12                      0  ...             0  ...             0         0
-Key 3{String}= Hello world         0  ...             0  ...             0         0
-Stoner.class{String}= Data          0  ...             0  ...             0         0
-...                                 0  ...             0  ...             0         0"""
+    selfrepr_string="""==========================  ========  =======  ========  =======  ========  ========\nTDI Format 1.5                D-Data   ....      H-Data   ....      Y-Data    Z-Data\nindex                          3 (x)              7 (y)                 24        25\n==========================  ========  =======  ========  =======  ========  ========\nKey 1{Boolean}= True               0                  0                  0         0\nKey 2{I32}= 12                     0  ...             0  ...             0         0\nKey 3{String}= Hello world         0  ...             0  ...             0         0\nStoner.class{String}= Data         0  ...             0  ...             0         0\n...                                0  ...             0  ...             0         0"""
     assert "\n".join(repr(selfdd).split("\n")[:9])==selfrepr_string,"Representation with interesting columns failed."
     del selfdd["Key 1"]
     assert len(selfdd.metadata)==3,"Deletion of metadata failed."

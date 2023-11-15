@@ -377,8 +377,11 @@ class ZipFolderMixin:
 
     def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other."""
-        if other is None and attrs_only:
-            other = type(self)(readlist=False)
+        if other is None:
+            if attrs_only:
+                other = type(self)(readlist=False)
+            else:
+                other = type(self)()
         for arg in self._defaults:
             if hasattr(self, arg):
                 setattr(other, arg, getattr(self, arg))

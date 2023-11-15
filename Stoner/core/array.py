@@ -380,7 +380,9 @@ class DataArray(ma.MaskedArray):
             ix = tuple(ix)
             # Now can index with our constructed multidimesnional indexer
         ret = super().__getitem__(ix)
-        if ret.ndim == 0 or isinstance(ret, np.ndarray) and ret.size == 1:
+        if isinstance(ret, np.ndarray) and ret.ndim > 0 and ret.size == 1:  # Numpy extract [x] to x
+            ret = ret.ravel()[0]
+        if ret.ndim == 0:
             if isinstance(ret, ma.core.MaskedConstant):
                 if ret.mask:
                     return self.fill_value

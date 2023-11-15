@@ -8,7 +8,7 @@ from glob import glob
 import re
 import importlib
 
-from numpy import genfromtxt, linspace, meshgrid, array, product
+from numpy import genfromtxt, linspace, meshgrid, array, prod
 from scipy.interpolate import griddata
 from scipy.optimize import curve_fit
 import h5py
@@ -262,7 +262,7 @@ class AttocubeScanMixin:
             raise StonerLoadError(f"{g.name} does not have a signal dataset !")
         tmp = self.type()  # pylint: disable=E1102
         data = g["signal"]
-        if product(array(data.shape)) > 0:
+        if prod(array(data.shape)) > 0:
             tmp.image = data[...]
         else:
             tmp.image = [[]]

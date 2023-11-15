@@ -21,7 +21,7 @@ class GroupsDict(regexpDict):
 
     def __setitem__(self, name, value):
         """Enforce type checking on values."""
-        if not isinstance(value, type(self.base)):
+        if not isinstance(value, type(self.base)) and self.base:
             raise ValueError(f"groups attribute can only contain {type(type(self.base))} objects not {type(value)}")
         super().__setitem__(name, value)
 

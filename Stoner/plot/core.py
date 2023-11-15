@@ -1474,10 +1474,12 @@ class PlotMixin:
                     lines = plt.gca()._get_lines
                     if hasattr(lines, "color_cycle"):  # mpl<1.5
                         cc = lines.color_cycle
-                    else:  # MPL >=1.5
-                        cc = lines.prop_cycler
-                    for i in range(ix):
                         next(cc)
+                    elif hasattr(lines, "prop_cycler"):  # MPL<3.8.0
+                        cc = lines.prop_cycler
+                        next(cc)
+                    else:
+                        lines.get_next_color()
             if len(c.ycol) > 1 and multiple in ["y2", "panels", "subplots"]:
                 self.ax = ix  # We're manipulating the plotting here
             if isinstance(fmt, list):  # Fix up the format

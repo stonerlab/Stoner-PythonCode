@@ -144,7 +144,7 @@ def and_core(other: Union["DataFile", np.ndarray], newdata: "DataFile") -> "Data
     setas = newdata.setas.clone
 
     # Workout whether to extend rows on one side or the other
-    if np.product(newdata.data.shape) == 0:  # Special case no data yet
+    if np.prod(newdata.data.shape) == 0:  # Special case no data yet
         newdata.data = other
     elif newdata.data.shape[0] == other.shape[0]:
         newdata.data = np.append(newdata.data, other, 1)

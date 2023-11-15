@@ -185,7 +185,7 @@ class HDF5File(DataFile):
             filename = self.filename
         with HDFFileManager(filename, "r") as f:
             data = f["data"]
-            if np.product(np.array(data.shape)) > 0:
+            if np.prod(np.array(data.shape)) > 0:
                 self.data = data[...]
             else:
                 self.data = [[]]
@@ -619,7 +619,7 @@ class SLS_STXMFile(DataFile):
             raise StonerLoadError("HDF5 file lacks single top level group called entry1")
         root = f["entry1"]
         data = root["counter0"]["data"]
-        if np.product(np.array(data.shape)) > 0:
+        if np.prod(np.array(data.shape)) > 0:
             self.data = data[...]
         else:
             self.data = [[]]
@@ -659,7 +659,7 @@ class SLS_STXMFile(DataFile):
             elif isinstance(thing, h5py.Dataset):
                 if thing.ndim > 1:
                     continue
-                if np.product(thing.shape) == 1:
+                if np.prod(thing.shape) == 1:
                     self.metadata[name] = thing[0]
                 else:
                     self.metadata[name] = thing[...]

@@ -226,7 +226,7 @@ class MaximusStackMixin:
             _raise_error(g.parent, message=f"{g.name} does not have a signal dataset !")
         tmp = self.type()  # pylint: disable=E1102
         data = g["image"]
-        if np.product(np.array(data.shape)) > 0:
+        if np.prod(np.array(data.shape)) > 0:
             tmp.image = data[...]
         else:
             tmp.image = [[]]

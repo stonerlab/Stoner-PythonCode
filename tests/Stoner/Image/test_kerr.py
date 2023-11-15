@@ -92,8 +92,8 @@ def test_kerrstack():
     ks.each.normalise(scale=(0,1.0))
     assert np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed min,max: {},{}'.format(np.min(ks.imarray),np.max(ks.imarray))
     d=ks.hysteresis()
-    assert isinstance(d, Data), 'hysteresis didn't return Data'
-    assert d.data.shape==(len(ks),2), 'hysteresis didn't return correct shape'
+    assert isinstance(d, Data), "hysteresis didn't return Data"
+    assert d.data.shape==(len(ks),2), "hysteresis didn't return correct shape"
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     pytest.main(["--pdb",__file__])
