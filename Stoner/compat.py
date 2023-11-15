@@ -95,7 +95,6 @@ if np_version.minor >= 20:
     np.str = str
     np.bool8 = np.bool_
     np.int0 = np.intp
-    
 
 
 def str2bytes(data):
