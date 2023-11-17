@@ -3,5 +3,6 @@
 
 from Stoner import Data
 
+
 class ArbClass(Data):
     pass
