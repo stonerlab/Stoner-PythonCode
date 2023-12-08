@@ -52,6 +52,9 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
 
 
 class HDFFileManager:
+
+    """Context manager for HDF5 files."""
+
     def __init__(self, filename, mode="r"):
         """Initialise context handler.
 
@@ -601,7 +604,7 @@ class SLS_STXMFile(DataFile):
             self.filename = filename
         if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
             try:
-                f = h5py.File(filename, "r+")
+                f = h5py.File(filename, "r")
             except IOError as err:
                 raise StonerLoadError(f"Failed to open {filename} as a n hdf5 file") from err
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):

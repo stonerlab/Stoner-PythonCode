@@ -12,6 +12,7 @@ np.random.seed(12345)
 def setup_function(function):
     global testd
     x = np.linspace(0, 2 * np.pi, 721)
+    np.random.seed(87654321)
     y = np.sin(2 * x) + np.random.normal(scale=0.02, size=x.size)
     testd = Data(x, y, column_headers=["Time", "Ramp", "sine"])
 
