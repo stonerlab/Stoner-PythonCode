@@ -26,6 +26,7 @@ _options = {
     "no_figs": True,
     "multiprocessing": False,  # Change default to not use multiprocessing for now
     "threading": False,
+    "warnings": False,
 }
 
 

@@ -42,6 +42,7 @@ from ..compat import (
 from .attrs import DrawProxy, MaskProxy
 from .widgets import RegionSelect
 from . import imagefuncs
+from ..tools.classes import Options
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -974,7 +975,7 @@ class ImageFile(metadataObject):
                 and getattr(self, "polarization") == getattr(other, "polarization")
             ):
                 raise ValueError("Can only calculate and XMCD ratio from images of opposite polarization")
-            if not (hasattr(other, "polarization") and hasattr(self, "polarization")):
+            if not (hasattr(other, "polarization") and hasattr(self, "polarization")) and Options().warnings:
                 warn("Calculating XMCD ratio even though one or both image polarizations cannoty be determined.")
             if self.image.dtype != other.image.dtype:
                 raise ValueError(

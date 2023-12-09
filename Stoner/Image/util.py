@@ -8,6 +8,8 @@ from warnings import warn
 
 import numpy as np
 
+from ..tools.classes import Options
+
 dtype_range = {
     np.bool_: (False, True),
     np.uint8: (0, 255),
@@ -47,15 +49,17 @@ _supported_types += (np.float16,)
 
 def sign_loss(dtypeobj_in, dtypeobj):
     """Warn over loss of sign information when converting image."""
-    warn(
-        "Possible sign loss when converting negative image of type "
-        "%s to positive image of type %s." % (dtypeobj_in, dtypeobj)
-    )
+    if Options().warnings:
+        warn(
+            "Possible sign loss when converting negative image of type "
+            "%s to positive image of type %s." % (dtypeobj_in, dtypeobj)
+        )
 
 
 def prec_loss(dtypeobj_in, dtypeobj):
     """Warn over precision loss when converting image."""
-    warn("Possible precision loss when converting from " "%s to %s" % (dtypeobj_in, dtypeobj))
+    if Options().warnings:
+        warn("Possible precision loss when converting from " "%s to %s" % (dtypeobj_in, dtypeobj))
 
 
 def _dtype(itemsize, *dtypes):
@@ -93,7 +97,8 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
             a.max(),
             dtype,
         )
-        warn(msg)
+        if Options().warnings:
+            warn(msg)
         return a.astype(_dtype2(kind, m))
     if n == m:
         return a.copy() if copy else a

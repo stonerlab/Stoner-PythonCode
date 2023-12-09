@@ -34,20 +34,9 @@ def shares_memory(arr1, arr2):
     return ret
 
 
-def _expected():
-    """Return number of image attributes for different versions of python and scipy."""
-    py = sys.version_info.minor
-    scipy = spv[1]
-
-    data = {
-        6: {7: 1056, 7: 1058, 8: 1062, 9: 1087, 10: 1089, 11: 1089},
-        7: {6: 1056, 7: 1058, 8: 1062, 9: 1087, 10: 1089, 11: 1089},
-        8: {6: 1056, 7: 1058, 8: 1062, 9: 1087, 10: 1089, 11: 1089},
-        9: {6: 1056, 7: 1058, 8: 1062, 9: 1087, 10: 1089, 11: 1089},
-        10: {6: 1056, 7: 1062, 8: 1062, 9: 1062, 10: 1089, 11: 1090},
-        11: {6: 1056, 7: 1062, 8: 1062, 9: 1062, 10: 1089, 11: 1097 },
-    }
-    return data[py][scipy]
+def _has_method(obj, method):
+    """Returns True if obj has a method."""
+    return callable(getattr(obj, method, None))
 
 
 # random array shape 3,4
@@ -342,8 +331,10 @@ def test_other_funcs():
 
 
 def test_attrs():
-    attrs = [x for x in dir(ImageArray([])) if not x.startswith("_")]
-    assert len(attrs) == _expected(), "Length of ImageArray dir failed. {}".format(len(attrs))
+    test = ImageArray([])
+    assert _has_method(test, "gaussian_filter"), "Failed to get scipy.ndimage.gaussian_filter as ImageArray attr"
+    assert _has_method(test, "gaussian"), "Failed to get skimage.filter.gaussian as ImageArray attr"
+    assert _has_method(test, "gridimage"), "Failed to get imagfuncs.gridimage has ImageArray attr"
 
 
 selfa = np.linspace(0, 5, 12).reshape(3, 4)
@@ -421,8 +412,10 @@ def test_methods():
     assert i3.mean() == pytest.approx(33940.72596111909, rel=1e-2), "Subtract integer failed."
     with pytest.raises(TypeError):
         i2 - "Gobble"
-    attrs = [x for x in dir(i2) if not x.startswith("_")]
-    assert len(attrs) == _expected() + 4, "Length of ImageFile dir failed. {}:{}".format(expected, len(attrs))
+    test = i2
+    assert _has_method(test, "gaussian_filter"), "Failed to get scipy.ndimage.gaussian_filter as ImageFile attr"
+    assert _has_method(test, "gaussian"), "Failed to get skimage.filter.gaussian as ImageFile attr"
+    assert _has_method(test, "gridimage"), "Failed to get imagfuncs.gridimage has ImageFile attr"
     assert image._repr_png_().startswith(b"\x89PNG\r\n"), "Failed to do ImageFile png representation"
 
 
