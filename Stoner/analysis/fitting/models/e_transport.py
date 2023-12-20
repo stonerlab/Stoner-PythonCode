@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """Model classes and functions for various models of electron transport (other than tunnelling processes)."""
 # pylint: disable=invalid-name
-__all__ = ["BlochGrueneisen", "FluchsSondheimer", "WLfit", "blochGrueneisen", "fluchsSondheimer", "wlfit"]
+__all__ = ["BlochGrueneisen", "FluchsSondheimer", "WLfit",
+           "blochGrueneisen", "fluchsSondheimer", "wlfit"]
 
 import numpy as np
 from scipy.integrate import quad
@@ -20,7 +21,7 @@ except ImportError:
     int64 = _dummy()
 
 
-@jit(float64(float64, int64))
+@jit(float64(float64, int64), nopython=True, nogil=True)
 def _bgintegrand(x, n):
     """Calculate the integrand for the Bloch Grueneisen model."""
     return x**n / ((np.exp(x) - 1) * (1 - np.exp(-x)))
@@ -60,8 +61,10 @@ def wlfit(B, s0, DS, B1, B2):
             WLpt1 = digamma(0.5 + B2 / np.abs(Bi))
             WLpt2 = digamma(0.5 + B1 / np.abs(Bi))
         else:
-            WLpt1 = (digamma(0.5 + B2 / np.abs(B[tt - 1])) + digamma(0.5 + B2 / np.abs(B[tt + 1]))) / 2
-            WLpt2 = (digamma(0.5 + B1 / np.abs(B[tt - 1])) + digamma(0.5 + B1 / np.abs(B[tt + 1]))) / 2
+            WLpt1 = (digamma(
+                0.5 + B2 / np.abs(B[tt - 1])) + digamma(0.5 + B2 / np.abs(B[tt + 1]))) / 2
+            WLpt2 = (digamma(
+                0.5 + B1 / np.abs(B[tt - 1])) + digamma(0.5 + B1 / np.abs(B[tt + 1]))) / 2
 
         WLpt3 = np.log(B2 / B1)
 
@@ -94,7 +97,7 @@ def fluchsSondheimer(t, l, p, sigma_0):
     """
     k = t / l
 
-    kernel = lambda x, k: (x - x**3) * np.exp(-k * x) / (1 - np.exp(-k * x))
+    def kernel(x, k): return (x - x**3) * np.exp(-k * x) / (1 - np.exp(-k * x))
 
     result = np.zeros(k.shape)
     for i, v in enumerate(k):
