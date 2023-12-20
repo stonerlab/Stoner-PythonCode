@@ -779,7 +779,7 @@ class metadataObject(MutableMapping):
         raise NotImplementedError("Save is not implemented in the base class.")
 
 
-if pd is not None and not hasattr(pd.DataFrame,"metadata"): # Don;t double add metadata
+if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata
 
     @pd.api.extensions.register_dataframe_accessor("metadata")
     class PandasMetadata(typeHintedDict):
