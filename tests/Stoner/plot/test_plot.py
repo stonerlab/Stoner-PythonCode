@@ -31,6 +31,8 @@ datadir = path.join(pth, "sample-data")
 selfd = Data(path.join(__home__, "..", "sample-data", "New-XRay-Data.dql"))
 
 
+warnings.filterwarnings("error")
+
 def test_set_no_figs():
     global selfd
     assert Options.no_figs, "Default setting for no_figs option is incorrect."
@@ -146,7 +148,6 @@ def test_misc_funcs():
     selfd.x2()
     selfd.setas = ".yx"
     selfd.plot()
-    selfd.tight_layout()
     assert len(selfd.fig_axes) == 2, "Creating a second X axis failed"
     plt.close("all")
     for i in range(4):

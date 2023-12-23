@@ -54,6 +54,7 @@ d = Data(
 d.template.fig_width = 5.2
 d.template.fig_height = 5.0  # Square aspect ratio
 d.plot_xyz(plotter="scatter", marker=",", griddata=False)
+d.set_box_aspect((1, 1, 1.0))  # Passing through to the current axes
 # curve_fit does the hard work
 popt, pcov = d.curve_fit(sphere, (0, 1, 2), zeros_like(d.x))
 

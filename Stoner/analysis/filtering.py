@@ -85,7 +85,7 @@ class FilteringOpsMixin:
 
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
-            offset = int(np.ceil(points * order**2 / 8))
+            offset = int(np.ceil(points * (order + 1) ** 2 / 8))
             padv = np.mean(ddata[:, offset:-offset], axis=1)
             pad = np.ones((ddata.shape[0], offset))
             for ix, v in enumerate(padv):
@@ -478,6 +478,7 @@ class FilteringOpsMixin:
             if mode.lower().startswith("lin"):
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
+                bin_start = np.where(bin_start <= 0, 1e-9, bin_start)
                 bin_centres = np.exp(np.log(bin_start) + np.log(bin_stop) / 2.0)
             else:
                 raise ValueError(f"mode should be either lin(ear) or log(arthimitc) not {mode}")

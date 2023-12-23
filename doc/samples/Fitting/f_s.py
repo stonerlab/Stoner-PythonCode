@@ -43,4 +43,3 @@ d.annotate_fit(
     prefix="FluchsSondheimer",
 )
 d.title = "Fluchs-Sondheimer Fit"
-d.tight_layout()

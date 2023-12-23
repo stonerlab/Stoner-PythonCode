@@ -4,6 +4,9 @@
 import pytest
 import numpy as np
 from Stoner import Data
+import warnings
+
+warnings.filterwarnings("error")
 
 testd = None
 np.random.seed(12345)

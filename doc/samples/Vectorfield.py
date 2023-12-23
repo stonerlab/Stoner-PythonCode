@@ -23,5 +23,3 @@ e.subplot(122)
 e.setas = "xy.uvw"
 e.plot()
 e.title = "3D Vector, 3D Field"
-
-e.tight_layout()

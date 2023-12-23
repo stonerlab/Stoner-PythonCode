@@ -11,8 +11,6 @@ y = 2 + 4 * exp(-x / 1.7) + random.normal(scale=0.2, size=101)
 
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
-d.plot(fmt="ro")  # plot our data
-
 func = lambda x, A, B, C: A + B * exp(-x / C)
 
 

@@ -50,4 +50,3 @@ d.annotate_fit(
 
 d.ylabel = "Current"
 d.title = "BDR Model test"
-d.tight_layout()

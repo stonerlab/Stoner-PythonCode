@@ -22,4 +22,3 @@ d.text(
 )
 d.ylabel = "Data"
 d.title = "Decompose Example"
-d.tight_layout()

@@ -13,7 +13,7 @@ from importlib import import_module
 
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
-from matplotlib.pyplot import figure, tight_layout, subplots
+from matplotlib.pyplot import figure, subplots
 
 from Stoner.tools import isiterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
@@ -683,8 +683,6 @@ class PlotMethodsMixin:
                 Passed to matplotlib figure call.
             plots_per_page(int):
                 maximum number of plots per figure.
-            tight_layout(dict or False):
-                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
@@ -705,7 +703,6 @@ class PlotMethodsMixin:
                 self[i] = make_Data(d)
 
         extra = kargs.pop("extra", lambda i, j, d: None)
-        tight = kargs.pop("tight_layout", {})
 
         fig_args = getattr(self, "_fig_args", [])
         fig_kargs = getattr(self, "_fig_kargs", {})
@@ -721,21 +718,18 @@ class PlotMethodsMixin:
         fignum = fig.number
         for i, d in enumerate(self):
             if i % plts == 0 and i != 0:
-                if isinstance(tight, dict):
-                    tight_layout(**tight)
                 fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
                 fignum = fig.number
                 j = 0
             else:
                 j += 1
             fig = figure(fignum)
-            kargs["fig"] = fig
+            kargs["figure"] = fig
             kargs["ax"] = axs.ravel()[j]
             ret.append(d.plot(*args, **kargs))
             extra(i, j, d)
         for n in range(j + 1, plt_x * plt_y):
             axs.ravel()[n].remove()
-        tight_layout()
         return ret
 
 

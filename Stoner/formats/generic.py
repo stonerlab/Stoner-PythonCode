@@ -8,18 +8,7 @@ import io
 import re
 from collections.abc import Mapping
 import sys
-
-
-@contextlib.contextmanager
-def catch_sysout(*args):
-    """Temporarily redirect sys.stdout and.sys.stdin."""
-    stdout, stderr = sys.stdout, sys.stderr
-    out = io.StringIO()
-    sys.stdout, sys.stderr = out, out
-    yield None
-    sys.stdout, sys.stderr = stdout, stderr
-    return
-
+import logging
 
 import PIL
 import numpy as np
@@ -28,6 +17,29 @@ from ..Core import DataFile
 from ..compat import str2bytes, Hyperspy_ok, hs, hsload
 from ..core.exceptions import StonerLoadError
 from ..tools.file import FileManager
+
+
+class _refuse_log(logging.Filter):
+
+    """Refuse to log all records."""
+
+    def filter(self, record):
+        """Do not log anything."""
+        return False
+
+
+@contextlib.contextmanager
+def catch_sysout(*args):
+    """Temporarily redirect sys.stdout and.sys.stdin."""
+    stdout, stderr = sys.stdout, sys.stderr
+    out = io.StringIO()
+    sys.stdout, sys.stderr = out, out
+    logger = logging.getLogger("hyperspy.io")
+    logger.addFilter(_refuse_log)
+    yield None
+    logger.removeFilter(_refuse_log)
+    sys.stdout, sys.stderr = stdout, stderr
+    return
 
 
 def _delim_detect(line):

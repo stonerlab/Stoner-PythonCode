@@ -4,7 +4,6 @@ __all__ = [
     "str2bytes",
     "bytes2str",
     "get_filedialog",
-    "getargspec",
     "string_types",
     "path_types",
     "int_types",
@@ -66,11 +65,6 @@ if __vi__[1] < 7:
     from re import _pattern_type  # pylint: disable = E0611
 else:
     from re import Pattern as _pattern_type  # pylint: disable = E0611
-
-
-def getargspec(*args, **kargs):
-    """Wrap for getargspec for Python V3."""
-    return getfullargspec(*args, **kargs)[:4]
 
 
 def get_func_params(func):

@@ -8,7 +8,7 @@ from json import loads, dumps
 from copy import deepcopy, copy
 
 import numpy as np
-from matplotlib.pyplot import figure, Figure, subplot, tight_layout
+from matplotlib.pyplot import figure, Figure, subplot
 from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from PIL import Image
 
@@ -314,8 +314,6 @@ class ImageFolderMixin:
                 Passed to matplotlib figure call.
             plots_per_page(int):
                 maximum number of plots per figure.
-            tight_layout(dict or False):
-                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
@@ -332,7 +330,6 @@ class ImageFolderMixin:
         plts = min(plts, len(self))
 
         extra = kargs.pop("extra", lambda i, j, d: None)
-        tight = kargs.pop("tight_layout", {})
 
         fig_num = kargs.pop("figure", getattr(self, "_figure", None))
         if isinstance(fig_num, Figure):
@@ -344,7 +341,7 @@ class ImageFolderMixin:
             fig_num = fig_num.number
 
         fig_args = getattr(self, "_fig_args", [])
-        fig_kargs = getattr(self, "_fig_kargs", {})
+        fig_kargs = getattr(self, "_fig_kargs", {"layout": "constrained"})
         for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
             if arg in kargs:
                 fig_kargs[arg] = kargs.pop(arg)
@@ -363,8 +360,6 @@ class ImageFolderMixin:
         for i, d in enumerate(self):
             plt_kargs = copy(kargs)
             if i % plts == 0 and i != 0:
-                if isinstance(tight, dict):
-                    tight_layout(**tight)
                 fig = figure(*fig_args, **fig_kargs)
                 fignum = fig.number
                 j = 1
@@ -381,8 +376,6 @@ class ImageFolderMixin:
                     plt_kargs["title"] = kargs["title"](d)
             ret.append(d.imshow(*args, **plt_kargs))
             extra(i, j, d)
-            if isinstance(tight, dict):
-                tight_layout(**tight)
         return ret
 
     def stddev(self, weights=None, _box=False, _metadata="first"):

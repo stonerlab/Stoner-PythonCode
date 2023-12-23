@@ -27,4 +27,3 @@ for i, (binned, label) in enumerate(
     d.xlim = (1, 6)
     d.ylim(-100.0, 400)
     d.title = "Bin demo" if i == 0 else ""
-d.tight_layout()

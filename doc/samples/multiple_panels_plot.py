@@ -6,4 +6,5 @@ p = Data("sample.txt", setas="xyy")
 # Quick plot
 p.plot(multiple="panels")
 # Helps to fix layout !
-p.tight_layout()
+p.set_layout_engine("tight")
+p.draw()

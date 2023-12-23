@@ -33,8 +33,8 @@ fit = d.curve_fit(
 )
 # Reset labels
 d.labels = []
-
 # Make nice two panel plot layout
+d.figure(figsize=(7, 5), no_axes=True)
 ax = d.subplot2grid((3, 1), (2, 0))
 d.setas = "x..y"
 d.plot(fmt="g+", label="Fit residuals")
