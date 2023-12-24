@@ -251,7 +251,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         We're using __new__ rather than __init__ to imitate a numpy array as
         close as possible.
         """
-
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
         array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.get("metadata", {})
@@ -670,6 +669,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             del self.metadata[index]
         else:
             super().__delitem__(index)
+
+    def save(self, filename=None, **kargs):
+        """Stub method for a save function."""
+        raise NotImplementedError(f"Save is not implemented in {self.__class__}")
 
 
 @class_modifier(

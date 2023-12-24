@@ -249,7 +249,7 @@ class ImageFolderMixin:
                 except (TypeError, ValueError, IOError):
                     metadata = []
             else:
-                raise TypeError(f"Cannot load as an ImageFolder due to lack of description tag")
+                raise TypeError("Cannot load as an ImageFolder due to lack of description tag")
             imglist = []
             for ix, md in enumerate(metadata):
                 img.seek(ix)

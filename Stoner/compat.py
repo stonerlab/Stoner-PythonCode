@@ -21,14 +21,15 @@ __all__ = [
     "_dummy",
 ]
 
-from sys import version_info as __vi__
+from sys import version_info as __vi__, modules
 from os import walk, makedirs
 from os.path import join, commonpath
 import fnmatch
-from inspect import signature, getfullargspec
 from shutil import which
 from pathlib import PurePath
 from packaging.version import parse as version_parse
+from inspect import signature
+import re
 
 import numpy as np
 import scipy as sp
@@ -38,6 +39,11 @@ _lmfit = True
 np_version = version_parse(np.__version__)
 sp_version = version_parse(sp.__version__)
 mpl_version = version_parse(matplotlib.__version__)
+
+modules["sre_parse"] = re._parser
+modules["sre_constants"] = re._constants
+modules["sre_compile"] = re._compiler
+
 
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages

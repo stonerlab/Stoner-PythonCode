@@ -172,7 +172,9 @@ class MimizerAdaptor:
 
 class _curve_fit_result:
 
-    """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
+    """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit`
+    as a class to make handling easier.
+    """
 
     def __init__(self, popt, pcov, infodict, mesg, ier):
         """Store the results of the curve fit full_output fit.
@@ -1140,7 +1142,7 @@ class FittingMixin:
             raise TypeError(
                 "".join(
                     [
-                        f"curve_fit parameter 1 must be either a Model class from",
+                        "curve_fit parameter 1 must be either a Model class from",
                         f" lmfit or scipy.odr, or a callable, not a {type(func)}",
                     ]
                 )

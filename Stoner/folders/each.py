@@ -76,6 +76,7 @@ class SetasWrapper(MutableSequence):
         """
         if len(value) < len(self._folder):
             value = value + value[-1] * (len(self._folder) - len(value))
+        v = "."
         for v, data in zip(value, self._folder):
             data.setas[index] = v
         setas = self._folder._object_attrs.get("setas", self.collapse())

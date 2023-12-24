@@ -21,7 +21,7 @@ from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
 from matplotlib import cm, colors, colormaps
 
-from Stoner.compat import string_types, index_types, int_types, get_func_params
+from Stoner.compat import string_types, index_types, int_types
 from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, typedList, get_option, fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
@@ -230,7 +230,8 @@ class PlotMixin:
     def showfig(self):
         """Return either the current figure or self or None.
 
-        The return value depends on whether the attribute is True or False or None."""
+        The return value depends on whether the attribute is True or False or None.
+        """
         if self._showfig is None or get_option("no_figs"):
             return None
         if self._showfig:
@@ -324,11 +325,14 @@ class PlotMixin:
         ReturnsL
             A matplotib Figure
 
-        This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
+        This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set
+        """
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-        if not isinstance(ax := self.__figure.gca(), Axes3D):
+        if not isinstance(self.__figure.gca(), Axes3D):
             ax = plt.axes(projection="3d")
+        else:
+            ax = self.__figure.gca()
         z_coord = np.nan_to_num(z_coord)
         surf = ax.plot_surface(x_coord, y_coord, z_coord, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
@@ -1531,7 +1535,7 @@ class PlotMixin:
             if ix > 0:  # Hooks for multiple subplots
                 if multiple == "panels":
                     loc, lab = plt.yticks()
-                    lab = [l.get_text() for l in lab]
+                    lab = [label.get_text() for label in lab]
                     plt.yticks(loc[:-1], lab[:-1])
         return self.showfig
 

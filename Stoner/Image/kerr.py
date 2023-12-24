@@ -83,6 +83,10 @@ class KerrArray(ImageArray):
         """Do a test call to tesseract to see if it is there and cache the result."""
         return _tesseractable
 
+    def save(self, filename=None, **kargs):
+        """Stub method for a save function."""
+        raise NotImplementedError(f"Save is not implemented in {self.__class__}")
+
 
 @class_modifier(kerrfuncs, adaptor=image_file_adaptor)
 class KerrImageFile(ImageFile):
@@ -99,7 +103,7 @@ class KerrImageFile(ImageFile):
         self._image = self.image.view(KerrArray)
 
     @ImageFile.image.getter
-    def image(self):
+    def image(self):  # pylint disable=invalid-overridden-method
         """Access the image data."""
         return self._image.view(KerrArray)
 

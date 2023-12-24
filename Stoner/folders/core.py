@@ -346,7 +346,8 @@ class baseFolder(MutableSequence):
     def each(self):
         """Return a :py:class:`Stoner.folders.each.item` proxy object.
 
-        This is for calling attributes of the member type of the folder."""
+        This is for calling attributes of the member type of the folder.
+        """
         return EachItem(self)
 
     @property
@@ -441,7 +442,8 @@ class baseFolder(MutableSequence):
     def metadata(self):
         """Return a :py:class:`Stoner.folders.metadata.MetadataProxy` object.
 
-        This allows for operations on combined metadata."""
+        This allows for operations on combined metadata.
+        """
         return MetadataProxy(self)
 
     @property
@@ -948,15 +950,15 @@ class baseFolder(MutableSequence):
         cls = type(self).__name__
         pth = self.key
         pattern = getattr(self, "pattern", "")
-        s = f"{cls}({pth}) with pattern {pattern} has {len(self)} files and {len(self.groups)} groups\n"
+        string = f"{cls}({pth}) with pattern {pattern} has {len(self)} files and {len(self.groups)} groups\n"
         if not short:
-            for r in self.ls:
-                s += "\t" + r + "\n"
+            for row in self.ls:
+                string += "\t" + row + "\n"
         for g in self.groups:  # iterate over groups
             r = self.groups[g].__repr__()
-            for l in r.split("\n"):  # indent each line by one tab
-                s += "\t" + l + "\n"
-        return s.strip()
+            for line in r.split("\n"):  # indent each line by one tab
+                string += "\t" + line + "\n"
+        return string.strip()
 
     def __reversed__(self):
         """Create an iterator function that runs backwards through the stored objects."""
@@ -1348,8 +1350,8 @@ class baseFolder(MutableSequence):
 
         Args:
             key (string or callable or list):
-                Either a simple string or callable function or a list. If a string then it is interpreted as an item of
-                metadata in each file. If a callable function then takes a single argument x which should be an
+                Either a simple string or callable function or a list. If a string then it is interpreted as an item
+                of metadata in each file. If a callable function then takes a single argument x which should be an
                 instance of a metadataObject and returns some vale. If key is a list then the grouping is
                 done recursely for each element in key.
 
@@ -1473,7 +1475,7 @@ class baseFolder(MutableSequence):
             name = f"Untitled-{self._last_name}"
         return name
 
-    def pop(self, name=-1, default=None):  # pylint: disable=arguments-differ
+    def pop(self, name=-1, default=None):  # pylint: disable=arguments-differ,arguments-renamed
         """Return and remove either a subgroup or named object from this folder."""
         try:
             ret = self[name]

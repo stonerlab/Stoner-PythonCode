@@ -37,7 +37,7 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
             Callable function that can produce an object of an appropriate class.
     """
     if "type" not in f.attrs:
-        StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
+        raise StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
     typ = bytes2str(f.attrs.get("type", ""))
     if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
         raise StonerLoadError(
@@ -84,8 +84,8 @@ class HDFFileManager:
             if not mode.startswith("w"):
                 with h5py.File(filename, "r"):
                     pass
-        except (IOError, OSError):
-            raise StonerLoadError(f"{filename} not at HDF5 File")
+        except (IOError, OSError) as err:
+            raise StonerLoadError(f"{filename} not at HDF5 File") from err
         self.filename = filename
 
     def __enter__(self):
@@ -108,7 +108,7 @@ class HDFFileManager:
             raise StonerLoadError("Note a resource that can be handled with HDF")
         return self.handle
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, _type, _value, _traceback):
         """Ensure we close the hdf file no matter what."""
         if self.file is not None and self.close:
             self.file.close()
