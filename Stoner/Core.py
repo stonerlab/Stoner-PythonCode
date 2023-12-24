@@ -30,7 +30,7 @@ from numpy import ma
 
 from .compat import string_types, int_types, index_types, _pattern_type, path_types
 from .tools import all_type, isiterable, isLikeList, get_option, make_Data
-from .tools.file import get_file_name_type, auto_load_classes, get_file_type
+from .tools.file import get_file_name_type, auto_load_classes
 
 from .core.exceptions import StonerLoadError, StonerSetasError
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
@@ -1369,8 +1369,6 @@ class DataFile(
             filename, filetype = get_file_name_type(filename, filetype, DataFile)
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
-        else:
-            filetype = get_file_type(filetype, DataFile)
         if auto_load:  # We're going to try every subclass we canA
             ret = auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs)
             if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!

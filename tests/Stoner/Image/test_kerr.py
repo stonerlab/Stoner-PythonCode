@@ -16,8 +16,6 @@ import matplotlib.pyplot as plt
 import Stoner
 
 Stoner.Options.multiprocessing = False
-Stoner.Options.threading = True
-
 
 # data arrays for testing - some useful small images for tests
 

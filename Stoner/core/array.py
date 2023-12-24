@@ -511,7 +511,7 @@ class DataArray(ma.MaskedArray):
                         ret[c] = ret[c][0]
                     else:
                         ret[c] = None
-        elif force_list or (isinstance(scalar, bool) and not scalar):
+        elif isinstance(scalar, bool) and not scalar:
             for c in ret:
                 if c.startswith("x") or c.startswith("has_"):
                     continue

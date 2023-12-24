@@ -10,65 +10,17 @@ __all__ = [
     "removeDisallowedFilenameChars",
 ]
 import os.path as path
-from os import cpu_count
 import re
 import string
 import fnmatch
 import pathlib
-from concurrent import futures
-from dask.distributed import Client
+from multiprocessing.pool import ThreadPool
 
 from numpy import array
+import multiprocess as multiprocessing
 
 from Stoner.compat import string_types, _pattern_type
 from Stoner.tools import get_option
-
-
-class _fake_future:
-
-    """Minimal class that behaves like a simple future.
-
-    This simply stores the function that should be exectured and its arguments and then delays executing it until
-    the result() method is called.
-    """
-
-    def __init__(self, fn, *args, **kargs):
-        self.fn = fn
-        self.args = args
-        self.kargs = kargs
-
-    def result(self):
-        """Execute the stored function call and return the result."""
-        return self.fn(*self.args, **self.kargs)
-
-
-class _fake_executor:
-
-    """Minimal class to fake the bits of the executor protocol that we need."""
-
-    def __init__(self, *args, **kargs):
-        """Fake constructor."""
-
-    def map(self, fn, *iterables):  # pylint: disable=no-self-use
-        """Map over the results, yields each result in turn."""
-        for item in zip(*iterables):
-            yield fn(*item)
-
-    def shutdown(self):  # pylint: disable=no-self-use
-        """Fake shutdown method."""
-
-    def submit(self, fn, *args, **kwargs):  # pylint: disable no-self-use
-        """Execute a function."""
-        return _fake_future(fn(*args, **kwargs))
-
-
-executor_map = {
-    "singleprocess": (_fake_executor, {}),
-    "serial": (_fake_executor, {}),
-    "threadpool": (futures.ThreadPoolExecutor, {"max_workers": cpu_count()}),
-    "processpool": (futures.ProcessPoolExecutor, {"max_workers": cpu_count()}),
-    "dask": (Client, {}),
-}
 
 
 def pathsplit(pth):
@@ -153,36 +105,27 @@ def filter_files(files, patterns, keep=True):
     return files
 
 
-def get_pool(folder=None, _model=None):
-    """Get a concurrent.futures compatible executor.
+def get_pool(_serial=False):
+    """Get a Pool and map implementation depending on options.
 
     Returns:
-        (futures.Executor):
-            Executor on which to run the distributed job.
+        Pool(),map: Pool object if possible and map implementation.
     """
-    if isinstance(_model, str):
-        _model = _model.lower()
-    if getattr(folder, "executor", False):
-        if folder.executor.name == _model:
-            return folder.executor
-
-    if _model is None:
-        if get_option("multiprocessing"):
+    if get_option("multiprocessing") and not _serial:
+        try:
             if get_option("threading"):
-                _model = "threadpool"
+                p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))
             else:
-                _model = "processpool"
-        else:
-            _model = "singleprocess"
-    executor_class, kwargs = executor_map[_model]
-    executor = executor_class(**kwargs)
-    executor.name = _model
-
-    if getattr(folder, "executor", False):
-        folder.executor.shutdown()
-    if folder:
-        setattr(folder, "executor", executor)
-    return executor
+                p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))
+            imap = p.imap
+        except (ArithmeticError, AttributeError, LookupError, RuntimeError, NameError, OSError, TypeError, ValueError):
+            # Fallback to non-multiprocessing if necessary
+            p = None
+            imap = map
+    else:
+        p = None
+        imap = map
+    return p, imap
 
 
 def removeDisallowedFilenameChars(filename):

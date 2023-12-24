@@ -26,7 +26,6 @@ from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 from .utils import hsl2rgb
-from .classes import PlotAttr
 
 
 try:  # Check we've got 3D plotting
@@ -133,7 +132,6 @@ class PlotMixin:
         self.__figure = None
         self._showfig = kargs.pop("showfig", True)  # Retains previous behaviour
         self._subplots = []
-        self.newplot = PlotAttr(self)
         self._public_attrs = {
             "fig": (int, mplfig.Figure),
             "labels": list,
@@ -144,7 +142,6 @@ class PlotMixin:
             "xlabel": string_types,
             "ylabel": string_types,
             "_showfig": bool,
-            "newplot": PlotAttr,
         }
         super().__init__(*args, **kargs)
         self._labels = typedList(string_types, [])
@@ -272,16 +269,6 @@ class PlotMixin:
         else:
             raise ValueError(f"Template is not of the right class:{type(value)}")
         self._template.apply()
-
-    def __getstate__(self):
-        """Cleanup state before pickle for folder operations."""
-        state = self.__dict__.copy()
-        state.pop("newplot", None)
-        return state
-
-    def __setstate__(self, state):
-        """Restore state after pickle."""
-        self.__dict__.update(state)
 
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.

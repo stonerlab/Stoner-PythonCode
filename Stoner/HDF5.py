@@ -3,7 +3,7 @@
 Classes include
 
 * HDF5File - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from hdf5 files
-* HDF5Folder - A :py:class:`Stoner.folders.DataFolder` subclass that can save and load data from a single hdf5 file
+* HDF5Folder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single hdf5 file
 
 It is only necessary to import this module for the subclasses of :py:class:`Stoner.Core.DataFile` to become available
 to :py:class:`Stoner.Core.Data`.
@@ -375,7 +375,7 @@ class HDF5FolderMixin:
 
     """Provides a method to load and save data from a single HDF5 file with groups.
 
-    See :py:class:`Stoner.folders.DataFolder` for documentation on constructor.
+    See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
 
     Datalayout consistns of sub-groups that are either instances of HDF5Files (i.e. have a type attribute that
     contains 'HDF5File') or are themsleves HDF5Folder instances (with a type attribute that reads 'HDF5Folder').

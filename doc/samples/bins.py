@@ -20,7 +20,7 @@ for i, (binned, label) in enumerate(
     zip([e, f, g, h], ["0.05 Linear", "0.25 Linear", "0.05 Log", "50 log"])
 ):
     binned.subplot(411 + i)
-    d.plot(fmt="k.", capsize=2.0, ms=3.0)
+    d.plot(fmt="k,", capsize=2.0)
     binned.fig = d.fig
     binned.plot(plotter=errorfill, label=label, color="red")
 

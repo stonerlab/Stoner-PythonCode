@@ -34,7 +34,7 @@ rising or falling. This is designed to help deal with analysis problems involvin
     from Stoner.Util import split_up_down
     folder=split_up_down(data,column)
 
-In this example *folder* is a :py:class:`Stoner.folders.DataFolder` instance with two groups, one for rising values of the column
+In this example *folder* is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
 and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter
 which is an existing :py:class:`Stoner.Core.DataFolder` instance to which the new groups (if they
 don't already exist) and files will be added.

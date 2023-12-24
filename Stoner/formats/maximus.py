@@ -223,7 +223,7 @@ class MaximusStackMixin:
     def _read_image(self, g):
         """Read an image array and return a member of the image stack."""
         if "image" not in g:
-            raise StonerLoadError(f"{g.name} does not have a signal dataset !")
+            _raise_error(g.parent, message=f"{g.name} does not have a signal dataset !")
         tmp = self.type()  # pylint: disable=E1102
         data = g["image"]
         if np.prod(np.array(data.shape)) > 0:
@@ -326,7 +326,7 @@ class MaximusStackMixin:
                 names = []
             grps = list(f.keys())
             if "common_metadata" not in grps or "common_typehints" not in grps:
-                raise StonerLoadError("Couldn;t find common metadata groups, something is not right here!")
+                _raise_error(f, message="Couldn;t find common metadata groups, something is not right here!")
             metadata = f["common_metadata"].attrs
             typehints = f["common_typehints"].attrs
             for i in sorted(metadata):

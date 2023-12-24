@@ -77,8 +77,8 @@ and a column 'Temperature' that contains numbers above and below 100.
 
 The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate instances of :py:class:`AnalysisMixin`  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
-produce a :py:class:`Stoner.folders.DataFolder` object containing two :py:class:`AnalysisMixin` objects for the rows with temperature above and below 100.
-The final example will result in a :py:class:`Stoner.folders.DataFolder` object that has two groups each of which contains
+produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalysisMixin` objects for the rows with temperature above and below 100.
+The final example will result in a :py:class:`Stoner.Folders.DataFolder` object that has two groups each of which contains
 :py:class:`AnalysisMixin` objects for each polarisation value.
 
 More AnalysisMixin Functions

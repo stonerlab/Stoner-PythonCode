@@ -199,25 +199,23 @@ Utility Functions
     :no-inheritance-diagram:
     :headings: -~
 
-
 -------------------------------------
 Folders pacakge - Collections Classes
 -------------------------------------
 
-.. module:: Stoner.folders
-
-
-Main Class
-^^^^^^^^^^
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    DataFolder
+Main Classes
+^^^^^^^^^^^^
+.. automodapi:: Stoner.Folders
+    :headings: -~
 
 
 Folders Package and Submodules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodapi:: Stoner.folders
+    :no-inheritance-diagram:
+    :inherited-members:
+    :headings: -~
 
 .. automodapi:: Stoner.folders.core
     :no-inheritance-diagram:

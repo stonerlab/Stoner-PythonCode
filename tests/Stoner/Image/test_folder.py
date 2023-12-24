@@ -5,7 +5,6 @@
 from Stoner.Image import ImageArray, ImageFolder
 import pytest
 import os
-import re
 
 knownkeys = [
     "Averaging",

@@ -9,7 +9,7 @@ Curve Fitting in the Stoner Package
 Introduction
 ============
 
-Many data analysis tasks make use of curve fitting at some point - the process of fitting a model to a set of data points and
+Many data analysis tasks make use of curve fitting at some point - the process of fitting a model to as set of data points and
 determining the co-efficients of the model that give the best fit. Since this is such a ubiquitous task, it will be no surprise that
 the Stoner package provides a variety of different algorithms.
 
@@ -37,7 +37,7 @@ In order of increasing complexity, the Stoner package supports the following:
 
 -   `Orthogonal distance regression`_
 
-    On the other hand, if your data has uncertainties in both *x* and *y* you may want to use the :py:meth:`Data.odr` method to do an analysis that
+    Finally, if your data has uncertainties in both *x* and *y* you may want to use the :py:meth:`Data.odr` method to do an analysis that
     minimizes the distance of the model function in both *x* and *y*.
 
 -   `Differential Evolution Algorithm`_
@@ -61,7 +61,7 @@ standalone fitting functions:
         Gerneally these follow the :py:func:`scipy.optimize.curve_fit` conventions.
     #.  They make use of the :py:attr:`Data.setas` attribute to identify data columns containing *x*, *y* and associated uncertainties. They
         also probvide a common way to select a subset of data to use for the fitting through the *bounds* keyword argument.
-    #.  They provide a consistent way to add the best fit data as a column(s) to the :py:class:`Data` object and to store the best-fit
+    #.  They provide a consistent way to add the best fit data as a column(s) to the :py:class:`Data` object and to stpore the best-fit
         parameters in the metadata for retrieval later. Since this is done in a consistent fashion, the package also can probide a
         :py:meth:`Data.annotate_plot` method to diisplay the fitting parameters on a plot of the data.
 

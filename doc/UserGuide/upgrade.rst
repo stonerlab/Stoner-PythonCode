@@ -151,3 +151,5 @@ The new :py:attr:`Stoner.DataFolder.metadata` attribute and :py:meth:`Stoner.fol
 allow this to be done directly::
 
     result=fldr.metadata.slice(["thing_1","thing_2"], output="Data")
+
+

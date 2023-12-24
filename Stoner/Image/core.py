@@ -8,7 +8,7 @@ from importlib import import_module
 from io import BytesIO as StreamIO
 from warnings import warn
 
-from PIL import Image, PngImagePlugin
+from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage as ndi
@@ -26,6 +26,7 @@ from skimage import (
     segmentation,
     transform,
 )
+
 from ..core.base import typeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..Core import DataFile
@@ -37,17 +38,11 @@ from ..compat import (
     get_filedialog,
     int_types,
     path_types,
-    str2bytes,
 )  # Some things to help with Python2 and Python3 compatibility
 from .attrs import DrawProxy, MaskProxy
 from .widgets import RegionSelect
 from . import imagefuncs
 from ..tools.classes import Options
-
-if "READTHEDOCS" not in os.environ:
-    from skimage import viewer
-else:
-    from ..tools import null as viewer
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 

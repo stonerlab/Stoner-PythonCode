@@ -1,17 +1,6 @@
 """Core support for working with collections of files in the :py:class:`Stoner.DataFolder`."""
 
-__all__ = [
-    "core",
-    "each",
-    "groups",
-    "metadata",
-    "mixins",
-    "utils",
-    "baseFolder",
-    "DataFolder",
-    "PlotFolder",
-    "DiskBasedFolderMixin",
-]
+__all__ = ["core", "each", "groups", "metadata", "mixins", "utils", "DataFolder", "PlotFolder"]
 
-from .core import baseFolder
-from .mixins import DataFolder, PlotFolder, DiskBasedFolderMixin
+from . import mixins
+from .mixins import DataFolder, PlotFolder

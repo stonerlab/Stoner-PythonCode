@@ -171,8 +171,8 @@ def split_up_down(data, col=None, folder=None):
             object containign the data to be sorted
         col (index):
             is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
-        folder (:py:class:`Stoner.folders.DataFolder` or None):
-            if this is an instance of :py:class:`Stoner.folders.DataFolder` then add
+        folder (:py:class:`Stoner.Folders.DataFolder` or None):
+            if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add
             rising and falling files to groups of this DataFolder, otherwise create a new one
 
     Returns:

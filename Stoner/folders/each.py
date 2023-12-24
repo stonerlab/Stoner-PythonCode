@@ -1,12 +1,8 @@
 """Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
-from __future__ import annotations
-
 __all__ = ["Item"]
 from collections.abc import MutableSequence
 from functools import wraps, partial
 from traceback import format_exc
-import os
-from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -14,15 +10,11 @@ from ..tools import isiterable
 from ..compat import string_types
 from .utils import get_pool
 
-if TYPE_CHECKING:
-    from ..core import metadataObject
-    from .core import baseFolder
-    from typing import Tuple, List, Any, Union, Optional, Callable
 
 def _worker(d, **kwargs):
     """Support function to run an arbitrary function over a :py:class:`Stoner.Data` object."""
     byname = kwargs.get("byname", False)
-    func = kwargs.get("_func", lambda x: x)
+    func = kwargs.get("func", lambda x: x)
     if byname:
         func = getattr(d, func, lambda x: x)
     args = kwargs.get("args", tuple())
@@ -46,7 +38,7 @@ class SetasWrapper(MutableSequence):
 
     """Manages wrapping each member of the folder's setas attribute."""
 
-    def __init__(self, parent: "Item"):
+    def __init__(self, parent):
         """Note a reference to the parent item class instance and folder."""
         self._each = parent
         self._folder = parent._folder
@@ -65,11 +57,11 @@ class SetasWrapper(MutableSequence):
         lengths = np.array([len(data.setas) for data in self._folder])
         return abs(lengths.min())
 
-    def __getitem__(self, index: Union[str, int, slice]) -> Union[str, List[str], int]:
+    def __getitem__(self, index):
         """Get the corresponding item from all the setas items in the folder."""
         return [data.setas[index] for data in self._folder]
 
-    def __setitem__(self, index: Union[str, int], value):
+    def __setitem__(self, index, value):
         """Set the value of the specified item on the setas elements in the folder.
 
         Args:
@@ -91,7 +83,7 @@ class SetasWrapper(MutableSequence):
         setas[index] = v
         self._folder._object_attrs["setas"] = setas
 
-    def __delitem__(self, index: Union[str, int]):
+    def __delitem__(self, index):
         """Cannot delete items from the proxy setas object - so simply clear it instead."""
         for data in self._folder:
             data.setas[index] = "."
@@ -99,13 +91,11 @@ class SetasWrapper(MutableSequence):
         setas[index] = "."
         self._folder._object_attrs["setas"] = setas
 
-    def insert(self, index: Union[str, int], value: Any):
+    def insert(self, index, value):
         """Cannot insert items into the proxy setas object."""
-        raise NotImplementedError(
-            "Cannot insert into the objectFolder's setas - insdert into the objectFolder instead!"
-        )
+        raise IndexError("Cannot insert into the objectFolder's setas - insdert into the objectFolder instead!")
 
-    def collapse(self) -> List[str]:
+    def collapse(self):
         """Collapse the setas into a single list if possible."""
         setas = []
         for v in self:
@@ -129,26 +119,26 @@ class Item:
 
     _folder = None
 
-    def __init__(self, folder: baseFolder):
+    def __init__(self, folder):
         """Create the each proxy object.
 
         Notes the partent folder that created us."""
         self._folder = folder
 
     @property
-    def setas(self) -> SetasWrapper:
+    def setas(self):
         """Return a proxy object for manipulating all the setas objects in a folder."""
         return SetasWrapper(self)
 
     @setas.setter
-    def setas(self, value: Union[str, List[str]]):
+    def setas(self, value):
         """Manipualte the setas property of all the objects in the folder."""
         setas = self.setas
         setas(value)
         self._folder._object_attrs["setas"] = setas.collapse()
         return setas
 
-    def __call__(self, func: Callable, *args, **kargs) -> Any:
+    def __call__(self, func, *args, **kargs):
         """Iterate over the baseFolder, calling func on each item.
 
         Args:
@@ -177,7 +167,7 @@ class Item:
                 func = getattr(self, func)
         return list(self.iter(func, *args, **kargs))
 
-    def __dir__(self) -> List[str]:
+    def __dir__(self):
         """Return a list of the common set of attributes of the instances in the folder."""
         if self._folder and len(self._folder) != 0:
             res = set(dir(self._folder[0]))
@@ -188,7 +178,7 @@ class Item:
                 res &= set(dir(d))
         return list(res)
 
-    def __delattr__(self, name: str):
+    def __delattr__(self, name):
         """Handle removing an attribute from the folder, including proxied attributes."""
         if name in dir(self._folder.instance) or (
             len(self._folder) and hasattr(self._folder[0], name)
@@ -206,7 +196,7 @@ class Item:
         else:
             raise AttributeError(f"Unrecognised attribute {name}")
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name):
         """Handle some special case attributes that provide alternative views of the objectFolder.
 
         Args:
@@ -246,9 +236,18 @@ class Item:
                     raise AttributeError
         except AttributeError as err:  # Ok, pass back
             raise AttributeError(f"{name} is not an Attribute of {type(self)} or {type(instance)}") from err
+        # except TypeError as err:  # Can be triggered if self.instance lacks the attribute
+        #     if len(self._folder) and hasattr(self._folder[0], name):
+        #         ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
+        #         mask, values = zip(*ret)
+        #         ret = np.ma.MaskedArray(values)
+        #         ret.mask = mask
+        #     else:
+        #         raise err
+
         return ret
 
-    def __setattr__(self, name: str, value: Any):
+    def __setattr__(self, name, value):
         """Proxy call to set an attribute.
 
         Setting the attribute on .each sets it on all instantiated objects and in _object_attrs.
@@ -283,7 +282,7 @@ class Item:
         else:
             raise AttributeError(f"Unknown attribute {name}")
 
-    def __getattr_proxy(self, item: str) -> Callable:
+    def __getattr_proxy(self, item):
         """Make a prpoxy call to access a method of the metadataObject like types.
 
         Args:
@@ -312,7 +311,7 @@ class Item:
         # Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
-    def __rmatmul__(self, other: Callable) -> Callable:
+    def __rmatmul__(self, other):
         """Implement callable@DataFolder as a generic iterate a function over DataFolder members.
 
         Returns:
@@ -338,24 +337,14 @@ class Item:
         # Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
-    def iter(self, func: Union[str, Callable], *args, **kargs) -> Any:
+    def iter(self, func, *args, **kargs):
         """Iterate over the baseFolder, calling func on each item.
 
         Args:
-            func (str, callable):
-                A Callable object that must take a metadataObject type instance as it's first argument.
+            func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
 
         Keyword Args:
-            _return (None, bool or str):
-                Controls how the return value from *func* is added to the DataFolder
-            _byname (bool):
-                Whether to look func up as the name of a function. Defaults to True if func is a string.
-            _mode (str):
-                Whether to iterate using a parallel iteration scheme. Possible values are:
-                    "serial","SingleProcess": In the same process as the main script
-                    "ThreadPool": Uses a concurrent.futures ThreadPool
-                    "ProcessPool": Uses a concurrent.futures ProcessPool
-                    "Dask": Uses a dask.distributed.Client to distribute the task over an DASK cluster.
+            _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder
 
         Returns:
             A list of the results of evaluating *func* for each item in the folder.
@@ -368,22 +357,19 @@ class Item:
             string. then return result is stored in the corresponding name.
         """
         _return = kargs.pop("_return", None)
-        _byname = kargs.pop("_byname", isinstance(func, string_types))
-        _model = kargs.pop("_mode", "serial")
-        if _model.lower() not in ["serial", "singleprocess", "threadpool", "processpool", "dask"]:
-            raise ValueError(f"Unknown folder iteration model {_model}")
-
+        _byname = kargs.pop("_byname", False)
+        _serial = kargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        executor = get_pool(folder=self._folder, _model=_model)
+        p, imap = get_pool(_serial)
         for ix, (new_d, ret) in enumerate(
-            executor.map(partial(_worker, _func=func, args=args, kargs=kargs, byname=_byname), self._folder)
+            imap(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder)
         ):
             if self._folder.debug:
                 print(ix, type(ret))
             if isinstance(ret, self._folder._type) and _return is None:
                 try:  # Check if ret has same data type, otherwise will not overwrite well
                     if ret.data.dtype != new_d.data.dtype:
-                        return ret
+                        continue
                     new_d = ret
                 except AttributeError:
                     pass
@@ -394,3 +380,6 @@ class Item:
             name = self._folder.__names__()[ix]
             self._folder.__setter__(name, new_d)
             yield ret
+        if p is not None:
+            p.close()
+            p.join()

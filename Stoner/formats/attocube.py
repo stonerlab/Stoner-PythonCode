@@ -14,7 +14,6 @@ from scipy.optimize import curve_fit
 import h5py
 
 from ..compat import string_types, bytes2str
-from ..core.exceptions import StonerLoadError
 from ..core.base import typeHintedDict
 from ..Image import ImageStack, ImageFile, ImageArray
 from ..HDF5 import HDFFileManager
@@ -135,11 +134,12 @@ class AttocubeScanMixin:
             self.filename = filename
         with HDFFileManager(self.filename, "r") as f:
             if "type" not in f.attrs:
-                raise StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
+                _raise_error(f, message="HDF5 Group does not specify the type attribute used to check we can load it.")
             typ = bytes2str(f.attrs["type"])
             if typ != type(self).__name__ and "module" not in f.attrs:
-                raise StonerLoadError(
-                    f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load.",
+                _raise_error(
+                    f,
+                    message=f"HDF5 Group is not a {type(self).__name__} and does not specify a module to use to load.",
                 )
             loader = None
             if typ == type(self).__name__:
@@ -234,7 +234,7 @@ class AttocubeScanMixin:
         """Load a single scan file from ascii data."""
         with FileManager(filename, "r") as data:
             if not data.readline().startswith("# Daisy frame view snapshot"):
-                raise StonerLoadError(f"{filename} lacked the correct header line")
+                raise ValueError(f"{filename} lacked the correct header line")
             tmp = ImageFile()
             for line in data:
                 if not line.startswith("# "):
@@ -439,7 +439,7 @@ class AttocubeScanMixin:
                 channels = []
             grps = list(f.keys())
             if "common_metadata" not in grps or "common_typehints" not in grps:
-                raise StonerLoadError("Couldn;t find common metadata groups, something is not right here!")
+                _raise_error(f, message="Couldn;t find common metadata groups, something is not right here!")
             metadata = f["common_metadata"].attrs
             typehints = f["common_typehints"].attrs
             for i in sorted(metadata):

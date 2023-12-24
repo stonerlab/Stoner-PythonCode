@@ -1,12 +1,17 @@
 """Stoner .Analysis provides a subclass of :class:`.Data` that has extra analysis routines builtin."""
 
-__all__ = ["AnalysisMixin"]
+__all__ = ["AnalysisMixin", "GetAffineTransform", "ApplyAffineTransform"]
+from inspect import getfullargspec
 import numpy as np
 import numpy.ma as ma
 
 from scipy.integrate import cumtrapz
+from scipy.optimize import curve_fit
 
 from .tools import isiterable, isTuple
+from .compat import string_types
+from .core.exceptions import assertion
+from .analysis.utils import threshold as _threshold, ApplyAffineTransform, GetAffineTransform
 
 # from matplotlib.pylab import * #Surely not?
 

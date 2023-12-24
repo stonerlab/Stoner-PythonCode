@@ -13,14 +13,12 @@ from .widgets import fileDialog
 from .classes import subclasses
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..core.base import regexpDict, metadataObject
-from .null import null
 
 from ..core.Typing import Filename
 
 __all__ = [
     "file_dialog",
     "get_file_name_type",
-    "get_filee_type",
     "auto_load_classes",
     "get_mime_type",
     "FileManager",
@@ -96,37 +94,6 @@ def get_file_name_type(
     """Rationalise a filename and filetype."""
     if isinstance(filename, string_types):
         filename = pathlib.Path(filename)
-    filetype = get_file_type(filetype, parent)
-    if filename is None or (isinstance(filename, bool) and not filename):
-        filename = file_dialog("r", filename, filetype, parent)
-    elif isinstance(filename, io.IOBase):  # Opened file
-        filename = filename.name
-    try:
-        if not filename.exists():
-            raise IOError(f"Cannot find {filename} to load")
-    except AttributeError as err:
-        raise IOError(f"Unable to tell if file exists - {type(filename)}") from err
-    return filename, filetype
-
-
-def get_file_type(filetype: Union[Type[metadataObject], str], parent: Type[metadataObject]) -> Type[metadataObject]:
-    """Try to ensure that the filetype parameter is an appropriate filetype class.
-
-    Args:
-        filetype (str or ubclass of metadataObject):
-            The requested type to use for loading.
-        parent (sublclass of metadataObject):
-            The type of object we're trying to create for which this file must be a subclass.
-
-    Returns:
-        (metadataObject subclass):
-            The requested  subclass.
-
-    Raises:
-        (ValueError):
-            If the requested filetype is a string and cannot be imported, or the filetype isn't a subclass of the
-            requested parent class.
-    """
     if isinstance(filetype, string_types):  # We can specify filetype as part of name
         try:
             filetype = regexpDict(subclasses(parent))[filetype]  # pylint: disable=E1136
@@ -138,24 +105,20 @@ def get_file_type(filetype: Union[Type[metadataObject], str], parent: Type[metad
                 filetype = getattr(mod, parts[-1])
             except (ImportError, AttributeError) as err:
                 raise ValueError(f"Unable to import {filetype}") from err
-    if filetype is None:
-        filetype = parent
-    if not issubclass(filetype, parent):
-        raise ValueError(f"{filetype} is  not a subclass of DataFile.")
-    return filetype
-
-
-def _handle_urllib_response(resp):
-    """Decode a response object to either a bytes or str depending on the context type."""
-    data = resp.read()
-    content_type = [x.strip() for x in resp.headers.get("Content-Type", "text/plain; charset=utf-8").split(";")]
-    typ, substyp = content_type[0].split("/")
-    if len(content_type) > 1 and "charset" in content_type[1] and typ == "text":
-        charset = content_type[1][8:]
-        data = data.decode(charset)
-    elif typ == "text":
-        data = bytes2str(data)
-    return data
+            if not issubclass(filetype, parent):
+                raise ValueError(f"{filetype} is  not a subclass of DataFile.")
+    if filename is None or (isinstance(filename, bool) and not filename):
+        if filetype is None:
+            filetype = parent
+        filename = file_dialog("r", filename, filetype, parent)
+    elif isinstance(filename, io.IOBase):  # Opened file
+        filename = filename.name
+    try:
+        if not filename.exists():
+            raise IOError(f"Cannot find {filename} to load")
+    except AttributeError as err:
+        raise IOError(f"Unable to tell if file exists - {type(filename)}") from err
+    return filename, filetype
 
 
 def auto_load_classes(
@@ -169,24 +132,6 @@ def auto_load_classes(
     mimetype = get_mime_type(filename, debug=debug)
     args = args if args is not None else ()
     kargs = kargs if kargs is not None else {}
-    debug = kargs.get("debug", False)
-    if isinstance(filename, io.IOBase):  # We need to stop the autoloading classes closing the file
-        if not filename.seekable():  # Replace the filename with a seekable buffer
-            data = _handle_urllib_response(filename)
-            if isinstance(data, bytes):
-                filename = io.BytesIO(data)
-                if debug:
-                    print("Replacing non seekable buffer with BytesIO")
-            else:
-                filename = io.StringIO(data)
-                if debug:
-                    print("Replacing non seekable buffer with BytesIO")
-        if debug:
-            print("Replacing close method to prevent unintended stream closure")
-        original_close = filename.close
-        filename.close = null()
-    else:
-        original_close = None
     for cls in subclasses(baseclass).values():  # pylint: disable=E1136, E1101
         cls_name = cls.__name__
         if debug:
@@ -231,8 +176,6 @@ def auto_load_classes(
             f"Ran out of subclasses to try and load {filename} (mimetype={mimetype}) as."
             + f" Recognised filetype are:{list(subclasses(baseclass).keys())}"  # pylint: disable=E1101
         )
-    if original_close is not None:
-        filename.close = original_close  # Restore the close method now we're done messing
     return test
 
 
@@ -259,7 +202,6 @@ class FileManager:
     def __init__(self, filename, *args, **kargs):
         """Store the parameters passed to the context manager."""
         self.filename = filename
-        self.buffer = None
         self.args = args
         self.kargs = kargs
         self.file = None
@@ -269,21 +211,25 @@ class FileManager:
             if parsed.scheme not in URL_SCHEMES:
                 filename = pathlib.Path(filename)
             else:
-                resp = urllib.request.urlopen(filename)
-                data = _handle_urllib_response(resp)
-                if isinstance(data, bytes):
-                    filename = io.BytesIO(data)
-                else:
-                    filename = io.StringIO(data)
+                filename = urllib.request.urlopen(filename)
         if isinstance(filename, path_types):
             self.mode = "open"
         elif isinstance(filename, io.IOBase):
-            self.mode = "buffer"
-            pos = filename.tell()
-            self.buffer = filename.read()
-            if len(args) == 0:
-                self.binary = isinstance(self.buffer, bytes)
-            filename.seek(0)
+            if not hasattr(filename, "response"):
+                if self.binary:
+                    self.mode = "bytes"
+                    self.filename = str2bytes(filename.read())
+                else:
+                    self.filename = bytes2str(filename.read())
+                    self.mode = "text"
+                filename.response = self.filename
+            else:
+                if self.binary:
+                    self.mode = "bytes"
+                    self.filename = str2bytes(filename.response)
+                else:
+                    self.filename = bytes2str(filename.response)
+                    self.mode = "text"
         elif isinstance(filename, bytes):
             if (len(args) > 0 and args[0][-1] == "b") or self.kargs.pop("mode", "").endswith("b"):
                 self.filename = filename
@@ -300,16 +246,20 @@ class FileManager:
             if len(self.args) > 0 and "b" not in self.args[0]:
                 self.kargs.setdefault("encoding", "utf-8")
             self.file = open(self.filename, *self.args, **self.kargs)
-        elif self.buffer is not None and self.binary:
-            self.file = io.BytesIO(str2bytes(self.buffer))
-        elif self.buffer is not None and not self.binary:
-            self.file = io.StringIO(bytes2str(self.buffer))
+        elif self.mode == "text":
+            self.file = io.StringIO(self.filename)
+        elif self.mode == "bytes":
+            self.file = io.BytesIO(self.filename)
+        elif self.mode in ["bytesio", "textio"]:
+            self.file = self.filename
         else:
             raise TypeError(f"Unrecognised filename type {type(self.filename)}")
         return self.file
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Close the open file, or reset the buffer position."""
+        if not self.file.closed and self.file.seekable():
+            self.file.seek(0)
         if self.mode == "open":
             self.file.close()
 
@@ -320,14 +270,19 @@ class SizedFileManager(FileManager):
 
     def __enter__(self):
         """Add the file length information to the context variable."""
-        ret = super().__enter__()
+        super().__enter__()
         if self.mode == "open":
             length = os.stat(self.filename).st_size
-        elif self.file.seekable():
-            pos = self.file.tell()
-            self.file.seek(0, 2)
-            length = self.file.tell()
-            self.file.seek(pos, 0)
+        elif self.mode in ["textio", "bytesio"]:
+            if self.file.seekable():
+                pos = self.file.tell()
+                self.file.seek(0, 2)
+                length = self.file.tell()
+                self.file.seek(pos)
+            else:
+                length = -1
+        elif self.mode in ["text", "bytes"]:
+            length = len(self.filename)
         else:
-            length = -1
-        return ret, length
+            length = len(self.file)
+        return self.file, length

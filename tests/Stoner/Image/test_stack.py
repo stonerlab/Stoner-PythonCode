@@ -61,7 +61,7 @@ def test_ImageStack_align():
         assert False, "stack.align with an object failed to raise a TypeError"
 
     istack2.align(method="imreg_dft")
-    assert (istack2[0]["tvec"] == (0.0, 0.0), "stack didn't align to first image")
+    assert istack2[0]["tvec"] == (0.0, 0.0), "stack didn't align to first image"
 
     istack2 = selfistack2.clone
 

@@ -295,8 +295,8 @@ def class_modifier(
         RTD_Restrictions (bool):
             If True (default), do not add members from outside our own package when on ReadTheDocs.
         no_long_names (bool):
-            To avoid name collision the default is to create two entries in the class __dict__ - one for the
-            standard name and one to include the full module path. This disables the latter.
+            To avoid name collision the default is to create two entries in the class __dict__ - one for the standard name
+            and one to include the full module path. This disables the latter.
 
 
     Returns:

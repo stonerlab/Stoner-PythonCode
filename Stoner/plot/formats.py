@@ -480,10 +480,7 @@ class DefaultPlotStyle(MutableMapping):
         """Update matplotlib rc parameters from any attributes starting template_."""
         plt.style.use(self.stylesheet)
         for attr in dir(self):
-            try:
-                v = getattr(self, attr)
-            except TypeError:
-                continue
+            v = getattr(self, attr)
             if not attr.startswith("template_"):
                 continue
             attr = _add_dots(attr[9:])
@@ -516,8 +513,6 @@ class DefaultPlotStyle(MutableMapping):
         ax.set_yticks(ax.get_yticks())
         ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick__labelsize)
         ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick__labelsize)
-        ax.xaxis.set_major_locator(self.xlocater())
-        ax.yaxis.set_major_locator(self.ylocater())
         if isinstance(self.xformatter, Formatter):
             xformatter = self.xformatter
         else:

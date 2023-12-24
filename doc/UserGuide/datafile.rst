@@ -758,7 +758,7 @@ ORed. The result of chaining together two separate calls to select will, however
 the, first line will assume an implicit equality test and give only those rows with a column *Temp* equal to 250. The second line gives an
 explicit greater than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4.2 *or*
 column T2 less than 5 and then from those select those rows which have a column Res between 100 and 200. The full list of operators is given in
-:py:meth:`Stoner.folders.baseFolder.select`.
+:py:meth:`Stoner.Folders.baseFolder.select`.
 
 Sectioning
 ~~~~~~~~~~

@@ -51,7 +51,3 @@ Backup_of_*.cdr
 
 #Profuling
 prof
-
-#LockFiles
-*.dirlock
-*.lock

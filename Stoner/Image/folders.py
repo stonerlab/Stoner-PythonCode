@@ -13,7 +13,7 @@ from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from PIL import Image
 
 from .core import ImageArray
-from ..folders import DiskBasedFolderMixin, baseFolder
+from ..Folders import DiskBasedFolderMixin, baseFolder
 from ..compat import string_types, int_types
 from . import ImageFile
 
@@ -366,7 +366,7 @@ class ImageFolderMixin:
             else:
                 j += 1
             fig = figure(fignum)
-            ax = fig.add_subplot(plt_y, plt_x, j)
+            ax = subplot(plt_y, plt_x, j)
             plt_kargs["figure"] = fig
             plt_kargs["ax"] = ax
             if "title" in kargs:

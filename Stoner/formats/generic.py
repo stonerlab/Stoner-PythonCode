@@ -136,19 +136,11 @@ class CSVFile(DataFile):
                     column_headers = next(csv.reader(io.StringIO(header), delimiter=header_delim))
                     data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line - header_line)
                 except (TypeError, ValueError, csv.Error, StopIteration, UnicodeDecodeError) as err:
-                    try:
-                        filename.seek(0)
-                    except AttributeError:
-                        pass
                     raise StonerLoadError("Header and data on the same line") from err
             else:  # Generate
                 try:
                     data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line)
                 except (TypeError, ValueError) as err:
-                    try:
-                        filename.seek(0)
-                    except AttributeError:
-                        pass
                     raise StonerLoadError("Failed to open file as CSV File") from err
                 column_headers = ["Column" + str(x) for x in range(np.shape(data)[1])]
 
@@ -249,10 +241,6 @@ class KermitPNGFile(DataFile):
                     self.metadata[k] = img.info[k]
                 self.data = np.asarray(img)
         except IOError as err:
-            try:
-                filename.seek(0)
-            except AttributeError:
-                pass
             raise StonerLoadError("Unable to read as a PNG file.") from err
 
         return self
@@ -399,10 +387,6 @@ if Hyperspy_ok:
                 if not isinstance(signal, Signal2D):
                     raise StonerLoadError("Not a 2D signal object - aborting!")
             except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
-                try:
-                    filename.seek(0)
-                except AttributeError:
-                    pass
                 raise StonerLoadError(f"Not readable by HyperSpy error was {err}") from err
             self.data = signal.data
             self._unpack_meta("", signal.metadata.as_dictionary())

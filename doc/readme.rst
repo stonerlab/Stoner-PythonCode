@@ -41,7 +41,8 @@ Getting this Code
     :alt: Introduction and Installation Guide to Stoner Pythin Package
     :width: 320
 
-See the `requirements.txt` file for the current package requirements.
+The *Stoner* package requires h5py>=2.7.0, lmfit>=0.9.7, matplotlib>=2.0,numpy>=1.13, Pillow>=4.0,
+scikit-image>=0.13.0 & scipy>=1.0.0 and also optional depends on  filemagic, npTDMS, imreg_dft and numba, fabio, hyperspy.
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
 dependencies are collected together in the **phygbu** repositry on anaconda cloud. The easiest way to install the Stoner package is,
@@ -50,10 +51,10 @@ therefore, to install the most recent Anaconda Python distribution.
 Compatibility
 --------------
 
-Versions 0.10.x (stable branch) are compatible with Python 3.6-3.9. The current development branch is targetting v3.8-3.9
-with 3.10 added when anaconda support is available in mainstream realease.
+Versions 0.9.x (stable branch) are compatible with Python 2.7, 3.5, 3.6 and 3.7. The latest 0.9.6 version is also compatible with Python 3.8
+The current stable verstion (0.10, stable branch) is compatible with Python 3.6-3.9
 
-Conda packages are built on each github release via a github actions for 64bit Python on Windows, MacOS and Linux.
+Conda packages are prepared for the stable branch and when the development branch enters beta testing. Pip wheels are prepared for selected stable releases only.
 
 Installation
 ------------

@@ -27,7 +27,7 @@ import pathlib
 
 from . import core, analysis, formats, plot, tools, Image
 from .core.data import Data
-from .folders import DataFolder
+from .Folders import DataFolder
 from .Image import ImageFile, ImageFolder, ImageStack
 
 from .tools import set_option, get_option, Options as _Options
