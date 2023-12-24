@@ -40,10 +40,12 @@ np_version = version_parse(np.__version__)
 sp_version = version_parse(sp.__version__)
 mpl_version = version_parse(matplotlib.__version__)
 
-modules["sre_parse"] = re._parser
-modules["sre_constants"] = re._constants
-modules["sre_compile"] = re._compiler
-
+try:  # This only works in PY 3.11 onwards
+    modules["sre_parse"] = re._parser
+    modules["sre_constants"] = re._constants
+    modules["sre_compile"] = re._compiler
+except AttributeError:
+    pass
 
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
