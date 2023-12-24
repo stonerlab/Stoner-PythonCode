@@ -8,7 +8,7 @@ from json import loads, dumps
 from copy import deepcopy, copy
 
 import numpy as np
-from matplotlib.pyplot import figure, Figure, subplot, tight_layout
+from matplotlib.pyplot import figure, Figure, subplot
 from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from PIL import Image
 
@@ -27,7 +27,7 @@ class ImageFolderMixin:
 
     Attributes:
         type (:py:class:`Stoner.Image.core.ImageArray`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -35,13 +35,13 @@ class ImageFolderMixin:
             provided then any named groups are used to construct additional metadata entryies from the filename.
             Default is *.* to match all files with an extension.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the
             experimental state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and
             :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):
@@ -120,7 +120,7 @@ class ImageFolderMixin:
 
         Keyword Arguments:
             method (str):
-                The mthod is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
+                The method is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
                 alignment is done. By default the 'Scharr' method is used.
             box (int, float, tuple of ints or floats):
                 Specifies a subset of the images to be used to calculate the alignment with.
@@ -165,6 +165,21 @@ class ImageFolderMixin:
         stack_limits[1::2] = np.floor(stack_limits)[1::2]
         self.metadata["align_box"] = tuple(stack_limits.astype(int))
         return self
+
+    def apply_all(self, func, *args, **kargs):
+        """Apply function to all images in the stack.
+
+        Args:
+            func(string or callable):
+                if string it must be a function reachable by ImageArray
+            quiet(bool):
+                if False print '.' for every iteration
+
+        Note:
+            Further args, kargs are passed through to the function
+        """
+        warn("apply_all is deprecated and will be removed in a future version. Use ImageFolder.each() instead")
+        return self.each(func, *args, **kargs)
 
     def average(self, weights=None, _box=False, _metadata="first"):
         """Get an array of average pixel values for the stack.
@@ -218,7 +233,6 @@ class ImageFolderMixin:
         with Image.open(filename, "r") as img:
             tags = img.tag_v2
             if 270 in tags:
-
                 try:
                     userdata = loads(tags[270])
                     typ = userdata.get("type", cls.__name__)
@@ -235,7 +249,7 @@ class ImageFolderMixin:
                 except (TypeError, ValueError, IOError):
                     metadata = []
             else:
-                raise TypeError(f"Cannot load as an ImageFolder due to lack of description tag")
+                raise TypeError("Cannot load as an ImageFolder due to lack of description tag")
             imglist = []
             for ix, md in enumerate(metadata):
                 img.seek(ix)
@@ -257,9 +271,7 @@ class ImageFolderMixin:
         return self
 
     def mask_select(self):
-        """Run the ImageFile.mask.select() on each image.
-
-        """
+        """Run the ImageFile.mask.select() on each image."""
         sel = []
         for img in self:
             img.mask.select(_selection=sel)
@@ -302,8 +314,6 @@ class ImageFolderMixin:
                 Passed to matplotlib figure call.
             plots_per_page(int):
                 maximum number of plots per figure.
-            tight_layout(dict or False):
-                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
@@ -320,7 +330,6 @@ class ImageFolderMixin:
         plts = min(plts, len(self))
 
         extra = kargs.pop("extra", lambda i, j, d: None)
-        tight = kargs.pop("tight_layout", {})
 
         fig_num = kargs.pop("figure", getattr(self, "_figure", None))
         if isinstance(fig_num, Figure):
@@ -332,7 +341,7 @@ class ImageFolderMixin:
             fig_num = fig_num.number
 
         fig_args = getattr(self, "_fig_args", [])
-        fig_kargs = getattr(self, "_fig_kargs", {})
+        fig_kargs = getattr(self, "_fig_kargs", {"layout": "constrained"})
         for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
             if arg in kargs:
                 fig_kargs[arg] = kargs.pop(arg)
@@ -351,8 +360,6 @@ class ImageFolderMixin:
         for i, d in enumerate(self):
             plt_kargs = copy(kargs)
             if i % plts == 0 and i != 0:
-                if isinstance(tight, dict):
-                    tight_layout(**tight)
                 fig = figure(*fig_args, **fig_kargs)
                 fignum = fig.number
                 j = 1
@@ -369,8 +376,6 @@ class ImageFolderMixin:
                     plt_kargs["title"] = kargs["title"](d)
             ret.append(d.imshow(*args, **plt_kargs))
             extra(i, j, d)
-            if isinstance(tight, dict):
-                tight_layout(**tight)
         return ret
 
     def stddev(self, weights=None, _box=False, _metadata="first"):
@@ -467,14 +472,6 @@ class ImageFolderMixin:
         imlist[0].save(tiffname, save_all=True, append_images=imlist[1:], tiffinfo=ifd)
         return self
 
-    def view(self):
-        """Create a matplotlib animated view of the contents."""
-        from skimage.viewer import CollectionViewer  # defer import until we needit
-
-        cv = CollectionViewer(list(self.images))
-        cv.show()
-        return cv
-
 
 class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
 
@@ -485,7 +482,7 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     Attributes:
         type (:py:class:`Stoner.Image.core.ImageArray`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -493,13 +490,13 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
             then any named groups are used to construct additional metadata entryies from the filename. Default is *.*
             to match all files with an extension.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the experimental
             state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
             and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):

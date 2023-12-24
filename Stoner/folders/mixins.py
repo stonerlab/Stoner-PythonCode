@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""mixin calsses for :py:class:`Stoner.folders.core.baseFoler`."""
+"""mixin classes for :py:class:`Stoner.folders.core.baseFoler`."""
 from __future__ import division
 
 __all__ = ["DiskBasedFolderMixin", "DataMethodsMixin", "PlotMethodsMixin"]
@@ -13,7 +13,7 @@ from importlib import import_module
 
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
-from matplotlib.pyplot import figure, Figure, subplot, tight_layout
+from matplotlib.pyplot import figure, subplots
 
 from Stoner.tools import isiterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
@@ -58,11 +58,11 @@ def _loader(name, loader=None, typ=None, directory=None):
 
 class DiskBasedFolderMixin:
 
-    """A Mixin class that implmenets reading metadataObjects from disc.
+    """A Mixin class that implements reading metadataObjects from disc.
 
     Attributes:
         type (:py:class:`Stoner.Core.metadataObject`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Core.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Core.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -73,13 +73,13 @@ class DiskBasedFolderMixin:
             A filename globbing pattern that matches files to exclude from the folder.  Default is *.tdms_index to
             exclude all tdms index files.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the experimental
             state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
             and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         discard_earlier (bool):
@@ -174,6 +174,8 @@ class DiskBasedFolderMixin:
         dlg = get_filedialog(what=mode, title=message)
         if not dlg or len(str(dlg)) == 0:
             raise RuntimeError("No directory or files selected!")
+        if mode == "directory" and new_directory and not path.exists(str(dlg)):
+            os.makedirs(dlg, exist_ok=True)
         if self.multifile:
             self.pattern = [path.basename(name) for name in dlg]
             self.directory = path.dirname(dlg[0]) if len(dlg) == 1 else path.commonprefix(dlg)
@@ -209,7 +211,7 @@ class DiskBasedFolderMixin:
         return grp.filename
 
     def __lookup__(self, name):
-        """Addional logic for the looking up names."""
+        """Additional logic for the looking up names."""
         if isinstance(name, string_types):
             if list(self.basenames).count(name) == 1:
                 return self.__names__()[list(self.basenames).index(name)]
@@ -225,7 +227,7 @@ class DiskBasedFolderMixin:
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool):
+            instantiate (bool):
                 If True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 :py:class:`Stoner.Core.Data` object.
@@ -329,16 +331,10 @@ class DiskBasedFolderMixin:
 
         With multiprocess enabled this will parallel load the contents of the folder into memory.
         """
-        self.executor = get_pool(self)
-        _futures = [
-            self.executor.submit(
-                _loader, fname, loader=self.loader, typ=self._type, directory=path.realpath(self.directory)
-            )
-            for fname in self.not_loaded
-        ]
-        if not futures:
-            return _futures
-        for (f, name) in [future.result() for future in _futures]:
+        p, imap = get_pool()
+        for f, name in imap(
+            partial(_loader, loader=self.loader, typ=self._type, directory=self.directory), self.not_loaded
+        ):
             self.__setter__(
                 name, self.on_load_process(f)
             )  # This doesn't run on_load_process in parallel, but it's not expensive enough to make it worth it.
@@ -400,7 +396,7 @@ class DiskBasedFolderMixin:
     def keep_latest(self):
         """Filter out earlier revisions of files with the same name.
 
-        The CM group LabVIEW software will avoid overwirting files when measuring by inserting !#### where #### is an
+        The CM group LabVIEW software will avoid overwriting files when measuring by inserting !#### where #### is an
         integer revision number just before the filename extension. This method will look for instances of several
         files which differ in name only by the presence of the revision number and will kepp only the highest revision
         number. This is useful if several measurements of the same experiment have been carried out, but only the
@@ -447,7 +443,7 @@ class DiskBasedFolderMixin:
         Args:
             root (string):
                 The root directory to start creating files and subdirectories under. If set to None or not specified,
-                the current folder's diretory attribute will be used.
+                the current folder's directory attribute will be used.
 
         Returns:
             A list of the saved files
@@ -459,7 +455,7 @@ class DiskBasedFolderMixin:
 
         Args:
             name(string,int or None):
-                Specifies the entry to unload from memeory. If set to None all loaded entries are unloaded.
+                Specifies the entry to unload from memory. If set to None all loaded entries are unloaded.
 
         Returns:
             (DataFolder): returns a copy of itself.
@@ -475,16 +471,16 @@ class DiskBasedFolderMixin:
 
 class DataMethodsMixin:
 
-    """Methods for wokring with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s."""
+    """Methods for working with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s."""
 
     def concatenate(self, sort=None, reverse=False):
-        """Concatentates all the files in a objectFolder into a single metadataObject like object.
+        """Concatenates all the files in a objectFolder into a single metadataObject like object.
 
         Keyword Arguments:
             sort (column index, None or bool, or clallable function):
                 Sort the resultant metadataObject by this column (if a column index), or by the *x* column if None
                 or True, or not at all if False. *sort* is passed directly to the eponymous method as the
-                *order* paramter.
+                *order* parameter.
             reverse (bool):
                 Reverse the order of the sort (defaults to False)
 
@@ -498,7 +494,7 @@ class DataMethodsMixin:
         if not isinstance(sort, bool) or sort:
             if isinstance(sort, bool) or sort is None:
                 sort = self[0].setas.cols["xcol"]
-            self[0].sort(order=sort, reverse=True)
+            self[0].sort(order=sort, reverse=reverse)
 
         return self
 
@@ -531,8 +527,7 @@ class DataMethodsMixin:
                 raise TypeError(f"Metadata values should be strings, or lists of strings, not {type(m)}")
         metadata = args
 
-        def _extractor(group, trail, metadata):
-
+        def _extractor(group, _, metadata):
             results = group.type()
             results.metadata = group[0].metadata
             headers = []
@@ -584,7 +579,7 @@ class DataMethodsMixin:
 
         """
 
-        def _gatherer(group, trail, xcol=None, ycol=None, xerr=None, yerr=None, **kargs):
+        def _gatherer(group, _, xcol=None, ycol=None, xerr=None, yerr=None, **kargs):
             yerr = None
             xerr = None
             cols = group[0]._col_args(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False)
@@ -657,7 +652,7 @@ class PlotMethodsMixin:
     _defaults = {"plots_per_page": 12, "fig_defaults": {"figsize": (8, 6)}}
 
     def figure(self, *args, **kargs):
-        """Pass through for :py:func:`matplotlib.pyplot.figure` but alos takes a note of the arguments for later."""
+        """Pass through for :py:func:`matplotlib.pyplot.figure` but also takes a note of the arguments for later."""
         self._fig_args = args
 
         self._fig_kargs = getattr(self, "fig_defaults", {})
@@ -689,8 +684,6 @@ class PlotMethodsMixin:
                 Passed to matplotlib figure call.
             plots_per_page(int):
                 maximum number of plots per figure.
-            tight_layout(dict or False):
-                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
@@ -711,44 +704,33 @@ class PlotMethodsMixin:
                 self[i] = make_Data(d)
 
         extra = kargs.pop("extra", lambda i, j, d: None)
-        tight = kargs.pop("tight_layout", {})
 
-        fig_num = kargs.pop("figure", getattr(self, "_figure", None))
-        if isinstance(fig_num, Figure):
-            fig_num = fig_num.number
         fig_args = getattr(self, "_fig_args", [])
         fig_kargs = getattr(self, "_fig_kargs", {})
         for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
             if arg in kargs:
                 fig_kargs[arg] = kargs.pop(arg)
-        if fig_num is None:
-            fig = figure(*fig_args, **fig_kargs)
-        else:
-            fig = figure(fig_num, **fig_kargs)
-        w, h = fig.get_size_inches()
+        w, h = fig_kargs.setdefault("figsize", (18, 12))
         plt_x = int(floor(sqrt(plts * w / h)))
         plt_y = int(ceil(plts / plt_x))
-
-        kargs["figure"] = fig
         ret = []
-        j = 0
+        j = -1
+        fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
         fignum = fig.number
         for i, d in enumerate(self):
             if i % plts == 0 and i != 0:
-                if isinstance(tight, dict):
-                    tight_layout(**tight)
-                fig = figure(*fig_args, **fig_kargs)
+                fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
                 fignum = fig.number
-                j = 1
+                j = 0
             else:
                 j += 1
             fig = figure(fignum)
-            ax = subplot(plt_y, plt_x, j)
-            kargs["fig"] = fig
-            kargs["ax"] = ax
+            kargs["figure"] = fig
+            kargs["ax"] = axs.ravel()[j]
             ret.append(d.plot(*args, **kargs))
             extra(i, j, d)
-        tight_layout()
+        for n in range(j + 1, plt_x * plt_y):
+            axs.ravel()[n].remove()
         return ret
 
 
@@ -756,7 +738,7 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
-    By default, the members of the DataFolder are isntances of :class:`Stoner.Data`. The DataFolder emplys a lazy
+    By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder emplys a lazy
     open strategy, so that files are only read in from disc when actually needed.
 
     .. inheritance-diagram:: DataFolder
@@ -764,7 +746,6 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
     """
 
     def __init__(self, *args, **kargs):
-
         self.type = kargs.pop("type", make_Data(None))
         super().__init__(*args, **kargs)
 

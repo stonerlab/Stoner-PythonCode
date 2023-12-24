@@ -34,7 +34,7 @@ def quadratic(x, a, b, c):
     r"""Calculate a simple quadratic fitting function.
 
     Args:
-        x (aray): Input data
+        x (array): Input data
         a (float): Quadratic term co-efficient
         b (float): Linear term co-efficient
         c (float): Constant offset term
@@ -49,7 +49,7 @@ def quadratic(x, a, b, c):
             :include-source:
             :outname: quadratic
     """
-    return a * x ** 2 + b * x + c
+    return a * x**2 + b * x + c
 
 
 def powerLaw(x, A, k):
@@ -58,7 +58,7 @@ def powerLaw(x, A, k):
     Args:
         x (array): Input data
         A (float): Prefactor
-        k (float): Pwoer
+        k (float): Power
 
     Return:
         Power law.
@@ -70,7 +70,7 @@ def powerLaw(x, A, k):
             :include-source:
             :outname: powerlaw
     """
-    return A * x ** k
+    return A * x**k
 
 
 def stretchedExp(x, A, beta, x_0):
@@ -95,7 +95,7 @@ def lorentzian_diff(x, A, sigma, mu):
 
     Args:
         x (array): x data
-        A (flaot): Peak amplitude
+        A (float): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
 
@@ -108,7 +108,7 @@ def lorentzian_diff(x, A, sigma, mu):
             :include-source:
             :outname: lorentzian_diff_func
     """
-    return A * sigma * (2 * mu - 2 * x) / (np.pi * (sigma ** 2 + (-mu + x) ** 2) ** 2)
+    return A * sigma * (2 * mu - 2 * x) / (np.pi * (sigma**2 + (-mu + x) ** 2) ** 2)
 
 
 class Linear(_Linear):
@@ -117,11 +117,10 @@ class Linear(_Linear):
 
 
 class Quadratic(_Quadratic):
-
     r"""A Simple quadratic fitting function.
 
     Args:
-        x (aray): Input data
+        x (array): Input data
         a (float): Quadratic term co-efficient
         b (float): Linear term co-efficient
         c (float): Constant offset term
@@ -139,13 +138,12 @@ class Quadratic(_Quadratic):
 
 
 class PowerLaw(_PowerLaw):
-
     r"""Power Law Fitting Equation.
 
     Args:
         x (array): Input data
         A (float): Prefactor
-        k (float): Pwoer
+        k (float): Power
 
     Return:
         Power law.
@@ -160,7 +158,6 @@ class PowerLaw(_PowerLaw):
 
 
 class StretchedExp(Model):
-
     r"""A stretched exponential fuinction.
 
     Args:
@@ -199,12 +196,11 @@ class StretchedExp(Model):
 
 
 class Lorentzian_diff(Model):
-
     r"""Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.
 
     Args:
         x (array): x data
-        A (flaot): Peak amplitude
+        A (float): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
 
@@ -236,7 +232,7 @@ class Lorentzian_diff(Model):
         y1 = np.max(data)
         y2 = np.min(data)
         dy = y1 - y2
-        A = dy * (4 * np.pi * sigma ** 2) / (3 * np.sqrt(3))
+        A = dy * (4 * np.pi * sigma**2) / (3 * np.sqrt(3))
 
         pars = self.make_params(A=A, sigma=sigma, mu=mu)
         pars["A"].min = 0

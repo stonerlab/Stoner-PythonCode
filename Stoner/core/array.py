@@ -19,7 +19,6 @@ from .exceptions import StonerSetasError
 
 
 class DataArray(ma.MaskedArray):
-
     r"""A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
@@ -32,16 +31,16 @@ class DataArray(ma.MaskedArray):
             When a column is declared to contain *x*, *y*, or *z* data, then these attributes access the corresponding
             columns. When written to, the attributes overwrite the existing column's data.
         d,e,f (1D DataArray):
-            Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these attributes
+            Where a column is identified as containing uncertainties for *x*, *y* or *z* data, then these attributes
             provide a quick access to them. When written to, the attributes overwrite the existing column's data.
         u,v,w (1D DataArray):
             Columns may be identieid as containing vectgor field information. These attributes provide quick
-            access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes
+            access to them, assuming that they are defined as cartesian coordinates. When written to, the attributes
             overwrite the existing column's data.
         p,q,r (1D DataArray):
             These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`
-            into :math:`(\phi,\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar
-            co-ordinates are returned for *q* and *r*.
+            into :math:`(\phi,\theta,r)` polar coordinates. If on *x* and *y* columns are defined, then 2D polar
+            coordinates are returned for *q* and *r*.
         setas (list or string):
             Actually a proxy to a magic class that handles the assignment of columns to different axes and
             also tracks the names of columns (so that columns may be accessed as named items).
@@ -145,16 +144,16 @@ class DataArray(ma.MaskedArray):
 
     @property
     def r(self):
-        r"""Calculate the radius :math:`\rho` co-ordinate if using spherical or polar co-ordinate systems."""
+        r"""Calculate the radius :math:`\rho` coordinate if using spherical or polar coordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [
             lambda d: None,
             lambda d: None,
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2),
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: np.sqrt(d.u ** 2 + d.v ** 2),
-            lambda d: np.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2),
+            lambda d: np.sqrt(d.x**2 + d.y**2),
+            lambda d: np.sqrt(d.x**2 + d.y**2 + d.z**2),
+            lambda d: np.sqrt(d.x**2 + d.y**2 + d.z**2),
+            lambda d: np.sqrt(d.u**2 + d.v**2),
+            lambda d: np.sqrt(d.u**2 + d.v**2 + d.w**2),
         ]
         ret = m[axes](self)
         if ret is None:
@@ -166,7 +165,7 @@ class DataArray(ma.MaskedArray):
 
     @property
     def q(self):
-        r"""Calculate the azimuthal :math:`\theta` co-ordinate if using spherical or polar co-ordinates."""
+        r"""Calculate the azimuthal :math:`\theta` coordinate if using spherical or polar coordinates."""
         axes = int(self._setas.cols["axes"])
         m = [
             lambda d: None,
@@ -187,7 +186,7 @@ class DataArray(ma.MaskedArray):
 
     @property
     def p(self):
-        r"""Calculate the inclination :math:`\phi` co-ordinate for spherical co-ordinate systems."""
+        r"""Calculate the inclination :math:`\phi` coordinate for spherical coordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [
             lambda d: None,
@@ -227,7 +226,7 @@ class DataArray(ma.MaskedArray):
                 self._ibase = np.array([value])
         elif self.ndim >= 1:
             r = self.shape[0]
-            if isiterable(value) and len(value) == r:  # Iterable and the correct length - assing straight
+            if isiterable(value) and len(value) == r:  # Iterable and the correct length - assign straight
                 self._ibase = np.array(value)
             elif isiterable(value) and len(value) > 0:  # Iterable but not the correct length - count from min of value
                 self._ibase = np.arange(min(value), min(value) + r)
@@ -266,7 +265,7 @@ class DataArray(ma.MaskedArray):
         setas(value)
 
     # ==============================================================================================================
-    ############################        Speical Methods         ####################################################
+    ############################        Special Methods         ####################################################
     # ==============================================================================================================
 
     def __reduce__(self):
@@ -342,12 +341,12 @@ class DataArray(ma.MaskedArray):
             plus the special operations where one columns are named.
 
         Warning:
-            Teh code almost certainly makes some assumptiuons that DataArray is one or 2D and
+            The code almost certainly makes some assumptiuons that DataArray is one or 2D and
             may blow up with 3D arrays ! On the other hand it has a special case exception for where
             you give a string as the first index element and assumes that you've forgotten that we're
             row major and tries to do the right thing.
         """
-        # Is this goign to be a single row ?
+        # Is this going to be a single row ?
         single_row = isinstance(ix, int_types) or (
             isinstance(ix, tuple) and len(ix) > 0 and isinstance(ix[0], int_types)
         )
@@ -381,14 +380,16 @@ class DataArray(ma.MaskedArray):
             ix = tuple(ix)
             # Now can index with our constructed multidimesnional indexer
         ret = super().__getitem__(ix)
-        if ret.ndim == 0 or isinstance(ret, np.ndarray) and ret.size == 1:
+        if isinstance(ret, np.ndarray) and ret.ndim > 0 and ret.size == 1:  # Numpy extract [x] to x
+            ret = ret.ravel()[0]
+        if ret.ndim == 0:
             if isinstance(ret, ma.core.MaskedConstant):
                 if ret.mask:
                     return self.fill_value
             if isinstance(ret, ma.MaskedArray):
                 ret = ma.filled(ret)
             return ret.dtype.type(ret)
-        if not isinstance(ret, np.ndarray):  # bugout for scalar resturns
+        if not isinstance(ret, np.ndarray):  # bugout for scalar returns
             return ret
         if ret.ndim >= 2:  # Potentially 2D array here
             if ix[-1] is None:  # Special case for increasing an array dimension
@@ -412,11 +413,12 @@ class DataArray(ma.MaskedArray):
                 ret.i = self.i
         elif ret.ndim == 1:  # Potentially a single row or single column
             ret.isrow = single_row
-            if len(ix) == len(self.setas):
-                tmp = np.array(self.setas)[ix[-1]]
-                ret.setas(tmp)
-                tmpcol = np.array(self.column_headers)[ix[-1]]
-                ret.column_headers = tmpcol
+            if not single_row:  # Workoput what the original setas was
+                if isinstance(ix, tuple) and len(ix) >= 2:
+                    tmp = np.array(self.setas)[ix[-1]].ravel()
+                    ret.setas(tmp)
+                    tmpcol = np.array(self.column_headers)[ix[-1]]
+                    ret.column_headers = tmpcol
             else:
                 ret.setas = self.setas.clone
                 ret.column_headers = copy.copy(self.column_headers)

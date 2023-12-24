@@ -1,19 +1,45 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Implement DataFile classes for soem generic file formats."""
+"""Implement DataFile classes for some generic file formats."""
 __all__ = ["CSVFile", "HyperSpyFile", "KermitPNGFile", "TDMSFile"]
 import csv
+import contextlib
 import io
 import re
 from collections.abc import Mapping
+import sys
+import logging
 
 import PIL
 import numpy as np
 
 from ..Core import DataFile
-from ..compat import str2bytes, Hyperspy_ok, hs
+from ..compat import str2bytes, Hyperspy_ok, hs, hsload
 from ..core.exceptions import StonerLoadError
 from ..tools.file import FileManager
+
+
+class _refuse_log(logging.Filter):
+
+    """Refuse to log all records."""
+
+    def filter(self, record):
+        """Do not log anything."""
+        return False
+
+
+@contextlib.contextmanager
+def catch_sysout(*args):
+    """Temporarily redirect sys.stdout and.sys.stdin."""
+    stdout, stderr = sys.stdout, sys.stderr
+    out = io.StringIO()
+    sys.stdout, sys.stderr = out, out
+    logger = logging.getLogger("hyperspy.io")
+    logger.addFilter(_refuse_log)
+    yield None
+    logger.removeFilter(_refuse_log)
+    sys.stdout, sys.stderr = stdout, stderr
+    return
 
 
 def _delim_detect(line):
@@ -61,7 +87,7 @@ class CSVFile(DataFile):
 
     _defaults = {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","}
 
-    mime_type = ["application/csv", "text/plain"]
+    mime_type = ["application/csv", "text/plain", "text/csv"]
 
     def _load(self, filename, *args, **kargs):
         """Load generic deliminated files.
@@ -72,9 +98,9 @@ class CSVFile(DataFile):
 
         Keyword Arguments:
             header_line (int): The line in the file that contains the column headers.
-                If None, then column headers are auotmatically generated.
+                If None, then column headers are automatically generated.
             data_line (int): The line on which the data starts
-            data_delim (string): Thge delimiter used for separating data values
+            data_delim (string): The delimiter used for separating data values
             header_delim (strong): The delimiter used for separating header values
 
         Returns:
@@ -135,7 +161,7 @@ class CSVFile(DataFile):
         """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
         Args:
-            filename (string): Fielname to save as (using the same rules as for the load routines)
+            filename (string): Filename to save as (using the same rules as for the load routines)
 
         Keyword Arguments:
             deliminator (string): Record deliniminator (defaults to a comma)
@@ -184,7 +210,7 @@ class KermitPNGFile(DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.png"]  # Recognised filename patterns
 
-    mime_type = "image/png"
+    mime_type = ["image/png"]
 
     def _check_signature(self, filename):
         """Check that this is a PNG file and raie a StonerLoadError if not."""
@@ -276,7 +302,7 @@ try:  # Optional tdms support
         # the file load/save dialog boxes.
         patterns = ["*.tdms"]  # Recognised filename patterns
 
-        mime_type = "application/octet-stream"
+        mime_type = ["application/octet-stream"]
 
         def _load(self, filename=None, *args, **kargs):
             """TDMS file loader routine.
@@ -314,7 +340,6 @@ try:  # Optional tdms support
 
             return self
 
-
 except ImportError:
     TDMSFile = DataFile
 
@@ -328,7 +353,7 @@ if Hyperspy_ok:
 
         patterns = ["*.emd", "*.dm4"]
 
-        mime_type = "application/x-hdf"  # Really an HDF5 file
+        mime_type = ["application/x-hdf", "application/x-hdf5"]  # Really an HDF5 file
 
         _axes_keys = ["name", "scale", "low_index", "low_value", "high_index", "high_value"]
 
@@ -365,17 +390,13 @@ if Hyperspy_ok:
                 self.filename = filename
             # Open the file and read the main file header and unpack into a dict
             try:
-                load = hs.load
-            except AttributeError:
-                try:
-                    from hyperspy import api
-
-                    load = api.load
-                except (ImportError, AttributeError) as err:
-                    raise ImportError("Panic over hyperspy") from err
-            try:
-                signal = load(self.filename)
-                if not isinstance(signal, hs.signals.Signal2D):
+                with catch_sysout():
+                    signal = hsload(self.filename)
+                if hasattr(hs, "signals"):
+                    Signal2D = hs.signals.Signal2D
+                else:
+                    Signal2D = hs.api.signals.Signal2D
+                if not isinstance(signal, Signal2D):
                     raise StonerLoadError("Not a 2D signal object - aborting!")
             except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
                 try:
@@ -388,7 +409,6 @@ if Hyperspy_ok:
             self._unpack_axes(signal.axes_manager)
 
             return self
-
 
 else:
     HyperSpyFile = DataFile

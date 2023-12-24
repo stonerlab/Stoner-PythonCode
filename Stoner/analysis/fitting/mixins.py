@@ -7,7 +7,6 @@ __all__ = ["odr_Model", "FittingMixin"]
 from copy import deepcopy as copy
 from inspect import isclass, getfullargspec
 from collections.abc import Mapping
-from distutils.version import LooseVersion
 
 import numpy as np
 import numpy.ma as ma
@@ -131,7 +130,7 @@ class MimizerAdaptor:
             params (lmfit:parameter or dict):
                 Parameters used to fit model.
             **kargs (dict):
-                Keyword arguments to intialise the reuslt object/.
+                Keyword arguments to initialise the result object/.
 
         Raises:
             RuntimeError:
@@ -164,7 +163,7 @@ class MimizerAdaptor:
                 sigma = np.ones_like(x)
             sigma = sigma / sigma.sum()  # normalise uncertainties
             sigma += np.finfo(float).eps
-            weights = 1.0 / sigma ** 2
+            weights = 1.0 / sigma**2
             variance = ((y - self.func(x, *beta)) ** 2) * weights
             return np.sum(variance) / (len(x) - len(beta))
 
@@ -173,7 +172,9 @@ class MimizerAdaptor:
 
 class _curve_fit_result:
 
-    """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit` as a class to make handling easier."""
+    """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit`
+    as a class to make handling easier.
+    """
 
     def __init__(self, popt, pcov, infodict, mesg, ier):
         """Store the results of the curve fit full_output fit.
@@ -186,7 +187,7 @@ class _curve_fit_result:
             infodict (dict):
                 Additional information from curve_fit.
             mesg (str):
-                Descriptive information frok curve_fit.
+                Descriptive information from curve_fit.
             ier (int):
                 Numerical error message.
         """
@@ -209,7 +210,7 @@ class _curve_fit_result:
         for k in infodict:
             setattr(self, k, infodict[k])
 
-    # Following peroperties used to return desired information
+    # Following properties used to return desired information
 
     @property
     def name(self):
@@ -482,9 +483,9 @@ class FittingMixin:
 
         Keyword Parameters:
             x (float):
-                x co-ordinate of the label
+                x coordinate of the label
             y (float):
-                y co-ordinate of the label
+                y coordinate of the label
             z (float):
                 z co-ordinbate of the label if the current axes are 3D
             prefix (str):
@@ -529,7 +530,6 @@ class FittingMixin:
             raise RuntimeError(f"model should be either an lmfit.Model or a callable function, not a {type(model)}")
 
         if prefix is not None:
-
             if isinstance(prefix, (list, tuple)):
                 prefix = prefix[0]
 
@@ -606,7 +606,6 @@ class FittingMixin:
             xdat = working[:, self.find_col(xcol)]
 
         for i, yc in enumerate(ycol):
-
             if isinstance(yc, index_types):
                 ydat = working[:, self.find_col(yc)]
             elif isinstance(yc, np.ndarray) and yc.ndim == 1 and len(yc) == len(self):
@@ -632,7 +631,7 @@ class FittingMixin:
             ycol(index):
                 Column with ydata in it
             sigma (index or array-like):
-                column of y-errors or uncertainity values.
+                column of y-errors or uncertainty values.
             bounds (callable):
                 Used to select the data rows to fit
             scale_covar (bool,None):
@@ -837,7 +836,7 @@ class FittingMixin:
             perr = fit.sd_beta
             delta, eps = fit.delta, fit.eps
             nfree = len(delta) - len(popt)
-            chisq = np.sum((delta ** 2 + eps ** 2)) / nfree
+            chisq = np.sum((delta**2 + eps**2)) / nfree
             nfev = None
         elif isinstance(fit, sp.optimize.OptimizeResult):
             popt = fit.popt
@@ -1012,7 +1011,7 @@ class FittingMixin:
             ycol (index, list of indices or array):
                 The index of the y-column data to fit. If an array, then should be 1D and
                 the same length as the data. If ycol is a list of indices then the columns are iterated over in
-                turn, fitting occuring for each one. In this case the return value is a list of what would be
+                turn, fitting occurring for each one. In this case the return value is a list of what would be
                 returned for a single column fit.
 
         Keyword Arguments:
@@ -1033,16 +1032,16 @@ class FittingMixin:
                 If this is a string then it is used as the name of the fitted data. (default None)
             absolute_sigma (bool):
                 If False, `sigma` denotes relative weights of the data points. The default True means that
-                the sigma parameter is the reciprocal of the absoluate standard deviation.
+                the sigma parameter is the reciprocal of the absolute standard deviation.
             output (str, default "fit"):
-                Specifiy what to return.
+                Specify what to return.
 
         Returns:
             (various):
                 The return value is determined by the *output* parameter. Options are:
                     * "fit"    (tuple of popt,pcov) Optimal values of the fitting parameters p, and the
                                 variance-co-variance matrix for the fitting parameters.
-                    * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their
+                    * "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                                 uncertainties
                     * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
                     * "data"   a copy of the :py:class:`Stoner.Core.DataFile` object with fit recorded in the
@@ -1143,13 +1142,13 @@ class FittingMixin:
             raise TypeError(
                 "".join(
                     [
-                        f"curve_fit parameter 1 must be either a Model class from",
+                        "curve_fit parameter 1 must be either a Model class from",
                         f" lmfit or scipy.odr, or a callable, not a {type(func)}",
                     ]
                 )
             )
 
-        if callable(p0):  # Allow the user to suppy p0 as a callanble function
+        if callable(p0):  # Allow the user to supply p0 as a callanble function
             if ydata.ndim != 1:
                 yy = ydata.ravel()
             else:
@@ -1173,7 +1172,6 @@ class FittingMixin:
         retvals = []
         i = None
         for i, ydat in enumerate(ydata):
-
             if isinstance(sigma, np.ndarray) and sigma.shape[0] > 1:
                 if sigma.shape[0] == len(ycol):
                     s = sigma[i]
@@ -1193,7 +1191,7 @@ class FittingMixin:
                 report.p0 = p0
             report.data = self
             report.residual_vals = ydata - report.fvec
-            report.chisq = (report.residual_vals ** 2).sum()
+            report.chisq = (report.residual_vals**2).sum()
             report.nfree = len(self) - len(report.popt)
             report.chisq /= report.nfree
 
@@ -1242,7 +1240,7 @@ class FittingMixin:
             scale_covar (bool) :
                 whether to automatically scale covariance matrix (leastsq only)
             output (str, default "fit"):
-                Specifiy what to return.
+                Specify what to return.
 
         Returns:
             ( various ) :
@@ -1250,13 +1248,13 @@ class FittingMixin:
                 The return value is determined by the *output* parameter. Options are
                     - "fit"    just the :py:class:`lmfit.model.ModelFit` instance that contains all relevant
                                 information about the fit.
-                    - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their
+                    - "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                                 uncertainties
                     - "full"    a tuple of the fit instance and the row.
                     - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the
-                                emtadata and optinally as a column of data.
+                                emtadata and optionally as a column of data.
 
-        This function is essentially a wrapper around the :py:func:`scipy.optimize.differential_evolution` funtion
+        This function is essentially a wrapper around the :py:func:`scipy.optimize.differential_evolution` function
         that presents the same interface as the other Stoner package curve fitting functions. The parent function,
         however, does not provide the variance-covariance matrix to estimate the fitting errors. To work around this,
         this function does the initial fit with the differential evolution, but then uses that to give a starting
@@ -1312,7 +1310,7 @@ class FittingMixin:
         polish.p0 = p0
         polish.data = self
         polish.residual_vals = data[1] - polish.fvec
-        polish.chisq = (polish.residual_vals ** 2).sum()
+        polish.chisq = (polish.residual_vals**2).sum()
         polish.nfree = len(self) - len(polish.popt)
         polish.chisq /= polish.nfree
 
@@ -1377,18 +1375,18 @@ class FittingMixin:
             scale_covar (bool) :
                 whether to automatically scale covariance matrix (leastsq only)
             output (str, default "fit"):
-                Specifiy what to return.
+                Specify what to return.
 
         Returns:
             ( various ) :
                 The return value is determined by the *output* parameter. Options are
                     - "fit"    just the :py:class:`lmfit.model.ModelFit` instance that contains all relevant
                                 information about the fit.
-                    - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their
+                    - "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                                 uncertainties
                     - "full"    a tuple of the fit instance and the row.
                     - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the
-                                emtadata and optinally as a column of data.
+                                emtadata and optionally as a column of data.
 
         See Also:
             -   :py:meth:`Stoner.Data.curve_fit`
@@ -1517,7 +1515,7 @@ class FittingMixin:
         Note:
             If the x or y columns are not specified (or are None) the the setas attribute is used instead.
 
-            This method is depricated and may be removed in a future version in favour of the more general
+            This method is deprecated and may be removed in a future version in favour of the more general
                 curve_fit
         """
         _ = self._col_args(xcol=xcol, ycol=ycol, scalar=False)
@@ -1551,7 +1549,7 @@ class FittingMixin:
 
         Args:
             model (scipy.odr.Model, lmfit.models.Model or callable):
-                Tje model that describes the data. See below for more details.
+                The model that describes the data. See below for more details.
             xcol (index or None):
                 Columns to be used for the x  data for the fitting. If not givem defaults to the
                 :py:attr:`Stoner.Core.DataFile.setas` x column
@@ -1579,17 +1577,17 @@ class FittingMixin:
             header (string or None):
                 If this is a string then it is used as the name of the fitted data. (default None)
             output (str, default "fit"):
-                Specifiy what to return.
+                Specify what to return.
 
         Returns:
             ( various ) :
                 The return value is determined by the *output* parameter. Options are
                     - "fit"    just the :py:class:`scipy.odr.Output` instance (default)
-                    - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their
+                    - "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                                 uncertainties
                     - "full"    a tuple of the fit instance and the row.
                     - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the
-                                emtadata and optinally
+                                emtadata and optionally
                         as a column of data.
 
         Notes:
@@ -1600,9 +1598,9 @@ class FittingMixin:
                 -   A subclass or instance of an lmfit.models.Model: the :py:mod:`Stoner.analysis.fitting.models`
                     package has a number of useful prebuilt lmfit models that can be used directly by this function.
                 -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the
-                    scip.odr stadnard f(beta,x)
+                    scip.odr standard f(beta,x)
 
-            This function ois designed to be as compatible as possible with :py:meth:`AnalysisMixin.curve_fit` and
+            This function is designed to be as compatible as possible with :py:meth:`AnalysisMixin.curve_fit` and
                 :py:meth:`AnalysisMixin.lmfit` to facilitate easy of switching between them.
 
         See Also:

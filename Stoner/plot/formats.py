@@ -19,6 +19,7 @@ from collections.abc import MutableMapping, Mapping
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter
 from matplotlib.ticker import AutoLocator
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from numpy.random import normal
 
@@ -50,10 +51,9 @@ def _remove_dots(key):
 
 
 class TexFormatter(Formatter):
-
     r"""An axis tick label formatter that emits Tex formula mode code.
 
-    Formating is set so that large numbers are registered as :math`\times 10^{power}`
+    Formatting is set so that large numbers are registered as :math`\times 10^{power}`
     rather than using E notation."""
 
     def __call__(self, value, pos=None):
@@ -65,7 +65,7 @@ class TexFormatter(Formatter):
             if np.abs(power) < 4:
                 ret = f"${round(value)}$"
             else:
-                v = _round(value / (10 ** power))
+                v = _round(value / (10**power))
                 ret = f"${v}\\times 10^{{{power:.0f}}}$"
         else:
             ret = "$0.0$"
@@ -121,7 +121,7 @@ class TexEngFormatter(EngFormatter):
                 ret = f"${round(value, 4)}\\,\\mathrm{{{self.unit}}}$"
             else:
                 power = power % 3
-                v = _round(value / (10 ** pre), 4)
+                v = _round(value / (10**pre), 4)
                 if np.abs(v) < 0.1:
                     v *= 1000
                     pre -= 3
@@ -162,7 +162,7 @@ class DefaultPlotStyle(MutableMapping):
         show_title (bool): show the title
         show_legend (bool): show the legend
         stylename (string): Name of the matplotlib style to use
-        stylesheet (list): Calculated list of stylesheets found by traversing the class heirarchy
+        stylesheet (list): Calculated list of stylesheets found by traversing the class hierarchy
 
     Example
         .. plot:: samples/plotstyles/default.py
@@ -242,7 +242,7 @@ class DefaultPlotStyle(MutableMapping):
                 self.update({_add_dots(k): v})
 
     def __delitem__(self, name):
-        """Clear any setting that overides the default for *name*."""
+        """Clear any setting that overrides the default for *name*."""
         if hasattr(self, name):
             default = getattr(type(self)(), name)
             setattr(self, name, default)
@@ -322,7 +322,7 @@ class DefaultPlotStyle(MutableMapping):
 
     @property
     def stylesheet(self):
-        """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
+        """Horribly hacky method to traverse over the class hierarchy for style sheet names."""
         if (
             self._stylesheet is not None and self._stylesheet[0] == self.stylename
         ):  # Have we cached a copy of our stylesheets ?
@@ -363,7 +363,7 @@ class DefaultPlotStyle(MutableMapping):
     @stylesheet.setter
     def stylesheet(self, value):  # pylint: disable=r0201
         """Just stop the stylesheet from being set."""
-        raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
+        raise AttributeError("Can't set the stylesheet value, this is derived from the stylename aatribute.")
 
     def clear(self):
         """Reset everything back o defaults."""
@@ -400,7 +400,7 @@ class DefaultPlotStyle(MutableMapping):
         """Create a new figure.
 
         This is called by PlotMixin to setup a new figure before we do anything."""
-        plt.rcdefaults()  # Start by resetting to our default settings
+        plt.style.use("default")
         params = dict()
         self.apply()
         if "fig_width_pt" in dir(self):
@@ -417,50 +417,64 @@ class DefaultPlotStyle(MutableMapping):
                 value = self.__getattribute__(attr)
                 if attrname in plt.rcParams.keys():
                     params[attrname] = value
-        plt.rcParams.update(params)  # Apply these parameters
         projection = kargs.pop("projection", "rectilinear")
         self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)  # pylint: disable=W0201
-        if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as out figure
-            ax = kargs.get("ax")
-            plt.sca(ax)
-            figure = plt.gcf().number
+        if "ax" in kargs and isinstance(kargs["ax"], (Axes3D, plt.Axes)):
+            # Giving an axis instance in kargs means we can use that as our figure
+            figure = kargs["ax"].figure.number
         if isinstance(figure, bool) and not figure:
-            ret = plt.figure(figure, figsize=self.template_figure__figsize)
-            if projection == "3d":
-                ax = ret.add_subplot(111, projection="3d")
-            else:
-                ax = ret.add_subplot(111)
+            return None, None
         elif figure is not None:
-            fig = plt.figure(figure, figsize=self.template_figure__figsize)
+            fig = plt.figure(figure, figsize=self.template_figure__figsize, layout="constrained")
             if len(fig.axes) == 0:
                 rect = [plt.rcParams[f"figure.subplot.{i}"] for i in ["left", "bottom", "right", "top"]]
                 rect[2] = rect[2] - rect[0]
                 rect[3] = rect[3] - rect[1]
                 if projection == "3d":
-                    ax = fig.add_subplot(111, projection="3d")
+                    if not kargs.get("no_axes", False):
+                        ax = fig.add_subplot(111, projection="3d")
+                    else:
+                        ax = None
                 else:
-                    ax = fig.add_axes(rect)
+                    if not kargs.get("no_axes", False):
+                        ax = fig.add_axes(rect)
+                    else:
+                        ax = None
             else:
                 if projection == "3d":
                     if "ax" in kargs:
                         ax = kargs.pop("ax")
                     else:
                         for ax in plt.gcf().axes:
-                            if "zaxis" in ax.properties():
+                            if isinstance(ax, Axes3D):
                                 break
                         else:
                             ax = plt.axes(projection="3d")
                 else:
                     ax = kargs.pop("ax", fig.gca())
 
-            ret = fig
+            return fig, ax
         else:
+            no_axes = kargs.pop("no_axes", False)
             if projection == "3d":
+                kargs.setdefault("layout", "constrained")
                 ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
-                ax = ret.add_subplot(111, projection="3d")
+                if not no_axes:
+                    ax = ret.add_subplot(111, projection="3d")
+                    return ret, ax
+                else:
+                    for ax in ret.axes:
+                        ax.remove()
+                    return ret, None
             else:
-                ret, ax = plt.subplots(figsize=self.template_figure__figsize, **kargs)
-        return ret, ax
+                kargs.setdefault("layout", "constrained")
+                if not no_axes:
+                    return plt.subplots(figsize=self.template_figure__figsize, **kargs)
+                else:
+                    ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
+                    for ax in ret.axes:
+                        ax.remove()
+                    return ret, None
 
     def apply(self):
         """Update matplotlib rc parameters from any attributes starting template_."""
@@ -482,7 +496,7 @@ class DefaultPlotStyle(MutableMapping):
         """Implement hook to customise plot.
 
         This method is supplied for sub classes to override to provide additional
-        plot customisation after the rc paramaters are updated from the class and
+        plot customisation after the rc parameters are updated from the class and
         instance attributes."""
 
     def customise_axes(self, ax, plot):
@@ -496,6 +510,10 @@ class DefaultPlotStyle(MutableMapping):
             In the DefaultPlotStyle class this method is used to set SI units
             plotting mode for all axes.
         """
+        ax.xaxis.set_major_locator(self.xlocater())
+        ax.yaxis.set_major_locator(self.ylocater())
+        ax.set_xticks(ax.get_xticks())
+        ax.set_yticks(ax.get_yticks())
         ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick__labelsize)
         ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick__labelsize)
         ax.xaxis.set_major_locator(self.xlocater())
@@ -530,7 +548,7 @@ class DefaultPlotStyle(MutableMapping):
         if multiple in self.subplot_settings:
             if ix == 0:
                 i = 0
-            elif ix == len(plot.axes):
+            elif ix == len(plot.axes) - 1:
                 i = 2
             else:
                 i = 1
@@ -684,7 +702,7 @@ if SEABORN:  # extra classes if we have seaborn available
 
         Attributes:
             stylename (str):
-                The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks
+                The seaborn plot style to use - darkgrid, whitegrid, dark, white, or ticks
             context (str):
                 The seaborn plot context for scaling elements - paper,notebook,talk, or poster
             palette (str):
@@ -744,7 +762,6 @@ if SEABORN:  # extra classes if we have seaborn available
             sns.set_context(context=self.context)
             sns.set_palette(sns.color_palette(self._palette))
             self.customise()
-
 
 else:
     SeabornPlotStyle = DefaultPlotStyle

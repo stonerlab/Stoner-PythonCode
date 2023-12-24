@@ -6,7 +6,7 @@ from Stoner import Data
 from Stoner.tools import format_val
 
 x = linspace(-10, 10, 201)
-y = 0.3 * x ** 3 - 6 * x ** 2 + 11 * x - 20
+y = 0.3 * x**3 - 6 * x**2 + 11 * x - 20
 d = Data(x, y, setas="xy", column_headers=["X", "Y"])
 d.decompose()
 d.setas = "xyyy"
@@ -22,4 +22,3 @@ d.text(
 )
 d.ylabel = "Data"
 d.title = "Decompose Example"
-d.tight_layout()

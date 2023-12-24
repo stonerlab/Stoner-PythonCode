@@ -27,7 +27,7 @@ labels = ["A", "B", "C"]
 txt = []
 lead = r"$x'\rightarrow x+A$" + "\n" + r"$y'=\rightarrow By+C$" + "\n"
 for l, v, e in zip(
-    labels, s2["Stitching Coefficients"], s2["Stitching Coeffient Errors"]
+    labels, s2["Stitching Coefficients"], s2["Stitching Coefficient Errors"]
 ):
     txt.append(format_error(v, e, latex=True, prefix=l + "="))
 plt.text(1.5, 1.25, lead + "\n".join(txt), fontdict={"size": "x-small"})
@@ -39,7 +39,7 @@ s1.plot(fmt="r:", label="Set 1 sticked on Set 2", linewidth=1)
 txt = []
 lead = r"$x'\rightarrow x+A$" + "\n" + r"$y'=\rightarrow By+C$" + "\n"
 for l, v, e in zip(
-    labels, s1["Stitching Coefficients"], s1["Stitching Coeffient Errors"]
+    labels, s1["Stitching Coefficients"], s1["Stitching Coefficient Errors"]
 ):
     txt.append(format_error(v, e, latex=True, prefix=l + "="))
 plt.text(5.0, 1.25, lead + "\n".join(txt), fontdict={"size": "x-small"})

@@ -114,7 +114,7 @@ def isiterable(value: Any) -> bool:
 
     Args:
         value :
-            Entitiy to check if it is iterable
+            Entity to check if it is iterable
 
     Returns:
         (bool):
@@ -165,7 +165,7 @@ def isproperty(obj: Any, name: str) -> bool:
         obj (instance or class):
             Thing that has the attribute to check
         name (str):
-            Name of the attrbiute that might be a property
+            Name of the attribute that might be a property
 
     Returns:
         (bool):
@@ -185,7 +185,7 @@ def isTuple(obj: Any, *args: type, strict: bool = True) -> bool:
         obj(object):
             The object to check
         *args(type):
-            Each of the suceeding arguments are used to determine the expected type of each element.
+            Each of the succeeding arguments are used to determine the expected type of each element.
 
     Keywoprd Arguments:
         strict(bool):

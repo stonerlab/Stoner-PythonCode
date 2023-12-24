@@ -39,4 +39,3 @@ d.annotate_fit(
     prefix="WLfit",
 )
 d.title = "Weak Localisation Fit"
-d.tight_layout()

@@ -1,4 +1,4 @@
-"""Provides the a class to facilitate easier plotting of Stoner Data.
+"""Provides the a class to facilitte easier plotting of Stoner Data.
 
 Classes:
     PlotMixin:
@@ -12,15 +12,16 @@ import os
 from collections.abc import Mapping
 from functools import wraps
 import copy
+from inspect import getfullargspec
 
 import numpy as np
 from scipy.interpolate import griddata
 
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
-from matplotlib import cm, colors
+from matplotlib import cm, colors, colormaps
 
-from Stoner.compat import string_types, index_types, int_types, getargspec
+from Stoner.compat import string_types, index_types, int_types
 from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, typedList, get_option, fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
@@ -38,16 +39,34 @@ except ImportError:
     _3D = False
 
 
+def _getargspec(*args, **kargs):
+    """Get the function signature spec."""
+    ret = getfullargspec(*args, **kargs)
+    if ret.args and ret.args[0] == "self":  # remove self for bound methods
+        del ret.args[0]
+    deflen = len(ret.defaults) if ret.defaults else 0
+    kwargs = ret.args[-deflen:]
+    kwargs.extend(ret.kwonlyargs)
+    args = ret.args[: len(ret.args) - deflen]
+    defaults = list(ret.defaults) if ret.defaults else []
+    if ret.kwonlydefaults:
+        defaults.extend(list(ret.kwonlydefaults.values()))
+    return args, kwargs, defaults, len(kwargs) - len(ret.kwonlyargs)
+
+
+FIG_KARGS = _getargspec(plt.figure)[1] + ["ax"]
+
+
 def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
     """Plot vector fields using mpltoolkit.quiver.
 
     Args:
         x_coord_coord_coord (array):
-            x data co-ordinates
+            x data coordinates
         y_coord (array):
-            y data co-ordinates
+            y data coordinates
         z_coord (array):
-            z data co-ordinates
+            z data coordinates
         u_comp (array):
             u data vector field component
         v_comp (array):
@@ -74,12 +93,11 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
 
 
 class PlotMixin:
-
     r"""A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
 
     Args:
         args(tuple):
-            Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
+            Arguments to pass to :py:meth:`Stoner.Core.DataFile.__init__`
         kargs (dict):
             keyword arguments to pass to \b DataFile.__init__
 
@@ -215,7 +233,8 @@ class PlotMixin:
     def showfig(self):
         """Return either the current figure or self or None.
 
-        The return value depeds on whether the attribute is True or False or None."""
+        The return value depends on whether the attribute is True or False or None.
+        """
         if self._showfig is None or get_option("no_figs"):
             return None
         if self._showfig:
@@ -290,6 +309,9 @@ class PlotMixin:
         mask = x.mask | y.mask
         x = x[~mask]
         y = y[~mask]
+        for err in ["xerr", "yerr"]:  # Check whether we need to shorten errors too
+            if err in kwords and len(kwords[err]) == len(mask):
+                kwords[err] = kwords[err][~mask]
         if plotter in self.positional_fmt:  # plots with positional fmt
             if fmt is None:
                 plotter(x, y, figure=figure, **kwords)
@@ -309,24 +331,28 @@ class PlotMixin:
 
         Args:
             x_coord, y_coord, z_coord (array):
-                Data point co-ordinates
+                Data point coordinates
             kargs (dict):
                 Other keywords to pass through
 
         ReturnsL
             A matplotib Figure
 
-        This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
+        This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set
+        """
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-        ax = plt.axes(projection="3d")
+        if not isinstance(self.__figure.gca(), Axes3D):
+            ax = plt.axes(projection="3d")
+        else:
+            ax = self.__figure.gca()
         z_coord = np.nan_to_num(z_coord)
         surf = ax.plot_surface(x_coord, y_coord, z_coord, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
 
         return surf
 
-    def _vector_color(self, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
+    def _vector_color(self, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Map a vector direction in the data to a value for use with a colormnap."""
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
 
@@ -337,9 +363,9 @@ class PlotMixin:
             phidata = np.ones(len(self)) * 0.5
             wdata = phidata - 0.5
         qdata = 0.5 + (np.arctan2(self.column(c.ucol), self.column(c.vcol)) / (2 * np.pi))
-        rdata = np.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata ** 2)
+        rdata = np.sqrt(self.column(c.ucol) ** 2 + self.column(c.vcol) ** 2 + wdata**2)
         rdata = rdata / rdata.max()
-        Z = hsl2rgb(qdata, rdata, phidata).astype("f") / 255.0
+        Z = hsl2rgb(qdata, rdata, phidata).astype("f") / 255.0001 + 1e-7
         return Z
 
     def _span_slice(self, col, num):
@@ -358,7 +384,7 @@ class PlotMixin:
 
         Args:
             x_coord, y_coord, z_coord (array):
-                Data point co-ordinates
+                Data point coordinates
             u_comp, v_comp, w_comp (array):
                 U,V,W vector field component
 
@@ -447,6 +473,7 @@ class PlotMixin:
         else:
             figure, ax = self.template.new_figure(None, **kargs)
         self.__figure = figure
+        figure.sca(ax)  # Esur4e we're set for plotting on the correct axes
         return figure, ax
 
     def _fix_kargs(self, function=None, defaults=None, otherkargs=None, **kargs):
@@ -459,15 +486,13 @@ class PlotMixin:
             defaults = dict()
         defaults.update(kargs)
 
-        fig_kargs = ["num", "figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass", "clear", "ax"]
-
         pass_fig_kargs = {}
-        for k in set(fig_kargs) & set(kargs.keys()):
+        for k in set(FIG_KARGS) & set(kargs.keys()):
             pass_fig_kargs[k] = kargs[k]
             if k not in otherkargs and k not in defaults:
                 del kargs[k]
 
-        # Defaults now a dictionary of default arugments overlaid with keyword argument values
+        # Defaults now a dictionary of default arguments overlaid with keyword argument values
         # Now inspect the plotting function to see what it takes.
         if function is None:
             function = defaults["plotter"]
@@ -480,16 +505,18 @@ class PlotMixin:
             if self.__figure is not plt.gcf():
                 plt.close(plt.gcf())
 
-        (args, _, kwargs) = getargspec(function)[:3]
-        # Manually overide the list of arguments that the plotting function takes if it takes keyword dictionary
-        if isinstance(otherkargs, (list, tuple)) and kwargs is not None:
-            args.extend(otherkargs)
-        nonkargs = dict()
-        for k in list(defaults.keys()):
-            nonkargs[k] = defaults[k]
-            if k not in args:
-                del defaults[k]
-        return defaults, nonkargs, pass_fig_kargs
+        (args, kwargs) = _getargspec(function)[:2]
+        # Manually override the list of arguments that the plotting function takes if it takes keyword dictionary
+        if isinstance(otherkargs, (list, tuple)):
+            kwargs.extend(otherkargs)
+        nonkargs = {}
+        func_kwargs = {}
+        for key, value in defaults.items():
+            if key in kwargs:
+                func_kwargs[key] = value
+            else:
+                nonkargs[key] = value
+        return func_kwargs, nonkargs, pass_fig_kargs
 
     def _fix_titles(self, ix, multiple, **kargs):
         """Do the titling and labelling for a matplotlib plot."""
@@ -512,7 +539,7 @@ class PlotMixin:
                     -   xlim - the X axis limits
                     -   ylim - the Y axis limits
 
-                    All other attrbiutes are passed over to the parent class
+                    All other attributes are passed over to the parent class
         """
         func = None
         o_name = name
@@ -600,7 +627,7 @@ class PlotMixin:
         Args:
             name (string):
                 The name of the attribute to set. The cuirrent attributes are supported:
-                    -   fig - set the plt figure isntance to use
+                    -   fig - set the plt figure instance to use
                     -   xlabel - set the X axis label text
                     -   ylabel - set the Y axis label text
                     -   title - set the plot title
@@ -613,7 +640,10 @@ class PlotMixin:
         """
         if plt.get_fignums():
             tfig = plt.gcf()
-            tax = tfig.gca()  # protect the current axes and figure
+            if len(tfig.axes):
+                tax = tfig.gca()  # protect the current axes and figure
+            else:
+                tax = None
         else:
             tfig = None
             tax = None
@@ -655,7 +685,8 @@ class PlotMixin:
             func(*value)
         if tfig is not None:
             plt.figure(tfig.number)
-            plt.sca(tax)
+            if tax is not None:
+                plt.sca(tax)
 
     def add_column(self, column_data, header=None, index=None, **kargs):
         """Append a column of data or inserts a column to a datafile instance.
@@ -678,7 +709,7 @@ class PlotMixin:
                 Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
 
         Returns:
-            A :py:class:`DataFile` instance with the additonal column inserted.
+            A :py:class:`DataFile` instance with the additional column inserted.
 
         Note:
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
@@ -743,7 +774,6 @@ class PlotMixin:
         ax = self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
         if colorbar:
             plt.colorbar()
-            plt.tight_layout()
         return ax
 
     def contour_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
@@ -839,11 +869,11 @@ class PlotMixin:
             zlim (tuple):
                 The ylimits
             method (string):
-                Type of interploation to use, default is linear
+                Type of interpolation to use, default is linear
 
             ReturnsL
                 (X,Y,Z) or (X,Y,Z,M):
-                    three two dimensional arrays of the co-ordinates of the interpolated data or 4 three diemensional
+                    three two dimensional arrays of the coordinates of the interpolated data or 4 three diemensional
                     arrays of the interpolated data
 
         Notes:
@@ -945,7 +975,7 @@ class PlotMixin:
             ylim (tuple):
                 The ylimits, defaults to automatically determined from data
             xlabel (string):
-                X axes label. Deafult is None - guess from xvals or metadata
+                X axes label. Default is None - guess from xvals or metadata
             ylabel (string):
                 Y axes label, Default is None - guess from metadata
             zlabel (string):
@@ -981,10 +1011,10 @@ class PlotMixin:
         kargs, nonkargs, _ = self._fix_kargs(None, defaults, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure = self._fix_fig(nonkargs["figure"])[0]
-        if "cmap" in kargs:
-            cmap = cm.get_cmap(kargs["cmap"])
-        elif "cmap" in nonkargs:
-            cmap = cm.get_cmap(nonkargs["cmap"])
+        if "cmap" in kargs and isinstance(kargs["cmap"], str):
+            cmap = colormaps[kargs["cmap"]]
+        elif "cmap" in nonkargs and isinstance(kargs["cmap"], str):
+            cmap = colormaps(nonkargs["cmap"])
         if Z.ndim == 2:
             Z = cmap(Z)
         elif Z.ndim != 3:
@@ -993,7 +1023,6 @@ class PlotMixin:
         xmax = np.max(X.ravel())
         ymin = np.min(Y.ravel())
         ymax = np.max(Y.ravel())
-        aspect = (xmax - xmin) / (ymax - ymin)
         extent = [xmin, xmax, ymin, ymax]
         fig = plotter(Z, extent=extent, aspect="auto", **kargs)
         self._fix_titles(0, "none", **nonkargs)
@@ -1138,9 +1167,9 @@ class PlotMixin:
             show_plot (bool):
                 True Turns on interactive plot control
             title (string):
-                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                Optional parameter that specifies the plot title - otherwise the current DataFile filename is used
             xlabel (string):
-                X axes label. Deafult is None - guess from xvals or metadata
+                X axes label. Default is None - guess from xvals or metadata
             ylabel (string):
                 Y axes label, Default is None - guess from metadata
             zlabel (string):
@@ -1150,7 +1179,7 @@ class PlotMixin:
                 False then a new figure is always used, otherwise it will default to using the last figure used
                 by this DataFile object.
             plotter (callable):
-                Optional arguement that passes a plotting function into the routine. Sensible choices might be
+                Optional argument that passes a plotting function into the routine. Sensible choices might be
                 plt.plot (default), py.semilogy, plt.semilogx
             kwords (dict):
                 A dictionary of other keyword arguments to pass into the plot function.
@@ -1159,8 +1188,8 @@ class PlotMixin:
                 The matplotib figure with the data plotted
         """
         # Sortout yvals values
-        if isinstance(yvals, int):  # Int means we're sepcifying a data row
-            if rectang is None:  # we need to intitialise the rectang
+        if isinstance(yvals, int):  # Int means we're specifying a data row
+            if rectang is None:  # we need to initialise the rectang
                 rectang = (yvals + 1, 0)  # We'll sort the column origin later
             elif (
                 isinstance(rectang, tuple) and rectang[1] <= yvals
@@ -1178,7 +1207,7 @@ class PlotMixin:
                 headers = self.column_headers[1:]
             else:
                 headers = self.column_headers
-            yvals = np.array([float(x) for x in headers])  # Ok try to construct yvals aray
+            yvals = np.array([float(x) for x in headers])  # Ok try to construct yvals array
         else:
             raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
         # Sort out xvls values
@@ -1281,11 +1310,11 @@ class PlotMixin:
             xerr,yerr (index): C
             olumns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar
             xlabel (string):
-                X axes label. Deafult is None - guess from xvals or metadata
+                X axes label. Default is None - guess from xvals or metadata
             ylabel (string):
                 Y axes label, Default is None - guess from metadata
             title (string):
-                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                Optional parameter that specifies the plot title - otherwise the current DataFile filename is used
             plotter (function):
                 Function to use to plot data. Defaults to plt.plot unless error bars are set
             show_plot (bool):
@@ -1305,7 +1334,7 @@ class PlotMixin:
                 Other arguments are passed on to the plotter.
 
         Returns:
-            A matplotlib.figure isntance
+            A matplotlib.figure instance
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False, **kargs)
         (kargs["xerr"], kargs["yerr"]) = (c.xerr, c.yerr)
@@ -1314,6 +1343,7 @@ class PlotMixin:
         title = kargs.pop("title", self.basename)
 
         defaults = {
+            "capsize": 4,
             "plotter": plt.plot,
             "show_plot": True,
             "figure": self.__figure,
@@ -1464,11 +1494,13 @@ class PlotMixin:
             c.ycol = [c.ycol]
         if len(c.ycol) > 1:
             if multiple == "panels":
-                self.__figure, _ = plt.subplots(nrows=len(c.ycol), sharex=True, gridspec_kw={"hspace": 0})
+                self.__figure, _ = plt.subplots(
+                    nrows=len(c.ycol), sharex=True, gridspec_kw={"hspace": 0}, layout="constrained", **fig_kargs
+                )
             elif multiple == "subplots":
                 m = int(np.floor(np.sqrt(len(c.ycol))))
                 n = int(np.ceil(len(c.ycol) / m))
-                self.__figure, _ = plt.subplots(nrows=m, ncols=n)
+                self.__figure, _ = plt.subplots(nrows=m, ncols=n, layout="constrained", **fig_kargs)
             else:
                 self.__figure, _ = self._fix_fig(nonkargs["figure"], **fig_kargs)
         else:
@@ -1482,10 +1514,12 @@ class PlotMixin:
                     lines = plt.gca()._get_lines
                     if hasattr(lines, "color_cycle"):  # mpl<1.5
                         cc = lines.color_cycle
-                    else:  # MPL >=1.5
-                        cc = lines.prop_cycler
-                    for i in range(ix):
                         next(cc)
+                    elif hasattr(lines, "prop_cycler"):  # MPL<3.8.0
+                        cc = lines.prop_cycler
+                        next(cc)
+                    else:
+                        lines.get_next_color()
             if len(c.ycol) > 1 and multiple in ["y2", "panels", "subplots"]:
                 self.ax = ix  # We're manipulating the plotting here
             if isinstance(fmt, list):  # Fix up the format
@@ -1514,7 +1548,7 @@ class PlotMixin:
             if ix > 0:  # Hooks for multiple subplots
                 if multiple == "panels":
                     loc, lab = plt.yticks()
-                    lab = [l.get_text() for l in lab]
+                    lab = [label.get_text() for label in lab]
                     plt.yticks(loc[:-1], lab[:-1])
         return self.showfig
 
@@ -1531,7 +1565,7 @@ class PlotMixin:
 
         Keyword Arguments:
             shape (tuple):
-                Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then
+                Defines the shape of the surface (i.e. the number of X and Y value. If not provided or None, then
                 the routine will attempt to calculate
                 these from the data provided
             xlim (tuple):
@@ -1543,7 +1577,7 @@ class PlotMixin:
             show_plot (bool):
                 True Turns on interactive plot control
             title (string):
-                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                Optional parameter that specifies the plot title - otherwise the current DataFile filename is used
             save_filename (string):
                 Filename used to save the plot
             figure (matplotlib figure):
@@ -1551,15 +1585,15 @@ class PlotMixin:
                 False then a new figure is always used, otherwise it will default to using the last figure used
                 by this DataFile object.
             plotter (callable):
-                Optional arguement that passes a plotting function into the routine. Default is a 3d surface
+                Optional argument that passes a plotting function into the routine. Default is a 3d surface
                 plotter, but contour plot and pcolormesh also work.
             projection (string or None):
-                Whether to use a 3D projection or regular 2D axes (deault is 3D)
+                Whether to use a 3D projection or regular 2D axes (default is 3D)
             **kargs (dict):
                 A dictionary of other keyword arguments to pass into the plot function.
 
         Returns:
-            A matplotlib.figure isntance
+            A matplotlib.figure instance
         """
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
@@ -1608,16 +1642,15 @@ class PlotMixin:
                 "shade",
                 "linewidth",
                 "ax",
+                "alpha",
             ]
         else:
-            otherkargs = ["vmin", "vmax", "shade", "color", "linewidth"]
-        kargs, nonkargs, _ = self._fix_kargs(
-            kargs.get("plotter", None), defaults, otherkargs=otherkargs, projection=projection, **kargs
-        )
-        plotter = nonkargs["plotter"]
-        self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
+            otherkargs = ["vmin", "vmax", "shade", "color", "linewidth", "marker"]
+        plotter = kargs.get("plotter", defaults["plotter"])
+        self.__figure, ax = self._fix_fig(kargs.get("figure", defaults["figure"]), projection=projection)
         if isinstance(plotter, string_types):
             plotter = ax.__getattribute__(plotter)
+        kargs, nonkargs, _ = self._fix_kargs(plotter, defaults, otherkargs=otherkargs, projection=projection, **kargs)
         self.plot3d = plotter(xdata, ydata, zdata, **kargs)
         if plotter is not self._surface_plotter:
             del nonkargs["zlabel"]
@@ -1627,38 +1660,38 @@ class PlotMixin:
     def plot_xyuv(self, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Make an overlaid image and quiver plot.
 
-        Args:
-            xcol (index):
-                Xcolumn index or label
-            ycol (index):
-                Y column index or label
-            zcol (index):
-                Z column index or label
-            ucol (index):
-                U column index or label
-            vcol (index):
-                V column index or label
-            wcol (index):
-                W column index or label
+          Args:
+        !c      xcol (index):
+                  Xcolumn index or label
+              ycol (index):
+                  Y column index or label
+              zcol (index):
+                  Z column index or label
+              ucol (index):
+                  U column index or label
+              vcol (index):
+                  V column index or label
+              wcol (index):
+                  W column index or label
 
-        Keyword Arguments:
-            show_plot (bool):
-                True Turns on interactive plot control
-            title (string):
-                Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
-            save_filename (string):
-                Filename used to save the plot
-            figure (matplotlib figure):
-                Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False
-                then a new figure is always used, otherwise it will default to using the last figure used by this
-                DataFile object.
-            no_quiver (bool):
-                Do not overlay quiver plot (in cases of dense meshes of points)
-            plotter (callable):
-                Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter,
-                but contour plot and pcolormesh also work.
-            **kargs (dict):
-                A dictionary of other keyword arguments to pass into the plot function.
+          Keyword Arguments:
+              show_plot (bool):
+                  True Turns on interactive plot control
+              title (string):
+                  Optional parameter that specifies the plot title - otherwise the current DataFile filename is used
+              save_filename (string):
+                  Filename used to save the plot
+              figure (matplotlib figure):
+                  Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False
+                  then a new figure is always used, otherwise it will default to using the last figure used by this
+                  DataFile object.
+              no_quiver (bool):
+                  Do not overlay quiver plot (in cases of dense meshes of points)
+              plotter (callable):
+                  Optional argument that passes a plotting function into the routine. Default is a 3d surface plotter,
+                  but contour plot and pcolormesh also work.
+              **kargs (dict):
+                  A dictionary of other keyword arguments to pass into the plot function.
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
         Z = self._vector_color(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol)
@@ -1713,7 +1746,7 @@ class PlotMixin:
                 figure is always used,
                 otherwise it will default to using the last figure used by this DataFile object.
             plotter (callable):
-                Optional arguement that passes a plotting function into the routine. Sensible choices might be
+                Optional argument that passes a plotting function into the routine. Sensible choices might be
                 plt.plot (default), py.semilogy, plt.semilogx
             kargs (dict):
                 A dictionary of other keyword arguments to pass into the plot function.
@@ -1909,7 +1942,7 @@ class PlotMixin:
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection="3d")
 
         norm = colors.Normalize(vmin=U.min(), vmax=U.max(), clip=True)
-        mapper = cm.ScalarMappable(norm=norm, cmap=kargs["cmap"])
+        mapper = cm.ScalarMappable(norm=norm, cmap=kargs.get("cmap", cmap))
         cshape = U.shape + (4,)
         facecolors = mapper.to_rgba(U.ravel(), alpha=nonkargs["f_alpha"]).reshape(cshape)
         edgecolors = mapper.to_rgba(U.ravel(), alpha=nonkargs["e_alpha"]).reshape(cshape)
@@ -1938,7 +1971,7 @@ class PlotMixin:
 
         Keyword Arguments:
             xlabel (string):
-                X axes label. Deafult is None - guess from xvals or metadata
+                X axes label. Default is None - guess from xvals or metadata
             ylabel (string):
                 Y axes label, Default is None - guess from metadata
             zlabel (string):
@@ -2001,7 +2034,13 @@ class PlotMixin:
         self.__figure, _ = self._fix_fig(nonkargs["figure"])
         data = np.column_stack([self // xcol, self // ycol, self // ucol, self // vcol])
 
-        fig = plotter(data[:, 0], data[:, 1], data[:, 2], data[:, 3], **kargs,)
+        fig = plotter(
+            data[:, 0],
+            data[:, 1],
+            data[:, 2],
+            data[:, 3],
+            **kargs,
+        )
         self._fix_titles(0, "non", **nonkargs)
         return fig
 
@@ -2011,7 +2050,7 @@ class PlotMixin:
         Args:
             rows (int):
                 If this is the only argument, then a three digit number representing
-                the rows,columns,index arguments. If seperate rows, column and index are provided,
+                the rows,columns,index arguments. If separate rows, column and index are provided,
                 then this is the number of rows of sub-plots in one figure.
             columns (int):
                 The number of columns of sub-plots in one figure.
@@ -2024,7 +2063,7 @@ class PlotMixin:
         As well as passing through to the plyplot routine of the same name, this
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """
-        self.template.new_figure(self.__figure.number)
+        self.template.new_figure(self.__figure.number, no_axes=True)
         sp = plt.subplot(*args, **kargs)
         if len(args) == 1:
             rows = args[0] // 100
@@ -2042,9 +2081,9 @@ class PlotMixin:
     def subplot2grid(self, *args, **kargs):
         """Provide a pass through to :py:func:`matplotlib.pyplot.subplot2grid`."""
         if self.__figure is None:
-            self.figure()
+            self.figure(no_axes=True)
 
-        figure = self.template.new_figure(self.__figure.number)[0]
+        figure = self.template.new_figure(self.__figure.number, no_axes=True)[0]
 
         plt.figure(figure.number)
         ret = plt.subplot2grid(*args, **kargs)
@@ -2069,6 +2108,6 @@ class PlotMixin:
         """
         ax = self.fig.gca()
         ax2 = ax.twinx()
-        plt.subplots_adjust(right=self.__figure.subplotpars.right - 0.05)
+        # plt.subplots_adjust(right=self.__figure.subplotpars.right - 0.05)
         plt.sca(ax2)
         return ax2

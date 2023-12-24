@@ -43,7 +43,7 @@ def _get_model_(model):
             imported.
         -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
             Model instance is constructed
-        -   A subclass of lmfit.Model - in whcih case it is instantiated.
+        -   A subclass of lmfit.Model - in which case it is instantiated.
         -   A Model instance - in which case no further action is necessary.
     """
     if isinstance(model, string_types):  # model is a string, so we;ll try importing it now
@@ -85,7 +85,7 @@ def make_model(model_func):
                 return (param_1,param_2,....,pram_n)
 
         Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a
-        function as something that can generate prameter hints for the model. In this case the function should
+        function as something that can generate parameter hints for the model. In this case the function should
         take the form::
 
             def hinter(**kwargs):
@@ -95,7 +95,6 @@ def make_model(model_func):
     """
 
     class _ModelDecorator(Model):
-
         __doc__ = model_func.__doc__
 
         def __init__(self, *args, **kargs):
@@ -164,7 +163,7 @@ def make_model(model_func):
 
             @wraps(func)
             def guess_proxy(self, *args, **kargs):
-                """A magic proxy call around a function to guess initial prameters."""
+                """A magic proxy call around a function to guess initial parameters."""
                 guesses = func(*args, **kargs)
                 pars = {x: y for x, y in zip(self.param_names, guesses)}
                 pars = self.make_params(**pars)
@@ -184,7 +183,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
             Path to the ini file to be read.
 
     Keyword Arguments:
-        filename (strig,boolean or None):
+        filename (string,boolean or None):
             File to load that contains the data.
         **kargs:
             All other keywords are passed to the Data constructor
@@ -197,7 +196,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
         -  **filename (str or boolean):** optionally used if *filename* parameter is None.
         - **xcol (column index):** defines the x-column data for fitting.
         - **ycol (column index):** defines the y-column data for fitting.
-        - **yerr (column index):** Optional column with uncertainity values for the data
+        - **yerr (column index):** Optional column with uncertainty values for the data
     """
     if SafeConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
@@ -267,7 +266,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
             imported.
         -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
             Model instance is constructed
-        -   A subclass of lmfit.Model - in whcih case it is instantiated.
+        -   A subclass of lmfit.Model - in which case it is instantiated.
         -   A Model instance - in which case no further action is necessary.
 
     The returned model is configured with parameter hints for fitting with. The second return value is

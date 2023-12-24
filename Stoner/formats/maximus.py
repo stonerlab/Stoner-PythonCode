@@ -20,8 +20,20 @@ from ..Core import DataFile
 from ..compat import string_types
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager
+from ..core.exceptions import StonerLoadError
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
+
+
+def _raise_error(openfile, message=""):
+    """Raise a StonerLoadError after trying to close file."""
+    try:
+        raise StonerLoadError(message)
+    finally:
+        try:
+            openfile.close()
+        except (AttributeError, TypeError, ValueError, IOError):
+            pass
 
 
 class MaximusSpectra(DataFile):
@@ -149,7 +161,7 @@ class MaximusStackMixin:
         self.compression = "gzip"
         self.compression_opts = 6
 
-    def _load(self, filename, **kargs):
+    def _load(self, filename):
         """Load an ImageStack from either an hdf file or textfiles."""
         if filename is None or not filename:
             self.get_filename("r")
@@ -214,7 +226,7 @@ class MaximusStackMixin:
             raise StonerLoadError(f"{g.name} does not have a signal dataset !")
         tmp = self.type()  # pylint: disable=E1102
         data = g["image"]
-        if np.product(np.array(data.shape)) > 0:
+        if np.prod(np.array(data.shape)) > 0:
             tmp.image = data[...]
         else:
             tmp.image = [[]]
@@ -455,7 +467,7 @@ def _read_images(files, header):
 
     Returns:
         data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arays): 2 or 3 1D arrays corresponding to the dimensions of data.
+        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
     """
     xims = list(files)
     scandef = header["ScanDefinition"]
@@ -485,7 +497,7 @@ def _read_pointscan(files, header):
 
     Returns:
         data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arays): 2 or 3 1D arrays corresponding to the dimensions of data.
+        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
     """
     xsps = list(files)
     scandef = header["ScanDefinition"]
@@ -506,7 +518,6 @@ def _read_pointscan(files, header):
 
 
 if __name__ == "__main__":
-
     # Test by reading all files
     for infile in Path(".").glob("*.hdr"):
         hdr, data, dims = read_scan(infile.stem)

@@ -12,7 +12,7 @@ Each class should implement a :py:meth:`Stoner.Core.DataFile._load` method and o
 positively identify that the file is one that they understand and throw a
 :py:exception:Stoner.cpre.exceptions.StonerLoadError` if not.
 
-Classes may also provide :py:attr:`Stoner.Core.DataFile.patterns` atribute which is a list of filename glob patterns
+Classes may also provide :py:attr:`Stoner.Core.DataFile.patterns` attribute which is a list of filename glob patterns
 (e.g.  ['*.data','*.txt']) which is used in the file dialog box to filter the list of files. Finally, classes can
 provide a :py:attr:`Stoner.Core.DataFile.mime_type` attribute which gives a list of mime types that this class might
 be able to open. This helps identify classes that could be use to load particular file types.

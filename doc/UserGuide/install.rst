@@ -5,7 +5,7 @@ Installation of Stoner Package
 Introduction
 ============
 
-This manual provides a user guide and reference for the Stoner python pacakage.
+This manual provides a user guide and reference for the Stoner python package.
 The Stoner python package provides a set of python classes and functions for
 reading, manipulating and plotting data acquired with the lab equipment in the
 Condensed Matter Physics Group at the University of Leeds.
@@ -114,6 +114,6 @@ representations such as png or html output formats.::
     from Stoner import Options
     Options.short_repr=True
 
-The **options** object supports reading and setting options through attribute assignment. Deleting an Option atribute
+The **options** object supports reading and setting options through attribute assignment. Deleting an Option attribute
 resets the Option back to the corresponding default value. **dir(Options)** will give a list of all possible package options.
 

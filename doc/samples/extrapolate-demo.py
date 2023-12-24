@@ -1,18 +1,19 @@
 """Extrapolate data example."""
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like, column_stack, exp, sqrt
-from numpy.random import normal
+from numpy.random import normal, seed
 import matplotlib.pyplot as plt
 
 from Stoner import Data
 from Stoner.plot.utils import errorfill
 
+seed(1245)  # Ensure consistent random numbers
 x = linspace(1, 10, 101)
 d = Data(
     column_stack(
         [
             x,
-            (2 * x ** 2 - x + 2) + normal(size=len(x), scale=2.0),
+            (2 * x**2 - x + 2) + normal(size=len(x), scale=2.0),
             ones_like(x) * 2,
         ]
     ),
@@ -27,7 +28,7 @@ y4 = d.extrapolate(
     overlap=200,
     kind=lambda x, A, C: A * exp(x / 10) + C,
     errors=lambda x, Aerr, Cerr, popt: sqrt(
-        (Aerr * exp(x / popt[1])) ** 2 + Cerr ** 2
+        (Aerr * exp(x / popt[1])) ** 2 + Cerr**2
     ),
 )
 y3 = d.extrapolate(extra_x, overlap=80, kind="cubic")

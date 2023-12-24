@@ -26,7 +26,7 @@ def field_sign(r):
     return where(pos, "pos", "neg")
 
 
-def extra(i, j, d):
+def extra(_, __, d):
     """Customise each individual plot."""
     d.axvline(x=d["cut"], ls="--")
     d.title = r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency") / 1e9)
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     )
     d.labels = None
 
-    # Deine x and y columns and normalise to a big number
+    # Define x and y columns and normalise to a big number
     d.setas(x="Field", y="FMR")  # pylint: disable=not-callable
     d.normalise(base=(-1e6, 1e6))
     fldr = d.split(field_sign, "Frequency")
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     # Merge the two field signs into a single file, taking care of the error columns too
     result = resfldr[0].clone
-    for c in [0, 1, 3, 5, 7]:
+    for c in [0, 2, 4, 6, 8]:
         result.data[:, c] = (resfldr[1][:, c] + resfldr[0][:, c]) / 2.0
     for c in [2, 4, 6, 8]:
         result.data[:, c] = gmean((resfldr[0][:, c], resfldr[1][:, c]), axis=0)
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # result.template.yformatter = TexEngFormatter
     # result.template.xformatter = TexEngFormatter
     result.labels = None
-    result.figure(figsize=(6, 8))
+    result.figure(figsize=(6, 8), no_axes=True)
     result.subplot(211)
     result.plot(fmt=["r.", "b-"])
     result.annotate_fit(Inverse_Kittel, x=7e9, y=1e5, fontdict={"size": 8})

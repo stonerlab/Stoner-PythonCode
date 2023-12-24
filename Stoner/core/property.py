@@ -15,8 +15,7 @@ from ..tools import get_option
 from ..compat import classproperty, path_types
 
 from .array import DataArray
-from .utils import copy_into
-from ..tools.classes import subclasses
+from ..tools.classes import subclasses, copy_into
 from ..tools.file import URL_SCHEMES
 
 try:
@@ -29,7 +28,7 @@ except ImportError:
 
 class DataFilePropertyMixin:
 
-    """Provide the proerties for DataFile Like Objects."""
+    """Provide the properties for DataFile Like Objects."""
 
     _subclasses = None
 
@@ -39,7 +38,7 @@ class DataFilePropertyMixin:
 
         Raises:
             AttributeError:
-                If short representation options are selcted, raise an AttributeError.
+                If short representation options are selected, raise an AttributeError.
 
         Returns:
             str:

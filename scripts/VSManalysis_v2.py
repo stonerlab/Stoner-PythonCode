@@ -79,7 +79,8 @@ def driftEliminator(data, N):
 def shift(data, N):
     """Translate curve in y so that halfway between the saturated fieldsis zero.
 
-    (uses the average y value of all the saturated points given to determine upper and lower bounds of curve"""
+    (uses the average y value of all the saturated points given to determine upper and lower bounds of curve
+    """
     maxHarg = int(
         np.argmax(data[: len(data[:, 0]) / 2, 1])
     )  # gives the data index of maximum field (in the first half of the data
@@ -196,12 +197,12 @@ timeout = 0
 while True:
     path = filenames[fCounter]
     fCounter += 1
-    fr = open(path, "r")
+    fr = open(path, "r", encoding="utf-8")
     data = fr.readlines()  # Get the file into an array
     fr.close()
     pathsplit = splitFileName(path)
     fw = open(
-        "EditedFiles/" + pathsplit[0] + "_edit.txt", "w"
+        "EditedFiles/" + pathsplit[0] + "_edit.txt", "w", enconcoding="utf-8"
     )  # create a new file for the edited data
     data = deleteCorruptLines(data)
     fw.writelines(

@@ -42,5 +42,4 @@ d.annotate_fit(
 d.ylabel = "Current (A)"
 d.xlabel = "Bias (V)"
 d.title = "Simmons Model test"
-d.yscale("symlog", linthreshy=1e-5)
-d.tight_layout()
+d.yscale("symlog", linthresh=1e-5)

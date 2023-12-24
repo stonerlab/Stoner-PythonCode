@@ -15,17 +15,17 @@ From the end-user perspective, the :py:class:`DataFile` class contains several a
 -   data
     Although this is essentially a numpy array, it is in fact a subclass of a :py:class:`numpy.ma.MaskedArray`, :py:class:`DataArray`, with an extra attribute 
     :py:attr:`DataArray.setas` that is used to label the columns of data and to track assignments to types of columns (x,y,z etc). As 
-    :py:class:`DataArray` can thus track what columns mean in cartersian co-ordinate systems, it can provide an on-the-fly conversion to polar
-    co-ordinate sustems. :py:class:`DataArray` also keeps track of the row numbers of the array and can label its rows with the :py:attr:`DataArray.i`
+    :py:class:`DataArray` can thus track what columns mean in cartersian coordinate systems, it can provide an on-the-fly conversion to polar
+    coordinate systems. :py:class:`DataArray` also keeps track of the row numbers of the array and can label its rows with the :py:attr:`DataArray.i`
     attribute.
 
 -   metadata
-    In many respects this looks like a standard dictionary, albeit one that sorts its keys in alpahabetical order. Actually it is a subclass of a
+    In many respects this looks like a standard dictionary, albeit one that sorts its keys in alphabetical order. Actually it is a subclass of a
     blist.sortedDict that maintains a second dictionary with matching keys that stores information about the data type of the values in the metadata
     in order to support export to non-duck typed environments.
 
 -   column_headers
-    This appears to be a stadnard list of strings, except that it is kept in sync with the size of the numerical data array, adding extra entries or
+    This appears to be a standard list of strings, except that it is kept in sync with the size of the numerical data array, adding extra entries or
     losing them as the data array gains or loses columns. Actually this is proxied through to the :py:attr:`DataArray.setas` attribute    
 
 -   setas

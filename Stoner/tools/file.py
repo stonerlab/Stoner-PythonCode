@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""General fle related tools."""
+"""General file related tools."""
 from importlib import import_module
 import io
 import os
@@ -45,7 +45,7 @@ def file_dialog(
         mode (string):
             The mode of the file operation  'r' or 'w'
         filename (str, Path, bool):
-            Tje starting filename
+            The starting filename
         filetype (submclass of metadataObject, string):
             The filetype to open with - used to selectr file patterns
         basclass (subclass of metadataObject):
@@ -216,7 +216,7 @@ def auto_load_classes(
             if isinstance(test, metadataObject):
                 test["Loaded as"] = cls_name
             if debug:
-                print(f"Test matadata: {test.metadata}")
+                print(f"Test metadata: {test.metadata}")
 
             break
         except StonerLoadError as e:
@@ -254,7 +254,7 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
 
 class FileManager:
 
-    """Simple context manager that allows opening files or working with alreadt open string buffers."""
+    """Simple context manager that allows opening files or working with already open string buffers."""
 
     def __init__(self, filename, *args, **kargs):
         """Store the parameters passed to the context manager."""
@@ -263,7 +263,7 @@ class FileManager:
         self.args = args
         self.kargs = kargs
         self.file = None
-        self.binary = len(args) > 0 and args[0][-1] == "b"
+        self.binary = len(args) > 0 and args[0].endswith("b")
         if isinstance(filename, path_types):
             parsed = urllib.parse.urlparse(str(filename))
             if parsed.scheme not in URL_SCHEMES:
@@ -285,14 +285,20 @@ class FileManager:
                 self.binary = isinstance(self.buffer, bytes)
             filename.seek(0)
         elif isinstance(filename, bytes):
-            self.mode = "bytes"
-            self.buffer = filename
+            if (len(args) > 0 and args[0][-1] == "b") or self.kargs.pop("mode", "").endswith("b"):
+                self.filename = filename
+                self.mode = "bytes"
+            else:
+                self.filename = bytes2str(filename)
+                self.mode = "text"
         else:
             raise TypeError(f"Unrecognised filename type {type(filename)}")
 
     def __enter__(self):
         """Either open the file or reset the buffer."""
         if self.mode == "open":
+            if len(self.args) > 0 and "b" not in self.args[0]:
+                self.kargs.setdefault("encoding", "utf-8")
             self.file = open(self.filename, *self.args, **self.kargs)
         elif self.buffer is not None and self.binary:
             self.file = io.BytesIO(str2bytes(self.buffer))

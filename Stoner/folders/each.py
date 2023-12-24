@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
 from __future__ import annotations
 
@@ -20,9 +19,8 @@ if TYPE_CHECKING:
     from .core import baseFolder
     from typing import Tuple, List, Any, Union, Optional, Callable
 
-
-def _worker(d: metadataObject, **kwargs) -> Tuple[metadataObject, Any]:
-    """Support function to run an arbitary function over a :py:class:`Stoner.Data` object."""
+def _worker(d, **kwargs):
+    """Support function to run an arbitrary function over a :py:class:`Stoner.Data` object."""
     byname = kwargs.get("byname", False)
     func = kwargs.get("_func", lambda x: x)
     if byname:
@@ -37,7 +35,7 @@ def _worker(d: metadataObject, **kwargs) -> Tuple[metadataObject, Any]:
     try:
         if byname:  # Ut's an instance bound moethod
             ret = func(*args, **kargs)
-        else:  # It's an arbitary function
+        else:  # It's an arbitrary function
             ret = func(d, *args, **kargs)
     except Exception as e:  # pylint: disable=W0703 # Ok to be broad as user func could do anything
         ret = e, format_exc()
@@ -56,7 +54,7 @@ class SetasWrapper(MutableSequence):
     def __call__(self, *args, **kargs):
         """Pass through the calls the setas method of each item in our folder."""
         _ = self._folder._object_attrs.pop("setas", None)
-        for ix, obj in enumerate(self._folder):
+        for obj in self._folder:
             obj.setas(*args, **kargs)
         self._folder._object_attrs["setas"] = self.collapse()
 
@@ -86,6 +84,7 @@ class SetasWrapper(MutableSequence):
         """
         if len(value) < len(self._folder):
             value = value + value[-1] * (len(self._folder) - len(value))
+        v = "."
         for v, data in zip(value, self._folder):
             data.setas[index] = v
         setas = self._folder._object_attrs.get("setas", self.collapse())
@@ -123,7 +122,7 @@ class Item:
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
 
     Notes:
-        The pupose of this class is to allow it to be explicit that we're calling methods
+        The purpose of this class is to allow it to be explicit that we're calling methods
         on the members of the folder rather than a collective method. This allows us to work
         around nameclashes.
     """
@@ -165,7 +164,7 @@ class Item:
 
         Notes:
             If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
-            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
+            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
             :py:class:`baseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
@@ -235,7 +234,11 @@ class Item:
                 elif len(self._folder):
                     ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
                     mask, values = zip(*ret)
-                    ret = np.ma.MaskedArray(values)
+                    lens = np.unique([len(v) if isiterable(v) else 0 for v in values])
+                    if lens.size == 1:
+                        ret = np.ma.MaskedArray(values)
+                    else:
+                        ret = np.ma.MaskedArray(values, dtype=object)
                     ret.mask = mask
                 else:
                     ret = getattr(instance, name, None)
@@ -248,7 +251,7 @@ class Item:
     def __setattr__(self, name: str, value: Any):
         """Proxy call to set an attribute.
 
-        Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.
+        Setting the attribute on .each sets it on all instantiated objects and in _object_attrs.
 
         Args:
             name(str): Attribute to set
@@ -287,7 +290,7 @@ class Item:
             item (string): Name of method of metadataObject class to be called
 
         Returns:
-            Either a modifed copy of this objectFolder or a list of return values
+            Either a modified copy of this objectFolder or a list of return values
             from evaluating the method for each file in the Folder.
         """
         meth = getattr(self._folder.instance, item, None)
@@ -359,7 +362,7 @@ class Item:
 
         Notes:
             If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
-            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
+            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
             :py:class:`baseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.

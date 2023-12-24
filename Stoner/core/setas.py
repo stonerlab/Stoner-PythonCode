@@ -206,7 +206,7 @@ class setas(MutableMapping):
 
     @column_headers.setter
     def column_headers(self, value):
-        """Set the colum headers."""
+        """Set the column headers."""
         if isinstance(value, np.ndarray):  # Convert ndarray to list of strings
             value = value.astype(str).tolist()
         elif isinstance(value, string_types):  # Bare strings get turned into lists
@@ -463,7 +463,7 @@ class setas(MutableMapping):
         return self.setas.__repr__()
 
     def __str__(self):
-        """Our string representation is just fromed by joing the assingments together."""
+        """Our string representation is just formed by joing the assignments together."""
         # Quick string conversion routine
         return "".join(self.setas)
 
@@ -560,7 +560,7 @@ class setas(MutableMapping):
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
 
-        Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
+        Indexing can be by supplying an integer, a string, a regular expression, a slice or a list of any of the above.
 
         -   Integer indices are simply checked to ensure that they are in range
         -   String indices are first checked for an exact match against a column header
@@ -584,7 +584,7 @@ class setas(MutableMapping):
         """
         if isinstance(col, int_types):  # col is an int so pass on
             if col >= len(self.column_headers):
-                raise IndexError(f"Attempting to index a non - existant column {col}")
+                raise IndexError(f"Attempting to index a non - existent column {col}")
             if col < 0:
                 col = col % len(self.column_headers)
         elif isinstance(col, string_types):  # Ok we have a string
@@ -624,24 +624,24 @@ class setas(MutableMapping):
         return col
 
     def clear(self):
-        """Clear the current setas attrbute.
+        """Clear the current setas attribute.
 
         Notes:
             Equivalent to doing :py:meth:`setas.unset` with no argument.
         """
         self.unset()
 
-    def get(self, name, default=None):  # pylint:  disable=arguments-differ
+    def get(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
-            return self[name]
+            return self[key]
         except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.") from err
+            raise KeyError(f"{key} is not in setas and no default was given.") from err
 
     def keys(self):
-        """Acess mapping keys.
+        """Access mapping keys.
 
         Mapping keys are the same as iterating over the unique headers"""
         for c in self._unique_headers:
@@ -661,16 +661,16 @@ class setas(MutableMapping):
         for k, v in zip(self._unique_headers, self.setas):
             yield k, v
 
-    def pop(self, name, default=None):  # pylint:  disable=arguments-differ
+    def pop(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
-            ret = self[name]
-            self.unset(name)
+            ret = self[key]
+            self.unset(key)
             return ret
         except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.") from err
+            raise KeyError(f"{key} is not in setas and no default was given.") from err
 
     def popitem(self):
         """Return and clear a column assignment."""
@@ -681,12 +681,12 @@ class setas(MutableMapping):
                 return (c, v)
         raise KeyError("No columns set in setas!")
 
-    def setdefault(self, name, default=None):  # pylint:  disable=arguments-differ
+    def setdefault(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a setdefault method."""
         try:
-            return self[name]
+            return self[key]
         except (IndexError, KeyError):
-            self[name] = default
+            self[key] = default
             return default
 
     def unset(self, what=None):
@@ -745,7 +745,7 @@ class setas(MutableMapping):
         If multiple columns are assigned to the same type, then the column names are
         returned as a list. If column headers are duplicated"""
         ret = dict()
-        for (k, ch) in zip(self._setas, self._unique_headers):
+        for k, ch in zip(self._setas, self._unique_headers):
             if k != ".":
                 if k in ret:
                     ret[k].append(ch)

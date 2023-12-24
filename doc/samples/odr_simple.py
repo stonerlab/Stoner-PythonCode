@@ -5,14 +5,14 @@ from numpy import linspace, exp, random
 from Stoner import Data
 from Stoner.plot.utils import errorfill
 
+random.seed(12345)  # Ensure consistent random numbers!
+
 # Make some data
 x = linspace(0, 10.0, 101)
 y = 2 + 4 * exp(-x / 1.7) + random.normal(scale=0.2, size=101)
 x += +random.normal(scale=0.1, size=101)
 
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
-
-d.plot(fmt="ro")  # plot our data
 
 func = lambda x, A, B, C: A + B * exp(-x / C)
 
@@ -52,4 +52,4 @@ d.xlabel = ""
 d.annotate_fit(func, prefix="Model", x=0.7, y=0.3, fontdict={"size": "x-small"})
 text = r"$y=A+Be^{-x/C}$" + "\n\n"
 d.text(7.2, 3.9, text, fontdict={"size": "x-small"})
-d.title = u"Orthogonal Distance Regression  Fit"
+d.title = "Orthogonal Distance Regression  Fit"

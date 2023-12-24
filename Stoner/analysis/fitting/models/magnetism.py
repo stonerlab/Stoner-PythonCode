@@ -128,7 +128,7 @@ def inverse_kittel(f, g, M_s, H_k):
     return (
         -H_k
         - M_s / 2
-        + np.sqrt(M_s ** 2 * gamma ** 2 * cnst.mu_0 ** 2 + 16 * np.pi ** 2 * f ** 2) / (2 * gamma * cnst.mu_0)
+        + np.sqrt(M_s**2 * gamma**2 * cnst.mu_0**2 + 16 * np.pi**2 * f**2) / (2 * gamma * cnst.mu_0)
     )
 
 
@@ -149,13 +149,12 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
     \left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     return (
-        4 * Delta_H * K_1 * (H - H_res) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
-        - K_2 * (Delta_H ** 2 - 4 * (H - H_res) ** 2) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
+        4 * Delta_H * K_1 * (H - H_res) / (Delta_H**2 + 4 * (H - H_res) ** 2) ** 2
+        - K_2 * (Delta_H**2 - 4 * (H - H_res) ** 2) / (Delta_H**2 + 4 * (H - H_res) ** 2) ** 2
     )
 
 
 class BlochLaw(Model):
-
     r"""Bloch's law for spontaneous magnetism at low temperatures.
 
     Args:
@@ -190,7 +189,7 @@ class BlochLaw(Model):
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
-        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_bulk(self, T, g, A, Ms):
         r"""Bloch's Law in bulk systems.
@@ -242,7 +241,6 @@ class BlochLaw(Model):
 
 
 class BlochLawThin(Model):
-
     r"""Bloch's law for spontaneous magnetism at low temperatures - thin film version.
 
     Args:
@@ -269,15 +267,15 @@ class BlochLawThin(Model):
     """
 
     def __init__(self, *args, **kwargs):
-        """Setup the model."""
+        """Initialise the model."""
         super().__init__(self.blochs_law_thinfilm, *args, **kwargs)
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
-        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_thinfilm(self, T, D, Bz, S, v_ws, a, nz):
-        """Thin film version of Blopch's Law.
+        r"""Thin film version of Blopch's Law.
 
         Parameters:
             T (array):
@@ -312,7 +310,6 @@ class BlochLawThin(Model):
                         ln\left[1-\exp\left( -\frac{1}{k_B T}\left(g\mu_B B_z+D\left(\frac{m \pi}{a(n_z-1)}\right)^2
                                                                    \right)\right) \right]`
         """
-
         kz_sum = sum(
             np.log(1.0 - np.exp(-(D * (m * np.pi / ((nz - 1) * a)) ** 2 + Bz) / (k * T))) for m in range(0, nz - 1)
         )
@@ -320,7 +317,6 @@ class BlochLawThin(Model):
 
 
 class Langevin(Model):
-
     r"""The Langevin function for paramagnetic M-H loops.
 
     Args:
@@ -349,7 +345,8 @@ class Langevin(Model):
         r"""Guess some starting values.
 
         M_s is taken as half the difference of the range of thew M data,
-        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`,"""
+        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`
+        """
         M_s = (np.max(data) - np.min(data)) / 2.0
         if x is not None:
             d = np.sort(np.row_stack((x, data)))
@@ -367,7 +364,6 @@ class Langevin(Model):
 
 
 class KittelEquation(Model):
-
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -398,8 +394,8 @@ class KittelEquation(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * np.pi ** 2 * data ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (x ** 2 + 2 * x * H_k + H_k ** 2)) / (
-            gamma ** 2 * cnst.mu_0 ** 2 * (x + H_k)
+        M_s = (4 * np.pi**2 * data**2 - gamma**2 * cnst.mu_0**2 * (x**2 + 2 * x * H_k + H_k**2)) / (
+            gamma**2 * cnst.mu_0**2 * (x + H_k)
         )
         M_s = np.mean(M_s)
 
@@ -412,7 +408,6 @@ class KittelEquation(Model):
 
 
 class Inverse_Kittel(Model):
-
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -439,8 +434,8 @@ class Inverse_Kittel(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * np.pi ** 2 * x ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (data ** 2 + 2 * data * H_k + H_k ** 2)) / (
-            gamma ** 2 * cnst.mu_0 ** 2 * (data + H_k)
+        M_s = (4 * np.pi**2 * x**2 - gamma**2 * cnst.mu_0**2 * (data**2 + 2 * data * H_k + H_k**2)) / (
+            gamma**2 * cnst.mu_0**2 * (data + H_k)
         )
         M_s = np.mean(M_s)
 
@@ -453,7 +448,6 @@ class Inverse_Kittel(Model):
 
 
 class FMR_Power(Model):
-
     r"""Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
@@ -488,7 +482,7 @@ class FMR_Power(Model):
         y1 = np.max(data)
         y2 = np.min(data)
         dy = y1 - y2
-        K_2 = dy * (4 * np.pi * Delta_H ** 2) / (3 * np.sqrt(3))
+        K_2 = dy * (4 * np.pi * Delta_H**2) / (3 * np.sqrt(3))
         ay = (y1 + y2) / 2
         K_1 = ay * np.pi / Delta_H
 

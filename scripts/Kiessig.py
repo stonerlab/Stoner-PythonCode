@@ -56,7 +56,7 @@ t.apply(
 )
 # Now create the m^2 order
 m = np.arange(len(t)) + fringe_offset
-m = m ** 2
+m = m**2
 # And add it to t
 t.add_column(m, column_header="$m^2$")
 # Now we can it a straight line

@@ -37,11 +37,11 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
             Callable function that can produce an object of an appropriate class.
     """
     if "type" not in f.attrs:
-        StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
+        raise StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
     typ = bytes2str(f.attrs.get("type", ""))
     if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
         raise StonerLoadError(
-            "HDF5 Group does not speicify a recongized type and does not specify a module to use to load."
+            "HDF5 Group does not specify a recognized type and does not specify a module to use to load."
         )
 
     if "module" in f.attrs:
@@ -52,7 +52,10 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
 
 
 class HDFFileManager:
-    def __init__(self, filename, mode="r", **kargs):
+
+    """Context manager for HDF5 files."""
+
+    def __init__(self, filename, mode="r"):
         """Initialise context handler.
 
         Works out the filename and group in cases the input flename includes a path to a sub group.
@@ -73,8 +76,6 @@ class HDFFileManager:
         bits = len(parts)
         for ix in range(bits):
             testname = "/".join(parts[: bits - ix])
-            if ix > 0:
-                groupname = "/".join(parts[bits - ix :])
             if path.exists(testname):
                 filename = testname
                 break
@@ -83,8 +84,8 @@ class HDFFileManager:
             if not mode.startswith("w"):
                 with h5py.File(filename, "r"):
                     pass
-        except (IOError, OSError):
-            raise StonerLoadError(f"{filename} not at HDF5 File")
+        except (IOError, OSError) as err:
+            raise StonerLoadError(f"{filename} not at HDF5 File") from err
         self.filename = filename
 
     def __enter__(self):
@@ -107,7 +108,7 @@ class HDFFileManager:
             raise StonerLoadError("Note a resource that can be handled with HDF")
         return self.handle
 
-    def __exit__(self, typ, value, traceback):
+    def __exit__(self, _type, _value, _traceback):
         """Ensure we close the hdf file no matter what."""
         if self.file is not None and self.close:
             self.file.close()
@@ -123,13 +124,13 @@ class HDF5File(DataFile):
         kargs (dict):
             Dictionary of keyword arguments
 
-    If the first non-keyword arguement is not an h5py File or Group then
+    If the first non-keyword argument is not an h5py File or Group then
     initialises with a blank parent constructor and then loads data, otherwise,
     calls parent constructor.
 
     Datalayout is dead simple, the numerical data is in a dataset called *data*,
-    metadata are attribtutes of a group called *metadata* with the keynames being the
-    full name + typehint of the stanard DataFile metadata dictionary
+    metadata are attributes of a group called *metadata* with the keynames being the
+    full name + typehint of the standard DataFile metadata dictionary
     *column_headers* are an attribute of the root file/group
     *filename* is set from either an attribute called filename, or from the
     group name or from the hdf5 filename.
@@ -141,7 +142,7 @@ class HDF5File(DataFile):
     compression = "gzip"
     compression_opts = 6
     patterns = ["*.hdf", "*.hf5"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
 
     def __init__(self, *args, **kargs):
         """Initialise with an h5py.File or h5py.Group."""
@@ -187,7 +188,7 @@ class HDF5File(DataFile):
             filename = self.filename
         with HDFFileManager(filename, "r") as f:
             data = f["data"]
-            if np.product(np.array(data.shape)) > 0:
+            if np.prod(np.array(data.shape)) > 0:
                 self.data = data[...]
             else:
                 self.data = [[]]
@@ -295,7 +296,7 @@ class HGXFile(DataFile):
 
     priority = 16
     pattern = ["*.hgx"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
 
     def _load(self, filename, *args, **kargs):
         """Load a GenX HDF file.
@@ -394,7 +395,7 @@ class HDF5FolderMixin:
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool):
+            instantiate (bool):
                 If True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 :py:class:`Stoner.Core.Data` object.
@@ -584,7 +585,7 @@ class SLS_STXMFile(DataFile):
     compression = "gzip"
     compression_opts = 6
     patterns = ["*.hdf"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
 
     def _load(self, filename, *args, **kargs):
         """Load data from the hdf5 file produced by Pollux.
@@ -603,7 +604,7 @@ class SLS_STXMFile(DataFile):
             self.filename = filename
         if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
             try:
-                f = h5py.File(filename, "r+")
+                f = h5py.File(filename, "r")
             except IOError as err:
                 raise StonerLoadError(f"Failed to open {filename} as a n hdf5 file") from err
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
@@ -621,7 +622,7 @@ class SLS_STXMFile(DataFile):
             raise StonerLoadError("HDF5 file lacks single top level group called entry1")
         root = f["entry1"]
         data = root["counter0"]["data"]
-        if np.product(np.array(data.shape)) > 0:
+        if np.prod(np.array(data.shape)) > 0:
             self.data = data[...]
         else:
             self.data = [[]]
@@ -651,7 +652,7 @@ class SLS_STXMFile(DataFile):
         return self
 
     def scan_meta(self, group):
-        """Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata."""
+        """Scan the HDF5 Group for attributes and datasets and sub groups and recursively add them to the metadata."""
         root = ".".join(group.name.split("/")[2:])
         for name, thing in group.items():
             parts = thing.name.split("/")
@@ -661,7 +662,7 @@ class SLS_STXMFile(DataFile):
             elif isinstance(thing, h5py.Dataset):
                 if thing.ndim > 1:
                     continue
-                if np.product(thing.shape) == 1:
+                if np.prod(thing.shape) == 1:
                     self.metadata[name] = thing[0]
                 else:
                     self.metadata[name] = thing[...]
@@ -678,7 +679,7 @@ class STXMImage(ImageFile):
     _reduce_metadata = False
 
     _patterns = ["*.hdf5", "*.hdf"]
-    mime_type = ["application/x-hdf"]
+    mime_type = ["application/x-hdf", "application/x-hdf5"]
     priority = 16
 
     def __init__(self, *args, **kargs):
@@ -686,7 +687,7 @@ class STXMImage(ImageFile):
 
         Keyword Args:
             regrid (bool):
-                If set True, the gridimage() method is automatically called to re-grid the image to known co-ordinates.
+                If set True, the gridimage() method is automatically called to re-grid the image to known coordinates.
         """
         regrid = kargs.pop("regrid", False)
         bcn = kargs.pop("bcn", False)

@@ -5,8 +5,8 @@ import numpy as np
 from Stoner import Data
 
 x, y = np.meshgrid(np.linspace(-2, 2, 101), np.linspace(-2, 2, 101))
-z = np.cos(4 * np.pi * np.sqrt(x ** 2 + y ** 2)) * np.exp(
-    -np.sqrt(x ** 2 + y ** 2)
+z = np.cos(4 * np.pi * np.sqrt(x**2 + y**2)) * np.exp(
+    -np.sqrt(x**2 + y**2)
 )
 
 p = Data()

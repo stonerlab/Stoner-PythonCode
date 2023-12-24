@@ -42,8 +42,6 @@ __all__ = [
 ]
 import warnings
 from distutils.version import LooseVersion
-from colorsys import hls_to_rgb
-from inspect import ismethod
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -225,7 +223,7 @@ def joy_division(x, y, z, **kargs):
 
     Parameters:
         x,y,z (1D arrays):
-            x y and z co-ordinates. data should be arranged so that z(x,y=constant)
+            x y and z coordinates. data should be arranged so that z(x,y=constant)
 
     Keyword Parameters:
         ax (matplotlib.Axes):
@@ -246,7 +244,7 @@ def joy_division(x, y, z, **kargs):
     Returns:
         None
 
-    Constructurs a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
+    Constructors a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
     """
     ax = kargs.pop("ax", plt.gca())
     y_shift = kargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
@@ -269,7 +267,12 @@ def joy_division(x, y, z, **kargs):
         this_data = data[y == yval, :]
 
         ax.plot(
-            this_data[:, 0], this_data[:, 1] + offset, color, lw=lw, zorder=(ix + 1) * 2, label=legend_fmt.format(yval)
+            this_data[:, 0],
+            this_data[:, 1] + offset,
+            color,
+            lw=lw,
+            zorder=(ix + 1) * 2,
+            label=legend_fmt.format(yval),
         )
         ax.fill_between(
             this_data[:, 0], this_data[:, 1] + offset, offset, facecolor=bg_colour, lw=0, zorder=(ix + 1) * 2 - 1
@@ -316,8 +319,8 @@ def auto_fit_fontsize(text, width, height, scale_down=True, scale_up=False):
     bbox_text = Bbox(fig.transFigure.inverted().transform(bbox_text))
     text_width, text_height = bbox_text.width, bbox_text.height
 
-    scale_w = abs(width / text_width)
-    scale_h = abs(height / text_height)
+    scale_w = abs(width / text_width) if text_width != 0 else 1.0
+    scale_h = abs(height / text_height) if text_height != 0 else 1.0
 
     scale = 1.0
     if scale_down:

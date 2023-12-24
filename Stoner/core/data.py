@@ -39,7 +39,7 @@ class Data(AnalysisMixin, FittingMixin, ColumnOpsMixin, FilteringOpsMixin, Featu
         r"""Return the contents of key pretty formatted using :py:func:`format_error`.
 
         Args:
-            fmt (str): Specify the output format, opyions are:
+            fmt (str): Specify the output format, options are:
 
                 *  "text" - plain text output
                 * "latex" - latex output
@@ -51,7 +51,7 @@ class Data(AnalysisMixin, FittingMixin, ColumnOpsMixin, FilteringOpsMixin, Featu
             mode (string):
                 If "float" (default) the number is formatted as is, if "eng" the value and error is converted
                 to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a
-                scientifc, i.e. mantissa and exponent format is used.
+                scientific, i.e. mantissa and exponent format is used.
             units (string):
                 A suffix providing the units of the value. If si mode is used, then appropriate si
                 prefixes are prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm

@@ -41,4 +41,3 @@ d.annotate_fit(
     prefix="BlochGrueneisen",
 )
 d.title = "Bloch-Grueneisen Fit"
-d.tight_layout()

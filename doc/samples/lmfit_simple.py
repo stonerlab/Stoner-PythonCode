@@ -4,6 +4,7 @@ from numpy import linspace, exp, random
 
 from Stoner import Data
 
+random.seed(12345)  # Ensure Consistent Random numbers
 # Make some data
 x = linspace(0, 10.0, 101)
 y = 2 + 4 * exp(-x / 1.7) + random.normal(scale=0.2, size=101)
@@ -42,4 +43,4 @@ d.xlabel = ""
 d.annotate_fit(func, prefix="Model", x=7.2, y=3, fontdict={"size": "x-small"})
 text = r"$y=A+Be^{-x/C}$" + "\n\n"
 d.text(7.2, 3.9, text, fontdict={"size": "x-small"})
-d.title = u"Levenberg-Marquardt Fit"
+d.title = "Levenberg-Marquardt Fit"

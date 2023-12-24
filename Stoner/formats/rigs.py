@@ -117,7 +117,7 @@ class MokeFile(Core.DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priotity = 16
+    priority = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns = ["*.dat", "*.txt"]
@@ -193,7 +193,7 @@ class FmokeFile(Core.DataFile):
                 raise Core.StonerLoadError("Not a Focussed MOKE file !")
             del label[0]
             for k, v in zip(label, value):
-                self.metadata[k] = v  # Create metatdata from first 2 lines
+                self.metadata[k] = v  # Create metadata from first 2 lines
             column_headers = [x.strip() for x in bytes2str(f.readline()).split("\t")]
             self.data = np.genfromtxt(f, dtype="float", delimiter="\t", invalid_raise=False)
             self.column_headers = column_headers

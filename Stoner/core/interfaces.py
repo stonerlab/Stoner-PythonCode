@@ -54,7 +54,7 @@ class DataFileInterfacesMixin:
         -   If name is a string then the metadata dictionary item             with the correspondoing key will be
             returned.
         -   If name is a numpy array then the corresponding rows of the data are returned.
-        -   If a tuple is supplied as the arguement then there are a number of possible behaviours.
+        -   If a tuple is supplied as the argument then there are a number of possible behaviours.
             -   If the first element of the tuple is a string, then it is assumed that it is the nth element of the
                 named metadata is required.
             -   Otherwise itis assumed that it is a particular element within a column determined by the second

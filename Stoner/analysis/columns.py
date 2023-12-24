@@ -38,19 +38,19 @@ class ColumnOpsMixin:
 
                 def error_calc(adata, bdata):  # pylint: disable=function-redefined, unused-argument
                     """Sum absolute errors."""
-                    return np.sqrt(e1data ** 2 + e2data ** 2)
+                    return np.sqrt(e1data**2 + e2data**2)
 
             elif error_type == "diffsum":
 
                 def error_calc(adata, bdata):  # pylint: disable=function-redefined
                     """Calculate error for difference over sum."""
                     return np.sqrt(
-                        (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data ** 2
-                        + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data ** 2
+                        (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data**2
+                        + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data**2
                     )
 
             else:
-                raise ValueError(f"Unknown error caclulation mode {error_type}")
+                raise ValueError(f"Unknown error calculation mode {error_type}")
 
         adata, aname = self.__get_math_val(col_a)
         bdata, bname = self.__get_math_val(col_b)
@@ -248,7 +248,7 @@ class ColumnOpsMixin:
 
         Keyword Arguments:
             sigma (column index or array):
-                The uncertainity noted for each value in the mean
+                The uncertainty noted for each value in the mean
             bounds (callable):
                 col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
@@ -280,9 +280,9 @@ class ColumnOpsMixin:
             result = self.data[:, _.ycol].mean()
         else:
             ydata = self.data[:, _.ycol]
-            w = 1 / (sigma ** 2 + 1e-8)
+            w = 1 / (sigma**2 + 1e-8)
             norm = w.sum(axis=0)
-            error = np.sqrt((sigma ** 2).sum(axis=0)) / len(sigma)
+            error = np.sqrt((sigma**2).sum(axis=0)) / len(sigma)
             result = (ydata * w).mean(axis=0) / norm, error
         if bounds is not None:
             self._pop_mask()
@@ -362,7 +362,7 @@ class ColumnOpsMixin:
         return self
 
     def span(self, column=None, bounds=None):
-        """Return a tuple of the maximum and minumum values within the given column and bounds.
+        """Return a tuple of the maximum and minimum values within the given column and bounds.
 
         Args:
             column (index):
@@ -395,7 +395,7 @@ class ColumnOpsMixin:
 
         Keyword Arguments:
             sigma (column index or array):
-                The uncertainity noted for each value in the mean
+                The uncertainty noted for each value in the mean
             bounds (callable):
                 col_a callable function that takes col_a single argument list of
                 numbers representing one row, and returns True for all rows to search in.
@@ -428,7 +428,7 @@ class ColumnOpsMixin:
 
         sigma = np.abs(sigma) / np.nanmax(np.abs(sigma))
         sigma = np.where(sigma < 1e-8, 1e-8, sigma)
-        weights = 1 / sigma ** 2
+        weights = 1 / sigma**2
         weights[np.isnan(weights)] = 0.0
 
         result = np.sqrt(np.cov(ydata, aweights=weights))

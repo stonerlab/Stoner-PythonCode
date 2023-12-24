@@ -5,7 +5,7 @@ Contributors and Credits
 A number of current and former members of the Condensed Matter Physics Group
 at the University of Leeds have contributed to this code in various forms.
 
-The original versions were developped by Dr Matthew Newman and Dr Chris Allen.
+The original versions were developed by Dr Matthew Newman and Dr Chris Allen.
 Dr Rowan Temple, Dr Sophie Morely and Dr Joe Batley have all contributed file formats,
 plot styles. They, and Dr May Wheeler, Dr Philippa Shepley and Nathan Satchell have 
 found bugs and made helpful suggestions.

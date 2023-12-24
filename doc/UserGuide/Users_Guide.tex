@@ -46,7 +46,7 @@ geometry}
 
   \section{Introduction}
 
-This manual provides a user guide and reference for the Stoner python pacakage.
+This manual provides a user guide and reference for the Stoner python package.
 The Stoner python package provides a set of python classes and functions for
 reading, manipulating and plotting data acquired with the lab equipment in the
 Condensed Matter Physics Group at the University of Leeds.
@@ -246,7 +246,7 @@ The data mask can be accessed via the \textit{mask} attribute of \textbf{DataFil
    d.mask=lambda x:[y<50 for y in x]
 \end{lstlisting}
 
-The first line is simply the import statement for the numpy masked arrays in order to get the \textit{nomask} symbol. The second line will simply print the current mask. The next two examples will unmask all the data \ie make the values visible and useable. The next example illustrates using a numpy array of booleans to set the mask - every element in the mask array that evaluates as a boolean True will be masked and every False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on the data via \verb'd.data.mask' but the final two examples illustrate an extension that setting the \textbf{DataFile} mask attribute allows. If you pass a callable object to the mask attribute it will be executed, passing each row of the data array to the user supplied function as a numpy array. The user supplied function can then either return a single boolean value -- in which case it will be used to mask the entire row -- or a list of booleans to mask individual cells in the current row.
+The first line is simply the import statement for the numpy masked arrays in order to get the \textit{nomask} symbol. The second line will simply print the current mask. The next two examples will unmask all the data \ie make the values visible and usable. The next example illustrates using a numpy array of booleans to set the mask - every element in the mask array that evaluates as a boolean True will be masked and every False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on the data via \verb'd.data.mask' but the final two examples illustrate an extension that setting the \textbf{DataFile} mask attribute allows. If you pass a callable object to the mask attribute it will be executed, passing each row of the data array to the user supplied function as a numpy array. The user supplied function can then either return a single boolean value -- in which case it will be used to mask the entire row -- or a list of booleans to mask individual cells in the current row.
 
 By default when the \textbf{DataFile} object is printed or saved, data values that have been masked are replaced with a ``fill'' value of $10^{20}$.
 
@@ -459,9 +459,9 @@ To select which rows of data have been masked off, use the \textbf{filter} metho
  d.filter(lambda r:r[0]>5,['Temp'])
 \end{lstlisting}
 
-With jsut a single argument, the filter method takes a complete row at a time and passes it
+With just a single argument, the filter method takes a complete row at a time and passes it
 to the first argument, expecting to get a boolean response (or list olf booleans equal in length
-to the number of columns). With a second argument as in the second example, you can sepcify which
+to the number of columns). With a second argument as in the second example, you can specify which
 columns are passed to the filtering function in what order. The second argument must be a list
 of things which can be used to index a column (\ie strings, integers, regular expressions).
 
@@ -484,9 +484,9 @@ method does.
 
 \subsubsection{Copying Data}
 
-One of the characterisitics of Python that can confuse those used to other
+One of the characteristics of Python that can confuse those used to other
 programming languages is that assignments and argument passing is by reference
-and not by value. This can lead to unexcted results as you can end up modifying variables you were not expecting ! To help with creating genuine copies of data Python provides the copy module. Whilst this works with DataFile objects, for convenience, the \textbf{DataFile.clone} atribute is provided to make a deep copy of a DataFile object.
+and not by value. This can lead to unexcted results as you can end up modifying variables you were not expecting ! To help with creating genuine copies of data Python provides the copy module. Whilst this works with DataFile objects, for convenience, the \textbf{DataFile.clone} attribute is provided to make a deep copy of a DataFile object.
 
 \keypoint{This is an attribute not a method, so there are no brackets here !}
 
@@ -536,7 +536,7 @@ arrays to the DataFile object to append additional data.
 In the first example above, we add a single row of data to \textit{d}. This
 assumes that the number of elements in the array matches the number of columns
 in the data file. The second example is similar but this time appends a 2
-dimensional numpy array to the data. The third example demonstrates adding data from a dictioary. In this case
+dimensional numpy array to the data. The third example demonstrates adding data from a dictionary. In this case
 the keys of the dictionary are used to determine which column the values are added to. If their columns that
 don't match one of the dictionary keys, then a \textit{NaN} is inserted. If their are keys that don't match
 columns labels, then new columns are added to the data set, filled with \textit{NaN}. In the fourth example, each element
@@ -583,13 +583,13 @@ you should use the \textbf{add\_column} method.
 The first example simply adds a column of data to the end of the dataset and
 sets the new column headers. The second variant  inserts the new column before
 column \textit{Index}. \textit{Index} follows the same rules as for the
-\textbf{DataFile.colummn()} method. In the third example, the new column data is
+\textbf{DataFile.column()} method. In the third example, the new column data is
 generated by applying the specified function. The function is passed s dingle
 row as a 1D numpy array and any of the keyword, argument pairs passed in a
 dictionary to the optional \textit{func\_args} argument.
 
 The \textbf{DataFile.add\_column} method returns a copy of the DataFile object
-itself as well as modifying the object. This is to allow the metod to be chained
+itself as well as modifying the object. This is to allow the method to be chained
 up with other methods for more compact code writing.
 
 \subsubsection{Deleting Rows of Data}
@@ -692,8 +692,8 @@ The first line imports the \textbf{Stoner.Plot} module. Strictly, this is unnece
 The examples above demonstrate several use cases of the \textbf{plot\_xy} method. The first parameter is always the x column that contains the data, the second is the y-data either as a single column or list of columns. The third parameter is the style of the plot (lines, points, colours \etc) and can either be a list if the y-column data is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log plots. By default, \textbf{plotxy} uses the \textbf{pyplot.plot} function to produce linear scaler plots. There are a number of useful plotter functions that will work like this:
 \begin{description}
   \item[pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making the x-axes the log one and semilogy the y-axis.
-  \item[pyplot.loglog] Liek the semi-log plots, this will produce a log-log plot.
-  \item[pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are passed as keyword arguments, \textit{xerr} or \textit{yerr}. In standard matplotlib, these can be numpy arrays or constants. \textbf{PlotFile.plot\_xy} extends this by intercepting these arguements and offering some short cuts:
+  \item[pyplot.loglog] Like the semi-log plots, this will produce a log-log plot.
+  \item[pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are passed as keyword arguments, \textit{xerr} or \textit{yerr}. In standard matplotlib, these can be numpy arrays or constants. \textbf{PlotFile.plot\_xy} extends this by intercepting these arguments and offering some short cuts:
       \begin{lstlisting}
          p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',xerr=[5,'dTemp+'])
       \end{lstlisting}
@@ -717,7 +717,7 @@ The X and Y axis label will be set from the column headers.
     p.plot_xyz(col_x,col_y,col_z,xlim=(-10,10,100),ylim=(-10,10,100))
  \end{lstlisting}
 
- By default the plot\_xyz will produce a 3D surface plot with the z-axis coded with a rainbow colourmap (specifically, the matplotlib provided \textit{matplotlib.cm.jet} colourmap. This can be overriden with the \textit{cmap} keyword parameter. If a simple 2D surface plot is required, then the \textit{plotter} parameter should be set to a suitable function such as \textbf{pyplot.pcolor}.
+ By default the plot\_xyz will produce a 3D surface plot with the z-axis coded with a rainbow colourmap (specifically, the matplotlib provided \textit{matplotlib.cm.jet} colourmap. This can be overridden with the \textit{cmap} keyword parameter. If a simple 2D surface plot is required, then the \textit{plotter} parameter should be set to a suitable function such as \textbf{pyplot.pcolor}.
 
  Like \textbf{plot\_xy}, a \textit{figure} parameter can be used to control the figure being used and any additional keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
 
@@ -745,7 +745,7 @@ If a \textit{xlim} or \textit{ylim} arguments are provided and are two tuples, t
     p.plot_matrix(plotter=pyplot.pcolor,figure=False)
  \end{lstlisting}
 
- The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults to the built in `jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set either from the meta data item ``ylabel'' or to ``Y Data''. Likewise the z axis label is set from the corresponding metadata item or defaults to ``Z Data''. In the second form these parameters are all set explicitly. The \textit{xvals} parameter can be either a column index (integer or sring) or a list, tuple or numpy array. The \textit{yvals} parameter can be either an row number (integer) or list,tuple or numpy array. Other parameters (including \textit{plotter}, \textit{figure} \etc) work as for the \textbf{PlotFile.plot\_xyz} method. The \textit{rectang} parameter is used to select only part of the data array to use as the matrix. It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth elements are the number of rows and columns to include. If \textit{xvals} or \textit{yvals} specify particular column or rows then the origin of the matrix is moved to be one column further over and one row further down (\ie the matrix is to the right and below the columns and rows used to generate the x and y data values). The final example illustrates how to generate a new 2D surface plot in a new window using default matrix setup.
+ The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults to the built in `jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set either from the meta data item ``ylabel'' or to ``Y Data''. Likewise the z axis label is set from the corresponding metadata item or defaults to ``Z Data''. In the second form these parameters are all set explicitly. The \textit{xvals} parameter can be either a column index (integer or string) or a list, tuple or numpy array. The \textit{yvals} parameter can be either an row number (integer) or list,tuple or numpy array. Other parameters (including \textit{plotter}, \textit{figure} \etc) work as for the \textbf{PlotFile.plot\_xyz} method. The \textit{rectang} parameter is used to select only part of the data array to use as the matrix. It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth elements are the number of rows and columns to include. If \textit{xvals} or \textit{yvals} specify particular column or rows then the origin of the matrix is moved to be one column further over and one row further down (\ie the matrix is to the right and below the columns and rows used to generate the x and y data values). The final example illustrates how to generate a new 2D surface plot in a new window using default matrix setup.
 
  \subsection{Getting More Control on the Figure}
 
@@ -837,7 +837,7 @@ In these examples we assume the \textbf{AnalyseFile} has a data column `Polarisa
 and a column `Temperature' that contains numbers above and below 100.
 
 The first example would return a \textbf{DataFoder} object (see \ref{DataFolder}) containing separate \textbf{AnalyseFile} which
-would each contain the rows from the orginal data that had each unique value of the polarisation data. The second example would
+would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
 produce a \textbf{DataFolder} object containing two \textbf{AnalyseFile} objects for the rows with temperature abobe and below 100.
 The final example will result in a \textbf{DataFolder} object that has two groups each of which contains \textbf{AnalyseFile} objects for each
 polarisation value.
@@ -881,7 +881,7 @@ The \textit{p0} parameter contains the initial guesses at the fitting
 parameters, the default value is 1. \textit{xcol} and \textit{ycol} are the x
 and y columns to fit. This method cannot handle multiple y columns.
 \textit{sigma}, if present, provides the weightings for each datapoint and so
-should also be an array of the same length as the x and y data. Fianlly, the
+should also be an array of the same length as the x and y data. Finally, the
 bounds function can be used to restrict the fitting to only a subset of the rows
 of data.
 
@@ -969,7 +969,7 @@ many.\\Default: 1 (all parameters printed)
 
 \subsection{More AnalyseFile Functions}
 
-\subsubsection{Applying an arbitary function through the data}
+\subsubsection{Applying an arbitrary function through the data}
 
 \begin{lstlisting}
  a.apply(func, col, replace = True, header = None)
@@ -1000,7 +1000,7 @@ There are a couple of related functions to help here:
 
 The span method simply returns a tuple of minimum and maximum values within either the whole column or bounded data. Internally this is just calling the \textbf{max} and \textbf{min} methods. The \textbf{clip} method deletes rows for which the specified column as a value that is either larger or smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple -- \eg the result of the \textbf{span} method, or a complete list as in the last example above. Specifying a single float would have the effect of removing all rows where the column didn't equal the float value. This is probably not a good idea...
 
-It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set, in which case the mask is temproarily discarded in favour of one generated from the bounds expression. This can be worked around, however, as the parameter passed to the bounds function is itself a masked array and thus one can include a test of the mask in the bounds function:
+It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set, in which case the mask is temporarily discarded in favour of one generated from the bounds expression. This can be worked around, however, as the parameter passed to the bounds function is itself a masked array and thus one can include a test of the mask in the bounds function:
 
 \begin{lstlisting}
    a.span(column,bounds=lambda x,y:y[2]>10 or not numpy.any(y.mask))
@@ -1084,12 +1084,12 @@ If you don't want to create groups for each sub-directory, then set the keyword 
 The current root directory and pattern are stored in the \textit{directory} and \textit{pattern} keywords and the \textbf{getlist} method can be used to force a new listing of files.
 
 \begin{lstlisting}
-   f.dirctory='/home/phygbu/Data'
+   f.directory='/home/phygbu/Data'
    f.pattern='*.txt'
    f.getlist()
 \end{lstlisting}
 
-Sometimes a more complex filename matching mechanism than simple ``globbing'' is useful. The \textit{patter} keyword can also be a compiled regular expression:
+Sometimes a more complex filename matching mechanism than simple ``globbing'' is useful. The \textit{pattern} keyword can also be a compiled regular expression:
 
 \begin{lstlisting}
    import re
@@ -1143,7 +1143,7 @@ The difference between these two is that \textit{f.basenames} will return only t
 
 \subsection{Sorting, Filtering and Grouping Data Files}\label{groups}
 
-The order of the files in a \textbf{DataFolder} is arbitary. If it is important to process them in a given order then the \textit{sort} method can be used:
+The order of the files in a \textbf{DataFolder} is arbitrary. If it is important to process them in a given order then the \textit{sort} method can be used:
 
 \begin{lstlisting}
    f.sort()
@@ -1175,7 +1175,7 @@ One of the more common tasks is to group a long list of data files into separate
    f.groups
 \end{lstlisting}
 
-The \textbf{group} method splits the files in the \textbf{DataFolder} into several groups each of which share a common value of the arguement supplied to the \textbf{group} method. A group is itself another isntanceinstance of the \textbf{DataFolder} class. Each \textbf{DataFolder} object maintains a dictionary called \textit{groups} whose keys are the distinct values of the argument of the \textbf{group} methods and whose values are \textbf{DataFolder} objects. So, if our \textbf{DataFolder} f contained files measured at 4.2, 77 and 300K and at fields of 1T and -1T then the first variant would create 3 groups: 4.2, 77 and 300 each one of which would be a \textbf{DataFolder} object containg the files measured at those temperatures. The second varaint would produce 2 groups -- ``postive'' containing the files measured with magnetic field of 1T and ``negative'' containing the files measured at -1T. The third variant then goes one stage further and would produce 3 groups, each of which in turn had 2 groups. The groups are accessed via the \textit{group} attribute:
+The \textbf{group} method splits the files in the \textbf{DataFolder} into several groups each of which share a common value of the argument supplied to the \textbf{group} method. A group is itself another isntanceinstance of the \textbf{DataFolder} class. Each \textbf{DataFolder} object maintains a dictionary called \textit{groups} whose keys are the distinct values of the argument of the \textbf{group} methods and whose values are \textbf{DataFolder} objects. So, if our \textbf{DataFolder} f contained files measured at 4.2, 77 and 300K and at fields of 1T and -1T then the first variant would create 3 groups: 4.2, 77 and 300 each one of which would be a \textbf{DataFolder} object containing the files measured at those temperatures. The second variant would produce 2 groups -- ``postive'' containing the files measured with magnetic field of 1T and ``negative'' containing the files measured at -1T. The third variant then goes one stage further and would produce 3 groups, each of which in turn had 2 groups. The groups are accessed via the \textit{group} attribute:
 
 \begin{lstlisting}
    f.groups[4.2].groups["positive"].files

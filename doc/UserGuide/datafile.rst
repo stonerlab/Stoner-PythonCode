@@ -22,12 +22,12 @@ class which in turn is a superset of many of the classes in the Stoner package. 
 detect the format of many of the measurement files that we use in our research.
 
 The native file format for the Stoner package is known as the *TDI 1.5* format - a tab delimited text file
-that stores arbitary metadata and a single 2D data set. It closely matches the :py:class:`DataFile` class of the
+that stores arbitrary metadata and a single 2D data set. It closely matches the :py:class:`DataFile` class of the
 :py:mod:`Stoner.Core` module.
 
 .. note::
     :py:class:`Data` will also read a related text format where the first column of the first line contains the string
-    *TDI Fromat=Text 1.0* which are produced by some of the LabVIEW rigs used by the Device Materials Group in
+    *TDI Format=Text 1.0* which are produced by some of the LabVIEW rigs used by the Device Materials Group in
     Cambridge.
 
 
@@ -64,7 +64,7 @@ Base Classes and Generic Formats
     :py:class:`Stoner.formats.simulations.OVFFile`
         OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0
 
-Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Leeds)
+Classes for Specific Instruments (Mainly ones owned by the CM Physics Group in Leeds)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     :py:class:`Stoner.formats.instruments.VSMFile`
@@ -295,7 +295,7 @@ so that 'e' data is the error in the y data). :py:class:`DataFile` has a concept
 will then use these by default in many methods when appropriate to have 'x' and 'y' data.
 
 In addition to identifying columns as 'x','y', or 'z', for data that describes a vector field, you can mark the columns as containing
-'u', 'v', 'w' data where (u,v,w) is the vector value at  the point (x,y,z). There's no support at present for uncertainities in (u,v,w) being marked.
+'u', 'v', 'w' data where (u,v,w) is the vector value at  the point (x,y,z). There's no support at present for uncertainties in (u,v,w) being marked.
 
 .. image:: https://i.imgur.com/vwBUO25.png
     :target: https://www.youtube.com/watch?v=LbSIqxTD9Xc
@@ -406,7 +406,7 @@ Number of Columns  Assignments
 Swapping and Rotating Column Assignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Finally, if the :py:attr:`DataFile.setas` attribute has been set with *x*, *y* (and *z*) columns then these assingments can be
+Finally, if the :py:attr:`DataFile.setas` attribute has been set with *x*, *y* (and *z*) columns then these assignments can be
 swapped around by the **invert** operator **~**. This either swaps *x* and *y* with eir associated errorbars for 2-D datasets, or rotates
 *x* to *y*, *y* to *z* and *z* to *x* )again with their associated errors bars.::
 
@@ -534,10 +534,10 @@ rows, or directly pull out the last fews rows in the file.
 Special Magic When Working with Subsets of Data
 -----------------------------------------------
 
-As mentioned above, the data in a :py:class:`DataFile` is a sepcial siubclass of numpy's Masked Array - :py:class:`DataArray`.
+As mentioned above, the data in a :py:class:`DataFile` is a special siubclass of numpy's Masked Array - :py:class:`DataArray`.
 A DataArray understands that columns can have names and can be assigned to hold specific types of data - x,y,z values etc. In
 fact, the logic used for the column names and setas attribute in a :py:class:`DataFile` is actually supplied by the
-:py:class:`DataArray`. Whn you index a DataFile or it's data, the resulting data remembers it's column names and assignments
+:py:class:`DataArray`. When you index a DataFile or it's data, the resulting data remembers it's column names and assignments
 and these can be used directly::
 
     r=d[1:4]
@@ -551,7 +551,7 @@ the *i* attribute.::
     r.i # 10
     r.column_headers
 
-You can reset the row numbers by assiging a value to the *i* attribute.
+You can reset the row numbers by assigning a value to the *i* attribute.
 
 A single column of data also gains a *.name* attribute that matches its column_header::
 
@@ -738,7 +738,7 @@ To select which rows of data have been masked off, use the :py:meth:`DataFile.fi
 
 With just a single argument, the filter method takes a complete row at a time and passes it
 to the first argument, expecting to get a boolean response (or list olf booleans equal in length
-to the number of columns). With a second argument as in the second example, you can sepcify which
+to the number of columns). With a second argument as in the second example, you can specify which
 columns are passed to the filtering function in what order. The second argument must be a list
 of things which can be used to index a column (ie strings, integers, regular expressions).
 
@@ -756,7 +756,7 @@ The general form is to provide keyword arguments that are something that can be 
 underscore, followed by and operator. Where more than one keyword argument is supplied, the results of testing each row are logically
 ORed. The result of chaining together two separate calls to select will, however, logically AND the two tests. So, in the examples above,
 the, first line will assume an implicit equality test and give only those rows with a column *Temp* equal to 250. The second line gives an
-explicit greather than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4.2 *or*
+explicit greater than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4.2 *or*
 column T2 less than 5 and then from those select those rows which have a column Res between 100 and 200. The full list of operators is given in
 :py:meth:`Stoner.folders.baseFolder.select`.
 
@@ -771,7 +771,7 @@ points. For this case the :py:,eth:`DataFile.section` method can be used::
     slab=d.section(x=5.2)
     line=d.section(x=4.7,z=2)
     thick_slab=d.section(z=(5.0,6.0))
-    arbitary=d.section(r=lambda x,y,z:3*x-2*y+z-4==0)
+    arbitrary=d.section(r=lambda x,y,z:3*x-2*y+z-4==0)
 
 After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
 'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
@@ -809,7 +809,7 @@ One of the characteristics of Python that can confuse those used to other
 programming languages is that assignments and argument passing is by reference
 and not by value. This can lead to unexpected results as you can end up modifying variables
 you were not expecting ! To help with creating genuine copies of data Python provides the copy module.
-Whilst this works with DataFile objects, for convenience, the :py:attr:`DataFile.clone` atribute is
+Whilst this works with DataFile objects, for convenience, the :py:attr:`DataFile.clone` attribute is
 provided to make a deep copy of a DataFile object.
 
 .. note::
@@ -863,7 +863,7 @@ arrays to the DataFile object to append additional data.::
 In the first example above, we add a single row of data to *d*. This
 assumes that the number of elements in the array matches the number of columns
 in the data file. The second example is similar but this time appends a 2
-dimensional numpy array to the data. The third example demonstrates adding data from a dictioary.
+dimensional numpy array to the data. The third example demonstrates adding data from a dictionary.
 In this case the keys of the dictionary are used to determine which column the values are added
 to. If their columns that don't match one of the dictionary keys, then a ``NaN`` is inserted. If there
 are keys that don't match columns labels, then new columns are added to the data set, filled with ``NaN``.
@@ -896,15 +896,15 @@ When writing to the column attriobutes you must supply a numpy array with the co
 try to spot and correct if the array needs to be transposed first). If you specify more than one column has a particular type
 then you should supply a 2D array with the corresponding number of columns of data setting the attribute.
 
-In order to preserve the behaviour that allows you to set the column assingments by setting the attribute to an index type, the
+In order to preserve the behaviour that allows you to set the column assignments by setting the attribute to an index type, the
 :py:class:`DataFile` checks to see if you are setting something that might be a column index or a numpy array. Thus the following
 also works::
 
     d.x="Temp" # Set the Temp column to be x data
     d.x=np.linspace(0,300,len(d)) # And set the column to contain a linear array of values from 0 to 300.
 
-You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian co-ordinates.
-On the otherhand you can do an efficient conversion to polar co-ordinates with::
+You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian coordinates.
+On the otherhand you can do an efficient conversion to polar coordinates with::
 
     d.setas="xyz"
     (d.x,d.y,d.z)=(d.p,d.q,d.r)
@@ -958,7 +958,7 @@ row as a 1D numpy array and any of the keyword, argument pairs passed in a
 dictionary to the optional *func_args* argument.
 
 The :py:meth:`DataFile.add_column` method returns a copy of the DataFile object
-itself as well as modifying the object. This is to allow the metod to be chained
+itself as well as modifying the object. This is to allow the method to be chained
 up with other methods for more compact code writing.
 
 Deleting Rows of Data
@@ -993,13 +993,13 @@ The final two variants above, use a tuple to select the data. The final example 
 use of the *invert* keyword argument to reverse the sense used to selkect tows. In both cases
 rows are deleted(kept for *invert* = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
-for specifying the bounds. Fianlly, if you call :py:meth:`DataFile.del_rows` with no arguments at all, then
+for specifying the bounds. Finally, if you call :py:meth:`DataFile.del_rows` with no arguments at all, then
 it removes all rows where at least one column of data is masked out.::
 
     d.filter(lambda r:r[0]>50) # Mask all rows where the first column is greater than 50
     d.del_rows() # Then delete them.
 
-For simple caases where the row to be delted can be expressed as an integer or list of integers,
+For simple caases where the row to be deleted can be expressed as an integer or list of integers,
 the subtration operator can be used.::
 
    e=d-2
@@ -1080,5 +1080,5 @@ as a two level index of column headers and column assignments. The Stoner librar
 *metadata* extension attribute for DataFrames that provides thin sub-class wrapper around the same regular expression
 based and type hinting dictionary that is used to store metadata in :py:attr:`Stoner.Data.metadata`.
 
-The pandas.DataFrame produced by the :py:meth:`Stoner.Data.to_pandas` method is reversibly convertable back to an identical
+The pandas.DataFrame produced by the :py:meth:`Stoner.Data.to_pandas` method is reversibly convertible back to an identical
 :py:class:`Stoner.Data` object by passing the DataFrame into the constructor of the :py:class:`Stoner.Data` object.

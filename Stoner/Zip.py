@@ -57,7 +57,7 @@ class ZippedFile(DataFile):
 
     """A sub class of DataFile that sores itself in a zip file.
 
-    If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
+    If the first non-keyword argument is not an :py:class:`zipfile:ZipFile` then
     initialises with a blank parent constructor and then loads data, otherwise,
     calls parent constructor.
 
@@ -122,14 +122,14 @@ class ZippedFile(DataFile):
         return self
 
     def _load(self, filename=None, *args, **kargs):
-        """Load a file from the zip file, openining it as necessary."""
+        """Load a file from the zip file, opening it as necessary."""
         if filename is None or not filename:
             self.get_filename("r")
         else:
             self.filename = filename
         try:
             if isinstance(self.filename, zf.ZipFile):  # Loading from an ZipFile
-                if not self.filename.fp:  # Open zipfile if necessarry
+                if not self.filename.fp:  # Open zipfile if necessary
                     other = zf.ZipFile(self.filename.filename, "r")
                     close_me = True
                 else:  # Zip file is already open
@@ -377,8 +377,11 @@ class ZipFolderMixin:
 
     def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other."""
-        if other is None and attrs_only:
-            other = type(self)(readlist=False)
+        if other is None:
+            if attrs_only:
+                other = type(self)(readlist=False)
+            else:
+                other = type(self)()
         for arg in self._defaults:
             if hasattr(self, arg):
                 setattr(other, arg, getattr(self, arg))
@@ -392,7 +395,7 @@ class ZipFolderMixin:
                 The canonical mapping key to construct the path from.
 
         Keyword Arguments:
-            instatiate (bool):
+            instantiate (bool):
                 IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 :py:class:`Stoner.Core.Data` object.
@@ -431,7 +434,7 @@ class ZipFolderMixin:
 
         Note:
             We try two things - first a direct lookup in the namelist if there is an exact match to the key and then
-            we preprend the ZipFolder's path to try for a match with just the final part of the filename.
+            we prepend the ZipFolder's path to try for a match with just the final part of the filename.
         """
         try:  # try to go back to the base to see if it's already loaded
             return self._storage_class.__lookup__(self, name)
@@ -441,7 +444,7 @@ class ZipFolderMixin:
         try:
             if isinstance(name, string_types):
                 name = name.replace(path.sep, "/")
-                # First try tthe direct lookup - will work if we have a full name
+                # First try the direct lookup - will work if we have a full name
                 if name in self.File.namelist():
                     return name
                 pth = path.normpath(path.join(self.full_key, name)).replace(path.sep, "/")
@@ -485,7 +488,7 @@ class ZipFolderMixin:
         Returns:
             The new filename of the saved DataFile.
 
-        ZipFiles are really a flat heirarchy, so concatentate the trail and save the data using
+        ZipFiles are really a flat hierarchy, so concatenate the trail and save the data using
         :py:meth:`Stoner.Zip.ZipFile.save`
 
         This routine is used by a walk_groups call - hence the prototype matches that required for
@@ -511,7 +514,7 @@ class ZipFolder(ZipFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     """A sub class of DataFile that sores itself in a zip file.
 
-    If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
+    If the first non-keyword argument is not an :py:class:`zipfile:ZipFile` then
     initialises with a blank parent constructor and then loads data, otherwise,
     calls parent constructor.
 

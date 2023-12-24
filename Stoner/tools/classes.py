@@ -26,6 +26,7 @@ _options = {
     "no_figs": True,
     "multiprocessing": False,  # Change default to not use multiprocessing for now
     "threading": False,
+    "warnings": False,
 }
 
 
@@ -48,7 +49,7 @@ class attributeStore(dict):
         self[name] = value
 
     def __getattr__(self, name: str) -> Any:
-        """Get an attrbute (equivalent to getting an item)."""
+        """Get an attribute (equivalent to getting an item)."""
         try:
             return self[name]
         except KeyError as err:
@@ -189,32 +190,30 @@ class typedList(MutableSequence):
         if isiterable(name) or isinstance(name, slice):
             if not isiterable(value) or not all_type(value, self._type):
                 raise TypeError(
-                    f"Elelements of this list should be of type {self._type} and must set "
+                    f"Elements of this list should be of type {self._type} and must set "
                     + "the correct number of elements"
                 )
         elif not isinstance(value, self._type):
-            raise TypeError(f"Elelements of this list should be of type {self._type}")
+            raise TypeError(f"Elements of this list should be of type {self._type}")
         self._store[name] = value
 
-    def extend(self, other: IterableType) -> None:  # pylint:  disable=arguments-differ
+    def extend(self, values: IterableType) -> None:  # pylint:  disable=arguments-differ
         """Extend the list and do some type checking."""
-        if not isiterable(other) or not all_type(other, self._type):
-            raise TypeError(f"Elelements of this list should be of type {self._type}")
-        self._store.extend(other)
+        if not isiterable(values) or not all_type(values, self._type):
+            raise TypeError(f"Elements of this list should be of type {self._type}")
+        self._store.extend(values)
 
-    def index(  # pylint:  disable=arguments-differ
-        self, search: Any, start: int = 0, end: Optional[int] = None
-    ) -> int:
+    def index(self, value: Any, start: int = 0, end: Optional[int] = None) -> int:  # pylint:  disable=arguments-differ
         """Index works like a list except we support Python 3 optional parameters everywhere."""
         if end is None:
             end = len(self._store)
-        return self._store[start:end].index(search) + start
+        return self._store[start:end].index(value) + start
 
-    def insert(self, index: int, obj: Any) -> None:  # pylint:  disable=arguments-differ
+    def insert(self, index: int, value: Any) -> None:  # pylint:  disable=arguments-differ
         """Insert an element and do some type checking."""
-        if not isinstance(obj, self._type):
-            raise TypeError(f"Elelements of this list should be of type {self._type}")
-        self._store.insert(index, obj)
+        if not isinstance(value, self._type):
+            raise TypeError(f"Elements of this list should be of type {self._type}")
+        self._store.insert(index, value)
 
 
 def get_option(name: str) -> bool:
@@ -296,7 +295,7 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
 
     Args:
         source(DataFile): The DataFile object to be copied from
-        dest (DataFile): The DataFile objrct to be changed by recieving the copiued data.
+        dest (DataFile): The DataFile objrct to be changed by receiving the copiued data.
 
     Returns:
         The modified *dest* DataFile.
@@ -306,8 +305,9 @@ def copy_into(source: "DataFile", dest: "DataFile") -> "DataFile":
     """
     dest.data = source.data.copy()
     dest.setas = source.setas
+    dest.fig = getattr(source, "fig", None)
     for attr in source._public_attrs:
-        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data"]:
+        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "fig"]:
             continue
         try:
             setattr(dest, attr, copy.deepcopy(getattr(source, attr)))

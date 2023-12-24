@@ -1,4 +1,4 @@
-"""Core support for wokring with collections of files in the :py:class:`Stoner.DataFolder`."""
+"""Core support for working with collections of files in the :py:class:`Stoner.DataFolder`."""
 
 __all__ = [
     "core",

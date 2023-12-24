@@ -7,7 +7,7 @@ d = Data("Noisy_Data.txt", setas="xy")
 
 d.template.fig_height = 6
 d.template.fig_width = 8
-d.figure(figsize=(6, 8))
+d.figure(figsize=(6, 8), no_axes=True)
 d.subplot(411)
 
 e = d.bin(bins=0.05, mode="lin")
@@ -27,4 +27,3 @@ for i, (binned, label) in enumerate(
     d.xlim = (1, 6)
     d.ylim(-100.0, 400)
     d.title = "Bin demo" if i == 0 else ""
-d.tight_layout()

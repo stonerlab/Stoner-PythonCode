@@ -8,7 +8,7 @@ from glob import glob
 import re
 import importlib
 
-from numpy import genfromtxt, linspace, meshgrid, array, product
+from numpy import genfromtxt, linspace, meshgrid, array, prod
 from scipy.interpolate import griddata
 from scipy.optimize import curve_fit
 import h5py
@@ -19,6 +19,7 @@ from ..core.base import typeHintedDict
 from ..Image import ImageStack, ImageFile, ImageArray
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager
+from ..core.exceptions import StonerLoadError
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
@@ -34,6 +35,17 @@ def plane(X, a, b, c):
     """Plane equation for levelling an image."""
     x, y = X
     return a * x + b * y + c
+
+
+def _raise_error(openfile, message=""):
+    """Raise a StonerLoadError after trying to close file."""
+    try:
+        raise StonerLoadError(message)
+    finally:
+        try:
+            openfile.close()
+        except (AttributeError, TypeError, ValueError, IOError):
+            pass
 
 
 class AttocubeScanMixin:
@@ -250,7 +262,7 @@ class AttocubeScanMixin:
             raise StonerLoadError(f"{g.name} does not have a signal dataset !")
         tmp = self.type()  # pylint: disable=E1102
         data = g["signal"]
-        if product(array(data.shape)) > 0:
+        if prod(array(data.shape)) > 0:
             tmp.image = data[...]
         else:
             tmp.image = [[]]
@@ -276,7 +288,7 @@ class AttocubeScanMixin:
         Keyword Parameters:
             x_range, y_range (tuple of start, stop, points):
                 Range of x-y co-rdinates to regrid the data to. Used as an argument to :py:func:`np.linspace` to
-                generate the co-ordinate
+                generate the coordinate
                 vector.
             in_place (bool):
                 If True then replace the existing datasets with the regridded data, otherwise create a new copy
@@ -359,7 +371,6 @@ class AttocubeScanMixin:
             mode = "r+" if path.exists(filename) else "w"
         self.filename = filename
         with HDFFileManager(self.filename, mode=mode) as f:
-
             f.attrs["type"] = type(self).__name__
             f.attrs["module"] = type(self).__module__
             f.attrs["scan_no"] = self.scan_no
@@ -411,7 +422,6 @@ class AttocubeScanMixin:
     def read_hdf5(cls, filename, *args, **kargs):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
-        close_me = False
         if filename is None or not filename:
             self.get_filename("r")
             filename = self.filename

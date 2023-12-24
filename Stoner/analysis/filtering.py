@@ -55,11 +55,11 @@ class FilteringOpsMixin:
 
         Notes:
             If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
-            to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
+            to set an x and y column. If col is a tuple, then it is assumed to specify and x-column and y-column
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
 
             Padding can help stop wildly wrong artefacts in the data at the start and enf of the data, particularly
-            when the differntial order is >1.
+            when the differential order is >1.
 
         See Also:
             User guide section :ref:`smoothing_guide`
@@ -85,7 +85,7 @@ class FilteringOpsMixin:
 
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
-            offset = int(np.ceil(points * order ** 2 / 8))
+            offset = int(np.ceil(points * (order + 1) ** 2 / 8))
             padv = np.mean(ddata[:, offset:-offset], axis=1)
             pad = np.ones((ddata.shape[0], offset))
             for ix, v in enumerate(padv):
@@ -118,7 +118,7 @@ class FilteringOpsMixin:
             return self
         return r
 
-    def bin(self, bins=0.03, mode="log", **kargs):
+    def bin(self, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
         """Bin x-y data into new values of x with an error bar.
 
         Args:
@@ -157,22 +157,28 @@ class FilteringOpsMixin:
             User Guide section :ref:`binning_guide`
         """
 
-        _ = self.data._col_args(
-            scalar=False,
-            force_list=True,
-            xcol=kargs.pop("xcol", None),
-            ycol=kargs.pop("ycol", None),
-            yerr=kargs.pop("yerr", None),
-        )
-        bin_left, bin_right, bin_centres = self.make_bins(_.xcol, bins, mode, **kargs)
+        if None in (xcol, ycol):
+            cols = self.setas._get_cols()
+            if xcol is None:
+                xcol = cols["xcol"]
+            if ycol is None:
+                ycol = cols["ycol"]
+        yerr = kargs.pop("yerr", cols["yerr"] if cols["has_yerr"] else None)
 
-        ybin = np.zeros((len(bin_left), len(_.ycol)))
-        ebin = np.zeros((len(bin_left), len(_.ycol)))
-        nbins = np.zeros((len(bin_left), len(_.ycol)))
+        bin_left, bin_right, bin_centres = self.make_bins(xcol, bins, mode, **kargs)
+
+        ycol = self.find_col(ycol)
+        if yerr is not None:
+            yerr = self.find_col(yerr)
+
+        ybin = np.zeros((len(bin_left), len(ycol)))
+        ebin = np.zeros((len(bin_left), len(ycol)))
+        nbins = np.zeros((len(bin_left), len(ycol)))
+        xcol = self.find_col(xcol)
         i = 0
 
         for limits in zip(bin_left, bin_right):
-            data = self.search(_.xcol, limits)
+            data = self.search(xcol, limits)
             if len(data) > 1:
                 ok = np.logical_not(np.isnan(data.y))
                 data = data[ok]
@@ -180,36 +186,34 @@ class FilteringOpsMixin:
                 shape = list(data.shape)
                 shape[0] = 0
                 data = np.zeros(shape)
-            if _.yerr is not None and _.yerr != []:
-                w = 1.0 / data[:, _.yerr] ** 2
+            if yerr is not None:
+                w = 1.0 / data[:, yerr] ** 2
                 W = np.sum(w, axis=0)
                 if data.shape[0] > 3:
-                    e = max(
-                        np.std(data[:, _.ycol], axis=0) / np.sqrt(data.shape[0]), (1.0 / np.sqrt(W)) / data.shape[0]
-                    )
+                    e = max(np.std(data[:, ycol], axis=0) / np.sqrt(data.shape[0]), (1.0 / np.sqrt(W)) / data.shape[0])
                 else:
-                    e = 1.0 / np.sqrt(W)
+                    e = 1.0 / np.sqrt(np.where(W > 0, W, np.nan))
             else:
-                w = np.ones((data.shape[0], len(_.ycol)))
+                w = np.ones((data.shape[0], len(ycol)))
                 W = data.shape[0]
-                if data[:, _.ycol].size > 1:
-                    e = np.std(data[:, _.ycol], axis=0) / np.sqrt(W)
+                if data[:, ycol].size > 1:
+                    e = np.std(data[:, ycol], axis=0) / np.sqrt(W)
                 else:
                     e = np.nan
             if data.shape[0] == 0 and self.debug:
                 warn(f"Empty bin at {limits}")
-            y = np.sum(data[:, _.ycol] * (w / W), axis=0)
-            ybin[i, :] = np.atleast_1d(y)
-            ebin[i, :] = np.atleast_1d(e)
+            y = np.sum(data[:, ycol] * (w / W), axis=0)
+            ybin[i, :] = y
+            ebin[i, :] = e
             nbins[i, :] = data.shape[0]
             i += 1
-        if kargs.get("clone", True):
+        if clone:
             ret = self.clone
             ret.data = np.atleast_2d(bin_centres).T
-            ret.column_headers = [self.column_headers[_.xcol]]
+            ret.column_headers = [self.column_headers[xcol]]
             ret.setas = ["x"]
             for i in range(ybin.shape[1]):
-                head = str(self.column_headers[_.ycol[i]])
+                head = str(self.column_headers[ycol[i]])
 
                 ret.add_column(ybin[:, i], header=head)
                 ret.add_column(ebin[:, i], header=f"d{head}")
@@ -259,14 +263,14 @@ class FilteringOpsMixin:
         _ = self._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
         kinds = {
             "linear": lambda x, m, c: m * x + c,
-            "quadratic": lambda x, a, b, c: a * x ** 2 + b * x + c,
-            "cubic": lambda x, a, b, c, d: a * x ** 3 + b * x ** 2 + c * x + d,
+            "quadratic": lambda x, a, b, c: a * x**2 + b * x + c,
+            "cubic": lambda x, a, b, c, d: a * x**3 + b * x**2 + c * x + d,
         }
         errs = {
-            "linear": lambda x, me, ce, popt: np.sqrt((me * x) ** 2 + ce ** 2),
-            "quadratic": lambda x, ae, be, ce, popt: np.sqrt((2 * x ** 2 * ae) ** 2 + (x * be) ** 2 + ce ** 2),
+            "linear": lambda x, me, ce, popt: np.sqrt((me * x) ** 2 + ce**2),
+            "quadratic": lambda x, ae, be, ce, popt: np.sqrt((2 * x**2 * ae) ** 2 + (x * be) ** 2 + ce**2),
             "cubic": lambda x, ae, be, ce, de, popt: np.sqrt(
-                (3 * ae * x ** 3) ** 2 + (2 * x ** 2 * be) ** 2 + (x * ce) ** 2 + de ** 2
+                (3 * ae * x**3) ** 2 + (2 * x**2 * be) ** 2 + (x * ce) ** 2 + de**2
             ),
         }
 
@@ -452,7 +456,7 @@ class FilteringOpsMixin:
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
                 if not 0.0 < bins <= 1.0:
-                    raise ValueError("Bin width must be between 0 ans 1 for log binning")
+                    raise ValueError("Bin width must be between 0 and 1 for log binning")
                 if xmin <= 0:
                     raise ValueError("The start of the binning must be a positive value in log mode.")
                 xp = xmin
@@ -474,6 +478,7 @@ class FilteringOpsMixin:
             if mode.lower().startswith("lin"):
                 bin_centres = (bin_start + bin_stop) / 2.0
             elif mode.lower().startswith("log"):
+                bin_start = np.where(bin_start <= 0, 1e-9, bin_start)
                 bin_centres = np.exp(np.log(bin_start) + np.log(bin_stop) / 2.0)
             else:
                 raise ValueError(f"mode should be either lin(ear) or log(arthimitc) not {mode}")
@@ -490,12 +495,12 @@ class FilteringOpsMixin:
 
         Args:
             column(column index):
-                specifing column for outlier detection. If not set,
+                specifying column for outlier detection. If not set,
                 defaults to the current y set column.
 
         Keyword Arguments:
             window(int):
-                data window for anomoly detection
+                data window for anomaly detection
             shape(str):
                 The name of a :py:mod:`scipy.signal` windowing function to use when averaging the data.
                 Defaults to 'boxcar' for a flat average.
@@ -516,7 +521,7 @@ class FilteringOpsMixin:
             action_args (tuple):
                 if *action* is callable, then action_args can be used to pass extra arguments to the action callable
             action_kargs (dict):
-                If *action* is callable, then action_kargs can be useed to pass extra keyword arguments to the action
+                If *action* is callable, then action_kargs can be used to pass extra keyword arguments to the action
                 callable.
 
         Returns:
@@ -533,7 +538,7 @@ class FilteringOpsMixin:
 
         The outlier detection function has the signatrure::
 
-            def outlier(row,column,window,certainity,**kargs)
+            def outlier(row,column,window,certainty,**kargs)
                 #code
                 return True # or False
 
@@ -577,7 +582,7 @@ class FilteringOpsMixin:
         index = np.zeros(len(self), dtype=bool)
         for i, t in enumerate(self.rolling_window(window, wrap=False, exclude_centre=width)):
             index[i] = func(self.data[i], t, metric=certainty, **kargs)
-        self["outliers"] = np.arange(len(self))[index]  # add outlier indecies to metadata
+        self["outliers"] = np.arange(len(self))[index]  # add outlier indices to metadata
         if action == "mask" or action == "mask row":
             if action == "mask":
                 self.mask[index, column] = True
@@ -595,7 +600,7 @@ class FilteringOpsMixin:
 
         Args:
             other (DataFile):
-                The other isntance of a datafile to match to
+                The other instance of a datafile to match to
 
         Keyword Arguments:
             xcol (column index):
@@ -615,7 +620,7 @@ class FilteringOpsMixin:
                 Specifies whether to estimate an initial transformation value or to use the provided one, or
                 start with an identity transformation.
             replace (bool):
-                Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true)
+                Whether to map the x,y data to the new coordinates and return a copy of this AnalysisMixin (true)
                 or to just return the results of the scaling.
             headers (2-element list or tuple of strings):
                 new column headers to use if replace is True.
@@ -750,7 +755,7 @@ class FilteringOpsMixin:
         """
         _ = self._col_args(xcol=xcol, ycol=ycol)
         replace = kargs.pop("replace", True)
-        result = kargs.pop("result", True)  # overwirte existing y column data
+        result = kargs.pop("result", True)  # overwrite existing y column data
         header = kargs.pop("header", self.column_headers[_.ycol])
 
         # Sort out window size
@@ -821,7 +826,7 @@ class FilteringOpsMixin:
                 Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of
                 data or an :[y:class:`scipy.interpolate.UniverateSpline` object.
 
-        This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the
+        This is really just a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the
         extrapolate function.
         """
         _ = self._col_args(xcol=xcol, ycol=ycol)
@@ -831,7 +836,7 @@ class FilteringOpsMixin:
             else:
                 sigma = np.ones(len(self))
         replace = kargs.pop("replace", True)
-        result = kargs.pop("result", True)  # overwirte existing y column data
+        result = kargs.pop("result", True)  # overwrite existing y column data
         header = kargs.pop("header", self.column_headers[_.ycol])
         k = kargs.pop("order", 3)
         s = kargs.pop("smoothing", None)

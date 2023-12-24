@@ -77,7 +77,7 @@ class LSTemperatureFile(Core.DataFile):
                 "Number of Breakpoints",
             ]:
                 raise Core.StonerLoadError("Header did not contain recognised keys.")
-            for (k, v) in zip(keys, vals):
+            for k, v in zip(keys, vals):
                 v = v.split()[0]
                 self.metadata[k] = string_to_type(v)
             headers = bytes2str(next(data)).strip().split()
@@ -356,7 +356,6 @@ class RigakuFile(Core.DataFile):
                 line = bytes2str(line).strip()
                 if "RAS_INT_END" in line:
                     break
-            endpos = f.tell()
             f.seek(pos)
             if max_rows > 0:
                 self.data = np.genfromtxt(
@@ -445,11 +444,11 @@ class SPCFile(Core.DataFile):
         if self._header["ftflgs"] & 1:
             y_width = 2
             y_fmt = "h"
-            divisor = 2 ** 16
+            divisor = 2**16
         else:
             y_width = 4
             y_fmt = "i"
-            divisor = 2 ** 32
+            divisor = 2**32
         if n * (y_width * self._pts + 32) > self._filesize - f.tell():
             raise Core.StonerLoadError("No good, going to read too much data!")
         for j in range(n):  # We have n sub-scans
@@ -463,7 +462,7 @@ class SPCFile(Core.DataFile):
                 ydata = np.array(struct.unpack(str2bytes(str(self._pts) + "f"), f.read(self._pts * y_width)))
             else:  # Data is scaled by exponent
                 yvals = struct.unpack(str2bytes(str(self._pts) + y_fmt), f.read(self._pts * y_width))
-                ydata = np.array(yvals, dtype="float64") * (2 ** exponent) / divisor
+                ydata = np.array(yvals, dtype="float64") * (2**exponent) / divisor
             data[:, j + 1] = ydata
             self._header = dict(self._header, **subheader)
             column_headers.append("Scan" + str(j) + ":" + self._yvars[self._header["fytype"]])
@@ -495,7 +494,7 @@ class SPCFile(Core.DataFile):
                 self._header[key] = value
 
     def _load(self, filename=None, *args, **kargs):
-        """Read a .scf file produced by the Renishaw Raman system (amongs others).
+        """Read a .scf file produced by the Renishaw Raman system (among others).
 
         Args:
             filename (string or bool):
@@ -678,7 +677,7 @@ class VSMFile(Core.DataFile):
 
         Keyword Arguments:
             header_line (int):
-                The line in the file that contains the column headers. If None, then column headers are auotmatically
+                The line in the file that contains the column headers. If None, then column headers are automatically
                 generated.
             data_line (int):
                 The line on which the data starts
@@ -787,7 +786,7 @@ class XRDFile(Core.DataFile):
             self.filename = filename
         sh = re.compile(r"\[(.+)\]")  # Regexp to grab section name
         with FileManager(self.filename, errors="ignore", encoding="utf-8") as f:  # Read filename linewise
-            if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
+            if f.readline().strip() != ";RAW4.00":  # Check we have the correct fileformat
                 raise Core.StonerLoadError("File Format Not Recognized !")
             drive = 0
             for line in f:  # for each line

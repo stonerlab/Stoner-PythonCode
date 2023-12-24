@@ -30,8 +30,8 @@ def _straight_ellipse(p, data):
     """A non-rotated ellipse."""
     xc, yc, a, b = p
     x, y = data.T
-    t1 = (x - xc) ** 2 / a ** 2
-    t2 = (y - yc) ** 2 / b ** 2
+    t1 = (x - xc) ** 2 / a**2
+    t2 = (y - yc) ** 2 / b**2
     return np.abs(np.sum(t1 + t2 - 1.0))
 
 
@@ -39,8 +39,8 @@ def _rotated_ellipse(p, data):
     """A non-rotated ellipse."""
     xc, yc, a, b, phi = p
     x, y = data.T
-    t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a ** 2
-    t2 = ((x - xc) * np.sin(phi) - (y - yc) * np.cos(phi)) ** 2 / b ** 2
+    t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a**2
+    t2 = ((x - xc) * np.sin(phi) - (y - yc) * np.cos(phi)) ** 2 / b**2
     return np.abs(np.sum(t1 + t2 - 1.0))
 
 
@@ -51,7 +51,7 @@ class LineSelect:
     def __init__(self):
         """Create the LineSelect object, display the image and register the hooks.
 
-        The constructor will wait until the finished co-ordinates are set and then return
+        The constructor will wait until the finished coordinates are set and then return
         [(x_start,y_start),(x_finish, y_finish)].
         """
         self.started = False
@@ -125,7 +125,7 @@ class LineSelect:
         Returns:
             None.
 
-        Records with the starting or finishing co-ordinates of the line.
+        Records with the starting or finishing coordinates of the line.
         """
         if self.mode == "x":
             y1, y2 = self.ax.get_ylim()
@@ -154,12 +154,12 @@ class LineSelect:
         Returns:
             None.
 
-        Optiuonal line properties can be overriden by passing keyword parameters to the constructor.
+        Optiuonal line properties can be overridden by passing keyword parameters to the constructor.
         """
         if not self.started:  # Do nothing until we start
             return
         if len(self.ax.lines) > 2:  # Rremove the old line
-            del self.ax.lines[2]
+            self.ax.lines[2].remove()
 
         self.kargs.setdefault("linewidth", 2)
         self.kargs.setdefault("linestyle", "dash")
@@ -177,7 +177,7 @@ class RegionSelect:
     def __init__(self):
         """Create the LineSelect object, display the image and register the hooks.
 
-        The constructor will wait until the finished co-ordinates are set and then return
+        The constructor will wait until the finished coordinates are set and then return
         [(x_start,y_start),(x_finish, y_finish)].
         """
         self.p1 = False
@@ -263,7 +263,7 @@ class ShapeSelect:
     def __init__(self):
         """Create the LineSelect object, display the image and register the hooks.
 
-        The constructor will wait until the finished co-ordinates are set and then return
+        The constructor will wait until the finished coordinates are set and then return
         [(x_start,y_start),(x_finish, y_finish)].
         """
         self.invert = False
@@ -438,7 +438,7 @@ class ShapeSelect:
     def draw_poly(self, vertices):
         """Draw a polygon method using the specified vertices.
 
-        Returns rr,cc co-ordinates.
+        Returns rr,cc coordinates.
         """
         if len(vertices) < 2:
             return ([], [])
@@ -495,7 +495,7 @@ class ShapeSelect:
     draw_circle.instructions = "2 or 3 perimeter vertices to define a circle\n4 or more to define an ellipse"
 
     def draw_rectangle(self, vertices):
-        """Calculate the co-ordinates for a rectangle from the vertices."""
+        """Calculate the coordinates for a rectangle from the vertices."""
         if len(vertices) < 2:
             return ([], [])
         if len(vertices) == 2:

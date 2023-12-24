@@ -83,6 +83,10 @@ class KerrArray(ImageArray):
         """Do a test call to tesseract to see if it is there and cache the result."""
         return _tesseractable
 
+    def save(self, filename=None, **kargs):
+        """Stub method for a save function."""
+        raise NotImplementedError(f"Save is not implemented in {self.__class__}")
+
 
 @class_modifier(kerrfuncs, adaptor=image_file_adaptor)
 class KerrImageFile(ImageFile):
@@ -99,7 +103,7 @@ class KerrImageFile(ImageFile):
         self._image = self.image.view(KerrArray)
 
     @ImageFile.image.getter
-    def image(self):  # pylint: disable=invalid-overridden-method
+    def image(self):  # pylint disable=invalid-overridden-method
         """Access the image data."""
         return self._image.view(KerrArray)
 
@@ -356,7 +360,7 @@ class MaskStackMixin:
                 True if the last image is closest to the fully saturated state.
                 False if you want the first image
             saturation_value(bool):
-                if True then a pixel value True means that switching has occured
+                if True then a pixel value True means that switching has occurred
                 (ie magnetic saturation would be all True)
 
         Returns:

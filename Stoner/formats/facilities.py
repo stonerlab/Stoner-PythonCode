@@ -27,7 +27,7 @@ class BNLFile(Core.DataFile):
 
     Author RCT 12/2011
 
-    The file from BNL must be split into seperate scan files before Stoner can use
+    The file from BNL must be split into separate scan files before Stoner can use
     them, a separate python script has been written for this and should be found
     in data/Python/PythonCode/scripts.
     """
@@ -306,7 +306,7 @@ class SNSFile(Core.DataFile):
 
                 if line.startswith("["):  # Look for a section header
                     section = line.strip().strip("[]")
-                    if section == "Data":  # The Data section has one line of colum headers and then data
+                    if section == "Data":  # The Data section has one line of column headers and then data
                         header = next(data)[2:].split("\t")
                         column_headers = [h.strip() for h in header]
                         self.data = np.genfromtxt(data)  # we end by reading the raw data
@@ -391,7 +391,6 @@ if fabio:
                 except AttributeError:
                     pass
                 raise StonerLoadError("Not a Fabio Image file !") from err
-
 
 else:
     ESRF_DataFile = None

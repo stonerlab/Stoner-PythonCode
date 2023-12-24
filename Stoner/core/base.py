@@ -47,8 +47,14 @@ except (StonerAssertionError, ImportError):  # Fail if blist not present or Pyth
 _asteval_interp = None
 
 
+def _parse_date(string: str) -> datetime.datetime:
+    """Run the dateutil parser with a UK sensible date order."""
+    parserinfo = parser.parserinfo(dayfirst=True)
+    return parser.parse(string, parserinfo)
+
+
 def literal_eval(string: str) -> Any:
-    """Use the asteval module to interpret arbitary strings slightly safely.
+    """Use the asteval module to interpret arbitrary strings slightly safely.
 
     Args:
         string (str):
@@ -78,7 +84,7 @@ def string_to_type(value: String_Types) -> Any:
     First of all the first character is checked to see if it is a [ or { which would
     suggest this is a list of dictionary. If the value looks like a common boolean
     value (i.e. Yes, No, True, Fale, On, Off) then it is assumed to be a boolean value.
-    Fianlly it interpretation as an int, float or string is tried.
+    Finally it interpretation as an int, float or string is tried.
 
     Args:
         value (string):
@@ -99,7 +105,7 @@ def string_to_type(value: String_Types) -> Any:
             if value.lower() in ["true", "yes", "on", "false", "no", "off"]:
                 ret = value.lower() in ["true", "yes", "on"]  # Boolean
             else:
-                for trial in [int, float, parser.parse, str]:
+                for trial in [int, float, _parse_date, str]:
                     try:
                         ret = trial(value)
                         break
@@ -134,7 +140,7 @@ class regexpDict(sorteddict):
 
         Keyword Arguments:
             multiple (bool):
-                Return a singl entry ()default, False) or multiple entries
+                Return a single entry ()default, False) or multiple entries
             exact(bool):
                 Do not do a regular expression search, match the exact string only.
 
@@ -173,7 +179,7 @@ class regexpDict(sorteddict):
 
         if ret is None or isiterable(ret) and not ret:
             raise KeyError(f"{name} is not a match to any key.")
-        if multiple:  # sort out returing multiple entries or not
+        if multiple:  # sort out returning multiple entries or not
             if not isinstance(ret, list):
                 ret = [ret]
         else:
@@ -200,7 +206,7 @@ class regexpDict(sorteddict):
         super().__delitem__(self.__lookup__(name))
 
     def __contains__(self, name: Any) -> bool:
-        """Return True if name either is an exact key or matches when interpreted as a regular experssion."""
+        """Return True if name either is an exact key or matches when interpreted as a regular expression."""
         try:
             name = self.__lookup__(name)
             return True
@@ -260,7 +266,7 @@ class typeHintedDict(regexpDict):
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
     the :py:class:`DataFile` data structure. However, it is convenient for this file format
     to be ASCII text for ease of use with other programs. In order to represent metadata which
-    can have arbitary types, the LabVIEW code that generates the data file from our measurements
+    can have arbitrary types, the LabVIEW code that generates the data file from our measurements
     adds a type hint string. The Stoner Python code can then make use of this type hinting to
     choose the correct representation for the metadata. The type hinting information is retained
     so that files output from Python will retain type hints to permit them to be loaded into
@@ -272,7 +278,7 @@ class typeHintedDict(regexpDict):
         __regexGetType (re):
             Used to extract the type hint from a string
         __regexSignedInt (re):
-            matches type hint strings for signed intergers
+            matches type hint strings for signed integers
         __regexUnsignedInt (re):
             matches the type hint string for unsigned integers
         __regexFloat (re):
@@ -355,7 +361,7 @@ class typeHintedDict(regexpDict):
         """
         self._typehints = sorteddict()
         super().__init__(*args, **kargs)
-        for key in list(self.keys()):  # Chekc through all the keys and see if they contain
+        for key in list(self.keys()):  # Check through all the keys and see if they contain
             # type hints. If they do, move them to the
             # _typehint dict
             value = super().__getitem__(key)
@@ -364,7 +370,7 @@ class typeHintedDict(regexpDict):
 
     @property
     def types(self) -> Dict:
-        """Return the dictrionary of value types."""
+        """Return the dictionary of value types."""
         return self._typehints
 
     def findtype(self, value: Any) -> str:
@@ -426,7 +432,7 @@ class typeHintedDict(regexpDict):
         ret = None
         if typ == "Invalid Type":  # Short circuit here
             return repr(value)
-        for (regexp, valuetype) in self.__tests:
+        for regexp, valuetype in self.__tests:
             matched = regexp.search(typ)
             if matched is not None:
                 if isinstance(valuetype, _evaluatable):
@@ -441,12 +447,15 @@ class typeHintedDict(regexpDict):
                         ret = ""
                     break
                 elif issubclass(valuetype, datetime.datetime):
-                    ret = literal_eval(value)
-                    if isinstance(ret, string_types):
+                    if isinstance(ret, datetime.datetime):
+                        break  # Alreadu a datetime object
+                    try:
+                        ret = parser.parse(value)
+                    except ValueError:
                         try:
-                            ret = parser.parse(ret)
-                        except (ValueError, OverflowError):
-                            pass
+                            ret = literal_eval(value)
+                        except ValueError:
+                            ret = str(value)
                     break
                 else:
                     ret = valuetype(value)
@@ -454,7 +463,7 @@ class typeHintedDict(regexpDict):
         else:
             ret = str(value)
             try:
-                ret = parser.parse(ret)
+                ret = _parse_date(ret)
             except (ValueError, OverflowError):
                 pass
         return ret
@@ -522,10 +531,7 @@ class typeHintedDict(regexpDict):
                 super().__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
-                try:
-                    super().__setitem__(name, self.__mungevalue(typehint, value))
-                except ValueError:
-                    pass  # Silently fail
+                super().__setitem__(name, self.__mungevalue(typehint, value))
         else:
             if isinstance(value, string_types):
                 value = string_to_type(value)
@@ -689,7 +695,7 @@ class metadataObject(MutableMapping):
 
     @property
     def _public_attrs(self):
-        """Return a dictionary of attributes setable by keyword argument with thier types."""
+        """Return a dictionary of attributes setable by keyword argument with their types."""
         try:
             return self._public_attrs_real  # pylint: disable=no-member
         except AttributeError:
@@ -698,7 +704,7 @@ class metadataObject(MutableMapping):
 
     @_public_attrs.setter
     def _public_attrs(self, value):
-        """Privaye property to update the list of public attributes."""
+        """Private property to update the list of public attributes."""
         self._public_attrs_real.update(dict(value))  # pylint: disable=no-member
 
     @property
@@ -773,7 +779,7 @@ class metadataObject(MutableMapping):
         raise NotImplementedError("Save is not implemented in the base class.")
 
 
-if pd is not None:
+if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata
 
     @pd.api.extensions.register_dataframe_accessor("metadata")
     class PandasMetadata(typeHintedDict):

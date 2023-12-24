@@ -20,10 +20,10 @@ except ImportError:
     int64 = _dummy()
 
 
-@jit(float64(float64, int64))
+@jit(float64(float64, int64), nopython=True)
 def _bgintegrand(x, n):
     """Calculate the integrand for the Bloch Grueneisen model."""
-    return x ** n / ((np.exp(x) - 1) * (1 - np.exp(-x)))
+    return x**n / ((np.exp(x) - 1) * (1 - np.exp(-x)))
 
 
 def wlfit(B, s0, DS, B1, B2):
@@ -66,7 +66,7 @@ def wlfit(B, s0, DS, B1, B2):
         WLpt3 = np.log(B2 / B1)
 
         # Calculates fermi level smearing
-        cond[tt] = (e ** 2 / (h * np.pi)) * (WLpt1 - WLpt2 - WLpt3)
+        cond[tt] = (e**2 / (h * np.pi)) * (WLpt1 - WLpt2 - WLpt3)
     # cond = s0*cond / min(cond)
     cond = s0 + DS * cond
     return cond
@@ -94,7 +94,8 @@ def fluchsSondheimer(t, l, p, sigma_0):
     """
     k = t / l
 
-    kernel = lambda x, k: (x - x ** 3) * np.exp(-k * x) / (1 - np.exp(-k * x))
+    def kernel(x, k):
+        return (x - x**3) * np.exp(-k * x) / (1 - np.exp(-k * x))
 
     result = np.zeros(k.shape)
     for i, v in enumerate(k):
