@@ -7,9 +7,14 @@ import configparser as ConfigParser
 import pathlib
 
 import numpy as np
-from Stoner import Data
+from Stoner import Data, __version_info__
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 from Stoner.analysis.fitting.models.generic import quadratic
+
+if __version_info__[0] == 0 and __version_info__[1] < 11:
+    raise ImportError(
+        "The version of the Stoner package is too old. This version of the script needs v. 0.11"
+    )
 
 
 class working(Data):
@@ -24,8 +29,8 @@ class working(Data):
             raise RuntimeError(
                 f"Could not find the fitting ini file {inifile}!"
             )
-
-        tmp = cfg_data_from_ini(inifile, filename=False)
+        filename = kargs.get("filename", False)
+        tmp = cfg_data_from_ini(inifile, filename)
         self._setas = tmp.setas.clone
         self.column_headers = tmp.column_headers
         self.metadata = tmp.metadata
@@ -47,6 +52,9 @@ class working(Data):
         self.fancyresults = config.has_option(
             "Options", "fancy_result"
         ) and config.getboolean("Options", "fancy_result")
+        self.make_symmetric = config.has_option(
+            "Options", "make_symmetric"
+        ) and config.getboolean("Options", "make_symmetric")
         self.method = config.get("Options", "method")
         self.model = model
         self.p0 = p0
@@ -114,26 +122,40 @@ class working(Data):
             "Options", "remove_offset"
         ) and self.config.getboolean("Options", "remove_offset"):
             print("Doing offset correction")
-            peaks = self.peaks(
-                ycol=self.gcol,
-                width=len(self) / 20,
-                xcol=self.vcol,
-                poly=4,
-                peaks=True,
-                troughs=True,
-            )
-            peaks = filter(lambda x: abs(x) < 4 * self.delta["value"], peaks)
-            offset = np.mean(np.array(peaks))
-            print("Mean offset =" + str(offset))
-            self.apply(lambda x: x[self.vcol] - offset, self.vcol)
+            if self.config.has_option(
+                "Options", "simple_offset"
+            ) and self.config.getboolean("Options", "simple_offset"):
+                self.x -= 0.5 * (self.x.min() + self.x.max())
+            else:
+                peaks = self.peaks(
+                    ycol=self.gcol,
+                    width=len(self) / 20,
+                    xcol=self.vcol,
+                    poly=4,
+                    peaks=True,
+                    troughs=True,
+                )
+                peaks = filter(
+                    lambda x: abs(x) < 4 * self.delta["value"], peaks
+                )
+                offset = np.mean(np.array(peaks))
+                print("Mean offset =" + str(offset))
+                self.apply(lambda x: x[self.vcol] - offset, self.vcol)
+        return self
+
+    def symmetrise(self):
+        """Decompose the data into symmetric and antisymmetric parts."""
+        if self.make_symmetric:
+            self.decompose()
+            self.setas(x=self.setas.x, y="Symmetric")
         return self
 
     def plot_results(self):
         """Do the plotting of the data and the results."""
         self.figure()  # Make a new figure and show the results
         self.plot_xy(
-            self.vcol,
-            [self.gcol, "Fit"],
+            self.setas.x,
+            self.setas.y + ["Fit"],
             fmt=["ro", "b-"],
             label=["Data", "Fit"],
         )
@@ -151,7 +173,7 @@ class working(Data):
 
     def Fit(self):
         """Run the fitting code."""
-        self.Discard().Normalise().offset_correct()
+        self.Discard().offset_correct().symmetrise().Normalise()
         chi2 = self.p0.shape[0] > 1
 
         method = getattr(self, self.method)

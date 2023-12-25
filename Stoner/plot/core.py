@@ -1093,10 +1093,10 @@ class PlotMixin:
         and whether to plot error bars (for an x,y plot). All keyword argume nts are passed through to
         the selected plotting routine.
         """
+        _ = self._col_args(**kargs)
         if len(args) != 0:
             axes = len(args)
         else:
-            _ = self._col_args(**kargs)
             axes = _.axes
         if "template" in kargs:
             self.template = kargs.pop("template")
