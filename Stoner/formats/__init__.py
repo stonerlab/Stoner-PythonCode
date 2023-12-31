@@ -1,21 +1,57 @@
-"""Provides the subclasses for loading different file formats into :py:class:`Stoner.Data` objects.
-
-You do not need to use these classes directly, they are made available to :py:class:`Stoner.Data` which
-will load each of them in turn when asked to load an unknown data file.
-
-Each class has a :py:attr:`Stoner.Core.DataFile.priority` attribute that is used to determine the order in which
-they are tried by :py:class:`Stoner.Data` and friends where trying to load data.
-Larger priority index classes are run last (so is a bit of a misnomer!).
-
-Each class should implement a :py:meth:`Stoner.Core.DataFile._load` method and optionally a
-:py:meth:`Stoner.Core.DataFile.save` method. Classes should make every effort to
-positively identify that the file is one that they understand and throw a
-:py:exception:Stoner.cpre.exceptions.StonerLoadError` if not.
-
-Classes may also provide :py:attr:`Stoner.Core.DataFile.patterns` attribute which is a list of filename glob patterns
-(e.g.  ['*.data','*.txt']) which is used in the file dialog box to filter the list of files. Finally, classes can
-provide a :py:attr:`Stoner.Core.DataFile.mime_type` attribute which gives a list of mime types that this class might
-be able to open. This helps identify classes that could be use to load particular file types.
+"""Provides functions to load files in a variety of formats.
 """
-__all__ = ["instruments", "generic", "rigs", "facilities", "simulations", "attocube", "maximus"]
+__all__ = [
+    "instruments",
+    "generic",
+    "rigs",
+    "facilities",
+    "simulations",
+    "attocube",
+    "maximus",
+    "register_loader",
+    "register_saver",
+    "next_loader",
+    "best_saver",
+    "load",
+    "get_loader",
+    "get_saver",
+]
+from copy import copy
+import io
+from pathlib import Path
 from . import instruments, generic, rigs, facilities, simulations, attocube, maximus
+from .decorators import register_loader, register_saver, next_loader, best_saver, get_loader, get_saver
+from ..core.exceptions import StonerLoadError
+from ..tools import make_Data
+from ..tools.file import get_mime_type
+
+
+def load(filename, *args, **kargs):
+    """Use the function based loaders to try and load a file from disk."""
+    if isinstance(filename, io.IOBase):
+        extension = "*"
+    elif isinstance(filename, bytes):
+        extension = "*"
+    elif hasattr(filename, "filename"):
+        extension = Path(filename.filename).suffix
+    else:
+        extension = Path(filename).suffix
+    what = kargs.pop("what", "Data")
+    mime_type = get_mime_type(filename)
+    if filetype := kargs.pop("filetype", False):
+        loader = get_loader(filetype)
+        print(f"Direct Loading {filetype}")
+        data = make_Data(what=what)
+        ret = loader(data, filename, *copy(args), *copy(kargs))
+        ret["Loaded as"] = loader.name
+        return ret
+    for loader in next_loader(extension, mime_type=mime_type, what=what):
+        print(loader.name)
+        data = make_Data(what=what)
+        try:
+            ret = loader(data, filename, *copy(args), *copy(kargs))
+            ret["Loaded as"] = loader.name
+            return ret
+        except StonerLoadError:
+            continue
+    raise StonerLoadError(f"Unable to find anything that would load {filename}")

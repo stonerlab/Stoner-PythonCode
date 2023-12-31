@@ -19,6 +19,7 @@ from ..Image import ImageStack, ImageFile, ImageArray
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager
 from ..core.exceptions import StonerLoadError
+from .decorators import register_loader
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
@@ -45,6 +46,36 @@ def _raise_error(openfile, message=""):
             openfile.close()
         except (AttributeError, TypeError, ValueError, IOError):
             pass
+
+
+@register_loader(patterns=(".txt", 32), mime_types=("text/plain", 32), name="AttocubeScanParametersFile", what="Data")
+def load_attocube_parameters(new_data, filename, *args, **kargs):
+    """Load the scan parameters text file as the metadata for a Data File.
+
+    Args:
+        root_name (str):
+            The scan prefix e.g. SC_###
+
+    Returns:
+        new_data:
+            The modififed scan stack.
+    """
+    new_data.filename = filename
+    with FileManager(filename, "r") as parameters:
+        if not parameters.readline().startswith("Daisy Parameter Snapshot"):
+            raise StonerLoadError("Parameters file exists but does not have correct header")
+        for line in parameters:
+            if not line.strip():
+                continue
+            parts = [x.strip() for x in line.strip().split(":")]
+            key = parts[0]
+            value = ":".join(parts[1:])
+            units = PARAM_RE.match(value)
+            if units and units.groups()[1]:
+                key += f" [{units.groups()[1]}]"
+                value = units.groups()[0]
+            new_data[key] = value
+    return new_data
 
 
 class AttocubeScanMixin:

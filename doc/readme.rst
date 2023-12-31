@@ -1,4 +1,4 @@
-.. image:: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml/badge.svg?branch=stable
+.. image:: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml/badge.svg?branch=master
     :target: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml
 
 .. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
@@ -106,12 +106,12 @@ contrasr, traditional functional programming thinks in terms of various function
 .. note::
     This is rather similar to pandas DataFrames and the package provides methods to easily convert to and from
     DataFrames. Unlike a DataFrame, a **Stoner.Data** object maintains a dictionary of additional metadata
-    attached to the dataset (e.g. of instrument settings, experimental ort environmental; conditions 
+    attached to the dataset (e.g. of instrument settings, experimental ort environmental; conditions
     when thedata was taken). To assist with exporting to pandas DataFrames, the package will add a custom
     attrobute handler to pandas DataFrames **DataFrame.metadata** to hold this additional data.
-    
+
     Unlike Pandas, the **Stoner** package's default is to operate in-place and also to return the object
-    from method calls to facilitate "chaining" of data methods into short single line pipelines. 
+    from method calls to facilitate "chaining" of data methods into short single line pipelines.
 
 Data and Friends
 ----------------
@@ -207,6 +207,8 @@ Version 0.9 was tested with Python 2.7, 3.5, 3.6 using the standard unittest mod
 
 Version 0.10 is tested using **pytest** with Python 3.7-3.11 using a github action.
 
+Version 0.11 is tested using **pytest** with Python 3.10 and 3.11 using a github action.
+
 
 Citing the Stoner Package
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,11 +216,20 @@ Citing the Stoner Package
 We maintain a digital object identifier (doi) for this package (linked to on the status bar at the top of this readme) and
 encourage any users to cite this package via that doi.
 
+Development Version
+-------------------
+
+New Features in 0.11 included:
+
+    *   Refactored loading and saving routines to reduce the size of the class heirarchy and allow easier creation
+        of user suplied loaders and savers.
+    *   Dropped support for Python<3.10 to allow use of new syntax features such as match...case
+
+
 Stable Versions
 ---------------
 
-
-New Features in 0.10 include:
+New Features in 0.10 included:
 
     *   Support for Python 3.10 and 3.11
     *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
@@ -270,7 +281,7 @@ No further relases will be made to 0.7.x - 0.9.x
 
 Versions 0.6.x and earlier are now pre-historic!
 
-.. _online documentation: http://stoner-pythoncode.readthedocs.io/en/stable/
+.. _online documentation: http://stoner-pythoncode.readthedocs.io/en/latest/
 .. _github repository: http://www.github.com/stonerlab/Stoner-PythonCode/
 .. _Dr Gavin Burnell: http://www.stoner.leeds.ac.uk/people/gb
 .. _User_Guide: http://stoner-pythoncode.readthedocs.io/en/latest/UserGuide/ugindex.html

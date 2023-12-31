@@ -29,7 +29,7 @@ from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
 from .compat import string_types, int_types, index_types, _pattern_type, path_types
-from .tools import all_type, isiterable, isLikeList, get_option, make_Data
+from .tools import all_type, isiterable, isLikeList, get_option, make_Data, isclass
 from .tools.file import get_file_name_type, auto_load_classes
 
 from .core.exceptions import StonerLoadError, StonerSetasError
@@ -1361,41 +1361,39 @@ class DataFile(
 
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
+        from .formats import load
+
         filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
+
+        # Sort out the filetype, checking whether we've been passed a class or an instance first.
         filetype = kargs.pop("filetype", None)
+        if isclass(filetype, metadataObject):
+            filetype = filetype.__name__
+        elif filetype and isinstance(filetype, metadataObject):
+            filetype = filetype.__class__.__name__
+
+        # If filetype is None, then we want to auto-load by default
         auto_load = kargs.pop("auto_load", filetype is None)
+        # Fallback to ensure filetype is set
+        filetype = "DataFile" if filetype is None else filetype
+
         loaded_class = kargs.pop("loaded_class", False)
-        if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
-            filename, filetype = get_file_name_type(filename, filetype, DataFile)
-        elif not auto_load and not filetype:
-            raise StonerLoadError("Cannot read data from non-path like filenames !")
+        if filename is None or not filename:
+            filename = file_dialog("r", filename, cls, DataFile)
+
         if auto_load:  # We're going to try every subclass we canA
-            ret = auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs)
-            if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!
-                return ret
+            kargs.pop("filetype", None)  # make sure filetype is not set
         else:
-            if filetype is None or isinstance(filetype, DataFile):  # set fieltype to DataFile
-                filetype = DataFile
-            if issubclass(filetype, DataFile):
-                ret = filetype()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = filetype.__name__
-            else:
-                raise ValueError(f"Unable to load {filename}")
+            kargs.setdefault("filetype", filetype)  # Makre sure filetype is set
+        ret = load(filename, *args, **kargs)
+        if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!
+            return ret
 
         for k, i in kargs.items():
             if not callable(getattr(ret, k, lambda x: False)):
                 setattr(ret, k, i)
         ret._kargs = kargs
-        filetype = ret.__class__.__name__
-        if loaded_class:
-            self = ret
-        else:
-            self = make_Data()
-            self._public_attrs.update(ret._public_attrs)
-            copy_into(ret, self)
-            self.filetype = filetype
-        return self
+        return ret
 
     def rename(self, old_col, new_col):
         """Rename columns without changing the underlying data.
@@ -1486,6 +1484,8 @@ class DataFile(
             self:
                 The current :py:class:`DataFile` object
         """
+        from .formats.decorators import get_saver
+
         as_loaded = kargs.pop("as_loaded", False)
         if filename is None:
             filename = self.filename
@@ -1498,45 +1498,21 @@ class DataFile(
             if (
                 isinstance(as_loaded, bool) and "Loaded as" in self
             ):  # Use the Loaded as key to find a different save routine
-                cls = subclasses(DataFile)[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
-            elif isinstance(as_loaded, string_types) and as_loaded in subclasses(
-                DataFile
-            ):  # pylint: disable=E1136, E1135
-                cls = subclasses(DataFile)[as_loaded]  # pylint: disable=unsubscriptable-object
+                as_loaded = self["Loaded as"]
+            if isinstance(as_loaded, string_types) and (saver := get_saver(as_loaded, silent=True)):
+                pass
             else:
                 raise ValueError(
                     f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)}"
                     + " so cannot be used to save this data"
                 )
-            ret = cls(self).save(filename)
-            self.filename = ret.filename
-            return self
-        # Normalise the extension to ensure it's something we like...
-        filename, ext = os.path.splitext(filename)
-        if f"*.{ext}" not in DataFile.patterns:  # pylint: disable=unsupported-membership-test
-            ext = DataFile.patterns[0][2:]  # pylint: disable=unsubscriptable-object
-        filename = f"{filename}.{ext}"
-        header = ["TDI Format 1.5"]
-        header.extend(self.column_headers[: self.data.shape[1]])
-        header = "\t".join(header)
-        mdkeys = sorted(self.metadata)
-        if len(mdkeys) > len(self):
-            mdremains = mdkeys[len(self) :]
-            mdkeys = mdkeys[0 : len(self)]
         else:
-            mdremains = []
-        mdtext = np.array([self.metadata.export(k) for k in mdkeys])
-        if len(mdtext) < len(self):
-            mdtext = np.append(mdtext, np.zeros(len(self) - len(mdtext), dtype=str))
-        data_out = np.column_stack([mdtext, self.data])
-        fmt = ["%s"] * data_out.shape[1]
-        with io.open(filename, "w", errors="replace", encoding="utf-8") as f:
-            np.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
-            for k in mdremains:
-                f.write(self.metadata.export(k) + "\n")  # (str2bytes(self.metadata.export(k) + "\n"))
-
-        self.filename = filename
-        return self
+            saver = get_saver("DataFile")  # Get my saver
+        # Normalise the extension to ensure it's something we like...
+        filename = pathlib.Path(filename)
+        if filename.suffix not in saver.patterns:
+            filename = filename.parent / f"{filename.stem}{saver.patterns[0][0]}"
+        return saver(self, filename)
 
     def swap_column(self, *swp, **kargs):
         """Swap pairs of columns in the data.

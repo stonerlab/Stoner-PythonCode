@@ -6,8 +6,9 @@ from pathlib import Path
 from numpy import log10
 
 from Stoner import Data, DataFolder
-from Stoner.formats.instruments import RigakuFile
+from Stoner.formats.instruments import load_rigaku
 from Stoner.plot.utils import joy_division
+from Stoner.tools import make_Data
 
 
 class RigakuFolder(DataFolder):
@@ -22,8 +23,7 @@ class RigakuFolder(DataFolder):
             data = data.read()
             ix = 0
             while len(data) > 0:
-                d = RigakuFile()
-                d._load(data)
+                d = load_rigaku(make_Data(), data)
                 d.filename = f"{filename.stem}-{ix}{filename.suffix}"
                 data = data[d.get("endpos", len(data)) :]
                 ix += 1

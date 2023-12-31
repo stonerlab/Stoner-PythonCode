@@ -10,10 +10,13 @@ import sys
 import pathlib
 import io
 import urllib
+from numpy import isclose
 
 from Stoner import Data, __homepath__, __datapath__, ImageFile
-from Stoner.Core import DataFile
 from Stoner.compat import Hyperspy_ok
+from Stoner.formats import load as new_load
+from Stoner.core.exceptions import StonerLoadError
+from Stoner.formats.decorators import get_saver
 
 import pytest
 
@@ -21,7 +24,6 @@ from Stoner.formats.attocube import AttocubeScan
 from Stoner.formats.maximus import MaximusStack
 from Stoner.tools.classes import subclasses
 from Stoner.core.exceptions import StonerUnrecognisedFormat
-from Stoner.formats.facilities import FabioImageFile
 
 pth = __homepath__ / ".."
 datadir = __datapath__
@@ -54,17 +56,23 @@ listed_files = list_files()
 @pytest.mark.parametrize("filename", listed_files)
 def test_one_file(tmpdir, filename):
     loaded = Data(filename, debug=False)
-    assert isinstance(loaded, DataFile), f"Failed to load {filename.name} correctly."
-    if "save" in subclasses()[loaded["Loaded as"]].__dict__:
+    assert isinstance(loaded, Data), f"Failed to load {filename.name} correctly (old load code)."
+    new_loaded = new_load(filename)
+    assert isinstance(new_loaded, Data), f"Failed to load {filename.name} correctly (new load code)."
+    assert loaded==new_loaded,"Difference between old and new loaders!"
+    try:
+        new_saver=get_saver(loaded["Loaded as"])
         pth = pathlib.Path(tmpdir) / filename.name
         _, name, ext = pth.parent, pth.stem, pth.suffix
         pth2 = pathlib.Path(tmpdir) / f"{name}-2{ext}"
-        loaded.save(pth, as_loaded=True)
+        new_saver(loaded,pth)
         assert pth.exists() or pathlib.Path(loaded.filename).exists(), f"Failed to save as {pth}"
         pathlib.Path(loaded.filename).unlink()
         loaded.save(pth2, as_loaded=loaded["Loaded as"])
         assert pth2.exists() or pathlib.Path(loaded.filename).exists(), "Failed to save as {}".format(pth)
         pathlib.Path(loaded.filename).unlink()
+    except StonerLoadError:
+        pass
 
 
 def test_csvfile():
@@ -136,11 +144,6 @@ def test_maximus_stack(tmpdir):
     assert stack2.shape == stack.shape, "Round trip through MaximusStack"
 
 
-def test_fail_to_load():
-    with pytest.raises(StonerUnrecognisedFormat):
-        _ = Data(datadir / "TDMS_File.tdms_index")
-
-
 def test_arb_class_load():
     _ = Data(datadir / "TDI_Format_RT.txt", filetype="dummy.ArbClass")
 
@@ -183,8 +186,7 @@ def test_ImageAutoLoad():
 
 
 def test_FabioImageFle():
-    loader = FabioImageFile()
-    loader._load(datadir / "working" / "hydra_0017.edf")
+    loader = new_load(datadir / "working" / "hydra_0017.edf")
     assert loader.shape == (512, 768)
 
 

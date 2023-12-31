@@ -415,10 +415,19 @@ def fix_signature(proxy_func, wrapped_func):
 
 
 def make_Data(*args, **kargs):
-    """Return an instance of Stoner.Data passig through constructor arguments.
+    """Return an instance of Stoner.Data or Stoner.ImageFile passig through constructor arguments.
+
+    Keyword Arguments:
+        what (str): Controls whether to makle Data or ImaageFile based on the same what argument to the autoloaders.
 
     Calling make_Data(None) is a special case to return the Data class ratther than an instance
     """
+    what = kargs.pop("what", "Data")
+    match what:
+        case "Image":
+            cls = import_module("Stoner.Image.core").ImageFile
+        case _:
+            cls = import_module("Stoner.core.data").Data
     if len(args) == 1 and args[0] is None:
-        return import_module("Stoner.core.data").Data
-    return import_module("Stoner.core.data").Data(*args, **kargs)
+        return cls
+    return cls(*args, **kargs)

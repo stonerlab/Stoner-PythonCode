@@ -37,12 +37,7 @@ from ..tools import isiterable, isComparable
 from .exceptions import StonerAssertionError
 from .Typing import String_Types, RegExp, Filename
 
-try:
-    from blist import sorteddict
-except (StonerAssertionError, ImportError):  # Fail if blist not present or Python 3
-    from collections import OrderedDict
-
-    sorteddict = OrderedDict
+from collections import OrderedDict
 
 _asteval_interp = None
 
@@ -123,7 +118,7 @@ class _evaluatable:
     """Placeholder to indicate that special action needed to convert a string representation to valid Python type."""
 
 
-class regexpDict(sorteddict):
+class regexpDict(OrderedDict):
 
     """An ordered dictionary that permits looks up by regular expression."""
 
@@ -261,7 +256,7 @@ class regexpDict(sorteddict):
 
 class typeHintedDict(regexpDict):
 
-    """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
+    """Extends a :py:class:`regedpDict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
     the :py:class:`DataFile` data structure. However, it is convenient for this file format
@@ -293,11 +288,6 @@ class typeHintedDict(regexpDict):
             mapping of type hinted types to actual Python types
         __tests (dict):
             mapping of the regex patterns to actual python types
-
-    Notes:
-        Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the
-        entries in a binary list structure. This makes accessing the keys much faster and also ensures that keys are
-        always returned in alphabetical order.
     """
 
     allowed_keys: Tuple = string_types
@@ -359,7 +349,7 @@ class typeHintedDict(regexpDict):
         embedded string type from the keyname) or determines the likely
         type hint from the value of the dict element.
         """
-        self._typehints = sorteddict()
+        self._typehints = OrderedDict()
         super().__init__(*args, **kargs)
         for key in list(self.keys()):  # Check through all the keys and see if they contain
             # type hints. If they do, move them to the
@@ -456,6 +446,9 @@ class typeHintedDict(regexpDict):
                             ret = literal_eval(value)
                         except ValueError:
                             ret = str(value)
+                    break
+                elif issubclass(valuetype, str) and value == "None":
+                    ret = None
                     break
                 else:
                     ret = valuetype(value)
@@ -640,7 +633,7 @@ class typeHintedDict(regexpDict):
             (list of str): A list of exported strings
 
         Notes:
-            The keys are returned in sorted order as a result of the underlying blist.sorteddict meothd.
+            The keys are returned in sorted order as a result of the underlying OrderedDict meothd.
         """
         return [self.export(x) for x in self]
 
@@ -777,6 +770,39 @@ class metadataObject(MutableMapping):
     def _load(self, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
+
+
+class SortedMultivalueDict(OrderedDict):
+
+    """Implement a simple multivalued dictionary where the values are always sorted lists of elements."""
+
+    @classmethod
+    def _matching(cls, val):
+        match val:
+            case (int(p), item):
+                return [(p, item)]
+            case [(int(p), item), *rest]:
+                return sorted([(p, item)] + cls._matching(rest))
+            case []:
+                return []
+            case _:
+                raise TypeError("Can only add items that are a typle of int,value")
+
+    def get_value_list(self, name):
+        """Get the values stored in the dictionary under name."""
+        return [item for _, item in self.get(name, [])]
+
+    def __setitem__(self, name: Any, value: Union[List[Tuple[int, Any]], Tuple[int, Any]]) -> None:
+        """Insert or replace a value and then sort the values."""
+        values = self._matching(value)
+        for p, value in values:
+            for ix, (old_p, old_value) in enumerate(self.get(name, [])):
+                if old_value == value:  # replacing existing value
+                    self[name][ix] = (p, value)
+                    break
+            else:
+                super().__setitem__(name, self.get(name, []) + [(p, value)])
+        super().__setitem__(name, sorted(self[name], key=lambda item: (item[0], str(item[1]))))
 
 
 if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata

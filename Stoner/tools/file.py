@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """General file related tools."""
 from importlib import import_module
+from http.client import HTTPResponse
 import io
 import os
 import pathlib
@@ -181,6 +182,9 @@ def auto_load_classes(
 
 def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Optional[str]:
     """Get the mime type of the file if filemagic is available."""
+    if isinstance(filename, HTTPResponse):
+        if "Content-Type" in filename.headers:
+            return filename.headers["Content-Type"].split(";")[0].strip()
     if (
         filemagic is not None
         and isinstance(filename, path_types)

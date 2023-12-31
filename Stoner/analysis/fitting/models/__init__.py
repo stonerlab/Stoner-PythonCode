@@ -211,10 +211,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
         raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
 
     if config.has_option("Data", "type"):
-        typ = config.get("Data", "type").split(".")
-        typ_mod = ".".join(typ[:-1])
-        typ = typ[-1]
-        typ = __import__(typ_mod, fromlist=[typ]).__getattribute__(typ)
+        typ = config.get("Data", "type")
     else:
         typ = None
     data = make_Data(**kargs)

@@ -1178,31 +1178,25 @@ class ImageFile(metadataObject):
 
             If no class can load a file successfully then a RunttimeError exception is raised.
         """
-        args = list(args)
-        filename = kargs.pop("filename", args.pop(0) if len(args) > 0 else None)
+        from ..formats import load
+
+        filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
+        if filename == args[0]:
+            args = tuple() if len(args) <= 1 else args[1:]
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
-        debug = kargs.pop("debug", False)
+        filetype = "ImageFile" if filetype is None else filetype
+        if filename is None or not filename:
+            filename = file_dialog("r", filename, cls, DataFile)
 
-        filename, filetype = get_file_name_type(filename, filetype, DataFile)
         if auto_load:  # We're going to try every subclass we canA
-            try:
-                ret = auto_load_classes(filename, ImageFile, debug=debug, args=args, kargs=kargs)
-            except StonerUnrecognisedFormat:
-                ret = ImageFile()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = filetype.__name__
+            kargs.pop("filetype", None)  # make sure filetype is not set
         else:
-            if issubclass(filetype, ImageFile):
-                ret = filetype()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = filetype.__name__
-            elif filetype is None or isinstance(filetype, ImageFile):
-                ret = cls()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = cls.__name__
-            else:
-                raise ValueError(f"Unable to load {filename}")
+            kargs.setdefault("filetype", filetype)  # Makre sure filetype is set
+        kargs.setdefault("what", "Image")
+        ret = load(filename, *args, **kargs)
+        if not isinstance(ret, ImageFile):  # autoload returned something that wasn't a data file!
+            return ret
 
         for k, i in kargs.items():
             if not callable(getattr(ret, k, lambda x: False)):

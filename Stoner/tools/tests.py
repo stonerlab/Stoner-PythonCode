@@ -11,6 +11,7 @@ __all__ = [
     "isnone",
     "isproperty",
     "isTuple",
+    "isclass",
 ]
 from typing import Optional, Iterable as IterableType, Tuple, Union, Any
 
@@ -213,3 +214,8 @@ def isTuple(obj: Any, *args: type, strict: bool = True) -> bool:
     else:
         bad = False
     return not bad
+
+
+def isclass(obj, cls):
+    """Check whether obj is a class and if so whether it is a subclass of cls."""
+    return obj is not None and isinstance(obj, type) and issubclass(obj, cls)
