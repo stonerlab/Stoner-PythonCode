@@ -16,7 +16,7 @@ from Stoner import Data, __homepath__, __datapath__, ImageFile
 from Stoner.compat import Hyperspy_ok
 from Stoner.formats import load as new_load
 from Stoner.core.exceptions import StonerLoadError
-from Stoner.formats.decorators import get_saver
+from Stoner.formats.decorators import get_saver, clear_routine
 
 import pytest
 
@@ -146,6 +146,7 @@ def test_maximus_stack(tmpdir):
 
 def test_arb_class_load():
     _ = Data(datadir / "TDI_Format_RT.txt", filetype="dummy.ArbClass")
+    ret = clear_routine("dummy.ArbClass")
 
 
 def test_url_load():

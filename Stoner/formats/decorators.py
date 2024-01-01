@@ -288,3 +288,47 @@ def get_saver(filetype, silent=False):
                 pass
         if not silent:
             raise StonerLoadError(f"Cannot locate a loader function for {filetype}") from err
+
+
+def clear_routine(name, loader=True, saver=True):
+    """Remove the routine with the specified name from the registered loaders and/or savers.
+
+    Args:
+        name (str): Name of routine to remove
+
+    Keyword Arguments:
+        loader (bool):
+            Whether to remove tyhe loader (default True)
+        saver (bool):
+            Whether to remove the saver routne (default True)
+
+    Returns:
+        (dict):
+            Removed kiader and saver routines.
+    """
+    ret = {}
+    for k, lookup, pattern_lookup, type_lookup in zip(
+        ["loader", "saver"],
+        [_loaders_by_name, _savers_by_name],
+        [_loaders_by_pattern, _savers_by_pattern],
+        [_loaders_by_type, None],
+    ):
+        if not locals()[k]:
+            continue
+        func = lookup.pop(name, None)
+        if func is None:
+            continue
+        ret[k] = func
+        for lookup_dict in [pattern_lookup, type_lookup]:
+            if not isinstance(lookup_dict, dict):
+                continue
+            for _, values in _loaders_by_pattern.items():
+                remove = []
+                for ix, (priority, loader) in enumerate(values):
+                    if loader is func:
+                        remove.append(ix)
+                if remove:
+                    remove.reverse()
+                    for ix in remove:
+                        del values[ix]
+    return ret

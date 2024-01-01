@@ -15,12 +15,13 @@ __all__ = [
     "load",
     "get_loader",
     "get_saver",
+    "clear_routine",
 ]
 from copy import copy
 import io
 from pathlib import Path
 from . import instruments, generic, rigs, facilities, simulations, attocube, maximus
-from .decorators import register_loader, register_saver, next_loader, best_saver, get_loader, get_saver
+from .decorators import register_loader, register_saver, next_loader, best_saver, get_loader, get_saver, clear_routine
 from ..core.exceptions import StonerLoadError
 from ..tools import make_Data
 from ..tools.file import get_mime_type
