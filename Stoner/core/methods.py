@@ -151,7 +151,7 @@ class DataFileSearchMixin:
         delta = np.atleast_1d(np.array(delta))
         if delta.size != search_data.shape[1]:
             delta = np.append(delta, np.ones(search_data.shape[1]) * delta[0])[: search_data.shape[1]]
-        results = dict()
+        results = {}
         for ix in range(search_data.shape[0]):
             row = np.atleast_1d(search_data[ix])
             if tuple(row) in results:
@@ -547,7 +547,7 @@ class DataFileSearchMixin:
         else:
             args = list(args)
             xcol = args.pop(0)
-        data = dict()
+        data = {}
 
         if isinstance(xcol, index_types):
             for val in np.unique(self.column(xcol)):

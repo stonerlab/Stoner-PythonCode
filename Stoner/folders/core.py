@@ -248,12 +248,12 @@ class baseFolder(MutableSequence):
         """
         self = super(baseFolder, cls).__new__(cls)
         self._debug = kargs.pop("debug", False)
-        self._object_attrs = dict()
+        self._object_attrs = {}
         self._last_name = 0
         self._groups = GroupsDict(base=self)
         self._objects = regexpDict()
         self._instance = None
-        self._object_attrs = dict()
+        self._object_attrs = {}
         self._key = None
         self._type = metadataObject
         self._loader = None
@@ -306,7 +306,7 @@ class baseFolder(MutableSequence):
     def defaults(self):
         """Build a single list of all of our defaults by iterating over the __mro__, caching the result."""
         if getattr(self, "_default_store", None) is None:
-            self._default_store = dict()  # pylint: disable=attribute-defined-outside-init
+            self._default_store = {}  # pylint: disable=attribute-defined-outside-init
             for cls in reversed(type(self).__mro__):
                 if hasattr(cls, "_defaults"):
                     self._default_store.update(cls._defaults)
@@ -1061,8 +1061,8 @@ class baseFolder(MutableSequence):
         group = kargs.pop("group", False)
         replace_terminal = kargs.pop("replace_terminal", False)
         only_terminal = kargs.pop("only_terminal", True)
-        walker_args = kargs.pop("walker_args", dict())
-        breadcrumb = kargs.pop("breadcrumb", dict())
+        walker_args = kargs.pop("walker_args", {})
+        breadcrumb = kargs.pop("breadcrumb", {})
         if len(self.groups) > 0:
             ret = []
             removeGroups = []
@@ -1768,8 +1768,8 @@ class baseFolder(MutableSequence):
         group = kargs.pop("group", False)
         replace_terminal = kargs.pop("replace_terminal", False)
         only_terminal = kargs.pop("only_terminal", True)
-        walker_args = kargs.pop("walker_args", dict())
-        walker_args = dict() if walker_args is None else walker_args
+        walker_args = kargs.pop("walker_args", {})
+        walker_args = {} if walker_args is None else walker_args
         return self.__walk_groups(
             walker,
             group=group,

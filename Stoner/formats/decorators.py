@@ -13,9 +13,9 @@ from ..core.exceptions import StonerLoadError
 
 _loaders_by_type = SortedMultivalueDict()
 _loaders_by_pattern = SortedMultivalueDict()
-_loaders_by_name = dict()
+_loaders_by_name = {}
 _savers_by_pattern = SortedMultivalueDict()
-_savers_by_name = dict()
+_savers_by_name = {}
 
 LoadQualifier = Optional[str | Tuple[str, int] | List[str] | List[Tuple[str, int]]]
 

@@ -66,7 +66,7 @@ class AnalysisMixin:
         if col is None:
             col = self.setas.get("y", [0])[0]
         col = self.find_col(col)
-        kargs.update(kargs.pop("_extra", dict()))
+        kargs.update(kargs.pop("_extra", {}))
         # Check the dimension of the output
         ret = func(next(self.rows()), **kargs)
         try:

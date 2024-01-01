@@ -300,7 +300,7 @@ class AttocubeScanMixin:
         metadata = g.require_group("metadata")
         typehints = g.get("typehints", None)
         if not isinstance(typehints, h5py.Group):
-            typehints = dict()
+            typehints = {}
         else:
             typehints = typehints.attrs
         for i in sorted(metadata.attrs):

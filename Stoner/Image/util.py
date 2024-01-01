@@ -52,14 +52,14 @@ def sign_loss(dtypeobj_in, dtypeobj):
     if Options().warnings:
         warn(
             "Possible sign loss when converting negative image of type "
-            "%s to positive image of type %s." % (dtypeobj_in, dtypeobj)
+            f"{dtypeobj_in} to positive image of type {dtypeobj}."
         )
 
 
 def prec_loss(dtypeobj_in, dtypeobj):
     """Warn over precision loss when converting image."""
     if Options().warnings:
-        warn("Possible precision loss when converting from " "%s to %s" % (dtypeobj_in, dtypeobj))
+        warn(f"Possible precision loss when converting from {dtypeobj_in} to {dtypeobj}")
 
 
 def _dtype(itemsize, *dtypes):
@@ -82,21 +82,17 @@ def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
     """Scaleunsigned/positive integers from n to m bits.
 
     Numbers can be represented exactly only if m is a multiple of n
-    Output array is of same kind as input."""
+    Output array is of same kind as input.
+    """
     kind = a.dtype.kind
     if n > m and a.max() <= 2**m:
         mnew = int(np.ceil(m / 2) * 2)
         if mnew > m:
-            dtype = "int%s" % mnew
+            dtype = f"int{mnew}"
         else:
-            dtype = "uint%s" % mnew
+            dtype = f"uint{mnew}"
         n = int(np.ceil(n / 2) * 2)
-        msg = "Downcasting %s to %s without scaling because max " "value %s fits in %s" % (
-            a.dtype,
-            dtype,
-            a.max(),
-            dtype,
-        )
+        msg = f"Downcasting {a.dtype} to {dtype} without scaling because max value {a.max()} fits in{dtype}"
         if Options().warnings:
             warn(msg)
         return a.astype(_dtype2(kind, m))

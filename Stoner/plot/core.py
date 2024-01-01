@@ -470,7 +470,7 @@ class PlotMixin:
             dictionary of correct arguments, dictionary of all arguments,dictionary of keyword arguments
         """
         if defaults is None:
-            defaults = dict()
+            defaults = {}
         defaults.update(kargs)
 
         pass_fig_kargs = {}

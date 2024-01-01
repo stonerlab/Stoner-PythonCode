@@ -235,7 +235,7 @@ def load_rigaku(new_data, filename=None, *args, **kargs):
     """
     sh = re.compile(r"^\*([^\s]+)\s+(.*)$")  # Regexp to grab the keys
     ka = re.compile(r"(.*)\-(\d+)$")
-    header = dict()
+    header = {}
     i = 0
     new_data.filename = filename
     with SizedFileManager(new_data.filename, "rb") as (f, end):
@@ -564,7 +564,7 @@ def load_spc(new_data, filename=None, *args, **kargs):
             75 <= new_data._header["fversn"] <= 77
         ):  # This is the multiple XY curves in file flag.
             raise StonerLoadError(
-                "Filetype not implemented yet ! ftflgs={ftflgs}, fversn={fversn}".format(**new_data._header)
+                f"Filetype not implemented yet ! {new_data._header['ftflgs']=}, {new_data._header['fversn']=}"
             )
         # Read the xdata and add it to the file.
         xdata = _read_spc_xdata(new_data, f)

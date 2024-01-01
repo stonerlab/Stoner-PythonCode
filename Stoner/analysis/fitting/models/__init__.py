@@ -303,7 +303,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
             "label": str,
             "units": str,
         }
-        kargs = dict()
+        kargs = {}
         for k in keys:
             if config.has_option(p, k):
                 if keys[k] == bool:

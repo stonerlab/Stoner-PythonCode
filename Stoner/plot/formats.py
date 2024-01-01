@@ -401,7 +401,7 @@ class DefaultPlotStyle(MutableMapping):
 
         This is called by PlotMixin to setup a new figure before we do anything."""
         plt.style.use("default")
-        params = dict()
+        params = {}
         self.apply()
         if "fig_width_pt" in dir(self):
             self.fig_width = self.fig_width_pt * self._inches_per_pt

@@ -74,7 +74,7 @@ def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], n
             newdata.data = np.atleast_2d(list(other.values()))
             newdata.column_headers = list(other.keys())
         else:
-            order = dict()
+            order = {}
             for k in other:
                 try:
                     order[k] = newdata.find_col(k)

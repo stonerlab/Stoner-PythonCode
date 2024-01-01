@@ -29,7 +29,7 @@ class odr_Model(odrModel):
 
     def __init__(self, *args, **kargs):
         """Initialise with lmfit.models.Model or callable."""
-        meta = kargs.pop("meta", dict())
+        meta = kargs.pop("meta", {})
         kargs = copy(kargs)
         for n in list(kargs.keys()):
             if n in ["replace", "header", "result", "output", "residuals", "prefix"]:
@@ -359,7 +359,7 @@ def _curve_fit_p0_list(p0, model):
         return p0
 
     if isinstance(p0, Mapping):
-        p_new = dict()
+        p_new = {}
         for x, v in p0.items():
             p_new[x] = getattr(v, "value", float(v))
         ret = []
@@ -957,7 +957,7 @@ class FittingMixin:
                 Reason(s) for Halting:
                 """
                 for r in fit_result.stopreason:
-                    tmp += "  %s\n" % r
+                    tmp += f"  {r}\n"
             tmp += f""""Sum of orthogonal distance (~chi^2):{fit_result.chisqr}
             Reduced Sum of Orthogonal distances (~reduced chi^2): {fit_result.redchi}"""
 

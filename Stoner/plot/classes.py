@@ -44,7 +44,7 @@ def _trim_kargs(kargs, columns=False, figure=False, annotations=False):
         ],
         "annotations": ["xlabel", "ylabel", "zlabel", "title", "label_props"],
     }
-    classified = dict()
+    classified = {}
     for var, name in zip([columns, figure, annotations], ["columns", "figure", "annotations"]):
         if var:
             trim = set(args[name]) & set(kargs.keys())

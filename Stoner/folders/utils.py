@@ -55,7 +55,7 @@ def scan_dir(root):
 def discard_earlier(files):
     """Discard files where a similar named file with !#### exists."""
     search = re.compile(r"^(?P<basename>.*)\!(?P<rev>\d+)(?P<ext>\.[^\.]*)$")
-    dups = dict()
+    dups = {}
     ret = []
     for f in files:
         match = search.match(f)
@@ -137,5 +137,5 @@ def removeDisallowedFilenameChars(filename):
     Returns:
         A filename with non ASCII characters stripped out
     """
-    validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    validFilenameChars = f"-_.() {string.ascii_letters}{string.digits}"
     return "".join([c for c in filename if c in validFilenameChars])

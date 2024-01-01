@@ -21,7 +21,7 @@ except ImportError:
 
         """Mock App that raises an error when you try to call openDialog on it."""
 
-        modes: Dict = dict()
+        modes: Dict = {}
 
         def openDialog(
             self,

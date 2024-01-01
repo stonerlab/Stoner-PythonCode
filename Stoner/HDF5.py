@@ -132,7 +132,7 @@ def load_hdf(new_data, filename, *args, **kargs):  # pylint: disable=unused-argu
         metadata = f.require_group("metadata")
         typehints = f.get("typehints", None)
         if not isinstance(typehints, h5py.Group):
-            typehints = dict()
+            typehints = {}
         else:
             typehints = typehints.attrs
         if "column_headers" in f.attrs:
@@ -486,7 +486,7 @@ class HDF5File(DataFile):
             metadata = f.require_group("metadata")
             typehints = f.get("typehints", None)
             if not isinstance(typehints, h5py.Group):
-                typehints = dict()
+                typehints = {}
             else:
                 typehints = typehints.attrs
             if "column_headers" in f.attrs:

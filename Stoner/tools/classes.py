@@ -104,7 +104,7 @@ def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-a
 
     _subclasses = getattr(cls, "_subclasses", None)
     if _subclasses is None:
-        _subclasses = dict()
+        _subclasses = {}
     tmp = itersubclasses(cls)
     if len(_subclasses) < 1 or _subclasses[0] != len(tmp):  # Rebuild index
         tmp = {
@@ -112,10 +112,10 @@ def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-a
             for x in sorted(tmp, key=lambda c: (getattr(c, "priority", 256), getattr(c, "__name__", "None")))
         }
         tmp = {v[1]: k for k, v in tmp.items()}
-        ret = dict()
+        ret = {}
         ret[cls.__name__] = cls
         ret.update(tmp)
-        _subclasses = dict()
+        _subclasses = {}
         _subclasses = (len(tmp), ret)
     else:
         ret = dict(_subclasses[1])
