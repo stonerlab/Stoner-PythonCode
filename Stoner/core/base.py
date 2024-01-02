@@ -306,7 +306,7 @@ class typeHintedDict(regexpDict):
     __regexTimestamp: RegExp = re.compile(r"Timestamp")
     __regexEvaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
 
-    __types: Dict[str, type] = dict(
+    __types: Dict[str, type] = dict(  # pylint: disable=use-before-assignment
         [  # Key order does matter here!
             ("Boolean", bool),
             ("I32", int),

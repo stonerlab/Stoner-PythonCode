@@ -9,5 +9,5 @@ filename = path.realpath(
     path.join(__home__, "..", "doc", "samples", "sample.txt")
 )
 d = Data(filename, setas="xy", template=GBPlotStyle)
-d.y = d.y - (max(d.y) / 2)
+d.y -= d.y.max() / 2.0  # pylint: disable=no-member
 d.plot()

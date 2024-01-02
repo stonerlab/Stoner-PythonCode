@@ -7,7 +7,6 @@ The :mod:`.formats` module provides a set of template classes for producing diff
 :py:mod:`Stoner.plot.util` module provides
 some handy utility functions.
 """
-
-from .core import PlotMixin
-
 __all__ = ["PlotMixin", "formats", "utils"]
+from .core import PlotMixin
+from . import formats, utils
