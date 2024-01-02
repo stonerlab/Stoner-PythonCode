@@ -3,7 +3,7 @@
 """Demonstrate a waterfall plot styled after the famous album cover from Joy Division."""
 from pathlib import Path
 
-from numpy import log10
+from numpy import log10, prod
 
 from Stoner import Data, DataFolder
 from Stoner.formats.instruments import load_rigaku

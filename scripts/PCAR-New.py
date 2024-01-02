@@ -126,8 +126,8 @@ class working(Data):
                 "Options", "simple_offset"
             ) and self.config.getboolean("Options", "simple_offset"):
                 self.x -= 0.5 * (
-                    self.x.min() + self.x.max()
-                )  # pylint: disable=no-member
+                    self.x.min() + self.x.max()  # pylint: disable=no-member
+                )
             else:
                 peaks = self.peaks(
                     ycol=self.gcol,

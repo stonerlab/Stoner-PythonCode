@@ -3,20 +3,14 @@
 """The main Data Class definition."""
 
 from sys import float_info
-from Stoner.Analysis import AnalysisMixin
-from Stoner.analysis.fitting.mixins import FittingMixin
-from Stoner.analysis.columns import ColumnOpsMixin
-from Stoner.analysis.filtering import FilteringOpsMixin
-from Stoner.analysis.features import FeatureOpsMixin
-from Stoner.plot import PlotMixin
-from Stoner.Core import DataFile
-
-# Bring all the subclasses into memory (idnore unused imports warnings)
-import Stoner.formats  # NOQA pylint: disable=W0611
-import Stoner.HDF5  # NOQA pylint: disable=W0611
-import Stoner.Zip  # NOQA pylint: disable=W0611
-
-from Stoner.tools import format_error
+from ..Analysis import AnalysisMixin
+from ..analysis.fitting.mixins import FittingMixin
+from ..analysis.columns import ColumnOpsMixin
+from ..analysis.filtering import FilteringOpsMixin
+from ..analysis.features import FeatureOpsMixin
+from ..plot import PlotMixin
+from ..Core import DataFile
+from ..tools import format_error
 
 
 class Data(AnalysisMixin, FittingMixin, ColumnOpsMixin, FilteringOpsMixin, FeatureOpsMixin, PlotMixin, DataFile):

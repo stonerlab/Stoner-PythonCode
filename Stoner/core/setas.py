@@ -51,7 +51,7 @@ class setas(MutableMapping):
         self._row = row
         self._cols = AttributeStore()
         self._shape = tuple()
-        self._setas = list()
+        self._setas = []
         self._column_headers = typedList(string_types)
         self._object = bless
         self._col_defaults = {
@@ -164,9 +164,9 @@ class setas(MutableMapping):
         """Create an exact copy of the current object."""
         cls = type(self)
         new = cls()
-        for attr in self.__dict__:
-            if not callable(self.__dict__[attr]):
-                new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
+        for attr, val in self.__dict__.items():
+            if not callable(val):
+                new.__dict__[attr] = copy.deepcopy(val)
         return new
 
     @property
@@ -312,7 +312,7 @@ class setas(MutableMapping):
             if len(value) > self._size:
                 value = value[: self._size]
             elif len(value) < self._size:
-                value = [v for v in value]  # Ensure value is now a list
+                value = list(value)  # Ensure value is now a list
                 value.extend(list("." * (self._size - len(value))))
             value = value[: self._size]
             for i, v in enumerate(value):
@@ -347,7 +347,7 @@ class setas(MutableMapping):
         """Check to see if this is the same object, or has the same headers and the same setas values."""
         ret = False
         if isinstance(other, string_types):  # Expand strings and convert to list
-            other = [c for c in decode_string(other)]
+            other = list(decode_string(other))
         if not isinstance(other, setas):  # Ok, need to check whether items match
             if isiterable(other) and len(other) <= self._size:
                 for m in self.setas[len(other) :]:  # Check that if other is short we don't have assignments there
@@ -388,7 +388,7 @@ class setas(MutableMapping):
             if len(ret) == 1:
                 ret = ret[0]
         elif isinstance(name, string_types) and len(name) == 2 and name[0] == "#" and name[1] in "xyzuvwdef.-":
-            ret = list()
+            ret = []
             name = name[1]
             s = 0
             while name in self._setas[s:]:
@@ -751,9 +751,9 @@ class setas(MutableMapping):
                     ret[k].append(ch)
                 else:
                     ret[k] = [ch]
-        for k in ret:
-            if len(ret[k]) == 1:
-                ret[k] = ret[k][0]
+        for k, val in ret.items():
+            if len(val) == 1:
+                ret[k] = val[0]
         return ret
 
     def to_list(self):

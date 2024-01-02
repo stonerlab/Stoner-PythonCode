@@ -356,8 +356,7 @@ class DataFileSearchMixin:
         if "z" in kargs:
             tmp.data = tmp.search(zcol, kargs.pop("z"), accuracy=accuracy)
         if "r" in kargs:
-            func = lambda x, r: kargs.pop("r")(r[xcol], r[ycol], r[zcol])
-            tmp.data = tmp.search(0, func, accuracy=accuracy)
+            tmp.data = tmp.search(0, lambda x, r: kargs.pop("r")(r[xcol], r[ycol], r[zcol]), accuracy=accuracy)
 
         if kargs:  # Fallback to working with select if nothing else.
             tmp.select(**kargs)
@@ -422,10 +421,10 @@ class DataFileSearchMixin:
                 kargs.update(args[0])
         result = self.clone
         res = np.zeros(len(self), dtype=bool)
-        for arg in kargs:
+        for arg, val in kargs.items():
             parts = arg.split("__")
             if parts == ["", ""]:
-                func = kargs[arg]
+                func = val
                 res = np.logical_or(res, np.array([func(r) for r in self.data]))
                 continue
             if len(parts) == 1 or parts[-1] not in operator:

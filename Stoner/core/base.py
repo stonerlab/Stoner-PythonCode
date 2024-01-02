@@ -3,6 +3,7 @@
 """Base classes for the Stoner package."""
 
 __all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
+from collections import OrderedDict
 from collections.abc import MutableMapping, Mapping
 import re
 import copy
@@ -34,10 +35,7 @@ except ImportError:
 
 from ..compat import string_types, int_types, _pattern_type
 from ..tools import isiterable, isComparable
-from .exceptions import StonerAssertionError
 from .Typing import String_Types, RegExp, Filename
-
-from collections import OrderedDict
 
 _asteval_interp = None
 
@@ -306,7 +304,7 @@ class typeHintedDict(regexpDict):
     __regexTimestamp: RegExp = re.compile(r"Timestamp")
     __regexEvaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
 
-    __types: Dict[str, type] = dict(  # pylint: disable=use-before-assignment
+    __types: Dict[str, type] = dict(  # pylint: disable=used-before-assignment
         [  # Key order does matter here!
             ("Boolean", bool),
             ("I32", int),
@@ -380,9 +378,9 @@ class typeHintedDict(regexpDict):
         typ = "Invalid Type"
         if value is None:
             return "Void"
-        for t in self.__types:
-            if isinstance(value, self.__types[t]):
-                if t == "Cluster" or t == "AnonCluster":
+        for t, val in self.__types.items():
+            if isinstance(value, val):
+                if t in ["Cluster", "AnonCluster"]:
                     elements = []
                     if isinstance(value, dict):
                         for k in value:
@@ -436,7 +434,7 @@ class typeHintedDict(regexpDict):
                     except SyntaxError:
                         ret = ""
                     break
-                elif issubclass(valuetype, datetime.datetime):
+                if issubclass(valuetype, datetime.datetime):
                     if isinstance(ret, datetime.datetime):
                         break  # Alreadu a datetime object
                     try:
@@ -447,12 +445,11 @@ class typeHintedDict(regexpDict):
                         except ValueError:
                             ret = str(value)
                     break
-                elif issubclass(valuetype, str) and value == "None":
+                if issubclass(valuetype, str) and value == "None":
                     ret = None
                     break
-                else:
-                    ret = valuetype(value)
-                    break
+                ret = valuetype(value)
+                break
         else:
             ret = str(value)
             try:
@@ -493,14 +490,14 @@ class typeHintedDict(regexpDict):
         key = name
         (name, typehint) = self._get_name_(name)
         name = self.__lookup__(name, True)
-        value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
+        value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]  # pylint: disable=super-with-arguments
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
         if len(value) == 0:  # pylint: disable=len-as-condition
             raise KeyError(f"{key} is not a valid key even when interpreted as a sregular expression!")
         if len(value) == 1:
             return value[0]
-        return {k: v for k, v in zip(name, value)}
+        return dict(zip(name, value))
 
     def __setitem__(self, name: Union[str, RegExp], value: Any) -> None:
         """Set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
@@ -558,10 +555,10 @@ class typeHintedDict(regexpDict):
         """
         cls = type(self)
         ret = cls()
-        for k in self.keys():
+        for k, val in self.items():
             t = self._typehints[k]
             ret._typehints[k] = t
-            super(typeHintedDict, ret).__setitem__(k, copy.copy(self[k]))
+            super(typeHintedDict, ret).__setitem__(k, copy.copy(val))
         return ret
 
     def filter(self, name: Union[str, RegExp, Callable]) -> None:
@@ -792,11 +789,11 @@ class SortedMultivalueDict(OrderedDict):
         """Get the values stored in the dictionary under name."""
         return [item for _, item in self.get(name, [])]
 
-    def __setitem__(self, name: Any, value: Union[List[Tuple[int, Any]], Tuple[int, Any]]) -> None:
+    def __setitem__(self, name: Any, val: Union[List[Tuple[int, Any]], Tuple[int, Any]]) -> None:
         """Insert or replace a value and then sort the values."""
-        values = self._matching(value)
+        values = self._matching(val)
         for p, value in values:
-            for ix, (old_p, old_value) in enumerate(self.get(name, [])):
+            for ix, (_, old_value) in enumerate(self.get(name, [])):
                 if old_value == value:  # replacing existing value
                     self[name][ix] = (p, value)
                     break

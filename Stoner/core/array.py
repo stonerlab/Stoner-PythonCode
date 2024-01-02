@@ -8,7 +8,7 @@ __all__ = ["DataArray"]
 
 import copy
 
-import numpy.ma as ma
+from numpy import ma
 import numpy as np
 
 from Stoner.compat import string_types, int_types
@@ -118,10 +118,48 @@ class DataArray(ma.MaskedArray):
                     self.fill_value = np.nan
             self._setas.shape = getattr(self, "shape", (0,))
 
-    def __array_wrap__(self, out_arr, context=None):
+    def __array_wrap__(self, obj, context=None):
         """Make sure ufuncs do the right thing with DataArrays."""
-        ret = ma.MaskedArray.__array_wrap__(self, out_arr, context)
+        ret = ma.MaskedArray.__array_wrap__(self, obj, context)
         return ret
+
+    def _prep_index(self, ix):
+        """Normalise the index for a __getitem__."""
+        if isinstance(ix, string_types):
+            if self.ndim > 1:
+                ret_ix = (slice(None, None, None), self._setas.find_col(ix))
+            else:
+                ret_ix = (self._setas.find_col(ix),)
+            return ret_ix
+
+        if isinstance(ix, (int_types, slice)):
+            return (ix,)
+
+        if isinstance(ix, tuple) and ix and isinstance(ix[-1], string_types):  # index still has a string type in it
+            ix = list(ix)
+            ix[-1] = self._setas.find_col(ix[-1])
+            return tuple(ix)
+
+        if (
+            isinstance(ix, tuple) and ix and isinstance(ix[-1], np.ndarray) and self.ndim == 1
+        ):  # Indexing with a numpy array
+            if len(ix) == 1:
+                return ix[0]
+
+        if isinstance(ix, tuple) and ix and isiterable(ix[-1]):  # indexing with a list of columns
+            ix = list(ix)
+            if all_type(ix[-1], bool):
+                ix[-1] = np.arange(len(ix[-1]))[ix[-1]]
+            ix[-1] = [self._setas.find_col(c) for c in ix[-1]]
+            return tuple(ix)
+
+        if isinstance(ix, tuple) and ix and isinstance(ix[0], string_types):  # oops! backwards indexing
+            c = ix[0]
+            ix = list(ix[1:])
+            ix.append(self._setas.find_col(c))
+            return tuple(ix)
+            # Now can index with our constructed multidimesnional indexer
+        return ix
 
     # ==============================================================================================================
     ############################          Property Accessor Functions                ###############################
@@ -160,8 +198,7 @@ class DataArray(ma.MaskedArray):
             raise StonerSetasError(
                 f"Insufficient axes defined in setas to calculate the r component. need 2 not {axes}"
             )
-        else:
-            return ret
+        return ret
 
     @property
     def q(self):
@@ -181,8 +218,7 @@ class DataArray(ma.MaskedArray):
             raise StonerSetasError(
                 f"Insufficient axes defined in setas to calculate the theta component. need 2 not {axes}"
             )
-        else:
-            return ret
+        return ret
 
     @property
     def p(self):
@@ -351,34 +387,7 @@ class DataArray(ma.MaskedArray):
             isinstance(ix, tuple) and len(ix) > 0 and isinstance(ix[0], int_types)
         )
         # If the index is a single string type, then build a column accessing index
-        if isinstance(ix, string_types):
-            if self.ndim > 1:
-                ix = (slice(None, None, None), self._setas.find_col(ix))
-            else:
-                ix = (self._setas.find_col(ix),)
-        if isinstance(ix, (int_types, slice)):
-            ix = (ix,)
-        elif isinstance(ix, tuple) and ix and isinstance(ix[-1], string_types):  # index still has a string type in it
-            ix = list(ix)
-            ix[-1] = self._setas.find_col(ix[-1])
-            ix = tuple(ix)
-        elif (
-            isinstance(ix, tuple) and ix and isinstance(ix[-1], np.ndarray) and self.ndim == 1
-        ):  # Indexing with a numpy array
-            if len(ix) == 1:
-                ix = ix[0]
-        elif isinstance(ix, tuple) and ix and isiterable(ix[-1]):  # indexing with a list of columns
-            ix = list(ix)
-            if all_type(ix[-1], bool):
-                ix[-1] = np.arange(len(ix[-1]))[ix[-1]]
-            ix[-1] = [self._setas.find_col(c) for c in ix[-1]]
-            ix = tuple(ix)
-        elif isinstance(ix, tuple) and ix and isinstance(ix[0], string_types):  # oops! backwards indexing
-            c = ix[0]
-            ix = list(ix[1:])
-            ix.append(self._setas.find_col(c))
-            ix = tuple(ix)
-            # Now can index with our constructed multidimesnional indexer
+        ix = self._prep_index(ix)
         ret = super().__getitem__(ix)
         if isinstance(ret, np.ndarray) and ret.ndim > 0 and ret.size == 1:  # Numpy extract [x] to x
             ret = ret.ravel()[0]
@@ -411,7 +420,9 @@ class DataArray(ma.MaskedArray):
                     ret.i = 0
             else:
                 ret.i = self.i
-        elif ret.ndim == 1:  # Potentially a single row or single column
+            return ret
+
+        if ret.ndim == 1:  # Potentially a single row or single column
             ret.isrow = single_row
             if not single_row:  # Workoput what the original setas was
                 if isinstance(ix, tuple) and len(ix) >= 2:

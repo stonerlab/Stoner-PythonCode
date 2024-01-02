@@ -125,8 +125,7 @@ class DataFilePropertyMixin:
             self.filename = "Untitled"
         if isinstance(self._filename, path_types):
             return str(self._filename)
-        else:
-            return self._filename
+        return self._filename
 
     @filename.setter
     def filename(self, filename):
