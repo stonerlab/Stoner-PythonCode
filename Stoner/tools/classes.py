@@ -3,6 +3,7 @@
 
 __all__ = [
     "attributeStore",
+    "AttributeStore",
     "typedList",
     "Options",
     "get_option",
@@ -54,6 +55,9 @@ class attributeStore(dict):
             return self[name]
         except KeyError as err:
             raise AttributeError from err
+
+
+AttributeStore = attributeStore
 
 
 def itersubclasses(cls: type, _seen: Optional[set] = None) -> List[type]:

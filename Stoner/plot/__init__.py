@@ -7,6 +7,17 @@ The :mod:`.formats` module provides a set of template classes for producing diff
 :py:mod:`Stoner.plot.util` module provides
 some handy utility functions.
 """
+import importlib
+
 __all__ = ["PlotMixin", "formats", "utils"]
-from .core import PlotMixin
-from . import formats, utils
+_sub_imports = {"PlotMixin": "core"}
+
+
+def __getattr__(name):
+    """Lazy import required module."""
+    if name in __all__:
+        if name in _sub_imports:
+            ret = importlib.import_module(f".{_sub_imports[name]}", __name__)
+            return getattr(ret, name)
+        return importlib.import_module("." + name, __name__)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

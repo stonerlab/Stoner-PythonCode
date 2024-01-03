@@ -15,6 +15,7 @@ __all__ = [
 from collections.abc import Mapping
 from configparser import ConfigParser as SafeConfigParser
 from functools import wraps
+import importlib
 from io import IOBase
 
 import numpy as np
@@ -24,7 +25,24 @@ from lmfit.models import update_param_vals
 from Stoner.compat import string_types
 from Stoner.tools import make_Data
 import Stoner.Core as _SC_
-from . import generic, thermal, magnetism, tunnelling, e_transport, superconductivity
+
+_sub_modules = [
+    "generic",
+    "thermal",
+    "magnetism",
+    "tunnelling",
+    "e_transport",
+    "superconductivity",
+]
+
+
+def __getattr__(name):
+    """Lazy import required module."""
+    if name in _sub_modules:
+        return importlib.import_module("." + name, __name__)
+    if name in globals():
+        return globals()[name]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 def _get_model_(model):

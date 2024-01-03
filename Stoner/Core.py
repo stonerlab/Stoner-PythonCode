@@ -10,10 +10,12 @@ __all__ = [
     "DataFile",
 ]
 
-import re
-import io
 import copy
+import importlib
+import io
 import pathlib
+import re
+import sys
 
 from collections.abc import MutableSequence, Mapping, Iterable
 import inspect as _inspect_
@@ -1277,7 +1279,13 @@ class DataFile(
 
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
-        from .formats import load  # pylint: disable=import-outside-toplevel
+        if "Stoner.formats" not in sys.modules:  # Implement lazy loading of loader functions
+            # TODO: split loader functions more cleanly into Image and Data loaders so we don't load the Image and
+            #   Folder stuff until we need it.
+            formats = importlib.import_module("..formats", __name__)
+        else:
+            formats = sys.modules["Stoner.formats"]
+        load = getattr(formats, "load")
 
         filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
 

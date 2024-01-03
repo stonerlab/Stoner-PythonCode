@@ -19,7 +19,6 @@ from collections.abc import Iterable
 from numpy import ndarray, dtype, isnan, logical_and  # pylint: disable=redefined-builtin
 
 from ..compat import string_types
-from ..core.Typing import NumericArray
 
 
 def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -> bool:
@@ -89,7 +88,7 @@ def isanynone(*args: Any) -> bool:
     return False
 
 
-def isComparable(v1: NumericArray, v2: NumericArray) -> bool:
+def isComparable(v1, v2) -> bool:
     """Return true if v1 and v2 can be compared sensibly.
 
     Args:

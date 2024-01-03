@@ -2,8 +2,12 @@
 # -*- coding: utf-8 -*-
 """Support functions for Stoner package.
 
-These functions depend only on Stoner.compat which is used to ensure a consistent namespace between python 2.7 and 3.x.
+Everything in the tools package now supports lazy imports
 """
+import importlib
+
+from numpy import logical_and
+
 __all__ = [
     "AttributeStore",
     "all_size",
@@ -32,31 +36,45 @@ __all__ = [
     "file",
     "decorators",
 ]
-from collections.abc import Iterable, MutableSequence
-import inspect
-from copy import deepcopy
-from importlib import import_module
 
-from numpy import log10, floor, logical_and, isnan, round, ndarray, dtype  # pylint: disable=redefined-builtin
+_sub_imports = {
+    "all_size": "tests",
+    "all_type": "tests",
+    "isanynone": "tests",
+    "isComparable": "tests",
+    "isiterable": "tests",
+    "isLikeList": "tests",
+    "isnone": "tests",
+    "isproperty": "tests",
+    "isTuple": "tests",
+    "isclass": "tests",
+    "bytes2str": ".compat",
+    "AttributeStore": "classes",
+    "typedList": "classes",
+    "Options": "classes",
+    "get_option": "classes",
+    "set_option": "classes",
+    "copy_into": "classes",
+    "format_error": "formatting",
+    "format_val": "formatting",
+    "quantize": "formatting",
+    "html_escape": "formatting",
+    "tex_escape": "formatting",
+    "ordinal": "formatting",
+    "make_Data": "decorators",
+    "fix_signature": "decorators",
+}
 
 
-from ..compat import bytes2str
-from .classes import attributeStore as AttributeStore, typedList, Options, get_option, set_option, copy_into
-from .tests import (
-    all_size,
-    all_type,
-    isanynone,
-    isComparable,
-    isiterable,
-    isLikeList,
-    isnone,
-    isproperty,
-    isTuple,
-    isclass,
-)
-from .formatting import format_error, format_val, quantize, html_escape, tex_escape, ordinal
-from . import decorators
-from .decorators import make_Data, fix_signature
+def __getattr__(name):
+    """Lazy import required module."""
+    if name in __all__:
+        if name in _sub_imports:
+            ret = importlib.import_module(f".{_sub_imports[name]}", __name__)
+            return getattr(ret, name)
+        return importlib.import_module("." + name, __name__)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 operator = {
     "eq": lambda k, v: k == v,

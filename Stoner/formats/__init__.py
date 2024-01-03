@@ -26,6 +26,10 @@ from ..core.exceptions import StonerLoadError
 from ..tools import make_Data
 from ..tools.file import get_mime_type
 
+# Legact Imports - not actually used directly
+from .. import HDF5  # pylint: disable=unused-import
+from .. import Zip  # pylint: disable=unused-import
+
 
 def load(filename, *args, **kargs):
     """Use the function based loaders to try and load a file from disk."""
