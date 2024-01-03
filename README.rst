@@ -1,8 +1,8 @@
 .. image:: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml/badge.svg?branch=master
     :target: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml
 
-.. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
-    :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
+.. image:: https://app.codacy.com/project/badge/Coverage/a9069a1567114a22b25d63fd4c50b228
+    :target: https://app.codacy.com/gh/stonerlab/Stoner-PythonCode/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage
 
 .. image:: https://app.codacy.com/project/badge/Grade/a9069a1567114a22b25d63fd4c50b228
     :target: https://app.codacy.com/gh/stonerlab/Stoner-PythonCode/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade

@@ -202,9 +202,8 @@ modelling codes, such OOMMF or MuMax. When modelling a 3D system, it is often us
 be able to examine a cross-section of the simulation. The Stoner package provides tools
 to quickly examine the output data::
 
-    from Stoner.FileFormats import OVFFile # reads OOMMF vector field files
-    import Stoner.plot
-    p=SP.PlotFile('my_simulation.ovf')
+    from Stoner import Data
+    p=Data('my_simulation.ovf')
     p.setas="xyzuvw"
     p=p.section(z=10.5) # Take a slice in the xy plane where z is 10.5 nm
     p.plot() # A 3D plot with cones

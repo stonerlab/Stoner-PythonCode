@@ -46,8 +46,7 @@ then a new instance *f* is created. The optional *pattern* keyword is used to on
 the files with a .dat extension. In this example, it is assumed that the files are readable by
 the :py:class:`Stoner.Core.Data` general class, if they are in some other format then the 'type' keyword can be used::
 
-   from Stoner.FileFormats import XRDFile
-   f=DataFolder(type=XRDFile,pattern='*.dql')
+   f=DataFolder(type="XRDFile",pattern='*.dql')
 
 Strictly, the class pointed to be a the *type* keyword should be a sub class of :py:class:`Stoner.Core.metadataObject`
 and should have a constructor that undersatands the initial string parameter to be a filename to load the object from. The class
