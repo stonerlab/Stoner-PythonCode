@@ -764,7 +764,8 @@ class metadataObject(MutableMapping):
         """Stub method for a save function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
-    def _load(self, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
+    @classmethod
+    def load(self, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 

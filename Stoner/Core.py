@@ -11,37 +11,29 @@ __all__ = [
 ]
 
 import re
-import os
 import io
 import copy
 import pathlib
-import warnings
-import urllib
 
 from collections.abc import MutableSequence, Mapping, Iterable
 import inspect as _inspect_
 from importlib import import_module
 from textwrap import TextWrapper
-import csv
 
 import numpy as np
 from numpy import NaN  # NOQA pylint: disable=unused-import
 from numpy import ma
 
 from .compat import string_types, int_types, index_types, _pattern_type, path_types
-from .tools import all_type, isiterable, isLikeList, get_option, make_Data, isclass
-from .tools.file import get_file_name_type, auto_load_classes
-
-from .core.exceptions import StonerLoadError, StonerSetasError
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
 from .core.array import DataArray
+from .core.exceptions import StonerLoadError, StonerSetasError
 from .core.operators import DataFileOperatorsMixin
 from .core.property import DataFilePropertyMixin
 from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
-from .core.utils import copy_into, tab_delimited
-from .tools.classes import subclasses
-from .tools.file import file_dialog, FileManager, URL_SCHEMES
+from .tools import all_type, isiterable, isLikeList, get_option, isclass, copy_into
+from .tools.file import file_dialog
 
 try:
     from tabulate import tabulate
@@ -236,17 +228,15 @@ class DataFile(
         self.metadata["Stoner.class"] = type(self).__name__
         if kargs:  # set public attributes from keywords
             to_go = []
-            for k in kargs:
+            for k, val in kargs.items():
                 if k in self._public_attrs:
-                    if isinstance(kargs[k], self._public_attrs[k]):
-                        self.__setattr__(k, kargs[k])
+                    if isinstance(val, self._public_attrs[k]):
+                        self.__setattr__(k, val)
                     else:
                         self._raise_type_error(k)
                         to_go.append(k)
                 else:
                     raise AttributeError(f"{k} is not an allowed attribute of {self._public_attrs}")
-                    # self._public_attrs[k]=type(kargs[k])
-                    # self.__setattr__(k, kargs[k])
             for k in to_go:
                 del kargs[k]
         if self.debug:
@@ -318,7 +308,7 @@ class DataFile(
         """Initialise from datafile."""
         for a in arg.__dict__:
             if not callable(a) and a != "_baseclass":
-                super().__setattr__(a, copy.copy(arg.__getattribute__(a)))
+                super().__setattr__(a, copy.copy(getattr(arg, a)))
         self.metadata = arg.metadata.copy()
         self.data = DataArray(arg.data, setas=arg.setas.clone)
         self.data.setas = arg.setas.clone
@@ -422,16 +412,15 @@ class DataFile(
         handler(*args, **kargs)
         if kargs:  # set public attributes from keywords
             myattrs = new_d._public_attrs
-            for k in kargs:
-                if k in myattrs:
-                    if isinstance(kargs[k], myattrs[k]):
-                        new_d.__setattr__(k, kargs[k])
+            for k in set(kargs.keys()) & set(myattrs.keys()):
+                if isinstance(kargs[k], myattrs[k]):
+                    new_d.__setattr__(k, kargs[k])
+                else:
+                    if isinstance(myattrs[k], tuple):
+                        typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
                     else:
-                        if isinstance(myattrs[k], tuple):
-                            typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
-                        else:
-                            typ = f"a {type(myattrs[k])}"
-                        raise TypeError(f"{k} should be {typ} not a {type(kargs[k])}")
+                        typ = f"a {type(myattrs[k])}"
+                    raise TypeError(f"{k} should be {typ} not a {type(kargs[k])}")
 
         return new_d
 
@@ -448,19 +437,20 @@ class DataFile(
         return result
 
     def __dir__(self):
-        """Returns the attributes of the current object.
+        """Return the attributes of the current object.
 
-        Augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle."""
+        Augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
+        """
         attr = dir(type(self))
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
         if not self.setas.empty:
-            for k in col_check:
+            for k, val in col_check.items():
                 if k.startswith("x"):
                     if k in self._data._setas.cols and self._data._setas.cols[k] is not None:
-                        attr.append(col_check[k])
+                        attr.append(val)
                 else:
                     if k in self._data._setas.cols and self._data._setas.cols[k]:
-                        attr.append(col_check[k])
+                        attr.append(val)
         return sorted(set(attr))
 
     def __getattr__(self, name):
@@ -566,7 +556,7 @@ class DataFile(
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
         try:
-            return self._data.__getattr__(name)
+            return getattr(self._data, name)
         except StonerSetasError:
             return None
 
@@ -586,7 +576,7 @@ class DataFile(
             interesting = []
             last = -1
             for ix, typ in enumerate(self.setas):
-                if last != -1 and last != ix - 1:
+                if last not in (-1, ix - 1):
                     interesting.append(-1)
                     last = -1
                 if typ != ".":
@@ -621,79 +611,6 @@ class DataFile(
             else:
                 col_assignments.append("")
         return interesting, col_assignments, cols
-
-    def _load(self, filename, *args, **kargs):
-        """Actually load the data from disc assuming a .tdi file format.
-
-        Args:
-            filename (str):
-                Path to filename to be loaded. If None or False, a dialog bax is raised to ask for the filename.
-
-        Returns:
-            DataFile:
-                A copy of the newly loaded :py:class`DataFile` object.
-
-        Exceptions:
-            StonerLoadError:
-                Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
-
-        Note:
-            The *_load* methods shouldbe overridden in each child class to handle the process of loading data from
-            disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
-            the loading class can try a different sub-class instead.
-        """
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-        with FileManager(self.filename, "r", encoding="utf-8", errors="ignore") as datafile:
-            line = datafile.readline()
-            if line.startswith("TDI Format 1.5"):
-                fmt = 1.5
-            elif line.startswith("TDI Format=Text 1.0"):
-                fmt = 1.0
-            else:
-                raise StonerLoadError("Not a TDI File")
-
-            datafile.seek(0)
-            reader = csv.reader(datafile, dialect=tab_delimited())
-            cols = 0
-            for ix, metadata in enumerate(reader):
-                if ix == 0:
-                    row = metadata
-                    continue
-                if len(metadata) < 1:
-                    continue
-                if cols == 0:
-                    cols = len(metadata)
-                if len(metadata) > 1:
-                    max_rows = ix + 1
-                if "=" in metadata[0]:
-                    self.metadata.import_key(metadata[0])
-            col_headers_tmp = [x.strip() for x in row[1:]]
-            with warnings.catch_warnings():
-                datafile.seek(0)
-                warnings.filterwarnings("ignore", "Some errors were detected !")
-                data = np.genfromtxt(
-                    datafile,
-                    skip_header=1,
-                    usemask=True,
-                    delimiter="\t",
-                    usecols=range(1, cols),
-                    invalid_raise=False,
-                    comments="\0",
-                    missing_values=[""],
-                    filling_values=[np.nan],
-                    max_rows=max_rows,
-                )
-        if data.ndim < 2:
-            data = np.ma.atleast_2d(data)
-        retain = np.all(np.isnan(data), axis=1)
-        self.data = DataArray(data[~retain])
-        self["TDI Format"] = fmt
-        if self.data.ndim == 2 and self.data.shape[1] > 0:
-            self.column_headers = col_headers_tmp
-        return self
 
     def __repr_core__(self, shorten=1000):
         """Actuall do the repr work, but allow for a shorten parameter to save printing big files out to disc."""
@@ -755,7 +672,7 @@ class DataFile(
             c_w = max([len(self.column_headers[x]) for x in interesting if x > -1])
         else:
             c_w = 0
-        wrapper = TextWrapper(subsequent_indent="\t", width=max(20, max(20, (80 - c_w * c))))
+        wrapper = TextWrapper(subsequent_indent="\t", width=max(20, (80 - c_w * c)))
         if r > rows:
             shorten = [True, False]
             r = rows + rows % 2
@@ -1047,8 +964,7 @@ class DataFile(
                 continue
             if reset:
                 return
-            else:
-                yield self.column(ix)
+            yield self.column(ix)
 
     def del_column(self, col=None, duplicates=False):
         """Delete a column from the current :py:class:`DataFile` object.
@@ -1152,7 +1068,7 @@ class DataFile(
             dels = np.logical_or(
                 dels, np.isnan(ret.data[:, ix])
             )  # dels contains True if any row contains a NaN in columns col
-        not_masked = np.logical_not(ma.mask_rows(ret.data).mask[:, 0])  # Get rows wqhich are not masked
+        not_masked = ma.logical_not(ma.mask_rows(ret.data).mask[:, 0])  # Get rows wqhich are not masked
         dels = np.logical_and(not_masked, dels)  # And make dels just be unmasked rows with NaNs
 
         ret.del_rows(np.logical_not(dels))  # Del the those rows
@@ -1361,7 +1277,7 @@ class DataFile(
 
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
-        from .formats import load
+        from .formats import load  # pylint: disable=import-outside-toplevel
 
         filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
 
@@ -1376,8 +1292,6 @@ class DataFile(
         auto_load = kargs.pop("auto_load", filetype is None)
         # Fallback to ensure filetype is set
         filetype = "DataFile" if filetype is None else filetype
-
-        loaded_class = kargs.pop("loaded_class", False)
         if filename is None or not filename:
             filename = file_dialog("r", filename, cls, DataFile)
 
@@ -1465,8 +1379,7 @@ class DataFile(
                 continue
             if reset:
                 return
-            else:
-                yield row
+            yield row
 
     def save(self, filename=None, **kargs):
         """Save a string representation of the current DataFile object into the file 'filename'.
@@ -1484,7 +1397,7 @@ class DataFile(
             self:
                 The current :py:class:`DataFile` object
         """
-        from .formats.decorators import get_saver
+        from .formats.decorators import get_saver  # pylint: disable=import-outside-toplevel
 
         as_loaded = kargs.pop("as_loaded", False)
         if filename is None:
