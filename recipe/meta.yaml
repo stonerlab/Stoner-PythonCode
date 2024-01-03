@@ -22,16 +22,16 @@ requirements:
     - pytest-runner
 
   run:
-    - python >=3.7
-    - scipy>1.7
-    - numpy >=1.18
-    - matplotlib >=3.0
-    - scikit-image >=0.17
+    - python >=3.10
+    - scipy>1.10
+    - numpy >=1.22
+    - matplotlib >=3.6
+    - scikit-image >=0.19
     - h5py
     - cycler >=0.10.0
     - filemagic >=1.6
     - image-registration >=0.2.1
-    - lmfit >=0.9.7
+    - lmfit >=1.0
     - memoization >=0.1.4
     - npTDMS >=0.11
     - python-dateutil >=2.7.0

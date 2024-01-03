@@ -21,7 +21,7 @@ import Stoner.tools.widgets as widgets
 from Stoner import Data, DataFolder
 
 
-def test_filedialog():
+def _fix_widgets():
     def dummy(mode="getOpenFileName"):
         modes = {
             "getOpenFileName": ret_pth,
@@ -57,6 +57,10 @@ def test_filedialog():
     widgets = sys.modules["Stoner.tools.widgets"]
     app = getattr(widgets, "App")
     setattr(app, "modes", modes)
+    return widgets
+
+def test_filedialog():
+    widgets=_fix_widgets()
 
     assert widgets.fileDialog.openDialog() == ret_pth
     assert widgets.fileDialog.openDialog(title="Test", start=".") == ret_pth
@@ -69,6 +73,7 @@ def test_filedialog():
 
 
 def test_loader():
+    _fix_widgets()
     d = Data(False)
     assert d.shape == (1676, 3), "Failed to load data with dialog box"
     with pytest.raises(RuntimeError):

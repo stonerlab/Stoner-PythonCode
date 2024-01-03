@@ -774,9 +774,6 @@ class ImageFile(metadataObject):
     # pylint: disable=no-member
 
     _protected_attrs = ["_fromstack"]  # these won't be passed through to self.image attrs
-    _patterns = ["*.png", "*.tif", "*.jpeg", "*.jpg"]
-    mime_type = ["image/png", "image/jpeg", "image/tiff", "application/octet-stream"]
-    priority = 32
 
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.

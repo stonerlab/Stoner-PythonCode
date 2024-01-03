@@ -354,7 +354,8 @@ class typeHintedDict(regexpDict):
             # _typehint dict
             value = super().__getitem__(key)
             super().__delitem__(key)
-            self[key] = value  # __Setitem__ has the logic to handle embedded type hints correctly
+            # __Setitem__ has the logic to handle embedded type hints correctly
+            self[key] = value
 
     @property
     def types(self) -> Dict:
@@ -425,7 +426,8 @@ class typeHintedDict(regexpDict):
             if matched is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
-                        if isinstance(value, string_types):  # we've got a string already don't need repr
+                        # we've got a string already don't need repr
+                        if isinstance(value, string_types):
                             ret = literal_eval(value)
                         else:
                             ret = literal_eval(repr(value))  # pylint: disable=eval-used
@@ -765,7 +767,7 @@ class metadataObject(MutableMapping):
         raise NotImplementedError("Save is not implemented in the base class.")
 
     @classmethod
-    def load(self, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
+    def load(cls, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
@@ -775,7 +777,7 @@ class SortedMultivalueDict(OrderedDict):
     """Implement a simple multivalued dictionary where the values are always sorted lists of elements."""
 
     @classmethod
-    def _matching(cls, val):
+    def _matching(cls, val: Tuple[int, str] | List[Tuple[int, str]]) -> List[Tuple[int, str]]:
         match val:
             case (int(p), item):
                 return [(p, item)]
@@ -793,7 +795,7 @@ class SortedMultivalueDict(OrderedDict):
     def __setitem__(self, name: Any, val: Union[List[Tuple[int, Any]], Tuple[int, Any]]) -> None:
         """Insert or replace a value and then sort the values."""
         values = self._matching(val)
-        for p, value in values:
+        for p, value in values:  # pylint: disable=not-an-iterable
             for ix, (_, old_value) in enumerate(self.get(name, [])):
                 if old_value == value:  # replacing existing value
                     self[name][ix] = (p, value)
@@ -803,7 +805,8 @@ class SortedMultivalueDict(OrderedDict):
         super().__setitem__(name, sorted(self[name], key=lambda item: (item[0], str(item[1]))))
 
 
-if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata
+# Don't double add metadata
+if pd is not None and not hasattr(pd.DataFrame, "metadata"):
 
     @pd.api.extensions.register_dataframe_accessor("metadata")
     class PandasMetadata(typeHintedDict):

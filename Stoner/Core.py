@@ -147,7 +147,7 @@ class DataFile(
 
     def __new__(cls, *args, **kargs):
         """Prepare the basic DataFile instance before the mixins add their bits."""
-        self = metadataObject.__new__(cls, *args)
+        self = metadataObject.__new__(cls)
         object.__setattr__(self, "debug", kargs.pop("debug", False))
         self._masks = [False]
         self._filename = None
