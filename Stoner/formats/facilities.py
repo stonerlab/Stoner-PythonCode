@@ -21,7 +21,7 @@ except ImportError:
     fabio = None
 
 
-def _BNL_find_lines(new_data):
+def _bnl_find_lines(new_data):
     """Return an array of ints [header_line,data_line,scan_line,date_line,motor_line]."""
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as fp:
         new_data.line_numbers = [0, 0, 0, 0, 0]
@@ -45,7 +45,7 @@ def _BNL_find_lines(new_data):
                 break
 
 
-def _BNL_get_metadata(new_data):
+def _bnl_get_metadata(new_data):
     """Load metadta from file.
 
     Metadata found is scan number 'Snumber', scan type and parameters 'Stype',
@@ -61,19 +61,19 @@ def _BNL_get_metadata(new_data):
     new_data.__setitem__("Smotor", motorLine.split()[3])
 
 
-def _parse_BNL_data(new_data):
+def _parse_bnl_data(new_data):
     """Parse BNL data.
 
      The meta data is labelled by #L type tags
     so easy to find but #L must be excluded from the result.
     """
-    _BNL_find_lines(new_data)
+    _bnl_find_lines(new_data)
     # creates a list, line_numbers, formatted [header_line,data_line,scan_line,date_line,motor_line]
     header_string = linecache.getline(new_data.filename, new_data.line_numbers[0])
     header_string = re.sub(r'["\n]', "", header_string)  # get rid of new line character
     header_string = re.sub(r"#L", "", header_string)  # get rid of line indicator character
     column_headers = map(lambda x: x.strip(), header_string.split())
-    _BNL_get_metadata(new_data)
+    _bnl_get_metadata(new_data)
     try:
         new_data.data = np.genfromtxt(new_data.filename, skip_header=new_data.line_numbers[1] - 1)
     except IOError:
@@ -83,7 +83,7 @@ def _parse_BNL_data(new_data):
 
 
 @register_loader(patterns=(".txt", 64), mime_types=("text/plain", 64), name="BNLFile", what="Data")
-def load_bnl(new_data, filename, *args, **kargs):  # fileType omitted, implicit in class call
+def load_bnl(new_data, filename, *args, **kargs):  # pylint: disable=unused-argument
     """Load the file from disc.
 
     Args:
@@ -103,87 +103,100 @@ def load_bnl(new_data, filename, *args, **kargs):  # fileType omitted, implicit 
     """
     new_data.filename = filename
     try:
-        _parse_BNL_data(new_data)  # call an internal function rather than put it in load function
+        _parse_bnl_data(new_data)  # call an internal function rather than put it in load function
     except (IndexError, TypeError, ValueError, StonerLoadError) as err:
         raise StonerLoadError("Not parseable as a NFLS file!") from err
     linecache.clearcache()
     return new_data
 
 
+def _read_mdaascii_header(data, new_data, i):
+    """Read the header block."""
+    for i[0], line in enumerate(data):
+        line.strip()
+        if "=" in line:
+            parts = line[2:].split("=")
+            new_data[parts[0].strip()] = string_to_type("".join(parts[1:]).strip())
+        elif line.startswith("#  Extra PV:"):
+            # Onto the next metadata bit
+            break
+
+
+def _read_mdaascii_metadata(data, new_data, i):
+    """Read the metadata block."""
+    pvpat = re.compile(r"^#\s+Extra\s+PV\s\d+\:(.*)")
+    for i[1], line in enumerate(data):
+        if line.strip() == "":
+            continue
+        if line.startswith("# Extra PV"):
+            res = pvpat.match(line)
+            bits = [b.strip().strip(r'"') for b in res.group(1).split(",")]
+            if bits[1] == "":
+                key = bits[0]
+            else:
+                key = bits[1]
+            if len(bits) > 3:
+                key = f"{key} ({bits[3]})"
+            new_data[key] = string_to_type(bits[2])
+        else:
+            break  # End of Extra PV stuff
+    else:
+        raise StonerLoadError("Overran Extra PV Block")
+    for i[2], line in enumerate(data):
+        line.strip()
+        if line.strip() == "":
+            continue
+        elif line.startswith("# Column Descriptions:"):
+            break  # Start of column headers now
+        elif "=" in line:
+            parts = line[2:].split("=")
+            new_data[parts[0].strip()] = string_to_type("".join(parts[1:]).strip())
+    else:
+        raise StonerLoadError("Overran end of scan header before column descriptions")
+
+
+def _read_mdaascii_columns(data, new_data, i):
+    """Reads the column header block."""
+    colpat = re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
+    column_headers = []
+    for i[3], line in enumerate(data):
+        res = colpat.match(line)
+        line.strip()
+        if line.strip() == "":
+            continue
+        elif line.startswith("# 1-D Scan Values"):
+            break  # Start of data
+        elif res is not None:
+            if "," in res.group(2):
+                bits = [b.strip() for b in res.group(2).split(",")]
+                if bits[-2] == "":
+                    colname = bits[0]
+                else:
+                    colname = bits[-2]
+                if bits[-1] != "":
+                    colname += f"({bits[-1]})"
+                if colname in column_headers:
+                    colname = f"{bits[0]}:{colname}"
+            else:
+                colname = res.group(1).strip()
+            column_headers.append(colname)
+    else:
+        raise StonerLoadError("Overand the end of file without reading data")
+    new_data.column_headers = column_headers
+
+
 @register_loader(patterns=(".txt", 32), mime_types=("text/plain", 32), name="MDAASCIIFile", what="Data")
-def load_mdaasci(new_data, filename=None, *args, **kargs):
+def load_mdaasci(new_data, filename, *args, **kargs):  # pylint: disable=unused-argument
     """Load function. File format has space delimited columns from row 3 onwards."""
     new_data.filename = filename
     i = [0, 0, 0, 0]
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
-        for i[0], line in enumerate(data):
-            if (
-                i[0] == 0 and line.strip() != "## mda2ascii 1.2 generated output"
-            ):  # bug out oif we don't like the header
-                raise StonerLoadError("Not a file mda2ascii")
-            line.strip()
-            if "=" in line:
-                parts = line[2:].split("=")
-                new_data[parts[0].strip()] = string_to_type("".join(parts[1:]).strip())
-            elif line.startswith("#  Extra PV:"):
-                # Onto the next metadata bit
-                break
-        pvpat = re.compile(r"^#\s+Extra\s+PV\s\d+\:(.*)")
-        for i[1], line in enumerate(data):
-            if line.strip() == "":
-                continue
-            if line.startswith("# Extra PV"):
-                res = pvpat.match(line)
-                bits = [b.strip().strip(r'"') for b in res.group(1).split(",")]
-                if bits[1] == "":
-                    key = bits[0]
-                else:
-                    key = bits[1]
-                if len(bits) > 3:
-                    key = f"{key} ({bits[3]})"
-                new_data[key] = string_to_type(bits[2])
-            else:
-                break  # End of Extra PV stuff
-        else:
-            raise StonerLoadError("Overran Extra PV Block")
-        for i[2], line in enumerate(data):
-            line.strip()
-            if line.strip() == "":
-                continue
-            elif line.startswith("# Column Descriptions:"):
-                break  # Start of column headers now
-            elif "=" in line:
-                parts = line[2:].split("=")
-                new_data[parts[0].strip()] = string_to_type("".join(parts[1:]).strip())
-        else:
-            raise StonerLoadError("Overran end of scan header before column descriptions")
-        colpat = re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
-        column_headers = []
-        for i[3], line in enumerate(data):
-            res = colpat.match(line)
-            line.strip()
-            if line.strip() == "":
-                continue
-            elif line.startswith("# 1-D Scan Values"):
-                break  # Start of data
-            elif res is not None:
-                if "," in res.group(2):
-                    bits = [b.strip() for b in res.group(2).split(",")]
-                    if bits[-2] == "":
-                        colname = bits[0]
-                    else:
-                        colname = bits[-2]
-                    if bits[-1] != "":
-                        colname += f"({bits[-1]})"
-                    if colname in column_headers:
-                        colname = f"{bits[0]}:{colname}"
-                else:
-                    colname = res.group(1).strip()
-                column_headers.append(colname)
-        else:
-            raise StonerLoadError("Overand the end of file without reading data")
-    new_data.data = np.genfromtxt(new_data.filename, skip_header=sum(i))  # so that's ok then !
-    new_data.column_headers = column_headers
+        if next(data).strip() != "## mda2ascii 1.2 generated output":
+            raise StonerLoadError("Not a file mda2ascii")
+        _read_mdaascii_header(data, new_data, i)
+        _read_mdaascii_metadata(data, new_data, i)
+        _read_mdaascii_columns(data, new_data, i)
+        new_data.data = np.genfromtxt(data)  # so that's ok then !
     return new_data
 
 

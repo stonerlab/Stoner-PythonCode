@@ -120,11 +120,11 @@ def load_maximus_image(new_data, filename, *args, **kargs):
     patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Data"
 )
 def load_maximus_data(new_data, filename, *args, **kargs):
+    """Load a maximus image, but to a Data object."""
     return load_maximus_image(new_data, filename, *args, **kargs)
 
 
 class MaximusSpectra(DataFile):
-
     """Provides a :py:class:`Stoner.DataFile` subclass for loading Point spectra from Maximus."""
 
     # We treat the hdr file as the key file type
@@ -177,7 +177,6 @@ class MaximusSpectra(DataFile):
 
 
 class MaximusImage(ImageFile):
-
     """Provide a STXMImage like class for the Maximus Beamline."""
 
     _patterns = ["*.hdr", "*.xim"]
@@ -208,7 +207,6 @@ class MaximusImage(ImageFile):
 
 
 class MaximusStackMixin:
-
     """Handle a stack of Maximus Images."""
 
     _defaults = {"type": MaximusImage, "pattern": "*.hdr"}
@@ -442,7 +440,6 @@ class MaximusStackMixin:
 
 
 class MaximusStack(MaximusStackMixin, ImageStack):
-
     """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
 
