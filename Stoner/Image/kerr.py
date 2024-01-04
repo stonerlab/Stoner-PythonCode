@@ -100,7 +100,7 @@ class KerrImageFile(ImageFile):
     def __init__(self, *args, **kargs):
         """Ensure that the image is a KerrImage."""
         super().__init__(*args, **kargs)
-        self._image = self.image.view(KerrArray)
+        self._image = self.image.view(KerrArray)  # pylint: disable=no-member
 
     @ImageFile.image.getter
     def image(self):  # pylint disable=invalid-overridden-method
@@ -110,7 +110,7 @@ class KerrImageFile(ImageFile):
     @ImageFile.image.setter
     def image(self, v):  # pylint: disable=function-redefined
         """Ensure stored image is always an ImageArray."""
-        filename = self.filename
+        filename = self.filename  # pylint: disable=access-member-before-defintion
         v = KerrArray(v)
         # ensure setting image goes into the same memory block if from stack
         if (
