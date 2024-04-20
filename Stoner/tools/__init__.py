@@ -25,6 +25,7 @@ __all__ = [
     "isTuple",
     "isclass",
     "copy_into",
+    "make_obj",
     "make_Data",
     "quantize",
     "tex_escape",
@@ -61,6 +62,7 @@ _sub_imports = {
     "html_escape": "formatting",
     "tex_escape": "formatting",
     "ordinal": "formatting",
+    "make_obj": "decorators",
     "make_Data": "decorators",
     "fix_signature": "decorators",
 }

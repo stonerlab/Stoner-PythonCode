@@ -16,7 +16,10 @@ from skimage import draw
 def send_event(image, names, **kargs):
     """Make a fake event."""
     time.sleep(0.05)
-    select = image._image._select
+    if hasattr(image,"_select"):
+        select = image._select
+    else:
+        select = image._image._select
     event = Event("fake", select.fig.canvas)
     if not isinstance(names, list):
         names = [names]
@@ -321,11 +324,11 @@ class ShapeSelect:
         mm_ev = self.fig.canvas.mpl_connect("key_press_event", self.keypress)
         while not self.finished:
             plt.pause(0.01)
-        delattr(image, "_select")  # cleanup
         plt.disconnect(bp_ev)
         plt.disconnect(kp_ev)
         plt.disconnect(mm_ev)
         plt.close(self.fig.number)
+        delattr(image, "_select")  # cleanup
         return self.get_mask()
 
     def keypress(self, event):

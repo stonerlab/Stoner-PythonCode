@@ -276,7 +276,7 @@ class Item:
                 self._folder._object_attrs[name] = value  # Add to attributes to be set on load
                 value = [value] * len(self._folder)
             for d, v in zip(self._folder.__names__(), value):  # And set on all instantiated objects
-                if force_load or isinstance(self._folder.__getter__(d, instantiate=False), self._folder.type):
+                if force_load or isinstance(self._folder.__getter__(d, instantiate=False), self._folder.itemtype):
                     d = self._folder.__getter__(d)
                     setattr(d, name, v)
         else:
@@ -366,7 +366,7 @@ class Item:
         ):
             if self._folder.debug:
                 print(ix, type(ret))
-            if isinstance(ret, self._folder._type) and _return is None:
+            if isinstance(ret, self._folder.itemtype) and _return is None:
                 try:  # Check if ret has same data type, otherwise will not overwrite well
                     if ret.data.dtype != new_d.data.dtype:
                         continue

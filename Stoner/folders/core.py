@@ -16,11 +16,15 @@ from ..compat import int_types, string_types, commonpath, _pattern_type
 from ..tools import operator, isiterable, all_type, get_option
 from ..core.base import regexpDict, typeHintedDict
 from ..core.base import metadataObject
+from ..core.exceptions import StonerLoadError
 
 from .utils import pathjoin
 from .each import Item as EachItem
 from .metadata import MetadataProxy
 from .groups import GroupsDict
+
+from ..formats.decorators import get_loader
+from ..tools import make_Data, make_obj
 
 regexp_type = (_pattern_type,)
 
@@ -32,7 +36,7 @@ def _add_core_(result, other):
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
     """
     if isinstance(other, baseFolder):
-        if isclass(other.type) and issubclass(other.type, result.type):
+        if isclass(other.itemtype) and issubclass(other.itemtype, result.itemtype):
             result.extend(list(other.files))
             for grp in other.groups:
                 if grp in result.groups:
@@ -43,7 +47,7 @@ def _add_core_(result, other):
             raise RuntimeError(
                 f"Incompatible types ({other.type} must be a subclass of {result.type}) in the two folders."
             )
-    elif isinstance(other, result.type):
+    elif isinstance(other, result.itemtype):
         result.append(other)
     else:
         result = NotImplemented
@@ -118,7 +122,7 @@ def _sub_core_data_(result, other):
 
 def _sub_core_folder_(result, other):
     """Remove a folder."""
-    if isclass(other.type) and issubclass(other.type, result.type):
+    if isclass(other.itemtype) and issubclass(other.itemtype, result.itemtype):
         for othername in other.ls:
             if othername in result:
                 result.__deleter__(othername)
@@ -255,8 +259,10 @@ class baseFolder(MutableSequence):
         self._instance = None
         self._object_attrs = {}
         self._key = None
-        self._type = metadataObject
-        self._loader = None
+        self._type = "metadataObject"
+        self._instance = make_Data()
+        self._itemtype = make_Data(None)
+        self._loader = make_Data(None)
         self._instance_attrs = set()
         self._root = "."
         self._default_store = None
@@ -382,7 +388,7 @@ class baseFolder(MutableSequence):
     def instance(self):
         """Return a default instance of the type of object in the folder."""
         if self._instance is None:
-            self._instance = self._type()
+            self._instance=self.itemtype()
         return self._instance
 
     @property
@@ -394,6 +400,18 @@ class baseFolder(MutableSequence):
     def key(self):
         """Allow overriding for getting and setting the key in mixins."""
         return self._key
+
+    @property
+    def itemtype(self):
+        """Get the Folder'sintemtype."""
+        return self._itemtype
+
+    @itemtype.setter
+    def itemtype(self, value):
+        """Set the Folder's itemtype."""
+        if not issubclass(value, metadataObject):
+            raise TypeError("Folder.itemtype should be a subclass of metadataObject")
+        self._itemtype = value
 
     @key.setter
     def key(self, value):
@@ -410,21 +428,23 @@ class baseFolder(MutableSequence):
         """Iterate only over those members of the folder in memory."""
         for f in self.__names__():
             val = self.__getter__(f, instantiate=None)
-            if isinstance(val, self.type):
+            if isinstance(val, metadataObject):
                 yield f, val
 
     @property
     def loader(self):
         """Return a callable that will load the files on demand."""
         if self._loader is None:
-            self._loader = self.type
+            self._loader = get_loader(self.type)
         return self._loader
 
     @loader.setter
     def loader(self, value):
         """Set the loader class ensuring that it is a metadataObject."""
-        if isclass(value) and issubclass(value, metadataObject):
+        if callable(value) or isclass(metadataObject):
             self._loader = value
+        elif ldr := get_loader(value):
+            self._loader = ldr
 
     @property
     def ls(self):
@@ -519,20 +539,21 @@ class baseFolder(MutableSequence):
         return min([self.groups[g].trunkdepth for g in self.groups]) + 1
 
     @property
-    def type(self):
-        """Return the (sub)class of the :py:class:`Stoner.Core.metadataObject` instances."""
+    def type(self)->str:
+        """Return the string name instances."""
         return self._type
 
     @type.setter
-    def type(self, value):
-        """Ensure that type is a subclass of metadataObject."""
-        if isclass(value) and issubclass(value, metadataObject):
+    def type(self, value:str)->None:
+        """Ensure that type is something we can load."""
+        if not isinstance(value,str):
+            value=type(value).__name__
+        try:
+            cls = make_obj(value, cls=True)
             self._type = value
-        elif isinstance(value, metadataObject):
-            self._type = type(value)
-        else:
-            raise TypeError(f"{type(value)} os neither a subclass nor instance of metadataObject")
-        self._instance = None  # Reset the instance cache
+            self.itemtype=cls
+        except StonerLoadError as err:
+            raise TypeError(f"{value} does not have a loader") from err
 
     ################### Methods for subclasses to override to handle storage #####
     def __lookup__(self, name):
@@ -589,10 +610,10 @@ class baseFolder(MutableSequence):
             return self.objects[name]
         if not instantiate:
             return name
-        name = self.objects[name]
-        if not isinstance(name, self._type):
+        value = self.objects[name]
+        if not isinstance(value, self.itemtype):
             raise KeyError(f"{name} is not a valid {self._type}")
-        return self._update_from_object_attrs(name)
+        return self._update_from_object_attrs(value)
 
     def __setter__(self, name, value, force_insert=False):
         """Stub to setting routine to store a metadataObject.
@@ -625,7 +646,7 @@ class baseFolder(MutableSequence):
                 the index value to insert at, must be 0 to len(self)-1
             name (str):
                 the string name to add as a key
-            value (self.type):
+            value (metadataObject):
                 the value to be inserted.
 
         Note:
@@ -752,7 +773,7 @@ class baseFolder(MutableSequence):
                 return item
             else:
                 name = name[1]
-            if isinstance(item, self._type):
+            if isinstance(item, self.itemtype):
                 return item[name]
             if isinstance(item, type(self)):
                 if all_type(name, (int_types, slice)):  # Looks like we're accessing data arrays
@@ -1204,7 +1225,7 @@ class baseFolder(MutableSequence):
                 existing = tmp.__getter__(section, instantiate=None) if section in tmp.__names__() else None
                 if (
                     existing is None
-                    or (isinstance(value, self.type) and id(existing) != id(value))
+                    or (isinstance(value, metadataObject) and id(existing) != id(value))
                     or (isinstance(existing, string_types) and existing != value)
                 ):  # skip if this is a nul op
                     if hasattr(value, "filename"):
@@ -1459,7 +1480,7 @@ class baseFolder(MutableSequence):
 
     def make_name(self, value=None):
         """Construct a name from the value object if possible."""
-        if isinstance(value, self.type):
+        if isinstance(value, metadataObject):
             name = getattr(value, "filename", "")
             if name == "":
                 name = f"Untitled-{self._last_name}"

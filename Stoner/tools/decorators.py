@@ -414,6 +414,20 @@ def fix_signature(proxy_func, wrapped_func):
     return proxy_func
 
 
+def make_obj(what,cls=False):
+    """Make an object or class of the requested type."""
+    mod = import_module("Stoner.formats.decorators")
+    cache = getattr(mod,"_loaders_by_name")
+    if not len(cache):
+        import_module("Stoner.formats.data")
+        import_module("Stoner.formats.image")
+    if what in cache:
+        what = cache[what].what
+    if cls:
+        return make_Data(None, what=what)
+    return make_Data(what=what)
+
+
 def make_Data(*args, **kargs):
     """Return an instance of Stoner.Data or Stoner.ImageFile passig through constructor arguments.
 

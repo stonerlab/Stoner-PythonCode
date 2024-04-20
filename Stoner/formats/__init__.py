@@ -1,8 +1,8 @@
 """Provides functions to load files in a variety of formats.
 """
 __all__ = [
-    "instruments",
-    "generic",
+    "data",
+    "image" "instruments",
     "rigs",
     "facilities",
     "simulations",
@@ -17,18 +17,26 @@ __all__ = [
     "get_saver",
     "clear_routine",
 ]
+import importlib
 from copy import copy
 import io
 from pathlib import Path
-from . import instruments, generic, rigs, facilities, simulations, attocube, maximus
 from .decorators import register_loader, register_saver, next_loader, best_saver, get_loader, get_saver, clear_routine
 from ..core.exceptions import StonerLoadError
 from ..tools import make_Data
 from ..tools.file import get_mime_type
 
-# Legact Imports - not actually used directly
-from .. import HDF5  # pylint: disable=unused-import
-from .. import Zip  # pylint: disable=unused-import
+_sub_imports = {}
+
+
+def __getattr__(name):
+    """Lazy import required module."""
+    if name in __all__:
+        if name in _sub_imports:
+            ret = importlib.import_module(f".{_sub_imports[name]}", __name__)
+            return getattr(ret, name)
+        return importlib.import_module("." + name, __name__)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 def load(filename, *args, **kargs):

@@ -295,6 +295,8 @@ class setas(MutableMapping):
         _ = self.setas  # Forxce setas to be the right length
         if isinstance(value, dict):
             for k, v in value.items():
+                if v is None:
+                    continue
                 if isinstance(k, string_types) and len(k) == 1 and k in "xyzuvwdef":  # of the form x:column_name
                     for v_item in self.find_col(v, force_list=True):
                         try:

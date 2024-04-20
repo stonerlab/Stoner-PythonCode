@@ -1279,12 +1279,11 @@ class DataFile(
 
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
-        if "Stoner.formats" not in sys.modules:  # Implement lazy loading of loader functions
+        if "Stoner.formats/data" not in sys.modules:  # Implement lazy loading of loader functions
             # TODO: split loader functions more cleanly into Image and Data loaders so we don't load the Image and
             #   Folder stuff until we need it.
-            formats = importlib.import_module("..formats", __name__)
-        else:
-            formats = sys.modules["Stoner.formats"]
+            formats = importlib.import_module("..formats.data", __name__)
+        formats = sys.modules["Stoner.formats"]
         load = getattr(formats, "load")
 
         filename = kargs.pop("filename", args[0] if len(args) > 0 else None)

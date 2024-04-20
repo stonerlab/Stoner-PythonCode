@@ -4,7 +4,6 @@ The core classes provides a means to access them as an ordered collection or as 
 """
 __all__ = ["DataFolder", "PlotFolder"]
 
-from Stoner.tools import make_Data
 from .folders.core import baseFolder
 
 from .folders.mixins import DiskBasedFolderMixin, DataMethodsMixin, PlotMethodsMixin
@@ -23,7 +22,7 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
     def __init__(self, *args, **kargs):
         """Set the default type before creating the DataFolder."""
-        self.type = kargs.pop("type", make_Data(None))
+        self.type = kargs.pop("type", "DataFile")
         super().__init__(*args, **kargs)
 
 

@@ -22,6 +22,7 @@ from ..core.exceptions import StonerUnrecognisedFormat
 from .core import baseFolder, _add_core_ as _base_add_core_, _sub_core_ as _base_sub_core_
 from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
 from ..core.exceptions import assertion
+from ..tools import make_obj
 
 
 regexp_type = (_pattern_type,)
@@ -53,6 +54,7 @@ def _sub_core_(result, other):
 def _loader(name, loader=None, typ=None, directory=None):
     """Lods and returns an object."""
     filename = name if path.exists(name) else path.join(directory, name)
+    typ=make_obj(typ,cls=True)
     return typ(loader(filename)), name
 
 
@@ -115,24 +117,13 @@ class DiskBasedFolderMixin:
         _ = self.defaults  # Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
             self._default_store["directory"] = os.getcwd()
-        if "type" in self._default_store and self._default_store["type"] is None and self._type == metadataObject:
+        if "type" in self._default_store and self._default_store["type"] is None and self._type == "metadataObject":
             self._default_store["type"] = make_Data(None)
-        elif self._type != metadataObject:  # Looks like we've already set our type in a subbclass
+        elif self._type != "metadataObject":  # Looks like we've already set our type in a subbclass
             self._default_store.pop("type")
         flat = kargs.pop("flat", self._default_store.get("flat", False))
         prefetch = kargs.pop("prefetch", self._default_store.get("prefetch", False))
-        if "type" in kargs and isinstance(kargs["type"], str):
-            if "." in kargs["type"]:
-                mod = ".".join(kargs["type"].split(".")[:-1])
-                cls = kargs["type"].split(".")[-1]
-                mod = import_module(mod)
-                kargs["type"] = getattr(mod, cls)
-            else:
-                kargs["type"] = globals()[kargs["type"]]
 
-        # Adjust the default pattern depending on the specified type
-        if "type" in kargs and "pattern" not in kargs:
-            kargs["pattern"] = kargs["type"]._patterns
         super().__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
         if self.readlist and len(args) > 0 and isinstance(args[0], path_types):
             self.getlist(directory=args[0])
@@ -205,8 +196,8 @@ class DiskBasedFolderMixin:
 
         pth = path.join(root, *trail)
         makedirs(pth, exist_ok=True)
-        if isinstance(grp, metadataObject) and not isinstance(grp, self.loader):
-            grp = self.loader(grp)
+        if isinstance(grp, metadataObject) and not isinstance(grp, self.itemtype):
+            grp = self.itemtype(grp)
         grp.save(path.join(pth, grp.filename))
         return grp.filename
 
@@ -238,7 +229,7 @@ class DiskBasedFolderMixin:
         assertion(name is not None, "Cannot get an anonympus entry!")
         try:  # Try the parent methods first
             return super().__getter__(name, instantiate=instantiate)
-        except (AttributeError, IndexError, KeyError):
+        except (AttributeError, IndexError, KeyError, TypeError):
             pass
         # name may still be a number when we have unloaded entries referred to by index:
         if isinstance(name, int):
@@ -246,7 +237,7 @@ class DiskBasedFolderMixin:
         # Find a filename and load
         fname = name if path.exists(name) else path.join(self.directory, name)
         try:
-            tmp = self.type(self.loader(fname, **self.extra_args))
+            tmp = self.loader( fname, **self.extra_args)
         except StonerUnrecognisedFormat:
             return None
         if not isinstance(getattr(tmp, "filename", None), path_types) or len(getattr(tmp, "filename", "")) == 0:
@@ -256,7 +247,7 @@ class DiskBasedFolderMixin:
         tmp = self._update_from_object_attrs(tmp)
         # Store the result
         self.__setter__(name, tmp)
-        return tmp
+        return  super().__getter__(name, instantiate=instantiate)
 
     def __add__(self, other):
         """Implement the addition operator for baseFolder and metadataObjects."""
@@ -302,7 +293,7 @@ class DiskBasedFolderMixin:
     def not_loaded(self):
         """Return an array of True/False for whether we've loaded a metadataObject yet."""
         for n in self.__names__():
-            if not isinstance(self.__getter__(n, instantiate=None), self._type):
+            if not isinstance(self.__getter__(n, instantiate=None), self.loader):
                 yield n
 
     @property
@@ -527,7 +518,7 @@ class DataMethodsMixin:
         metadata = args
 
         def _extractor(group, _, metadata):
-            results = group.type()
+            results = group.instance
             results.metadata = group[0].metadata
             headers = []
 
@@ -592,7 +583,7 @@ class DataMethodsMixin:
 
             common_x = kargs.pop("common_x", True)
 
-            results = group.type()
+            results = group.instance
             results.metadata = group[0].metadata
             xbase = group[0].column(xcol)
             xtitle = group[0].column_headers[xcol]
@@ -698,8 +689,9 @@ class PlotMethodsMixin:
         plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
         plts = min(plts, len(self))
 
-        if not hasattr(self.type, "plot"):  # switch the objects to being Stoner.Data instances
+        if not issubclass(self.itemtype, make_Data(None)):
             for i, d in enumerate(self):
+                d.fig=None
                 self[i] = make_Data(d)
 
         extra = kargs.pop("extra", lambda i, j, d: None)
@@ -745,7 +737,7 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
     """
 
     def __init__(self, *args, **kargs):
-        self.type = kargs.pop("type", make_Data(None))
+        self.type = kargs.pop("type", "DataFile")
         super().__init__(*args, **kargs)
 
 

@@ -6,7 +6,6 @@ Created on Mon Jun 20 19:21:48 2016
 """
 from types import MethodType
 from Stoner.Image import ImageArray, ImageFile
-from Stoner.HDF5 import STXMImage
 from Stoner import __datapath__
 import pytest
 from os.path import dirname, join
@@ -65,8 +64,8 @@ def test_extra():
 
 
 def test_imagefile_ops():
-    img_a2 = STXMImage(join(__datapath__, "Sample_Image_2017-10-15_100.hdf5"))
-    img_a3 = STXMImage(join(__datapath__, "Sample_Image_2017-10-15_101.hdf5"))
+    img_a2 = ImageFile(join(__datapath__, "Sample_Image_2017-10-15_100.hdf5"))
+    img_a3 = ImageFile(join(__datapath__, "Sample_Image_2017-10-15_101.hdf5"))
     img_a2.gridimage()
     img_a3.gridimage()
     img_a2.crop(5, -15, 5, -5, _=True)
@@ -133,7 +132,7 @@ def test_funcs():
 
 
 def test_imagefuncs():
-    img_a2 = STXMImage(join(__datapath__, "Sample_Image_2017-10-15_100.hdf5"))
+    img_a2 = ImageFile(join(__datapath__, "Sample_Image_2017-10-15_100.hdf5"))
     img_a2.subtract_image(img_a2.image, offset=0)
     assert np.all(img_a2.image <= 0.0001), "Failed to subtract image from itself"
     x = np.linspace(-3 * np.pi, 3 * np.pi, 101)

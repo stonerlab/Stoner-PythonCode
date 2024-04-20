@@ -187,7 +187,7 @@ class MetadataProxy(MutableMapping):
         """Give an informative display of the metadata representation."""
         return (
             f"The {type(self._folder).__name__} {self._folder.key} has"
-            + f" {len(self)} common keys of metadata in {len(self._folder)} {self._folder.type.__name__} objects"
+            + f" {len(self)} common keys of metadata in {len(self._folder)} {self._folder.itemtype.__name__} objects"
         )
 
     def __delitem__(self, item):

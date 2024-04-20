@@ -169,7 +169,9 @@ def register_saver(
     return innner
 
 
-def next_loader(pattern: Optional[str] = "*", mime_type: Optional[str] = None, what: Optional[str] = None) -> Callable:
+def next_loader(
+    pattern: Optional[str] = "*", mime_type: Optional[str] = None, what: Optional[str] = None
+) -> Callable:
     """Find possible loaders and yield them in turn.
 
     Keyword Args:
@@ -241,6 +243,9 @@ def get_loader(filetype, silent=False):
         hope that that defines the missing loader. If that fails to work, then either raises StonerLoadError or
         returns None, depending on *silent*.
     """
+    if not len(_loaders_by_name):  # Autoload loaders if we get here and don't have anything
+        import_module("..data", __name__)
+        import_module("..image", __name__)
     try:
         return _loaders_by_name[filetype]
     except KeyError as err:

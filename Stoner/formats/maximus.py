@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Support files from the Bessy Maximus instrument."""
 
-__all__ = ["hdr_to_dict", "read_scan", "MaximusImage"]
+__all__ = ["MaximusImage"]
 
 import json
 import re
@@ -18,12 +18,9 @@ from ..core.base import typeHintedDict
 from ..Image import ImageFile, ImageStack, ImageArray
 from ..Core import DataFile
 from ..compat import string_types
-from ..HDF5 import HDFFileManager
-from ..tools.file import FileManager
-from ..core.exceptions import StonerLoadError
-from ..tools import make_Data
+from ..tools.file import HDFFileManager
 
-from .decorators import register_loader
+from .utils.maximus import read_scan, hdr_to_dict, flatten_header
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
 
@@ -38,90 +35,6 @@ def _raise_error(openfile, message=""):
         except (AttributeError, TypeError, ValueError, IOError):
             pass
 
-
-@register_loader(
-    patterns=[(".hdr", 16), (".xsp", 16)], mime_types=("text/plain", 16), name="MaximusSpectra", what="Data"
-)
-def load_maximus_spectra(new_data, *args, **kargs):
-    """Maximus xsp file loader routine.
-
-    Args:
-        filename (string or bool): File to load. If None then the existing filename is used,
-            if False, then a file dialog will be used.
-
-    Returns:
-        A copy of the itnew_data after loading the data.
-    """
-    filename = kargs.get("filename", args[0])
-    if filename is None or not filename:
-        new_data.get_filename("r")
-    else:
-        new_data.filename = filename
-    # Open the file and read the main file header and unpack into a dict
-    try:
-        pth = Path(new_data.filename)
-    except (TypeError, ValueError) as err:
-        raise StonerLoadError("Can only open things that can be converted to paths!") from err
-    if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
-        pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
-    stem = pth.parent / pth.stem
-
-    try:
-        hdr = _flatten_header(hdr_to_dict(pth))
-        if "Point Scan" not in hdr["ScanDefinition.Type"]:
-            raise StonerLoadError("Not an Maximus Single Image File")
-    except (StonerLoadError, ValueError, TypeError, IOError) as err:
-        raise StonerLoadError("Error loading as Maximus File") from err
-    header, data, dims = read_scan(stem)
-    new_data.metadata.update(_flatten_header(header))
-    new_data.data = np.column_stack((dims[0], data))
-    headers = [new_data.metadata["ScanDefinition.Regions.PAxis.Name"]]
-    if len(dims) == 2:
-        headers.extend([str(x) for x in dims[1]])
-    else:
-        headers.append(new_data.metadata["ScanDefinition.Channels.Name"])
-    new_data.column_headers = headers
-    new_data.setas = "xy"
-    return new_data
-
-
-@register_loader(
-    patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Image"
-)
-def load_maximus_image(new_data, filename, *args, **kargs):
-    """Load an ImageFile by calling the ImageArray method instead."""
-    try:
-        new_data.filename = filename
-        pth = Path(new_data.filename)
-    except TypeError as err:
-        raise StonerLoadError(f"UUnable to interpret {filename} as a path like object") from err
-    if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
-        pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
-    stem = pth.parent / pth.stem
-
-    try:
-        hdr = _flatten_header(hdr_to_dict(pth))
-        if "Image Scan" not in hdr["ScanDefinition.Type"]:
-            raise StonerLoadError("Not an Maximus Single Image File")
-    except (StonerLoadError, ValueError, TypeError, IOError) as err:
-        raise StonerLoadError("Error loading as Maximus File") from err
-    data = read_scan(stem)[1]
-    new_data.metadata.update(hdr)
-    if isinstance(new_data, make_Data(None, what="Data")):
-        if data.ndim == 3:
-            data = data[:, :, 0]
-        new_data.data = data
-    elif isinstance(new_data, make_Data(None, what="Image")):
-        new_data.image = data
-    return new_data
-
-
-@register_loader(
-    patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Data"
-)
-def load_maximus_data(new_data, filename, *args, **kargs):
-    """Load a maximus image, but to a Data object."""
-    return load_maximus_image(new_data, filename, *args, **kargs)
 
 
 class MaximusSpectra(DataFile):
@@ -158,13 +71,13 @@ class MaximusSpectra(DataFile):
         stem = pth.parent / pth.stem
 
         try:
-            hdr = _flatten_header(hdr_to_dict(pth))
+            hdr = flatten_header(hdr_to_dict(pth))
             if "Point Scan" not in hdr["ScanDefinition.Type"]:
                 raise StonerLoadError("Not an Maximus Single Image File")
         except (StonerLoadError, ValueError, TypeError, IOError) as err:
             raise StonerLoadError("Error loading as Maximus File") from err
         header, data, dims = read_scan(stem)
-        self.metadata.update(_flatten_header(header))
+        self.metadata.update(flatten_header(header))
         self.data = np.column_stack((dims[0], data))
         headers = [self.metadata["ScanDefinition.Regions.PAxis.Name"]]
         if len(dims) == 2:
@@ -195,7 +108,7 @@ class MaximusImage(ImageFile):
         stem = pth.parent / pth.stem
 
         try:
-            hdr = _flatten_header(hdr_to_dict(pth))
+            hdr = flatten_header(hdr_to_dict(pth))
             if hdr["ScanDefinition.Type"] != "Image Scan":
                 raise StonerLoadError("Not an Maximus Single Image File")
         except (StonerLoadError, ValueError, TypeError, IOError) as err:
@@ -261,14 +174,14 @@ class MaximusStackMixin:
         stem = pth.parent / pth.stem
 
         try:
-            hdr = _flatten_header(hdr_to_dict(pth))
+            hdr = flatten_header(hdr_to_dict(pth))
             if hdr["ScanDefinition.Type"] != "NEXAFS Image Scan":
                 raise StonerLoadError("Not an Maximus ImageStack")
         except (StonerLoadError, ValueError, TypeError, IOError) as err:
             raise StonerLoadError("Error loading as Maximus File") from err
 
         metadata, stack, _ = read_scan(stem)
-        self._common_metadata.update(_flatten_header(metadata))
+        self._common_metadata.update(flatten_header(metadata))
         self._stack = stack
         self._names = [f"{stem}_a{ix:03d}" for ix in range(stack.shape[2])]
         self._sizes = np.ones((stack.shape[2], 2), dtype=int) * stack.shape[:2]
@@ -443,162 +356,7 @@ class MaximusStack(MaximusStackMixin, ImageStack):
     """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
 
-def hdr_to_dict(filename, to_python=True):
-    """Convert .hdr metadata file to  json or python dictionary.
 
-    Args:
-        filename (str):
-            Name of file to read (can also be a pathlib.Path).
-
-    Keyword Arguments:
-        to_python (bool):
-            If true, return a python dictionary, otherwise return a json text string.
-
-    Returns:
-        (dict or str):
-            Either the header file as a python dictionary, or a json string.
-    """
-    bare = re.compile("([\s\{])([A-Za-z][A-Za-z0-9_]*)\s\:")  # Match for keys
-    term = re.compile(r",\s*([\]\}])")  # match for extra , at the end of a dict or list
-    nan = re.compile(r"([\-0-9\.]+\#QNAN)")  # Handle NaN values
-
-    # Use oathlib to suck in the file
-    with FileManager(filename, "r") as f:
-        hdr = f.read()
-    # Simple string replacements first
-    stage1 = hdr.replace("=", ":").replace(";", ",").replace("(", "[").replace(")", "]")
-    # Wrap in { }
-    stage2 = f"{{{stage1}}}"
-    # Regexp replacements next
-    stage3 = bare.sub('\\1"\\2" :', stage2)
-    stage4 = term.sub("\\n\\1", stage3)
-    stage5 = nan.sub("NaN", stage4)
-
-    if to_python:
-        ret = _process_key(json.loads(stage5))
-    else:  # orettyify the json
-        ret = json.dumps(json.loads(stage5), indent=4)
-
-    return ret
-
-
-def read_scan(file_root):
-    """Find the .hdr and .xim/,xsp files for a scan load them into memory.
-
-    Args:
-        file_root (str): This is the part of the hdr filename beore the extension.
-
-    Returns:
-        (dict,ndarray, (n-1d arrays)):
-            Returns the metadata and an ndarray of the scan data and then n 1D arrays of the axes.
-    """
-    hdr = Path(str(file_root) + ".hdr")
-    header = hdr_to_dict(hdr, to_python=True)
-    scan_type = header["ScanDefinition"]["Type"]
-
-    if "Image Scan" in scan_type:
-        data, dims = _read_images(hdr.parent.glob(f"{hdr.stem}*.xim"), header)
-    elif "Point Scan" in scan_type:
-        data, dims = _read_pointscan(hdr.parent.glob(f"{hdr.stem}*.xsp"), header)
-    else:
-        raise ValueError(f"Unrecognised scan type {scan_type}")
-
-    return header, data, dims
-
-
-def _flatten_header(value):
-    """Flatten nested dictionaries."""
-    if isinstance(value, list) and len(value) == 1:
-        value = value[0]
-    if not isinstance(value, dict):
-        return value
-    dels = []
-    adds = {}
-    for key, item in value.items():
-        item = _flatten_header(item)
-        if isinstance(item, dict):
-            for item_key, item_val in item.items():
-                adds[f"{key}.{item_key}"] = item_val
-            dels.append(key)
-    for key in dels:
-        del value[key]
-    value.update(adds)
-    return value
-
-
-def _process_key(value):
-    """Carry out post loading processing of data structures."""
-    if isinstance(value, dict):
-        for key, val in value.items():
-            value[key] = _process_key(val)
-        return value
-    if isinstance(value, list):
-        if len(value) > 0 and isinstance(value[0], int) and len(value) == value[0] + 1:  # Lists prepended with size
-            del value[0]
-        a = np.array(value)
-        if a.dtype.kind in ["f", "i", "u", "U"]:  # convert arrays to arrays
-            return a
-        value = [_process_key(v) for v in value]
-    return value
-
-
-def _read_images(files, header):
-    """Read one or more .xim files and construct the data array.
-
-    Args:
-        files (glob): glob pattern of xim files to read.
-        header (dict): contents of the .jdr file.
-
-    Returns:
-        data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
-    """
-    xims = list(files)
-    scandef = header["ScanDefinition"]
-    region = scandef["Regions"][0]  # FIXME assumes a single region in the data
-    if len(xims) > 1:
-        data = np.stack([np.genfromtxt(x)[::-1] for x in xims]).T
-    elif len(xims) == 1:
-        data = np.genfromtxt(xims[0])[::-1]
-    else:  # no files !
-        raise IOError("No Images located")
-    xpts = region["PAxis"]["Points"]
-    ypts = region["QAxis"]["Points"]
-    if data.ndim == 3:
-        zpts = scandef["StackAxis"]["Points"]
-        dims = (xpts, ypts, zpts)
-    else:
-        dims = (xpts, ypts)
-    return data, dims
-
-
-def _read_pointscan(files, header):
-    """Read one or more .xsp files and construct the data array.
-
-    Args:
-        files (glob): glob pattern of xim files to read.
-        header (dict): contents of the .jdr file.
-
-    Returns:
-        data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
-    """
-    xsps = list(files)
-    scandef = header["ScanDefinition"]
-    region = scandef["Regions"][0]  # FIXME assumes a single region in the data
-    if len(xsps) > 1:
-        data = np.stack([np.genfromtxt(x)[:, 1] for x in xsps]).T
-    elif len(xsps) == 1:
-        data = np.genfromtxt(xsps[0])[:, 1]
-    else:  # No files !
-        raise IOError("No Spectra located")
-    xpts = region["PAxis"]["Points"]
-    if data.ndim == 2:
-        zpts = scandef["StackAxis"]["Points"]
-        dims = (xpts, zpts)
-    else:
-        dims = (xpts,)
-    return data, dims
 
 
 if __name__ == "__main__":

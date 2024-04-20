@@ -69,7 +69,6 @@ def test_loader_opts():
 
     def add_col(d):
         d.add_column(np.ones(len(d)) * d["field"], header="field")
-
     fldr7.each(add_col)
     fldr7.concatenate()
     assert fldr7[0].shape == (909, 4), "Concatenate failed."
@@ -241,7 +240,7 @@ def test_Properties():
     fldr.objects = objects
     assert isinstance(fldr.objects, regexpDict), "Setting Folder objects mangled type"
     fldr.type = Data()
-    assert issubclass(fldr.type, Data), "Setting type by instance of class failed"
+    assert issubclass(fldr.itemtype, Data), "Setting type by instance of class failed"
 
 
 def test_methods():

@@ -30,6 +30,13 @@ class ImageStackMixin:
 
     _defaults = {"type": ImageFile}
 
+    def __new__(cls, *args, **kargs):
+        """Force itemtype to be an Image."""
+        self = super(ImageStackMixin, cls).__new__(cls)
+        self.type = "ImageFile"
+        self.itemtype = ImageFile
+        return self
+
     def __init__(self, *args, **kargs):
         """Initialise an ImageStack's pricate data and provide a type argument."""
         self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
@@ -162,8 +169,8 @@ class ImageStackMixin:
                 return None
             idx = len(self)
             return self.__inserter__(idx, name, value)
-        if not isinstance(value, self.type):
-            value = self.type(value)
+        if not isinstance(value, self.itemtype):
+            value = self.itemtype(value)
         self._sizes[idx] = value.shape
         self._metadata[name] = value.metadata
         _public_attrs = {}
@@ -277,11 +284,11 @@ class ImageStackMixin:
         """Reconstructs the data type."""
         r, c = self._sizes[idx]
         if issubclass(
-            self.type, ImageArray
+            self.itemtype, ImageArray
         ):  # IF the underlying type is an ImageArray, then return as a view with extra metadata
-            tmp = self._stack[:r, :c, idx].view(type=self.type)
+            tmp = self._stack[:r, :c, idx].view(type=self.itemtype)
         else:  # Otherwise it must be something with a data attribute
-            tmp = self.type(self._stack[:r, :c, idx])
+            tmp = self.itemtype(self._stack[:r, :c, idx])
         name = self.__names__()[idx]
         tmp.metadata = self._metadata[name]
         tmp._fromstack = True

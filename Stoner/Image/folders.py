@@ -55,6 +55,14 @@ class ImageFolderMixin:
     _defaults = {"type": ImageArray, "pattern": ["*.png", "*.tiff", "*.jpeg", "*.jpg", "*.tif"]}
     _no_defaults = ["flat"]
 
+    def __new__(cls, *args, **kargs):
+        """Override the itemtype."""
+        self = super(ImageFolderMixin, cls).__new__(cls, *args, **kargs)
+        self._itemtype = ImageFile
+        self._type = "ImageFile"
+        self.loader=ImageFile
+        return self
+
     @property
     def size(self):
         """Return the size of an individual image or False if not all images are the same size."""
@@ -213,7 +221,7 @@ class ImageFolderMixin:
             ret.metadata = self.metadata.common_metadata
         elif _metadata == "first":
             ret.metadata = deepcopy(self[0].metadata)
-        return self._type(ret[ret._box(_box)])
+        return self.itemtype(ret[ret._box(_box)])
 
     def loadgroup(self):
         """Load all files from this group into memory."""
@@ -274,6 +282,7 @@ class ImageFolderMixin:
         """Run the ImageFile.mask.select() on each image."""
         sel = []
         for img in self:
+            print(id(img))
             img.mask.select(_selection=sel)
 
     def mean(self, _box=False, _metadata="first"):
@@ -407,7 +416,7 @@ class ImageFolderMixin:
             sumsqdev = np.sqrt(sumsqdev) / np.sum(weights, axis=0)
         ret = sumsqdev.view(ImageArray)
         ret.metadata = self.metadata.common_metadata
-        return self._type(ret[ret._box(_box)])
+        return self.itemtype(ret[ret._box(_box)])
 
     def stderr(self, weights=None, _box=False, _metadata="first"):
         """Calculate standard error in the stack average.

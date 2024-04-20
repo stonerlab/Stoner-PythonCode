@@ -7,19 +7,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from lmfit.models import LorentzianModel
 
-from Stoner.Image import ImageFolder
-from Stoner.HDF5 import STXMImage
+from Stoner.Image import ImageFolder, ImageFile
 
 # Load the images
 thisdir = dirname(__file__)
 
-imgs = ImageFolder(type=STXMImage)
+imgs = ImageFolder(type="STXMImage")
 for fname in [
     "Sample_Image_2017-10-15_100.hdf5",
     "Sample_Image_2017-10-15_101.hdf5",
 ]:
     # Load the image
-    img = STXMImage(join(thisdir, "..", "..", "..", "sample-data", fname))
+    img = ImageFile(join(thisdir, "..", "..", "..", "sample-data", fname))
     a1 = id(img.metadata)
     img.gridimage()
     a2 = id(img.metadata)

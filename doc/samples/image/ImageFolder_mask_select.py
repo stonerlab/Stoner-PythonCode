@@ -8,7 +8,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from Stoner import ImageFolder, __datapath__
-from Stoner.HDF5 import STXMImage
 from Stoner.Image.widgets import send_event as _event
 
 
@@ -42,10 +41,12 @@ def fake_user_action(image):
 
 
 fldr = ImageFolder(
-    __datapath__, pattern="Sample*.hdf5", type=STXMImage, recursive=False
+    __datapath__, pattern="Sample*.hdf5", type="STXMImage", recursive=False
 )
 
 # Start the scripted control
+for img in fldr:
+    pass
 fake_user = threading.Thread(target=fake_user_action, args=(fldr[0],))
 fake_user.start()
 
