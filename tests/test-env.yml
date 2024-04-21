@@ -4,31 +4,31 @@ channels:
   - phygbu
   - conda-forge
 dependencies:
-  - coveralls >= 3.2.0
-  - cycler >= 0.10.0
-  - dill >= 0.3.4
-  - fabio >= 0.11.0
-  - filemagic >= 1.6
-  - h5py >= 3.3.0
-  - hyperspy >= 1.6.4
-  - importlib_resources >= 5.2.0
-  - imreg_dft >= 2.0.0
-  - image-registration >= 0.2.7
-  - lmfit >= 1.0.0
-  - matplotlib >= 3.4.3
-  - memoization >= 0.3.1
-  - multiprocess >= 0.70.12.2
-  - nptdms >= 1.1.0
-  - numpy >= 1.21.2
-  - pytest >= 6.2.4
-  - pytest-cov >= 2.12.1
-  - pytest-forked >= 1.3.0
-  - pytest-runner >= 5.3.1
-  - pytest-xdist >= 2.3.0
-  - python-dateutil >= 2.8.2
-  - scikit-image >= 0.18.3
-  - scipy >= 1.7.1
-  - seaborn >= 0.11.2
-  - statsmodels >= 0.13.0
-  - tabulate >= 0.8.10
-  - urllib3 >= 1.26.7
+  - coveralls
+  - cycler
+  - dill
+  - fabio
+  - filemagic
+  - h5py
+  - hyperspy
+  - importlib_resources
+  - imreg_dft
+  - image-registration
+  - lmfit
+  - matplotlib
+  - memoization
+  - multiprocess
+  - nptdms
+  - numpy
+  - pytest
+  - pytest-cov
+  - pytest-forked
+  - pytest-runner
+  - pytest-xdist
+  - python-dateutil
+  - scikit-image
+  - scipy
+  - seaborn
+  - statsmodels
+  - tabulate
+  - urllib3
