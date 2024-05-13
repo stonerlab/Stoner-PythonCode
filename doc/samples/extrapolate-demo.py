@@ -1,4 +1,5 @@
 """Extrapolate data example."""
+
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like, column_stack, exp, sqrt
 from numpy.random import normal, seed

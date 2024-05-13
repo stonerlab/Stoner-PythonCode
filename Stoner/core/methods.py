@@ -13,7 +13,6 @@ from ..tools.widgets import RangeSelect
 
 
 class DataFileSearchMixin:
-
     """Mixin class that provides the search, selecting and sorting methods for a DataFile."""
 
     def _search_index(self, xcol=None, value=None, accuracy=0.0, invert=False):

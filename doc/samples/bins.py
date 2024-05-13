@@ -1,4 +1,5 @@
 """Re-binning data example."""
+
 # pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.plot.utils import errorfill

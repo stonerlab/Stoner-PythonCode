@@ -131,7 +131,6 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
 
 class WLfit(Model):
-
     """Weak localisation model class.
 
     Args:
@@ -175,7 +174,6 @@ class WLfit(Model):
 
 
 class FluchsSondheimer(Model):
-
     """Evaluate a Fluchs-Sondheumer model function for conductivity.
 
     Args:
@@ -210,7 +208,6 @@ class FluchsSondheimer(Model):
 
 
 class BlochGrueneisen(Model):
-
     """BlochGrueneiseen Function for fitting R(T).
 
     Args:

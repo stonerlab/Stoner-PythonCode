@@ -1,4 +1,5 @@
 """Demo of Fitting a directory of files."""
+
 # pylint: disable=invalid-name
 from os.path import join
 from matplotlib.pyplot import figure

@@ -151,7 +151,6 @@ def listdir_recursive(dirname, glob=None):
 
 
 class ClassPropertyDescriptor:
-
     """Supports adding class properties."""
 
     def __init__(self, fget, fset=None):
@@ -180,7 +179,6 @@ def _jit(func, *_, **__):
 
 
 class _dummy:
-
     """A class that does nothing so that float64 can be an instance of it safely."""
 
     def jit(self, func, *_, **__):  # pylint: disable=no-self-use

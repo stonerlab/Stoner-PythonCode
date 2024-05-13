@@ -27,7 +27,6 @@ except ImportError:
 
 
 class DataFilePropertyMixin:
-
     """Provide the properties for DataFile Like Objects."""
 
     _subclasses = None

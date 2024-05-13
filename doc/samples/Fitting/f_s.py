@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+
 # pylint: disable=invalid-name
 from numpy import logspace, ones_like, log10
 from numpy.random import normal

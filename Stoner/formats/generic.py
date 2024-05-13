@@ -20,7 +20,6 @@ from ..tools.file import FileManager
 
 
 class _refuse_log(logging.Filter):
-
     """Refuse to log all records."""
 
     def filter(self, record):
@@ -73,7 +72,6 @@ def _delim_detect(line):
 
 
 class CSVFile(DataFile):
-
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -178,7 +176,6 @@ class CSVFile(DataFile):
 
 
 class JustNumbersFile(CSVFile):
-
     """A reader format for things which are just a block of numbers with no headers or metadata."""
 
     priority = 256  # Rather generic file format so make it a low priority
@@ -190,7 +187,6 @@ class JustNumbersFile(CSVFile):
 
 
 class KermitPNGFile(DataFile):
-
     """Loads PNG files with additional metadata embedded in them and extracts as metadata."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -278,7 +274,6 @@ try:  # Optional tdms support
     from nptdms import TdmsFile
 
     class TDMSFile(DataFile):
-
         """First stab at writing a file that will import TDMS files."""
 
         #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -334,7 +329,6 @@ except ImportError:
 if Hyperspy_ok:
 
     class HyperSpyFile(DataFile):
-
         """Wrap the HyperSpy file to map to DataFile."""
 
         priority = 64  # Makes an ID check but is quite generic

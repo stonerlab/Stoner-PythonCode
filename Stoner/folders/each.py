@@ -1,4 +1,5 @@
 """Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
+
 __all__ = ["Item"]
 from collections.abc import MutableSequence
 from functools import wraps, partial
@@ -35,7 +36,6 @@ def _worker(d, **kwargs):
 
 
 class SetasWrapper(MutableSequence):
-
     """Manages wrapping each member of the folder's setas attribute."""
 
     def __init__(self, parent):
@@ -108,7 +108,6 @@ class SetasWrapper(MutableSequence):
 
 
 class Item:
-
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
 
     Notes:

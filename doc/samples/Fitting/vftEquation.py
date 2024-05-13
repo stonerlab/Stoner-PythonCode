@@ -1,4 +1,5 @@
 """Example of Arrhenius Fit."""
+
 # pylint: disable=invalid-name
 from numpy import logspace, log10
 from numpy.random import normal

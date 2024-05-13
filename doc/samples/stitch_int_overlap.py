@@ -1,6 +1,7 @@
 """Scale data to stitch it together.
 
 This example demonstrates specifying the overlap as an integer and scaling both curves to match the other."""
+
 # pylint: disable=invalid-name
 import matplotlib.pyplot as plt
 

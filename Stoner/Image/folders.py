@@ -19,7 +19,6 @@ from . import ImageFile
 
 
 class ImageFolderMixin:
-
     """Mixin to provide a folder object for images.
 
     ImageFolderMixin is designed to behave pretty much like DataFolder but with
@@ -474,7 +473,6 @@ class ImageFolderMixin:
 
 
 class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
-
     """Folder object for images.
 
     ImageFolder is designed to behave pretty much like DataFolder but with

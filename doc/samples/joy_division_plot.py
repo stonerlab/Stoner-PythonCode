@@ -11,7 +11,6 @@ from Stoner.plot.utils import joy_division
 
 
 class RigakuFolder(DataFolder):
-
     """Quick subclass of DataFolder that knows how to extract multiple files from a single Rigaku file."""
 
     def load_files(self, filename):

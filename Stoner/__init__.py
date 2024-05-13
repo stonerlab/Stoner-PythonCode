@@ -3,6 +3,7 @@
 It has been developed by members of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the
 `University  of Leeds<http://www.leeds.ac.uk>`.
 """
+
 # pylint: disable=import-error
 __all__ = [
     "core",

@@ -1,4 +1,5 @@
 """Example plot in XKCD comic style SketchPlot template."""
+
 # pylint: disable=invalid-name
 import os.path as path
 from Stoner import Data, __home__

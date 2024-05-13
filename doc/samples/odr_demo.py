@@ -1,4 +1,5 @@
 """Demo of new Stoner.Analysis.AnalyseFile.lmfit."""
+
 # pylint: disable=invalid-name
 from os.path import join
 

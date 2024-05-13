@@ -31,7 +31,6 @@ _options = {
 
 
 class attributeStore(dict):
-
     """A dictionary=like class that provides attributes that work like indices.
 
     Used to implement the mapping of column types to indices in the setas attriobutes.
@@ -124,7 +123,6 @@ def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-a
 
 
 class typedList(MutableSequence):
-
     """Subclass list to make setitem enforce  strict typing of members of the list."""
 
     def __init__(self, *args: Any, **kargs: Any) -> None:
@@ -248,7 +246,6 @@ def set_option(name: str, value: bool) -> None:
 
 
 class Options:
-
     """Dead simple class to allow access to package options."""
 
     def __init__(self):

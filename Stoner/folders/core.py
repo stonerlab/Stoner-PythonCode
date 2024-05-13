@@ -178,7 +178,6 @@ def _build_select_function(kargs, arg):
 
 
 class baseFolder(MutableSequence):
-
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.
 
     Attributes:

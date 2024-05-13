@@ -17,7 +17,6 @@ from .analysis.utils import threshold as _threshold, ApplyAffineTransform, GetAf
 
 
 class AnalysisMixin:
-
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods."""
 
     def __dir__(self):

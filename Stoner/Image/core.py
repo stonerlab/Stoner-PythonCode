@@ -151,7 +151,6 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
 @class_modifier([ndi], transpose=True)
 @class_modifier(imagefuncs, overload=True)
 class ImageArray(np.ma.MaskedArray, metadataObject):
-
     """A numpy array like class with a metadata parameter and pass through to skimage methods.
 
     ImageArray is for manipulating images stored as a 2d numpy array.
@@ -701,7 +700,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 @class_modifier(imagefuncs, overload=True, adaptor=image_file_adaptor)
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
 class ImageFile(metadataObject):
-
     """An Image file type that is analogous to :py:class:`Stoner.Data`.
 
     This contains metadata and an image attribute which

@@ -78,9 +78,7 @@ def _strijkers_core(V, omega, delta, P, Z):
     Au2 = (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) ** 2) - 1) / (
         ((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2
     )
-    Bu2 = (4 * (Z**2) * (1 + (Z**2))) / (
-        ((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2
-    )
+    Bu2 = (4 * (Z**2) * (1 + (Z**2))) / (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2)
     Bp2 = Bu2 / (1 - Au2)
 
     unpolarised_prefactor = (1 - P) * (1 + (Z**2))
@@ -312,7 +310,6 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
 
 
 class Strijkers(Model):
-
     """strijkers Model for point-contact Andreev Reflection Spectroscopy.
 
     Args:

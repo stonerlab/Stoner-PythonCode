@@ -1,4 +1,5 @@
 """Add an inset to a plot."""
+
 # pylint: disable=invalid-name
 from Stoner import Data
 

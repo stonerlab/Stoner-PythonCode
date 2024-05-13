@@ -125,7 +125,6 @@ def tersoffHammann(V, A):
 
 
 class Simmons(Model):
-
     """Simmons model of electron tunnelling.
 
     Args:
@@ -160,7 +159,6 @@ class Simmons(Model):
 
 
 class BDR(Model):
-
     """BDR model tunnelling.
 
     Args:
@@ -195,7 +193,6 @@ class BDR(Model):
 
 
 class FowlerNordheim(Model):
-
     """Fowler Nordhiem Model of electron tunnelling.
 
     Args:
@@ -224,7 +221,6 @@ class FowlerNordheim(Model):
 
 
 class TersoffHammann(Model):
-
     """Tersoff-Hamman model for tunnelling through STM tip.
 
     Args:

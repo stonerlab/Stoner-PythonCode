@@ -48,7 +48,6 @@ def _raise_error(openfile, message=""):
 
 
 class AttocubeScanMixin:
-
     """Provides the specialist methods for dealing with Attocube SPM scan files.
 
     See :py:class:`AttocubeScan` for details."""
@@ -468,7 +467,6 @@ class AttocubeScanMixin:
 
 
 class AttocubeScan(AttocubeScanMixin, ImageStack):
-
     """An ImageStack subclass that can load scans from the AttocubeScan SPM System.
 
     AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with

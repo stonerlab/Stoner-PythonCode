@@ -24,7 +24,6 @@ _lmfit = True
 
 
 class odr_Model(odrModel):
-
     """A wrapper for converting lmfit models to odr models."""
 
     def __init__(self, *args, **kargs):
@@ -109,7 +108,6 @@ class odr_Model(odrModel):
 
 
 class MimizerAdaptor:
-
     """Work with an lmfit.Model or generic callable to use with scipy.optimize global minimization functions.
 
     The :pymod:`scipy.optimize` module's minimizers generally expect functions  which take an array like parameter
@@ -171,7 +169,6 @@ class MimizerAdaptor:
 
 
 class _curve_fit_result:
-
     """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit`
     as a class to make handling easier.
     """
@@ -471,7 +468,6 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
 
 
 class FittingMixin:
-
     """A mixin calss for :py:class:`Stoner.Core.DataFile` to provide additional curve_fiotting methods."""
 
     def annotate_fit(self, model, x=None, y=None, z=None, text_only=False, **kargs):

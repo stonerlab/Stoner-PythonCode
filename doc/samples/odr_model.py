@@ -1,4 +1,5 @@
 """Simple use of lmfit to fit data."""
+
 # pylint: disable=invalid-name
 from numpy import linspace, exp, random
 from scipy.odr import Model as odrModel

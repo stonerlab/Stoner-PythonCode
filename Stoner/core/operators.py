@@ -11,7 +11,6 @@ from . import _setas, DataArray
 
 
 class DataFileOperatorsMixin:
-
     """Provides the operator mixins for DataFile like objects."""
 
     def __add__(self, other):

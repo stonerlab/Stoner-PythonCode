@@ -47,7 +47,6 @@ def _draw_apaptor(func):
 
 @class_modifier(draw, adaptor=_draw_apaptor, RTD_restrictions=False, no_long_names=True)
 class DrawProxy:
-
     """Provides a wrapper around :py:mod:`skimage.draw` to allow easy drawing of objects onto images.
 
     This class allows access the user to draw simply shapes on an image (or its mask) by specifying the desired shape
@@ -205,7 +204,6 @@ class DrawProxy:
 
 
 class MaskProxy:
-
     """Provides a wrapper to support manipulating the image mask easily.
 
     The actual mask of a :py:class:`Stonmer.ImageFile` is held by the mask attribute of the underlying

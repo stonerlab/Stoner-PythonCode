@@ -20,7 +20,6 @@ from Stoner.tools import format_error
 
 
 class Data(AnalysisMixin, FittingMixin, ColumnOpsMixin, FilteringOpsMixin, FeatureOpsMixin, PlotMixin, DataFile):
-
     """The principal class for representing a data file.
 
     This merges:

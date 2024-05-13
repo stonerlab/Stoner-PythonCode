@@ -125,11 +125,7 @@ def inverse_kittel(f, g, M_s, H_k):
        \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
     """
     gamma = g * cnst.e / (2 * cnst.m_e)
-    return (
-        -H_k
-        - M_s / 2
-        + np.sqrt(M_s**2 * gamma**2 * cnst.mu_0**2 + 16 * np.pi**2 * f**2) / (2 * gamma * cnst.mu_0)
-    )
+    return -H_k - M_s / 2 + np.sqrt(M_s**2 * gamma**2 * cnst.mu_0**2 + 16 * np.pi**2 * f**2) / (2 * gamma * cnst.mu_0)
 
 
 def fmr_power(H, H_res, Delta_H, K_1, K_2):

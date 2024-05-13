@@ -1,4 +1,5 @@
 """Plot data using multiple sub-plots."""
+
 # pylint: disable=invalid-name
 from Stoner import Data
 
