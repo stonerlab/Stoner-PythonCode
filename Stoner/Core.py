@@ -1,4 +1,5 @@
 """Stoner.Core provides the core classes for the Stoner package."""
+
 __all__ = [
     "StonerLoadError",
     "StonerSetasError",
@@ -64,7 +65,6 @@ class DataFile(
     metadataObject,
     MutableSequence,
 ):
-
     """Base class object that represents a matrix of data, associated metadata and column headers.
 
     Attributes:

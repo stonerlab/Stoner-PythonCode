@@ -20,7 +20,7 @@ except ImportError:
     int64 = _dummy()
 
 
-@jit(float64(float64, int64))
+@jit(float64(float64, int64), nopython=True)
 def _bgintegrand(x, n):
     """Calculate the integrand for the Bloch Grueneisen model."""
     return x**n / ((np.exp(x) - 1) * (1 - np.exp(-x)))
@@ -94,7 +94,8 @@ def fluchsSondheimer(t, l, p, sigma_0):
     """
     k = t / l
 
-    kernel = lambda x, k: (x - x**3) * np.exp(-k * x) / (1 - np.exp(-k * x))
+    def kernel(x, k):
+        return (x - x**3) * np.exp(-k * x) / (1 - np.exp(-k * x))
 
     result = np.zeros(k.shape)
     for i, v in enumerate(k):
@@ -130,7 +131,6 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
 
 class WLfit(Model):
-
     """Weak localisation model class.
 
     Args:
@@ -174,7 +174,6 @@ class WLfit(Model):
 
 
 class FluchsSondheimer(Model):
-
     """Evaluate a Fluchs-Sondheumer model function for conductivity.
 
     Args:
@@ -209,7 +208,6 @@ class FluchsSondheimer(Model):
 
 
 class BlochGrueneisen(Model):
-
     """BlochGrueneiseen Function for fitting R(T).
 
     Args:

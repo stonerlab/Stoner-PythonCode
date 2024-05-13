@@ -4,6 +4,7 @@ R.C.Temple
 
 Will overwrite any files already split but that should be ok for an update.
 """
+
 # pylint: disable=invalid-name
 import os
 import numpy as np

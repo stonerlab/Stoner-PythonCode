@@ -1,4 +1,5 @@
 """Demonstrate STXM Image Processing - G.Burnell Nov. 2017"""
+
 # pylint: disable=invalid-name,no-member
 from os.path import join, dirname
 from types import MethodType
@@ -53,7 +54,7 @@ xmcd.normalise()
 
 # Create a profile and plot it
 profile = xmcd.profile_line((0, 0), (100, 100))
-profile.figure(figsize=(7, 5), no_axes=True)
+profile.figure(figsize=(7, 6), no_axes=True)
 profile.subplot(222)
 profile.plot()
 profile.title = "XMCD Cross Section"
@@ -120,6 +121,3 @@ hist.setas = "xyyy"
 profile.subplot(224)
 hist.plot(fmt=["b+", "b--", "r-"])
 hist.title = "Intensity histogram"
-
-# Tidy up
-plt.tight_layout()

@@ -125,11 +125,7 @@ def inverse_kittel(f, g, M_s, H_k):
        \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
     """
     gamma = g * cnst.e / (2 * cnst.m_e)
-    return (
-        -H_k
-        - M_s / 2
-        + np.sqrt(M_s**2 * gamma**2 * cnst.mu_0**2 + 16 * np.pi**2 * f**2) / (2 * gamma * cnst.mu_0)
-    )
+    return -H_k - M_s / 2 + np.sqrt(M_s**2 * gamma**2 * cnst.mu_0**2 + 16 * np.pi**2 * f**2) / (2 * gamma * cnst.mu_0)
 
 
 def fmr_power(H, H_res, Delta_H, K_1, K_2):
@@ -267,7 +263,7 @@ class BlochLawThin(Model):
     """
 
     def __init__(self, *args, **kwargs):
-        """Setup the model."""
+        """Initialise the model."""
         super().__init__(self.blochs_law_thinfilm, *args, **kwargs)
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
@@ -275,7 +271,7 @@ class BlochLawThin(Model):
         self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_thinfilm(self, T, D, Bz, S, v_ws, a, nz):
-        """Thin film version of Blopch's Law.
+        r"""Thin film version of Blopch's Law.
 
         Parameters:
             T (array):
@@ -310,7 +306,6 @@ class BlochLawThin(Model):
                         ln\left[1-\exp\left( -\frac{1}{k_B T}\left(g\mu_B B_z+D\left(\frac{m \pi}{a(n_z-1)}\right)^2
                                                                    \right)\right) \right]`
         """
-
         kz_sum = sum(
             np.log(1.0 - np.exp(-(D * (m * np.pi / ((nz - 1) * a)) ** 2 + Bz) / (k * T))) for m in range(0, nz - 1)
         )
@@ -346,7 +341,8 @@ class Langevin(Model):
         r"""Guess some starting values.
 
         M_s is taken as half the difference of the range of thew M data,
-        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`,"""
+        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`
+        """
         M_s = (np.max(data) - np.min(data)) / 2.0
         if x is not None:
             d = np.sort(np.row_stack((x, data)))

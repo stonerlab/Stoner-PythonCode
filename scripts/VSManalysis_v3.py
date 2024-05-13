@@ -13,7 +13,6 @@ from Stoner.analysis.fitting.models.generic import Linear
 
 
 class VSMAnalysis(Data):
-
     """Augment Data with some extra methods."""
 
     def true_m(self):

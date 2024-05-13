@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+
 # pylint: disable=invalid-name
 from copy import deepcopy
 
@@ -41,4 +42,3 @@ d.annotate_fit(
     prefix="BlochGrueneisen",
 )
 d.title = "Bloch-Grueneisen Fit"
-d.tight_layout()

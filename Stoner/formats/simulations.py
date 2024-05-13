@@ -32,7 +32,6 @@ def _read_line(data, metadata):
 
 
 class GenXFile(DataFile):
-
     """Extends DataFile for GenX Exported data."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -42,7 +41,7 @@ class GenXFile(DataFile):
     priority = 16
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns = ["*.dat"]  # Recognised filename patterns
+    patterns = ["*.dat", "*.txt"]  # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -50,8 +49,8 @@ class GenXFile(DataFile):
             self.get_filename("r")
         else:
             self.filename = filename
-        pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
-        pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
+        pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX3? on (.*)$')
+        pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX3?\'s\sReflectivity\splugin")
         i = 0
         ix = 0
         with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as datafile:
@@ -72,14 +71,14 @@ class GenXFile(DataFile):
                 raise StonerLoadError("Not a GenXFile")
             for ix, line in enumerate(datafile):
                 line = line.strip()
-                if line in ["# Headers:", "# Column labels:"]:
+                if line in ["# Headers:", "# Column lables:"]:
                     line = next(datafile)[1:].strip()
                     break
             else:
                 raise StonerLoadError("Cannot find headers")
-        skip = ix + i + 2
-        column_headers = [f.strip() for f in line.strip().split("\t")]
-        self.data = np.real(np.genfromtxt(self.filename, skip_header=skip, dtype=complex))
+            skip = ix + i + 2
+            column_headers = [f.strip() for f in re.split(r"[\s\t]+", line.strip())]
+            self.data = np.real(np.genfromtxt(datafile, dtype=complex))
         self["dataset"] = dataset
         if "sld" in dataset.lower():
             self["type"] = "SLD"
@@ -90,11 +89,11 @@ class GenXFile(DataFile):
         elif "uu" in dataset.lower():
             self["type"] = "Up"
         self.column_headers = column_headers
+        self.setas = "xyye"
         return self
 
 
 class OVFFile(DataFile):
-
     """A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.
 
     OVF 1 and OVF 2 files with text or binary data and only files with a meshtype rectangular are supported

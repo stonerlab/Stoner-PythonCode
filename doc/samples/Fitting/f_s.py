@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+
 # pylint: disable=invalid-name
 from numpy import logspace, ones_like, log10
 from numpy.random import normal
@@ -43,4 +44,3 @@ d.annotate_fit(
     prefix="FluchsSondheimer",
 )
 d.title = "Fluchs-Sondheimer Fit"
-d.tight_layout()

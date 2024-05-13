@@ -14,7 +14,6 @@ from .utils import decode_string
 
 
 class setas(MutableMapping):
-
     """A Class that provides a mechanism for managing the column assignments in a DataFile like object.
 
     Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).

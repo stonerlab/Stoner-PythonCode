@@ -4,7 +4,6 @@ __all__ = [
     "str2bytes",
     "bytes2str",
     "get_filedialog",
-    "getargspec",
     "string_types",
     "path_types",
     "int_types",
@@ -22,14 +21,15 @@ __all__ = [
     "_dummy",
 ]
 
-from sys import version_info as __vi__
+from sys import version_info as __vi__, modules
 from os import walk, makedirs
 from os.path import join, commonpath
 import fnmatch
-from inspect import signature, getfullargspec
 from shutil import which
 from pathlib import PurePath
 from packaging.version import parse as version_parse
+from inspect import signature
+import re
 
 import numpy as np
 import scipy as sp
@@ -39,6 +39,13 @@ _lmfit = True
 np_version = version_parse(np.__version__)
 sp_version = version_parse(sp.__version__)
 mpl_version = version_parse(matplotlib.__version__)
+
+try:  # This only works in PY 3.11 onwards
+    modules["sre_parse"] = re._parser
+    modules["sre_constants"] = re._constants
+    modules["sre_compile"] = re._compiler
+except AttributeError:
+    pass
 
 try:
     import hyperspy as hs  # Workaround an issue in hs 1.5.2 conda packages
@@ -66,11 +73,6 @@ if __vi__[1] < 7:
     from re import _pattern_type  # pylint: disable = E0611
 else:
     from re import Pattern as _pattern_type  # pylint: disable = E0611
-
-
-def getargspec(*args, **kargs):
-    """Wrap for getargspec for Python V3."""
-    return getfullargspec(*args, **kargs)[:4]
 
 
 def get_func_params(func):
@@ -149,7 +151,6 @@ def listdir_recursive(dirname, glob=None):
 
 
 class ClassPropertyDescriptor:
-
     """Supports adding class properties."""
 
     def __init__(self, fget, fset=None):
@@ -178,7 +179,6 @@ def _jit(func, *_, **__):
 
 
 class _dummy:
-
     """A class that does nothing so that float64 can be an instance of it safely."""
 
     def jit(self, func, *_, **__):  # pylint: disable=no-self-use

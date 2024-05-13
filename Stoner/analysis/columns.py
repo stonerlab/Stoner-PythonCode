@@ -11,7 +11,6 @@ from Stoner.compat import index_types
 
 
 class ColumnOpsMixin:
-
     """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods."""
 
     def _do_error_calc(self, col_a, col_b, error_type="relative"):

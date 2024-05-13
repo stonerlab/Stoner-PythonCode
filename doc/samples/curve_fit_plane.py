@@ -1,4 +1,5 @@
 """Use curve_fit to fit a plane to some data."""
+
 # pylint: disable=invalid-name
 from numpy.random import normal, seed
 from numpy import linspace, meshgrid, column_stack, array
@@ -26,13 +27,20 @@ d = Data(
 )
 
 d.column_headers = ["X", "Y", "Z"]
-d.figure(projection="3d")
-d.plot_xyz(plotter="scatter")
+d.plot_xyz(plotter="scatter", title=None, griddata=False, color="k")
 
 popt, pcov = d.curve_fit(plane, [0, 1], 2, result=True)
-d.setas = "xy.z"
+col = linspace(-10, 10, 128)
+X, Y = meshgrid(col, col)
+Z = plane(array([X, Y]).T, *popt)
+e = Data(
+    column_stack((X.ravel(), Y.ravel(), Z.ravel())),
+    filename="Fitting a Plane",
+    setas="xyz",
+)
+e.column_headers = d.column_headers
 
-d.plot_xyz(linewidth=0, cmap=cmap.jet)
+e.plot_xyz(linewidth=0, cmap=cmap.jet, alpha=0.5, figure=d.fig)
 
 txt = "$z=c-ax+by$\n"
 txt += "\n".join(
@@ -40,4 +48,4 @@ txt += "\n".join(
 )
 
 ax = d.axes[0]
-ax.text(15, 5, -50, txt)
+ax.text(-30, -10, 10, txt)

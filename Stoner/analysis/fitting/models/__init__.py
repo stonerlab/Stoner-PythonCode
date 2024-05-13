@@ -1,4 +1,5 @@
 """Sub package of various built-in models for the Stoner package."""
+
 __all__ = [
     "generic",
     "thermal",

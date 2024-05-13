@@ -25,7 +25,6 @@ def _load_ImageArray(f, **kargs):
 
 
 class ImageStackMixin:
-
     """Implement an interface for a baseFolder to store images in a 3D numpy array for faster access."""
 
     _defaults = {"type": ImageFile}
@@ -481,7 +480,6 @@ class ImageStackMixin:
 
 
 class StackAnalysisMixin:
-
     """Add some analysis capability to ImageStack.
 
     These functions may override :py:class:`Stoner,Image.ImageFile` functions but do them efficiently for a numpy
@@ -520,5 +518,4 @@ class StackAnalysisMixin:
 
 
 class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
-
     """An alternative implementation of an image stack based on baseFolder."""

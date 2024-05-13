@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+
 # pylint: disable=invalid-name
 from copy import copy
 
@@ -53,4 +54,3 @@ d.annotate_fit(
 d.title = "Kittel Fit"
 d.fig.gca().xaxis.set_major_formatter(TexEngFormatter())
 d.fig.gca().yaxis.set_major_formatter(TexEngFormatter())
-d.tight_layout()

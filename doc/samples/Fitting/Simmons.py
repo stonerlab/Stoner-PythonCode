@@ -1,4 +1,5 @@
 """Example of nDimArrhenius Fit."""
+
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like
 from numpy.random import normal
@@ -43,4 +44,3 @@ d.ylabel = "Current (A)"
 d.xlabel = "Bias (V)"
 d.title = "Simmons Model test"
 d.yscale("symlog", linthresh=1e-5)
-d.tight_layout()

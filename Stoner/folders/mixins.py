@@ -13,7 +13,7 @@ from importlib import import_module
 
 from numpy import mean, std, array, append, any as np_any, floor, sqrt, ceil
 from numpy.ma import masked_invalid
-from matplotlib.pyplot import figure, tight_layout, subplots
+from matplotlib.pyplot import figure, subplots
 
 from Stoner.tools import isiterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
@@ -57,7 +57,6 @@ def _loader(name, loader=None, typ=None, directory=None):
 
 
 class DiskBasedFolderMixin:
-
     """A Mixin class that implements reading metadataObjects from disc.
 
     Attributes:
@@ -469,7 +468,6 @@ class DiskBasedFolderMixin:
 
 
 class DataMethodsMixin:
-
     """Methods for working with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s."""
 
     def concatenate(self, sort=None, reverse=False):
@@ -639,7 +637,6 @@ class DataMethodsMixin:
 
 
 class PlotMethodsMixin:
-
     """A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files.
 
     Example:
@@ -683,8 +680,6 @@ class PlotMethodsMixin:
                 Passed to matplotlib figure call.
             plots_per_page(int):
                 maximum number of plots per figure.
-            tight_layout(dict or False):
-                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
@@ -705,7 +700,6 @@ class PlotMethodsMixin:
                 self[i] = make_Data(d)
 
         extra = kargs.pop("extra", lambda i, j, d: None)
-        tight = kargs.pop("tight_layout", {})
 
         fig_args = getattr(self, "_fig_args", [])
         fig_kargs = getattr(self, "_fig_kargs", {})
@@ -721,26 +715,22 @@ class PlotMethodsMixin:
         fignum = fig.number
         for i, d in enumerate(self):
             if i % plts == 0 and i != 0:
-                if isinstance(tight, dict):
-                    tight_layout(**tight)
                 fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
                 fignum = fig.number
                 j = 0
             else:
                 j += 1
             fig = figure(fignum)
-            kargs["fig"] = fig
+            kargs["figure"] = fig
             kargs["ax"] = axs.ravel()[j]
             ret.append(d.plot(*args, **kargs))
             extra(i, j, d)
         for n in range(j + 1, plt_x * plt_y):
             axs.ravel()[n].remove()
-        tight_layout()
         return ret
 
 
 class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
-
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
     By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder emplys a lazy
@@ -756,5 +746,4 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
 
 class PlotFolder(PlotMethodsMixin, DataFolder):
-
     """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""

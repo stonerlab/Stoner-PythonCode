@@ -5,7 +5,7 @@
     :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
 
 .. image:: https://app.codacy.com/project/badge/Grade/a9069a1567114a22b25d63fd4c50b228
-    :target: https://www.codacy.com/gh/stonerlab/Stoner-PythonCode/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=stonerlab/Stoner-PythonCode&amp;utm_campaign=Badge_Grade
+    :target: https://app.codacy.com/gh/stonerlab/Stoner-PythonCode/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
 
 .. image:: https://badge.fury.io/py/Stoner.svg
    :target: https://badge.fury.io/py/Stoner
@@ -63,13 +63,17 @@ After installing the current Anaconda version, open a terminal (Mac/Linux) or An
 
 .. code-block:: sh
 
-    conda install -c phygbu Stoner
+    conda install -c phygbu -c conda-forge Stoner
 
-If you are not using Anaconda python, then pip should also work:
+If (and only if) you are not using Anaconda python, then pip should also work:
 
 .. code-block:: sh
 
     pip install Stoner
+
+.. warning::
+    The conda packages are generally much better tested than the pip wheels, so we would recommend using
+    conda where possible.
 
 This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
@@ -78,11 +82,11 @@ and some sample data files can be obtained from the github repository: https://g
 Overview
 ========
 
-The main part of the **Stoner** package provides four basic top-level classes that describe:
-    - an individual file of experimental data (**Stoner.Data**),
+The main part of the **Stoner** package provides four top-level classes that describe:
+    - an individual file of experimental data (**Stoner.Data**) - somewhat similar to a DataFrame,
     - an individual experimental image (**Stoner.ImageFile**),
-    - a list (such as a directory tree on disc) of many experimental files (**Stoner.DataFolder**)
-    - a list (such as a directory tree on disc) of many image files (**Stoner.ImageFolder**).
+    - a nested list (such as a directory tree on disc) of many experimental files (**Stoner.DataFolder**)
+    - a nested list (such as a directory tree on disc) of many image files (**Stoner.ImageFolder**).
 
 For our research, a typical single experimental data file is essentially a single 2D table of floating point
 numbers with associated metadata, usually saved in some ASCII text format. This seems to cover most experiments
@@ -99,6 +103,15 @@ operations to be chained together in one line.
 This is a *data-centric* approach - we have some data and we do various operations on it to get to our result. In
 contrasr, traditional functional programming thinks in terms of various functions into which you pass data.
 
+.. note::
+    This is rather similar to pandas DataFrames and the package provides methods to easily convert to and from
+    DataFrames. Unlike a DataFrame, a **Stoner.Data** object maintains a dictionary of additional metadata
+    attached to the dataset (e.g. of instrument settings, experimental ort environmental; conditions 
+    when thedata was taken). To assist with exporting to pandas DataFrames, the package will add a custom
+    attrobute handler to pandas DataFrames **DataFrame.metadata** to hold this additional data.
+    
+    Unlike Pandas, the **Stoner** package's default is to operate in-place and also to return the object
+    from method calls to facilitate "chaining" of data methods into short single line pipelines. 
 
 Data and Friends
 ----------------
@@ -188,11 +201,11 @@ At the moment the development version is maily broen....
 Build Status
 ~~~~~~~~~~~~
 
-Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls.
+Version 0.7-0.9 were tested using the Travis-CI services with unit test coverage assessed by Coveralls.
 
-Version 0.9 is tested with Python 2.7, 3.5, 3.6 using the standard unittest module.
+Version 0.9 was tested with Python 2.7, 3.5, 3.6 using the standard unittest module.
 
-Version 0.10 is tested using **pytest** with Python 3.6-3.9 using a github action.
+Version 0.10 is tested using **pytest** with Python 3.7-3.11 using a github action.
 
 
 Citing the Stoner Package
@@ -207,6 +220,7 @@ Stable Versions
 
 New Features in 0.10 include:
 
+    *   Support for Python 3.10 and 3.11
     *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
     *   Start implementing PEP484 Type hinting
     *   Support pathlib for paths
@@ -252,12 +266,11 @@ The ancient stable version is 0.7.2. Features of 0.7.2 include
     *   DataFolder has an options to skip iterating over empty Data files
     *   Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
 
-No further relases will be made to 0.7.x.
+No further relases will be made to 0.7.x - 0.9.x
 
-0.6, 0.7 should work on Python 2.7 and 3.5
-0.8 is also tested on Python 3.6
+Versions 0.6.x and earlier are now pre-historic!
 
-.. _online documentation: http://stoner-pythoncode.readthedocs.io/en/latest/
+.. _online documentation: http://stoner-pythoncode.readthedocs.io/en/stable/
 .. _github repository: http://www.github.com/stonerlab/Stoner-PythonCode/
 .. _Dr Gavin Burnell: http://www.stoner.leeds.ac.uk/people/gb
 .. _User_Guide: http://stoner-pythoncode.readthedocs.io/en/latest/UserGuide/ugindex.html

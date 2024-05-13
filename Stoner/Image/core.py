@@ -151,7 +151,6 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
 @class_modifier([ndi], transpose=True)
 @class_modifier(imagefuncs, overload=True)
 class ImageArray(np.ma.MaskedArray, metadataObject):
-
     """A numpy array like class with a metadata parameter and pass through to skimage methods.
 
     ImageArray is for manipulating images stored as a 2d numpy array.
@@ -251,7 +250,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         We're using __new__ rather than __init__ to imitate a numpy array as
         close as possible.
         """
-
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
         array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.get("metadata", {})
@@ -671,6 +669,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         else:
             super().__delitem__(index)
 
+    def save(self, filename=None, **kargs):
+        """Stub method for a save function."""
+        raise NotImplementedError(f"Save is not implemented in {self.__class__}")
+
 
 @class_modifier(
     [
@@ -698,7 +700,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 @class_modifier(imagefuncs, overload=True, adaptor=image_file_adaptor)
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
 class ImageFile(metadataObject):
-
     """An Image file type that is analogous to :py:class:`Stoner.Data`.
 
     This contains metadata and an image attribute which

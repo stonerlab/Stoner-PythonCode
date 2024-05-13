@@ -1,4 +1,5 @@
 """Test langevin fitting."""
+
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like, where, nan, isnan
 from numpy.random import normal

@@ -1,4 +1,5 @@
 """Create a 2D vector field plot."""
+
 # pylint: disable=invalid-name
 from os import path
 
@@ -23,5 +24,3 @@ e.subplot(122)
 e.setas = "xy.uvw"
 e.plot()
 e.title = "3D Vector, 3D Field"
-
-e.tight_layout()

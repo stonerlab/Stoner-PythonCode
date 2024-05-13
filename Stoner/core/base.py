@@ -119,12 +119,10 @@ def string_to_type(value: String_Types) -> Any:
 
 
 class _evaluatable:
-
     """Placeholder to indicate that special action needed to convert a string representation to valid Python type."""
 
 
 class regexpDict(sorteddict):
-
     """An ordered dictionary that permits looks up by regular expression."""
 
     allowed_keys: Tuple = (object,)
@@ -260,7 +258,6 @@ class regexpDict(sorteddict):
 
 
 class typeHintedDict(regexpDict):
-
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
@@ -670,7 +667,6 @@ class typeHintedDict(regexpDict):
 
 
 class metadataObject(MutableMapping):
-
     """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
 
     Attributes:
@@ -779,11 +775,10 @@ class metadataObject(MutableMapping):
         raise NotImplementedError("Save is not implemented in the base class.")
 
 
-if pd is not None:
+if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata
 
     @pd.api.extensions.register_dataframe_accessor("metadata")
     class PandasMetadata(typeHintedDict):
-
         """Add a typehintedDict to PandasDataFrames."""
 
         def __init__(self, pandas_obj):

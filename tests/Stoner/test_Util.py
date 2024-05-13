@@ -12,7 +12,6 @@ pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
 sys.path.insert(0, pth)
 
-
 def is_2tuple(x):
     """Return tru if x is a length two tuple of floats."""
     return isinstance(x, tuple) and len(x) == 2 and isinstance(x[0], float) and isinstance(x[1], float)

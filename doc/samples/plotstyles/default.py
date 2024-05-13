@@ -1,4 +1,5 @@
 """Example plot using default style."""
+
 # pylint: disable=invalid-name
 import os.path as path
 

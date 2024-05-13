@@ -33,7 +33,6 @@ pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
 
 @class_modifier(kerrfuncs)
 class KerrArray(ImageArray):
-
     """A subclass for Kerr microscopy specific image functions."""
 
     # useful_keys are metadata keys that we'd usually like to keep from a
@@ -83,10 +82,13 @@ class KerrArray(ImageArray):
         """Do a test call to tesseract to see if it is there and cache the result."""
         return _tesseractable
 
+    def save(self, filename=None, **kargs):
+        """Stub method for a save function."""
+        raise NotImplementedError(f"Save is not implemented in {self.__class__}")
+
 
 @class_modifier(kerrfuncs, adaptor=image_file_adaptor)
 class KerrImageFile(ImageFile):
-
     """Subclass of ImageFile that keeps the data as a KerrArray so that extra functions are available."""
 
     priority = 16
@@ -99,7 +101,7 @@ class KerrImageFile(ImageFile):
         self._image = self.image.view(KerrArray)
 
     @ImageFile.image.getter
-    def image(self):
+    def image(self):  # pylint disable=invalid-overridden-method
         """Access the image data."""
         return self._image.view(KerrArray)
 
@@ -123,7 +125,6 @@ class KerrImageFile(ImageFile):
 
 
 class KerrStackMixin:
-
     """A mixin for :py:class:`ImageStack` that adds some functionality particular to Kerr images.
 
     Attributes:
@@ -327,7 +328,6 @@ class KerrStackMixin:
 
 
 class MaskStackMixin:
-
     """A Mixin for :py:class:`Stoner.Image.ImageStack` but made for stacks of boolean or binary images."""
 
     def __init__(self, *args, **kargs):
@@ -394,10 +394,8 @@ class MaskStackMixin:
 
 
 class KerrStack(KerrStackMixin, ImageStack):
-
     """Represent a stack of Kerr images."""
 
 
 class MaskStack(MaskStackMixin, KerrStackMixin, ImageStack):
-
     """Represent a set of masks for Kerr images."""

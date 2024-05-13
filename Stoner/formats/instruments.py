@@ -18,7 +18,6 @@ from ..tools.file import FileManager, SizedFileManager
 
 
 class LSTemperatureFile(Core.DataFile):
-
     """A class that reads and writes Lakeshore Temperature Calibration Curves.
 
     .. warning::
@@ -145,7 +144,6 @@ class LSTemperatureFile(Core.DataFile):
 
 
 class QDFile(Core.DataFile):
-
     """Extends Core.DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -239,7 +237,6 @@ class QDFile(Core.DataFile):
 
 
 class RigakuFile(Core.DataFile):
-
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -377,7 +374,6 @@ class RigakuFile(Core.DataFile):
 
 
 class SPCFile(Core.DataFile):
-
     """Extends Core.DataFile to load SPC files from Raman."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -650,7 +646,6 @@ class SPCFile(Core.DataFile):
 
 
 class VSMFile(Core.DataFile):
-
     """Extends Core.DataFile to open VSM Files."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -737,7 +732,6 @@ class VSMFile(Core.DataFile):
 
 
 class XRDFile(Core.DataFile):
-
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.

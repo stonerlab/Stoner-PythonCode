@@ -108,7 +108,6 @@ def _slice_keys(args, possible=None):
 
 
 class MetadataProxy(MutableMapping):
-
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
 
     def __init__(self, folder):

@@ -200,7 +200,6 @@ def sub_core(other: Union[Int_Types, slice, Callable], newdata: "DataFile") -> "
 
 
 class tab_delimited(csv.Dialect):
-
     """A customised csv dialect class for reading tab delimited text files."""
 
     delimiter = "\t"

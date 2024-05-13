@@ -19,6 +19,7 @@ from collections.abc import MutableMapping, Mapping
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter
 from matplotlib.ticker import AutoLocator
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from numpy.random import normal
 
@@ -82,7 +83,6 @@ class TexFormatter(Formatter):
 
 
 class TexEngFormatter(EngFormatter):
-
     """An axis tick label formatter that emits Tex formula mode code.
 
     Formatting is set so that large numbers are registered as with SI prefixes
@@ -145,7 +145,6 @@ class TexEngFormatter(EngFormatter):
 
 
 class DefaultPlotStyle(MutableMapping):
-
     """Produces a default plot style.
 
     To produce alternative plot styles, create subclasses of this plot. Either override or
@@ -418,14 +417,13 @@ class DefaultPlotStyle(MutableMapping):
                     params[attrname] = value
         projection = kargs.pop("projection", "rectilinear")
         self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)  # pylint: disable=W0201
-        if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as our figure
-            ax = kargs.get("ax")
-            plt.sca(ax)
-            figure = plt.gcf().number
+        if "ax" in kargs and isinstance(kargs["ax"], (Axes3D, plt.Axes)):
+            # Giving an axis instance in kargs means we can use that as our figure
+            figure = kargs["ax"].figure.number
         if isinstance(figure, bool) and not figure:
             return None, None
         elif figure is not None:
-            fig = plt.figure(figure, figsize=self.template_figure__figsize)
+            fig = plt.figure(figure, figsize=self.template_figure__figsize, layout="constrained")
             if len(fig.axes) == 0:
                 rect = [plt.rcParams[f"figure.subplot.{i}"] for i in ["left", "bottom", "right", "top"]]
                 rect[2] = rect[2] - rect[0]
@@ -446,7 +444,7 @@ class DefaultPlotStyle(MutableMapping):
                         ax = kargs.pop("ax")
                     else:
                         for ax in plt.gcf().axes:
-                            if "zaxis" in ax.properties():
+                            if isinstance(ax, Axes3D):
                                 break
                         else:
                             ax = plt.axes(projection="3d")
@@ -457,6 +455,7 @@ class DefaultPlotStyle(MutableMapping):
         else:
             no_axes = kargs.pop("no_axes", False)
             if projection == "3d":
+                kargs.setdefault("layout", "constrained")
                 ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
                 if not no_axes:
                     ax = ret.add_subplot(111, projection="3d")
@@ -466,6 +465,7 @@ class DefaultPlotStyle(MutableMapping):
                         ax.remove()
                     return ret, None
             else:
+                kargs.setdefault("layout", "constrained")
                 if not no_axes:
                     return plt.subplots(figsize=self.template_figure__figsize, **kargs)
                 else:
@@ -541,7 +541,7 @@ class DefaultPlotStyle(MutableMapping):
         if multiple in self.subplot_settings:
             if ix == 0:
                 i = 0
-            elif ix == len(plot.axes):
+            elif ix == len(plot.axes) - 1:
                 i = 2
             else:
                 i = 1
@@ -564,7 +564,6 @@ class DefaultPlotStyle(MutableMapping):
 
 
 class GBPlotStyle(DefaultPlotStyle):
-
     """Template developed for Gavin's plotting.
 
     This is largely an experimental class for trying things out rather than
@@ -593,7 +592,6 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
 class JTBPlotStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings.
 
     Example:
@@ -610,7 +608,6 @@ class JTBPlotStyle(DefaultPlotStyle):
 
 
 class JTBinsetStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -621,7 +618,6 @@ class JTBinsetStyle(DefaultPlotStyle):
 
 
 class ThesisPlotStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -629,7 +625,6 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 
 class PRBPlotStyle(DefaultPlotStyle):
-
     """A figure Style for making figures for Phys Rev * Jounrals.
 
     Example:
@@ -647,7 +642,6 @@ class PRBPlotStyle(DefaultPlotStyle):
 
 
 class SketchPlot(DefaultPlotStyle):
-
     """Turn on xkcd plot style.
 
     Implemented as a bit of a joke, but perhaps someone will use this in a real
@@ -690,7 +684,6 @@ class SketchPlot(DefaultPlotStyle):
 if SEABORN:  # extra classes if we have seaborn available
 
     class SeabornPlotStyle(DefaultPlotStyle):
-
         """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
 
         Attributes:

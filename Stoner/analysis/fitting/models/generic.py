@@ -112,7 +112,6 @@ def lorentzian_diff(x, A, sigma, mu):
 
 
 class Linear(_Linear):
-
     """Simple linear fit class."""
 
 

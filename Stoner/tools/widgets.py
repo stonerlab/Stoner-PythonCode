@@ -18,7 +18,6 @@ try:
 except ImportError:
 
     class App:
-
         """Mock App that raises an error when you try to call openDialog on it."""
 
         modes: Dict = dict()
@@ -36,7 +35,6 @@ except ImportError:
 else:
 
     class App(QApplication):
-
         """Placehold PyQT5 Application for producing filedialog boxes."""
 
         modes = {
@@ -141,7 +139,6 @@ else:
 
 
 class RangeSelect:
-
     """A simple class to allow a matplotlib graph to be used to select data."""
 
     def __init__(self):

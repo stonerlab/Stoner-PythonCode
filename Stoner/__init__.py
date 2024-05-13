@@ -3,6 +3,7 @@
 It has been developed by members of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the
 `University  of Leeds<http://www.leeds.ac.uk>`.
 """
+
 # pylint: disable=import-error
 __all__ = [
     "core",
@@ -35,7 +36,7 @@ from .tools import set_option, get_option, Options as _Options
 Options = _Options()
 
 
-__version_info__ = ("0", "10", "9")
+__version_info__ = ("0", "10", "10")
 __version__ = ".".join(__version_info__)
 
 __homepath__ = pathlib.Path(__file__).parent.resolve()

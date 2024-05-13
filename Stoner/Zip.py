@@ -54,7 +54,6 @@ def test_is_zip(filename, member=""):
 
 
 class ZippedFile(DataFile):
-
     """A sub class of DataFile that sores itself in a zip file.
 
     If the first non-keyword argument is not an :py:class:`zipfile:ZipFile` then
@@ -228,7 +227,6 @@ class ZippedFile(DataFile):
 
 
 class ZipFolderMixin:
-
     """Provides methods to load and save data from a single Zip file.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
@@ -511,7 +509,6 @@ class ZipFolderMixin:
 
 
 class ZipFolder(ZipFolderMixin, DiskBasedFolderMixin, baseFolder):
-
     """A sub class of DataFile that sores itself in a zip file.
 
     If the first non-keyword argument is not an :py:class:`zipfile:ZipFile` then

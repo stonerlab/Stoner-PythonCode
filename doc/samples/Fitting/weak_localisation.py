@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+
 # pylint: disable=invalid-name
 from copy import copy
 
@@ -39,4 +40,3 @@ d.annotate_fit(
     prefix="WLfit",
 )
 d.title = "Weak Localisation Fit"
-d.tight_layout()

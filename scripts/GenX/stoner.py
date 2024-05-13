@@ -3,6 +3,7 @@
 Hacked up version of the default data loader plugin that uses the Stoner package classes to
 read in data files. Supports loading from the Brucker D8
 """
+
 # pylint: disable=invalid-name
 import numpy as np
 import wx
@@ -16,7 +17,6 @@ from Stoner.compat import string_types
 
 
 class Plugin(Template):
-
     """Plugin class from GenX."""
 
     def __init__(self, parent):
@@ -94,7 +94,6 @@ class Plugin(Template):
 
 
 class SettingsDialog(wx.Dialog):
-
     """Plugin Settings dialog class."""
 
     def __init__(self, parent, col_values):
