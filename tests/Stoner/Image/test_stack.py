@@ -41,27 +41,15 @@ def test_ImageStack_align():
     assert data.shape == (16, 2), "Slice metadata went a bit funny"
 
     istack2 = selfistack2.clone
-    try:
+    with pytest.raises(ValueError):
         istack2.align(0, 10, 20, method="imreg_dft")
-    except ValueError:
-        pass
-    else:
-        assert False, "stack.align with more than one positional argument failed to raise ValueError"
-    try:
+    with pytest.raises(TypeError):
         istack2.align(np.zeros(5), method="imreg_dft")
-    except TypeError:
-        pass
-    else:
-        assert False, "stack.align with a 1D array failed to raise a TypeError"
-    try:
+    with pytest.raises(TypeError):
         istack2.align(object, method="imreg_dft")
-    except TypeError:
-        pass
-    else:
-        assert False, "stack.align with an object failed to raise a TypeError"
 
     istack2.align(method="imreg_dft")
-    assert (istack2[0]["tvec"] == (0.0, 0.0), "stack didn't align to first image")
+    assert istack2[0]["tvec"] == (0.0, 0.0), "stack didn't align to first image"
 
     istack2 = selfistack2.clone
 

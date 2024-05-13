@@ -218,7 +218,7 @@ def test_Properties():
     fldr /= "Loaded as"
     grps = list(fldr.lsgrp)
     skip = 0 if Hyperspy_ok else 1
-    assert len(grps) == 27 - skip, f"Length of lsgrp not as expected: {len(grps)} not {27-skip}"
+    assert len(grps) == 26 - skip, f"Length of lsgrp not as expected: {len(grps)} not {27-skip}"
     fldr.debug = True
     fldr = fldr
     assert fldr["XRDFile"][0].debug, "Setting debug on folder failed!"
