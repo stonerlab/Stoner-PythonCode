@@ -196,7 +196,6 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
 
 
 class FileManager:
-
     """Simple context manager that allows opening files or working with already open string buffers."""
 
     def __init__(self, filename, *args, **kargs):
@@ -265,7 +264,6 @@ class FileManager:
 
 
 class SizedFileManager(FileManager):
-
     """Context manager that figures out the size of the file as well as opening it."""
 
     def __enter__(self):

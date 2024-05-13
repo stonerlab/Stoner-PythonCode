@@ -1,4 +1,5 @@
 """Fit a sphere with curve_fit."""
+
 # pylint: disable=invalid-name, redefined-outer-name
 from numpy import (
     sin,

@@ -10,7 +10,6 @@ from ..tools import isiterable
 
 
 class DataFileInterfacesMixin:
-
     """Implement the required methods for a sequence and mapping type object."""
 
     def __contains__(self, item):

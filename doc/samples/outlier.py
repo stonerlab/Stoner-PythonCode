@@ -1,4 +1,5 @@
 """Detect outlying points from a lione."""
+
 # pylint: disable=invalid-name
 import numpy as np
 

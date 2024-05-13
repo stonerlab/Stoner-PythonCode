@@ -45,7 +45,6 @@ def _rotated_ellipse(p, data):
 
 
 class LineSelect:
-
     """Show an Image and slow the user to draw a line on it using cursors."""
 
     def __init__(self):
@@ -171,7 +170,6 @@ class LineSelect:
 
 
 class RegionSelect:
-
     """Show an Image and slow the user to select a rectangular section."""
 
     def __init__(self):
@@ -257,7 +255,6 @@ class RegionSelect:
 
 
 class ShapeSelect:
-
     """Show an Image and slow the user to draw a line on it using cursors."""
 
     def __init__(self):

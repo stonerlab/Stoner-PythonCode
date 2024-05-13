@@ -9,6 +9,7 @@ It is only necessary to import this module for the subclasses of :py:class:`Ston
 to :py:class:`Stoner.Core.Data`.
 
 """
+
 __all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage", "HDFFileManager"]
 import importlib
 import os.path as path
@@ -52,7 +53,6 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
 
 
 class HDFFileManager:
-
     """Context manager for HDF5 files."""
 
     def __init__(self, filename, mode="r"):
@@ -115,7 +115,6 @@ class HDFFileManager:
 
 
 class HDF5File(DataFile):
-
     """A sub class of DataFile that sores itself in a HDF5File or group.
 
     Args:
@@ -287,7 +286,6 @@ class HDF5File(DataFile):
 
 
 class HGXFile(DataFile):
-
     """A subclass of DataFile for reading GenX HDF Files.
 
     These files typically have an extension .hgx. This class has been based on a limited sample
@@ -372,7 +370,6 @@ class HGXFile(DataFile):
 
 
 class HDF5FolderMixin:
-
     """Provides a method to load and save data from a single HDF5 file with groups.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
@@ -568,7 +565,6 @@ class HDF5FolderMixin:
 
 
 class HDF5Folder(HDF5FolderMixin, DataFolder):
-
     """Just enforces the loader attriobute to be an HDF5File."""
 
     def __init__(self, *args, **kargs):
@@ -578,7 +574,6 @@ class HDF5Folder(HDF5FolderMixin, DataFolder):
 
 
 class SLS_STXMFile(DataFile):
-
     """Load images from the Swiss Light Source Pollux beamline."""
 
     priority = 16
@@ -671,7 +666,6 @@ class SLS_STXMFile(DataFile):
 
 
 class STXMImage(ImageFile):
-
     """An instance of KerrArray that will load itself from a Swiss Light Source STXM image."""
 
     # pylint: disable=no-member

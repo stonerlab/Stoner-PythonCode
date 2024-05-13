@@ -37,7 +37,6 @@ def _raise_error(openfile, message=""):
 
 
 class MaximusSpectra(DataFile):
-
     """Provides a :py:class:`Stoner.DataFile` subclass for loading Point spectra from Maximus."""
 
     # We treat the hdr file as the key file type
@@ -90,7 +89,6 @@ class MaximusSpectra(DataFile):
 
 
 class MaximusImage(ImageFile):
-
     """Provide a STXMImage like class for the Maximus Beamline."""
 
     _patterns = ["*.hdr", "*.xim"]
@@ -121,7 +119,6 @@ class MaximusImage(ImageFile):
 
 
 class MaximusStackMixin:
-
     """Handle a stack of Maximus Images."""
 
     _defaults = {"type": MaximusImage, "pattern": "*.hdr"}
@@ -355,7 +352,6 @@ class MaximusStackMixin:
 
 
 class MaximusStack(MaximusStackMixin, ImageStack):
-
     """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
 
@@ -374,7 +370,7 @@ def hdr_to_dict(filename, to_python=True):
         (dict or str):
             Either the header file as a python dictionary, or a json string.
     """
-    bare = re.compile("([\s\{])([A-Za-z][A-Za-z0-9_]*)\s\:")  # Match for keys
+    bare = re.compile(r"([\s\{])([A-Za-z][A-Za-z0-9_]*)\s\:")  # Match for keys
     term = re.compile(r",\s*([\]\}])")  # match for extra , at the end of a dict or list
     nan = re.compile(r"([\-0-9\.]+\#QNAN)")  # Handle NaN values
 

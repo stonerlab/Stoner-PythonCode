@@ -1,4 +1,5 @@
 """3D surface plot example."""
+
 # pylint: disable=invalid-name
 import numpy as np
 import matplotlib.cm

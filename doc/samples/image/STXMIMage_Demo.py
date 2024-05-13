@@ -1,4 +1,5 @@
 """Demonstrate STXM Image Processing - G.Burnell Nov. 2017"""
+
 # pylint: disable=invalid-name,no-member
 from os.path import join, dirname
 from types import MethodType

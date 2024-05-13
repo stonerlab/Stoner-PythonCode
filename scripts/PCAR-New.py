@@ -2,6 +2,7 @@
 
 Gavin Burnell g.burnell@leeds.ac.uk
 """
+
 # pylint: disable=invalid-name
 import configparser as ConfigParser
 import pathlib
@@ -13,7 +14,6 @@ from Stoner.analysis.fitting.models.generic import quadratic
 
 
 class working(Data):
-
     """Utility class to manipulate data and plot it."""
 
     def __init__(self, *args, **kargs):

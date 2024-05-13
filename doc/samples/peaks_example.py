@@ -1,4 +1,5 @@
 """Detect peaks in a dataset."""
+
 # pylint: disable=invalid-name,unsubscriptable-object
 from matplotlib.cm import jet
 from numpy import linspace

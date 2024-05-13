@@ -1,4 +1,5 @@
 """Simple plot in 2 lines."""
+
 # pylint: disable=invalid-name
 from Stoner import Data
 

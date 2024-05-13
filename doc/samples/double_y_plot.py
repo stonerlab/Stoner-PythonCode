@@ -1,4 +1,5 @@
 """Plot data using two y-axes."""
+
 # pylint: disable=invalid-name
 from Stoner import Data
 

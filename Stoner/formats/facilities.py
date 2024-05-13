@@ -22,7 +22,6 @@ except ImportError:
 
 
 class BNLFile(Core.DataFile):
-
     """Reader of files in the SPEC format given by BNL (specifically u4b beamline but hopefully generalisable).
 
     Author RCT 12/2011
@@ -137,7 +136,6 @@ class BNLFile(Core.DataFile):
 
 
 class MDAASCIIFile(Core.DataFile):
-
     """Reads files generated from the APS."""
 
     priority = 16
@@ -223,7 +221,6 @@ class MDAASCIIFile(Core.DataFile):
 
 
 class OpenGDAFile(Core.DataFile):
-
     """Extends Core.DataFile to load files from RASOR."""
 
     priority = 16  # Makes a positive ID of it's file type so give priority
@@ -264,12 +261,10 @@ class OpenGDAFile(Core.DataFile):
 
 
 class RasorFile(OpenGDAFile):
-
     """Just an alias for OpenGDAFile."""
 
 
 class SNSFile(Core.DataFile):
-
     """Reads the ASCII exported PNR reduced files from BL-4A line at the SSNS at Oak Ridge National Lab.
 
     File has a large header marked up with # prefixes which include several section is []
@@ -343,7 +338,6 @@ class SNSFile(Core.DataFile):
 if fabio:
 
     class ESRF_DataFile(Core.DataFile):
-
         """Utilise the fabIO library to read an edf file has a DataFile."""
 
         priority = 16
@@ -365,7 +359,6 @@ if fabio:
                 raise StonerLoadError("Not an ESRF data file !") from err
 
     class FabioImageFile(Image.ImageFile):
-
         """Utilise the fabIO library to read an edf file has a DataFile."""
 
         priority = 32

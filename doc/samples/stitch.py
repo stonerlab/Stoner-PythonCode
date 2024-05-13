@@ -1,4 +1,5 @@
 """Scale data to stitch it together."""
+
 # pylint: disable=invalid-name
 import matplotlib.pyplot as plt
 

@@ -11,7 +11,6 @@ from Stoner.core.base import regexpDict
 
 
 class GroupsDict(regexpDict):
-
     """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.baseFolder` objects."""
 
     def __init__(self, *args, **kargs):

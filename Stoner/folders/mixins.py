@@ -57,7 +57,6 @@ def _loader(name, loader=None, typ=None, directory=None):
 
 
 class DiskBasedFolderMixin:
-
     """A Mixin class that implements reading metadataObjects from disc.
 
     Attributes:
@@ -469,7 +468,6 @@ class DiskBasedFolderMixin:
 
 
 class DataMethodsMixin:
-
     """Methods for working with :py:class:`Stner.Data` in py:class:`Stoner.DataFolder`s."""
 
     def concatenate(self, sort=None, reverse=False):
@@ -639,7 +637,6 @@ class DataMethodsMixin:
 
 
 class PlotMethodsMixin:
-
     """A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files.
 
     Example:
@@ -734,7 +731,6 @@ class PlotMethodsMixin:
 
 
 class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
-
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
     By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder emplys a lazy
@@ -750,5 +746,4 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
 
 class PlotFolder(PlotMethodsMixin, DataFolder):
-
     """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""

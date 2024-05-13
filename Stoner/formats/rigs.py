@@ -16,7 +16,6 @@ from ..tools.file import FileManager
 
 
 class BigBlueFile(CSVFile):
-
     """Extends CSVFile to load files from Nick Porter's old BigBlue code."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -50,7 +49,6 @@ class BigBlueFile(CSVFile):
 
 
 class BirgeIVFile(Core.DataFile):
-
     """Implements the IV File format used by the Birge Group in Michigan State University Condesned Matter Physiscs."""
 
     patterns = ["*.dat"]
@@ -110,7 +108,6 @@ class BirgeIVFile(Core.DataFile):
 
 
 class MokeFile(Core.DataFile):
-
     """Class that extgends Core.DataFile to load files from the Leeds MOKE system."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -155,7 +152,6 @@ class MokeFile(Core.DataFile):
 
 
 class FmokeFile(Core.DataFile):
-
     """Extends Core.DataFile to open Fmoke Files."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -201,7 +197,6 @@ class FmokeFile(Core.DataFile):
 
 
 class EasyPlotFile(Core.DataFile):
-
     """A class that will extract as much as it can from an EasyPlot save File."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -296,7 +291,6 @@ class EasyPlotFile(Core.DataFile):
 
 
 class PinkLibFile(Core.DataFile):
-
     """Extends Core.DataFile to load files from MdV's PINK library - as used by the GMR anneal rig."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.

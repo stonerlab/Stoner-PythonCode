@@ -1,4 +1,5 @@
 """Test langevin fitting."""
+
 # pylint: disable=invalid-name
 from copy import copy
 

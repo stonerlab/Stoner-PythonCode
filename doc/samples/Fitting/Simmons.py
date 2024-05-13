@@ -1,4 +1,5 @@
 """Example of nDimArrhenius Fit."""
+
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like
 from numpy.random import normal

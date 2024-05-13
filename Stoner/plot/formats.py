@@ -83,7 +83,6 @@ class TexFormatter(Formatter):
 
 
 class TexEngFormatter(EngFormatter):
-
     """An axis tick label formatter that emits Tex formula mode code.
 
     Formatting is set so that large numbers are registered as with SI prefixes
@@ -146,7 +145,6 @@ class TexEngFormatter(EngFormatter):
 
 
 class DefaultPlotStyle(MutableMapping):
-
     """Produces a default plot style.
 
     To produce alternative plot styles, create subclasses of this plot. Either override or
@@ -566,7 +564,6 @@ class DefaultPlotStyle(MutableMapping):
 
 
 class GBPlotStyle(DefaultPlotStyle):
-
     """Template developed for Gavin's plotting.
 
     This is largely an experimental class for trying things out rather than
@@ -595,7 +592,6 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
 class JTBPlotStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings.
 
     Example:
@@ -612,7 +608,6 @@ class JTBPlotStyle(DefaultPlotStyle):
 
 
 class JTBinsetStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -623,7 +618,6 @@ class JTBinsetStyle(DefaultPlotStyle):
 
 
 class ThesisPlotStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -631,7 +625,6 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 
 class PRBPlotStyle(DefaultPlotStyle):
-
     """A figure Style for making figures for Phys Rev * Jounrals.
 
     Example:
@@ -649,7 +642,6 @@ class PRBPlotStyle(DefaultPlotStyle):
 
 
 class SketchPlot(DefaultPlotStyle):
-
     """Turn on xkcd plot style.
 
     Implemented as a bit of a joke, but perhaps someone will use this in a real
@@ -692,7 +684,6 @@ class SketchPlot(DefaultPlotStyle):
 if SEABORN:  # extra classes if we have seaborn available
 
     class SeabornPlotStyle(DefaultPlotStyle):
-
         """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
 
         Attributes:

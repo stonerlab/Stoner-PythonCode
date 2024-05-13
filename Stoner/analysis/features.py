@@ -14,7 +14,6 @@ from .utils import threshold
 
 
 class FeatureOpsMixin:
-
     """Mixin to provide additional functions to support finding features in a dataset."""
 
     def peaks(self, **kargs):

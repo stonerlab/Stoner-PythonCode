@@ -1,4 +1,5 @@
 """Create a 2D vector field plot."""
+
 # pylint: disable=invalid-name
 from os import path
 

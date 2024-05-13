@@ -1,4 +1,5 @@
 """Example of Quadratic Fit."""
+
 # pylint: disable=invalid-name
 from numpy import linspace
 from numpy.random import normal

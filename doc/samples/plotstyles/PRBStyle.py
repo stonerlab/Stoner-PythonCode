@@ -1,4 +1,5 @@
 """Example plot using a style similar to Physical Review B."""
+
 # pylint: disable=invalid-name
 import os.path as path
 
