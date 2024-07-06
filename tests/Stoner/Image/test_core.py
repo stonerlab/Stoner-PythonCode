@@ -107,12 +107,12 @@ def test_load_save_all():
         iml = ImageFile(path.join(tmpdir, "kermit-{}.tiff".format(fmt)))
         del iml["Loaded from"]
         assert ims[fmt] == iml, f"{ims[fmt].metadata} {iml.metadata}"
-        iml = ImageFile(path.join(tmpdir, "kermit-{}.npy".format(fmt)))
+        iml = ImageFile(path.join(tmpdir, f"kermit-{fmt}.npy"))
         del iml["Loaded from"]
-        assert np.all(ims[fmt].data == iml.data), "Round tripping npy with format {} failed".format(fmt)
+        assert np.all(ims[fmt].data == iml.data), f"Round tripping npy with format {fmt} failed"
         if fmt != "uint16":
-            im = ImageFile(path.join(tmpdir, "kermit-nometadata-{}.tiff".format(fmt)))
-            assert np.all(im.data == ims[fmt].data), "Loading from tif without metadata failed for {}".format(fmt)
+            im = ImageFile(path.join(tmpdir, f"kermit-nometadata-{fmt}.tiff"))
+            assert np.all(im.data == ims[fmt].data), f"Loading from tif without metadata failed for {fmt}"
     shutil.rmtree(tmpdir)
     _ = image.convert("uint8")
 

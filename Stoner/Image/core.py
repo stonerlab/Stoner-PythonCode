@@ -409,9 +409,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         with Image.open(filename, "r") as img:
             image = np.asarray(img)
             if image.ndim == 3:
-                if image.shape[2] < 4:  # Need to add a dummy alpha channel
-                    image = np.append(np.zeros_like(image[:, :, 0]), axis=2)
-                image = image.view(dtype=np.uint32).reshape(image.shape[:-1])
+                image = io.imread(filename).view(np.uint32)[:, :, 0]  # Workaround for issues with more recent pillow
             tags = img.tag_v2
             if 270 in tags:
                 from json import loads

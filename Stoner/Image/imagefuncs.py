@@ -348,47 +348,44 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
     if not (dtype_in in _supported_types and dtype in _supported_types):
         raise ValueError(f"can not convert {dtype_in} to {dtype}.")
 
-    kind = dtypeobj.kind
-    kind_in = dtypeobj_in.kind
-    itemsize = dtypeobj.itemsize
-    itemsize_in = dtypeobj_in.itemsize
-
-    if kind == "b":
+    if dtypeobj.kind == "b":
         # to binary image
-        if kind_in in "fi":
+        if dtypeobj_in.kind in "fi":
             sign_loss(dtype_in, dtypeobj)
         prec_loss(dtypeobj_in, dtypeobj)
         return image > dtype_in(dtype_range[dtype_in][1] / 2)
 
-    if kind_in == "b":
+    if dtypeobj_in.kind == "b":
         # from binary image, to float and to integer
         result = np.where(~image, *dtype_range[dtype])
         return result
 
-    if kind in "ui":
+    if dtypeobj.kind in "ui":
         imin = np.iinfo(dtype).min
         imax = np.iinfo(dtype).max
-    if kind_in in "ui":
+    if dtypeobj_in.kind in "ui":
         imin_in = np.iinfo(dtype_in).min
         imax_in = np.iinfo(dtype_in).max
 
-    if kind_in == "f":
+    if dtypeobj_in.kind == "f":
         if np.min(image) < -1.0 or np.max(image) > 1.0:
             raise ValueError("Images of type float must be between -1 and 1.")
-        if kind == "f":
+        if dtypeobj.kind == "f":
             # floating point -> floating point
-            if itemsize_in > itemsize:
+            if dtypeobj_in.itemsize > dtypeobj.itemsize:
                 prec_loss(dtypeobj_in, dtypeobj)
             return image.astype(dtype)
 
         # floating point -> integer
         prec_loss(dtypeobj_in, dtypeobj)
         # use float type that can represent output integer type
-        image = np.array(image, _dtype(itemsize, dtype_in, np.float32, np.float64))
+        image = np.array(image, _dtype(dtypeobj.itemsize, dtype_in, np.float32, np.float64))
         if not uniform:
-            if kind == "u":
+            if dtypeobj.kind == "u":
                 image *= imax
-            elif itemsize_in <= itemsize and itemsize == 8:  # f64->int64 needs care to avoid overruns!
+            elif (
+                dtypeobj_in.itemsize <= dtypeobj.itemsize and dtypeobj.itemsize == 8
+            ):  # f64->int64 needs care to avoid overruns!
                 image *= 2**54  # float64 has 52bits of mantissa, so this will avoid precission loss for a +/-1 range
                 np.rint(image, out=image)
                 image = image.astype(dtype)
@@ -400,7 +397,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
                 image /= 2.0
                 np.rint(image, out=image)
                 np.clip(image, imin, imax, out=image)
-        elif kind == "u":
+        elif dtypeobj.kind == "u":
             image *= imax + 1
             np.clip(image, 0, imax, out=image)
         else:
@@ -409,14 +406,14 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
             np.clip(image, imin, imax, out=image)
         return image.astype(dtype)
 
-    if kind == "f":
+    if dtypeobj.kind == "f":
         # integer -> floating point
-        if itemsize_in >= itemsize:
+        if dtypeobj_in.itemsize >= dtypeobj.itemsize:
             prec_loss(dtypeobj_in, dtypeobj)
         # use float type that can exactly represent input integers
-        image = np.array(image, _dtype(itemsize_in, dtype, np.float32, np.float64))
+        image = np.array(image, _dtype(dtypeobj_in.itemsize, dtype, np.float32, np.float64))
         if normalise:  # normalise floats by maximum value of int type
-            if kind_in == "u":
+            if dtypeobj_in.kind == "u":
                 image /= imax_in
                 # DirectX uses this conversion also for signed ints
                 # if imin_in:
@@ -427,28 +424,28 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
                 image /= imax_in - imin_in
         return image.astype(dtype)
 
-    if kind_in == "u":
-        if kind == "i":
+    if dtypeobj_in.kind == "u":
+        if dtypeobj.kind == "i":
             # unsigned integer -> signed integer
-            image = im_scale(image, 8 * itemsize_in, 8 * itemsize - 1, dtypeobj_in, dtypeobj)
+            image = im_scale(image, 8 * dtypeobj_in.itemsize, 8 * dtypeobj.itemsize - 1, dtypeobj_in, dtypeobj)
             return image.view(dtype)
         # unsigned integer -> unsigned integer
-        return im_scale(image, 8 * itemsize_in, 8 * itemsize, dtypeobj_in, dtypeobj)
+        return im_scale(image, 8 * dtypeobj_in.itemsize, 8 * dtypeobj.itemsize, dtypeobj_in, dtypeobj)
 
-    if kind == "u":
+    if dtypeobj.kind == "u":
         # signed integer -> unsigned integer
         sign_loss(dtype_in, dtypeobj)
-        image = im_scale(image, 8 * itemsize_in - 1, 8 * itemsize, dtypeobj_in, dtypeobj)
+        image = im_scale(image, 8 * dtypeobj_in.itemsize - 1, 8 * dtypeobj.itemsize, dtypeobj_in, dtypeobj)
         result = np.empty(image.shape, dtype)
         np.maximum(image, 0, out=result, dtype=image.dtype, casting="unsafe")
         return result
 
     # signed integer -> signed integer
-    if itemsize_in > itemsize:
-        return im_scale(image, 8 * itemsize_in - 1, 8 * itemsize - 1, dtypeobj_in, dtypeobj)
-    image = image.astype(_dtype2("i", itemsize * 8))
+    if dtypeobj_in.itemsize > dtypeobj.itemsize:
+        return im_scale(image, 8 * dtypeobj_in.itemsize - 1, 8 * dtypeobj.itemsize - 1, dtypeobj_in, dtypeobj)
+    image = image.astype(_dtype2("i", dtypeobj.itemsize * 8))
     image -= imin_in
-    image = im_scale(image, 8 * itemsize_in, 8 * itemsize, dtypeobj_in, dtypeobj, copy=False)
+    image = im_scale(image, 8 * dtypeobj_in.itemsize, 8 * dtypeobj.itemsize, dtypeobj_in, dtypeobj, copy=False)
     image += imin
     return image.astype(dtype)
 

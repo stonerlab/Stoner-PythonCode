@@ -78,58 +78,63 @@ def _dtype2(kind, bits, itemsize=1):
     return np.dtype(kind + str(s))
 
 
-def _scale(a, n, m, dtypeobj_in, dtypeobj, copy=True):
-    """Scaleunsigned/positive integers from n to m bits.
+def _scale(image, src_bits, dest_bits, dtypeobj_in, dtypeobj, copy=True):
+    """Scale unsigned/positive integers from src_bitsto dest_bits_bits.
 
-    Numbers can be represented exactly only if m is a multiple of n
-    Output array is of same kind as input."""
-    kind = a.dtype.kind
-    if n > m and a.max() <= 2**m:
-        mnew = int(np.ceil(m / 2) * 2)
-        if mnew > m:
-            dtype = "int%s" % mnew
-        else:
-            dtype = "uint%s" % mnew
-        n = int(np.ceil(n / 2) * 2)
-        msg = "Downcasting %s to %s without scaling because max " "value %s fits in %s" % (
-            a.dtype,
-            dtype,
-            a.max(),
-            dtype,
-        )
+    Numbers can be represented exactly only if dest_bits_is a multiple of n
+    Output array is of same kind as input.
+    """
+    if src_bits == dest_bits:  # Trivial case no scale necessary
+        return image.copy() if copy else image
+
+    if src_bits > dest_bits:
+        return _down_scale(image, src_bits, dest_bits, dtypeobj_in, dtypeobj)
+
+    return _up_scale(image, src_bits, dest_bits, dtypeobj_in, dtypeobj)
+
+
+def _down_scale(image, src_bits, dest_bits, dtypeobj_in, dtypeobj, copy=True):
+    """Downscale and image from src_bits to dest_bits."""
+    kind = image.dtype.kind
+    if image.max() <= 2**dest_bits:
+        prefix = ["uint", "int"][dest_bits % 2]
+        dest_bits += dest_bits % 2
+        dtype = f"{prefix}{dest_bits}"
+        src_bits += src_bits % 2
         if Options().warnings:
-            warn(msg)
-        return a.astype(_dtype2(kind, m))
-    if n == m:
-        return a.copy() if copy else a
-    if n > m:
-        # downscale with precision loss
-        prec_loss(dtypeobj_in, dtypeobj)
+            warn(
+                f"Downcasting {image.dtype} to {dtype} without scaling"
+                + f"because max value {image.max()} fits in {dtype}."
+            )
+        return image.astype(_dtype2(kind, dest_bits))
+    prec_loss(dtypeobj_in, dtypeobj)
+    if copy:
+        image2 = np.empty(image.shape, _dtype2(kind, dest_bits))
+    else:
+        image2 = image
+    np.floor_divide(image, 2 ** (src_bits - dest_bits), out=image2, dtype=image.dtype, casting="unsafe")
+    return image2
+
+
+def _up_scale(image, src_bits, dest_bits, dtypeobj_in, dtypeobj, copy=True):
+    """Upscale an image from src_bits to dest_bits."""
+    kind = image.dtype.kind
+    if dest_bits % src_bits == 0:
+        # exact upscale to a multiple of src_bitsbits
         if copy:
-            b = np.empty(a.shape, _dtype2(kind, m))
-            np.floor_divide(a, 2 ** (n - m), out=b, dtype=a.dtype, casting="unsafe")
-            return b
-        a //= 2 ** (n - m)
-        return a
-    if m % n == 0:
-        # exact upscale to a multiple of n bits
-        if copy:
-            b = np.empty(a.shape, _dtype2(kind, m))
-            np.multiply(a, (2**m - 1) // (2**n - 1), out=b, dtype=b.dtype)
-            return b
-        a = np.array(a, _dtype2(kind, m, a.dtype.itemsize), copy=False)
-        a *= (2**m - 1) // (2**n - 1)
-        return a
-    # upscale to a multiple of n bits,
+            image2 = np.empty(image.shape, _dtype2(kind, dest_bits))
+        else:
+            image2 = np.array(image, _dtype2(kind, dest_bits, image.dtype.itemsize), copy=False)
+        np.multiply(image, (2**dest_bits - 1) // (2**src_bits - 1), out=image2, dtype=image2.dtype)
+        return image2
+    # upscale to a multiple of src_bitsbits,
     # then downscale with precision loss
     prec_loss(dtypeobj_in, dtypeobj)
-    o = (m // n + 1) * n
+    upscale_factor = (dest_bits // src_bits + 1) * src_bits
     if copy:
-        b = np.empty(a.shape, _dtype2(kind, o))
-        np.multiply(a, (2**o - 1) // (2**n - 1), out=b, dtype=b.dtype)
-        b //= 2 ** (o - m)
-        return b
-    a = np.array(a, _dtype2(kind, o, a.dtype.itemsize), copy=False)
-    a *= (2**o - 1) // (2**n - 1)
-    a //= 2 ** (o - m)
-    return a
+        image2 = np.empty(image.shape, _dtype2(kind, upscale_factor))
+    else:
+        image2 = image
+    np.multiply(image, (2**upscale_factor - 1) // (2**src_bits - 1), out=image2, dtype=image2.dtype)
+    image2 //= 2 ** (upscale_factor - dest_bits)
+    return image2
