@@ -130,8 +130,9 @@ def get_filedialog(what="file", **opts):
         raise RuntimeError(f"Unable to recognise required file dialog type:{what}")
     return fileDialog.openDialog(mode=funcs[what], **opts)
 
-
-if np_version.minor >= 20:
+if np_version.major >= 2:
+    int_types += (int, np.int8, np.int16, np.int32, np.int64)
+elif np_version.minor >= 20:
     int_types += (int, np.int0, np.int8, np.int16, np.int32, np.int64)
 else:
     int_types += (np.int, np.int0, np.int8, np.int16, np.int32, np.int64)

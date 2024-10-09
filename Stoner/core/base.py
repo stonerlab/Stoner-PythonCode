@@ -24,7 +24,7 @@ from typing import (
 
 from dateutil import parser
 import numpy as np
-from numpy import NaN
+from numpy import nan
 import asteval
 
 try:
@@ -70,7 +70,7 @@ def literal_eval(string: str) -> Any:
     global _asteval_interp  # pylint: disable=W0603
     if _asteval_interp is None:
         _asteval_interp = asteval.Interpreter(
-            usersyms={"np": np, "re": re, "NaN": NaN, "nan": NaN, "None": None, "datetime": datetime}
+            usersyms={"np": np, "re": re, "NaN": nan, "nan": nan, "None": None, "datetime": datetime}
         )
     try:
         return _asteval_interp(string, show_errors=False)

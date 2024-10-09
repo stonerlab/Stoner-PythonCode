@@ -223,7 +223,7 @@ class QDFile(Core.DataFile):
             if data.shape[0] == 0:
                 raise Core.StonerLoadError("No data in file!")
             if data.shape[1] < len(column_headers):  # Trap for buggy QD software not giving ewnough columns of data
-                data = np.append(data, np.ones((data.shape[0], len(column_headers) - data.shape[1])) * np.NaN, axis=1)
+                data = np.append(data, np.ones((data.shape[0], len(column_headers) - data.shape[1])) * np.nan, axis=1)
             elif data.shape[1] > len(column_headers):  # too much data
                 data = data[:, : len(column_headers) - data.shape[1]]
             self.data = data

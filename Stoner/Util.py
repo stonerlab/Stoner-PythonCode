@@ -79,7 +79,7 @@ def _h_sat_susceptibility(d, i, Ms_vals, Hsat_vals, h_sat_fraction):  # pylint: 
     if hs.size > 1:
         Hsat_err[1 - i] = sem(hs)
     else:
-        Hsat_err[1 - i] = np.NaN
+        Hsat_err[1 - i] = np.nan
     return (Hsat, Hsat_err)
 
 
@@ -95,7 +95,7 @@ def _h_sat_delta_M(d, i, Ms_vals, Hsat_vals, h_sat_fraction):  # pylint: disable
     if hs.size > 1:
         hs = hs[np.argmin(np.abs(hs))]
     Hsat[1 - i] = hs  # Get the H_sat value
-    Hsat_err[1 - i] = np.NaN
+    Hsat_err[1 - i] = np.nan
     return (Hsat, Hsat_err)
 
 

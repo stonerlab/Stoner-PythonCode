@@ -9,6 +9,7 @@ from warnings import warn
 import numpy as np
 
 from ..tools.classes import Options
+from ..compat import np_version
 
 dtype_range = {
     np.bool_: (False, True),
@@ -24,7 +25,7 @@ dtype_range = {
     np.float64: (-1.0, 1.0),
 }
 
-if float(np.version.version.split(".")[1]) < 1.24:
+if np_version.major==1 and np_version.minon<24:
     dtype_range[np.bool8] = (False, True)
 
 integer_types = (np.uint8, np.uint16, np.int8, np.int16)

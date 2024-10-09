@@ -80,11 +80,11 @@ def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], n
                     order[k] = newdata.find_col(k)
                 except (KeyError, re.error):
                     mask = newdata.mask
-                    newdata.add_column(np.ones(len(newdata)) * np.NaN, header=k)
+                    newdata.add_column(np.ones(len(newdata)) * np.nan, header=k)
                     newdata.mask[:, :-1] = mask
                     newdata.mask[:, -1] = np.ones(len(newdata), dtype=bool)
                     order[k] = newdata.shape[1] - 1
-            row = np.ones(newdata.shape[1]) * np.NaN
+            row = np.ones(newdata.shape[1]) * np.nan
             mask = np.ones_like(row, dtype=bool)
             for k in order:
                 row[order[k]] = other[k]
