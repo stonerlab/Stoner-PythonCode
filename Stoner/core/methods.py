@@ -18,7 +18,7 @@ class DataFileSearchMixin:
     def _search_index(self, xcol=None, value=None, accuracy=0.0, invert=False):
         """Return an array of booleans for indexing matching rows for use with search method."""
         _ = self._col_args(scalar=False, xcol=xcol)
-        x = self.find_col(_.xcol)
+        x = self.find_col(_.xcol, force_list=True)[0]  # Workaround in newer numpy
         if isinstance(value, (int_types, float)):  # Search for a value in x-column
             ix = np.isclose(self.data[:, x], value, atol=accuracy)
         elif isinstance(value, tuple) and len(value) == 2:  # within a range of values

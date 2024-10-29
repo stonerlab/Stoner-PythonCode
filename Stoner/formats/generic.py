@@ -316,7 +316,7 @@ try:  # Optional tdms support
                         tmp = DataFile(grp.as_dataframe())
                         self.data = tmp.data
                         self.column_headers = tmp.column_headers
-            except (IOError, ValueError, TypeError, StonerLoadError) as err:
+            except (IOError, ValueError, TypeError, StonerLoadError, RuntimeError) as err:
                 from traceback import format_exc
 
                 raise StonerLoadError(f"Not a TDMS File \n{format_exc()}") from err

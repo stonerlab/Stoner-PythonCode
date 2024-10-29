@@ -25,7 +25,7 @@ dtype_range = {
     np.float64: (-1.0, 1.0),
 }
 
-if np_version.major==1 and np_version.minon<24:
+if np_version.major == 1 and np_version.minor < 24:
     dtype_range[np.bool8] = (False, True)
 
 integer_types = (np.uint8, np.uint16, np.int8, np.int16)

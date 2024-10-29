@@ -83,7 +83,7 @@ def test_metadata_slice():
                 pass
     for k, typ in zip(
         ["Info.Sample_Holder", ("Info.Sample_Holder", "Datatype,Comment")],
-        [(np.ndarray, np.str), (np.ndarray, np.ndarray)],
+        [(np.ndarray, str), (np.ndarray, np.ndarray)],
     ):
         ret = fldr6.metadata[k]
         for ix, t in enumerate(typ):

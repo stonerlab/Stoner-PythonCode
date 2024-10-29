@@ -32,8 +32,8 @@ def _draw_apaptor(func):
         if len(coords) == 2 and isinstance(coords[0], np.ndarray) and coords[0].ndim == 3:
             im = type(self._img)(np.zeros(self._img.shape, dtype="uint32"))
             im += coords[0][:, :, 0]
-            im += coords[0][:, :, 1] * 256
-            im += coords[0][:, :, 2] * 256**2
+            im += coords[0][:, :, 1].astype("uint32") * 256
+            im += coords[0][:, :, 2].astype("uint32") * 256**2
             im[im == 16777215] = 0
             im.convert(self._img.dtype)
             self._img[im != 0] = im[im != 0]

@@ -391,6 +391,8 @@ class DataArray(ma.MaskedArray):
             return ret.dtype.type(ret)
         if not isinstance(ret, np.ndarray):  # bugout for scalar returns
             return ret
+        if isinstance(ix, tuple) and len(ix) == 0:
+            return ret
         if ret.ndim >= 2:  # Potentially 2D array here
             if ix[-1] is None:  # Special case for increasing an array dimension
                 if self.ndim == 1:  # Going from 1 D to 2D
