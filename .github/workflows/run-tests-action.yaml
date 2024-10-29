@@ -16,7 +16,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Install Conda environment with Micromamba
-      - uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: tests/test-env.yml
           extra-specs: |
