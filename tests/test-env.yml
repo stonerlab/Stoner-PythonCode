@@ -33,3 +33,4 @@ dependencies:
   - python-dateutil >=2.8
   - hyperspy
   - fabio
+  - seaborn >=0.13

@@ -292,6 +292,8 @@ class DefaultPlotStyle(MutableMapping):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
         if name.startswith("template_"):
             attrname = _add_dots(name[9:])
+            if attrname not in plt.rcParams.keys():
+                raise AttributeError(f"{attrname} is not an attribute of matplotlib.rcParams!")
             plt.rcParams[attrname] = value
             super().__setattr__(name, value)
         else:
