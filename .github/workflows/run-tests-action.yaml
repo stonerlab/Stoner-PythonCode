@@ -14,7 +14,7 @@ jobs:
         os: ["ubuntu-latest"]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Conda environment with Micromamba
         uses: conda-incubator/setup-miniconda@v3
         with:
@@ -37,7 +37,7 @@ jobs:
            sudo apt-get install xvfb
            sudo apt-get install qtbase5-dev
       - name: Test with xvfb
-        run: xvfb-run --auto-servernum /usr/share/miniconda/envs/test-environment/bin/pytest  --cov-report=xml:cov.xml --cov=Stoner --junitxml pytest.xml
+        run: xvfb-run --auto-servernum /usr/share/miniconda/envs/test-environment/bin/pytest  -n 2 --cov-report=xml:cov.xml --cov=Stoner --junitxml pytest.xml
         env:
             TZ: Europe/London
             LC_CTYPE: en_GB.UTF-8
@@ -69,12 +69,12 @@ jobs:
 
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: artifacts/**/*.xml
 
@@ -83,6 +83,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Finish colveralls
-        uses: AndreMiras/coveralls-python-action@v20201129
+        uses: AndreMiras/coveralls-python-action@develop
         with:
           parallel-finished: true
