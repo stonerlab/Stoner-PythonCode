@@ -24,6 +24,7 @@ jobs:
           channel-priority: flexible
           activate-environment: test-environment
           auto-activate-base: false
+      - name: Conda information
         run: |
           conda info
           conda list
