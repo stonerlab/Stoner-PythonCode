@@ -14,22 +14,21 @@ jobs:
         os: ["ubuntu-latest"]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Install Conda environment with Micromamba
         uses: conda-incubator/setup-miniconda@v3
         with:
           environment-file: tests/test-env.yml
           python: ${{ matrix.python-version }}
           channels: conda-forge,phygbu
-          allow-softlinks: true
           channel-priority: flexible
-          show-channel-urls: true
+          activate-environment: test-environment
+          auto-activate-base: false
         run: |
           conda info
           conda list
           conda config --show-sources
           conda config --show
-          conda activate test-environment
       - name: install package
         run: pip install --no-deps .
       - name: Install headless server
