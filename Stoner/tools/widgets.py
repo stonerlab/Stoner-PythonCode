@@ -230,7 +230,7 @@ class RangeSelect:
                 self.ax.patches[-1].remove()
                 self.data.fig.canvas.draw()
         elif event.key.lower() == "i":  # Invert selection
-            self.invert = ~self.invert
+            self.invert = not self.invert
             col = "red" if self.invert else "green"
             for p in self.ax.patches:
                 p.update({"color": col, "facecolor": col})

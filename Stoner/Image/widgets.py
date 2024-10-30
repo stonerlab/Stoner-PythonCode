@@ -343,7 +343,7 @@ class ShapeSelect:
             plt.title(getattr(getattr(self, f"draw_{self.obj}", ""), "instructions", ""))
             return self.draw(event)
         if event.key.lower() == "i":
-            self.invert = ~self.invert
+            self.invert = not self.invert
             return self.draw(event)
         if event.key.lower() == "enter":
             self.vertices.append((event.xdata, event.ydata))
@@ -524,5 +524,5 @@ class ShapeSelect:
         vertices = np.array(self.vertices)
         meth = getattr(self, f"draw_{self.obj}", lambda x: ([], []))
         rr, cc = meth(vertices)
-        mask[rr, cc] = ~self.invert
+        mask[rr, cc] = not self.invert
         return mask

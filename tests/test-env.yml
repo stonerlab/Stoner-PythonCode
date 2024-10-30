@@ -32,3 +32,4 @@ dependencies:
   - statsmodels
   - tabulate
   - urllib3
+  - pip

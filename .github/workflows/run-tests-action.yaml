@@ -14,21 +14,24 @@ jobs:
         os: ["ubuntu-latest"]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Conda environment with Micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: conda-incubator/setup-miniconda@v3
         with:
           environment-file: tests/test-env.yml
-          extra-specs: |
-            python=${{ matrix.python-version }}
-          channels: phygbu, conda-forge
+          python: ${{ matrix.python-version }}
+          channels: conda-forge,phygbu
+          allow-softlinks: true
           channel-priority: flexible
-      - name: Conda info
-        run: ${MAMBA_EXE} info
-      - name: Conda list
-        run: ${MAMBA_EXE} list
+          show-channel-urls: true
+        run: |
+          conda info
+          conda list
+          conda config --show-sources
+          conda config --show
+          conda activate test-environment
       - name: install package
-        run: ${MAMBA_ROOT_PREFIX}/envs/test-environment/bin/pip install --no-deps .
+        run: pip install --no-deps .
       - name: Install headless server
         run: |
            sudo apt-get install xvfb
