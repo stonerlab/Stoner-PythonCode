@@ -425,7 +425,10 @@ class DefaultPlotStyle(MutableMapping):
         if isinstance(figure, bool) and not figure:
             return None, None
         elif figure is not None:
-            fig = plt.figure(figure, figsize=self.template_figure__figsize, layout="constrained")
+            if figure in plt.get_fignums():
+                fig = plt.figure(figure)
+            else:
+                fig = plt.figure(figure, figsize=self.template_figure__figsize, layout="constrained")
             if len(fig.axes) == 0:
                 rect = [plt.rcParams[f"figure.subplot.{i}"] for i in ["left", "bottom", "right", "top"]]
                 rect[2] = rect[2] - rect[0]

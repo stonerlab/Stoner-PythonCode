@@ -8,7 +8,7 @@ from json import loads, dumps
 from copy import deepcopy, copy
 
 import numpy as np
-from matplotlib.pyplot import figure, Figure, subplot
+from matplotlib.pyplot import figure, Figure, subplot, get_fignums
 from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from PIL import Image
 
@@ -332,7 +332,7 @@ class ImageFolderMixin:
 
         fig_num = kargs.pop("figure", getattr(self, "_figure", None))
         if isinstance(fig_num, Figure):
-            kargs.setdefault("figsize", fig_num.get_size_inches())
+            kargs.setdefault("figsize", tuple(fig_num.get_size_inches()))
             kargs.setdefault("facecolor", fig_num.get_facecolor())
             kargs.setdefault("edgecolor", fig_num.get_edgecolor())
             kargs.setdefault("frameon", fig_num.get_frameon())
@@ -346,6 +346,8 @@ class ImageFolderMixin:
                 fig_kargs[arg] = kargs.pop(arg)
         if fig_num is None:
             fig = figure(*fig_args, **fig_kargs)
+        elif fig_num in get_fignums():
+            fig = figure(fig_num)
         else:
             fig = figure(fig_num, **fig_kargs)
         w, h = fig.get_size_inches()
