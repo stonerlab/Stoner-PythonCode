@@ -44,11 +44,11 @@ jobs:
             GH_ACTION: True
       - name: Cleanup X11 server
         uses: bcomnes/cleanup-xvfb@v1
-      - name: Run Coveralls
-        uses: AndreMiras/coveralls-python-action@v20201129
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v2
         with:
+          flag-name: run-${{ join(matrix.*, '-') }}
           parallel: true
-          flag-name: python-${{ matrix.python-version }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Unit Test Results
         if: always()
@@ -82,7 +82,8 @@ jobs:
     needs: run_pytest
     runs-on: ubuntu-latest
     steps:
-      - name: Finish colveralls
-        uses: AndreMiras/coveralls-python-action@develop
-        with:
-          parallel-finished: true
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
+        carryforward: "run-1,run-2"
