@@ -285,6 +285,8 @@ def test_dir():
             "_abc_impl",
             "__annotations__",
             "__getstate__",
+            '__static_attributes__',
+            '__firstlineno__'
         ]
     )
     attrs = set(dir(selfd)) - bad_keys

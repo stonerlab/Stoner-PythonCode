@@ -133,7 +133,8 @@ def _tesseract_image(kerr_im, key):
     i = exposure.rescale_intensity(i)  # make sure they're black and white
     i = transform.rescale(i, 5.0, mode="constant")  # rescale to get more pixels on text
     io.imsave(
-        imagefile, (255.0 * i).astype("uint8"),
+        imagefile,
+        (255.0 * i).astype("uint8"),
     )  # python imaging library will save according to file extension
 
     # call tesseract

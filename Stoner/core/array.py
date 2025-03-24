@@ -123,6 +123,29 @@ class DataArray(ma.MaskedArray):
         ret = ma.MaskedArray.__array_wrap__(self, out_arr, context)
         return ret
 
+    def _prepare_index(self, ix):
+        """Mangle an indexing argument into a standard tuple form."""
+        match ix:
+            case str():  # Index by string - look for columns
+                if self.ndim > 1:
+                    ix = (slice(None, None, None), self._setas.find_col(ix))
+                else:
+                    ix = (self._setas.find_col(ix),)
+            case int() | slice():  # index by integer or slice on rows
+                ix = (ix,)
+            case (*i, str()):  # index by something and then string
+                ix = (*i, self._setas.find_col(ix[-1]))
+            case (*i, np.ndarray()) if self.ndim == 1:
+                if len(ix) == 1:
+                    ix = ix[0]
+            case (*i, np.ndarray(dtype=bool)) if len(ix[-1]) == self.shape[1]:
+                pass
+            case (*i, s) if isiterable(s):  # index by whatever and thena string
+                ix = (*i, [self._setas.find_col(c) for c in s])
+            case (str(), *i):
+                ix = (*i, self._setas.find_col(ix[0]))
+        return ix
+
     # ==============================================================================================================
     ############################          Property Accessor Functions                ###############################
     # ==============================================================================================================
@@ -350,88 +373,63 @@ class DataArray(ma.MaskedArray):
         single_row = isinstance(ix, int_types) or (
             isinstance(ix, tuple) and len(ix) > 0 and isinstance(ix[0], int_types)
         )
-        # If the index is a single string type, then build a column accessing index
-        if isinstance(ix, string_types):
-            if self.ndim > 1:
-                ix = (slice(None, None, None), self._setas.find_col(ix))
-            else:
-                ix = (self._setas.find_col(ix),)
-        if isinstance(ix, (int_types, slice)):
-            ix = (ix,)
-        elif isinstance(ix, tuple) and ix and isinstance(ix[-1], string_types):  # index still has a string type in it
-            ix = list(ix)
-            ix[-1] = self._setas.find_col(ix[-1])
-            ix = tuple(ix)
-        elif (
-            isinstance(ix, tuple) and ix and isinstance(ix[-1], np.ndarray) and self.ndim == 1
-        ):  # Indexing with a numpy array
-            if len(ix) == 1:
-                ix = ix[0]
-        elif isinstance(ix, tuple) and ix and isiterable(ix[-1]):  # indexing with a list of columns
-            ix = list(ix)
-            if all_type(ix[-1], bool):
-                ix[-1] = np.arange(len(ix[-1]))[ix[-1]]
-            ix[-1] = [self._setas.find_col(c) for c in ix[-1]]
-            ix = tuple(ix)
-        elif isinstance(ix, tuple) and ix and isinstance(ix[0], string_types):  # oops! backwards indexing
-            c = ix[0]
-            ix = list(ix[1:])
-            ix.append(self._setas.find_col(c))
-            ix = tuple(ix)
-            # Now can index with our constructed multidimesnional indexer
-        ret = super().__getitem__(ix)
-        if isinstance(ret, np.ndarray) and ret.ndim > 0 and ret.size == 1:  # Numpy extract [x] to x
-            ret = ret.ravel()[0]
-        if ret.ndim == 0:
-            if isinstance(ret, ma.core.MaskedConstant):
+        idx = self._prepare_index(ix)
+        ret = super().__getitem__(idx)
+        match ret:
+            case np.ndarray(size=1) if ret.ndim > 0:
+                return ret.ravel()[0]
+            case ma.core.MaskedConstant() | np.ndarray(ndim=0):
                 if ret.mask:
                     return self.fill_value
-            if isinstance(ret, ma.MaskedArray):
-                ret = ma.filled(ret)
-            return ret.dtype.type(ret)
-        if not isinstance(ret, np.ndarray):  # bugout for scalar returns
-            return ret
-        if isinstance(ix, tuple) and len(ix) == 0:
-            return ret
-        if ret.ndim >= 2:  # Potentially 2D array here
-            if ix[-1] is None:  # Special case for increasing an array dimension
-                if self.ndim == 1:  # Going from 1 D to 2D
-                    ret.setas = self.setas.clone
-                    ret.i = self.i
-                    ret.name = getattr(self, "name", "Column")
+                return ret.dtype.type(ret)
+            case ma.MaskedArray() if ret.ndim == 0:
+                return ret.dtype.type(ma.filled(ret))
+            case np.ndarray() if isinstance(idx, tuple) and len(
+                idx
+            ) == 0:  # special case for indexing with empty tuple.
                 return ret
-            ret.isrow = single_row
-            ret.setas = self.setas.clone
-            ret.column_headers = copy.copy(self.column_headers)
-            if len(ix) > 0 and isiterable(ix[-1]):  # pylint: disable=len-as-condition
-                ret.column_headers = list(np.array(ret.column_headers)[ix[-1]])
-            # Sort out whether we need an array of row labels
-            if isinstance(self.i, np.ndarray) and len(ix) > 0:  # pylint: disable=len-as-condition
-                if isiterable(ix[0]) or isinstance(ix[0], int_types):
-                    ret.i = self.i[ix[0]]
-                else:
-                    ret.i = 0
-            else:
-                ret.i = self.i
-        elif ret.ndim == 1:  # Potentially a single row or single column
-            ret.isrow = single_row
-            if not single_row:  # Workoput what the original setas was
-                if isinstance(ix, tuple) and len(ix) >= 2:
-                    tmp = np.array(self.setas)[ix[-1]].ravel()
-                    ret.setas(tmp)
-                    tmpcol = np.array(self.column_headers)[ix[-1]]
-                    ret.column_headers = tmpcol
-            else:
+            case np.ndarray(ndim=1) if single_row:
+                ret.isrow = single_row
                 ret.setas = self.setas.clone
                 ret.column_headers = copy.copy(self.column_headers)
-            # Sort out whether we need an array of row labels
-            if single_row and isinstance(self.i, np.ndarray):
-                ret.i = self.i[ix[0]]
-            else:  # This is a single element?
-                ret.i = self.i
-            if not single_row:
+                if isinstance(self.i, np.ndarray):
+                    ret.i = self.i[idx[0]]
+                else:
+                    ret.i = self.i
+                return ret
+            case np.ndarray(ndim=1):
+                ret.isrow = single_row
+                if isinstance(idx, tuple) and len(idx) >= 2:
+                    tmp = np.array(self.setas)[idx[-1]].ravel()
+                    ret.setas(tmp)
+                    tmpcol = np.array(self.column_headers)[idx[-1]]
+                    ret.column_headers = tmpcol
                 ret.name = self.column_headers
-        return ret
+                return ret
+            case np.ndarray() if ret.ndim == 2:
+
+                if idx[-1] is None:  # Special case for increasing an array dimension
+                    if self.ndim == 1:  # Going from 1 D to 2D
+                        ret.setas = self.setas.clone
+                        ret.i = self.i
+                        ret.name = getattr(self, "name", "Column")
+                    return ret
+                ret.isrow = single_row
+                ret.setas = self.setas.clone
+                ret.column_headers = copy.copy(self.column_headers)
+                if len(idx) > 0 and isiterable(idx[-1]):  # pylint: disable=len-as-condition
+                    ret.column_headers = list(np.array(ret.column_headers)[idx[-1]])
+                # Sort out whether we need an array of row labels
+                if isinstance(self.i, np.ndarray) and len(idx) > 0:  # pylint: disable=len-as-condition
+                    if isiterable(idx[0]) or isinstance(idx[0], int_types):
+                        ret.i = self.i[idx[0]]
+                    else:
+                        ret.i = 0
+                else:
+                    ret.i = self.i
+                return ret
+            case _:
+                return ret
 
     def __setitem__(self, ix, val):
         """Override __setitem__ to handle string indexing."""

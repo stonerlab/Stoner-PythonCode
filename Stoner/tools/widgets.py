@@ -13,9 +13,21 @@ from matplotlib.patches import Rectangle
 
 from ..compat import mpl_version
 
+QT_VERSION = None
 try:
     from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
+
+    QT_VERSION = 5
 except ImportError:
+    pass
+if QT_VERSION is None:
+    try:
+        from PyQt6.QtWidgets import QWidget, QFileDialog, QApplication
+
+        QT_VERSION = 6
+    except ImportError:
+        pass
+if QT_VERSION is None:
 
     class App:
         """Mock App that raises an error when you try to call openDialog on it."""
@@ -118,7 +130,10 @@ else:
             if patterns is None:
                 patterns = {"*.*": "All Files", "*.py": "Python Files"}
             patterns = ";;".join([f"{v} ({k})" for k, v in patterns.items()])
-            options = QFileDialog.Options()
+            try:
+                options = QFileDialog.Options()
+            except AttributeError:
+                options = QFileDialog().options()
 
             kwargs = {"caption": title, "directory": str(start), "filter": patterns, "options": options, "modal": True}
             kwargs = {k: kwargs[k] for k in (set(kwargs.keys()) & set(self.modes[mode]["arg"]))}
