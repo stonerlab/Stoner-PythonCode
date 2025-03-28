@@ -430,37 +430,30 @@ class typeHintedDict(regexpDict):
         if typ == "Invalid Type":  # Short circuit here
             return repr(value)
         for regexp, valuetype in self.__tests:
-            matched = regexp.search(typ)
-            if matched is not None:
-                if isinstance(valuetype, _evaluatable):
+            if regexp.search(typ) is None:
+                continue
+            if isinstance(valuetype, _evaluatable):
+                try:
+                    if isinstance(value, string_types):  # we've got a string already don't need repr
+                        return literal_eval(value)
+                    return literal_eval(repr(value))  # pylint: disable=eval-used
+                except ValueError:  # Oops just keep string format
+                    return str(value)
+                except SyntaxError:
+                    return ""
+            if issubclass(valuetype, datetime.datetime):
+                try:
+                    return parser.parse(value)
+                except ValueError:
                     try:
-                        if isinstance(value, string_types):  # we've got a string already don't need repr
-                            ret = literal_eval(value)
-                        else:
-                            ret = literal_eval(repr(value))  # pylint: disable=eval-used
-                    except ValueError:  # Oops just keep string format
-                        ret = str(value)
-                    except SyntaxError:
-                        ret = ""
-                    break
-                elif issubclass(valuetype, datetime.datetime):
-                    if isinstance(ret, datetime.datetime):
-                        break  # Alreadu a datetime object
-                    try:
-                        ret = parser.parse(value)
+                        return literal_eval(value)
                     except ValueError:
-                        try:
-                            ret = literal_eval(value)
-                        except ValueError:
-                            ret = str(value)
-                    break
-                else:
-                    ret = valuetype(value)
-                    break
+                        return str(value)
+            return valuetype(value)
         else:
             ret = str(value)
             try:
-                ret = _parse_date(ret)
+                return _parse_date(ret)
             except (ValueError, OverflowError):
                 pass
         return ret

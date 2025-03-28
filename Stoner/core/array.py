@@ -433,17 +433,15 @@ class DataArray(ma.MaskedArray):
 
     def __setitem__(self, ix, val):
         """Override __setitem__ to handle string indexing."""
-        if isinstance(ix, string_types):
-            ix = self._setas.find_col(ix)
-        elif isinstance(ix, tuple) and isinstance(ix[-1], string_types):
-            ix = list(ix)
-            ix[-1] = self._setas.find_col(ix[-1])
-            ix = tuple(ix)
-        elif isinstance(ix, tuple) and isinstance(ix[0], string_types):
-            c = ix[0]
-            ix = list(ix[1:])
-            ix.append(self._setas.find_col(c))
-            ix = tuple(ix)
+        match ix:
+            case str():
+                ix = self._setas.find_col(ix)
+            case (*i, str()):
+                ix = (*i, self._setas.find_col(ix[-1]))
+            case (str(), *i):
+                ix = (*i, self._setas.find_col(ix[0]))
+            case _:
+                pass
 
         if self.sharedmask:  # We do not want to share a mask when we're about to change soimething here...
             self.unshare_mask()
