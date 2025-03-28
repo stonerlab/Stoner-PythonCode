@@ -5,6 +5,7 @@ channels:
   - conda-forge
 dependencies:
   - coveralls
+  - coverage
   - pytest
   - pytest-cov
   - pytest-forked
