@@ -211,10 +211,7 @@ class tab_delimited(csv.Dialect):
 def decode_string(value: str) -> str:
     """Expand a string of column assignments, replacing numbers with repeated characters."""
     pattern = re.compile(r"(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))")
-    while True:
-        res = pattern.search(value)
-        if res is None:
-            break
+    while res := pattern.search(value):
         (total, count, code) = res.groups()
         count = int(count)
         value = value.replace(total, code * count, 1)

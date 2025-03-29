@@ -426,7 +426,6 @@ class typeHintedDict(regexpDict):
             are tested in turn and if the type string matches the constructor of
             the associated python class is called with value as its argument.
         """
-        ret = None
         if typ == "Invalid Type":  # Short circuit here
             return repr(value)
         for regexp, valuetype in self.__tests:

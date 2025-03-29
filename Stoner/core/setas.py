@@ -4,7 +4,7 @@
 __all__ = ["setas"]
 import re
 import copy
-from collections.abc import MutableMapping, Mapping
+from collections.abc import MutableMapping, Mapping, Iterable
 
 import numpy as np
 
@@ -137,15 +137,15 @@ class setas(MutableMapping):
     @property
     def _size(self):
         """Calculate a size of the setas attribute."""
-        if len(self._shape) == 1 and self._row:
-            c = self._shape[0]
-        elif len(self._shape) == 1:
-            c = 1
-        elif len(self._shape) > 1:
-            c = self.shape[1]
-        else:
-            c = len(self._column_headers)
-        return c
+        match len(self.shape):
+            case 1 if self._row:
+                return self._shape[0]
+            case 1:
+                return 1
+            case 0:
+                return len(self._column_headers)
+            case _:
+                return self.shape[1]
 
     @property
     def _unique_headers(self):
@@ -382,30 +382,32 @@ class setas(MutableMapping):
             Either a single letter x,y,z,u,v,w,d,e or f, or a list of letters if used in
             list mode, or a single coliumn name or list of names if used in dictionary mode.
         """
-        if isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":
-            ret = self.to_dict()[name]
-            if len(ret) == 1:
-                ret = ret[0]
-        elif isinstance(name, string_types) and len(name) == 2 and name[0] == "#" and name[1] in "xyzuvwdef.-":
-            ret = list()
-            name = name[1]
-            s = 0
-            while name in self._setas[s:]:
-                s = self._setas.index(name) + 1
-                ret.append(s - 1)
-            if len(ret) == 1:
-                ret = ret[0]
-        elif isinstance(name, index_types):
-            ret = self.setas[self.find_col(name)]
-        elif isinstance(name, slice):
-            indices = name.indices(len(self.setas))
-            name = range(*indices)
-            ret = [self[x] for x in name]
-        elif isiterable(name):
-            ret = [self[x] for x in name]
-        else:
-            raise IndexError(f"{name} was not found in the setas attribute.")
-        return ret
+        match name:
+            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f" | "." | "-":
+                ret = self.to_dict()[name]
+                if len(ret) == 1:
+                    ret = ret[0]
+                return ret
+            case "#x" | "y#" | "#z" | "#u" | "#v" | "#w" | "#d" | "#e" | "#f":
+                ret = list()
+                name = name[1]
+                s = 0
+                while name in self._setas[s:]:
+                    s = self._setas.index(name) + 1
+                    ret.append(s - 1)
+                if len(ret) == 1:
+                    ret = ret[0]
+                return ret
+            case int() | str() | _pattern_type():
+                return self.setas[self.find_col(name)]
+            case slice():
+                indices = name.indices(len(self.setas))
+                name = range(*indices)
+                return [self[x] for x in name]
+            case _ if isiterable(name):
+                return [self[x] for x in name]
+            case _:
+                raise IndexError(f"{name} was not found in the setas attribute.")
 
     def __iter__(self):
         """Iterate over thew column assignments.
@@ -432,26 +434,22 @@ class setas(MutableMapping):
                 a single letter string in the set above.
             value (integer or column index): See above.
         """
-        if isLikeList(name):  # Sipport indexing with a list like object
-            if isLikeList(value) and len(value) == len(name):
-                for n, v in zip(name, value):
-                    self._setas[n] = v
-            else:
-                for n in name:
-                    self[n] = value
-        elif isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":  # indexing by single letter
-            for c in self.find_col(value, force_list=True):
-                self._setas[c] = name
-        elif (
-            isinstance(name, index_types)
-            and isinstance(value, string_types)
-            and len(value) == 1
-            and value in "xyzuvwdef.-"
-        ):
-            for c in self.find_col(name, force_list=True):
-                self.setas[c] = value
-        else:
-            raise IndexError(f"Failed to set setas as couldn't workout what todo with setas[{name}] = {value}")
+        match name:
+            case Iterable() if not isinstance(name, str):
+                if isLikeList(value) and len(value) == len(name):
+                    for n, v in zip(name, value):
+                        self._setas[n] = v
+                else:
+                    for n in name:
+                        self[n] = value
+            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f" | "." | "-":
+                for c in self.find_col(value, force_list=True):
+                    self._setas[c] = name
+            case int() | str() | _pattern_type() if value in [letter for letter in "xyzuvwdef.-"]:
+                for c in self.find_col(name, force_list=True):
+                    self.setas[c] = value
+            case _:
+                raise IndexError(f"Failed to set setas as couldn't workout what todo with setas[{name}] = {value}")
 
     def __len__(self):
         """Return our own length."""
@@ -503,48 +501,54 @@ class setas(MutableMapping):
 
     def _sub_core_(self, new, other):
         """Implement subtracting either column indices or x,y,z,d,e,f,u,v,w for the current setas."""
-        if isinstance(other, string_types) and len(other) == 1 and other in "xyzuvwdef":
-            while True:
-                try:
-                    new._setas[new._setas.index(other)] = "."
-                except ValueError:
-                    break
-            return new
-        if isinstance(other, index_types):
+        if isinstance(other, str):
             try:
-                new._setas[new.find_col(other)] = "."
-                return new
+                other = self.find_col(other)
             except KeyError:
-                other = new.clone(other, _self=True)
-
-        if isinstance(other, Mapping):
-            me = new.to_dict()
-            other = new.clone(other, _self=True).to_dict()
-            for k, v in other.items():
-                v = [v] if not isinstance(v, list) else v
-                if k in me:
-                    for header in v:
-                        if header in me[k]:
-                            if isinstance(me[k], list):
-                                me[k].remove(header)
+                other = decode_string(other)
+        match other:
+            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f":
+                while other in new._setas:
+                    new._setas[new._setas.index(other)] = "."
+                return new
+            case dict():
+                me = new.to_dict()
+                other = new.clone(other, _self=True).to_dict()
+                for k, v in other.items():
+                    v = [v] if not isinstance(v, list) else v
+                    if k in me:
+                        for header in v:
+                            if header in me[k]:
+                                if isinstance(me[k], list):
+                                    me[k].remove(header)
+                                else:
+                                    me[k] = ""
+                                if len(me[k]) == 0:
+                                    del me[k]
                             else:
-                                me[k] = ""
-                        else:
-                            raise ValueError(f"{header} is not set as {k}")
-                        if len(me[k]) == 0:
-                            del me[k]
-                else:
-                    raise ValueError(f"No column is set as {k}")
-            new.clear()
-            new(me)
-            return new
-        if isiterable(other):
-            for o in other:
-                new = self._sub_core_(new, o)
-                if new is NotImplemented:
-                    return NotImplemented
-            return new
-        return NotImplemented
+                                raise ValueError(f"{header} is not set as {k}")
+                    else:
+                        raise ValueError(f"No column is set as {k}")
+                new.clear()
+                new(me)
+                return new
+            case Iterable() if all(isinstance(x, (str, int, slice, list, re.Pattern)) for x in other):
+                for o in other:
+                    if o == other:
+                        continue
+                    new = self._sub_core_(new, o)
+                    if new is NotImplemented:
+                        return NotImplemented
+                return new
+            case int() | slice() | list() | re.Pattern():
+                try:
+                    new._setas[new.find_col(other)] = "."
+                    return new
+                except KeyError:
+                    other = new.clone(other, _self=True)
+
+            case _:
+                return NotImplemented
 
     def __sub__(self, other):
         """Jump to the core."""
@@ -553,8 +557,7 @@ class setas(MutableMapping):
 
     def __isub__(self, other):
         """Jump to the core."""
-        new = self
-        return self._sub_core_(new, other)
+        return self._sub_core_(self, other)
 
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
@@ -581,43 +584,44 @@ class setas(MutableMapping):
         Returns:
             The matching column index as an integer or a KeyError
         """
-        if isinstance(col, int_types):  # col is an int so pass on
-            if col >= len(self.column_headers):
-                raise IndexError(f"Attempting to index a non - existent column {col}")
-            if col < 0:
-                col = col % len(self.column_headers)
-        elif isinstance(col, string_types):  # Ok we have a string
-            col = str(col)
-            if col in self.column_headers:  # and it is an exact string match
-                col = self.column_headers.index(col)
-            else:  # ok we'll try for a regular expression
-                test = re.compile(col)
+        match col:
+            case int():
+                if col >= len(self.column_headers):
+                    raise IndexError(f"Attempting to index a non - existent column {col}")
+                if col < 0:
+                    col = col % len(self.column_headers)
+            case str():
+                col = str(col)
+                if col in self.column_headers:  # and it is an exact string match
+                    col = self.column_headers.index(col)
+                else:  # ok we'll try for a regular expression
+                    test = re.compile(col)
+                    possible = [x for x in self.column_headers if test.search(x)]
+                    if not possible:
+                        try:
+                            col = int(col)
+                        except ValueError as err:
+                            raise KeyError(
+                                f'Unable to find any possible column matches for "{col} in {self.column_headers}"'
+                            ) from err
+                        if col < 0 or col >= self.data.shape[1]:
+                            raise KeyError("Column index out of range")
+                    else:
+                        col = self.column_headers.index(possible[0])
+            case _pattern_type():
+                test = col
                 possible = [x for x in self.column_headers if test.search(x)]
                 if not possible:
-                    try:
-                        col = int(col)
-                    except ValueError as err:
-                        raise KeyError(
-                            f'Unable to find any possible column matches for "{col} in {self.column_headers}"'
-                        ) from err
-                    if col < 0 or col >= self.data.shape[1]:
-                        raise KeyError("Column index out of range")
-                else:
-                    col = self.column_headers.index(possible[0])
-        elif isinstance(col, _pattern_type):
-            test = col
-            possible = [x for x in self.column_headers if test.search(x)]
-            if not possible:
-                raise KeyError(f"Unable to find any possible column matches for {col.pattern}")
-            col = self.find_col(possible)
-        elif isinstance(col, slice):
-            indices = col.indices(self.shape[1])
-            col = range(*indices)
-            col = self.find_col(col)
-        elif isiterable(col):
-            col = [self.find_col(x) for x in col]
-        else:
-            raise TypeError(f"Column index must be an integer, string, list or slice, not a {type(col)}")
+                    raise KeyError(f"Unable to find any possible column matches for {col.pattern}")
+                col = self.find_col(possible)
+            case slice():
+                indices = col.indices(self.shape[1])
+                col = range(*indices)
+                col = self.find_col(col)
+            case _ if isiterable(col):
+                col = [self.find_col(x) for x in col]
+            case _:
+                raise TypeError(f"Column index must be an integer, string, list or slice, not a {type(col)}")
         if force_list and not isinstance(col, list):
             col = [col]
         return col
