@@ -128,6 +128,7 @@ def errorfill(
 
 def extrema_from_error_input(z, zerr):
     """Work out where to draw limits."""
+    zmin = zmax = None
     if np.isscalar(zerr) or len(zerr) == len(z):
         zmin = z - zerr
         zmax = z + zerr

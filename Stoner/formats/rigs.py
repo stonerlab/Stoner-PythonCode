@@ -321,6 +321,7 @@ class PinkLibFile(Core.DataFile):
                 raise Core.StonerLoadError("Not a PINK file")
             f = f.readlines()
             happened_before = False
+            header_line = None
             for i, line in enumerate(f):
                 if line[0] != "#" and not happened_before:
                     header_line = i - 2  # -2 because there's a commented out data line

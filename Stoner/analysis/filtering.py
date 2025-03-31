@@ -292,30 +292,33 @@ class FilteringOpsMixin:
         work = self.clone
         for ix, x in enumerate(new_x):
             r = self.closest(x, xcol=_.xcol)
-            if isinstance(overlap, int):
-                if (r.i - overlap / 2) < 0:
-                    ll = 0
-                    hl = min(len(self), overlap)
-                elif (r.i + overlap / 2) > len(self):
-                    hl = len(self)
-                    ll = max(hl - overlap, 0)
-                else:
-                    ll = r.i - overlap / 2
-                    hl = r.i + overlap / 2
-                bounds = {"_i__between": (ll, hl)}
-                mid_x = (self[ll, _.xcol] + self[hl - 1, _.xcol]) / 2.0
-            elif isinstance(overlap, float):
-                if (r[_.xcol] - overlap / 2) < self.min(_.xcol)[0]:
-                    ll = self.min(_.xcol)[0]
-                    hl = ll + overlap
-                elif (r[_.xcol] + overlap / 2) > self.max(_.xcol)[0]:
-                    hl = self.max(_.xcol)[0]
-                    ll = hl - overlap
-                else:
-                    ll = r[_.xcol] - overlap / 2
-                    hl = r[_.xcol] + overlap / 2
-                bounds = {f"{self.column_headers[_.xcol]}__between": (ll, hl)}
-                mid_x = (ll + hl) / 2.0
+            match overlap:
+                case int():
+                    if (r.i - overlap / 2) < 0:
+                        ll = 0
+                        hl = min(len(self), overlap)
+                    elif (r.i + overlap / 2) > len(self):
+                        hl = len(self)
+                        ll = max(hl - overlap, 0)
+                    else:
+                        ll = r.i - overlap / 2
+                        hl = r.i + overlap / 2
+                    bounds = {"_i__between": (ll, hl)}
+                    mid_x = (self[ll, _.xcol] + self[hl - 1, _.xcol]) / 2.0
+                case float():
+                    if (r[_.xcol] - overlap / 2) < self.min(_.xcol)[0]:
+                        ll = self.min(_.xcol)[0]
+                        hl = ll + overlap
+                    elif (r[_.xcol] + overlap / 2) > self.max(_.xcol)[0]:
+                        hl = self.max(_.xcol)[0]
+                        ll = hl - overlap
+                    else:
+                        ll = r[_.xcol] - overlap / 2
+                        hl = r[_.xcol] + overlap / 2
+                    bounds = {f"{self.column_headers[_.xcol]}__between": (ll, hl)}
+                    mid_x = (ll + hl) / 2.0
+                case _:
+                    raise TypeError(f"Overlap should be an integer or floating point number not a {type(overlap)}")
             pointdata = work.select(**bounds)
             pointdata.data[:, _.xcol] = pointdata.column(_.xcol) - mid_x
             ret = pointdata.curve_fit(kindf, _.xcol, _.ycol, sigma=_.yerr, absolute_sigma=True)

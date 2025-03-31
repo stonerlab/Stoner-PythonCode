@@ -4,11 +4,11 @@
 __all__ = ["setas"]
 import re
 import copy
-from collections.abc import MutableMapping, Mapping, Iterable
+from collections.abc import MutableMapping, Iterable
 
 import numpy as np
 
-from ..compat import string_types, int_types, index_types, _pattern_type
+from ..compat import string_types, index_types, _pattern_type
 from ..tools import AttributeStore, isiterable, typedList, isLikeList
 from .utils import decode_string
 
@@ -339,7 +339,8 @@ class setas(MutableMapping):
     def __delitem__(self, name):
         """Unset either by column index or column assignment.
 
-        Equivalent to unsetting the same object."""
+        Equivalent to unsetting the same object.
+        """
         self.unset(name)
 
     def __eq__(self, other):
@@ -445,7 +446,7 @@ class setas(MutableMapping):
             case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f" | "." | "-":
                 for c in self.find_col(value, force_list=True):
                     self._setas[c] = name
-            case int() | str() | _pattern_type() if value in [letter for letter in "xyzuvwdef.-"]:
+            case int() | str() | _pattern_type() if value in list("xyzuvwdef.-"):
                 for c in self.find_col(name, force_list=True):
                     self.setas[c] = value
             case _:
@@ -646,21 +647,24 @@ class setas(MutableMapping):
     def keys(self):
         """Access mapping keys.
 
-        Mapping keys are the same as iterating over the unique headers"""
+        Mapping keys are the same as iterating over the unique headers
+        """
         for c in self._unique_headers:
             yield c
 
     def values(self):
         """Access mapping values.
 
-        Mapping values are the same as iterating over setas."""
+        Mapping values are the same as iterating over setas.
+        """
         for v in self.setas:
             yield v
 
     def items(self):
         """Access mapping items.
 
-        Mapping items iterates over keys and values."""
+        Mapping items iterates over keys and values.
+        """
         for k, v in zip(self._unique_headers, self.setas):
             yield k, v
 
@@ -746,7 +750,8 @@ class setas(MutableMapping):
         """Return the setas attribute as a dictionary.
 
         If multiple columns are assigned to the same type, then the column names are
-        returned as a list. If column headers are duplicated"""
+        returned as a list. If column headers are duplicated.
+        """
         ret = dict()
         for k, ch in zip(self._setas, self._unique_headers):
             if k != ".":
@@ -766,7 +771,8 @@ class setas(MutableMapping):
     def to_string(self, encode=False):
         """Return the setas attribute encoded as a string.
 
-        Optionally replaces runs of 3 or more identical characters with a precediung digit."""
+        Optionally replaces runs of 3 or more identical characters with a precediung digit.
+        """
         expanded = "".join(self)
         if encode:
             pat = re.compile(r"((.)\2{2,9})")

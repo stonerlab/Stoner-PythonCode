@@ -360,6 +360,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
         result = np.where(~image, *dtype_range[dtype])
         return result
 
+    imax = imin = imax_in = imin_in = None
     if dtypeobj.kind in "ui":
         imin = np.iinfo(dtype).min
         imax = np.iinfo(dtype).max

@@ -245,6 +245,7 @@ class MaximusStackMixin:
 
     def to_hdf5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
+        mode = "r"
         if filename is None:
             filename = path.join(self.directory, f"MPI_{self.scan_no:09d}.hdf5")
         if isinstance(filename, Path):
