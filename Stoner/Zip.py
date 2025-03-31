@@ -282,7 +282,7 @@ class ZipFolderMixin:
 
         if mode == "r":
             what = "file"
-        elif mode == "w":
+        else:
             what = "save"
 
         dlg = get_filedialog(what=what, filetypes=file_wildcard)

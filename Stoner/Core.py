@@ -658,6 +658,7 @@ class DataFile(
             datafile.seek(0)
             reader = csv.reader(datafile, dialect=tab_delimited())
             cols = 0
+            max_rows = 0
             for ix, metadata in enumerate(reader):
                 if ix == 0:
                     row = metadata

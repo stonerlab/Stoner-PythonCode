@@ -214,6 +214,7 @@ class EasyPlotFile(Core.DataFile):
 
         datastart = -1
         dataend = -1
+        delimiter = kargs.pop("delimiter", None)
 
         i = 0
         with FileManager(self.filename, "r", errors="ignore", encoding="utf-8") as data:

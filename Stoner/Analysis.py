@@ -384,23 +384,21 @@ class AnalysisMixin:
         otherpoints = other.column([_.xcol, _.ycol])
         otherpoints = otherpoints[otherpoints[:, 0].argsort(), :]
         self_second = np.max(points[:, 0]) > np.max(otherpoints[:, 0])
-        if overlap is None:  # Calculate the overlap
-            lower = max(np.min(points[:, 0]), np.min(otherpoints[:, 0]))
-            upper = min(np.max(points[:, 0]), np.max(otherpoints[:, 0]))
-        elif isinstance(overlap, int) and overlap > 0:
-            if self_second:
-                lower = points[0, 0]
-                upper = points[overlap, 0]
-            else:
-                lower = points[-overlap - 1, 0]
-                upper = points[-1, 0]
-        elif (
-            isinstance(overlap, tuple)
-            and len(overlap) == 2
-            and isinstance(overlap[0], float and isinstance(overlap[1], float))
-        ):
-            lower = min(overlap)
-            upper = max(overlap)
+        match overlap:
+            case int() if overlap > 0:
+                if self_second:
+                    lower = points[0, 0]
+                    upper = points[overlap, 0]
+                else:
+                    lower = points[-overlap - 1, 0]
+                    upper = points[-1, 0]
+            case (float(), float()):
+                lower = min(overlap)
+                upper = max(overlap)
+            case _:
+                lower = max(np.min(points[:, 0]), np.min(otherpoints[:, 0]))
+                upper = min(np.max(points[:, 0]), np.max(otherpoints[:, 0]))
+
         inrange = np.logical_and(points[:, 0] >= lower, points[:, 0] <= upper)
         points = points[inrange]
         num_pts = points.shape[0]

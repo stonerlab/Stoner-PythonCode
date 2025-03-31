@@ -1003,6 +1003,8 @@ class PlotMixin:
             cmap = colormaps[kargs["cmap"]]
         elif "cmap" in nonkargs and isinstance(kargs["cmap"], str):
             cmap = colormaps(nonkargs["cmap"])
+        else:
+            cmap = colormaps["viridis"]
         if Z.ndim == 2:
             Z = cmap(Z)
         elif Z.ndim != 3:

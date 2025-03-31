@@ -1451,7 +1451,7 @@ class FittingMixin:
                 ret.column_headers = []
                 ret.setas = ""
                 prefix = ret["lmfit.prefix"][-1]
-                ix = 0
+                ix = fixed = 0
                 for ix, p in enumerate(model.param_names):
                     label = self.metadata.get(f"{prefix}{p} label", p)
                     units = self.metadata.get(f"{prefix}{p} units", "")

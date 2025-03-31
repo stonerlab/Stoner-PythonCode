@@ -191,6 +191,7 @@ def _sa_cmd(new_data, parts):
 def load_easyplot(new_data, filename, *args, **kargs):
     """Private loader method."""
     new_data.filename = filename
+    delimiter = kargs.pop("delimiter")
 
     datastart = -1
     dataend = -1
@@ -257,6 +258,7 @@ def load_pinklib(new_data, filename=None, *args, **kargs):
         new_data.get_filename("r")
     else:
         new_data.filename = filename
+    header_line = 0
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
         if "PINKlibrary" not in f.readline():
             raise StonerLoadError("Not a PINK file")

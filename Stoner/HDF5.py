@@ -24,6 +24,7 @@ from .Core import StonerLoadError, DataFile
 from .folders import DataFolder
 from .Image.core import ImageFile, ImageArray
 from .core.utils import copy_into
+from .tools.file import HDFFileManager
 
 
 def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
@@ -50,68 +51,6 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
         cls = getattr(mod, typ)
         return getattr(cls, "read_hdf5", default_loader)
     return getattr(globals()[typ], "read_hdf5", default_loader)
-
-
-class HDFFileManager:
-    """Context manager for HDF5 files."""
-
-    def __init__(self, filename, mode="r"):
-        """Initialise context handler.
-
-        Works out the filename and group in cases the input flename includes a path to a sub group.
-
-        Checks the file is actually an h4py file that is openable with the given mode.
-        """
-        self.mode = mode
-        self.handle = None
-        self.file = None
-        self.close = True
-        self.group = ""
-        # Handle the case we're passed an already open h5py object
-        if not isinstance(filename, path_types) or mode == "w":  # passed an already open h5py object
-            self.filename = filename
-            return
-        # Here we deal with a string or path filename
-        parts = str(filename).split(os.path.sep)
-        bits = len(parts)
-        for ix in range(bits):
-            testname = "/".join(parts[: bits - ix])
-            if path.exists(testname):
-                filename = testname
-                break
-
-        try:
-            if not mode.startswith("w"):
-                with h5py.File(filename, "r"):
-                    pass
-        except (IOError, OSError) as err:
-            raise StonerLoadError(f"{filename} not at HDF5 File") from err
-        self.filename = filename
-
-    def __enter__(self):
-        """Open the hdf file with given mode and navigate to the group."""
-        if isinstance(self.filename, (h5py.File, h5py.Group)):  # passed an already open h5py object
-            self.handle = self.filename
-            if isinstance(self.filename, h5py.Group):
-                self.file = self.filename.file
-            else:
-                self.file = self.filename
-            self.close = False
-        elif isinstance(self.filename, path_types):  # Passed something to open
-            handle = h5py.File(self.filename, self.mode)
-            self.file = handle
-            for grp in self.group.split("/"):
-                if grp.strip() != "":
-                    handle = handle[grp]
-            self.handle = handle
-        else:
-            raise StonerLoadError("Note a resource that can be handled with HDF")
-        return self.handle
-
-    def __exit__(self, _type, _value, _traceback):
-        """Ensure we close the hdf file no matter what."""
-        if self.file is not None and self.close:
-            self.file.close()
 
 
 class HDF5File(DataFile):
