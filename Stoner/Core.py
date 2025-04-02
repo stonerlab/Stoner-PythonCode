@@ -43,6 +43,7 @@ from .core.methods import DataFileSearchMixin
 from .core.utils import copy_into, tab_delimited
 from .tools.classes import subclasses
 from .tools.file import file_dialog, FileManager, URL_SCHEMES
+from .tools.tests import ClassTester
 
 try:
     from tabulate import tabulate
@@ -258,42 +259,40 @@ class DataFile(
 
     def _init_single(self, *args, **kargs):
         """Handle constructor with 1 argument - called from __init__."""
-        arg = args[0]
-        inits = {
-            path_types + (bool, bytes, io.IOBase): self._init_load,
-            np.ndarray: self._init_array,
-            DataFile: self._init_datafile,
-            pd.DataFrame: self._init_pandas,
-            "Stoner.Image.core.ImageFile": self._init_imagefile,
-            Mapping: self._init_dict,
-            Iterable: self._init_list,
-        }
-        for typ, meth in inits.items():
-            if isinstance(typ, str):
-                parts = typ.split(".")
-                mod = import_module(".".join(parts[:-1]))
-                typ = getattr(mod, parts[-1])
-            if isinstance(arg, typ):
-                meth(arg, **kargs)
-                break
-        else:
-            raise TypeError(f"No constructor for {type(arg)}")
-
+        test = ClassTester(ImageFile="Stoner.Image.core.ImageFile")
+        match args[0]:
+            case str() | bool() | pathlib.Path() | bytes() | io.IOBase():
+                self._init_load(args[0], **kargs)
+            case DataFile():
+                self._init_datafile(args[0], **kargs)
+            case pd.DataFrame():
+                self._init_pandas(args[0], **kargs)
+            case test.ImageFile():
+                self._init_imagefile(args[0], **kargs)
+            case np.ndarray():
+                self._init_array(args[0], **kargs)
+            case Mapping():
+                self._init_dict(args[0], **kargs)
+            case Iterable():
+                self._init_list(args[0], **kargs)
+            case _:
+                raise TypeError(f"No constructor for {type(args[0])}")
         self.data._setas.cols.update(self.setas._get_cols())
 
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__."""
         (arg0, arg1) = args
-        if isinstance(arg1, dict) or (isiterable(arg1) and all_type(arg1, string_types)):
-            self._init_single(arg0, **kargs)
-            self._init_single(arg1, **kargs)
-        elif (
-            isinstance(arg0, np.ndarray)
-            and isinstance(arg1, np.ndarray)
-            and len(arg0.shape) == 1
-            and len(arg1.shape) == 1
-        ):
-            self._init_many(*args, **kargs)
+        match args:
+            case (arg0, dict() as arg1):
+                self._init_single(arg0, **kargs)
+                self._init_single(arg1, **kargs)
+            case (arg0, Iterable() as arg1) if all_type(arg1, str):
+                self._init_single(arg0, **kargs)
+                self._init_single(arg1, **kargs)
+            case (np.ndarray() as arg0, np.ndarray() as arg1) if arg0.ndim == 1 and arg1.ndim == 1:
+                self._init_many(*args, **kargs)
+            case _:
+                raise TypeError(f"Unable to decide how to initialise {type(args)}")
 
     def _init_many(self, *args, **kargs):
         """Handle more than two arguments to the constructor - called from init."""

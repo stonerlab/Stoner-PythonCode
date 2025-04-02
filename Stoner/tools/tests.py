@@ -15,6 +15,8 @@ __all__ = [
 from typing import Optional, Iterable as IterableType, Tuple, Union, Any
 
 from collections.abc import Iterable
+from importlib import import_module
+
 from numpy import ndarray, dtype, isnan, logical_and  # pylint: disable=redefined-builtin
 
 from ..compat import string_types
@@ -213,3 +215,41 @@ def isTuple(obj: Any, *args: type, strict: bool = True) -> bool:
     else:
         bad = False
     return not bad
+
+
+class ClassTester:
+    """Dynamically load classes on attribute access for structural pattern matching."""
+
+    def __init__(self, **kargs):
+        """Store a mapping of attribute name to a string of dot notation classes."""
+        self._kargs = kargs
+
+    def __call__(self, **kargs):
+        """Update the mapping of attribute names and class mappings."""
+        self.kargs |= kargs
+
+    def __getattr__(self, name):
+        """Lookup an attribute name in the stored name-class name mapping and return it.
+
+        Args:
+            name (str):
+                Attribute name to lookup.
+
+        Returns:
+            (type):
+                Class type matchignt he attribute.
+
+        If the mapping contains a string then it is split into class and module. If the module exists in
+        sys.modules then just get the module from there, otherwise, load it with importlib machinery. Finally
+        get the class as an attribute in the module and return it. Also, set the type into the stored mapping.
+        """
+        if name not in self._kargs:
+            return AttributeError(f"{name} is not an attrbute or mapped class alias.")
+        mod = self._kargs[name]
+        if isinstance(mod, str):
+            parts = mod.split(".")
+            cls = parts.pop()
+            mod = ".".join(parts)
+            mod = import_module(mod)
+            self._kargs[name] = getattr(mod, cls)
+        return self._kargs[name]
