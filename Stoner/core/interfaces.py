@@ -69,29 +69,32 @@ class DataFileInterfacesMixin:
             and DataFile[5,3] would return the 6th element of the
             4th column.
         """
-        if isinstance(name, string_types + (_pattern_type,)):
-            try:
-                ret = self.metadata[name]
-            except KeyError:
+        match name:
+            case str() | _pattern_type():
                 try:
-                    ret = self.data[name]
-                except KeyError as err:
-                    raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.") from err
-        elif isinstance(name, tuple) and isinstance(name[0], string_types):
-            try:
-                rest = name[1:]
-                ret = self.metadata[name[0]]
-                ret = ret.__getitem__(*rest)
-            except KeyError:
+                    return self.metadata[name]
+                except KeyError:
+                    try:
+                        return self.data[name]
+                    except KeyError as err:
+                        raise KeyError(
+                            f"{name} was neither a key in the metadata nor a column in the main data."
+                        ) from err
+            case tuple() if name in self.metadata:
+                return self.metadata[name]
+            case (str(), *rest):
                 try:
-                    ret = self.data[name]
-                except KeyError as err:
-                    raise KeyError(f"{name} was neither a key in the metadata nor a column in the main data.") from err
-        elif isinstance(name, tuple) and name in self.metadata:
-            ret = self.metadata[name]
-        else:
-            ret = self.data[name]
-        return ret
+                    ret = self.metadata[name[0]]
+                    return ret.__getitem__(*rest)
+                except KeyError:
+                    try:
+                        return self.data[name]
+                    except KeyError as err:
+                        raise KeyError(
+                            f"{name} was neither a key in the metadata nor a column in the main data."
+                        ) from err
+            case _:
+                return self.data[name]
 
     def __iter__(self):
         """Provide agenerator for iterating.
@@ -128,10 +131,12 @@ class DataFileInterfacesMixin:
             existing metadata item that is iterable, and if so, sets the metadta. In all other circumstances,
             it attempts to set an item in the main data array.
         """
-        if isinstance(name, string_types) or str(name) in self.metadata:
-            self.metadata[name] = value
-        elif isinstance(name, tuple):
-            if isinstance(name[0], string_types) and name[0] in self.metadata and isiterable(self.metadata[name[0]]):
+        match name:
+            case str():
+                self.metadata[name] = value
+            case _ if name in self.metadata:
+                self.metadata[name] = value
+            case (str(), *rest) if name[0] in self.metadata and isiterable(self.metadata[name[0]]):
                 if len(name) == 2:
                     key = name[0]
                     name = name[1]
@@ -139,10 +144,8 @@ class DataFileInterfacesMixin:
                     key = name[0]
                     name = tuple(name[1:])
                 self.metadata[key][name] = value
-            else:
+            case _:
                 self.data[name] = value
-        else:
-            self.data[name] = value
 
     def count(self, value=None, axis=0, col=None):
         """Count the number of un-masked elements in the :py:class:`DataFile`.
