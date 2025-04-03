@@ -118,9 +118,9 @@ class DataArray(ma.MaskedArray):
                     self.fill_value = np.nan
             self._setas.shape = getattr(self, "shape", (0,))
 
-    def __array_wrap__(self, out_arr, context=None):
+    def __array_wrap__(self, out_arr, context=None, return_scalar=None):
         """Make sure ufuncs do the right thing with DataArrays."""
-        ret = ma.MaskedArray.__array_wrap__(self, out_arr, context)
+        ret = ma.MaskedArray.__array_wrap__(self, out_arr, context=context, return_scalar=return_scalar)
         return ret
 
     def _prepare_index(self, ix):

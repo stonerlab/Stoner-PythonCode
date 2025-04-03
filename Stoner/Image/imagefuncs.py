@@ -141,7 +141,7 @@ def adjust_contrast(im, lims=(0.1, 0.9), percent=True):
         rescaled image
     """
     if percent:
-        vmin, vmax = np.percentile(im, np.array(lims) * 100)
+        vmin, vmax = np.percentile(im.view(np.ndarray), np.array(lims) * 100)
     else:
         vmin, vmax = lims[0], lims[1]
     im.metadata["adjust_contrast"] = (vmin, vmax)
@@ -889,10 +889,10 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
     if fast_mode:
         if "x" in kargs:
             result = img[:, src[1]]
-            points = np.row_stack((np.ones(img.shape[0]) * src[1], np.arange(img.shape[0])))
+            points = np.vstack((np.ones(img.shape[0]) * src[1], np.arange(img.shape[0])))
         else:
             result = img[src[0], :]
-            points = np.row_stack((np.arange(img.shape[1]), np.ones(img.shape[1]) * src[0]))
+            points = np.vstack((np.arange(img.shape[1]), np.ones(img.shape[1]) * src[0]))
     else:
         result = measure.profile_line(img, src, dst, linewidth, order, mode, cval)
         points = measure.profile._line_profile_coordinates(src, dst, linewidth)[:, :, 0]

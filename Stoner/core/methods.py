@@ -258,14 +258,14 @@ class DataFileSearchMixin:
             stopi = min(len(self), i + hw + 1)
             if exclude_centre:  # hacked to stop problems with DataArray concatenation
                 tmp = self.clone  # copy all properties
-                data = np.row_stack((self.data[starti : i - hc], self.data[i + 1 + hc : stopi]))
+                data = np.vstack((self.data[starti : i - hc], self.data[i + 1 + hc : stopi]))
                 tmp.data = np.array(data)  # guarantee an ndarray
                 data = tmp.data  # get the DataArray
             else:
                 data = self.data[starti:stopi]
             if wrap:
                 tmp = self.clone  # copy all properties
-                ret = np.row_stack((pre_data, data, post_data))
+                ret = np.vstack((pre_data, data, post_data))
                 tmp.data = np.array(ret)  # guarantee an ndarray
                 ret = tmp.data  # get the DataArray
             else:

@@ -345,7 +345,7 @@ class Langevin(Model):
         """
         M_s = (np.max(data) - np.min(data)) / 2.0
         if x is not None:
-            d = np.sort(np.row_stack((x, data)))
+            d = np.sort(np.vstack((x, data)))
             dd = savgol_filter(d, 7, 1)
             yd = dd[1] / dd[0]
             chi = np.interp(np.array([0]), d[0], yd)[0]

@@ -614,7 +614,7 @@ class FittingMixin:
             if i == 0:
                 ydata = np.atleast_2d(ydat)
             else:
-                ydata = np.row_stack([ydata, ydat])
+                ydata = np.vstack([ydata, ydat])
 
         return xdat, ydata, sigma
 

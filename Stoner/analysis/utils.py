@@ -236,7 +236,7 @@ def ApplyAffineTransform(xy, transform):
         (n x 2 array).
         Transformed coordinates.
     """
-    xyt = np.row_stack((xy.T, np.ones(len(xy))))
+    xyt = np.vstack((xy.T, np.ones(len(xy))))
     xyt = np.dot(transform, xyt)
     return xyt.T
 

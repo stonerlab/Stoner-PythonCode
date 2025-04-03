@@ -169,4 +169,4 @@ def test_imagefuncs():
 
 
 if __name__ == "__main__":  # Run some tests manually to allow debugging
-    pytest.main(["--pdb", __file__])
+    pytest.main(["--pdb","-W","error", __file__])

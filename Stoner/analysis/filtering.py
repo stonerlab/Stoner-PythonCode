@@ -80,7 +80,7 @@ class FilteringOpsMixin:
         else:
             col = _.ycol
             data = self.column(list(col)).T
-            data = np.row_stack((data, np.arange(data.shape[1])))
+            data = np.vstack((data, np.arange(data.shape[1])))
 
         ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if isinstance(pad, bool) and pad:
