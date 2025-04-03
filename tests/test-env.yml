@@ -16,6 +16,7 @@ dependencies:
   - scipy >=1.14
   - numpy >=2.0
   - matplotlib >=3.8
+  - matplotlib-scalebar
   - scikit-image >=0.24
   - h5py
   - cycler >=0.10.0

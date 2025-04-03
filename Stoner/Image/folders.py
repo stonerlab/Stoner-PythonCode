@@ -299,7 +299,7 @@ class ImageFolderMixin:
             kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
 
         Keyword Arguments:
-            extra (callable(i,j,d)):
+            plot_extra (callable(i,j,d)):
                 A callable that can carry out additional processing per plot after the plot is done
             figsize(tuple(x,y)):
                 Size of the figure to create
@@ -328,7 +328,7 @@ class ImageFolderMixin:
         plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
         plts = min(plts, len(self))
 
-        extra = kargs.pop("extra", lambda i, j, d: None)
+        plot_extra = kargs.pop("plot_extra", lambda i, j, d: None)
 
         fig_num = kargs.pop("figure", getattr(self, "_figure", None))
         if isinstance(fig_num, Figure):
@@ -376,7 +376,7 @@ class ImageFolderMixin:
                 elif callable(kargs["title"]):
                     plt_kargs["title"] = kargs["title"](d)
             ret.append(d.imshow(*args, **plt_kargs))
-            extra(i, j, d)
+            plot_extra(i, j, d)
         return ret
 
     def stddev(self, weights=None, _box=False, _metadata="first"):

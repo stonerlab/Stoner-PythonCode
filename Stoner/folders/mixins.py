@@ -666,7 +666,7 @@ class PlotMethodsMixin:
             kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
 
         Keyword Arguments:
-            extra (callable(i,j,d)):
+            plot_extra (callable(i,j,d)):
                 A callable that can carry out additional processing per plot after the plot is done
             figsize(tuple(x,y)):
                 Size of the figure to create
@@ -699,7 +699,7 @@ class PlotMethodsMixin:
             for i, d in enumerate(self):
                 self[i] = make_Data(d)
 
-        extra = kargs.pop("extra", lambda i, j, d: None)
+        plot_extra = kargs.pop("plot_extra", lambda i, j, d: None)
 
         fig_args = getattr(self, "_fig_args", [])
         fig_kargs = getattr(self, "_fig_kargs", {})
@@ -724,7 +724,7 @@ class PlotMethodsMixin:
             kargs["figure"] = fig
             kargs["ax"] = axs.ravel()[j]
             ret.append(d.plot(*args, **kargs))
-            extra(i, j, d)
+            plot_extra(i, j, d)
         for n in range(j + 1, plt_x * plt_y):
             axs.ravel()[n].remove()
         return ret

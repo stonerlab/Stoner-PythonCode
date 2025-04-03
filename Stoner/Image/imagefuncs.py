@@ -683,6 +683,11 @@ def imshow(im, **kwargs):
         height = 0.09 / gs.nrows
         auto_fit_fontsize(txt, width, height)
     ax.axis("on" if kwargs.get("show_axis", False) else "off")
+    try:
+        im["ax"] = ax
+        im["fig"] = fig
+    except IndexError:
+        pass
 
     if QImage is None:  # No Qt5
         return fig
