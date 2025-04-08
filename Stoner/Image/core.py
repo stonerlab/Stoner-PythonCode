@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
 __all__ = ["ImageArray", "ImageFile"]
+from pathlib import Path
 import os
+from collections.abc import Iterable
 from copy import copy, deepcopy
 import inspect
 from importlib import import_module
@@ -82,14 +84,16 @@ else:
 
 def _add_core_(result, other):
     """Actually do result=result-other."""
-    if isinstance(other, type(result)) and result.shape == other.shape:
-        result.image += other.image
-    elif isinstance(other, np.ndarray) and other.shape == result.shape:
-        result.image += other
-    elif isinstance(other, (int, float)):
-        result.image += other
-    else:
-        return NotImplemented
+    result_type = type(result)
+    match other:
+        case result_type() if result.shape == other.shape:
+            result.image += other.image
+        case np.ndarray() if result.shape == other.shape:
+            result.image += other
+        case int() | float():
+            result.image += other
+        case _:
+            return NotImplemented
     return result
 
 
@@ -117,14 +121,16 @@ def _div_core_(result, other):
 
 def _sub_core_(result, other):
     """Actually do result=result-other."""
-    if isinstance(other, type(result)) and result.shape == other.shape:
-        result.image -= other.image
-    elif isinstance(other, np.ndarray) and other.shape == result.shape:
-        result.image -= other
-    elif isinstance(other, (int, float)):
-        result.image -= other
-    else:
-        return NotImplemented
+    result_type = type(result)
+    match other:
+        case result_type() if result.shape == other.shape:
+            result.image -= other.image
+        case np.ndarray() if result.shape == other.shape:
+            result.image -= other
+        case int() | float():
+            result.image -= other
+        case _:
+            return NotImplemented
     return result
 
 
@@ -271,34 +277,26 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.get("metadata", {})
 
-        if len(args) not in [0, 1]:
-            raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
-
         # 0 args initialisation
-        if len(args) == 0:
-            ret = np.empty((0, 0), dtype=float).view(cls)
-            # merge the results of __new__ from emtadataObject
-        else:
-            # 1 args initialisation
-            arg = args[0]
-            loadfromfile = False
-            if isinstance(arg, cls):
-                ret = arg
-            elif isinstance(arg, np.ndarray):
+        match args:
+            case tuple() if len(args) == 0:
+                ret = np.empty((0, 0), dtype=float).view(cls)
+                # merge the results of __new__ from emtadataObject
+            case (cls(),):
+                ret = args[0]
+            case (np.ndarray(),):
                 # numpy array or ImageArray)
-                if arg.ndim < 2:
-                    ret = np.atleast_2d(arg).view(ImageArray)
+                if args[0].ndim < 2:
+                    ret = np.atleast_2d(args[0]).view(ImageArray)
                 else:
-                    ret = arg.view(ImageArray)
-                kargs["metadata"] = getattr(arg, "metadata", typeHintedDict())
+                    ret = args[0].view(ImageArray)
+                kargs["metadata"] = getattr(args[0], "metadata", typeHintedDict())
                 kargs["metadata"].update(user_metadata)
-            elif isinstance(arg, bool) and not arg:
+            case (bool(),) if not args[0]:
                 patterns = (("png", "*.png"), ("npy", "*.npy"))
                 arg = get_filedialog(what="r", filetypes=patterns)
                 if len(arg) == 0:
                     raise ValueError("No file given")
-                loadfromfile = True
-            elif isinstance(arg, path_types) or loadfromfile:
                 # Filename- load datafile
                 if not os.path.exists(arg):
                     raise ValueError(f"File path does not exist {arg}")
@@ -306,18 +304,28 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 ret = ret._load(arg, **array_args)  # pylint: disable=no-member
                 kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
                 kargs["metadata"].update(user_metadata)
-            elif isinstance(arg, ImageFile):
-                # extract the image
-                ret = arg.image
+            case (str(),) | (Path(),):
+                # Filename- load datafile
+                if not os.path.exists(args[0]):
+                    raise ValueError(f"File path does not exist {args[0]}")
+                ret = np.empty((0, 0), dtype=float).view(cls)
+                ret = ret._load(args[0], **array_args)  # pylint: disable=no-member
                 kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
                 kargs["metadata"].update(user_metadata)
-            else:
+            case (ImageFile(),):
+                # extract the image
+                ret = args[0].image
+                kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
+                kargs["metadata"].update(user_metadata)
+            case (_,):
                 try:  # try converting to a numpy array (eg a list type)
-                    ret = np.asarray(arg, **array_args).view(cls)
+                    ret = np.asarray(args[0], **array_args).view(cls)
                     if ret.dtype == "O":  # object dtype - can't deal with this
                         raise ValueError
                 except ValueError as err:  # ok couldn't load from iterable, we're done
-                    raise ValueError(f"No constructor for {arg}") from err
+                    raise ValueError(f"No constructor for {args[0]}") from err
+            case _:
+                raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
 
         asfloat = kargs.pop("asfloat", False) or kargs.pop(
             "convert_float", False
@@ -487,48 +495,51 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             - (iterable of length 4) - assumed to give 4 integers to describe a specific box
         """
         if len(args) == 0 and "box" in kargs.keys():
-            args = [kargs["box"]]  # back compatibility
-        elif len(args) not in (0, 1, 4):
-            raise ValueError("box accepts 1 or 4 arguments, {len(args)} given.")
+            args = (kargs["box"],)  # back compatibility
         if len(args) == 0 or (len(args) == 1 and args[0] is None):
-            args = RegionSelect()(self)
-        if len(args) == 1:
-            box = args[0]
-            if isinstance(box, bool) and not box:  # box=False is the same as all values
-                return slice(None, None, None), slice(None, None, None)
-            if isLikeList(box) and len(box) == 4:  # Full box as a list
-                box = [x for x in box]
-            elif isinstance(box, int):  # Take a border of n pixels out
-                box = [box, self.shape[1] - box, box, self.shape[0] - box]
-            elif isinstance(box, string_types):
-                box = self.metadata[box]
-                return self._box(*box)
-            elif isinstance(box, float):  # Keep the central fraction of the image
-                box = [
-                    round(self.shape[1] * box / 2),
-                    round(self.shape[1] * (1 - box / 2)),
-                    round(self.shape[1] * box / 2),
-                    round(self.shape[1] * (1 - box / 2)),
-                ]
-                box = list([int(x) for x in box])
-            else:
-                raise ValueError(f"crop accepts tuple of length 4, {len(box)} given.")
-        else:
-            box = list(args)
+            args = tuple(RegionSelect()(self))
+        match args:
+            case (box,):
+                match box:
+                    case bool() if not box:
+                        return slice(None, None, None), slice(None, None, None)
+                    case Iterable() if len(box) == 4 and not isinstance(box, str):
+                        box = [x for x in box]
+                    case int() | np.int16() | np.int32() | np.int64():
+                        box = [box, self.shape[1] - box, box, self.shape[0] - box]
+                    case str():
+                        box = self.metadata[box]
+                        return self._box(*box)
+                    case float() | np.float16() | np.float32() | np.float64():
+                        box = [
+                            round(self.shape[1] * box / 2),
+                            round(self.shape[1] * (1 - box / 2)),
+                            round(self.shape[1] * box / 2),
+                            round(self.shape[1] * (1 - box / 2)),
+                        ]
+                        box = list([int(x) for x in box])
+                    case _:
+                        raise ValueError(f"crop accepts tuple of length 4, {len(args)} given.")
+            case tuple() if len(args) in [2, 4]:
+                box = list(args)
+            case _:
+                raise ValueError(f"crop accepts tuple of length 4, {len(args)} given.")
+
         for i, item in enumerate(box):  # replace None with max extent
-            if isinstance(item, float) and 0 <= item <= 1:
-                if i < 2:
-                    box[i] = int(round(self.shape[1] * item))
-                else:
-                    box[i] = int(round(self.shape[0] * item))
-            elif isinstance(item, float):
-                box[i] = int(round(item))
-            elif isinstance(item, int_types):
-                pass
-            elif item is None:
-                box[i] = self.max_box[i]
-            else:
-                raise TypeError(f"Arguments for box should be floats, integers or None, not {type(item)}")
+            match item:
+                case float() | np.float16() | np.float32() | np.float64() if 0 <= item <= 1:
+                    if i < 2:
+                        box[i] = int(round(self.shape[1] * item))
+                    else:
+                        box[i] = int(round(self.shape[0] * item))
+                case float() | np.float16() | np.float32() | np.float64():
+                    box[i] = int(round(item))
+                case int() | np.int16() | np.int32() | np.int64():
+                    pass
+                case None:
+                    box[i] = self.max_box[i]
+                case _:
+                    raise TypeError(f"Arguments for box should be floats, integers or None, not {type(item)}")
         return slice(box[2], box[3]), slice(box[0], box[1])
 
     #################################################################################################

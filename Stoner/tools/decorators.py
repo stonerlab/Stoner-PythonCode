@@ -58,6 +58,9 @@ def image_file_adaptor(workingfunc):
         r = workingfunc(im, *args, **kargs)
         if getattr(workingfunc, "keep_class", False):
             return r
+        if isinstance(r, type(self.image)):
+            self.image = r
+            return self
         if isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
             ret = make_Data(r)
             ret.metadata = self.metadata.copy()
@@ -67,6 +70,7 @@ def image_file_adaptor(workingfunc):
                 r = r.T
             if isinstance(r, type(im)) and np.shares_memory(r, im):  # Assume everything was inplace
                 self.image = r
+
                 return self
             r = r.view(type(im))
             if r.shape == self.shape:

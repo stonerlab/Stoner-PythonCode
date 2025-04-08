@@ -285,8 +285,8 @@ def test_dir():
             "_abc_impl",
             "__annotations__",
             "__getstate__",
-            '__static_attributes__',
-            '__firstlineno__'
+            "__static_attributes__",
+            "__firstlineno__",
         ]
     )
     attrs = set(dir(selfd)) - bad_keys
@@ -353,9 +353,7 @@ def test_methods():
     ), "Adding a column as a DataArray with column headers didn't work"
     e = d.clone
     d.swap_column([(0, 1), (0, 2)])
-    assert d.column_headers == [
-        e.column_headers[x] for x in [2, 0, 1]
-    ], f"Swap column test failed: {d.column_headers}"
+    assert d.column_headers == [e.column_headers[x] for x in [2, 0, 1]], f"Swap column test failed: {d.column_headers}"
     e = selfd(setas="yx")
     assert e.shape == selfd.shape and e.setas[0] == "y", "Failed on a DataFile.__call__ test"
     spl = len(repr(selfd).split("\n"))

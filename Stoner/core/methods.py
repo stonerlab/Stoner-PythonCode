@@ -3,11 +3,12 @@
 
 __all__ = ["DataFileSearchMixin"]
 
+from collections.abc import Iterable
 import copy
 import numpy as np
 from statsmodels.stats.weightstats import DescrStatsW
 
-from ..compat import index_types, int_types
+from ..compat import index_types, int_types, _pattern_type
 from ..tools import operator, isiterable, all_type
 from ..tools.widgets import RangeSelect
 
@@ -19,34 +20,34 @@ class DataFileSearchMixin:
         """Return an array of booleans for indexing matching rows for use with search method."""
         _ = self._col_args(scalar=False, xcol=xcol)
         x = self.find_col(_.xcol, force_list=True)[0]  # Workaround in newer numpy
-        if isinstance(value, (int_types, float)):  # Search for a value in x-column
-            ix = np.isclose(self.data[:, x], value, atol=accuracy)
-        elif isinstance(value, tuple) and len(value) == 2:  # within a range of values
-            (low, u) = (min(value), max(value))
-            low -= accuracy
-            u += accuracy
-            v = self.data[:, x]
-            low = np.ones_like(v) * low
-            u = np.ones_like(v) * u
-            ix = np.logical_and(v > low, v <= u)
-        elif (
-            isinstance(value, (list, np.ndarray)) and all_type(value, bool) and len(value) <= len(self)
-        ):  # index by list or array of booleans
-            if len(value) < len(self):  # Expand array if necessary
-                ix = np.append(value, [False] * len(self) - len(value))
-            else:
-                ix = np.array(value)
-        elif isinstance(value, (list, np.ndarray)):  # Array or list of values
-            ix = np.zeros(len(self), dtype=bool)
-            for v in value:
-                ix = np.logical_or(ix, self._search_index(xcol, v, accuracy))
-        elif callable(value):  # Index with a callable function
-            ix = np.array([value(r[x], r) for r in self], dtype=bool)
-        elif value is None:  # If indexing with None, use a gui range slector
-            selector = RangeSelect()
-            ix = selector(self, x, accuracy)
-        else:  # error!
-            raise RuntimeError(f"Unknown search value type {value}")
+        match value:
+            case int() | float():
+                ix = np.isclose(self.data[:, x], value, atol=accuracy)
+            case (_, _):
+                (low, u) = (min(value), max(value))
+                low -= accuracy
+                u += accuracy
+                v = self.data[:, x]
+                low = np.ones_like(v) * low
+                u = np.ones_like(v) * u
+                ix = np.logical_and(v > low, v <= u)
+            case list() | np.ndarray() if all_type(value, bool) and len(value) <= len(self):
+                if len(value) < len(self):  # Expand array if necessary
+                    ix = np.append(value, [False] * len(self) - len(value))
+                else:
+                    ix = np.array(value)
+            case list() | np.ndarray():
+                ix = np.zeros(len(self), dtype=bool)
+                for v in value:
+                    ix = np.logical_or(ix, self._search_index(xcol, v, accuracy))
+            case _ if callable(value):
+                ix = np.array([value(r[x], r) for r in self], dtype=bool)
+            case _ if value is None:
+                selector = RangeSelect()
+                ix = selector(self, x, accuracy)
+            case _:
+                raise RuntimeError(f"Unknown search value type {value}")
+
         ix = np.logical_xor(invert, ix)
         if ix.ndim > 1:
             ix = ix[:, 0]
@@ -414,11 +415,14 @@ class DataFileSearchMixin:
                 :include-source:
                 :outname: select
         """
-        if len(args) == 1:
-            if callable(args[0]):
-                kargs["__"] = args[0]
-            elif isinstance(args[0], dict):
-                kargs.update(args[0])
+        match args:
+            case (arg,) if callable(arg):
+                kargs["__"] = arg
+            case (dict() as arg,):
+                kargs.update(arg)
+            case _:
+                pass
+
         result = self.clone
         res = np.zeros(len(self), dtype=bool)
         for arg in kargs:
@@ -484,16 +488,18 @@ class DataFileSearchMixin:
         if order is None:
             order = list(range(len(self.column_headers)))
         recs = self.records
-        if callable(order):
-            d = sorted(recs, cmp=order)
-        elif isinstance(order, index_types):
-            order = [recs.dtype.names[self.find_col(order)]]
-            d = np.sort(recs, order=order)
-        elif isiterable(order):
-            order = [recs.dtype.names[self.find_col(x)] for x in order]
-            d = np.sort(recs, order=order)
-        else:
-            raise KeyError(f"Unable to work out how to sort by a {type(order)}")
+        match order:
+            case _ if callable(order):
+                d = sorted(recs, cmp=order)
+            case int() | str() | _pattern_type():
+                order = [recs.dtype.names[self.find_col(order)]]
+                d = np.sort(recs, order=order)
+            case Iterable():
+                order = [recs.dtype.names[self.find_col(x)] for x in order]
+                d = np.sort(recs, order=order)
+            case _:
+                raise KeyError(f"Unable to work out how to sort by a {type(order)}")
+
         self.data = d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers))
         if reverse:
             self.data = self.data[::-1]
@@ -548,29 +554,30 @@ class DataFileSearchMixin:
             xcol = args.pop(0)
         data = dict()
 
-        if isinstance(xcol, index_types):
-            for val in np.unique(self.column(xcol)):
-                newfile = self.clone
-                newfile.filename = f"{self.column_headers[self.find_col(xcol)]}={val} {self.filename}"
-                newfile.data = self.search(xcol, val)
-                data[val] = newfile
-        elif callable(xcol):
-            try:  # Try to call function with all data in one go
-                keys = xcol(self.data)
-                if not isiterable(keys):
-                    keys = [keys] * len(self)
-            except Exception:  # pylint: disable=W0703  # Ok try instead to do it row by row
-                keys = [xcol(r) for r in self]
-            if not isiterable(keys) or len(keys) != len(self):
-                raise RuntimeError("Not returning an index of keys")
-            keys = np.array(keys)
-            for key in np.unique(keys):
-                data[key] = self.clone
-                data[key].data = self.data[keys == key, :]
-                data[key].filename = f"{xcol.__name__}={key} {self.filename}"
-                data[key].setas = self.setas
-        else:
-            raise NotImplementedError(f"Unable to split a file with an argument of type {type(xcol)}")
+        match xcol:
+            case int() | str() | _pattern_type():
+                for val in np.unique(self.column(xcol)):
+                    newfile = self.clone
+                    newfile.filename = f"{self.column_headers[self.find_col(xcol)]}={val} {self.filename}"
+                    newfile.data = self.search(xcol, val)
+                    data[val] = newfile
+            case _ if callable(xcol):
+                try:  # Try to call function with all data in one go
+                    keys = xcol(self.data)
+                    if not isiterable(keys):
+                        keys = [keys] * len(self)
+                except Exception:  # pylint: disable=W0703  # Ok try instead to do it row by row
+                    keys = [xcol(r) for r in self]
+                if not isiterable(keys) or len(keys) != len(self):
+                    raise RuntimeError("Not returning an index of keys")
+                keys = np.array(keys)
+                for key in np.unique(keys):
+                    data[key] = self.clone
+                    data[key].data = self.data[keys == key, :]
+                    data[key].filename = f"{xcol.__name__}={key} {self.filename}"
+                    data[key].setas = self.setas
+            case _:
+                raise NotImplementedError(f"Unable to split a file with an argument of type {type(xcol)}")
         out = DataFolder(nolist=True, setas=self.setas)
         for k, f in data.items():
             if args:
