@@ -8,11 +8,15 @@ import copy
 import csv
 import re
 from collections.abc import Mapping
-from typing import Union, List, Mapping as MappingType, Callable
+from typing import Callable, List
+from typing import Mapping as MappingType
+from typing import Union
+
 import numpy as np
+
 from ..compat import index_types, int_types
 from ..tools import all_type, copy_into
-from .Typing import Numeric, Column_Index, Int_Types
+from .Typing import Column_Index, Int_Types, Numeric
 
 
 def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], newdata: "DataFile") -> "DataFile":

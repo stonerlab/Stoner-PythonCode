@@ -8,14 +8,13 @@ __all__ = ["DataArray"]
 
 import copy
 
-import numpy.ma as ma
 import numpy as np
+import numpy.ma as ma
+from Stoner.compat import int_types, string_types
+from Stoner.tools import AttributeStore, all_size, all_type, isiterable, isnone
 
-from Stoner.compat import string_types, int_types
-from Stoner.tools import isiterable, all_type, isnone, AttributeStore, all_size
-
-from .setas import setas as _setas
 from .exceptions import StonerSetasError
+from .setas import setas as _setas
 
 
 class DataArray(ma.MaskedArray):

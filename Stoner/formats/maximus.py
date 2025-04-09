@@ -19,7 +19,7 @@ from ..Image import ImageFile, ImageStack, ImageArray
 from ..Core import DataFile
 from ..compat import string_types
 from ..HDF5 import HDFFileManager
-from ..tools.file import FileManager
+from ..tools.file import FileManager, get_filename
 from ..core.exceptions import StonerLoadError
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
@@ -55,7 +55,7 @@ class MaximusSpectra(DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
-        filename = kargs.get("filename", args[0])
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -95,8 +95,9 @@ class MaximusImage(ImageFile):
     mime_type = ["text/plain"]
     priority = 16
 
-    def _load(self, filename, **kargs):
+    def _load(self, *args, **kargs):
         """Load an ImageFile by calling the ImageArray method instead."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -158,8 +159,9 @@ class MaximusStackMixin:
         self.compression = "gzip"
         self.compression_opts = 6
 
-    def _load(self, filename):
+    def _load(self, *args, **kargs):
         """Load an ImageStack from either an hdf file or textfiles."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:

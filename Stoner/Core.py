@@ -969,13 +969,16 @@ class DataFile(
             )
 
         # Make sure our current data is at least 2D and get its size
-        if len(self.data.shape) == 1:
-            self.data = np.atleast_2d(self.data).T
-        if len(self.data.shape) == 2:
-            (dr, dc) = self.data.shape
-        elif not self.data.shape:
-            self.data = np.array([[]])
-            (dr, dc) = (0, 0)
+        match self.data.shape:
+            case (_,):
+                self.data = np.atleast_2d(self.data).T
+            case (_, _):
+                (dr, dc) = self.data.shape
+            case _ if not self.data.shape:
+                self.data = np.array([[]])
+                (dr, dc) = (0, 0)
+            case _:
+                raise ValueError("Data should be 1 or 2 dimensional")
 
         # Expand either our current data or new data to have the same number of rows
         if cl > dr and dc * dr > 0:  # Existing data is finite and too short

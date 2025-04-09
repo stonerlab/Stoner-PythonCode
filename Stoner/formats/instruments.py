@@ -14,7 +14,7 @@ from .. import Core
 from ..compat import str2bytes, bytes2str
 from ..core.exceptions import StonerAssertionError, assertion, StonerLoadError
 from ..core.base import string_to_type
-from ..tools.file import FileManager, SizedFileManager
+from ..tools.file import FileManager, SizedFileManager, get_filename
 
 
 class LSTemperatureFile(Core.DataFile):
@@ -36,8 +36,9 @@ class LSTemperatureFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.340"]
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load data for 340 files."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -157,7 +158,7 @@ class QDFile(Core.DataFile):
 
     mime_type = ["application/x-wine-extension-ini", "text/plain"]
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """QD system file loader routine.
 
         Args:
@@ -167,6 +168,7 @@ class QDFile(Core.DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -248,7 +250,7 @@ class RigakuFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.ras"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Read a Rigaku ras file including handling the metadata nicely.
 
         Args:
@@ -260,6 +262,7 @@ class RigakuFile(Core.DataFile):
         """
         from ast import literal_eval
 
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("rb")
         else:
@@ -479,7 +482,7 @@ class SPCFile(Core.DataFile):
                 value = parts[1].decode()
                 self._header[key] = value
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Read a .scf file produced by the Renishaw Raman system (among others).
 
         Args:
@@ -495,6 +498,7 @@ class SPCFile(Core.DataFile):
         Notes:
             Metadata keys are pretty much as specified in the spc.h file that defines the filerformat.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -713,7 +717,7 @@ class VSMFile(Core.DataFile):
         self.column_headers = column_headers
         self.setas(x="H_vsm (T)", y="m (emu)")  # pylint: disable=not-callable
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """VSM file loader routine.
 
         Args:
@@ -723,6 +727,7 @@ class VSMFile(Core.DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -750,7 +755,7 @@ class XRDFile(Core.DataFile):
         super().__init__(*args, **kargs)
         self._public_attrs = {"four_bounce": bool}
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Read an XRD Core.DataFile as produced by the Brucker diffractometer.
 
         Args:
@@ -764,6 +769,7 @@ class XRDFile(Core.DataFile):
             Format is ini file like but not enough to do standard inifile processing - in particular
             one can have multiple sections with the same name (!)
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:

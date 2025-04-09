@@ -3,20 +3,19 @@
 
 __all__ = ["DataFilePropertyMixin"]
 
-import os
 import copy
+import os
 import pathlib
 import urllib
 
 import numpy as np
 from numpy import ma
 
-from ..tools import get_option
 from ..compat import classproperty, path_types
-
-from .array import DataArray
-from ..tools.classes import subclasses, copy_into
+from ..tools import get_option
+from ..tools.classes import copy_into, subclasses
 from ..tools.file import URL_SCHEMES
+from .array import DataArray
 
 try:
     from tabulate import tabulate

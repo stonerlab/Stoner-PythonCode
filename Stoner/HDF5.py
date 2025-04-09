@@ -384,10 +384,12 @@ class HDF5FolderMixin:
         file_wildcard = "hdf file (*.hdf5)|*.hdf5|Data file (*.dat)|\
         *.dat|All files|*"
 
-        if mode == "r":
+        if mode.startswith("r"):
             mode2 = "Open HDF file"
-        elif mode == "w":
+        elif mode.startswith("w"):
             mode2 = "Save HDF file as"
+        else:
+            raise ValueError(f"Unrecognised {mode=}")
 
         dlg = get_filedialog(
             "file", title=mode2, filetypes=file_wildcard, message=message, mustexist=not new_directory

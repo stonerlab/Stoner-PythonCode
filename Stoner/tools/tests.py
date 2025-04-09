@@ -226,7 +226,7 @@ class ClassTester:
 
     def __call__(self, **kargs):
         """Update the mapping of attribute names and class mappings."""
-        self.kargs |= kargs
+        self._kargs |= kargs
 
     def __getattr__(self, name):
         """Lookup an attribute name in the stored name-class name mapping and return it.

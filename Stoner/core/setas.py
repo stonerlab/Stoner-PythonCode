@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 """setas module provides the setas class for DataFile and friends."""
 __all__ = ["setas"]
-import re
 import copy
-from collections.abc import MutableMapping, Iterable
+import re
+from collections.abc import Iterable, MutableMapping
 
 import numpy as np
 
-from ..compat import string_types, index_types, _pattern_type
-from ..tools import AttributeStore, isiterable, typedList, isLikeList
+from ..compat import _pattern_type, index_types, string_types
+from ..tools import AttributeStore, isiterable, isLikeList, typedList
 from .utils import decode_string
 
 

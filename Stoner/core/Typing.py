@@ -4,6 +4,7 @@
 # pylint: disable-all
 import typing
 from pathlib import PurePath
+
 from numpy import ndarray
 
 from ..compat import _pattern_type

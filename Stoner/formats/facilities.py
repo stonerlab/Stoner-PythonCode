@@ -12,7 +12,7 @@ import numpy as np
 from .. import Core, Image
 from ..compat import str2bytes
 from ..core.base import string_to_type
-from ..tools.file import FileManager
+from ..tools.file import FileManager, get_filename
 from ..core.exceptions import StonerLoadError
 
 try:
@@ -108,7 +108,7 @@ class BNLFile(Core.DataFile):
             print(f"Did not import any data for {self.filename}")
         self.column_headers = column_headers
 
-    def _load(self, filename, *args, **kargs):  # fileType omitted, implicit in class call
+    def _load(self, *args, **kargs):
         """Load the file from disc.
 
         Args:
@@ -126,6 +126,7 @@ class BNLFile(Core.DataFile):
             to load data but unfortunately Brookhaven data isn't very plain so there's
             a new method below.
         """
+        filename, args, kargs = get_filename(args, kargs)
         self.filename = filename
         try:
             self.__parse_BNL_data()  # call an internal function rather than put it in load function
@@ -141,8 +142,9 @@ class MDAASCIIFile(Core.DataFile):
     priority = 16
     patterns = ["*.txt"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -226,7 +228,7 @@ class OpenGDAFile(Core.DataFile):
     priority = 16  # Makes a positive ID of it's file type so give priority
     patterns = ["*.dat"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load an OpenGDA file.
 
         Args:
@@ -236,6 +238,7 @@ class OpenGDAFile(Core.DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -280,8 +283,9 @@ class SNSFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -344,8 +348,9 @@ if fabio:
         patterns = ["*.edf"]
         mime_type = ["application/octet-stream", "text/plain"]
 
-        def _load(self, filename=None, *args, **kargs):
+        def _load(self, *args, **kargs):
             """Load function. File format has space delimited columns from row 3 onwards."""
+            filename, args, kargs = get_filename(args, kargs)
             if filename is None or not filename:
                 self.get_filename("r")
             else:
@@ -365,8 +370,9 @@ if fabio:
         patterns = ["*.edf"]
         mime_type = ["text/plain", "application/octet-stream"]
 
-        def _load(self, filename=None, *args, **kargs):
+        def _load(self, *args, **kargs):
             """Load function. File format has space delimited columns from row 3 onwards."""
+            filename, args, kargs = get_filename(args, kargs)
             if filename is None or not filename:
                 self.get_filename("r")
             else:

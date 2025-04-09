@@ -3,13 +3,14 @@
 
 __all__ = ["DataFileSearchMixin"]
 
-from collections.abc import Iterable
 import copy
+from collections.abc import Iterable
+
 import numpy as np
 from statsmodels.stats.weightstats import DescrStatsW
 
-from ..compat import index_types, int_types, _pattern_type
-from ..tools import operator, isiterable, all_type
+from ..compat import _pattern_type, index_types, int_types
+from ..tools import all_type, isiterable, operator
 from ..tools.widgets import RangeSelect
 
 

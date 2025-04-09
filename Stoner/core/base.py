@@ -3,39 +3,26 @@
 """Base classes for the Stoner package."""
 
 __all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
-from collections.abc import MutableMapping, Mapping
-import re
 import copy
 import datetime
-from typing import (
-    Union,
-    Optional,
-    Any,
-    Dict,
-    Mapping as MappingType,
-    Tuple,
-    List,
-    Set,
-    Callable,
-    Sequence,
-    Iterable as IterableType,
-    Generator,
-)
+import re
+from collections.abc import Generator, Iterable, Mapping, MutableMapping, Sequence
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union
 
-from dateutil import parser
-import numpy as np
-from numpy import nan
 import asteval
+import numpy as np
+from dateutil import parser
+from numpy import nan
 
 try:
     import pandas as pd
 except ImportError:
     pd = None
 
-from ..compat import string_types, int_types, _pattern_type
-from ..tools import isiterable, isComparable
+from ..compat import _pattern_type, int_types, string_types
+from ..tools import isComparable, isiterable
 from .exceptions import StonerAssertionError
-from .Typing import String_Types, RegExp, Filename
+from .Typing import Filename, RegExp, String_Types
 
 try:
     from blist import sorteddict
@@ -217,7 +204,7 @@ class regexpDict(sorteddict):
             return NotImplemented
         return len(self ^ other) == 0 and len(other ^ self) == 0
 
-    def __sub__(self, other: MappingType) -> "regexpDict":
+    def __sub__(self, other: Mapping) -> "regexpDict":
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -226,7 +213,7 @@ class regexpDict(sorteddict):
         ret = type(self)({k: self[k] for k in (mk - ok)})
         return ret
 
-    def __xor__(self, other: MappingType) -> Union["regexpDict", Set[Any]]:
+    def __xor__(self, other: Mapping) -> Union["regexpDict", Set[Any]]:
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -313,7 +300,7 @@ class typeHintedDict(regexpDict):
     __regexTimestamp: RegExp = re.compile(r"Timestamp")
     __regexEvaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
 
-    __types: Dict[str, type] = dict(
+    __types: Dict[str, Type] = dict(
         [  # Key order does matter here!
             ("Boolean", bool),
             ("I32", int),
@@ -705,7 +692,7 @@ class metadataObject(MutableMapping):
             return self._metadata
 
     @metadata.setter
-    def metadata(self, value: IterableType) -> None:
+    def metadata(self, value: Iterable) -> None:
         """Update the metadata object with type checking."""
         if not isinstance(value, typeHintedDict) and isiterable(value):
             self._metadata = typeHintedDict(value)

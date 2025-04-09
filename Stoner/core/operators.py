@@ -6,8 +6,8 @@ import numpy as np
 
 from ..compat import index_types, string_types
 from ..tools import isiterable
+from . import DataArray, _setas
 from .utils import add_core, and_core, mod_core, sub_core
-from . import _setas, DataArray
 
 
 class DataFileOperatorsMixin:
@@ -236,6 +236,8 @@ class DataFileOperatorsMixin:
             swaps = zip(["ycol", "yerr"], ["x", "d"])
         elif cols["axes"] >= 3:
             swaps = zip(["ycol", "zcol", "yerr", "zerr"], ["z", "x", "f", "d"])
+        else:
+            raise ValueError("Cannot invert unless at least two columns are identified in setas")
         setas[cols["xcol"]] = "y"
         if cols["has_xerr"]:
             setas[cols["xerr"]] = "e"

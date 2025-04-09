@@ -9,7 +9,7 @@ import numpy as np
 
 from ..Core import DataFile
 from ..core.exceptions import StonerLoadError
-from ..tools.file import FileManager
+from ..tools.file import FileManager, get_filename
 
 
 def _read_line(data, metadata):
@@ -43,8 +43,9 @@ class GenXFile(DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat", "*.txt"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -110,12 +111,13 @@ class OVFFile(DataFile):
 
     mime_type = ["text/plain", "application/octet-stream"]
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards.
 
         Notes:
             This code can handle only the first segment in the data file.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:

@@ -26,6 +26,7 @@ __all__ = [
     "FileManager",
     "SizedFileManager",
     "URL_SCHEMES",
+    "get_filename",
 ]
 
 try:
@@ -34,6 +35,16 @@ except ImportError:
     filemagic = None
 
 URL_SCHEMES = ["http", "https"]
+
+
+def get_filename(args, kargs):
+    """Extract a filename from the function arguments."""
+    if "filename" in kargs:
+        return kargs.pop("filename"), args, kargs
+    if len(args):
+        args = list(args)
+        return args.pop(0), args, kargs
+    return None, args, kargs
 
 
 def file_dialog(

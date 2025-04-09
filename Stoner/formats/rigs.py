@@ -12,7 +12,7 @@ from ..compat import bytes2str
 from ..core.base import string_to_type
 from .. import Core
 from .generic import CSVFile
-from ..tools.file import FileManager
+from ..tools.file import FileManager, get_filename
 
 
 class BigBlueFile(CSVFile):
@@ -27,7 +27,7 @@ class BigBlueFile(CSVFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat", "*.iv", "*.rvt"]  # Recognised filename patterns
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Just call the parent class but with the right parameters set.
 
         Args:
@@ -37,6 +37,7 @@ class BigBlueFile(CSVFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -53,7 +54,7 @@ class BirgeIVFile(Core.DataFile):
 
     patterns = ["*.dat"]
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, *args, **kargs):
         """File loader for PinkLib.
 
         Args:
@@ -63,6 +64,7 @@ class BirgeIVFile(Core.DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -119,7 +121,7 @@ class MokeFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat", "*.txt"]
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Leeds  MOKE file loader routine.
 
         Args:
@@ -129,6 +131,7 @@ class MokeFile(Core.DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -163,7 +166,7 @@ class FmokeFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat"]  # Recognised filename patterns
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Sheffield Focussed MOKE file loader routine.
 
         Args:
@@ -173,6 +176,7 @@ class FmokeFile(Core.DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -205,8 +209,9 @@ class EasyPlotFile(Core.DataFile):
     #      file type before attempting to read data.
     priority = 32  # Fairly generic, but can do some explicit testing
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Private loader method."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -303,7 +308,7 @@ class PinkLibFile(Core.DataFile):
     # the file load/save dialog boxes.
     patterns = ["*.dat"]  # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """File loader for PinkLib.
 
         Args:
@@ -313,6 +318,7 @@ class PinkLibFile(Core.DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:

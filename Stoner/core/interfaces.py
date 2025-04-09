@@ -5,7 +5,7 @@ __all__ = ["DataFileInterfacesMixin"]
 
 import numpy as np
 
-from ..compat import string_types, _pattern_type
+from ..compat import _pattern_type, string_types
 from ..tools import isiterable
 
 

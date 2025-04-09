@@ -16,7 +16,7 @@ import numpy as np
 from ..Core import DataFile
 from ..compat import str2bytes, Hyperspy_ok, hs, hsload
 from ..core.exceptions import StonerLoadError
-from ..tools.file import FileManager
+from ..tools.file import FileManager, get_filename
 
 
 class _refuse_log(logging.Filter):
@@ -87,7 +87,7 @@ class CSVFile(DataFile):
 
     mime_type = ["application/csv", "text/plain", "text/csv"]
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load generic deliminated files.
 
         Args:
@@ -104,6 +104,7 @@ class CSVFile(DataFile):
         Returns:
             A copy of the current object after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         header_line = kargs.pop("header_line", self._defaults["header_line"])
         data_line = kargs.pop("data_line", self._defaults["data_line"])
         data_delim = kargs.pop("data_delim", self._defaults["data_delim"])
@@ -216,7 +217,7 @@ class KermitPNGFile(DataFile):
             raise StonerLoadError(f"Not a PNG file!>\n{format_exc()}") from err
         return True
 
-    def _load(self, filename=None, *args, **kargs):
+    def _load(self, *args, **kargs):
         """PNG file loader routine.
 
         Args:
@@ -226,6 +227,7 @@ class KermitPNGFile(DataFile):
         Returns:
             A copy of the itself after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:
@@ -287,7 +289,7 @@ try:  # Optional tdms support
 
         mime_type = ["application/octet-stream"]
 
-        def _load(self, filename=None, *args, **kargs):
+        def _load(self, *args, **kargs):
             """TDMS file loader routine.
 
             Args:
@@ -297,6 +299,7 @@ try:  # Optional tdms support
             Returns:
                 A copy of the itself after loading the data.
             """
+            filename, args, kargs = get_filename(args, kargs)
             if filename is None or not filename:
                 self.get_filename("r")
             else:
@@ -356,7 +359,7 @@ if Hyperspy_ok:
                 for k in self._axes_keys:
                     self.metadata[f"{ax.name}.{k}"] = getattr(ax, k)
 
-        def _load(self, filename=None, *args, **kargs):
+        def _load(self, *args, **kargs):
             """Load HyperSpy file loader routine.
 
             Args:
@@ -366,6 +369,7 @@ if Hyperspy_ok:
             Returns:
                 A copy of the itself after loading the data.
             """
+            filename, args, kargs = get_filename(args, kargs)
             if filename is None or not filename:
                 self.get_filename("r")
             else:

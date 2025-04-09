@@ -17,7 +17,7 @@ from ..compat import string_types, bytes2str
 from ..core.base import typeHintedDict
 from ..Image import ImageStack, ImageFile, ImageArray
 from ..HDF5 import HDFFileManager
-from ..tools.file import FileManager
+from ..tools.file import FileManager, get_filename
 from ..core.exceptions import StonerLoadError
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
@@ -116,7 +116,7 @@ class AttocubeScanMixin:
             return self.metadata.slice("display", values_only=True)
         return []
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, *args, **kargs):
         """Load data from a hdf5 file.
 
         Args:
@@ -126,6 +126,7 @@ class AttocubeScanMixin:
         Returns:
             itself after having loaded the data
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
             filename = self.filename
