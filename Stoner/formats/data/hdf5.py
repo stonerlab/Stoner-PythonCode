@@ -79,8 +79,6 @@ def save_hdf(save_data, filename=None, **kargs):  # pylint: disable=unused-argum
         mode = "r+" if os.path.exists(filename) else "w"
     else:
         mode = ""
-    compression = "gzip"
-    compression_opts = 6
     with HDFFileManager(filename, mode) as f:
         f.require_dataset(
             "data",

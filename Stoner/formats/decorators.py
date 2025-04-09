@@ -324,7 +324,7 @@ def clear_routine(name, loader=True, saver=True):
                 continue
             for _, values in _loaders_by_pattern.items():
                 remove = []
-                for ix, (priority, loader) in enumerate(values):
+                for ix, (_, loader) in enumerate(values):
                     if loader is func:
                         remove.append(ix)
                 if remove:

@@ -9,7 +9,7 @@ from collections.abc import Iterable
 import numpy as np
 from statsmodels.stats.weightstats import DescrStatsW
 
-from ..compat import _pattern_type, index_types, int_types
+from ..compat import _pattern_type, int_types
 from ..tools import all_type, isiterable, operator
 from ..tools.widgets import RangeSelect
 

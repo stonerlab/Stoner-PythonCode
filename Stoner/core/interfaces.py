@@ -136,7 +136,7 @@ class DataFileInterfacesMixin:
                 self.metadata[name] = value
             case _ if name in self.metadata:
                 self.metadata[name] = value
-            case (str(), *rest) if name[0] in self.metadata and isiterable(self.metadata[name[0]]):
+            case (str(), *_) if name[0] in self.metadata and isiterable(self.metadata[name[0]]):
                 if len(name) == 2:
                     key = name[0]
                     name = name[1]

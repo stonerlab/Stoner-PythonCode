@@ -77,7 +77,6 @@ class GenXFile(DataFile):
                     break
             else:
                 raise StonerLoadError("Cannot find headers")
-            skip = ix + i + 2
             column_headers = [f.strip() for f in re.split(r"[\s\t]+", line.strip())]
             self.data = np.real(np.genfromtxt(datafile, dtype=complex))
         self["dataset"] = dataset

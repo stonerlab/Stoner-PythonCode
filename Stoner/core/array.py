@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 """Provides the DataArray class.
 
-A subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names."""
-
+A subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names.
+"""
 __all__ = ["DataArray"]
 
 import copy
 
 import numpy as np
 import numpy.ma as ma
-from Stoner.compat import int_types, string_types
+from Stoner.compat import int_types
 from Stoner.tools import AttributeStore, all_size, all_type, isiterable, isnone
 
 from .exceptions import StonerSetasError
@@ -137,7 +137,7 @@ class DataArray(ma.MaskedArray):
             case (*i, np.ndarray()) if self.ndim == 1:
                 if len(ix) == 1:
                     ix = ix[0]
-            case (*i, np.ndarray(dtype=bool)) if len(ix[-1]) == self.shape[1]:
+            case (*i, np.ndarray()) if len(ix[1]) == self.shape[1] and ix[1].dtype.kind == "b":
                 pass
             case (*i, s) if isiterable(s):  # index by whatever and thena string
                 ix = (*i, [self._setas.find_col(c) for c in s])

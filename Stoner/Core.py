@@ -21,7 +21,6 @@ import urllib
 
 from collections.abc import MutableSequence, Mapping, Iterable
 import inspect as _inspect_
-from importlib import import_module
 from textwrap import TextWrapper
 import csv
 

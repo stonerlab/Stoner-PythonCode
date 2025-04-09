@@ -33,7 +33,7 @@ from ..compat import np_version
 from ..core.base import typeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..Core import DataFile
-from ..tools import isTuple, isLikeList, make_Data
+from ..tools import isTuple, make_Data
 from ..tools.file import file_dialog, get_file_name_type, auto_load_classes
 from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones
 from ..compat import (
