@@ -7,6 +7,7 @@ import numpy as np
 from ..decorators import register_loader
 from ...core.exceptions import StonerLoadError
 from ..utils.maximus import read_scan, flatten_header, hdr_to_dict
+from ...tools.file import get_filename
 
 
 @register_loader(
@@ -22,7 +23,7 @@ def load_maximus_spectra(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename = kargs.get("filename", args[0])
+    filename, args, kargs = get_filename(args, kargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -58,8 +59,9 @@ def load_maximus_spectra(new_data, *args, **kargs):
 @register_loader(
     patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Data"
 )
-def load_maximus_data(new_data, filename, *args, **kargs):
+def load_maximus_data(new_data, *args, **kargs):
     """Load a maximus image, but to a Data object."""
+    filename, args, kargs = get_filename(args, kargs)
     try:
         new_data.filename = filename
         pth = Path(new_data.filename)

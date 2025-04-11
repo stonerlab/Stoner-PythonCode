@@ -11,7 +11,7 @@ from ...compat import bytes2str
 from ...core.base import string_to_type
 from ...core.exceptions import StonerLoadError
 from ..data.generic import load_csvfile
-from ...tools.file import FileManager
+from ...tools.file import FileManager, get_filename
 
 from ..decorators import register_loader
 
@@ -19,7 +19,7 @@ from ..decorators import register_loader
 @register_loader(
     patterns=[(".dat", 64), (".iv", 64), (".rvt", 64)], mime_types=("text/plain", 64), name="BigBlueFile", what="Data"
 )
-def load_bigblue(new_data, filename, *args, **kargs):
+def load_bigblue(new_data, *args, **kargs):
     """Just call the parent class but with the right parameters set.
 
     Args:
@@ -29,6 +29,7 @@ def load_bigblue(new_data, filename, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
 
     new_data = load_csvfile(new_data, filename, *args, header_line=3, data_line=7, data_delim=" ", header_delim=",")
@@ -38,7 +39,7 @@ def load_bigblue(new_data, filename, *args, **kargs):
 
 
 @register_loader(patterns=(".dat", 32), mime_types=("text/plain", 32), name="BirgeIVFile", what="Data")
-def load_birge(new_data, filename, *args, **kargs):
+def load_birge(new_data, *args, **kargs):
     """File loader for PinkLib.
 
     Args:
@@ -48,6 +49,7 @@ def load_birge(new_data, filename, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     ix = 0
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
@@ -90,7 +92,7 @@ def load_birge(new_data, filename, *args, **kargs):
 
 
 @register_loader(patterns=[(".dat", 16), (".txt", 16)], mime_types=("text/plain", 16), name="MokeFile", what="Data")
-def load_old_moke(new_data, filename, *args, **kargs):
+def load_old_moke(new_data, *args, **kargs):
     """Leeds  MOKE file loader routine.
 
     Args:
@@ -100,6 +102,7 @@ def load_old_moke(new_data, filename, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     with FileManager(new_data.filename, mode="rb") as f:
         line = bytes2str(f.readline()).strip()
@@ -120,7 +123,7 @@ def load_old_moke(new_data, filename, *args, **kargs):
 
 
 @register_loader(patterns=(".dat", 16), mime_types=("text/plain", 16), name="FmokeFile", what="Data")
-def load_fmoke(new_data, filename, *args, **kargs):
+def load_fmoke(new_data, *args, **kargs):
     """Sheffield Focussed MOKE file loader routine.
 
     Args:
@@ -130,6 +133,7 @@ def load_fmoke(new_data, filename, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -188,8 +192,9 @@ def _sa_cmd(new_data, parts):
 
 
 @register_loader(patterns=("*", 64), mime_types=("text/plain", 64), name="EasyPlotFile", what="Data")
-def load_easyplot(new_data, filename, *args, **kargs):
+def load_easyplot(new_data, *args, **kargs):
     """Private loader method."""
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     delimiter = kargs.pop("delimiter")
 
@@ -244,7 +249,7 @@ def load_easyplot(new_data, filename, *args, **kargs):
 
 
 @register_loader(patterns=(".dat", 64), mime_types=("text/plain", 64), name="PinkLibFile", what="Data")
-def load_pinklib(new_data, filename=None, *args, **kargs):
+def load_pinklib(new_data, *args, **kargs):
     """File loader for PinkLib.
 
     Args:
@@ -254,6 +259,7 @@ def load_pinklib(new_data, filename=None, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:

@@ -383,9 +383,9 @@ class DataArray(ma.MaskedArray):
                 return ret.dtype.type(ret)
             case ma.MaskedArray() if ret.ndim == 0:
                 return ret.dtype.type(ma.filled(ret))
-            case np.ndarray() if isinstance(idx, tuple) and len(
-                idx
-            ) == 0:  # special case for indexing with empty tuple.
+            case np.ndarray() if (
+                isinstance(idx, tuple) and len(idx) == 0
+            ):  # special case for indexing with empty tuple.
                 return ret
             case np.ndarray(ndim=1) if single_row:
                 ret.isrow = single_row

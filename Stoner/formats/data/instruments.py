@@ -13,14 +13,15 @@ import numpy as np
 from ...compat import str2bytes, bytes2str
 from ...core.exceptions import StonerAssertionError, assertion, StonerLoadError
 from ...core.base import string_to_type
-from ...tools.file import FileManager, SizedFileManager
+from ...tools.file import FileManager, SizedFileManager, get_filename
 
 from ..decorators import register_loader, register_saver
 
 
 @register_loader(patterns=(".340", 16), mime_types=("text/plain", 32), name="LSTemperatureFile", what="Data")
-def load_340(new_data, filename=None, *args, **kargs):
+def load_340(new_data, *args, **kargs):
     """Load data for 340 files."""
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     with FileManager(new_data.filename, "rb") as data:
         keys = []
@@ -130,7 +131,7 @@ def save_340(save_data, filename=None, **kargs):
     name="QDFile",
     what="Data",
 )
-def load_qdfile(new_data, filename=None, *args, **kargs):
+def load_qdfile(new_data, *args, **kargs):
     """QD system file loader routine.
 
     Args:
@@ -140,6 +141,7 @@ def load_qdfile(new_data, filename=None, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     setas = {}
     i = 0
     new_data.filename = filename
@@ -223,7 +225,7 @@ def _to_Q(new_data, wavelength=1.540593):
     name="RigakuFile",
     what="Data",
 )
-def load_rigaku(new_data, filename=None, *args, **kargs):
+def load_rigaku(new_data, *args, **kargs):
     """Read a Rigaku ras file including handling the metadata nicely.
 
     Args:
@@ -233,6 +235,7 @@ def load_rigaku(new_data, filename=None, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     sh = re.compile(r"^\*([^\s]+)\s+(.*)$")  # Regexp to grab the keys
     ka = re.compile(r"(.*)\-(\d+)$")
     header = {}
@@ -423,7 +426,7 @@ def _read_spc_loginfo(new_data, f):
 
 
 @register_loader(patterns=(".spc", 16), mime_types=("application/octet-stream", 16), name="SPCFile", what="Data")
-def load_spc(new_data, filename=None, *args, **kargs):
+def load_spc(new_data, *args, **kargs):
     """Read a .scf file produced by the Renishaw Raman system (among others).
 
     Args:
@@ -439,6 +442,7 @@ def load_spc(new_data, filename=None, *args, **kargs):
     Notes:
         Metadata keys are pretty much as specified in the spc.h file that defines the filerformat.
     """
+    filename, args, kargs = get_filename(args, kargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -590,7 +594,7 @@ def load_spc(new_data, filename=None, *args, **kargs):
 
 
 @register_loader(patterns=[(".fld", 16), (".dat", 32)], mime_types=("text/plain", 16), name="VSMFile", what="Data")
-def load_vsm(new_data, filename=None, *args, header_line=3, data_line=3, header_delim=",", **kargs):
+def load_vsm(new_data, *args, header_line=3, data_line=3, header_delim=",", **kargs):
     """VSM file loader routine.
 
     Args:
@@ -609,6 +613,7 @@ def load_vsm(new_data, filename=None, *args, header_line=3, data_line=3, header_
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     try:
         with FileManager(filename, errors="ignore", encoding="utf-8") as f:
@@ -656,7 +661,7 @@ def load_vsm(new_data, filename=None, *args, header_line=3, data_line=3, header_
     name="XRDFile",
     what="Data",
 )
-def load_xrd(new_data, filename=None, *args, **kargs):
+def load_xrd(new_data, *args, **kargs):
     """Read an XRD DataFile as produced by the Brucker diffractometer.
 
     Args:
@@ -670,6 +675,7 @@ def load_xrd(new_data, filename=None, *args, **kargs):
         Format is ini file like but not enough to do standard inifile processing - in particular
         one can have multiple sections with the same name (!)
     """
+    filename, args, kargs = get_filename(args, kargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:

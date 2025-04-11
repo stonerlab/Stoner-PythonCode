@@ -9,7 +9,7 @@ from importlib import import_module
 from ...compat import string_types, bytes2str, path_types, str2bytes
 from ...core.exceptions import StonerLoadError
 from ..decorators import register_loader, register_saver
-from ...tools.file import HDFFileManager
+from ...tools.file import HDFFileManager, get_filename
 
 
 @register_loader(
@@ -18,8 +18,9 @@ from ...tools.file import HDFFileManager
     name="HDF5File",
     what="Data",
 )
-def load_hdf(new_data, filename, *args, **kargs):  # pylint: disable=unused-argument
+def load_hdf(new_data, *args, **kargs):  # pylint: disable=unused-argument
     """Create a new HDF5File from an actual HDF file."""
+    filename, args, kargs = get_filename(args, kargs)
     with HDFFileManager(filename, "r") as f:
         data = f["data"]
         if np.prod(np.array(data.shape)) > 0:
@@ -128,7 +129,7 @@ def _scan_SLS_meta(new_data, group):
     name="SLS_STXMFile",
     what="Data",
 )
-def load_sls_stxm(new_data, filename, *args, **kargs):
+def load_sls_stxm(new_data, *args, **kargs):
     """Load data from the hdf5 file produced by Pollux.
 
     Args:
@@ -138,6 +139,7 @@ def load_sls_stxm(new_data, filename, *args, **kargs):
     Returns:
         itnew_data after having loaded the data
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
         try:
@@ -244,7 +246,7 @@ def _hgx_main_data(new_data, data_grp):
     name="HGXFile",
     what="Data",
 )
-def _load(new_data, filename, *args, **kargs):
+def _load(new_data, *args, **kargs):
     """Load a GenX HDF file.
 
     Args:
@@ -254,6 +256,7 @@ def _load(new_data, filename, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     new_data.seen = []
     with HDFFileManager(new_data.filename, "r") as f:

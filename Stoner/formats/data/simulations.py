@@ -7,7 +7,7 @@ import re
 import numpy as np
 
 from ...core.exceptions import StonerLoadError
-from ...tools.file import FileManager
+from ...tools.file import FileManager, get_filename
 
 from ..decorators import register_loader
 
@@ -32,8 +32,9 @@ def _read_line(data, metadata):
 
 
 @register_loader(patterns=(".dat", 16), mime_types=("text/plain", 16), name="GenXFile", what="Data")
-def load_genx(new_data, filename=None, *args, **kargs):
+def load_genx(new_data, *args, **kargs):
     """Load function. File format has space delimited columns from row 3 onwards."""
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
     pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
@@ -84,12 +85,13 @@ def load_genx(new_data, filename=None, *args, **kargs):
     name="OVFFile",
     what="Data",
 )
-def _load(new_data, filename=None, *args, **kargs):
+def _load(new_data, *args, **kargs):
     """Load function. File format has space delimited columns from row 3 onwards.
 
     Notes:
         This code can handle only the first segment in the data file.
     """
+    filename, args, kargs = get_filename(args, kargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:

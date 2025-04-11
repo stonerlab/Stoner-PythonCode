@@ -2,7 +2,7 @@
 """Module to work with scan files from an AttocubeSPM running Daisy."""
 import re
 
-from ...tools.file import FileManager
+from ...tools.file import FileManager, get_filename
 from ...core.exceptions import StonerLoadError
 from ..decorators import register_loader
 
@@ -23,7 +23,7 @@ def plane(X, a, b, c):
 
 
 @register_loader(patterns=(".txt", 32), mime_types=("text/plain", 32), name="AttocubeScanParametersFile", what="Data")
-def load_attocube_parameters(new_data, filename, *args, **kargs):
+def load_attocube_parameters(new_data, *args, **kargs):
     """Load the scan parameters text file as the metadata for a Data File.
 
     Args:
@@ -34,6 +34,7 @@ def load_attocube_parameters(new_data, filename, *args, **kargs):
         new_data:
             The modififed scan stack.
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     with FileManager(filename, "r") as parameters:
         if not parameters.readline().startswith("Daisy Parameter Snapshot"):

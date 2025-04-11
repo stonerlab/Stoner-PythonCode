@@ -7,13 +7,15 @@ from traceback import format_exc
 from ...compat import str2bytes, path_types
 from ...core.exceptions import StonerLoadError
 from ...tools import copy_into, make_Data
+from ...tools.file import get_filename
 from ..decorators import register_loader, register_saver
 from ..utils.zip import test_is_zip
 
 
 @register_loader(patterns=(".zip", 16), mime_types=("application/zip", 16), name="ZippedFile", what="Data")
-def load_zipfile(new_data, filename=None, *args, **kargs):
+def load_zipfile(new_data, *args, **kargs):
     """Load a file from the zip file, opening it as necessary."""
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     try:
         if isinstance(new_data.filename, zf.ZipFile):  # Loading from an ZipFile

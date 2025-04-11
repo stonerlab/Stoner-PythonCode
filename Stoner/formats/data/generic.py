@@ -22,7 +22,7 @@ from ...core.exceptions import StonerLoadError
 from ...core.utils import tab_delimited
 from ...tools import make_Data
 
-from ...tools.file import FileManager
+from ...tools.file import FileManager, get_filename
 
 from ..decorators import register_loader, register_saver
 
@@ -85,7 +85,7 @@ def _delim_detect(line):
     name="DataFile",
     what="Data",
 )
-def load_tdi_format(new_data, filename, *args, **kargs):
+def load_tdi_format(new_data, *args, **kargs):
     """Actually load the data from disc assuming a .tdi file format.
 
     Args:
@@ -105,6 +105,7 @@ def load_tdi_format(new_data, filename, *args, **kargs):
         disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
         the loading class can try a different sub-class instead.
     """
+    filename, args, kargs = get_filename(args, kargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -199,7 +200,7 @@ def save_tdi_format(save_data, filename):
     name="CSVFile",
     what="Data",
 )
-def load_csvfile(new_data: "DataFile", filename: str, *args, **kargs) -> "DataFile":
+def load_csvfile(new_data: "DataFile", *args, **kargs) -> "DataFile":
     """Load generic deliminated files.
 
     Args:
@@ -216,6 +217,7 @@ def load_csvfile(new_data: "DataFile", filename: str, *args, **kargs) -> "DataFi
     Returns:
         A copy of the current object after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     _defaults = {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","}
 
     header_line = kargs.pop("header_line", _defaults["header_line"])
@@ -260,7 +262,7 @@ def load_csvfile(new_data: "DataFile", filename: str, *args, **kargs) -> "DataFi
 
 
 @register_saver(patterns=[(".csv", 32), (".txt", 256)], name="CSVFile", what="Data")
-def save_csvfile(save_data: "DataFile", filename: Optional[str] = None, **kargs):
+def save_csvfile(save_data: "DataFile", *args, **kargs):
     """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
     Args:
@@ -273,6 +275,7 @@ def save_csvfile(save_data: "DataFile", filename: Optional[str] = None, **kargs)
     Returns:
         A copy of itsave_data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     delimiter = kargs.pop("deliminator", ",")
     if filename is None:
         filename = save_data.filename
@@ -297,7 +300,7 @@ def save_csvfile(save_data: "DataFile", filename: Optional[str] = None, **kargs)
     name="JustNumbers",
     what="Data",
 )
-def load_justnumbers(new_data: "DataFile", filename: str, *args, **kargs) -> "DataFile":
+def load_justnumbers(new_data: "DataFile", *args, **kargs) -> "DataFile":
     """Load generic deliminated files with no headers or metadata.
 
     Args:
@@ -311,6 +314,7 @@ def load_justnumbers(new_data: "DataFile", filename: str, *args, **kargs) -> "Da
     Returns:
         A copy of the current object after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     _defaults = {"header_line": None, "data_line": 0, "data_delim": None}
     for karg, val in _defaults.items():
         kargs.setdefault(karg, val)
@@ -355,7 +359,7 @@ def _check_png_signature(filename):
     name="KermitPNGFile",
     what="Data",
 )
-def load_pngfile(new_data, filename=None, *args, **kargs):
+def load_pngfile(new_data, *args, **kargs):
     """PNG file loader routine.
 
     Args:
@@ -365,6 +369,7 @@ def load_pngfile(new_data, filename=None, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
+    filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
     _check_png_signature(filename)
     try:
@@ -419,7 +424,7 @@ try:  # Optional tdms support
         name="TDMSFile",
         what="Data",
     )
-    def load_tdms(new_data, filename=None, *args, **kargs):
+    def load_tdms(new_data, *args, **kargs):
         """TDMS file loader routine.
 
         Args:
@@ -429,6 +434,7 @@ try:  # Optional tdms support
         Returns:
             A copy of the itnew_data after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         filename = Path(filename)
         if filename.suffix == ".tdms_index":
             filename = filename.parent / f"{filename.stem}.tdms"  # rewrite filename for not the index file!
@@ -484,7 +490,7 @@ if Hyperspy_ok:
         name="HyperSpyFile",
         what="Data",
     )
-    def hypersput_load(new_data, filename=None, *args, **kargs):
+    def hypersput_load(new_data, *args, **kargs):
         """Load HyperSpy file loader routine.
 
         Args:
@@ -494,6 +500,7 @@ if Hyperspy_ok:
         Returns:
             A copy of the itnew_data after loading the data.
         """
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             new_data.get_filename("r")
         else:
