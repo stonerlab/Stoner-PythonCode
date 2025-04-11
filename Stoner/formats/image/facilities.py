@@ -4,6 +4,7 @@
 
 # Standard Library imports
 from ...core.exceptions import StonerLoadError
+from ...tools.file import get_filename
 
 from ..decorators import register_loader
 
@@ -20,8 +21,9 @@ if fabio:
         name="FabioImage",
         what="Image",
     )
-    def load_fabio(new_data, filename=None, *args, **kargs):
+    def load_fabio(new_data, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             new_data.get_filename("r")
         else:

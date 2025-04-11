@@ -6,13 +6,15 @@ from pathlib import Path
 from ..decorators import register_loader
 from ...core.exceptions import StonerLoadError
 from ..utils.maximus import read_scan, flatten_header, hdr_to_dict
+from ...tools.file import get_filename
 
 
 @register_loader(
     patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Image"
 )
-def load_maximus_image(new_data, filename, *args, **kargs):
+def load_maximus_image(new_data, *args, **kargs):
     """Load an ImageFile by calling the ImageArray method instead."""
+    filename, args, kargs = get_filename(args, kargs)
     try:
         new_data.filename = filename
         pth = Path(new_data.filename)

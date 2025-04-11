@@ -201,11 +201,11 @@ class typedList(MutableSequence):
             raise TypeError(f"Elements of this list should be of type {self._type}")
         self._store.extend(values)
 
-    def index(self, value: Any, start: int = 0, end: Optional[int] = None) -> int:  # pylint:  disable=arguments-differ
+    def index(self, value: Any, start: int = 0, stop: Optional[int] = None) -> int:
         """Index works like a list except we support Python 3 optional parameters everywhere."""
-        if end is None:
-            end = len(self._store)
-        return self._store[start:end].index(value) + start
+        if stop is None:
+            stop = len(self._store)
+        return self._store[start:stop].index(value) + start
 
     def insert(self, index: int, value: Any) -> None:  # pylint:  disable=arguments-differ
         """Insert an element and do some type checking."""

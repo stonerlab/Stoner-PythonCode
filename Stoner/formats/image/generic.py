@@ -10,6 +10,7 @@ import logging
 from ...core.exceptions import StonerLoadError
 from ...Image import ImageArray
 from ...formats.decorators import register_loader
+from ...toos.file import get_filename
 
 
 class _refuse_log(logging.Filter):
@@ -70,8 +71,9 @@ def _delim_detect(line):
     name="ImageFile",
     what="Image",
 )
-def load_imagefile(new_image, filename, *args, **kargs):
+def load_imagefile(new_image, *args, **kargs):
     """Load an ImageFile by calling the ImageArray method instead."""
+    filename, args, kargs = get_filename(args, kargs)
     new_image._image = ImageArray(filename, *args, **kargs)
     for k in new_image._image._public_attrs:
         setattr(new_image, k, getattr(new_image._image, k, None))

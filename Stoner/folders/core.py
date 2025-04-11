@@ -1382,7 +1382,7 @@ class baseFolder(MutableSequence):
                 self.groups[g].group(next_keys)
         return self
 
-    def index(self, value, start=None, end=None):  # pylint:  disable=arguments-differ
+    def index(self, value, start=None, stop=None):
         """Provide an index method like a sequence.
 
         Args:
@@ -1405,9 +1405,9 @@ class baseFolder(MutableSequence):
         """
         if start is None:
             start = 0
-        if end is None:
-            end = len(self)
-        search = self.__names__()[start:end]
+        if stop is None:
+            stop = len(self)
+        search = self.__names__()[start:stop]
         if isinstance(value, string_types):
             if "*" in value or "?" in value:  # globbing pattern
                 m = fnmatch.filter(search, value)

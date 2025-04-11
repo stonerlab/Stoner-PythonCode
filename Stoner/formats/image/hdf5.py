@@ -6,6 +6,7 @@ import numpy as np
 
 from ..decorators import register_loader
 from ...tools import make_Data
+from ...tools.file import get_filename
 
 
 @register_loader(
@@ -14,13 +15,14 @@ from ...tools import make_Data
     name="STXMImage",
     what="Image",
 )
-def load_stxm_image(new_data, filename, *args, **kargs):
+def load_stxm_image(new_data, *args, **kargs):
     """Initialise and load a STXM image produced by Pollux.
 
     Keyword Args:
         regrid (bool):
             If set True, the gridimage() method is automatically called to re-grid the image to known coordinates.
     """
+    filename, args, kargs = get_filename(args, kargs)
     regrid = kargs.pop("regrid", False)
     kargs.setdefault("filetype", "SLS_STXMFile")
     bcn = kargs.pop("bcn", False)
