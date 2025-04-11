@@ -110,7 +110,7 @@ def get_file_name_type(
     if isinstance(filetype, string_types):  # We can specify filetype as part of name
         try:
             filetype = regexpDict(subclasses(parent))[filetype]  # pylint: disable=E1136
-        except KeyError:
+        except KeyError as keyerr:
             parts = filetype.split(".")
             mod = ".".join(parts[:-1])
             try:
@@ -119,7 +119,7 @@ def get_file_name_type(
             except (ImportError, AttributeError) as err:
                 raise ValueError(f"Unable to import {filetype}") from err
             if not issubclass(filetype, parent):
-                raise ValueError(f"{filetype} is  not a subclass of DataFile.")
+                raise ValueError(f"{filetype} is  not a subclass of DataFile.") from keyerr
     if filename is None or (isinstance(filename, bool) and not filename):
         if filetype is None:
             filetype = parent

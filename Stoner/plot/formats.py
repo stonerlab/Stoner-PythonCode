@@ -226,7 +226,7 @@ class DefaultPlotStyle(MutableMapping):
         # self.fig_width = None
         # self.fig_height = None
 
-        self.update(**kargs)
+        self.update(kargs)
 
     def __call__(self, **kargs):
         """Call the template object can manipulate the rcParams that will be set."""
@@ -376,7 +376,7 @@ class DefaultPlotStyle(MutableMapping):
         for attr in attrs:
             delattr(self, attr)
 
-    def update(self, *args, **kargs):  # pylint: disable=signature-differs
+    def update(self, other):
         """Update the template with new attributes from keyword arguments.
 
         Up to one positional argument may be supplied
@@ -384,17 +384,17 @@ class DefaultPlotStyle(MutableMapping):
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
-        if len(args) == 1 and isinstance(args[0], Mapping):
-            super().update(args[0])
-        elif len(args) > 0:
-            raise SyntaxError(
-                "Only one posotional argument which should be a Mapping subclass can be supplied toi update."
-            )
-        for k in kargs:
-            if k in dir(self) and not callable(self.__getattr__(k)):
-                self.__setattr__(k, kargs[k])
-            elif not k.startswith("_"):
-                self.__setattr__("template_" + k, kargs[k])
+        match other:
+            case Mapping():
+                for k, val in other.items():
+                    if k in dir(self) and not callable(self.__getattr__(k)):
+                        self.__setattr__(k, val)
+                    elif not k.startswith("_"):
+                        self.__setattr__("template_" + k, val)
+            case _:
+                raise SyntaxError(
+                    "Only one posotional argument which should be a Mapping subclass can be supplied toi update."
+                )
 
     def new_figure(self, figure=False, **kargs):
         """Create a new figure.

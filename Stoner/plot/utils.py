@@ -41,7 +41,7 @@ __all__ = [
     "auto_fit_fontsize",
 ]
 import warnings
-from distutils.version import LooseVersion
+from looseversion import LooseVersion
 
 import numpy as np
 import matplotlib.pyplot as plt

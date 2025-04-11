@@ -20,7 +20,6 @@ from ..Core import DataFile
 from ..compat import string_types
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager, get_filename
-from ..core.exceptions import StonerLoadError
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
 

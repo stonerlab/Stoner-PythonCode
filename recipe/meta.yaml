@@ -43,6 +43,7 @@ requirements:
     - dill >=0.2.8
     - urllib3 >=1.26
     - python-dateutil >=2.8
+    - looseversion >=1.0
 
 
 

@@ -18,6 +18,7 @@ from .Folders import DiskBasedFolderMixin
 from .folders.core import baseFolder
 from .folders.utils import pathjoin
 from .tools import copy_into, make_Data
+from .tools.file import get_filename
 
 
 def test_is_zip(filename, member=""):
@@ -120,8 +121,8 @@ class ZippedFile(DataFile):
         self.filename = path.join(archive.filename, member)
         return self
 
-    def _load(self, filename=None, *args, **kargs):
-        """Load a file from the zip file, opening it as necessary."""
+    def _load(self, *args, **kargs):
+        filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:

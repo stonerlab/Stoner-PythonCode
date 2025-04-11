@@ -333,7 +333,7 @@ def _get_model_parnames(model):
         raise ValueError(
             "".join(
                 [
-                    f"Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model",
+                    "Unrecognised type for model! - should be lmfit.Model, scipy.odr.Model",
                     f" or callable, not {type(model)}",
                 ]
             )

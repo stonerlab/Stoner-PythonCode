@@ -36,3 +36,4 @@ dependencies:
   - hyperspy
   - fabio
   - seaborn >=0.13
+  - looseversion >=1.0
