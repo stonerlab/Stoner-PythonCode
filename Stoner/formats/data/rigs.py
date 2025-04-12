@@ -196,7 +196,7 @@ def load_easyplot(new_data, *args, **kargs):
     """Private loader method."""
     filename, args, kargs = get_filename(args, kargs)
     new_data.filename = filename
-    delimiter = kargs.pop("delimiter")
+    delimiter = kargs.pop("delimiter", None)
 
     datastart = -1
     dataend = -1

@@ -7,6 +7,7 @@ from Stoner import __datapath__, DataFolder, Data
 from Stoner.compat import Hyperspy_ok
 
 fldr = DataFolder(__datapath__)
+del fldr["bad_data"]
 if not Hyperspy_ok:
     del fldr[".*emd$"]
 # .all() will recursely iterate all files and groups, depth first.

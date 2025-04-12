@@ -19,7 +19,8 @@ import pytest
 
 from Stoner.formats.attocube import AttocubeScan
 from Stoner.formats.maximus import MaximusStack
-from Stoner.tools.classes import subclasses
+from Stoner.tools.file import get_saver
+from Stoner.core.exceptions import StonerLoadError
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 from Stoner.formats.facilities import FabioImageFile
 
@@ -55,7 +56,8 @@ listed_files = list_files()
 def test_one_file(tmpdir, filename):
     loaded = Data(filename, debug=False)
     assert isinstance(loaded, DataFile), f"Failed to load {filename.name} correctly."
-    if "save" in subclasses()[loaded["Loaded as"]].__dict__:
+    try:
+        saver=get_saver(loaded["Loaded as"])
         pth = pathlib.Path(tmpdir) / filename.name
         _, name, ext = pth.parent, pth.stem, pth.suffix
         pth2 = pathlib.Path(tmpdir) / f"{name}-2{ext}"
@@ -65,7 +67,8 @@ def test_one_file(tmpdir, filename):
         loaded.save(pth2, as_loaded=loaded["Loaded as"])
         assert pth2.exists() or pathlib.Path(loaded.filename).exists(), "Failed to save as {}".format(pth)
         pathlib.Path(loaded.filename).unlink()
-
+    except StonerLoadError:
+        pass
 
 def test_csvfile():
     csv = Data(
@@ -138,7 +141,7 @@ def test_maximus_stack(tmpdir):
 
 def test_fail_to_load():
     with pytest.raises(StonerUnrecognisedFormat):
-        _ = Data(datadir / "TDMS_File.tdms_index")
+        _ = Data(datadir /"bad_data" / "Origin_Project.opju")
 
 
 def test_arb_class_load():

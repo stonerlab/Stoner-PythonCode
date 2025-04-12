@@ -22,7 +22,10 @@ def load_hdf(new_data, *args, **kargs):  # pylint: disable=unused-argument
     """Create a new HDF5File from an actual HDF file."""
     filename, args, kargs = get_filename(args, kargs)
     with HDFFileManager(filename, "r") as f:
-        data = f["data"]
+        if "data" in f.keys():
+            data = f["data"]
+        else:
+            raise StonerLoadError("Not our hdf5 file format.")
         if np.prod(np.array(data.shape)) > 0:
             new_data.data = data[...]
         else:

@@ -260,6 +260,16 @@ def load_csvfile(new_data: "DataFile", *args, **kargs) -> "DataFile":
     new_data.metadata |= kargs
     return new_data
 
+@register_loader(
+    patterns=[(".csv", 512), (".txt", 512)],
+    mime_types=[("application/csv", 512), ("text/plain", 512), ("text/csv", 512)],
+    name="JustNumbers",
+    what="Data",
+)
+def load_numbersfile(new_data: "DataFile", *args, **kargs) -> "DataFile":
+    """Simple pass through for csv file."""
+    return load_csvfile(new_data, *args, header_line=None, data_line=0, header_delim=None, data_delim=None)
+
 
 @register_saver(patterns=[(".csv", 32), (".txt", 256)], name="CSVFile", what="Data")
 def save_csvfile(save_data: "DataFile", *args, **kargs):

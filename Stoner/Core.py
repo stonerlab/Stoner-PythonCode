@@ -30,7 +30,7 @@ from numpy import ma
 
 from .compat import string_types, int_types, index_types, _pattern_type, path_types
 from .tools import all_type, isiterable, isLikeList, get_option, make_Data
-from .tools.file import get_file_name_type, auto_load_classes
+from .tools.file import get_file_name_type, auto_load_classes, get_loader
 
 from .core.exceptions import StonerLoadError, StonerSetasError
 from .core import _setas, regexpDict, typeHintedDict, metadataObject
@@ -40,8 +40,7 @@ from .core.property import DataFilePropertyMixin
 from .core.interfaces import DataFileInterfacesMixin
 from .core.methods import DataFileSearchMixin
 from .core.utils import copy_into, tab_delimited
-from .tools.classes import subclasses
-from .tools.file import file_dialog, FileManager, URL_SCHEMES
+from .tools.file import file_dialog, FileManager, URL_SCHEMES, get_filename, best_saver
 from .tools.tests import ClassTester
 
 try:
@@ -1309,7 +1308,7 @@ class DataFile(
         Note:
             The filename attribute of the current instance is updated by this method as well.
         """
-        self.filename = file_dialog(mode, self.filename, type(self), DataFile)
+        self.filename = file_dialog(mode, self.filename, self.get("Loaded as","DataFile"), DataFile)
         return self.filename
 
     def insert_rows(self, row, new_data):
@@ -1363,27 +1362,26 @@ class DataFile(
 
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
-        filename = kargs.pop("filename", args[0] if len(args) > 0 else None)
+        filename, args, kargs = get_filename(args, kargs)
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
         loaded_class = kargs.pop("loaded_class", False)
         if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
             filename, filetype = get_file_name_type(filename, filetype, DataFile)
+        if filename is None or not filename:
+            filename = file_dialog("r", filename, "DataFile", DataFile)
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA
-            ret = auto_load_classes(filename, DataFile, debug=False, args=args, kargs=kargs)
+            ret = auto_load_classes(filename, "Data", debug=False, args=args, kargs=kargs)
             if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!
                 return ret
         else:
-            if filetype is None or isinstance(filetype, DataFile):  # set fieltype to DataFile
-                filetype = DataFile
-            if issubclass(filetype, DataFile):
-                ret = filetype()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = filetype.__name__
-            else:
-                raise ValueError(f"Unable to load {filename}")
+            loader=get_loader(filetype)
+            try:
+                ret = loader(make_Data(), filename, *args, **kargs)
+            except StonerLoadError as err:
+                raise ValueError(f"Unable to load {filename}") from err
 
         for k, i in kargs.items():
             if not callable(getattr(ret, k, lambda x: False)):
@@ -1497,26 +1495,17 @@ class DataFile(
             if not filename:
                 raise RuntimeError("Cannot get filename to save")
         if as_loaded:
-            if (
-                isinstance(as_loaded, bool) and "Loaded as" in self
-            ):  # Use the Loaded as key to find a different save routine
-                cls = subclasses(DataFile)[self["Loaded as"]]  # pylint: disable=unsubscriptable-object
-            elif isinstance(as_loaded, string_types) and as_loaded in subclasses(
-                DataFile
-            ):  # pylint: disable=E1136, E1135
-                cls = subclasses(DataFile)[as_loaded]  # pylint: disable=unsubscriptable-object
-            else:
-                raise ValueError(
-                    f"{as_loaded} cannot be interpreted as a valid sub class of {type(self)}"
-                    + " so cannot be used to save this data"
-                )
-            ret = cls(self).save(filename)
-            self.filename = ret.filename
-            return self
+            loadtype = self.get("Loaded as", "DataFile")
+            if loadtype != "DataFile":
+                saver = best_saver(filename, loadtype)
+                ret = saver(self, filename)
+                self.filename = ret.filename
+                return self
         # Normalise the extension to ensure it's something we like...
         filename, ext = os.path.splitext(filename)
-        if f"*.{ext}" not in DataFile.patterns:  # pylint: disable=unsupported-membership-test
-            ext = DataFile.patterns[0][2:]  # pylint: disable=unsubscriptable-object
+        saver= best_saver(filename, name=self.get("Loaded as","DataFile"), what="Data")
+        if ext not in saver.patterns:
+            ext = saver.patterns[0]
         filename = f"{filename}.{ext}"
         header = ["TDI Format 1.5"]
         header.extend(self.column_headers[: self.data.shape[1]])

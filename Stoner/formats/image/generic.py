@@ -10,7 +10,7 @@ import logging
 from ...core.exceptions import StonerLoadError
 from ...Image import ImageArray
 from ...formats.decorators import register_loader
-from ...toos.file import get_filename
+from ...tools.file import get_filename
 
 
 class _refuse_log(logging.Filter):

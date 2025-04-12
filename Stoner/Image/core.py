@@ -1208,10 +1208,10 @@ class ImageFile(metadataObject):
         auto_load = kargs.pop("auto_load", filetype is None)
         debug = kargs.pop("debug", False)
 
-        filename, filetype = get_file_name_type(filename, filetype, DataFile)
+        filename, filetype = get_file_name_type(filename, filetype, ImageFile)
         if auto_load:  # We're going to try every subclass we canA
             try:
-                ret = auto_load_classes(filename, ImageFile, debug=debug, args=args, kargs=kargs)
+                ret = auto_load_classes(filename, "Image", debug=debug, args=args, kargs=kargs)
             except StonerUnrecognisedFormat:
                 ret = ImageFile()
                 ret = ret._load(filename, *args, **kargs)

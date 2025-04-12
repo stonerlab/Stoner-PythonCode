@@ -213,11 +213,9 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
 
     if config.has_option("Data", "type"):
         typ = config.get("Data", "type").split(".")
-        typ_mod = ".".join(typ[:-1])
         typ = typ[-1]
-        typ = __import__(typ_mod, fromlist=[typ]).__getattribute__(typ)
     else:
-        typ = None
+        typ = "Data"
     data = make_Data(**kargs)
     if filename is None:
         if not config.has_option("Data", "filename"):

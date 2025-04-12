@@ -93,35 +93,6 @@ def itersubclasses(cls: type, _seen: Optional[set] = None) -> List[type]:
     return list(_seen)
 
 
-def subclasses(cls: Optional[type] = None) -> Dict:  # pylint: disable=no-self-argument
-    """Return a list of all in memory subclasses of this DataFile."""
-    # pylint: disable=E1136, E1135
-    if cls is None:
-        from ..Core import DataFile  # pylint: disable=import-outside-toplevel
-
-        cls = DataFile
-
-    _subclasses = getattr(cls, "_subclasses", None)
-    if _subclasses is None:
-        _subclasses = dict()
-    tmp = itersubclasses(cls)
-    if len(_subclasses) < 1 or _subclasses[0] != len(tmp):  # Rebuild index
-        tmp = {
-            x: (getattr(x, "priority", 256), x.__name__)
-            for x in sorted(tmp, key=lambda c: (getattr(c, "priority", 256), getattr(c, "__name__", "None")))
-        }
-        tmp = {v[1]: k for k, v in tmp.items()}
-        ret = dict()
-        ret[cls.__name__] = cls
-        ret.update(tmp)
-        _subclasses = dict()
-        _subclasses = (len(tmp), ret)
-    else:
-        ret = dict(_subclasses[1])
-    setattr(cls, "_subclasses", _subclasses)
-    return ret
-
-
 class typedList(MutableSequence):
     """Subclass list to make setitem enforce  strict typing of members of the list."""
 

@@ -426,3 +426,12 @@ def make_Data(*args, **kargs):
     if len(args) == 1 and args[0] is None:
         return import_module("Stoner.core.data").Data
     return import_module("Stoner.core.data").Data(*args, **kargs)
+
+def make_Image(*args, **kargs):
+    """Return an instance of Stoner.Data passig through constructor arguments.
+
+    Calling make_Data(None) is a special case to return the Data class ratther than an instance
+    """
+    if len(args) == 1 and args[0] is None:
+        return import_module("Stoner.Image.core").ImageFile
+    return import_module("Stoner.Image.core").ImageFile(*args, **kargs)

@@ -753,6 +753,39 @@ class metadataObject(MutableMapping):
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
+class SortedMultivalueDict(OrderedDict):
+
+    """Implement a simple multivalued dictionary where the values are always sorted lists of elements."""
+
+    @classmethod
+    def _matching(cls, val: Tuple[int, str] | List[Tuple[int, str]]) -> List[Tuple[int, str]]:
+        match val:
+            case (int(p), item):
+                return [(p, item)]
+            case [(int(p), item), *rest]:
+                return sorted([(p, item)] + cls._matching(rest))
+            case []:
+                return []
+            case _:
+                raise TypeError("Can only add items that are a typle of int,value")
+
+    def get_value_list(self, name):
+        """Get the values stored in the dictionary under name."""
+        return [item for _, item in self.get(name, [])]
+
+    def __setitem__(self, name: Any, val: Union[List[Tuple[int, Any]], Tuple[int, Any]]) -> None:
+        """Insert or replace a value and then sort the values."""
+        values = self._matching(val)
+        for p, value in values:  # pylint: disable=not-an-iterable
+            for ix, (_, old_value) in enumerate(self.get(name, [])):
+                if old_value == value:  # replacing existing value
+                    self[name][ix] = (p, value)
+                    break
+            else:
+                super().__setitem__(name, self.get(name, []) + [(p, value)])
+        super().__setitem__(name, sorted(self[name], key=lambda item: (item[0], str(item[1]))))
+
+
 
 if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata
 

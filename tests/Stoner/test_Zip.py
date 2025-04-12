@@ -26,8 +26,9 @@ def test_zipFile(tmpdir):
     z["Stoner.class"] = z2["Stoner.class"]
     assert z == z2
     with zf.ZipFile(path.join(tmpdir, "TDI_Format_RT.zip"), "r") as open_zipfile:
-        z3 = Stoner.Data().load(open_zipfile, filetype=SZ.ZippedFile)
+        z3 = Stoner.Data().load(open_zipfile, filetype="ZippedFile")
     z3["Stoner.class"] = z2["Stoner.class"]
+    z3["Loaded as"] = z2["Loaded as"]
     assert z2 == z3
 
 

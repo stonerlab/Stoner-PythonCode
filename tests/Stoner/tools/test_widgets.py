@@ -74,6 +74,7 @@ def test_loader():
     with pytest.raises(RuntimeError):
         d.save(False)
     fldr = DataFolder(False)
+    del fldr["bad_data"]
     assert fldr.shape == (
         52,
         {

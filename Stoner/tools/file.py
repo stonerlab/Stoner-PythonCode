@@ -4,17 +4,18 @@ from importlib import import_module
 import io
 import os
 import pathlib
+import sys
 import urllib
 from traceback import format_exc
-from typing import Union, Sequence, Dict, Type, Tuple, Optional
+from typing import Union, Sequence, Dict, Type, Tuple, Optional, Callable
 
 import h5py
 
 from ..compat import string_types, path_types, bytes2str, str2bytes
 from .widgets import fileDialog
-from .classes import subclasses
+from .decorators import make_Data, make_Image
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..core.base import regexpDict, metadataObject
+from ..core.base import regexpDict, metadataObject, SortedMultivalueDict
 
 from ..core.Typing import Filename
 
@@ -28,6 +29,13 @@ __all__ = [
     "URL_SCHEMES",
     "get_filename",
 ]
+
+_loaders_by_type = SortedMultivalueDict()
+_loaders_by_pattern = SortedMultivalueDict()
+_loaders_by_name = {}
+_savers_by_pattern = SortedMultivalueDict()
+_savers_by_name = {}
+
 
 try:
     from magic import Magic as filemagic, MAGIC_MIME_TYPE
@@ -48,7 +56,7 @@ def get_filename(args, kargs):
 
 
 def file_dialog(
-    mode: str, filename: Filename, filetype: Union[Type[metadataObject], str], baseclass: Type[metadataObject]
+    mode: str, filename: Filename, filetype: str, baseclass: Type[metadataObject]
 ) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
     """Create a file dialog box for loading or saving ~b DataFile objects.
 
@@ -68,19 +76,8 @@ def file_dialog(
     """
     # Wildcard pattern to be used in file dialogs.
 
-    descs: Dict = {"*.*": "All Files"}
-    for p in filetype.patterns:  # pylint: disable=not-an-iterable
-        descs[p] = filetype.__name__ + " file"
-    for c in subclasses(baseclass):  # pylint: disable=E1136, E1133
-        for p in subclasses(baseclass)[c].patterns:  # pylint: disable=unsubscriptable-object
-            if p in descs:
-                descs[p] += (
-                    ", " + subclasses(baseclass)[c].__name__ + " file"  # pylint: disable=E1136
-                )  # pylint: disable=unsubscriptable-object
-            else:
-                descs[p] = subclasses(baseclass)[c].__name__ + " file"  # pylint: disable=unsubscriptable-object
-
-    patterns = descs
+    patterns: Dict = {"*.*": "All Files"}
+    patterns.update(dialog_patterns(name=filetype))
 
     if isinstance(filename, string_types):
         filename = pathlib.Path(filename)
@@ -108,18 +105,7 @@ def get_file_name_type(
     if isinstance(filename, string_types):
         filename = pathlib.Path(filename)
     if isinstance(filetype, string_types):  # We can specify filetype as part of name
-        try:
-            filetype = regexpDict(subclasses(parent))[filetype]  # pylint: disable=E1136
-        except KeyError as keyerr:
-            parts = filetype.split(".")
-            mod = ".".join(parts[:-1])
-            try:
-                mod = import_module(mod)
-                filetype = getattr(mod, parts[-1])
-            except (ImportError, AttributeError) as err:
-                raise ValueError(f"Unable to import {filetype}") from err
-            if not issubclass(filetype, parent):
-                raise ValueError(f"{filetype} is  not a subclass of DataFile.") from keyerr
+        filetype = get_loader(filetype).name
     if filename is None or (isinstance(filename, bool) and not filename):
         if filetype is None:
             filetype = parent
@@ -145,24 +131,26 @@ def auto_load_classes(
     mimetype = get_mime_type(filename, debug=debug)
     args = args if args is not None else ()
     kargs = kargs if kargs is not None else {}
-    for cls in subclasses(baseclass).values():  # pylint: disable=E1136, E1101
-        cls_name = cls.__name__
-        if debug:
-            print(cls_name)
+    match filename:
+        case str() | pathlib.Path():
+            pattern = pathlib.Path(filename).suffix
+        case _ if hasattr(filename,"url"):
+            pth=urllib.parse.urlparse(filename.url).path
+            pattern = pathlib.Path(pth).suffix
+        case bytes() | io.StringIO() | io.BytesIO() | bool():
+            pattern="*"
+        case _:
+            assert False
+    for loader in next_filer(pattern, mimetype, what=baseclass):
         try:
-            if mimetype is not None and mimetype not in cls.mime_type:  # short circuit for non-=matching mime-types
-                if debug:
-                    print(f"Skipping {cls_name} due to mismatcb mime type {cls.mime_type}")
-                continue
-            test = cls()
-            if "_load" not in cls.__dict__:  # No local _load method
-                continue
-            if debug and filemagic is not None:
-                print(f"Trying: {cls_name} =mimetype {test.mime_type}")
-
-            test = test._load(filename, auto_load=False, *args, **kargs)
-            if test is None:
-                raise SyntaxError(f"Class {cls_name}'s _load returned None !!")
+            match baseclass:
+                case "Data":
+                    test = make_Data()
+                case "Image":
+                    test=make_Image()
+                case _:
+                    assert False
+            test = loader(test, filename, *args, **kargs)
             try:
                 kargs = test._kargs
                 delattr(test, "_kargs")
@@ -172,7 +160,7 @@ def auto_load_classes(
             if debug:
                 print("Passed Load")
             if isinstance(test, metadataObject):
-                test["Loaded as"] = cls_name
+                test["Loaded as"] = loader.name
             if debug:
                 print(f"Test metadata: {test.metadata}")
 
@@ -182,12 +170,12 @@ def auto_load_classes(
                 print(f"Failed Load: {e}")
             continue
         except UnicodeDecodeError:
-            print(f"{cls, filename} Failed with a uncicode decode error for { format_exc()}\n")
+            print(f"{loader.name, filename} Failed with a uncicode decode error for { format_exc()}\n")
             continue
     else:
         raise StonerUnrecognisedFormat(
             f"Ran out of subclasses to try and load {filename} (mimetype={mimetype}) as."
-            + f" Recognised filetype are:{list(subclasses(baseclass).keys())}"  # pylint: disable=E1101
+            + f" Recognised filetype are:"  # FIXME
         )
     return test
 
@@ -207,6 +195,203 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
         mimetype = None
     return mimetype
 
+def next_filer(
+    pattern: Optional[str] = "*",
+    mime_type: Optional[str] = None,
+    name: Optional[str] = None,
+    what: Optional[str] = None,
+    mode: str = "load",
+) -> Callable:
+    """Find possible loaders and yield them in turn.
+
+    Keyword Args:
+        pattern (str, None):
+            (deault None) - if the file to load has an extension, use this.
+        mime-type (str,None):
+            (default None) - if we have a mime-type for the file, use this.
+        what (str, None):
+            (default None) - limit the return values to things that can load the specified class. If None, then
+            this check is skipped.
+        mode (str):
+            "load" or "save" - set which caches to look at.
+
+    Yields:
+        func (callable):
+            The next loader function to try.
+
+    Notes:
+        If avaialbe, iterate through all loaders that match that particular mime-type, but also match the pattern
+        if it is available (which is should be!). If mime-type is not specified, then just match by pattern and if
+        neither are specified, then yse the default no pattern "*".
+    """
+    if mode=="save":
+        cache_by_type = {}
+        cache_by_pattern = _savers_by_pattern
+        cache_bu_name = _savers_by_name
+    else:
+        cache_by_pattern = _loaders_by_pattern
+        cache_by_type = _loaders_by_type
+        cache_by_name = _loaders_by_name
+
+    if mime_type is not None and mime_type in cache_by_type:  # Prefer mime-type if available
+        for func in cache_by_type.get_value_list(mime_type):
+            if pattern and pattern != "*" and pattern not in func.patterns:
+                # If we have both pattern and type, match patterns too.
+                continue
+            if what and what != func.what:  # If we are limiting what we can load, do that check
+                continue
+            yield func
+    if pattern in cache_by_pattern:  # Fall back to specific pattern
+        for func in cache_by_pattern.get_value_list(pattern):
+            if what and what != func.what:  # If we are limiting what we can load, do that check
+                continue
+            yield func
+    if name in cache_by_name:
+        func = cache_by_name[name]
+        if not (what and what != func.what):  # If we are limiting what we can load, do that check
+            yield func
+    if pattern != "*":  # Fall back again to generic pattern
+        for func in cache_by_pattern.get_value_list("*"):
+            if what and what != func.what:  # If we are limiting what we can load, do that check
+                continue
+            yield func
+    return StopIteration
+
+def dialog_patterns(pattern:str="*",name:Optional[str]=None, what:str="Data", mode:str="load"):
+    """Build a list of patterns and names for a dialog box."""
+    out={}
+    for func in next_filer(pattern=pattern, name=name, what=what, mode=mode):
+        for pattern in func.patterns:
+            if pattern in out:
+                out[pattern]+=f",{func.name}"
+            else:
+                out[pattern]=f"{func.name}"
+    return out
+
+
+def best_saver(filename: str, name: Optional[str], what: Optional[str] = None) -> Callable:
+    """Figure out the best saving routine registerd with the package."""
+    if name and name in _savers_by_name:
+        return _savers_by_name[name]
+    extension = pathlib.Path(filename).suffix
+    if extension in _savers_by_pattern:
+        for _, func in _savers_by_pattern[extension]:
+            if what is None or (what and what == func.what):
+                return func
+    for _, func in _savers_by_pattern["*"]:
+        if what is None or (what and what == func.what):
+            return func
+    raise ValueError(f"Unable to find a saving routine for {filename}")
+
+
+def get_loader(filetype, silent=False):
+    """Return the loader function by name.
+
+    Args:
+        filetype (str): Filetype to get loader for.
+        silent (bool): If False (default) raise a StonerLoadError if filetype doesn't have a loade.
+
+    Returns:
+        (callable): Matching loader.
+
+    Notes:
+        If the filetype is not found and contains a . then it tries to import a module with the same name int he
+        hope that that defines the missing loader. If that fails to work, then either raises StonerLoadError or
+        returns None, depending on *silent*.
+    """
+    try:
+        return _loaders_by_name[filetype]
+    except KeyError as err:
+        if "." in filetype:
+            try:
+                module_name = ".".join(filetype.split(".")[:-1])
+                if module_name not in sys.modules:
+                    import_module(module_name)
+                ret = _loaders_by_name.get(filetype, _loaders_by_name.get(filetype.split(".")[-1], None))
+                if ret:
+                    return ret
+            except ImportError:
+                pass
+        if not silent:
+            raise StonerLoadError(f"Cannot locate a loader function for {filetype}") from err
+
+
+def get_saver(filetype, silent=False):
+    """Return the saver function by name.
+
+    Args:
+        filetype (str): Filetype to get saver for.
+        silent (bool): If False (default) raise a Stonersaverror if filetype doesn't have a loade.
+
+    Returns:
+        (callable): Matching saver.
+
+    Notes:
+        If the filetype is not found and contains a . then it tries to import a module with the same name int he
+        hope that that defines the missing saver. If that fails to work, then either raises Stonersaverror or
+        returns None, depending on *silent*.
+    """
+    try:
+        return _savers_by_name[filetype]
+    except KeyError as err:
+        if "." in filetype:
+            try:
+                module_name = ".".join(filetype.split(".")[:-1])
+                if module_name not in sys.modules:
+                    import_module(module_name)
+                ret = _savers_by_name.get(filetype, _savers_by_name.get(filetype.split(".")[-1], None))
+                if ret:
+                    return ret
+            except ImportError:
+                pass
+        if not silent:
+            raise StonerLoadError(f"Cannot locate a loader function for {filetype}") from err
+
+
+def clear_routine(name, loader=True, saver=True):
+    """Remove the routine with the specified name from the registered loaders and/or savers.
+
+    Args:
+        name (str): Name of routine to remove
+
+    Keyword Arguments:
+        loader (bool):
+            Whether to remove tyhe loader (default True)
+        saver (bool):
+            Whether to remove the saver routne (default True)
+
+    Returns:
+        (dict):
+            Removed kiader and saver routines.
+    """
+    ret = {}
+    for k, lookup, pattern_lookup, type_lookup in zip(
+        ["loader", "saver"],
+        [_loaders_by_name, _savers_by_name],
+        [_loaders_by_pattern, _savers_by_pattern],
+        [_loaders_by_type, None],
+    ):
+        if not locals()[k]:
+            continue
+        func = lookup.pop(name, None)
+        if func is None:
+            continue
+        ret[k] = func
+        for lookup_dict in [pattern_lookup, type_lookup]:
+            if not isinstance(lookup_dict, dict):
+                continue
+            for _, values in _loaders_by_pattern.items():
+                remove = []
+                for ix, (_, loader) in enumerate(values):
+                    if loader is func:
+                        remove.append(ix)
+                if remove:
+                    remove.reverse()
+                    for ix in remove:
+                        del values[ix]
+    return ret
+
+
 
 class FileManager:
     """Simple context manager that allows opening files or working with already open string buffers."""
@@ -224,10 +409,17 @@ class FileManager:
                 filename = pathlib.Path(filename)
             else:
                 filename = urllib.request.urlopen(filename)
-        if isinstance(filename, path_types):
-            self.mode = "open"
-        elif isinstance(filename, io.IOBase):
-            if not hasattr(filename, "response"):
+        match filename:
+            case str() | pathlib.Path():
+                self.mode = "open"
+            case io.IOBase() if hasattr(filename, "response"):
+                if self.binary:
+                    self.mode = "bytes"
+                    self.filename = str2bytes(filename.response)
+                else:
+                    self.filename = bytes2str(filename.response)
+                    self.mode = "text"
+            case io.IOBase():
                 if self.binary:
                     self.mode = "bytes"
                     self.filename = str2bytes(filename.read())
@@ -235,22 +427,15 @@ class FileManager:
                     self.filename = bytes2str(filename.read())
                     self.mode = "text"
                 filename.response = self.filename
-            else:
-                if self.binary:
+            case bytes():
+                if (len(args) > 0 and args[0][-1] == "b") or self.kargs.pop("mode", "").endswith("b"):
+                    self.filename = filename
                     self.mode = "bytes"
-                    self.filename = str2bytes(filename.response)
                 else:
-                    self.filename = bytes2str(filename.response)
+                    self.filename = bytes2str(filename)
                     self.mode = "text"
-        elif isinstance(filename, bytes):
-            if (len(args) > 0 and args[0][-1] == "b") or self.kargs.pop("mode", "").endswith("b"):
-                self.filename = filename
-                self.mode = "bytes"
-            else:
-                self.filename = bytes2str(filename)
-                self.mode = "text"
-        else:
-            raise TypeError(f"Unrecognised filename type {type(filename)}")
+            case _:
+                raise TypeError(f"Unrecognised filename type {type(filename)}")
 
     def __enter__(self):
         """Either open the file or reset the buffer."""

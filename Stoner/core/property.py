@@ -13,7 +13,7 @@ from numpy import ma
 
 from ..compat import classproperty, path_types
 from ..tools import get_option
-from ..tools.classes import copy_into, subclasses
+from ..tools.classes import copy_into
 from ..tools.file import URL_SCHEMES
 from .array import DataArray
 
@@ -191,16 +191,6 @@ class DataFilePropertyMixin:
             self._set_mask(value, invert=False)
         else:
             self.data.mask = value
-
-    @classproperty
-    def patterns(cls):  # pylint: disable=no-self-argument
-        """Return the possible filename patterns for use in dialog boxes."""
-        patterns = cls._patterns
-        for cls_name, klass in subclasses().items():  # pylint: disable=not-an-iterable
-            if cls_name == "DataFile" or "patterns" not in klass.__dict__:
-                continue
-            patterns.extend([p for p in klass.patterns if p not in patterns])
-        return patterns
 
     @property
     def records(self):
