@@ -443,8 +443,7 @@ class FileManager:
         if self.mode == "open":
             if len(self.args) > 0 and "b" not in self.args[0]:
                 self.kargs.setdefault("encoding", "utf-8")
-            encoding = self.kargs.pop("encoding", "utf-8")
-            self.file = open(self.filename, *self.args, encoding=encoding, **self.kargs)
+            self.file = open(self.filename, *self.args, **self.kargs)  #  pylint: disable=unspecified-encodin
         elif self.mode == "text":
             self.file = io.StringIO(self.filename)
         elif self.mode == "bytes":
