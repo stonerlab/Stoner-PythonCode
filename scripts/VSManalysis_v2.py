@@ -202,7 +202,7 @@ while True:
     data = fr.readlines()  # Get the file into an array
     fr.close()
     pathsplit = splitFileName(path)
-    fw = open(
+    fw = open(  # pylint: disable=unspecified-encoding
         "EditedFiles/" + pathsplit[0] + "_edit.txt", "w", enconcoding="utf-8"
     )
     data = deleteCorruptLines(data)

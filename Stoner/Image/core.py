@@ -1214,7 +1214,6 @@ class ImageFile(metadataObject):
         filetype = kargs.pop("filetype", None)
         debug = kargs.pop("debug", False)
         auto_load = kargs.pop("auto_load", filetype is None)
-        loaded_class = kargs.pop("loaded_class", False)
         if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
             filename, filetype = get_file_name_type(filename, filetype, ImageFile)
         if filename is None or not filename:

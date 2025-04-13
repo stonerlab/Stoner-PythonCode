@@ -436,12 +436,11 @@ class typeHintedDict(regexpDict):
                     except ValueError:
                         return str(value)
             return valuetype(value)
-        else:
-            ret = str(value)
-            try:
-                return _parse_date(ret)
-            except (ValueError, OverflowError):
-                pass
+        ret = str(value)
+        try:
+            return _parse_date(ret)
+        except (ValueError, OverflowError):
+            pass
         return ret
 
     def _get_name_(self, name: Union[str, RegExp]) -> Tuple[str, Optional[str]]:

@@ -149,7 +149,7 @@ def auto_load_classes(
                 case "Image":
                     test = make_Image()
                 case _:
-                    assert False
+                    raise ValueError(f"Unable to figure out what data type to look at for {baseclass}")
             test = loader(test, filename, *args, **kargs)
             try:
                 kargs = test._kargs
@@ -175,7 +175,7 @@ def auto_load_classes(
     else:
         raise StonerUnrecognisedFormat(
             f"Ran out of subclasses to try and load {filename} (mimetype={mimetype}) as."
-            + f" Recognised filetype are:"  # FIXME
+            + " Recognised filetype are:{','.join(_loaders_by_type.keys())}"
         )
     return test
 
@@ -443,7 +443,7 @@ class FileManager:
         if self.mode == "open":
             if len(self.args) > 0 and "b" not in self.args[0]:
                 self.kargs.setdefault("encoding", "utf-8")
-            self.file = open(self.filename, *self.args, **self.kargs)  #  pylint: disable=unspecified-encodin
+            self.file = open(self.filename, *self.args, **self.kargs)  # pylint: disable=unspecified-encoding
         elif self.mode == "text":
             self.file = io.StringIO(self.filename)
         elif self.mode == "bytes":
