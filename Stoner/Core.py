@@ -1308,7 +1308,7 @@ class DataFile(
         Note:
             The filename attribute of the current instance is updated by this method as well.
         """
-        self.filename = file_dialog(mode, self.filename, self.get("Loaded as","DataFile"), DataFile)
+        self.filename = file_dialog(mode, self.filename, self.get("Loaded as", "DataFile"), DataFile)
         return self.filename
 
     def insert_rows(self, row, new_data):
@@ -1363,6 +1363,7 @@ class DataFile(
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
         filename, args, kargs = get_filename(args, kargs)
+        debug = kargs.pop("debug", False)
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
         loaded_class = kargs.pop("loaded_class", False)
@@ -1373,11 +1374,11 @@ class DataFile(
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA
-            ret = auto_load_classes(filename, "Data", debug=False, args=args, kargs=kargs)
+            ret = auto_load_classes(filename, "Data", debug=debug, args=args, kargs=kargs)
             if not isinstance(ret, DataFile):  # autoload returned something that wasn't a data file!
                 return ret
         else:
-            loader=get_loader(filetype)
+            loader = get_loader(filetype)
             try:
                 ret = loader(make_Data(), filename, *args, **kargs)
             except StonerLoadError as err:
@@ -1503,7 +1504,7 @@ class DataFile(
                 return self
         # Normalise the extension to ensure it's something we like...
         filename, ext = os.path.splitext(filename)
-        saver= best_saver(filename, name=self.get("Loaded as","DataFile"), what="Data")
+        saver = best_saver(filename, name=self.get("Loaded as", "DataFile"), what="Data")
         if ext not in saver.patterns:
             ext = saver.patterns[0]
         filename = f"{filename}.{ext}"

@@ -22,7 +22,6 @@ from Stoner.formats.maximus import MaximusStack
 from Stoner.tools.file import get_saver
 from Stoner.core.exceptions import StonerLoadError
 from Stoner.core.exceptions import StonerUnrecognisedFormat
-from Stoner.formats.facilities import FabioImageFile
 
 pth = __homepath__ / ".."
 datadir = __datapath__
@@ -186,8 +185,7 @@ def test_ImageAutoLoad():
 
 
 def test_FabioImageFle():
-    loader = FabioImageFile()
-    loader._load(datadir / "working" / "hydra_0017.edf")
+    loader = ImageFile.load(datadir / "working" / "hydra_0017.edf", filetype="FabioImage")
     assert loader.shape == (512, 768)
 
 

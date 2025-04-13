@@ -20,5 +20,5 @@ be able to open. This helps identify classes that could be use to load particula
 
 # __all__ = ["instruments", "generic", "rigs", "facilities", "simulations", "attocube", "maximus"]
 # from . import instruments, generic, rigs, facilities, simulations, attocube, maximus
-__all__ = ["data","image"]
-from . import data,image
+__all__ = ["data", "image"]
+from . import data, image

@@ -134,11 +134,11 @@ def auto_load_classes(
     match filename:
         case str() | pathlib.Path():
             pattern = pathlib.Path(filename).suffix
-        case _ if hasattr(filename,"url"):
-            pth=urllib.parse.urlparse(filename.url).path
+        case _ if hasattr(filename, "url"):
+            pth = urllib.parse.urlparse(filename.url).path
             pattern = pathlib.Path(pth).suffix
         case bytes() | io.StringIO() | io.BytesIO() | bool():
-            pattern="*"
+            pattern = "*"
         case _:
             assert False
     for loader in next_filer(pattern, mimetype, what=baseclass):
@@ -147,7 +147,7 @@ def auto_load_classes(
                 case "Data":
                     test = make_Data()
                 case "Image":
-                    test=make_Image()
+                    test = make_Image()
                 case _:
                     assert False
             test = loader(test, filename, *args, **kargs)
@@ -195,6 +195,7 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
         mimetype = None
     return mimetype
 
+
 def next_filer(
     pattern: Optional[str] = "*",
     mime_type: Optional[str] = None,
@@ -224,7 +225,7 @@ def next_filer(
         if it is available (which is should be!). If mime-type is not specified, then just match by pattern and if
         neither are specified, then yse the default no pattern "*".
     """
-    if mode=="save":
+    if mode == "save":
         cache_by_type = {}
         cache_by_pattern = _savers_by_pattern
         cache_bu_name = _savers_by_name
@@ -257,15 +258,16 @@ def next_filer(
             yield func
     return StopIteration
 
-def dialog_patterns(pattern:str="*",name:Optional[str]=None, what:str="Data", mode:str="load"):
+
+def dialog_patterns(pattern: str = "*", name: Optional[str] = None, what: str = "Data", mode: str = "load"):
     """Build a list of patterns and names for a dialog box."""
-    out={}
+    out = {}
     for func in next_filer(pattern=pattern, name=name, what=what, mode=mode):
         for pattern in func.patterns:
             if pattern in out:
-                out[pattern]+=f",{func.name}"
+                out[pattern] += f",{func.name}"
             else:
-                out[pattern]=f"{func.name}"
+                out[pattern] = f"{func.name}"
     return out
 
 
@@ -390,7 +392,6 @@ def clear_routine(name, loader=True, saver=True):
                     for ix in remove:
                         del values[ix]
     return ret
-
 
 
 class FileManager:

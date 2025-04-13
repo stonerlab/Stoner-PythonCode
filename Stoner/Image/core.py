@@ -8,6 +8,7 @@ from copy import copy, deepcopy
 import inspect
 from importlib import import_module
 from io import BytesIO as StreamIO
+import urllib
 from warnings import warn
 
 from PIL import Image
@@ -34,8 +35,7 @@ from ..core.base import typeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..Core import DataFile
 from ..tools import isTuple, make_Data
-from ..tools.file import file_dialog, get_file_name_type, auto_load_classes
-from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones
+from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones, make_Image
 from ..compat import (
     string_types,
     get_filedialog,
@@ -46,6 +46,16 @@ from .attrs import DrawProxy, MaskProxy
 from .widgets import RegionSelect
 from . import imagefuncs
 from ..tools.classes import Options
+from ..tools.file import (
+    file_dialog,
+    FileManager,
+    URL_SCHEMES,
+    get_filename,
+    best_saver,
+    get_loader,
+    get_file_name_type,
+    auto_load_classes,
+)
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
@@ -1202,13 +1212,17 @@ class ImageFile(metadataObject):
 
             If no class can load a file successfully then a RunttimeError exception is raised.
         """
-        args = list(args)
-        filename = kargs.pop("filename", args.pop(0) if len(args) > 0 else None)
+        filename, args, kargs = get_filename(args, kargs)
         filetype = kargs.pop("filetype", None)
-        auto_load = kargs.pop("auto_load", filetype is None)
         debug = kargs.pop("debug", False)
-
-        filename, filetype = get_file_name_type(filename, filetype, ImageFile)
+        auto_load = kargs.pop("auto_load", filetype is None)
+        loaded_class = kargs.pop("loaded_class", False)
+        if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
+            filename, filetype = get_file_name_type(filename, filetype, ImageFile)
+        if filename is None or not filename:
+            filename = file_dialog("r", filename, "ImageFile", ImageFile)
+        elif not auto_load and not filetype:
+            raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA
             try:
                 ret = auto_load_classes(filename, "Image", debug=debug, args=args, kargs=kargs)
@@ -1217,16 +1231,18 @@ class ImageFile(metadataObject):
                 ret = ret._load(filename, *args, **kargs)
                 ret["Loaded as"] = filetype.__name__
         else:
-            if issubclass(filetype, ImageFile):
-                ret = filetype()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = filetype.__name__
-            elif filetype is None or isinstance(filetype, ImageFile):
-                ret = cls()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = cls.__name__
-            else:
-                raise ValueError(f"Unable to load {filename}")
+            if isinstance(filetype, type) and issubclass(filetype, ImageFile):
+                filetype = filetype.__name__
+            elif isinstance(filetype, ImageFile):
+                filetype = filetype.__class__.__name__
+            if not isinstance(filetype, str):
+                raise TypeError(f"Unable to work out how to load {filetype}")
+            loader = get_loader(filetype)
+            try:
+                ret = loader(make_Image(), filename, *args, **kargs)
+                ret["Loaded as"] = filetype
+            except StonerLoadError as err:
+                raise ValueError(f"Unable to load {filename}") from err
 
         for k, i in kargs.items():
             if not callable(getattr(ret, k, lambda x: False)):

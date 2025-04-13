@@ -77,7 +77,7 @@ def register_loader(
             for mime_type in inner_mime_types:
                 match mime_type:  # Accept either a tuple of (mime_type,priority) or just string mime_type
                     case (str(mime_type), int(p)):  # per mime_type priority
-                       _loaders_by_type[mime_type] = (p, func)
+                        _loaders_by_type[mime_type] = (p, func)
                     case str(mime_type):  # Use global priority
                         _loaders_by_type[mime_type] = (func.priority, func)
                     case _:  # Unrecognised

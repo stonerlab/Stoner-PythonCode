@@ -753,8 +753,8 @@ class metadataObject(MutableMapping):
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
-class SortedMultivalueDict(OrderedDict):
 
+class SortedMultivalueDict(OrderedDict):
     """Implement a simple multivalued dictionary where the values are always sorted lists of elements."""
 
     @classmethod
@@ -784,7 +784,6 @@ class SortedMultivalueDict(OrderedDict):
             else:
                 super().__setitem__(name, self.get(name, []) + [(p, value)])
         super().__setitem__(name, sorted(self[name], key=lambda item: (item[0], str(item[1]))))
-
 
 
 if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata

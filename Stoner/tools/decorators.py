@@ -427,6 +427,7 @@ def make_Data(*args, **kargs):
         return import_module("Stoner.core.data").Data
     return import_module("Stoner.core.data").Data(*args, **kargs)
 
+
 def make_Image(*args, **kargs):
     """Return an instance of Stoner.Data passig through constructor arguments.
 
