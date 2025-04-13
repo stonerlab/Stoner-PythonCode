@@ -204,7 +204,7 @@ while True:
     pathsplit = splitFileName(path)
     fw = open(
         "EditedFiles/" + pathsplit[0] + "_edit.txt", "w", enconcoding="utf-8"
-    )  # create a new file for the edited data
+    )
     data = deleteCorruptLines(data)
     fw.writelines(
         data

@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Decoiratoprs for manging loader and saver functions.
-"""
+"""Decoiratoprs for manging loader and saver functions."""
 from typing import Optional, List, Tuple, Callable
-from importlib import import_module
 from inspect import signature, _empty
-from pathlib import Path
-import sys
 
-from ..core.exceptions import StonerLoadError
 from ..tools.file import _loaders_by_type, _loaders_by_pattern, _loaders_by_name, _savers_by_pattern, _savers_by_name
 
 

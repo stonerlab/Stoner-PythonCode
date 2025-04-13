@@ -15,7 +15,7 @@ from ..compat import string_types, path_types, bytes2str, str2bytes
 from .widgets import fileDialog
 from .decorators import make_Data, make_Image
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..core.base import regexpDict, metadataObject, SortedMultivalueDict
+from ..core.base import metadataObject, SortedMultivalueDict
 
 from ..core.Typing import Filename
 
@@ -140,7 +140,7 @@ def auto_load_classes(
         case bytes() | io.StringIO() | io.BytesIO() | bool():
             pattern = "*"
         case _:
-            assert False
+            raise TypeError(f"Unable to figure out how to deal with {filename}")
     for loader in next_filer(pattern, mimetype, what=baseclass):
         try:
             match baseclass:
@@ -228,7 +228,7 @@ def next_filer(
     if mode == "save":
         cache_by_type = {}
         cache_by_pattern = _savers_by_pattern
-        cache_bu_name = _savers_by_name
+        cache_by_name = _savers_by_name
     else:
         cache_by_pattern = _loaders_by_pattern
         cache_by_type = _loaders_by_type
@@ -443,7 +443,8 @@ class FileManager:
         if self.mode == "open":
             if len(self.args) > 0 and "b" not in self.args[0]:
                 self.kargs.setdefault("encoding", "utf-8")
-            self.file = open(self.filename, *self.args, **self.kargs)
+            encoding = self.kargs.pop("encoding", "utf-8")
+            self.file = open(self.filename, *self.args, encoding=encoding, **self.kargs)
         elif self.mode == "text":
             self.file = io.StringIO(self.filename)
         elif self.mode == "bytes":

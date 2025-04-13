@@ -47,11 +47,9 @@ from .widgets import RegionSelect
 from . import imagefuncs
 from ..tools.classes import Options
 from ..tools.file import (
-    file_dialog,
-    FileManager,
     URL_SCHEMES,
+    file_dialog,
     get_filename,
-    best_saver,
     get_loader,
     get_file_name_type,
     auto_load_classes,

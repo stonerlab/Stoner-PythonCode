@@ -11,7 +11,7 @@ import urllib
 import numpy as np
 from numpy import ma
 
-from ..compat import classproperty, path_types
+from ..compat import path_types
 from ..tools import get_option
 from ..tools.classes import copy_into
 from ..tools.file import URL_SCHEMES
