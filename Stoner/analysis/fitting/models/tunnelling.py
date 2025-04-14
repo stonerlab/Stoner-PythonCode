@@ -41,7 +41,7 @@ def simmons(V, A, phi, d):
             :include-source:
             :outname: simmons
     """
-    I = (
+    current = (
         6.2e2
         * A
         / d**2
@@ -50,7 +50,7 @@ def simmons(V, A, phi, d):
             - (phi + V / 2) * np.exp(-1.025 * d * np.sqrt(phi + V / 2))
         )
     )
-    return I
+    return current
 
 
 def bdr(V, A, phi, dphi, d, mass):
@@ -78,7 +78,7 @@ def bdr(V, A, phi, dphi, d, mass):
     mass = abs(mass)
     phi = abs(phi)
     d = abs(d)
-    I = (
+    current = (
         3.16e10
         * A**2
         * np.sqrt(phi)
@@ -86,7 +86,7 @@ def bdr(V, A, phi, dphi, d, mass):
         * np.exp(-1.028 * np.sqrt(phi) * d)
         * (V - 0.0214 * np.sqrt(mass) * d * dphi / phi**1.5 * V**2 + 0.0110 * mass * d**2 / phi * V**3)
     )
-    return I
+    return current
 
 
 def fowlerNordheim(V, A, phi, d):
@@ -106,8 +106,8 @@ def fowlerNordheim(V, A, phi, d):
             :include-source:
             :outname: fowlernordheim
     """
-    I = V / np.abs(V) * 3.38e6 * A * V**2 / (d**2 * phi) * np.exp(-0.689 * phi**1.5 * d / np.abs(V))
-    return I
+    current = V / np.abs(V) * 3.38e6 * A * V**2 / (d**2 * phi) * np.exp(-0.689 * phi**1.5 * d / np.abs(V))
+    return current
 
 
 def tersoffHammann(V, A):
@@ -120,8 +120,8 @@ def tersoffHammann(V, A):
     Return:
         A linear fit.
     """
-    I = A * V
-    return I
+    current = A * V
+    return current
 
 
 class Simmons(Model):
