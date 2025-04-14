@@ -14,7 +14,7 @@ import numpy as np
 
 from ..compat import int_types, string_types, commonpath, _pattern_type
 from ..tools import operator, isiterable, all_type, get_option
-from ..core.base import regexpDict, typeHintedDict
+from ..core.base import regexpDict, TypeHintedDict
 from ..core.base import metadataObject
 
 from .utils import pathjoin
@@ -1591,7 +1591,7 @@ class baseFolder(MutableSequence):
             placer = f
             if not must_read:
                 match = self.pattern[0].search(f)
-                f = typeHintedDict(match.groupdict())
+                f = TypeHintedDict(match.groupdict())
 
             for arg in kargs:
                 if callable(kargs[arg]) and kargs[arg](f):

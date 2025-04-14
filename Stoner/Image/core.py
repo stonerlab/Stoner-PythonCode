@@ -31,7 +31,7 @@ from skimage import (
 )
 
 from ..compat import np_version
-from ..core.base import typeHintedDict, metadataObject
+from ..core.base import TypeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..Core import DataFile
 from ..tools import isTuple, make_Data
@@ -298,7 +298,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     ret = np.atleast_2d(args[0]).view(ImageArray)
                 else:
                     ret = args[0].view(ImageArray)
-                kargs["metadata"] = getattr(args[0], "metadata", typeHintedDict())
+                kargs["metadata"] = getattr(args[0], "metadata", TypeHintedDict())
                 kargs["metadata"].update(user_metadata)
             case (bool(),) if not args[0]:
                 patterns = (("png", "*.png"), ("npy", "*.npy"))
@@ -310,7 +310,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     raise ValueError(f"File path does not exist {arg}")
                 ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(arg, **array_args)  # pylint: disable=no-member
-                kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
+                kargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
                 kargs["metadata"].update(user_metadata)
             case (str(),) | (Path(),):
                 # Filename- load datafile
@@ -318,12 +318,12 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     raise ValueError(f"File path does not exist {args[0]}")
                 ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(args[0], **array_args)  # pylint: disable=no-member
-                kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
+                kargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
                 kargs["metadata"].update(user_metadata)
             case (ImageFile(),):
                 # extract the image
                 ret = args[0].image
-                kargs["metadata"] = getattr(ret, "metadata", typeHintedDict())
+                kargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
                 kargs["metadata"].update(user_metadata)
             case (_,):
                 try:  # try converting to a numpy array (eg a list type)
@@ -355,7 +355,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         _optinfo).
         """
         if not hasattr(self, "_optinfo"):
-            setattr(self, "_optinfo", {"metadata": typeHintedDict({}), "filename": ""})
+            setattr(self, "_optinfo", {"metadata": TypeHintedDict({}), "filename": ""})
 
         kargs = self.__dict__.pop("kargs", {})  # pylint: disable=access-member-before-definition
         tmp = metadataObject.__new__(metadataObject)
@@ -438,7 +438,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     @classmethod
     def _load_tiff(cls, filename, **kargs):  # pylint: disable=unused-argument
         """Create a new ImageArray from a tiff file."""
-        metadict = typeHintedDict({})
+        metadict = TypeHintedDict({})
         with Image.open(filename, "r") as img:
             image = np.asarray(img)
             if image.ndim == 3:

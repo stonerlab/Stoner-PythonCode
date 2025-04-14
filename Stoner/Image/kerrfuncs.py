@@ -8,7 +8,7 @@ import tempfile
 import numpy as np
 from skimage import exposure, io, transform
 
-from ..core.base import typeHintedDict
+from ..core.base import TypeHintedDict
 from ..compat import which
 from ..core.exceptions import assertion, StonerAssertionError
 
@@ -91,7 +91,7 @@ def reduce_metadata(kerr_im):
     """Reduce the metadata down to a few useful pieces and do a bit of processing.
 
     Returns:
-        (:py:class:`typeHintedDict`): the new metadata
+        (:py:class:`TypeHintedDict`): the new metadata
     """
     newmet = {}
     if not all([k in kerr_im.keys() for k in _test_keys]):
@@ -108,7 +108,7 @@ def reduce_metadata(kerr_im):
         else:
             newmet["Averaging"] = 1
             newmet.pop("Images to Average")
-    kerr_im.metadata = typeHintedDict(newmet)
+    kerr_im.metadata = TypeHintedDict(newmet)
     return kerr_im.metadata
 
 

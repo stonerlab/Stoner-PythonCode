@@ -14,7 +14,7 @@ from scipy.optimize import curve_fit
 import h5py
 
 from ..compat import string_types, bytes2str
-from ..core.base import typeHintedDict
+from ..core.base import TypeHintedDict
 from ..Image import ImageStack, ImageFile, ImageArray
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager, get_filename
@@ -77,7 +77,7 @@ class AttocubeScanMixin:
 
         super().__init__(*args, **kargs)
 
-        self._common_metadata = typeHintedDict()
+        self._common_metadata = TypeHintedDict()
 
         if root_name:
             self._load_files(root_name, regrid)

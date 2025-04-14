@@ -8,7 +8,7 @@ from collections.abc import MutableMapping
 from lmfit import Model
 import numpy as np
 
-from ..core import typeHintedDict, metadataObject
+from ..core import TypeHintedDict, metadataObject
 from ..compat import string_types
 from ..tools import isLikeList, isiterable, make_Data
 from ..Core import DataFile
@@ -143,7 +143,7 @@ class MetadataProxy(MutableMapping):
                 keys &= set(d.metadata.keys())
         else:
             keys = set()
-        ret = typeHintedDict()
+        ret = TypeHintedDict()
         for k in sorted(list(keys)):
             ret[k] = self[k].view(np.ndarray)
         return ret
@@ -162,7 +162,7 @@ class MetadataProxy(MutableMapping):
     @property
     def common_metadata(self):
         """Return a dictionary of the common_keys that have common values."""
-        output = typeHintedDict()
+        output = TypeHintedDict()
         for key in self.common_keys:
             vals = self.slice(key, output="list")
             if np.all(vals == vals[0]):

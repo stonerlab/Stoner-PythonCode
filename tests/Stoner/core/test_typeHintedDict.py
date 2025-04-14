@@ -8,7 +8,7 @@ Created on Sat Dec  8 15:20:15 2018
 
 import pytest
 import os.path as path
-from Stoner.core.base import typeHintedDict
+from Stoner.core.base import TypeHintedDict
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
@@ -16,7 +16,7 @@ pth = path.realpath(path.join(pth, "../../"))
 
 
 def test_ops():
-    d = typeHintedDict([("el1", 1), ("el2", 2), ("el3", 3), ("other", 4)])
+    d = TypeHintedDict([("el1", 1), ("el2", 2), ("el3", 3), ("other", 4)])
     d.filter("el")
     assert len(d) == 3
     d.filter(lambda x: x.endswith("3"))

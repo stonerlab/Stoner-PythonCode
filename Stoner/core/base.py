@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Base classes for the Stoner package."""
 
-__all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
+__all__ = ["_evaluatable", "regexpDict", "string_to_type", "TypeHintedDict", "metadataObject"]
 import copy
 import datetime
 import re
@@ -25,11 +25,11 @@ from .exceptions import StonerAssertionError
 from .Typing import Filename, RegExp, String_Types
 
 try:
-    from blist import sorteddict
+    from blist import sorteddict as SortedDict
 except (StonerAssertionError, ImportError):  # Fail if blist not present or Python 3
     from collections import OrderedDict
 
-    sorteddict = OrderedDict
+    SortedDict = OrderedDict
 
 _asteval_interp = None
 
@@ -109,7 +109,7 @@ class _evaluatable:
     """Placeholder to indicate that special action needed to convert a string representation to valid Python type."""
 
 
-class regexpDict(sorteddict):
+class regexpDict(SortedDict):
     """An ordered dictionary that permits looks up by regular expression."""
 
     allowed_keys: Tuple = (object,)
@@ -244,7 +244,7 @@ class regexpDict(sorteddict):
         return super().__contains__(name)
 
 
-class typeHintedDict(regexpDict):
+class TypeHintedDict(regexpDict):
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
@@ -330,7 +330,7 @@ class typeHintedDict(regexpDict):
     # some string types
 
     def __init__(self, *args: Any, **kargs: Any) -> None:
-        """Construct the typeHintedDict.
+        """Construct the TypeHintedDict.
 
         Args:
             *args, **kargs:
@@ -343,7 +343,7 @@ class typeHintedDict(regexpDict):
         embedded string type from the keyname) or determines the likely
         type hint from the value of the dict element.
         """
-        self._typehints = sorteddict()
+        self._typehints = SortedDict()
         super().__init__(*args, **kargs)
         for key in list(self.keys()):  # Check through all the keys and see if they contain
             # type hints. If they do, move them to the
@@ -475,7 +475,7 @@ class typeHintedDict(regexpDict):
         key = name
         (name, typehint) = self._get_name_(name)
         name = self.__lookup__(name, True)
-        value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
+        value = [super(TypeHintedDict, self).__getitem__(nm) for nm in name]
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
         if len(value) == 0:  # pylint: disable=len-as-condition
@@ -530,20 +530,20 @@ class typeHintedDict(regexpDict):
         ret = [f"{repr(key)}:{self.type(key)}:{repr(self[key])}" for key in sorted(self)]
         return "\n".join(ret)
 
-    def copy(self) -> "typeHintedDict":
+    def copy(self) -> "TypeHintedDict":
         """Provide a copy method that is aware of the type hinting strings.
 
         This produces a flat dictionary with the type hint embedded in the key name.
 
         Returns:
-            A copy of the current typeHintedDict
+            A copy of the current TypeHintedDict
         """
         cls = type(self)
         ret = cls()
         for k in self.keys():
             t = self._typehints[k]
             ret._typehints[k] = t
-            super(typeHintedDict, ret).__setitem__(k, copy.copy(self[k]))
+            super(TypeHintedDict, ret).__setitem__(k, copy.copy(self[k]))
         return ret
 
     def filter(self, name: Union[str, RegExp, Callable]) -> None:
@@ -609,7 +609,7 @@ class typeHintedDict(regexpDict):
         return ret
 
     def export_all(self) -> List[str]:
-        """Return all the entries in the typeHintedDict as a list of exported lines.
+        """Return all the entries in the TypeHintedDict as a list of exported lines.
 
         Returns:
             (list of str): A list of exported strings
@@ -632,7 +632,7 @@ class typeHintedDict(regexpDict):
     def import_key(self, line: str) -> None:
         """Import a single key from a string like key{type hint} = value.
 
-        This is the inverse of the :py:meth:`typeHintedDict.export` method.
+        This is the inverse of the :py:meth:`TypeHintedDict.export` method.
 
         Args:
             line(str):
@@ -645,10 +645,10 @@ class typeHintedDict(regexpDict):
 
 
 class metadataObject(MutableMapping):
-    """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
+    """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.TypeHintedDict` object.
 
     Attributes:
-        metadata (typeHintedDict):
+        metadata (TypeHintedDict):
             Dictionary of key-value metadata pairs. The dictionary tries to retain information about the type of data
             so as to aid import and export from CM group LabVIEW code.
     """
@@ -657,13 +657,13 @@ class metadataObject(MutableMapping):
         """Pre initialisation routines."""
         self = super().__new__(cls)
         self._public_attrs_real = dict()
-        self._metadata = typeHintedDict()
+        self._metadata = TypeHintedDict()
         return self
 
     def __init__(self, *args: Any, **kargs: Any) -> None:  # pylint: disable=unused-argument
         """Initialise the current metadata attribute."""
         metadata = kargs.pop("metadata", {})
-        self._metadata = getattr(self, "_metadata", typeHintedDict())
+        self._metadata = getattr(self, "_metadata", TypeHintedDict())
         self.metadata.update(metadata)
         super().__init__()
 
@@ -687,15 +687,15 @@ class metadataObject(MutableMapping):
         try:
             return self._metadata
         except AttributeError:  # Oops no metadata yet
-            self._metadata = typeHintedDict()
+            self._metadata = TypeHintedDict()
             return self._metadata
 
     @metadata.setter
     def metadata(self, value: Iterable) -> None:
         """Update the metadata object with type checking."""
-        if not isinstance(value, typeHintedDict) and isiterable(value):
-            self._metadata = typeHintedDict(value)
-        elif isinstance(value, typeHintedDict):
+        if not isinstance(value, TypeHintedDict) and isiterable(value):
+            self._metadata = TypeHintedDict(value)
+        elif isinstance(value, TypeHintedDict):
             self._metadata = value
         else:
             raise TypeError(f"metadata must be something that can be turned into a dictionary, not a {value}")
@@ -788,7 +788,7 @@ class SortedMultivalueDict(OrderedDict):
 if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata
 
     @pd.api.extensions.register_dataframe_accessor("metadata")
-    class PandasMetadata(typeHintedDict):
+    class PandasMetadata(TypeHintedDict):
         """Add a typehintedDict to PandasDataFrames."""
 
         def __init__(self, pandas_obj):

@@ -14,7 +14,7 @@ import h5py
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
-from ..core.base import typeHintedDict
+from ..core.base import TypeHintedDict
 from ..Image import ImageFile, ImageStack, ImageArray
 from ..Core import DataFile
 from ..compat import string_types
@@ -146,7 +146,7 @@ class MaximusStackMixin:
 
         super().__init__(*args, **kargs)
 
-        self._common_metadata = typeHintedDict()
+        self._common_metadata = TypeHintedDict()
 
         self.scan_no = scan
 

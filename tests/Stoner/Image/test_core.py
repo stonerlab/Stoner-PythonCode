@@ -6,7 +6,7 @@ Created on Fri May 27 17:09:04 2016
 """
 
 from Stoner.Image import ImageArray, ImageFile
-from Stoner.Core import typeHintedDict
+from Stoner.Core import TypeHintedDict
 from Stoner import Data, __home__
 import numpy as np
 import pytest
@@ -222,7 +222,7 @@ def test_clone():
 
 
 def test_metadata():
-    assert isinstance(selfimarr.metadata, typeHintedDict)
+    assert isinstance(selfimarr.metadata, TypeHintedDict)
     selfimarr["testmeta"] = "abc"
     assert selfimarr["testmeta"] == "abc", "Couldn't change metadata"
     del selfimarr["testmeta"]

@@ -5,7 +5,7 @@ __all__ = [
     "StonerSetasError",
     "_setas",
     "regexpDict",
-    "typeHintedDict",
+    "TypeHintedDict",
     "metadataObject",
     "DataArray",
     "DataFile",
@@ -33,7 +33,7 @@ from .tools import all_type, isiterable, isLikeList, get_option, make_Data
 from .tools.file import get_file_name_type, auto_load_classes, get_loader
 
 from .core.exceptions import StonerLoadError, StonerSetasError
-from .core import _setas, regexpDict, typeHintedDict, metadataObject
+from .core import _setas, regexpDict, TypeHintedDict, metadataObject
 from .core.array import DataArray
 from .core.operators import DataFileOperatorsMixin
 from .core.property import DataFilePropertyMixin
@@ -215,7 +215,7 @@ class DataFile(
             "filetype": str,
             "setas": (string_types, list, dict),
             "column_headers": list,
-            "metadata": typeHintedDict,
+            "metadata": TypeHintedDict,
             "debug": bool,
             "filename": string_types,
             "mask": (np.ndarray, bool),
@@ -1563,7 +1563,7 @@ class DataFile(
             a multi-level index of the :py:attr:`Stoner.Data.column_headers` and :py:attr:`Stoner.Data.setas`
             values. A pandas DataFrame extension attribute, *metadata* is registered and is used to store
             the metada from the :py:class:1Stoner.Data` object. This pandas extension attribute is in fact a trivial
-            subclass of the :py:class:`Stoner.core.typeHintedDict`.
+            subclass of the :py:class:`Stoner.core.TypeHintedDict`.
 
             The inverse operation can be carried out simply by passing a DataFrame into the copnstructor of the
             :py:class:`Stoner.Data` object.

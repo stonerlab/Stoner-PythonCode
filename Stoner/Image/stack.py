@@ -8,7 +8,7 @@ import numpy as np
 from ..compat import string_types, int_types
 from ..core.exceptions import assertion
 
-from ..Core import regexpDict, typeHintedDict
+from ..Core import regexpDict, TypeHintedDict
 from ..Folders import DiskBasedFolderMixin, baseFolder
 
 from .core import ImageArray, ImageFile
@@ -57,7 +57,7 @@ class ImageStackMixin:
             self._sizes = np.ones((other.shape[0], 2), dtype=int) * other.shape[1:]
             self._names = [f"Untitled-{d}" for d in range(other.shape[0])]
             for n in self._names:
-                self._metadata[n] = typeHintedDict()
+                self._metadata[n] = TypeHintedDict()
         elif isinstance(other, list):
             try:
                 other = [ImageFile(i) for i in other]

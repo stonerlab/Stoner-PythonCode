@@ -121,7 +121,7 @@ include-naming-hint=yes
 property-classes=abc.abstractproperty
 
 # Regular expression matching correct function names
-function-rgx=[a-z_][a-z0-9_]{2,25}$
+function-rgx=([a-z][a-z0-9_]{2,25})|(_[a-zA-Z9-9_]{2,25})$
 
 # Naming hint for function names
 function-name-hint=[a-z_][a-z0-9_]{2,25}$
@@ -269,7 +269,7 @@ init-import=no
 
 # A regular expression matching the name of dummy variables (i.e. expectedly
 # not used).
-dummy-variables-rgx=(_+[a-zA-Z0-9]*?$)|dummy
+dummy-variables-rgx=_
 
 # List of additional names supposed to be defined in builtins. Remember that
 # you should avoid to define new builtins when possible.
@@ -389,6 +389,8 @@ max-public-methods=50
 # Maximum number of boolean expressions in a if statement
 max-bool-expr=5
 
+# Maximum number of positional arguments (see R0917).
+max-positional-arguments = 10
 
 [CLASSES]
 
