@@ -22,8 +22,8 @@ from Stoner import DataFolder, __homepath__
 from Stoner.folders import PlotFolder
 
 from Stoner import Data
-from Stoner.core.base import regexpDict
-from Stoner.folders.core import baseFolder
+from Stoner.core.base import RegexpDict
+from Stoner.folders.core import BaseFolder
 import matplotlib.pyplot as plt
 
 import tempfile
@@ -165,7 +165,7 @@ def test_Base_Operators():
         del fldr[".*emd$"]
     for d in fldr:
         _ = d["Loaded as"]
-    fldr = baseFolder(fldr)
+    fldr = BaseFolder(fldr)
     fl = len(fldr)
     d = Data(np.ones((100, 5)))
     fldr += d
@@ -183,7 +183,7 @@ def test_Base_Operators():
     fldr = DataFolder(datadir, debug=False, recursive=False)
     for d in fldr:
         _ = d["Loaded as"]
-    fldr = baseFolder(fldr)
+    fldr = BaseFolder(fldr)
     fldr2 = DataFolder(path.join(datadir, "NLIV"), pattern="*.txt")
     fldr2.group(lambda x: "zero" if x["iterator"] % 2 == 0 else "one")
     fldr3 = fldr + fldr2
@@ -237,9 +237,9 @@ def test_Properties():
     fldr = DataFolder(datadir, debug=False, recursive=False)
     objects = copy(fldr.objects)
     fldr.objects = dict(objects)
-    assert isinstance(fldr.objects, regexpDict), "Folder objects not reset to regexp dictionary"
+    assert isinstance(fldr.objects, RegexpDict), "Folder objects not reset to regexp dictionary"
     fldr.objects = objects
-    assert isinstance(fldr.objects, regexpDict), "Setting Folder objects mangled type"
+    assert isinstance(fldr.objects, RegexpDict), "Setting Folder objects mangled type"
     fldr.type = Data()
     assert issubclass(fldr.type, Data), "Setting type by instance of class failed"
 

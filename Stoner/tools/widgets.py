@@ -209,9 +209,9 @@ class RangeSelect:
         idx = np.ones(len(self.data), dtype=bool)
         for ix, selection in enumerate(self.selection):
             if ix == 0:
-                idx = self.data._search_index(xcol, selection, accuracy, invert=self.invert)
+                idx = self.data.search_index(xcol, selection, accuracy, invert=self.invert)
             else:
-                idx = np.logical_or(idx, self.data._search_index(xcol, selection, accuracy, invert=self.invert))
+                idx = np.logical_or(idx, self.data.search_index(xcol, selection, accuracy, invert=self.invert))
         return idx
 
     def onselect(self, xmin, xmax):

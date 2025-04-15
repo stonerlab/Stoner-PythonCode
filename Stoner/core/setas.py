@@ -9,7 +9,7 @@ from collections.abc import Iterable, MutableMapping
 import numpy as np
 
 from ..compat import _pattern_type, index_types, string_types
-from ..tools import AttributeStore, isiterable, isLikeList, typedList
+from ..tools import AttributeStore, isiterable, isLikeList, TypedList
 from .utils import decode_string
 
 
@@ -51,7 +51,7 @@ class setas(MutableMapping):
         self._cols = AttributeStore()
         self._shape = tuple()
         self._setas = list()
-        self._column_headers = typedList(string_types)
+        self._column_headers = TypedList(string_types)
         self._object = bless
         self._col_defaults = {
             2: {
@@ -210,7 +210,7 @@ class setas(MutableMapping):
             value = value.astype(str).tolist()
         elif isinstance(value, string_types):  # Bare strings get turned into lists
             value = [value]
-        self._column_headers = typedList(string_types, value)
+        self._column_headers = TypedList(string_types, value)
 
     @property
     def empty(self):

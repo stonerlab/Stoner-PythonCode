@@ -6,7 +6,7 @@ from numpy import max, argmax, mean  # pylint: disable=redefined-builtin
 from scipy.stats import sem
 from scipy.optimize import fsolve
 
-from .Core import DataFile
+from .core.data import Data
 
 from .tools import format_error, make_Data, ordinal
 from . import DataFolder
@@ -268,7 +268,7 @@ def hysteresis_correct(data, **kargs):
             The original loop with the x and y columns replaced with corrected data and extra metadata added to give
             the background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
     """
-    if isinstance(data, DataFile):
+    if isinstance(data, Data):
         cls = type(data)
     else:
         cls = make_Data(None)

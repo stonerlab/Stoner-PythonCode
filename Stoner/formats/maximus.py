@@ -16,7 +16,7 @@ import h5py
 from ..core.exceptions import StonerLoadError
 from ..core.base import TypeHintedDict
 from ..Image import ImageFile, ImageStack, ImageArray
-from ..Core import DataFile
+from ..core.data import Data
 from ..compat import string_types
 from ..HDF5 import HDFFileManager
 from ..tools.file import FileManager, get_filename
@@ -35,7 +35,7 @@ def _raise_error(openfile, message=""):
             pass
 
 
-class MaximusSpectra(DataFile):
+class MaximusSpectra(Data):
     """Provides a :py:class:`Stoner.DataFile` subclass for loading Point spectra from Maximus."""
 
     # We treat the hdr file as the key file type

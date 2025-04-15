@@ -19,7 +19,7 @@ import numpy as np
 from ...compat import str2bytes, Hyperspy_ok, hs, hsload
 from ...core.array import DataArray
 from ...core.exceptions import StonerLoadError
-from ...core.utils import tab_delimited
+from ...core.utils import Tab_Delimited
 from ...tools import make_Data
 
 from ...tools.file import FileManager, get_filename
@@ -120,7 +120,7 @@ def load_tdi_format(new_data, *args, **kargs):
             raise StonerLoadError("Not a TDI File")
 
         datafile.seek(0)
-        reader = csv.reader(datafile, dialect=tab_delimited())
+        reader = csv.reader(datafile, dialect=Tab_Delimited())
         cols = 0
         max_rows = 0
         for ix, metadata in enumerate(reader):

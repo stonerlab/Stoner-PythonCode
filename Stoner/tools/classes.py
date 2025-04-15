@@ -3,7 +3,7 @@
 
 __all__ = [
     "attributeStore",
-    "typedList",
+    "TypedList",
     "Options",
     "get_option",
     "set_option",
@@ -53,11 +53,11 @@ class attributeStore(dict):
             raise AttributeError from err
 
 
-class typedList(MutableSequence):
+class TypedList(MutableSequence):
     """Subclass list to make setitem enforce  strict typing of members of the list."""
 
     def __init__(self, *args: Any, **kargs: Any) -> None:
-        """Construct the typedList."""
+        """Construct the TypedList."""
         self._store = []
         if (not args) or not (isinstance(args[0], type) or (isinstance(args[0], tuple) and all_type(args[0], type))):
             self._type = str  # Default list type is a string
@@ -73,7 +73,7 @@ class typedList(MutableSequence):
                 raise SyntaxError("List should be constructed with at most two arguments, a type and an iterable")
             raise TypeError(f"List should be initialised with elements that are all of type {self._type}")
 
-    def __add__(self, other: IterableType) -> "typedList":
+    def __add__(self, other: IterableType) -> "TypedList":
         """Add operator works like ordinary lists."""
         if isiterable(other):
             new = copy.deepcopy(self)
@@ -81,14 +81,14 @@ class typedList(MutableSequence):
             return new
         return NotImplemented
 
-    def __iadd__(self, other: IterableType) -> "typedList":
+    def __iadd__(self, other: IterableType) -> "TypedList":
         """Inplace-add works like a list."""
         if isiterable(other):
             self.extend(other)
             return self
         return NotImplemented
 
-    def __radd__(self, other: IterableType) -> "typedList":
+    def __radd__(self, other: IterableType) -> "TypedList":
         """Support add on the right like a list."""
         if isinstance(other, list):
             return other + self._store

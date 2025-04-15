@@ -13,9 +13,10 @@ from traceback import format_exc
 import fnmatch
 
 from .compat import string_types, str2bytes, get_filedialog, _pattern_type, path_types
-from .Core import DataFile, StonerLoadError
+from .core.exceptions import StonerLoadError
+from .core.data import Data
 from .Folders import DiskBasedFolderMixin
-from .folders.core import baseFolder
+from .folders.core import BaseFolder
 from .folders.utils import pathjoin
 from .tools import copy_into, make_Data
 from .tools.file import get_filename
@@ -54,7 +55,7 @@ def test_is_zip(filename, member=""):
     return test_is_zip(newfile, newmember)
 
 
-class ZippedFile(DataFile):
+class ZippedFile(Data):
     """A sub class of DataFile that sores itself in a zip file.
 
     If the first non-keyword argument is not an :py:class:`zipfile:ZipFile` then
@@ -494,8 +495,8 @@ class ZipFolderMixin:
         :py:meth:`Stoner.Folders.DataFolder.walk_groups`.
 
         """
-        if not isinstance(f, DataFile):
-            f = DataFile(f)
+        if not isinstance(f, Data):
+            f = Data(f)
         filename = path.splitdrive(f.filename)[1]
         bits = [self.File.filename] + trail + [filename]
         pathsep = path.join("a", "b")[1]
@@ -509,7 +510,7 @@ class ZipFolderMixin:
         return f.filename
 
 
-class ZipFolder(ZipFolderMixin, DiskBasedFolderMixin, baseFolder):
+class ZipFolder(ZipFolderMixin, DiskBasedFolderMixin, BaseFolder):
     """A sub class of DataFile that sores itself in a zip file.
 
     If the first non-keyword argument is not an :py:class:`zipfile:ZipFile` then

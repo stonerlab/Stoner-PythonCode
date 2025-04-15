@@ -8,8 +8,8 @@ import numpy as np
 from ..compat import string_types, int_types
 from ..core.exceptions import assertion
 
-from ..Core import regexpDict, TypeHintedDict
-from ..Folders import DiskBasedFolderMixin, baseFolder
+from ..core.base import RegexpDict, TypeHintedDict
+from ..Folders import DiskBasedFolderMixin, BaseFolder
 
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
@@ -25,15 +25,15 @@ def _load_ImageArray(f, **kargs):
 
 
 class ImageStackMixin:
-    """Implement an interface for a baseFolder to store images in a 3D numpy array for faster access."""
+    """Implement an interface for a BaseFolder to store images in a 3D numpy array for faster access."""
 
     _defaults = {"type": ImageFile}
 
     def __init__(self, *args, **kargs):
         """Initialise an ImageStack's pricate data and provide a type argument."""
         self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
-        self._metadata = regexpDict()
-        self._public_attrs_store = regexpDict()
+        self._metadata = RegexpDict()
+        self._public_attrs_store = RegexpDict()
         self._names = list()
         self._sizes = np.array([], dtype=int).reshape(0, 2)
 
@@ -77,7 +77,7 @@ class ImageStackMixin:
             name(str): Name of an object
 
         Returns:
-            A key in whatever form the :py:meth:`baseFolder.__getter__` will accept.
+            A key in whatever form the :py:meth:`BaseFolder.__getter__` will accept.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -105,7 +105,7 @@ class ImageStackMixin:
 
         Parameters:
             name (key type): The canonical mapping key to get the dataObject. By default
-                the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+                the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
 
         Keyword Arguments:
             instantiate (bool): If True (default) then always return a metadataObject. If False,
@@ -217,7 +217,7 @@ class ImageStackMixin:
         self._public_attrs_store[name] = _public_attrs
 
     def __deleter__(self, ix):
-        """Delete an object from the baseFolder.
+        """Delete an object from the BaseFolder.
 
         Parameters:
             ix(str): Index to delete, should be within +- the lengthe length of the folder.
@@ -240,7 +240,7 @@ class ImageStackMixin:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
         """
-        self._metadata = regexpDict()
+        self._metadata = RegexpDict()
         self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
 
     ###########################################################################
@@ -517,5 +517,5 @@ class StackAnalysisMixin:
         return self
 
 
-class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
-    """An alternative implementation of an image stack based on baseFolder."""
+class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, BaseFolder):
+    """An alternative implementation of an image stack based on BaseFolder."""

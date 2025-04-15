@@ -7,11 +7,11 @@ from collections.abc import Iterable
 import fnmatch
 from os import path
 
-from Stoner.core.base import regexpDict
+from Stoner.core.base import RegexpDict
 
 
-class GroupsDict(regexpDict):
-    """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.baseFolder` objects."""
+class GroupsDict(RegexpDict):
+    """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.BaseFolder` objects."""
 
     def __init__(self, *args, **kargs):
         """Capture a *base* keyuword that sets the parent :py:class:`Stoner.DataFolder` instance."""
@@ -57,7 +57,7 @@ class GroupsDict(regexpDict):
                 Name(s) (or glob patterns) of groups to keep.
 
         Returns:
-            A copy of the  baseFolder with the retained groups.
+            A copy of the  BaseFolder with the retained groups.
         """
         keys = list(self.keys())
         if isinstance(name, str):

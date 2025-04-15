@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Utility functions to support :py:mod:`Stoner.Core`."""
 
-__all__ = ["add_core", "and_core", "sub_core", "mod_core", "copy_into", "tab_delimited", "decode_string"]
+__all__ = ["add_core", "and_core", "sub_core", "mod_core", "copy_into", "Tab_Delimited", "decode_string"]
 
 import copy
 import csv
@@ -203,7 +203,7 @@ def sub_core(other: Union[Int_Types, slice, Callable], newdata: "DataFile") -> "
     return newdata
 
 
-class tab_delimited(csv.Dialect):
+class Tab_Delimited(csv.Dialect):
     """A customised csv dialect class for reading tab delimited text files."""
 
     delimiter = "\t"

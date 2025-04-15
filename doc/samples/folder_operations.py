@@ -25,7 +25,7 @@ print(
     fldr2.count(re.compile(r"QD")),
     fldr2.count(fldr2[1]),
 )
-# baseFolders implement a mapping interface to their contents
+# BaseFolders implement a mapping interface to their contents
 one_qd = fldr2.get("QD", Data())
 two_qd = fldr2.pop("QD", Data())
 # These should be the same

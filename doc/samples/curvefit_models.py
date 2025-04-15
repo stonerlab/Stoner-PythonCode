@@ -5,7 +5,7 @@ from numpy import linspace, random
 
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import PowerLaw
-from Stoner.analysis.fitting import odr_Model
+from Stoner.analysis.fitting import ODR_Model
 
 # Make some data
 x = linspace(0, 10.0, 101)
@@ -23,7 +23,7 @@ fit = d.curve_fit(
     output="report",
 )
 
-ODRModel = odr_Model(PowerLaw, p0=(1, 1))
+ODRModel = ODR_Model(PowerLaw, p0=(1, 1))
 fit = d.curve_fit(
     ODRModel,
     result=True,

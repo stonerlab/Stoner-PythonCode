@@ -11,7 +11,6 @@ import numpy as np
 from ..core import TypeHintedDict, metadataObject
 from ..compat import string_types
 from ..tools import isLikeList, isiterable, make_Data
-from ..Core import DataFile
 
 
 def _fmt_as_list(results):
@@ -329,7 +328,7 @@ class MetadataProxy(MutableMapping):
             dict: _fmt_as_dict,
             "frame": _fmt_as_dataframe,
             "data": _fmt_as_Data,
-            DataFile: _fmt_as_Data,
+            make_Data(None): _fmt_as_Data,
             "array": _fmt_as_array,
             np.ndarray: _fmt_as_array,
             "smart": _fmt_as_smart,

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Base classes for the Stoner package."""
 
-__all__ = ["_evaluatable", "regexpDict", "string_to_type", "TypeHintedDict", "metadataObject"]
+__all__ = ["_evaluatable", "RegexpDict", "string_to_type", "TypeHintedDict", "metadataObject"]
 import copy
 import datetime
 import re
@@ -109,7 +109,7 @@ class _evaluatable:
     """Placeholder to indicate that special action needed to convert a string representation to valid Python type."""
 
 
-class regexpDict(SortedDict):
+class RegexpDict(SortedDict):
     """An ordered dictionary that permits looks up by regular expression."""
 
     allowed_keys: Tuple = (object,)
@@ -204,7 +204,7 @@ class regexpDict(SortedDict):
             return NotImplemented
         return len(self ^ other) == 0 and len(other ^ self) == 0
 
-    def __sub__(self, other: Mapping) -> "regexpDict":
+    def __sub__(self, other: Mapping) -> "RegexpDict":
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -213,7 +213,7 @@ class regexpDict(SortedDict):
         ret = type(self)({k: self[k] for k in (mk - ok)})
         return ret
 
-    def __xor__(self, other: Mapping) -> Union["regexpDict", Set[Any]]:
+    def __xor__(self, other: Mapping) -> Union["RegexpDict", Set[Any]]:
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -244,7 +244,7 @@ class regexpDict(SortedDict):
         return super().__contains__(name)
 
 
-class TypeHintedDict(regexpDict):
+class TypeHintedDict(RegexpDict):
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches

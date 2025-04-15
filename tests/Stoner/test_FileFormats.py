@@ -12,7 +12,6 @@ import io
 import urllib
 
 from Stoner import Data, __homepath__, __datapath__, ImageFile
-from Stoner.Core import DataFile
 from Stoner.compat import Hyperspy_ok
 
 import pytest
@@ -54,7 +53,7 @@ listed_files = list_files()
 @pytest.mark.parametrize("filename", listed_files)
 def test_one_file(tmpdir, filename):
     loaded = Data(filename, debug=False)
-    assert isinstance(loaded, DataFile), f"Failed to load {filename.name} correctly."
+    assert isinstance(loaded, Data), f"Failed to load {filename.name} correctly."
     try:
         saver=get_saver(loaded["Loaded as"])
         pth = pathlib.Path(tmpdir) / filename.name

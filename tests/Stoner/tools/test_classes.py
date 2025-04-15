@@ -7,31 +7,31 @@ from Stoner.tools import classes
 from Stoner import Options
 
 
-def test_typedList_create():
-    tl = classes.typedList()
-    assert tl._type == str, "Empty typedList should default to str"
-    tl = classes.typedList(int)
-    assert tl._type == int and len(tl) == 0, "typedList with single type constructor failed"
-    tl = classes.typedList(int, [1, 2, 3, 4, 5])
-    assert tl._type == int and len(tl) == 5, "typedList with type and iterator constructor failed"
+def test_TypedList_create():
+    tl = classes.TypedList()
+    assert tl._type == str, "Empty TypedList should default to str"
+    tl = classes.TypedList(int)
+    assert tl._type == int and len(tl) == 0, "TypedList with single type constructor failed"
+    tl = classes.TypedList(int, [1, 2, 3, 4, 5])
+    assert tl._type == int and len(tl) == 5, "TypedList with type and iterator constructor failed"
     try:
-        tl = classes.typedList(int, 1, 2, 3)
+        tl = classes.TypedList(int, 1, 2, 3)
     except SyntaxError:
         pass
     else:
-        assert False, "typedList with too many arguments didn't throw error"
+        assert False, "TypedList with too many arguments didn't throw error"
     try:
-        tl = classes.typedList(int, ["A", 1, 2, 3])
+        tl = classes.TypedList(int, ["A", 1, 2, 3])
     except TypeError:
         pass
     else:
-        assert False, "typedList with with bad types didn't throw error"
+        assert False, "TypedList with with bad types didn't throw error"
 
 
-def test_typedList_operators():
-    tl1 = classes.typedList(int, (1, 2, 3))
-    tl2 = classes.typedList(int, (4, 5, 6))
-    tl3 = classes.typedList(float, (1.1, 1.2, 1.3))
+def test_TypedList_operators():
+    tl1 = classes.TypedList(int, (1, 2, 3))
+    tl2 = classes.TypedList(int, (4, 5, 6))
+    tl3 = classes.TypedList(float, (1.1, 1.2, 1.3))
     assert len(tl1 + tl2) == 6, "Failed to add similar typed lists"
     try:
         _ = tl1 + tl3
@@ -40,22 +40,22 @@ def test_typedList_operators():
     else:
         assert False, "Adding unlike typed lists didn't raise TyperError"
     tl1 += tl2
-    assert len(tl1) == 6, "In place add of typedList failed"
+    assert len(tl1) == 6, "In place add of TypedList failed"
     try:
         tl1 += 2
     except TypeError:
         pass
     else:
         assert False, "Adding non list to a typed lists didn't raise TyperError"
-    assert [True, 2] + tl3 == [True, 2, 1.1, 1.2, 1.3], "Right adding typedList failed."
-    tl1 = classes.typedList(int, (1, 2, 3))
-    tl2 = classes.typedList(int, (1, 2, 3))
-    assert tl1 == tl2, "typedList equality check failed"
+    assert [True, 2] + tl3 == [True, 2, 1.1, 1.2, 1.3], "Right adding TypedList failed."
+    tl1 = classes.TypedList(int, (1, 2, 3))
+    tl2 = classes.TypedList(int, (1, 2, 3))
+    assert tl1 == tl2, "TypedList equality check failed"
 
     del tl1[0]
     assert tl1 == [2, 3], "Failed to delete and item from the list"
-    assert tl1[0] == 2, "typedList get item failed"
-    assert repr(tl1) == "[2, 3]", "typedList representation failed"
+    assert tl1[0] == 2, "TypedList get item failed"
+    assert repr(tl1) == "[2, 3]", "TypedList representation failed"
     try:
         tl1[[0, 1]] = 3
     except TypeError:
@@ -63,32 +63,32 @@ def test_typedList_operators():
     else:
         assert (
             False
-        ), "typedList setitem with mismatch between iterable key and scalar value failed to rasise a TypeError"
+        ), "TypedList setitem with mismatch between iterable key and scalar value failed to rasise a TypeError"
     try:
         tl1[[0, 1]] = 3.0
     except TypeError:
         pass
     else:
-        assert False, "typedList setitem with from type of value failed to rasise a TypeError"
+        assert False, "TypedList setitem with from type of value failed to rasise a TypeError"
 
 
-def test_typedList_methods():
-    tl1 = classes.typedList(int, (1, 2, 3))
+def test_TypedList_methods():
+    tl1 = classes.TypedList(int, (1, 2, 3))
     try:
         tl1.extend(1)
     except TypeError:
         pass
     else:
-        assert False, "typedList failed to raise typeError when extending with a scale"
-    assert tl1.index(2) == 1, "typedList index failed to give right answer"
+        assert False, "TypedList failed to raise typeError when extending with a scale"
+    assert tl1.index(2) == 1, "TypedList index failed to give right answer"
     tl1.insert(0, 0)
-    assert tl1 == [0, 1, 2, 3], "typedList insert at start failed."
+    assert tl1 == [0, 1, 2, 3], "TypedList insert at start failed."
     try:
         tl1.insert(0, "G")
     except TypeError:
         pass
     else:
-        assert False, "typedList failed to raise typeError when inserting with the wrong type"
+        assert False, "TypedList failed to raise typeError when inserting with the wrong type"
 
 
 def test_Options():

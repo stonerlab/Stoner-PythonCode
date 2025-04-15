@@ -23,7 +23,7 @@ from matplotlib import figure as mplfig
 from matplotlib import cm, colors, colormaps
 
 from Stoner.compat import string_types, index_types, int_types
-from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, typedList, get_option, fix_signature
+from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, TypedList, get_option, fix_signature
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 from .utils import hsl2rgb
@@ -145,7 +145,7 @@ class PlotMixin:
             "_showfig": bool,
         }
         super().__init__(*args, **kargs)
-        self._labels = typedList(string_types, [])
+        self._labels = TypedList(string_types, [])
         if self.debug:
             print("Done PlotMixin init")
 
@@ -221,9 +221,9 @@ class PlotMixin:
     def labels(self, value):
         """Set the labels for the plot columns."""
         if value is None:
-            self._labels = typedList(string_types, self.column_headers)
+            self._labels = TypedList(string_types, self.column_headers)
         elif isiterable(value) and all_type(value, string_types):
-            self._labels = typedList(string_types, value)
+            self._labels = TypedList(string_types, value)
         else:
             raise TypeError(f"labels should be iterable and all strings, or None, not {type(value)}")
 
@@ -676,47 +676,6 @@ class PlotMixin:
             if tax is not None:
                 plt.sca(tax)
 
-    def add_column(self, column_data, header=None, index=None, **kargs):
-        """Append a column of data or inserts a column to a datafile instance.
-
-        Args:
-            column_data (:py:class:`numpy.array` or list or callable):
-                Data to append or insert or a callable function that will generate new data
-
-        Keyword Arguments:
-            column_header (string):
-                The text to set the column header to, if not supplied then defaults to 'col#'
-            index (int or string):
-                The  index (numeric or string) to insert (or replace) the data
-            func_args (dict):
-                If column_data is a callable object, then this argument can be used to supply a dictionary of function
-                arguments to the callable object.
-            replace (bool):
-                Replace the data or insert the data (default)
-            setas (str):
-                Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
-
-        Returns:
-            A :py:class:`DataFile` instance with the additional column inserted.
-
-        Note:
-            Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
-            the original DataFile Instance as well as returning it.
-        """
-        # Call the parent method and then update this label
-        super().add_column(column_data, header=header, index=index, **kargs)
-        # Mostly this is duplicating the parent method
-        if index is None:
-            index = len(self.column_headers) - 1
-        else:
-            index = self.find_col(index)
-
-        self.labels = (
-            self.labels[:index]
-            + self.column_headers[index : len(self.column_headers) - len(self.labels) + index]
-            + self.labels[index:]
-        )
-        return self
 
     def colormap_xyz(self, xcol=None, ycol=None, zcol=None, **kargs):
         """Make a xyz plot that forces the use of plt.colormap.

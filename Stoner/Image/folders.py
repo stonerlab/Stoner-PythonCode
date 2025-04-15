@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Implements a baseFolder type structure for working with collections of images."""
+"""Implements a BaseFolder type structure for working with collections of images."""
 __all__ = ["ImageFolderMixin", "ImageFolder"]
 from warnings import warn
 from importlib import import_module
@@ -13,7 +13,7 @@ from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from PIL import Image
 
 from .core import ImageArray
-from ..Folders import DiskBasedFolderMixin, baseFolder
+from ..Folders import DiskBasedFolderMixin, BaseFolder
 from ..compat import string_types, int_types
 from . import ImageFile
 
@@ -87,7 +87,7 @@ class ImageFolderMixin:
         Parameters:
            name (key type):
                The canonical mapping key to get the dataObject. By default
-               the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+               the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
 
         Keyword Arguments:
             instantiate (bool):
@@ -474,7 +474,7 @@ class ImageFolderMixin:
         return self
 
 
-class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
+class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, BaseFolder):
     """Folder object for images.
 
     ImageFolder is designed to behave pretty much like DataFolder but with

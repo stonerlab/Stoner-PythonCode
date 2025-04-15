@@ -22,9 +22,8 @@ import numpy as np
 from lmfit import Model
 from lmfit.models import update_param_vals
 
-from Stoner.compat import string_types
-from Stoner.tools import make_Data
-import Stoner.Core as _SC_
+from ....compat import string_types
+from ....tools import make_Data
 from . import generic, thermal, magnetism, tunnelling, e_transport, superconductivity
 
 
@@ -314,7 +313,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
                     kargs[k] = config.getfloat(p, k)
                 elif keys[k] == str:
                     kargs[k] = config.get(p, k)
-        if isinstance(data, _SC_.DataFile):  # stuff the parameter hint data into metadata
+        if isinstance(data, make_Data(None)):  # stuff the parameter hint data into metadata
             for k in keys:  # remove keywords not needed
                 if k in kargs:
                     data[f"{prefix}{p} {k}"] = kargs[k]

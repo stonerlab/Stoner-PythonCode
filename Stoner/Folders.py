@@ -6,12 +6,12 @@ The core classes provides a means to access them as an ordered collection or as 
 __all__ = ["DataFolder", "PlotFolder"]
 
 from Stoner.tools import make_Data
-from .folders.core import baseFolder
+from .folders.core import BaseFolder
 
 from .folders.mixins import DiskBasedFolderMixin, DataMethodsMixin, PlotMethodsMixin
 
 
-class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
+class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, BaseFolder):
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
     By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder emplys a lazy
@@ -28,4 +28,4 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
 
 class PlotFolder(PlotMethodsMixin, DataFolder):
-    """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""
+    """A :py:class:`Stoner.folders.BaseFolder` that knows how to ploth its underlying data files."""

@@ -7,6 +7,7 @@ from importlib import import_module
 from collections.abc import Iterable
 from copy import copy
 from os import environ
+import re
 
 import numpy as np
 
@@ -273,6 +274,7 @@ def class_modifier(
     proxy_cls=None,
     RTD_restrictions=True,
     no_long_names=False,
+    alias=None,
 ):
     """Decorate  a class by addiding member functions from module.
 
@@ -312,6 +314,11 @@ def class_modifier(
         proxy_class = cls if proxy_cls is None else proxy_cls
         mods = module if isinstance(module, Iterable) else [module]
         for mod in mods:
+            if alias is None:
+                mod_name = mod.__name__.replace(".", r"\.")
+                mod_name = "^" + mod_name
+            else:
+                mod_name = alias
             if (RTD_restrictions and _RTD) and not getattr(mod, "__package__", "Stoner").startswith("Stoner"):
                 continue  # Do not bind all the external functions if we're in ReadTheDocs
             for fname in dir(mod):
@@ -321,11 +328,14 @@ def class_modifier(
                     except AttributeError:  # This shouldn't happen, but it did for scipy.ndimage!
                         continue
                     fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""))
-                    if callable(func) and isinstance(fmod, str) and fmod[:5] in ["Stone", "scipy", "skima"]:
+                    if callable(func) and isinstance(fmod, str) and re.search(mod_name, fmod):
                         if transpose:
                             func.transpose = transpose
                         name = f"{fmod}__{fname}".replace(".", "__")
-                        proxy = adaptor(func)
+                        if adaptor is not None:
+                            proxy = adaptor(func)
+                        else:
+                            proxy = func
                         setattr(proxy, "_src_mod", fmod)
                         if not no_long_names:
                             setattr(cls, name, proxy)

@@ -20,7 +20,8 @@ import h5py
 import numpy as np
 
 from .compat import string_types, bytes2str, get_filedialog, path_types, str2bytes
-from .Core import StonerLoadError, DataFile
+from .core.exceptions import StonerLoadError
+from .core.data import Data
 from .folders import DataFolder
 from .Image.core import ImageFile, ImageArray
 from .core.utils import copy_into
@@ -53,7 +54,7 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
     return getattr(globals()[typ], "read_hdf5", default_loader)
 
 
-class HDF5File(DataFile):
+class HDF5File(Data):
     """A sub class of DataFile that sores itself in a HDF5File or group.
 
     Args:
@@ -112,7 +113,7 @@ class HDF5File(DataFile):
         with HDFFileManager(self.filename, "r") as f:
             loader = get_hdf_loader(f, default_loader=HDF5File.read_hdf)
             ret = loader(f, *args, instance=self, **kargs)
-            if isinstance(ret, DataFile):
+            if isinstance(ret, Data):
                 copy_into(ret, self)
                 return self
             return ret
@@ -224,7 +225,7 @@ class HDF5File(DataFile):
         return self
 
 
-class HGXFile(DataFile):
+class HGXFile(Data):
     """A subclass of DataFile for reading GenX HDF Files.
 
     These files typically have an extension .hgx. This class has been based on a limited sample
@@ -328,7 +329,7 @@ class HDF5FolderMixin:
         Parameters:
             name (key type):
                 The canonical mapping key to get the dataObject. By default
-                the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+                the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
 
         Keyword Arguments:
             instantiate (bool):
@@ -514,7 +515,7 @@ class HDF5Folder(HDF5FolderMixin, DataFolder):
         super().__init__(*args, **kargs)
 
 
-class SLS_STXMFile(DataFile):
+class SLS_STXMFile(Data):
     """Load images from the Swiss Light Source Pollux beamline."""
 
     priority = 16

@@ -138,7 +138,7 @@ class Item:
         return setas
 
     def __call__(self, func, *args, **kargs):
-        """Iterate over the baseFolder, calling func on each item.
+        """Iterate over the BaseFolder, calling func on each item.
 
         Args:
             func (callable, str):
@@ -152,9 +152,9 @@ class Item:
             A list of the results of evaluating *func* for each item in the folder.
 
         Notes:
-            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`BaseFolder` is
             storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
-            :py:class:`baseFolder`. If *_result* is True the return value is added to the
+            :py:class:`BaseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
@@ -337,7 +337,7 @@ class Item:
         return _wrapper_
 
     def iter(self, func, *args, **kargs):
-        """Iterate over the baseFolder, calling func on each item.
+        """Iterate over the BaseFolder, calling func on each item.
 
         Args:
             func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
@@ -349,9 +349,9 @@ class Item:
             A list of the results of evaluating *func* for each item in the folder.
 
         Notes:
-            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`BaseFolder` is
             storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
-            :py:class:`baseFolder`. If *_result* is True the return value is added to the
+            :py:class:`BaseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """

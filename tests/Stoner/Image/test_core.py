@@ -6,7 +6,7 @@ Created on Fri May 27 17:09:04 2016
 """
 
 from Stoner.Image import ImageArray, ImageFile
-from Stoner.Core import TypeHintedDict
+from Stoner.core.base import TypeHintedDict
 from Stoner import Data, __home__
 import numpy as np
 import pytest

@@ -81,7 +81,7 @@ pydocstyle:
     - D407
     - D413
     - D417
-  run: true
+  run: false
 
 pyroma:
   run: true

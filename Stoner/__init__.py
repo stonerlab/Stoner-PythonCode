@@ -20,6 +20,8 @@ __all__ = [
     "set_option",
     "get_option",
     "Options",
+    "HDF5",
+    "ZIP",
 ]
 
 # These fake the old namespace if you do an import Stoner
@@ -30,7 +32,7 @@ from . import core, analysis, formats, plot, tools, Image
 from .core.data import Data
 from .Folders import DataFolder
 from .Image import ImageFile, ImageFolder, ImageStack
-
+from . import Zip, HDF5
 from .tools import set_option, get_option, Options as _Options
 
 Options = _Options()

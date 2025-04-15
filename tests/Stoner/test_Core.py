@@ -17,7 +17,7 @@ pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
 old_path = []
 from Stoner import Data, __home__
-from Stoner.Core import metadataObject
+from Stoner.core.base import metadataObject
 import Stoner.compat
 
 
@@ -290,10 +290,10 @@ def test_dir():
         ]
     )
     attrs = set(dir(selfd)) - bad_keys
-    assert len(attrs) == 246, "DataFile.__dir__ failed."
+    assert len(attrs) == 219, "DataFile.__dir__ failed."
     selfd.setas.clear()
     attrs = set(dir(selfd)) - bad_keys
-    assert len(attrs) == 244, "DataFile.__dir__ failed."
+    assert len(attrs) == 217, "DataFile.__dir__ failed."
 
 
 def test_filter():

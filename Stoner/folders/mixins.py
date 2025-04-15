@@ -19,7 +19,7 @@ from Stoner.tools import isiterable, make_Data
 from ..compat import string_types, get_filedialog, _pattern_type, makedirs, path_types
 from ..core.base import metadataObject, string_to_type
 from ..core.exceptions import StonerUnrecognisedFormat
-from .core import baseFolder, _add_core_ as _base_add_core_, _sub_core_ as _base_sub_core_
+from .core import BaseFolder, _add_core_ as _base_add_core_, _sub_core_ as _base_sub_core_
 from .utils import scan_dir, discard_earlier, filter_files, get_pool, removeDisallowedFilenameChars
 from ..core.exceptions import assertion
 
@@ -144,7 +144,7 @@ class DiskBasedFolderMixin:
         if self.pruned:
             self.prune()
 
-    @baseFolder.key.getter  # pylint: disable=no-member
+    @BaseFolder.key.getter  # pylint: disable=no-member
     def key(self):
         """Override the parent class *key* to use the *directory* attribute."""
         k = getattr(super(), "key", None)
@@ -223,7 +223,7 @@ class DiskBasedFolderMixin:
         Parameters:
             name (key type):
                 The canonical mapping key to get the dataObject. By default
-                the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+                the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
 
         Keyword Arguments:
             instantiate (bool):
@@ -258,25 +258,25 @@ class DiskBasedFolderMixin:
         return tmp
 
     def __add__(self, other):
-        """Implement the addition operator for baseFolder and metadataObjects."""
+        """Implement the addition operator for BaseFolder and metadataObjects."""
         result = deepcopy(self)
         result = _add_core_(result, other)
         return result
 
     def __iadd__(self, other):
-        """Implement the addition operator for baseFolder and metadataObjects."""
+        """Implement the addition operator for BaseFolder and metadataObjects."""
         result = self
         result = _add_core_(result, other)
         return result
 
     def __sub__(self, other):
-        """Implement the addition operator for baseFolder and metadataObjects."""
+        """Implement the addition operator for BaseFolder and metadataObjects."""
         result = deepcopy(self)
         result = _sub_core_(result, other)
         return result
 
     def __isub__(self, other):
-        """Implement the addition operator for baseFolder and metadataObjects."""
+        """Implement the addition operator for BaseFolder and metadataObjects."""
         result = self
         result = _sub_core_(result, other)
         return result
@@ -637,7 +637,7 @@ class DataMethodsMixin:
 
 
 class PlotMethodsMixin:
-    """A Mixin for :py:class:`Stoner.folders.core.baseFolder` with extra methods for plotting lots of files.
+    """A Mixin for :py:class:`Stoner.folders.core.BaseFolder` with extra methods for plotting lots of files.
 
     Example:
         .. plot:: samples/plot-folder-test.py
@@ -730,7 +730,7 @@ class PlotMethodsMixin:
         return ret
 
 
-class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
+class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, BaseFolder):
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
     By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder emplys a lazy
@@ -746,4 +746,4 @@ class DataFolder(DataMethodsMixin, DiskBasedFolderMixin, baseFolder):
 
 
 class PlotFolder(PlotMethodsMixin, DataFolder):
-    """A :py:class:`Stoner.folders.baseFolder` that knows how to ploth its underlying data files."""
+    """A :py:class:`Stoner.folders.BaseFolder` that knows how to ploth its underlying data files."""

@@ -55,14 +55,6 @@ Core Package and Modules
    :no-main-docstr:
     :headings: -~
 
-Stoner.Core Classes
--------------------
-
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    Stoner.Core.DataFile
 
 Analysis Package
 ^^^^^^^^^^^^^^^^
@@ -101,69 +93,17 @@ Plot Package and Modules
 File Formats Package Module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Generic Fomats
----------------
+Data Classes
+------------
 
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    Stoner.formats.generic.CSVFile
-    Stoner.formats.generic.JustNumbersFile
+.. automodapi:: Stoner.formats.data
+    :no-inheritance-diagram:
 
 
-Instrument Formats
---------------------
+Image Classes
+-------------
 
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    Stoner.formats.instruments.LSTemperatureFile
-    Stoner.formats.instruments.QDFile
-    Stoner.formats.instruments.SPCFile
-    Stoner.formats.instruments.VSMFile
-    Stoner.formats.instruments.XRDFile
-
-Facility Outputs
-------------------
-
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    Stoner.formats.facilities.BNLFile
-    Stoner.formats.facilities.MDAASCIIFile
-    Stoner.formats.facilities.OpenGDAFile
-    Stoner.formats.facilities.RasorFile
-    Stoner.formats.facilities.SNSFile
-
-Measurement Rig Files
----------------------
-
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    Stoner.formats.rigs.BigBlueFile
-    Stoner.formats.rigs.BirgeIVFile
-    Stoner.formats.rigs.MokeFile
-    Stoner.formats.rigs.FmokeFile
-    Stoner.formats.rigs.EasyPlotFile
-    Stoner.formats.rigs.PinkLibFile
-
-Simulation Package Files
--------------------------
-
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    Stoner.formats.simulations.GenXFile
-    Stoner.formats.simulations.OVFFile
-
-
-.. automodapi:: Stoner.analysis.fitting
+.. automodapi:: Stoner.formats.image
     :no-inheritance-diagram:
 
 
@@ -258,14 +198,6 @@ Main Image Classes
     :inherited-members:
     :headings: -~
 
-Generic Fomats
----------------
-
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    Stoner.formats.generic.KermitPNGFile
 
 Attocube SPM Scans
 ------------------

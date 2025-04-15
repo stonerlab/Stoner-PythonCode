@@ -33,7 +33,6 @@ from skimage import (
 from ..compat import np_version
 from ..core.base import TypeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..Core import DataFile
 from ..tools import isTuple, make_Data
 from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones, make_Image
 from ..compat import (
@@ -177,7 +176,8 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
         morphology,
         segmentation,
         transform,
-    ]
+    ],
+    alias=r"^skimage."
 )
 @class_modifier([ndi], transpose=True)
 @class_modifier(imagefuncs, overload=True)
@@ -197,7 +197,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     image argument required by skimage.
 
     Attributes:
-        metadata (:py:class:`Stoner.core.regexpDict`):
+        metadata (:py:class:`Stoner.core.RegexpDict`):
             A dictionary of metadata items associated with this image.
         filename (str):
             The name of the file from which this image was loaded.
@@ -725,6 +725,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         transform,
     ],
     adaptor=image_file_adaptor,
+    alias=r'^skimage\.'
 )
 @class_modifier(
     [ndi],
@@ -743,7 +744,7 @@ class ImageFile(metadataObject):
     Attributes:
         image (:py:class:`Stoner.Image.ImageArray`):
             A :py:class:`numpy.ndarray` subclass that stores the actual image data.
-        metadata (:py:class:`Stoner.core.regexpDict`):
+        metadata (:py:class:`Stoner.core.RegexpDict`):
             A dictionary of metadata items associated with this image.
         filename (str):
             The name of the file from which this image was loaded.
@@ -847,7 +848,7 @@ class ImageFile(metadataObject):
                 for k in args[0]._public_attrs:
                     setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(
-            args[0], DataFile
+            args[0], make_Data(None)
         ):  # Support initing from a DataFile that defines x,y,z coordinates
             self._init_from_datafile(*args, **kargs)
         self._public_attrs = {"title": str, "filename": str}
