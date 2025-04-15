@@ -1209,6 +1209,7 @@ def to_pandas(datafile):
     df.metadata.update(datafile.metadata)
     return df
 
+
 def format(datafile, key, **kargs):
     r"""Return the contents of key pretty formatted using :py:func:`format_error`.
 

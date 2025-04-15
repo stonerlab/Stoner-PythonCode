@@ -676,7 +676,6 @@ class PlotMixin:
             if tax is not None:
                 plt.sca(tax)
 
-
     def colormap_xyz(self, xcol=None, ycol=None, zcol=None, **kargs):
         """Make a xyz plot that forces the use of plt.colormap.
 

@@ -177,7 +177,7 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
         segmentation,
         transform,
     ],
-    alias=r"^skimage."
+    alias=r"^skimage.",
 )
 @class_modifier([ndi], transpose=True)
 @class_modifier(imagefuncs, overload=True)
@@ -725,7 +725,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         transform,
     ],
     adaptor=image_file_adaptor,
-    alias=r'^skimage\.'
+    alias=r"^skimage\.",
 )
 @class_modifier(
     [ndi],

@@ -17,8 +17,8 @@ def _do_error_calc(datafile, col_a, col_b, error_type="relative"):
     ):  # Error columns on
         (col_a, e1) = col_a
         (col_b, e2) = col_b
-        e1data = __get_math_val(datafile,e1)[0]
-        e2data = __get_math_val(datafile,e2)[0]
+        e1data = __get_math_val(datafile, e1)[0]
+        e2data = __get_math_val(datafile, e2)[0]
         match error_type:
             case "relative":
 
@@ -44,8 +44,8 @@ def _do_error_calc(datafile, col_a, col_b, error_type="relative"):
             case _:
                 raise ValueError(f"Unknown error calculation mode {error_type}")
 
-    adata, aname = __get_math_val(datafile,col_a)
-    bdata, bname = __get_math_val(datafile,col_b)
+    adata, aname = __get_math_val(datafile, col_a)
+    bdata, bname = __get_math_val(datafile, col_b)
     return adata, bdata, error_calc, aname, bname
 
 
@@ -105,7 +105,7 @@ def add(datafile, col_a, col_b, replace=False, header=None, index=None):
     the second element an uncertainty in the value. The uncertainties will then be propagated and an
     additional column with the uncertainites will be added to the data.
     """
-    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile,col_a, col_b, error_type="absolute")
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="absolute")
     err_header = None
     if isinstance(header, tuple) and len(header) == 2:
         header, err_header = header
@@ -147,7 +147,7 @@ def diffsum(datafile, col_a, col_b, replace=False, header=None, index=None):
     the second element an uncertainty in the value. The uncertainties will then be propagated and an
     additional column with the uncertainites will be added to the data.
     """
-    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile,col_a, col_b, error_type="diffsum")
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="diffsum")
     err_header = None
     if isinstance(header, tuple) and len(header) == 2:
         header, err_header = header
@@ -189,7 +189,7 @@ def divide(datafile, col_a, col_b, replace=False, header=None, index=None):
     the second element an uncertainty in the value. The uncertainties will then be propagated and an
     additional column with the uncertainites will be added to the data.
     """
-    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile,col_a, col_b, error_type="relative")
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="relative")
     err_header = None
     if isinstance(header, tuple) and len(header) == 2:
         header, err_header = header
@@ -346,7 +346,7 @@ def multiply(datafile, col_a, col_b, replace=False, header=None, index=None):
     the second element an uncertainty in the value. The uncertainties will then be propagated and an
     additional column with the uncertainites will be added to the data.
     """
-    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile,col_a, col_b, error_type="relative")
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="relative")
     err_header = None
     if isinstance(header, tuple) and len(header) == 2:
         header, err_header = header
@@ -466,7 +466,7 @@ def subtract(datafile, col_a, col_b, replace=False, header=None, index=None):
     the second element an uncertainty in the value. The uncertainties will then be propagated and an
     additional column with the uncertainites will be added to the data.
     """
-    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile,col_a, col_b, error_type="absolute")
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="absolute")
     err_header = None
     if isinstance(header, tuple) and len(header) == 2:
         header, err_header = header

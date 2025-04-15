@@ -63,7 +63,8 @@ class Data(
     DataFilePropertyMixin,
     metadataObject,
     MutableSequence,
-    AnalysisMixin, PlotMixin,
+    AnalysisMixin,
+    PlotMixin,
 ):
     """Base class object that represents a matrix of data, associated metadata and column headers.
 
@@ -888,7 +889,6 @@ class Data(
             typ = f"a {type(self._public_attrs[k])}"
         raise TypeError(f"{k} should be {typ}")
 
-
     @classmethod
     def load(cls, *args, **kargs):
         """Create a new :py:class:`Data` from a file on disc guessing a better subclass if necessary.
@@ -928,7 +928,10 @@ class Data(
         filetype = kargs.pop("filetype", None)
         auto_load = kargs.pop("auto_load", filetype is None)
         loaded_class = kargs.pop("loaded_class", False)
-        if isinstance(filename, (str,pathlib.Path)) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
+        if (
+            isinstance(filename, (str, pathlib.Path))
+            and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES
+        ):
             filename, filetype = get_file_name_type(filename, filetype, Data)
         if filename is None or not filename:
             filename = file_dialog("r", filename, "Data", Data)
