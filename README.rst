@@ -13,8 +13,8 @@
 .. image:: https://anaconda.org/phygbu/stoner/badges/version.svg
    :target: https://anaconda.org/phygbu/stoner
 
-.. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest
-   :target: http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=stable
+   :target: http://stoner-pythoncode.readthedocs.io/en/latest/?badge=stable
    :alt: Documentation Status
 
 .. image:: https://zenodo.org/badge/10057055.svg
@@ -41,18 +41,17 @@ Getting this Code
     :alt: Introduction and Installation Guide to Stoner Pythin Package
     :width: 320
 
-The *Stoner* package requires h5py>=2.7.0, lmfit>=0.9.7, matplotlib>=2.0,numpy>=1.13, Pillow>=4.0,
-scikit-image>=0.13.0 & scipy>=1.0.0 and also optional depends on  filemagic, npTDMS, imreg_dft and numba, fabio, hyperspy.
-
-Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, and the remaining
-dependencies are collected together in the **phygbu** repositry on anaconda cloud. The easiest way to install the Stoner package is,
-therefore, to install the most recent Anaconda Python distribution.
+Anaconda Python is the recommended distribution of python and the conda packages are the preferred packaging system for
+this library. Recent Anaconda Python includes nearly all the necessary dependencies, but additional dependencies can
+be obtained from the `phygbu` channel (although for full functionality, other packages available from conda-forge are needed.)
 
 Compatibility
 --------------
 
-Versions 0.9.x (stable branch) are compatible with Python 2.7, 3.5, 3.6 and 3.7. The latest 0.9.6 version is also compatible with Python 3.8
-The current stable verstion (0.10, stable branch) is compatible with Python 3.6-3.9
+Version 0.10.x is compatbile with Python 3.9-3.13. Version 0.11.x (currently in development) will be compatible with
+Python 3.11-3.13 and will add support for 3.14 when it is supported within the Anaconda distrubtion.
+
+The last version that supported Python 2.7 was 0.9.x
 
 Conda packages are prepared for the stable branch and when the development branch enters beta testing. Pip wheels are prepared for selected stable releases only.
 
@@ -63,7 +62,7 @@ After installing the current Anaconda version, open a terminal (Mac/Linux) or An
 
 .. code-block:: sh
 
-    conda install -c phygbu -c conda-forge Stoner
+    conda install -c phygbu Stoner
 
 If (and only if) you are not using Anaconda python, then pip should also work:
 
@@ -106,21 +105,20 @@ contrasr, traditional functional programming thinks in terms of various function
 .. note::
     This is rather similar to pandas DataFrames and the package provides methods to easily convert to and from
     DataFrames. Unlike a DataFrame, a **Stoner.Data** object maintains a dictionary of additional metadata
-    attached to the dataset (e.g. of instrument settings, experimental ort environmental; conditions 
+    attached to the dataset (e.g. of instrument settings, experimental ort environmental; conditions
     when thedata was taken). To assist with exporting to pandas DataFrames, the package will add a custom
     attrobute handler to pandas DataFrames **DataFrame.metadata** to hold this additional data.
-    
+
     Unlike Pandas, the **Stoner** package's default is to operate in-place and also to return the object
-    from method calls to facilitate "chaining" of data methods into short single line pipelines. 
+    from method calls to facilitate "chaining" of data methods into short single line pipelines.
 
 Data and Friends
 ----------------
 
 **Stoner.Data** is the core class for representing individual experimental data sets.
-It is actually composed of several mixin classes that provide different functionality, with methods
-to examine and manipulate data, manage metadata, load and save data files, plot results and carry out various analysis tasks.
-It has a large number of sub classes - most of these are in Stoner.formats and are used to handle the loading of specific
-file formats.
+It is actually composed of several mixin classes that provide different functionality, augmented by additional
+functions bound to the class as methods., The functionality includes methods to examine and manipulate data, manage
+metadata, load and save data files, plot results and carry out various analysis tasks.
 
 ImageFile
 ---------
@@ -149,6 +147,13 @@ ImageFolder
 objects, the ImageFolder class offers additional Image specific functionality). There is a subclass of ImageFolder,
 **Stoner.Image.ImageStack** that uses a 3D numpy array as it's primary image store which permits faster access
 (at the expense of a larger memory footprint) than the lazy loading ordered dictionary of **ImageFolder**
+
+Import/Export Functionality
+---------------------------
+
+The package is able to import and export data from a variety of instruments and facilities. This is implemented by
+building a registry of load/save functions that register themselves as able to handle a mime-type or filename extension,
+The package will try to locate suitable loader functions for a given file and to use that to import data.
 
 Other Modules and Classes
 -------------------------
@@ -179,7 +184,7 @@ the CM Physics group have contributed code, ideas and bug testing.
 
 The User Guide gives the current list of other contributors to the project.
 
-This code and the sample data are all (C) The University of Leeds 2008-2021 unless otherwise indficated in the source
+This code and the sample data are all (C) The University of Leeds 2008-2025 unless otherwise indficated in the source
 file. The contents of this package are licensed under the terms of the GNU Public License v3
 
 Recent Changes
@@ -194,9 +199,8 @@ making beta packages available.
 Development Version
 -------------------
 
-The current development version is hosted in the master branch of the repository and will become version 0.11.
-
-At the moment the development version is maily broen....
+The current development version is currently on a stable branch and is version 0.11.x. The master branch contains work
+in progress to migrate to using Pandas dataframes as the underlying data store - this is however largely broken!
 
 Build Status
 ~~~~~~~~~~~~
@@ -205,7 +209,9 @@ Version 0.7-0.9 were tested using the Travis-CI services with unit test coverage
 
 Version 0.9 was tested with Python 2.7, 3.5, 3.6 using the standard unittest module.
 
-Version 0.10 is tested using **pytest** with Python 3.7-3.11 using a github action.
+Version 0.10 was tested using **pytest** with Python 3.7-3.13 using a github action.
+
+Version 0.11 is tested using **pytest** with Python 3.11-3.13 using a github action.
 
 
 Citing the Stoner Package
@@ -217,8 +223,15 @@ encourage any users to cite this package via that doi.
 Stable Versions
 ---------------
 
+Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
 
-New Features in 0.10 include:
+Version 0.11 is the current (in development) stable release (i.e. releases pass all unit tests.) New features include:
+
+    *   Move away from mixin classes and multiple inheritence to dynamically binding functions into the class from
+        modules.
+    *   Continued restructuring of the class layout and rationalisation of the naming conventions.
+
+Version 0.10 is the old stable release. New Features in 0.10 include:
 
     *   Support for Python 3.10 and 3.11
     *   Refactor Stoner.Core.DataFile to move functionality to mixin classes
@@ -233,9 +246,10 @@ New Features in 0.10 include:
     *   Introduce interactive selection of boxes, lines and mask regions for interactive Matplotlib backends.
     *   Fix some long standing bugs which could lead to shared metadata dictionaries and race conditions
 
-Online documentation for all versions can be found on the ReadTheDocs pages `online documentation`_
+Version 0.10.11 was the final release of the 0.10.x series and included support for Python 3.13.
 
-Version 0.9 is the old stable version. This is the last version to support Python 2 and 3<3.6. Features of this release are:
+Version 0.9 is the very old stable version. This is the last version to support Python 2 and 3<3.6.
+Features of this release are:
 
     *   Refactoring of the package into a more granual core, plot, formats, folders packages with submodules
     *   Overhaul of the documentation and user guide
@@ -246,7 +260,7 @@ Version 0.9 is the old stable version. This is the last version to support Pytho
 
 Version 0.9.8 was the final version of the 0.9 branch
 
-Version 0.8 is the very old stable release. The main new features were:
+Version 0.8 is the ancient release. The main new features were:
 
     *   Reworking of the ImageArray, ImageFile and ImageFolder with many updates and new features.
     *   New mixin based ImageStack2 that can manipulate a large number of images in a 3D numpy array
@@ -257,18 +271,9 @@ Version 0.8 is the very old stable release. The main new features were:
 
 0.8.2 was the final release of the 0.8.0 branch
 
-The ancient stable version is 0.7.2. Features of 0.7.2 include
+No further relases will be made to 0.8.x - 0.10.x
 
-    *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
-    *   Addition of Stoner.Image package to handle image analysis
-    *   Refactor DataFolder to use Mixin classes
-    *   DataFolder now defaults to using :py:class:`Stoner.Core.Data`
-    *   DataFolder has an options to skip iterating over empty Data files
-    *   Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
-
-No further relases will be made to 0.7.x - 0.9.x
-
-Versions 0.6.x and earlier are now pre-historic!
+Versions 0.7.x and earlier are now pre-historic!
 
 .. _online documentation: http://stoner-pythoncode.readthedocs.io/en/stable/
 .. _github repository: http://www.github.com/stonerlab/Stoner-PythonCode/
