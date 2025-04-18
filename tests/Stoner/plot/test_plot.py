@@ -21,7 +21,7 @@ pth = path.realpath(path.join(pth, "../../../"))
 sys.path.insert(0, pth)
 from Stoner import Data, __home__, Options
 from Stoner.core.base import TypeHintedDict
-from Stoner.plot.core import hsl2rgb
+from Stoner.plot.functions import hsl2rgb
 from Stoner.Image import ImageFile
 
 from Stoner.plot.formats import DefaultPlotStyle
