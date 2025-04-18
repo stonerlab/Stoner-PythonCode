@@ -9,17 +9,16 @@ __all__ = [
     "get_pool",
     "removeDisallowedFilenameChars",
 ]
+import fnmatch
 import os.path as path
+import pathlib
 import re
 import string
-import fnmatch
-import pathlib
 from multiprocessing.pool import ThreadPool
 
-from numpy import array
 import multiprocess as multiprocessing
-
-from Stoner.compat import string_types, _pattern_type
+from numpy import array
+from Stoner.compat import _pattern_type, string_types
 from Stoner.tools import get_option
 
 

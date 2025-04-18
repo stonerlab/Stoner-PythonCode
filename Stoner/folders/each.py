@@ -2,13 +2,13 @@
 
 __all__ = ["Item"]
 from collections.abc import MutableSequence
-from functools import wraps, partial
+from functools import partial, wraps
 from traceback import format_exc
 
 import numpy as np
 
-from ..tools import isiterable
 from ..compat import string_types
+from ..tools import isiterable
 from .utils import get_pool
 
 

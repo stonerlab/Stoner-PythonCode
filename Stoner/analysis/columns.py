@@ -261,7 +261,7 @@ def mean(datafile, column=None, sigma=None, bounds=None):
         assignments are used.
 
     .. todo::
-        Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`
+        Fix the row index when the bounds function is used - see note of :py:meth:`Stoner.Data.max`
     """
     _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 
@@ -412,7 +412,7 @@ def std(datafile, column=None, sigma=None, bounds=None):
         assignments are used.
 
     .. todo::
-        Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`
+        Fix the row index when the bounds function is used - see note of :py:meth:`Stoner.Data.max`
     """
     _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 

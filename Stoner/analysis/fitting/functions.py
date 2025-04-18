@@ -1207,12 +1207,12 @@ def odr(datafile, model, xcol=None, ycol=None, **kargs):
             -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the
                 scip.odr standard f(beta,x)
 
-        This function is designed to be as compatible as possible with :py:meth:`AnalysisMixin.curve_fit` and
-            :py:meth:`AnalysisMixin.lmfit` to facilitate easy of switching between them.
+        This function is designed to be as compatible as possible with :py:meth:`Stoner.Data.curve_fit` and
+            :py:meth:`Stoner.Data.lmfit` to facilitate easy of switching between them.
 
     See Also:
-        -   :py:meth:`AnalysisMixin.curve_fit`
-        -   :py:meth:`AnalysisMixin.lmfit`
+        -   :py:meth:`Stoner.Data.curve_fit`
+        -   :py:meth:`Stoner.Data.lmfit`
         -   :py:meth:`Stoner.Data.differential_evolution`
         -   User guide section :ref:`fitting_with_limits`
 

@@ -16,10 +16,7 @@ functions.
 The :py:class:`Data` Class
 --------------------------
 
-In practice, one often requires both the analysis functions of :py:class:`Stoner.Analysis.AnalysisMixin` and
-the plotting functions of :py:class:`Stoner.plot.PlotMixin`. This can be done easily by creating a
-subclass that inherits from both, but for convenience, the :py:mod:`Stoner.Util` module provides the :py:class:`Data`
-class that does this for you.::
+The :py:class:`Stoner.Data` class provides the core object for analysing data.
 
     from Stoner.Core import Data
     d=Data("File-of-data.txt")

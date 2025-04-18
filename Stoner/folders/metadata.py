@@ -5,12 +5,12 @@ __all__ = ["MetadataProxy"]
 import fnmatch
 from collections.abc import MutableMapping
 
-from lmfit import Model
 import numpy as np
+from lmfit import Model
 
-from ..core import TypeHintedDict, metadataObject
 from ..compat import string_types
-from ..tools import isLikeList, isiterable, make_Data
+from ..core import TypeHintedDict, metadataObject
+from ..tools import isiterable, isLikeList, make_Data
 
 
 def _fmt_as_list(results):

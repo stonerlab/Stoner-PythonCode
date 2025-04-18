@@ -15,7 +15,7 @@ import fnmatch
 from .compat import string_types, str2bytes, get_filedialog, _pattern_type, path_types
 from .core.exceptions import StonerLoadError
 from .core.data import Data
-from .Folders import DiskBasedFolderMixin
+from .folders.mixins import DiskBasedFolderMixin
 from .folders.core import BaseFolder
 from .folders.utils import pathjoin
 from .tools import copy_into, make_Data

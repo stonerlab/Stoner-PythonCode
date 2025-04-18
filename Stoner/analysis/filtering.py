@@ -108,7 +108,7 @@ def SG_Filter(
     Returns:
         (numpy array or datafile):
             If result is None, a numpy array representing the smoothed or differentiated data is returned.
-            Otherwise, a copy of the modified AnalysisMixin object is returned.
+            Otherwise, a copy of the modified Stoner.Data object is returned.
 
     Notes:
         If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
@@ -195,7 +195,7 @@ def bin(datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kar
         bin_stop (float):
             Manually override the maximum bin value
         clone (bool):
-            Return a clone of the current AnalysisMixin with binned data (True)
+            Return a clone of the current Stoner.Data with binned data (True)
             or just the numbers (False).
 
     Returns:
@@ -314,7 +314,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
         of the data centred about the point and overlap points long will be used to interpolate a value.
 
         If *kind* is callable, it should take x values in the first parameter and free fitting parameters as
-        the other parameters (i.e. as with :py:meth:`AnalysisMixin.curve_fit`).
+        the other parameters (i.e. as with :py:meth:`Stoner.Data.curve_fit`).
     """
     _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
     kinds = {
@@ -397,7 +397,7 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
     Args:
         ewX (1D array or None):
             Row indices or X column values to interpolate with. If None, then the
-            :py:meth:`AnalysisMixin.interpolate` returns an interpolation function. Unlike the raw interpolation
+            :py:meth:`Stoner.Data.interpolate` returns an interpolation function. Unlike the raw interpolation
             function from scipy, this interpolation function will work with MaskedArrays by compressing them
             first.
 
@@ -408,12 +408,12 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
             Column index or label that contains the data to use with newX to determine which rows to return.
             Defaults to None.
         replace (bool):
-            If true, then the current AnalysisMixin's data is replaced with the  newly interpolated data and the
-            current AnalysisMixin is returned.
+            If true, then the current Stoner.Data's data is replaced with the  newly interpolated data and the
+            current Stoner.Data is returned.
 
     Returns:
         (2D numpy array):
-            Section of the current object's data if replace is False(default) or the modofied AnalysisMixin if
+            Section of the current object's data if replace is False(default) or the modofied Stoner.Data if
             replace is true.
 
     Note:
@@ -683,7 +683,7 @@ def scale(datafile, other, xcol=None, ycol=None, **kargs):
             Specifies whether to estimate an initial transformation value or to use the provided one, or
             start with an identity transformation.
         replace (bool):
-            Whether to map the x,y data to the new coordinates and return a copy of this AnalysisMixin (true)
+            Whether to map the x,y data to the new coordinates and return a copy of this Stoner.Data (true)
             or to just return the results of the scaling.
         headers (2-element list or tuple of strings):
             new column headers to use if replace is True.
@@ -809,7 +809,7 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, **kargs):
     Returns:
         (datafile or array):
             If result is False, then the return value will be a copy of the smoothed data, otherwise the return
-            value is a copy of the AnalysisMixin object with the smoothed data added,
+            value is a copy of the Stoner.Data object with the smoothed data added,
 
     Notes:
         If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data
@@ -888,7 +888,7 @@ def spline(datafile, xcol=None, ycol=None, sigma=None, **kargs):
 
     Returns:
         (various):
-            Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of
+            Depending on the value of *replace*, returns a copy of the Stoner.Data, a 1D numpy array of
             data or an :[y:class:`scipy.interpolate.UniverateSpline` object.
 
     This is really just a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the

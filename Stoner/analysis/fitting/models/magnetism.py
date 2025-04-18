@@ -117,8 +117,8 @@ def inverse_kittel(f, g, M_s, H_k):
         In practice one often measures FMR by sweepign field for constant frequency and then locates the
         peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a
         :math:`H_{res}\pm \Delta H_{res}`
-        In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or
-        :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`
+        In order to make use of this data with :py:meth:`Stoner.Analysis.Stoner.Data.lmfit` or
+        :py:meth:`Stoner.Analysis.Stoner.Data.curve_fit`
         it makes more sense to fit the Kittel Equation written in terms of H than frequency.
 
        :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2}

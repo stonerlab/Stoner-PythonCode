@@ -2,34 +2,39 @@
 # -*- coding: utf-8 -*-
 """The main Data Class definition."""
 
-import io
 import copy
-import pathlib
-import warnings
-import urllib
-
-from collections.abc import MutableSequence, Mapping, Iterable
-import inspect as _inspect_
-from textwrap import TextWrapper
 import csv
+import inspect as _inspect_
+import io
+import pathlib
+import urllib
+import warnings
+from collections.abc import Iterable, Mapping, MutableSequence
+from textwrap import TextWrapper
 
 import numpy as np
 from numpy import nan  # NOQA pylint: disable=unused-import
 from numpy import ma
 
-from ..compat import string_types, index_types
-from ..tools import all_type, isiterable, get_option, make_Data
-from ..tools.file import get_file_name_type, auto_load_classes, get_loader
-
-from .exceptions import StonerLoadError, StonerSetasError
-from .base import TypeHintedDict, metadataObject
+from ..compat import index_types, string_types
+from ..tools import all_type, get_option, isiterable, make_Data
+from ..tools.file import (
+    URL_SCHEMES,
+    FileManager,
+    auto_load_classes,
+    file_dialog,
+    get_file_name_type,
+    get_filename,
+    get_loader,
+)
+from ..tools.tests import ClassTester
 from .array import DataArray
+from .base import TypeHintedDict, metadataObject
+from .exceptions import StonerLoadError, StonerSetasError
+from .interfaces import DataFileInterfacesMixin
 from .operators import DataFileOperatorsMixin
 from .property import DataFilePropertyMixin
-from .interfaces import DataFileInterfacesMixin
-from .utils import copy_into, Tab_Delimited
-from ..tools.file import file_dialog, FileManager, URL_SCHEMES, get_filename
-from ..tools.tests import ClassTester
+from .utils import Tab_Delimited, copy_into
 
 try:
     from tabulate import tabulate
@@ -46,24 +51,22 @@ except ImportError:
 
 # Bring all the subclasses into memory (idnore unused imports warnings)
 from .. import formats  # NOQA pylint: disable=W0611
-from ..Analysis import AnalysisMixin
-from ..analysis import columns
-from ..analysis import features
-from ..analysis import filtering
+from ..analysis import columns, features, filtering, functions
 from ..analysis.fitting import functions as fitting
-from . import methods
 from ..plot import PlotMixin
 from ..tools.decorators import class_modifier
+from . import methods
 
 
-@class_modifier([methods, fitting, columns, features, filtering], adaptor=None, no_long_names=True, overload=True)
+@class_modifier(
+    [methods, fitting, columns, functions, features, filtering], adaptor=None, no_long_names=True, overload=True
+)
 class Data(
     DataFileInterfacesMixin,
     DataFileOperatorsMixin,
     DataFilePropertyMixin,
     metadataObject,
     MutableSequence,
-    AnalysisMixin,
     PlotMixin,
 ):
     """Base class object that represents a matrix of data, associated metadata and column headers.

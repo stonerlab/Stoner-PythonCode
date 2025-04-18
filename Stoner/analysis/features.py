@@ -47,7 +47,7 @@ def peaks(datafile, **kargs):
 
     Returns:
         (various):
-            If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
+            If *modify* is true, then returns a the Stoner.Data with the data set to just the peaks/troughs.
             If *modify* is false (default), then the return value depends on *ycol* and *xcol*. If *ycol* is
             not None and *xcol* is None, then returns complete rows of data corresponding to the found
             peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then returns a 1D array
@@ -194,7 +194,7 @@ def find_peaks(datafile, **kargs):
 
     Returns:
         (various):
-            If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs.
+            If *modify* is true, then returns a the Stoner.Data with the data set to just the peaks/troughs.
             If *modify* is false (default), then the return value depends on *ycol* and *xcol*. If *ycol* is
             not None and *xcol* is None, then returns complete rows of data corresponding to the found
             peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then returns a 1D array

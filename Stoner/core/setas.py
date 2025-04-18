@@ -9,7 +9,7 @@ from collections.abc import Iterable, MutableMapping
 import numpy as np
 
 from ..compat import _pattern_type, index_types, string_types
-from ..tools import AttributeStore, isiterable, isLikeList, TypedList
+from ..tools import AttributeStore, TypedList, isiterable, isLikeList
 from .utils import decode_string
 
 

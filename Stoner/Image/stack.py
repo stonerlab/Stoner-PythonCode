@@ -9,7 +9,8 @@ from ..compat import string_types, int_types
 from ..core.exceptions import assertion
 
 from ..core.base import RegexpDict, TypeHintedDict
-from ..Folders import DiskBasedFolderMixin, BaseFolder
+from ..folders.mixins import DiskBasedFolderMixin
+from ..folders.core import BaseFolder
 
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin

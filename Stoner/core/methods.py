@@ -2,22 +2,21 @@
 """Mxinin classes for DataFile objects."""
 
 import copy
-from collections.abc import Iterable
 import io
 import pathlib
 import re
+from collections.abc import Iterable
 from sys import float_info
-
 
 import numpy as np
 from numpy import ma
 from statsmodels.stats.weightstats import DescrStatsW
 
-from .array import DataArray
 from ..compat import _pattern_type, int_types
-from ..tools import all_type, isiterable, operator, format_error
+from ..tools import all_type, format_error, isiterable, operator
+from ..tools.file import best_saver, file_dialog
 from ..tools.widgets import RangeSelect
-from ..tools.file import file_dialog, best_saver
+from .array import DataArray
 
 try:
     import pandas as pd
@@ -543,7 +542,7 @@ def split(datafile, *args, final="files"):
     Returns:
         Stoner.Folders.DataFolder:
             A :py:class:`Stoner.Folders.DataFolder` object containing the individual
-            :py:class:`AnalysisMixin` objects
+            :py:class:`Stoner.Data` objects
 
     Note:
         Creates a DataFolder of  DataFiles where each one contains the rows from the original object which

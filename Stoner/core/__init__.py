@@ -23,5 +23,5 @@ __all__ = [
 
 from . import Typing, array, base, exceptions, utils
 from .array import DataArray
-from .base import metadataObject, RegexpDict, string_to_type, TypeHintedDict
+from .base import RegexpDict, TypeHintedDict, metadataObject, string_to_type
 from .setas import setas as _setas
