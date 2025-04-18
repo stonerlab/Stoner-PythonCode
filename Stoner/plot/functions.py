@@ -3,6 +3,7 @@
 import copy
 from inspect import getfullargspec
 import os
+import re
 from functools import partial
 
 import numpy as np
@@ -27,7 +28,7 @@ except ImportError:
 from ..tools.tests import isanynone, isnone, isiterable
 from ..tools import AttributeStore
 
-from ..compat import index_types
+from ..compat import _pattern_type
 
 from .utils import hsl2rgb
 
@@ -160,7 +161,7 @@ def _vector_color(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=Non
     """Map a vector direction in the data to a value for use with a colormnap."""
     c = _fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
 
-    if isinstance(c.wcol, index_types):  # 3D vector field
+    if isinstance(c.wcol, (int, str, _pattern_type)):  # 3D vector field
         wdata = datafile.column(c.wcol)
         phidata = (wdata - np.min(wdata)) / (np.max(wdata) - np.min(wdata))
     else:  # 2D vector field
@@ -235,17 +236,18 @@ def _fix_cols(datafile, scalar=True, **kargs):
 
 def _fix_fig(datafile, figure, **kargs):
     """Sorts out the matplotlib figure handling."""
-    if isinstance(figure, bool) and not figure:
-        figure, ax = datafile.template.new_figure(None, **kargs)
-    elif not isinstance(figure, bool) and isinstance(figure, int):
-        figure, ax = datafile.template.new_figure(figure, **kargs)
-    elif isinstance(figure, mplfig.Figure):
-        figure, ax = datafile.template.new_figure(figure.number, **kargs)
-    elif isinstance(datafile._figure, mplfig.Figure):
-        figure = datafile._figure
-        ax = datafile._figure.gca(**kargs)
-    else:
-        figure, ax = datafile.template.new_figure(None, **kargs)
+    match figure:
+        case bool() if not figure:
+            figure, ax = datafile.template.new_figure(None, **kargs)
+        case int() if not isinstance(figure, bool):
+            figure, ax = datafile.template.new_figure(figure, **kargs)
+        case mplfig.Figure():
+            figure, ax = datafile.template.new_figure(figure.number, **kargs)
+        case _ if isinstance(datafile._figure, mplfig.Figure):
+            figure = datafile._figure
+            ax = datafile._figure.gca(**kargs)
+        case _:
+            figure, ax = datafile.template.new_figure(None, **kargs)
     datafile._figure = figure
     figure.sca(ax)  # Esur4e we're set for plotting on the correct axes
     return figure, ax
@@ -303,6 +305,11 @@ def _fix_titles(datafile, ix, multiple, **kargs):
         plt.show()
     if "save_filename" in kargs and kargs["save_filename"] is not None:
         plt.savefig(str(kargs["save_filename"]))
+
+
+#  #########################################################################################
+#  ################ Public Methods #########################################################
+#  #########################################################################################
 
 
 def colormap_xyz(datafile, xcol=None, ycol=None, zcol=None, **kargs):
@@ -401,12 +408,15 @@ def figure(datafile, figure=None, projection="rectilinear", **kargs):
     Returns:
         The current Stoner.plot.PlotMixin instance
     """
-    if figure is None:
-        figure = datafile.template.new_figure(None, projection=projection, **kargs)[0]
-    elif isinstance(figure, int):
-        figure = datafile.template.new_figure(figure, projection=projection, **kargs)[0]
-    elif isinstance(figure, mplfig.Figure):
-        figure = datafile.template.new_figure(figure.number, projection=projection, **kargs)[0]
+    match figure:
+        case None:
+            figure = datafile.template.new_figure(None, projection=projection, **kargs)[0]
+        case int():
+            figure = datafile.template.new_figure(figure, projection=projection, **kargs)[0]
+        case mplfig.Figure():
+            figure = datafile.template.new_figure(figure.number, projection=projection, **kargs)[0]
+        case _:
+            raise ValueError(f"Unable to interpret {figure=}")
     datafile._figure = figure
     return datafile
 
@@ -660,18 +670,25 @@ def inset(datafile, parent=None, loc=None, width=0.35, height=0.30, **kargs):  #
             loc = locations2.index(loc)
         else:
             raise RuntimeError(f"Couldn't work out where {loc} was supposed to be")
-    if isinstance(width, int):
-        width = f"{width}%"
-    elif isinstance(width, float) and 0 < width <= 1:
-        width = f"{width*100}%"
-    elif not isinstance(width, str):
-        raise RuntimeError(f"didn't Recognize width specification {width}")
-    if isinstance(height, int):
-        height = f"{height}%"
-    elif isinstance(height, float) and 0 < height <= 1:
-        height = "{height * 100}%"
-    elif not isinstance(height, str):
-        raise RuntimeError("didn't Recognize height specification {height}")
+    match width:
+        case int():
+            width = f"{width}%"
+        case float() if 0 < width <= 1:
+            width = f"{width*100}%"
+        case str() if re.match(r"[0-9]+\%", width):
+            pass
+        case _:
+            raise RuntimeError(f"didn't Recognize width specification {width=}")
+    match height:
+        case int():
+            height = f"{height}%"
+        case float() if 0 < width <= 1:
+            height = "{height * 100}%"
+        case str() if re.match(r"[0-9]+\%", height):
+            pass
+
+        case _:
+            raise RuntimeError("didn't Recognize height specification {height=}")
     if parent is None:
         parent = plt.gca()
     return inset_locator.inset_axes(parent, width, height, loc, **kargs)
@@ -773,47 +790,47 @@ def plot_matrix(
             The matplotib figure with the data plotted
     """
     # Sortout yvals values
-    if isinstance(yvals, int):  # Int means we're specifying a data row
-        if rectang is None:  # we need to initialise the rectang
-            rectang = (yvals + 1, 0)  # We'll sort the column origin later
-        elif (
-            isinstance(rectang, tuple) and rectang[1] <= yvals
-        ):  # We have a rectang, but we need to adjust the row origin
-            rectang[0] = yvals + 1
-        yvals = datafile[yvals]  # change the yvals into a numpy array
-    elif isinstance(yvals, (list, tuple, np.ndarray)):  # We're given the yvals as a list already
-        yvals = np.array(yvals)
-    elif yvals is None:  # No yvals, so we'l try column headings
-        if isinstance(xvals, index_types):  # Do we have an xcolumn header to take away ?
-            xvals = datafile.find_col(xvals)
-            headers = datafile.column_headers[xvals + 1 :]
-        elif xvals is None:  # No xvals so we're going to be using the first column
-            xvals = 0
-            headers = datafile.column_headers[1:]
-        else:
-            headers = datafile.column_headers
-        yvals = np.array([float(x) for x in headers])  # Ok try to construct yvals array
-    else:
-        raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
+    match yvals:
+        case int() | str() | _pattern_type():
+            if rectang is None:  # we need to initialise the rectang
+                rectang = (yvals + 1, 0)  # We'll sort the column origin later
+            elif (
+                isinstance(rectang, tuple) and rectang[1] <= yvals
+            ):  # We have a rectang, but we need to adjust the row origin
+                rectang[0] = yvals + 1
+            yvals = datafile[yvals]  # change the yvals into a numpy array
+        case list() | tuple() | np.ndarray():
+            yvals = np.array(yvals)
+        case None:
+            if isinstance(xvals, (int, str, _pattern_type)):  # Do we have an xcolumn header to take away ?
+                xvals = datafile.find_col(xvals)
+                headers = datafile.column_headers[xvals + 1 :]
+            elif xvals is None:  # No xvals so we're going to be using the first column
+                xvals = 0
+                headers = datafile.column_headers[1:]
+            else:
+                headers = datafile.column_headers
+            yvals = np.array([float(x) for x in headers])  # Ok try to construct yvals array
+        case _:
+            raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
     # Sort out xvls values
-    if isinstance(xvals, index_types):  # String or int means using a column index
-        if xlabel is None:
-            xlabel = datafile._col_label(xvals)
-        if rectang is None:  # Do we need to init the rectan ?
-            rectang = (0, xvals + 1)
-        elif isinstance(rectang, tuple):  # Do we need to adjust the rectan column origin ?
-            rectang[1] = xvals + 1
-        xvals = datafile.column(xvals)
-    elif isinstance(xvals, (list, tuple, np.ndarray)):  # Xvals as a data item
-        xvals = np.array(xvals)
-    elif isinstance(xvals, np.ndarray):
-        pass
-    elif xvals is None:  # xvals from column 0
-        xvals = datafile.column(0)
-        if rectang is None:  # and fix up rectang
-            rectang = (0, 1)
-    else:
-        raise RuntimeError("xvals must be a string, integer, list, tuple or numpy array or None")
+    match xvals:
+        case int() | str() | _pattern_type():
+            if xlabel is None:
+                xlabel = datafile._col_label(xvals)
+            if rectang is None:  # Do we need to init the rectan ?
+                rectang = (0, xvals + 1)
+            elif isinstance(rectang, tuple):  # Do we need to adjust the rectan column origin ?
+                rectang[1] = xvals + 1
+            xvals = datafile.column(xvals)
+        case list() | tuple() | np.ndarray():
+            xvals = np.array(xvals)
+        case None:
+            xvals = datafile.column(0)
+            if rectang is None:  # and fix up rectang
+                rectang = (0, 1)
+        case _:
+            raise RuntimeError("xvals must be a string, integer, list, tuple or numpy array or None")
 
     if isinstance(rectang, tuple) and len(rectang) == 2:  # Sort the rectang value
         rectang = (
@@ -1058,13 +1075,13 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
         if isnone(kargs.get(err, None)):
             kargs.pop(err, None)
 
-        elif isinstance(kargs[err], index_types):
+        elif isinstance(kargs[err], (int, str, _pattern_type)):
             kargs[err] = datafile.column(kargs[err])
         elif isiterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) <= len(c.ycol):
             # Ok, so it's a list, so redo the check for each  item.
             kargs[err].extend([None] * (len(c.ycol) - len(kargs[err])))
             for i in range(len(kargs[err])):
-                if isinstance(kargs[err][i], index_types):
+                if isinstance(kargs[err][i], (int, str, _pattern_type)):
                     kargs[err][i] = datafile.column(kargs[err][i])
                 else:
                     kargs[err][i] = np.zeros(len(datafile))
@@ -1076,7 +1093,7 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
             kargs[err] = np.zeros(len(datafile))
 
     temp_kwords = copy.copy(kargs)
-    if isinstance(c.ycol, (index_types)):
+    if isinstance(c.ycol, ((int, str, _pattern_type))):
         c.ycol = [c.ycol]
     if len(c.ycol) > 1:
         if multiple == "panels":
@@ -1211,7 +1228,7 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
     }
     coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
     for k in coltypes:
-        if isinstance(coltypes[k], index_types):
+        if isinstance(coltypes[k], (int, str, _pattern_type)):
             label = datafile._col_label(coltypes[k])
             if isinstance(label, list):
                 label = ",".join(label)
@@ -1402,7 +1419,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         projection = kargs.pop("projection", "3d")
         coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
         for k in coltypes:
-            if isinstance(coltypes[k], index_types):
+            if isinstance(coltypes[k], (int, str, _pattern_type)):
                 label = datafile._col_label(coltypes[k])
                 if isinstance(label, list):
                     label = ",".join(label)
@@ -1416,7 +1433,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
     colors = nonkargs.pop("color", True)
     if isinstance(colors, bool) and colors:
         pass
-    elif isinstance(colors, index_types):
+    elif isinstance(colors, (int, str, _pattern_type)):
         colors = datafile.column(colors)
     elif isinstance(colors, np.ndarray):
         pass
