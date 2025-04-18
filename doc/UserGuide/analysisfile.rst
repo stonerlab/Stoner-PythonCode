@@ -1,7 +1,7 @@
 ********************
 Analysing Data Files
 ********************
-.. currentmodule:: Stoner.Analysis
+.. currentmodule:: Stoner.analysis
 
 .. _channel_maths_guide:
 
@@ -75,10 +75,10 @@ each row belongs in. The :py:meth:`Stoner.Data.split` method is useful for this 
 In these examples we assume the :py:class:`Stoner.Data` has a data column 'Polarisation' that takes two (or more) discrete values
 and a column 'Temperature' that contains numbers above and below 100.
 
-The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate instances of :py:class:`Stoner.Data`  which
+The first example would return a :py:class:`Stoner.DataFolder` object  containing two separate instances of :py:class:`Stoner.Data`  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
-produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`Stoner.Data` objects for the rows with temperature above and below 100.
-The final example will result in a :py:class:`Stoner.Folders.DataFolder` object that has two groups each of which contains
+produce a :py:class:`Stoner.DataFolder` object containing two :py:class:`Stoner.Data` objects for the rows with temperature above and below 100.
+The final example will result in a :py:class:`Stoner.DataFolder` object that has two groups each of which contains
 :py:class:`Stoner.Data` objects for each polarisation value.
 
 More Stoner.Data Functions

@@ -11,7 +11,7 @@ from Stoner import Data, __home__
 from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel
 from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
-from Stoner.Folders import PlotFolder
+from Stoner.folders import PlotFolder
 
 # Customise a plot template
 template = DefaultPlotStyle()

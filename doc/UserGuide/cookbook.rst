@@ -31,7 +31,7 @@ rising or falling. This is designed to help deal with analysis problems involvin
     from Stoner.Util import split_up_down
     folder=split_up_down(data,column)
 
-In this example *folder* is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
+In this example *folder* is a :py:class:`Stoner.DataFolder` instance with two groups, one for rising values of the column
 and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter
 which is an existing :py:class:`Stoner.Core.DataFolder` instance to which the new groups (if they
 don't already exist) and files will be added.
@@ -97,7 +97,7 @@ Fitting Tricks
 Fitting 3D Data
 ---------------
 
-:py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+:py:meth:`Stoner.Data.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
 variables. In order to do this, the *xcol* parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.

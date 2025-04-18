@@ -59,7 +59,7 @@ Core Package and Modules
 Analysis Package
 ^^^^^^^^^^^^^^^^
 
-.. automodapi:: Stoner.Analysis
+.. automodapi:: Stoner.analysis
     :no-inheritance-diagram:
     :headings: -~
 
@@ -145,17 +145,12 @@ Folders pacakge - Collections Classes
 
 Main Classes
 ^^^^^^^^^^^^
-.. automodapi:: Stoner.Folders
+.. automodapi:: Stoner.folders
     :headings: -~
 
 
 Folders Package and Submodules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodapi:: Stoner.folders
-    :no-inheritance-diagram:
-    :inherited-members:
-    :headings: -~
 
 .. automodapi:: Stoner.folders.core
     :no-inheritance-diagram:
@@ -163,6 +158,10 @@ Folders Package and Submodules
     :headings: -~
 
 .. automodapi:: Stoner.folders.mixins
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.folders.functions
     :no-inheritance-diagram:
     :headings: -~
 
