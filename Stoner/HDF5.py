@@ -12,19 +12,19 @@ to :py:class:`Stoner.Core.Data`.
 
 __all__ = ["HDF5File", "HDF5Folder", "HGXFile", "SLS_STXMFile", "STXMImage", "HDFFileManager"]
 import importlib
-import os.path as path
 import os
+import os.path as path
 from copy import deepcopy
 
 import h5py
 import numpy as np
 
-from .compat import string_types, bytes2str, get_filedialog, path_types, str2bytes
-from .core.exceptions import StonerLoadError
+from .compat import bytes2str, get_filedialog, path_types, str2bytes, string_types
 from .core.data import Data
-from .folders import DataFolder
-from .Image.core import ImageFile, ImageArray
+from .core.exceptions import StonerLoadError
 from .core.utils import copy_into
+from .folders import DataFolder
+from .Image.core import ImageArray, ImageFile
 from .tools.file import HDFFileManager
 
 

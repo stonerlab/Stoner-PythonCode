@@ -10,8 +10,8 @@ import numpy as np
 
 from ...compat import str2bytes
 from ...core.base import string_to_type
-from ...tools.file import FileManager, get_filename
 from ...core.exceptions import StonerLoadError
+from ...tools.file import FileManager, get_filename
 from ..decorators import register_loader
 
 try:

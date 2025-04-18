@@ -9,30 +9,40 @@ Classes:
 from __future__ import division
 
 __all__ = ["PlotMixin"]
+import copy
 import os
 from collections.abc import Mapping
 from functools import wraps
-import copy
 from inspect import getfullargspec
 
 import numpy as np
+from matplotlib import cm, colormaps, colors
+from matplotlib import figure as mplfig
+from matplotlib import pyplot as plt
 from scipy.interpolate import griddata
 
-from matplotlib import pyplot as plt
-from matplotlib import figure as mplfig
-from matplotlib import cm, colors, colormaps
+from Stoner.compat import index_types, int_types, string_types
+from Stoner.tools import (
+    AttributeStore,
+    TypedList,
+    all_type,
+    fix_signature,
+    get_option,
+    isanynone,
+    isiterable,
+    isnone,
+)
 
-from Stoner.compat import string_types, index_types, int_types
-from Stoner.tools import AttributeStore, isnone, isanynone, all_type, isiterable, TypedList, get_option, fix_signature
 from .formats import DefaultPlotStyle
-from .utils import errorfill
-from .utils import hsl2rgb
-
+from .utils import errorfill, hsl2rgb
 
 try:  # Check we've got 3D plotting
-    from mpl_toolkits.mplot3d import Axes3D  # NOQA pylint: disable=unused-import
-    from mpl_toolkits.axes_grid1 import host_subplot, inset_locator  # NOQA pylint: disable=unused-import
     import mpl_toolkits.axisartist as AA  # NOQA pylint: disable=unused-import
+    from mpl_toolkits.axes_grid1 import (  # NOQA pylint: disable=unused-import
+        host_subplot,
+        inset_locator,
+    )
+    from mpl_toolkits.mplot3d import Axes3D  # NOQA pylint: disable=unused-import
 
     _3D = True
 except ImportError:
@@ -1703,7 +1713,7 @@ class PlotMixin:
             A mayavi scene instance
         """
         try:
-            from mayavi import mlab, core
+            from mayavi import core, mlab
 
             mlab.figure()
             mayavi = True

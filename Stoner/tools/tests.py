@@ -12,12 +12,18 @@ __all__ = [
     "isproperty",
     "isTuple",
 ]
-from typing import Optional, Iterable as IterableType, Tuple, Union, Any
-
 from collections.abc import Iterable
 from importlib import import_module
+from typing import Any
+from typing import Iterable as IterableType
+from typing import Optional, Tuple, Union
 
-from numpy import ndarray, dtype, isnan, logical_and  # pylint: disable=redefined-builtin
+from numpy import (  # pylint: disable=redefined-builtin
+    dtype,
+    isnan,
+    logical_and,
+    ndarray,
+)
 
 from ..compat import string_types
 from ..core.Typing import NumericArray

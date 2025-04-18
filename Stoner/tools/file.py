@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
 """General file related tools."""
-from importlib import import_module
 import io
 import os
 import pathlib
 import sys
 import urllib
+from importlib import import_module
 from traceback import format_exc
-from typing import Union, Sequence, Dict, Type, Tuple, Optional, Callable
+from typing import Callable, Dict, Optional, Sequence, Tuple, Type, Union
 
 import h5py
 
-from ..compat import string_types, path_types, bytes2str, str2bytes
-from .widgets import fileDialog
-from .decorators import make_Data, make_Image
+from ..compat import bytes2str, path_types, str2bytes, string_types
+from ..core.base import SortedMultivalueDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..core.base import metadataObject, SortedMultivalueDict
-
 from ..core.Typing import Filename
+from .decorators import make_Data, make_Image
+from .widgets import fileDialog
 
 __all__ = [
     "file_dialog",
@@ -38,7 +37,8 @@ _savers_by_name = {}
 
 
 try:
-    from magic import Magic as filemagic, MAGIC_MIME_TYPE
+    from magic import MAGIC_MIME_TYPE
+    from magic import Magic as filemagic
 except ImportError:
     filemagic = None
 

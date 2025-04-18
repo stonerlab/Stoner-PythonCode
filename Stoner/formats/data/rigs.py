@@ -2,17 +2,16 @@
 # -*- coding: utf-8 -*-
 """Implement DataFile like classes for Various experimental rigs."""
 
-import re
 import csv
+import re
 
 import numpy as np
 
 from ...compat import bytes2str
 from ...core.base import string_to_type
 from ...core.exceptions import StonerLoadError
-from ..data.generic import load_csvfile
 from ...tools.file import FileManager, get_filename
-
+from ..data.generic import load_csvfile
 from ..decorators import register_loader
 
 

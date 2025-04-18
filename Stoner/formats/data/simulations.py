@@ -8,7 +8,6 @@ import numpy as np
 
 from ...core.exceptions import StonerLoadError
 from ...tools.file import FileManager, get_filename
-
 from ..decorators import register_loader
 
 

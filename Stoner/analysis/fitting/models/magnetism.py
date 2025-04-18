@@ -17,12 +17,11 @@ __all__ = [
 
 import numpy as np
 import scipy.constants as cnst
-from scipy.special import zeta, gamma
-from scipy.constants import k, mu_0, e, electron_mass, hbar
-from scipy.signal import savgol_filter
-
 from lmfit import Model
 from lmfit.models import update_param_vals
+from scipy.constants import e, electron_mass, hbar, k, mu_0
+from scipy.signal import savgol_filter
+from scipy.special import gamma, zeta
 
 mu_B = cnst.physical_constants["Bohr magneton"][0]
 

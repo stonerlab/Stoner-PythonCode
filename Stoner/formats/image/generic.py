@@ -3,14 +3,14 @@
 """Implement DataFile classes for some generic file formats."""
 import contextlib
 import io
+import logging
 import re
 import sys
-import logging
 
 from ...core.exceptions import StonerLoadError
-from ...Image import ImageArray
 from ...formats.decorators import register_loader
 from ...tools.file import get_filename
+from ...tools.decorators import make_Class
 
 
 class _refuse_log(logging.Filter):
@@ -74,7 +74,7 @@ def _delim_detect(line):
 def load_imagefile(new_image, *args, **kargs):
     """Load an ImageFile by calling the ImageArray method instead."""
     filename, args, kargs = get_filename(args, kargs)
-    new_image._image = ImageArray(filename, *args, **kargs)
+    new_image._image = make_Class("Image.ImageArray", filename, *args, **kargs)
     for k in new_image._image._public_attrs:
         setattr(new_image, k, getattr(new_image._image, k, None))
     return new_image

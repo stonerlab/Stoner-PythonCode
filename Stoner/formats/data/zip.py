@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Loader for zip files."""
-import zipfile as zf
 import os.path as path
+import zipfile as zf
 from traceback import format_exc
 
-from ...compat import str2bytes, path_types
+from ...compat import path_types, str2bytes
 from ...core.exceptions import StonerLoadError
 from ...tools import copy_into, make_Data
 from ...tools.file import get_filename

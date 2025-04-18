@@ -19,9 +19,8 @@ __all__ = [
     "KerrStack",
     "MaskStack",
 ]
+from . import attrs, widgets
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder
-from .stack import ImageStack
 from .kerr import KerrArray, KerrStack, MaskStack
-from . import attrs
-from . import widgets
+from .stack import ImageStack

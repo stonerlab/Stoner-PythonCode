@@ -1,29 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Implement DataFile classes for some generic file formats."""
-import csv
 import contextlib
 import copy
+import csv
 import io
-from pathlib import Path
-import re
-from collections.abc import Mapping
-import sys
 import logging
-from typing import Optional
+import re
+import sys
 import warnings
+from collections.abc import Mapping
+from pathlib import Path
+from typing import Optional
 
-import PIL
 import numpy as np
+import PIL
 
-from ...compat import str2bytes, Hyperspy_ok, hs, hsload
+from ...compat import Hyperspy_ok, hs, hsload, str2bytes
 from ...core.array import DataArray
 from ...core.exceptions import StonerLoadError
 from ...core.utils import Tab_Delimited
 from ...tools import make_Data
-
 from ...tools.file import FileManager, get_filename
-
 from ..decorators import register_loader, register_saver
 
 

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """HDF5 format Data loader routines"""
 import os
+from importlib import import_module
 
 import h5py
 import numpy as np
-from importlib import import_module
 
-from ...compat import string_types, bytes2str, path_types, str2bytes
+from ...compat import bytes2str, path_types, str2bytes, string_types
 from ...core.exceptions import StonerLoadError
-from ..decorators import register_loader, register_saver
 from ...tools.file import HDFFileManager, get_filename
+from ..decorators import register_loader, register_saver
 
 
 @register_loader(

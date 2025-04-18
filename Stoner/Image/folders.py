@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 """Implements a BaseFolder type structure for working with collections of images."""
 __all__ = ["ImageFolderMixin", "ImageFolder"]
-from warnings import warn
+from copy import copy, deepcopy
 from importlib import import_module
+from json import dumps, loads
 from os import path
-from json import loads, dumps
-from copy import deepcopy, copy
+from warnings import warn
 
 import numpy as np
-from matplotlib.pyplot import figure, Figure, subplot, get_fignums
-from PIL.TiffImagePlugin import ImageFileDirectory_v2
+from matplotlib.pyplot import Figure, figure, get_fignums, subplot
 from PIL import Image
+from PIL.TiffImagePlugin import ImageFileDirectory_v2
 
-from .core import ImageArray
-from ..folders.mixins import DiskBasedFolderMixin
+from ..compat import int_types, string_types
 from ..folders.core import BaseFolder
-from ..compat import string_types, int_types
+from ..folders.mixins import DiskBasedFolderMixin
 from . import ImageFile
+from .core import ImageArray
 
 
 class ImageFolderMixin:

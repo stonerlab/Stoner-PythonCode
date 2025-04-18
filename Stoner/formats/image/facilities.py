@@ -5,7 +5,6 @@
 # Standard Library imports
 from ...core.exceptions import StonerLoadError
 from ...tools.file import get_filename
-
 from ..decorators import register_loader
 
 try:

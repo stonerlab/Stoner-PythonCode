@@ -18,6 +18,7 @@ from multiprocessing.pool import ThreadPool
 
 import multiprocess as multiprocessing
 from numpy import array
+
 from Stoner.compat import _pattern_type, string_types
 from Stoner.tools import get_option
 

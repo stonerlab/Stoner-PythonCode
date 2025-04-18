@@ -2,19 +2,19 @@
 # -*- coding: utf-8 -*-
 """Implement DataFile like classes to represent Instrument Manufacturer's File Formats'."""
 
-# Standard Library imports
-from datetime import datetime
 import re
 import struct
 from ast import literal_eval
 
+# Standard Library imports
+from datetime import datetime
+
 import numpy as np
 
-from ...compat import str2bytes, bytes2str
-from ...core.exceptions import StonerAssertionError, assertion, StonerLoadError
+from ...compat import bytes2str, str2bytes
 from ...core.base import string_to_type
+from ...core.exceptions import StonerAssertionError, StonerLoadError, assertion
 from ...tools.file import FileManager, SizedFileManager, get_filename
-
 from ..decorators import register_loader, register_saver
 
 

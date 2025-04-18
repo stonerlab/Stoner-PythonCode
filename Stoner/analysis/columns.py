@@ -4,8 +4,8 @@
 
 import numpy as np
 
-from Stoner.tools import isiterable, all_type
 from Stoner.compat import _pattern_type
+from Stoner.tools import all_type, isiterable
 
 
 def _do_error_calc(datafile, col_a, col_b, error_type="relative"):

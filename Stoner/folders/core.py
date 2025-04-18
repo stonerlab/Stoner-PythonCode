@@ -176,6 +176,7 @@ def _build_select_function(kargs, arg):
         func = lambda k, v: not func(k, v)
     return func, arg
 
+
 @class_modifier([functions], adaptor=None, no_long_names=True, overload=True)
 class BaseFolder(MutableSequence):
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.

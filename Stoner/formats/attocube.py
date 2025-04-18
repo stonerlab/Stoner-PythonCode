@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 """Module to work with scan files from an AttocubeSPM running Daisy."""
 __all__ = ["AttocubeScan"]
+import importlib
 import pathlib
-from os import path
+import re
 from copy import deepcopy
 from glob import glob
-import re
-import importlib
+from os import path
 
-from numpy import genfromtxt, linspace, meshgrid, array, prod
+import h5py
+from numpy import array, genfromtxt, linspace, meshgrid, prod
 from scipy.interpolate import griddata
 from scipy.optimize import curve_fit
-import h5py
 
-from ..compat import string_types, bytes2str
+from ..compat import bytes2str, string_types
 from ..core.base import TypeHintedDict
-from ..Image import ImageStack, ImageFile, ImageArray
-from ..HDF5 import HDFFileManager
-from ..tools.file import FileManager, get_filename
 from ..core.exceptions import StonerLoadError
+from ..HDF5 import HDFFileManager
+from ..Image import ImageArray, ImageFile, ImageStack
+from ..tools.file import FileManager, get_filename
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")

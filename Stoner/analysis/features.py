@@ -3,11 +3,12 @@
 """Feature Finding functions for analysis code."""
 
 import numpy as np
-from scipy.signal import find_peaks as sp_find_peaks
 from scipy.interpolate import interp1d as sp_interp1d
+from scipy.signal import find_peaks as sp_find_peaks
 
-from Stoner.tools import isiterable, isTuple
 from Stoner.core.exceptions import assertion
+from Stoner.tools import isiterable, isTuple
+
 from .utils import threshold
 
 

@@ -5,4 +5,14 @@ This sub-package is lazy-loaded but then pulls in all of the modules in order to
 
 __all__ = ["generic", "hdf5", "instruments", "facilities", "rigs", "simulations", "attocube", "maximus", "zipped"]
 
-from . import generic, hdf5, instruments, facilities, rigs, simulations, attocube, maximus, zip as zipped
+from . import (
+    attocube,
+    facilities,
+    generic,
+    hdf5,
+    instruments,
+    maximus,
+    rigs,
+    simulations,
+)
+from . import zip as zipped

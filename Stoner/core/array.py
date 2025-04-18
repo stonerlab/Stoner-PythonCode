@@ -10,6 +10,7 @@ import copy
 
 import numpy as np
 import numpy.ma as ma
+
 from Stoner.compat import int_types
 from Stoner.tools import AttributeStore, all_size, all_type, isiterable, isnone
 

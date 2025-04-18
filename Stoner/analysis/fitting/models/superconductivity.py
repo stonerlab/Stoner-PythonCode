@@ -17,12 +17,11 @@ __all__ = [
 from functools import partial
 
 import numpy as np
-from scipy.special import jv
-from scipy.constants import physical_constants
-from scipy.integrate import quad
-
 from lmfit import Model
 from lmfit.models import update_param_vals
+from scipy.constants import physical_constants
+from scipy.integrate import quad
+from scipy.special import jv
 
 hbar = physical_constants["Planck constant over 2 pi"]
 kb = physical_constants["Boltzmann constant"]
@@ -32,9 +31,10 @@ J1 = partial(jv, 1)
 
 
 try:  # numba is an optional dependency
-    from numba import jit, float64
+    from numba import float64, jit
 except ImportError:
-    from ....compat import _dummy, _jit as jit
+    from ....compat import _dummy
+    from ....compat import _jit as jit
 
     float64 = _dummy()
 

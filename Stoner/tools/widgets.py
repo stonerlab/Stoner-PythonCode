@@ -5,24 +5,25 @@ Code based on the PyQt5 Tutorial code,
 """
 __all__ = ["fileDialog"]
 import pathlib
-from typing import Any, Union, Optional, Dict, Type
-import numpy as np
+from typing import Any, Dict, Optional, Type, Union
+
 import matplotlib.pyplot as plt
-from matplotlib.widgets import SpanSelector
+import numpy as np
 from matplotlib.patches import Rectangle
+from matplotlib.widgets import SpanSelector
 
 from ..compat import mpl_version
 
 QT_VERSION = None
 try:
-    from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
+    from PyQt5.QtWidgets import QApplication, QFileDialog, QWidget
 
     QT_VERSION = 5
 except ImportError:
     pass
 if QT_VERSION is None:
     try:
-        from PyQt6.QtWidgets import QWidget, QFileDialog, QApplication
+        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget
 
         QT_VERSION = 6
     except ImportError:

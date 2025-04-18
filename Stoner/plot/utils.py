@@ -41,10 +41,10 @@ __all__ = [
     "auto_fit_fontsize",
 ]
 import warnings
-from looseversion import LooseVersion
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from looseversion import LooseVersion
 from matplotlib.transforms import Bbox
 
 from Stoner.compat import mpl_version

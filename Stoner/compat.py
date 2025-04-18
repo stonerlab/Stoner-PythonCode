@@ -21,19 +21,20 @@ __all__ = [
     "_dummy",
 ]
 
-from sys import version_info as __vi__, modules
-from os import walk, makedirs
-from os.path import join, commonpath
 import fnmatch
-from shutil import which
-from pathlib import PurePath
-from packaging.version import parse as version_parse
-from inspect import signature
 import re
+from inspect import signature
+from os import makedirs, walk
+from os.path import commonpath, join
+from pathlib import PurePath
+from shutil import which
+from sys import modules
+from sys import version_info as __vi__
 
+import matplotlib
 import numpy as np
 import scipy as sp
-import matplotlib
+from packaging.version import parse as version_parse
 
 _lmfit = True
 np_version = version_parse(np.__version__)

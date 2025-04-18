@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """Provide some decorators and associated functions for modifying package classes and functions."""
 
-from functools import wraps
 import inspect
-from importlib import import_module
+import re
 from collections.abc import Iterable
 from copy import copy
+from functools import wraps
+from importlib import import_module
 from os import environ
-import re
 
 import numpy as np
 
@@ -446,3 +446,17 @@ def make_Image(*args, **kargs):
     if len(args) == 1 and args[0] is None:
         return import_module("Stoner.Image.core").ImageFile
     return import_module("Stoner.Image.core").ImageFile(*args, **kargs)
+
+
+def make_Class(cls, *args, **kargs):
+    """Return an instance of Stoner.Data passig through constructor arguments.
+
+    Calling make_Data(None) is a special case to return the Data class ratther than an instance
+    """
+    parts = cls.split(".")
+    cls = parts.pop()
+    mod = ".".join(["Stoner"] + parts)
+
+    if len(args) == 1 and args[0] is None:
+        return getattr(import_module(mod), cls)
+    return getattr(import_module(mod), cls)(*args, **kargs)

@@ -2,21 +2,27 @@
 # -*- coding: utf-8 -*-
 """Fitting Functions and classes to mixin for :py:class:`Stoner.Data`."""
 
-from inspect import isclass, getfullargspec
 from collections.abc import Mapping
+from inspect import getfullargspec, isclass
 
+import lmfit as lmfit_mod
 import numpy as np
 import numpy.ma as ma
 import scipy as sp
-from scipy.odr import Model as odrModel
-from scipy.optimize import curve_fit as _curve_fit, differential_evolution as _differential_evolution
-
-import lmfit as lmfit_mod
 from lmfit.model import Model
+from scipy.odr import Model as odrModel
+from scipy.optimize import curve_fit as _curve_fit
+from scipy.optimize import differential_evolution as _differential_evolution
 
-from ...compat import string_types, index_types
-from ...tools import isnone, isiterable, isLikeList, ordinal
-from .classes import ODR_Model, MimizerAdaptor, _curve_fit_result, _prep_lmfit_p0, _prep_lmfit_model
+from ...compat import index_types, string_types
+from ...tools import isiterable, isLikeList, isnone, ordinal
+from .classes import (
+    MimizerAdaptor,
+    ODR_Model,
+    _curve_fit_result,
+    _prep_lmfit_model,
+    _prep_lmfit_p0,
+)
 
 _lmfit = True
 

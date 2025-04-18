@@ -8,8 +8,8 @@ from warnings import warn
 
 import numpy as np
 
-from ..tools.classes import Options
 from ..compat import np_version
+from ..tools.classes import Options
 
 dtype_range = {
     np.bool_: (False, True),

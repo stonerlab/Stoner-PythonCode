@@ -2,8 +2,8 @@
 """Module to work with scan files from an AttocubeSPM running Daisy."""
 import re
 
-from ...tools.file import FileManager, get_filename
 from ...core.exceptions import StonerLoadError
+from ...tools.file import FileManager, get_filename
 from ..decorators import register_loader
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")

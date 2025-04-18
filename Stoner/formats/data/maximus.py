@@ -4,10 +4,10 @@ from pathlib import Path
 
 import numpy as np
 
-from ..decorators import register_loader
 from ...core.exceptions import StonerLoadError
-from ..utils.maximus import read_scan, flatten_header, hdr_to_dict
 from ...tools.file import get_filename
+from ..decorators import register_loader
+from ..utils.maximus import flatten_header, hdr_to_dict, read_scan
 
 
 @register_loader(

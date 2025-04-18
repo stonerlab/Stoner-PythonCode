@@ -24,7 +24,7 @@ from lmfit.models import update_param_vals
 
 from ....compat import string_types
 from ....tools import make_Data
-from . import generic, thermal, magnetism, tunnelling, e_transport, superconductivity
+from . import e_transport, generic, magnetism, superconductivity, thermal, tunnelling
 
 
 def _get_model_(model):

@@ -5,20 +5,21 @@ __all__ = ["hdr_to_dict", "read_scan", "MaximusImage"]
 
 import json
 import re
-from pathlib import Path
-from os import path
 from copy import deepcopy
+from os import path
+from pathlib import Path
 
-import numpy as np
 import h5py
+import numpy as np
+
+from ..compat import string_types
+from ..core.base import TypeHintedDict
+from ..core.data import Data
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
-from ..core.base import TypeHintedDict
-from ..Image import ImageFile, ImageStack, ImageArray
-from ..core.data import Data
-from ..compat import string_types
 from ..HDF5 import HDFFileManager
+from ..Image import ImageArray, ImageFile, ImageStack
 from ..tools.file import FileManager, get_filename
 
 SCAN_NO = re.compile(r"MPI_(\d+)")

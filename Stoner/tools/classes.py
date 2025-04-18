@@ -11,8 +11,10 @@ __all__ = [
 ]
 
 import copy
-from typing import Optional, Any, List, Iterable as IterableType, Union
 from collections.abc import MutableSequence
+from typing import Any
+from typing import Iterable as IterableType
+from typing import List, Optional, Union
 
 from .tests import all_type, isiterable
 

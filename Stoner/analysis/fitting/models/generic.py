@@ -17,11 +17,14 @@ __all__ = [
 ]
 
 import numpy as np
-
 from lmfit import Model
 from lmfit.models import LinearModel as _Linear  # NOQA pylint: disable=unused-import
-from lmfit.models import PowerLawModel as _PowerLaw  # NOQA pylint: disable=unused-import
-from lmfit.models import QuadraticModel as _Quadratic  # NOQA pylint: disable=unused-import
+from lmfit.models import (
+    PowerLawModel as _PowerLaw,  # NOQA pylint: disable=unused-import
+)
+from lmfit.models import (
+    QuadraticModel as _Quadratic,  # NOQA pylint: disable=unused-import
+)
 from lmfit.models import update_param_vals
 
 

@@ -1,58 +1,64 @@
 # -*- coding: utf-8 -*-
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
 __all__ = ["ImageArray", "ImageFile"]
-from pathlib import Path
+import inspect
 import os
+import urllib
 from collections.abc import Iterable
 from copy import copy, deepcopy
-import inspect
 from importlib import import_module
 from io import BytesIO as StreamIO
-import urllib
+from pathlib import Path
 from warnings import warn
 
-from PIL import Image
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
 from scipy import ndimage as ndi
 from skimage import (
     color,
     exposure,
     feature,
-    io,
-    measure,
     filters,
     graph,
-    util,
-    restoration,
+    io,
+    measure,
     morphology,
+    restoration,
     segmentation,
     transform,
+    util,
 )
 
-from ..compat import np_version
+from ..compat import (  # Some things to help with Python2 and Python3 compatibility
+    get_filedialog,
+    int_types,
+    np_version,
+    path_types,
+    string_types,
+)
 from ..core.base import TypeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..tools import isTuple, make_Data
-from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones, make_Image
-from ..compat import (
-    string_types,
-    get_filedialog,
-    int_types,
-    path_types,
-)  # Some things to help with Python2 and Python3 compatibility
-from .attrs import DrawProxy, MaskProxy
-from .widgets import RegionSelect
-from . import imagefuncs
 from ..tools.classes import Options
+from ..tools.decorators import (
+    class_modifier,
+    class_wrapper,
+    clones,
+    image_file_adaptor,
+    make_Image,
+)
 from ..tools.file import (
     URL_SCHEMES,
+    auto_load_classes,
     file_dialog,
+    get_file_name_type,
     get_filename,
     get_loader,
-    get_file_name_type,
-    auto_load_classes,
 )
+from . import imagefuncs
+from .attrs import DrawProxy, MaskProxy
+from .widgets import RegionSelect
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 

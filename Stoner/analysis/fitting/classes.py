@@ -2,13 +2,12 @@
 """Classes to support data fitting."""
 
 from copy import deepcopy as copy
-from inspect import isclass, getfullargspec
-
-import numpy as np
-from scipy.odr import Model as odrModel
+from inspect import getfullargspec, isclass
 
 import lmfit as lmfit_mod
+import numpy as np
 from lmfit.model import Model
+from scipy.odr import Model as odrModel
 
 from ...compat import get_func_params
 from ...tools import AttributeStore

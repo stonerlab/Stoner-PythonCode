@@ -4,9 +4,9 @@ from copy import deepcopy
 
 import numpy as np
 
-from ..decorators import register_loader
 from ...tools import make_Data
 from ...tools.file import get_filename
+from ..decorators import register_loader
 
 
 @register_loader(
