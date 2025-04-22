@@ -73,7 +73,7 @@ def _trigger6(image, mode):
 
 def test_profile_line():
     os.chdir(Stoner.__homepath__ / ".." / "sample-data")
-    img = Stoner.HDF5.STXMImage("Sample_Image_2017-10-15_100.hdf5")
+    img = Stoner.ImageFile("Sample_Image_2017-10-15_100.hdf5")
     thread = threading.Thread(target=_trigger, args=(img,))
     thread.start()
     result = img.profile_line()
@@ -99,7 +99,7 @@ def test_profile_line():
 
 def test_crop_with_ui():
     os.chdir(Stoner.__homepath__ / ".." / "sample-data")
-    img = Stoner.HDF5.STXMImage("Sample_Image_2017-10-15_100.hdf5")
+    img = Stoner.ImageFile("Sample_Image_2017-10-15_100.hdf5")
     thread = threading.Thread(target=_trigger4, args=(img,))
     thread.start()
     result = img.crop()
@@ -108,7 +108,7 @@ def test_crop_with_ui():
 
 def test_mask_select():
     os.chdir(Stoner.__homepath__ / ".." / "sample-data")
-    img = Stoner.HDF5.STXMImage("Sample_Image_2017-10-15_100.hdf5")
+    img = Stoner.ImageFile("Sample_Image_2017-10-15_100.hdf5")
     thread = threading.Thread(target=_trigger5, args=(img, "p"))
     thread.start()
     img.mask.select()

@@ -290,10 +290,10 @@ def test_dir():
         ]
     )
     attrs = set(dir(selfd)) - bad_keys
-    assert len(attrs) == 211, "DataFile.__dir__ failed."
+    assert len(attrs) == 213, "DataFile.__dir__ failed."
     selfd.setas.clear()
     attrs = set(dir(selfd)) - bad_keys
-    assert len(attrs) == 209, "DataFile.__dir__ failed."
+    assert len(attrs) == 211, "DataFile.__dir__ failed."
 
 
 def test_filter():

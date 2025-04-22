@@ -47,10 +47,132 @@ def _raise_error(openfile, message=""):
             pass
 
 
-class AttocubeScanMixin:
-    """Provides the specialist methods for dealing with Attocube SPM scan files.
+def _read_signal(scandata, g):
+    """Read a signal array and return a member of the image stack."""
+    if "signal" not in g:
+        raise StonerLoadError(f"{g.name} does not have a signal dataset !")
+    tmp = scandata.type()  # pylint: disable=E1102
+    data = g["signal"]
+    if prod(array(data.shape)) > 0:
+        tmp.image = data[...]
+    else:
+        tmp.image = [[]]
+    metadata = g.require_group("metadata")
+    typehints = g.get("typehints", None)
+    if not isinstance(typehints, h5py.Group):
+        typehints = dict()
+    else:
+        typehints = typehints.attrs
+    for i in sorted(metadata.attrs):
+        v = metadata.attrs[i]
+        t = typehints.get(i, "Detect")
+        if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
+            tmp.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
+        else:
+            tmp[i] = metadata.attrs[i]
+    tmp.filename = path.basename(g.name)
+    return tmp
 
-    See :py:class:`AttocubeScan` for details."""
+
+def _load_files(scandata, root_name, regrid):
+    """Build the image stack from a stack of files.
+
+    Args:
+        root_name (str):
+            The scan prefix e.g. SC_###
+        regrid (bool):
+            Use the X and Y positions if available to regrid the data.
+    """
+    if not path.exists(path.join(scandata.directory, f"{root_name}-Parameters.txt")):
+        return False
+    _load_parameters(scandata, root_name)
+    for data in glob(path.join(scandata.directory, f"{root_name}*.asc")):
+        if data.endswith("fwd.asc"):
+            if "fwd" not in scandata.groups:
+                scandata.add_group("fwd")
+            target = scandata.groups["fwd"]
+        elif data.endswith("bwd.asc"):
+            if "bwd" not in scandata.groups:
+                scandata.add_group("bwd")
+            target = scandata.groups["bwd"]
+        else:
+            target = scandata
+        target._load_asc(data)
+    if regrid:
+        if "fwd" in scandata.groups:
+            scandata.groups["fwd"].regrid(in_place=True)
+        if "bwd" in scandata.groups:
+            scandata.groups["bwd"].regrid(in_place=True)
+        if not scandata.groups:
+            scandata.regrid(in_place=True)
+    return scandata
+
+
+def _load_parameters(scandata, root_name):
+    """Load the scan parameters text file.
+
+    Args:
+        root_name (str):
+            The scan prefix e.g. SC_###
+
+    Returns:
+        scandata:
+            The modififed scan stack.
+    """
+    filename = path.join(scandata.directory, f"{root_name}-Parameters.txt")
+    with FileManager(filename, "r") as parameters:
+        if not parameters.readline().startswith("Daisy Parameter Snapshot"):
+            raise IOError("Parameters file exists but does not have correct header")
+        for line in parameters:
+            if not line.strip():
+                continue
+            parts = [x.strip() for x in line.strip().split(":")]
+            key = parts[0]
+            value = ":".join(parts[1:])
+            units = PARAM_RE.match(value)
+            if units and units.groups()[1]:
+                key += f" [{units.groups()[1]}]"
+                value = units.groups()[0]
+            scandata._common_metadata[key] = value
+    return scandata
+
+
+class AttocubeScan(ImageStack):
+    """An ImageStack subclass that can load scans from the AttocubeScan SPM System.
+
+    AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with
+    associated metadata. Indexing the AttocubeScan with either an integer or a partial match to one the
+    signals saved in the scan will pull out that particular scan as a :py:class:`Stoner.Image.ImageFile`.
+
+    If the scan was a dual pass scan with forwards and backwards data, then the root AttocubeScan will
+    contain the common metadata derived from the Scan parameters and then two sub-stacks that represent
+    the forwards ('fwd') and backwards ('bwd') scans.
+
+    The AttocubeScan constructor will with take a *rrot name* of the scan - e.g. "SC_099" or alternatively
+    a scan number integer. It will then look in the stack's directory for matching files and builds the scan stack
+    from them. Currently, it uses the scan parameters.txt file and any ASCII stream files .asc files. 2D linescans
+    are not currently supported or imported.
+
+    The native file format for an AttocubeScan is an HDF5 file with a particilar structure. The stack is saved into
+    an HDF5 group which then has a *type* and *module* attribute that specifies the class and module pf the Python
+    object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
+
+    There is a class method :py:meth:`AttocubeSca.read_hdf5` to read the stack from the HDSF format and an instance
+    method :py:meth:`AttocubeScan.to_hdf` that will save to either a new or existing HDF file format.
+
+    The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
+
+    Todo:
+        Implement load and save to/from multipage TIFF files.
+
+    Attrs:
+        scan_no (int):
+            The scan number as defined in the Attocube software.
+        compression (str):
+            The HDF5 compression algorithm to use when writing files
+        compression_opts (int):
+            The lelbel of compression to use (depends on compression algorithm)
+    """
 
     def __init__(self, *args, **kargs):
         """Construct the attocube subclass of ImageStack."""
@@ -80,7 +202,7 @@ class AttocubeScanMixin:
         self._common_metadata = TypeHintedDict()
 
         if root_name:
-            self._load_files(root_name, regrid)
+            _load_files(self, root_name, regrid)
 
         self.scan_no = scan
 
@@ -169,67 +291,6 @@ class AttocubeScanMixin:
         tmp._fromstack = True
         return tmp
 
-    def _load_files(self, root_name, regrid):
-        """Build the image stack from a stack of files.
-
-        Args:
-            root_name (str):
-                The scan prefix e.g. SC_###
-            regrid (bool):
-                Use the X and Y positions if available to regrid the data.
-        """
-        if not path.exists(path.join(self.directory, f"{root_name}-Parameters.txt")):
-            return False
-        self._load_parameters(root_name)
-        for data in glob(path.join(self.directory, f"{root_name}*.asc")):
-            if data.endswith("fwd.asc"):
-                if "fwd" not in self.groups:
-                    self.add_group("fwd")
-                target = self.groups["fwd"]
-            elif data.endswith("bwd.asc"):
-                if "bwd" not in self.groups:
-                    self.add_group("bwd")
-                target = self.groups["bwd"]
-            else:
-                target = self
-            target._load_asc(data)
-        if regrid:
-            if "fwd" in self.groups:
-                self.groups["fwd"].regrid(in_place=True)
-            if "bwd" in self.groups:
-                self.groups["bwd"].regrid(in_place=True)
-            if not self.groups:
-                self.regrid(in_place=True)
-        return self
-
-    def _load_parameters(self, root_name):
-        """Load the scan parameters text file.
-
-        Args:
-            root_name (str):
-                The scan prefix e.g. SC_###
-
-        Returns:
-            self:
-                The modififed scan stack.
-        """
-        filename = path.join(self.directory, f"{root_name}-Parameters.txt")
-        with FileManager(filename, "r") as parameters:
-            if not parameters.readline().startswith("Daisy Parameter Snapshot"):
-                raise IOError("Parameters file exists but does not have correct header")
-            for line in parameters:
-                if not line.strip():
-                    continue
-                parts = [x.strip() for x in line.strip().split(":")]
-                key = parts[0]
-                value = ":".join(parts[1:])
-                units = PARAM_RE.match(value)
-                if units and units.groups()[1]:
-                    key += f" [{units.groups()[1]}]"
-                    value = units.groups()[0]
-                self._common_metadata[key] = value
-        return self
-
     def _load_asc(self, filename):
         """Load a single scan file from ascii data."""
         with FileManager(filename, "r") as data:
@@ -256,31 +317,39 @@ class AttocubeScanMixin:
         self.append(tmp)
         return self
 
-    def _read_signal(self, g):
-        """Read a signal array and return a member of the image stack."""
-        if "signal" not in g:
-            raise StonerLoadError(f"{g.name} does not have a signal dataset !")
-        tmp = self.type()  # pylint: disable=E1102
-        data = g["signal"]
-        if prod(array(data.shape)) > 0:
-            tmp.image = data[...]
-        else:
-            tmp.image = [[]]
-        metadata = g.require_group("metadata")
-        typehints = g.get("typehints", None)
-        if not isinstance(typehints, h5py.Group):
-            typehints = dict()
-        else:
-            typehints = typehints.attrs
-        for i in sorted(metadata.attrs):
-            v = metadata.attrs[i]
-            t = typehints.get(i, "Detect")
-            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-                tmp.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
-            else:
-                tmp[i] = metadata.attrs[i]
-        tmp.filename = path.basename(g.name)
-        return tmp
+    def level_image(self, method="plane", signal="Amp"):
+        """Remove a background signla by fitting an appropriate function.
+
+        Keyword Arguments:
+            method (str or callable):
+                Eirther the name of a fitting function in the global scope, or a callable. *plane* and *parabola*
+                are already defined.
+            signal (str):
+                The name of the dataset to be flattened. Defaults to the Amplitude signal
+
+        Returns:
+            (AttocubeScan):
+                The current scan object with the data modified.
+        """
+        if isinstance(method, string_types):
+            method = globals()[method]
+        if not callable(method):
+            raise ValueError("Could not get a callable method to flatten the data")
+        data = self[signal]
+        ys, xs = data.shape
+        X, Y = meshgrid(linspace(-1, 1, xs), linspace(-1, 1, ys))
+        Z = data.data
+        X = X.ravel()
+        Y = Y.ravel()
+        Z = Z.ravel()
+
+        popt = curve_fit(method, (X, Y), Z)[0]
+
+        nZ = method((X, Y), *popt)
+        Z -= nZ
+
+        data.data = Z.reshape(xs, ys)
+        return self
 
     def regrid(self, **kargs):
         """Regrid the data sets based on PosX and PosY channels.
@@ -323,40 +392,6 @@ class AttocubeScanMixin:
         new["PosY"].data = ny
 
         return new
-
-    def level_image(self, method="plane", signal="Amp"):
-        """Remove a background signla by fitting an appropriate function.
-
-        Keyword Arguments:
-            method (str or callable):
-                Eirther the name of a fitting function in the global scope, or a callable. *plane* and *parabola*
-                are already defined.
-            signal (str):
-                The name of the dataset to be flattened. Defaults to the Amplitude signal
-
-        Returns:
-            (AttocubeScan):
-                The current scan object with the data modified.
-        """
-        if isinstance(method, string_types):
-            method = globals()[method]
-        if not callable(method):
-            raise ValueError("Could not get a callable method to flatten the data")
-        data = self[signal]
-        ys, xs = data.shape
-        X, Y = meshgrid(linspace(-1, 1, xs), linspace(-1, 1, ys))
-        Z = data.data
-        X = X.ravel()
-        Y = Y.ravel()
-        Z = Z.ravel()
-
-        popt = curve_fit(method, (X, Y), Z)[0]
-
-        nZ = method((X, Y), *popt)
-        Z -= nZ
-
-        data.data = Z.reshape(xs, ys)
-        return self
 
     def to_hdf5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
@@ -460,46 +495,8 @@ class AttocubeScanMixin:
                     self.groups[grp] = cls.read_hdf5(f[grp], *args, **kargs)
                     continue
                 g = f[grp]
-                self.append(self._read_signal(g))
+                self.append(_read_signal(self, g))
             for grp in channels:
                 g = f[grp]
-                self.append(self._read_signal(g))
+                self.append(_read_signal(self, g))
         return self
-
-
-class AttocubeScan(AttocubeScanMixin, ImageStack):
-    """An ImageStack subclass that can load scans from the AttocubeScan SPM System.
-
-    AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with
-    associated metadata. Indexing the AttocubeScan with either an integer or a partial match to one the
-    signals saved in the scan will pull out that particular scan as a :py:class:`Stoner.Image.ImageFile`.
-
-    If the scan was a dual pass scan with forwards and backwards data, then the root AttocubeScan will
-    contain the common metadata derived from the Scan parameters and then two sub-stacks that represent
-    the forwards ('fwd') and backwards ('bwd') scans.
-
-    The AttocubeScan constructor will with take a *rrot name* of the scan - e.g. "SC_099" or alternatively
-    a scan number integer. It will then look in the stack's directory for matching files and builds the scan stack
-    from them. Currently, it uses the scan parameters.txt file and any ASCII stream files .asc files. 2D linescans
-    are not currently supported or imported.
-
-    The native file format for an AttocubeScan is an HDF5 file with a particilar structure. The stack is saved into
-    an HDF5 group which then has a *type* and *module* attribute that specifies the class and module pf the Python
-    object that created the group - sof for an AttocubeScan, the type attribute is *AttocubeScan*.
-
-    There is a class method :py:meth:`AttocubeSca.read_hdf5` to read the stack from the HDSF format and an instance
-    method :py:meth:`AttocubeScan.to_hdf` that will save to either a new or existing HDF file format.
-
-    The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
-
-    Todo:
-        Implement load and save to/from multipage TIFF files.
-
-    Attrs:
-        scan_no (int):
-            The scan number as defined in the Attocube software.
-        compression (str):
-            The HDF5 compression algorithm to use when writing files
-        compression_opts (int):
-            The lelbel of compression to use (depends on compression algorithm)
-    """

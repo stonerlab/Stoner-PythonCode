@@ -5,7 +5,7 @@ __all__ = ["DataFileOperatorsMixin"]
 import numpy as np
 
 from ..compat import index_types, string_types
-from ..tools import isiterable
+from ..tools import isiterable, make_Data
 from . import DataArray, _setas
 from .utils import add_core, and_core, mod_core, sub_core
 
@@ -293,3 +293,19 @@ class DataFileOperatorsMixin:
         for i, head_temp in enumerate(col_headers_tmp):
             self.column_headers[i] = head_temp
         self["TDI Format"] = fmt
+
+    def __xor__(self, other):
+        """Implement an XOR operator for Data objects."""
+        Data = make_Data(None)
+        match other:
+            case Data():
+                new = make_Data()
+                if np.all(self.data == other.data):
+                    new.data = np.ma.empty_like(self.data)
+                else:
+                    new.data = self.data == other.data
+                new.metadata = self.metadata ^ other.metadata
+                new.column_headers = [str(s == o) for s, o in zip(self.column_headers, other.column_headers)]
+                return new
+            case _:
+                return NotImplemented

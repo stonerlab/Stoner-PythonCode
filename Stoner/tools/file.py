@@ -10,6 +10,7 @@ from traceback import format_exc
 from typing import Callable, Dict, Optional, Sequence, Tuple, Type, Union
 
 import h5py
+import zipfile
 
 from ..compat import bytes2str, path_types, str2bytes, string_types
 from ..core.base import SortedMultivalueDict, metadataObject
@@ -139,8 +140,17 @@ def auto_load_classes(
             pattern = pathlib.Path(pth).suffix
         case bytes() | io.StringIO() | io.BytesIO() | bool():
             pattern = "*"
+        case io.IOBase() if hasattr(filename, "name"):
+            pattern = pathlib.Path(filename.name).suffix
+        case h5py.File():
+            pattern = pathlib.Path(filename.filename).suffix
+        case h5py.Group():
+            pattern = pathlib.Path(filename.file.filename).suffix
+        case zipfile.ZipFile():
+            pattern = pathlib.Path(filename.filename).suffix
         case _:
             raise TypeError(f"Unable to figure out how to deal with {filename}")
+    pattern = pattern.lower()
     for loader in next_filer(pattern, mimetype, what=baseclass):
         try:
             match baseclass:
@@ -275,9 +285,21 @@ def best_saver(filename: str, name: Optional[str], what: Optional[str] = None) -
     """Figure out the best saving routine registerd with the package."""
     if name and name in _savers_by_name:
         return _savers_by_name[name]
-    extension = pathlib.Path(filename).suffix
-    if extension in _savers_by_pattern:
-        for _, func in _savers_by_pattern[extension]:
+    match filename:
+        case str() | pathlib.Path():
+            extension = pathlib.Path(filename).suffix
+        case io.IOBase() if hasattr(filename, "name"):
+            extension = pathlib.Path(filename.name).suffix
+        case h5py.File():
+            extension = pathlib.Path(filename.filename).suffix
+        case h5py.Group():
+            extension = pathlib.Path(filename.file.filename).suffix
+        case zipfile.ZipFile():
+            extension = pathlib.Path(filename.filename).suffix
+        case _:
+            raise TypeError(f"Don't know how to get an extension pattern for a {type(filename)}")
+    if extension.lower() in _savers_by_pattern:
+        for _, func in _savers_by_pattern[extension.lower()]:
             if what is None or (what and what == func.what):
                 return func
     for _, func in _savers_by_pattern["*"]:

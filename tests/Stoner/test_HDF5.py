@@ -36,9 +36,9 @@ def test_HDF5folder():
     ), "HDF5Folder loaded from disc not same shape as HDF5Folder in memory!"
     self_h1 = self_HDF5fldr[0]
     self_h2 = self_HDF5fldr_2[0]
-    self_h2.metadata["Stoner.class"] = "Data"  # Correct the loader class
+    self_h2["Loaded as"] = "DataFile"  # reset Loaded as key
     self_h2.metadata["Loaded from"] = self_h1.metadata["Loaded from"]  # Corrects a path separator bug on Windows
-    assert self_h1 == self_h2, "File from loaded HDF5Folder not the same as in memory HDF5Folder."
+    assert self_h1 == self_h2, f"File from loaded HDF5Folder not the same as in memory HDF5Folder. {self_h1.metadata ^ self_h2.metadata}"
 
 
 if __name__ == "__main__":  # Run some tests manually to allow debugging

@@ -8,8 +8,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib_scalebar.scalebar import ScaleBar
 
+from Stoner import ImageFile
 from Stoner import ImageFolder, __datapath__
-from Stoner.HDF5 import STXMImage
 from Stoner.Image.widgets import send_event as _event
 
 
@@ -51,7 +51,7 @@ def extra_ops(i, j, image):
 
 
 fldr = ImageFolder(
-    __datapath__, pattern="Sample*.hdf5", type=STXMImage, recursive=False
+    __datapath__, pattern="Sample*.hdf5", type=ImageFile, recursive=False
 )
 
 # Start the scripted control

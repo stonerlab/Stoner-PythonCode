@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Support files from the Bessy Maximus instrument."""
 
-__all__ = ["hdr_to_dict", "read_scan", "MaximusImage"]
-
 import json
 import re
 from copy import deepcopy
@@ -14,7 +12,6 @@ import numpy as np
 
 from ..compat import string_types
 from ..core.base import TypeHintedDict
-from ..core.data import Data
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
@@ -36,93 +33,10 @@ def _raise_error(openfile, message=""):
             pass
 
 
-class MaximusSpectra(Data):
-    """Provides a :py:class:`Stoner.DataFile` subclass for loading Point spectra from Maximus."""
+class MaximusStack(ImageStack):
+    """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
-    # We treat the hdr file as the key file type
-    _patterns = ["*.hdr", "*.xsp"]
-    mime_type = ["text/plain"]
-
-    priority = 16
-
-    def _load(self, *args, **kargs):
-        """Maximus xsp file loader routine.
-
-        Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
-
-        Returns:
-            A copy of the itself after loading the data.
-        """
-        filename, args, kargs = get_filename(args, kargs)
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-        # Open the file and read the main file header and unpack into a dict
-        try:
-            pth = Path(self.filename)
-        except (TypeError, ValueError) as err:
-            raise StonerLoadError("Can only open things that can be converted to paths!") from err
-        if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
-            pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
-        stem = pth.parent / pth.stem
-
-        try:
-            hdr = _flatten_header(hdr_to_dict(pth))
-            if "Point Scan" not in hdr["ScanDefinition.Type"]:
-                raise StonerLoadError("Not an Maximus Single Image File")
-        except (StonerLoadError, ValueError, TypeError, IOError) as err:
-            raise StonerLoadError("Error loading as Maximus File") from err
-        header, data, dims = read_scan(stem)
-        self.metadata.update(_flatten_header(header))
-        self.data = np.column_stack((dims[0], data))
-        headers = [self.metadata["ScanDefinition.Regions.PAxis.Name"]]
-        if len(dims) == 2:
-            headers.extend([str(x) for x in dims[1]])
-        else:
-            headers.append(self.metadata["ScanDefinition.Channels.Name"])
-        self.column_headers = headers
-        self.setas = "xy"
-        return self
-
-
-class MaximusImage(ImageFile):
-    """Provide a STXMImage like class for the Maximus Beamline."""
-
-    _patterns = ["*.hdr", "*.xim"]
-    mime_type = ["text/plain"]
-    priority = 16
-
-    def _load(self, *args, **kargs):
-        """Load an ImageFile by calling the ImageArray method instead."""
-        filename, args, kargs = get_filename(args, kargs)
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
-        pth = Path(self.filename)
-        if pth.suffix != ".hdr":  # Passed a .xim or .xsp file in instead of the hdr file.
-            pth = Path("_".join(str(pth).split("_")[:-1]) + ".hdr")
-        stem = pth.parent / pth.stem
-
-        try:
-            hdr = _flatten_header(hdr_to_dict(pth))
-            if hdr["ScanDefinition.Type"] != "Image Scan":
-                raise StonerLoadError("Not an Maximus Single Image File")
-        except (StonerLoadError, ValueError, TypeError, IOError) as err:
-            raise StonerLoadError("Error loading as Maximus File") from err
-        data = read_scan(stem)[1]
-        self.metadata.update(hdr)
-        self.image = data
-        return self
-
-
-class MaximusStackMixin:
-    """Handle a stack of Maximus Images."""
-
-    _defaults = {"type": MaximusImage, "pattern": "*.hdr"}
+    _defaults = {"type": ImageFile, "pattern": "*.hdr"}
 
     def __init__(self, *args, **kargs):
         """Construct the attocube subclass of ImageStack."""
@@ -352,10 +266,6 @@ class MaximusStackMixin:
                 g = f[grp]
                 self.append(self._read_image(g))
         return self
-
-
-class MaximusStack(MaximusStackMixin, ImageStack):
-    """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
 
 def hdr_to_dict(filename, to_python=True):

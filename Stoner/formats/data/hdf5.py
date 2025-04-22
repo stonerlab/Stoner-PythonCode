@@ -13,7 +13,7 @@ from ..decorators import register_loader, register_saver
 
 
 @register_loader(
-    patterns=[(".hdf", 16), (".hf5", 16)],
+    patterns=[(".hdf", 16), (".hf5", 16), (".hdf5", 16)],
     mime_types=[("application/x-hdf", 16), ("application/x-hdf5", 16)],
     name="HDF5File",
     what="Data",
@@ -60,7 +60,7 @@ def load_hdf(new_data, *args, **kargs):  # pylint: disable=unused-argument
     return new_data
 
 
-@register_saver(patterns=[(".hdf", 16), (".hf5", 16)], name="HDF5File", what="Data")
+@register_saver(patterns=[(".hdf", 16), (".hf5", 16), (".hdf5", 16)], name="HDF5File", what="Data")
 def save_hdf(save_data, filename=None, **kargs):  # pylint: disable=unused-argument
     """Write the current object into  an hdf5 file or group within a file.
 
@@ -127,7 +127,7 @@ def _scan_SLS_meta(new_data, group):
 
 
 @register_loader(
-    patterns=[(".hdf", 16), (".hdf5", 16)],
+    patterns=[(".hdf", 16), (".hdf5", 16), (".hf5", 16)],
     mime_types=[("application/x-hdf", 16), ("application/x-hdf5", 16)],
     name="SLS_STXMFile",
     what="Data",

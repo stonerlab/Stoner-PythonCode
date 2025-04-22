@@ -12,9 +12,9 @@ import numpy as np
 from numpy import ma
 from statsmodels.stats.weightstats import DescrStatsW
 
-from ..compat import _pattern_type, int_types
+from ..compat import _pattern_type, int_types, str2bytes
 from ..tools import all_type, format_error, isiterable, operator
-from ..tools.file import best_saver, file_dialog
+from ..tools.file import best_saver, file_dialog, HDFFileManager
 from ..tools.widgets import RangeSelect
 from .array import DataArray
 
@@ -1123,39 +1123,21 @@ def save(datafile, filename=None, **kargs):
         filename = file_dialog("w", datafile.filename, type(datafile), datafile.__class__)
         if not filename:
             raise RuntimeError("Cannot get filename to save")
-    if as_loaded:
-        loadtype = datafile.get("Loaded as", "DataFile")
-        if loadtype != "DataFile":
-            saver = best_saver(filename, loadtype)
+    match as_loaded:
+        case False:
+            saver = best_saver(filename, name=None, what="Data")
             ret = saver(datafile, filename)
             datafile.filename = ret.filename
             return datafile
-    # Normalise the extension to ensure it's something we like...
-    filename, ext = pathlib.Path(filename).with_suffix(""), pathlib.Path(filename).suffix
-    saver = best_saver(filename, name=datafile.get("Loaded as", "DataFile"), what="Data")
-    if ext not in saver.patterns:
-        ext = saver.patterns[0]
-    filename = f"{filename}.{ext}"
-    header = ["TDI Format 1.5"]
-    header.extend(datafile.column_headers[: datafile.data.shape[1]])
-    header = "\t".join(header)
-    mdkeys = sorted(datafile.metadata)
-    if len(mdkeys) > len(datafile):
-        mdremains = mdkeys[len(datafile) :]
-        mdkeys = mdkeys[0 : len(datafile)]
-    else:
-        mdremains = []
-    mdtext = np.array([datafile.metadata.export(k) for k in mdkeys])
-    if len(mdtext) < len(datafile):
-        mdtext = np.append(mdtext, np.zeros(len(datafile) - len(mdtext), dtype=str))
-    data_out = np.column_stack([mdtext, datafile.data])
-    fmt = ["%s"] * data_out.shape[1]
-    with io.open(filename, "w", errors="replace", encoding="utf-8") as f:
-        np.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
-        for k in mdremains:
-            f.write(datafile.metadata.export(k) + "\n")  # (str2bytes(datafile.metadata.export(k) + "\n"))
-
-    datafile.filename = filename
+        case True:
+            as_loaded = datafile.get("Loaded as", "DataFile")
+        case str():
+            pass
+        case _:
+            raise TypeError(f"Unable to use loadtype to work out best saving routine.")
+    saver = best_saver(filename, name=as_loaded, what="Data")
+    ret = saver(datafile, filename)
+    datafile.filename = ret.filename
     return datafile
 
 
@@ -1256,3 +1238,51 @@ def format(datafile, key, **kargs):
     except (TypeError, KeyError):
         error = float_info.epsilon
     return format_error(value, error, fmt=fmt, mode=mode, units=units, prefix=prefix, scape=escape)
+
+
+def to_hdf(datafile, filename=None, **kargs):  # pylint: disable=unused-argument
+    """Write the current object into  an hdf5 file or group within a file.
+
+    Writes the data in afashion that is compatible with being loaded in again.
+
+    Args:
+        filename (string or h5py.Group):
+            Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
+            the corresponding file is opened for writing, written to and save again.
+
+    Returns
+        A copy of the object
+    """
+    if filename is None:
+        filename = datafile.filename
+    if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+        filename = datafile.__file_dialog("w")
+        datafile.filename = filename
+    if isinstance(filename, (str, pathlib.PurePath)):
+        mode = "r+" if pathlib.Path(filename).exists() else "w"
+    else:
+        mode = ""
+    with HDFFileManager(filename, mode) as f:
+        f.require_dataset(
+            "data",
+            data=datafile.data,
+            shape=datafile.data.shape,
+            dtype=datafile.data.dtype,
+            compression=datafile.compression,
+            compression_opts=datafile.compression_opts,
+        )
+        metadata = f.require_group("metadata")
+        typehints = f.require_group("typehints")
+        for k in datafile.metadata:
+            try:
+                typehints.attrs[k] = datafile.metadata._typehints[k]
+                metadata.attrs[k] = datafile[k]
+            except TypeError:
+                # We get this for trying to store a bad data type - fallback to metadata export to string
+                parts = datafile.metadata.export(k).split("=")
+                metadata.attrs[k] = "=".join(parts[1:])
+        f.attrs["column_headers"] = [str2bytes(x) for x in datafile.column_headers]
+        f.attrs["filename"] = datafile.filename
+        f.attrs["type"] = type(datafile).__name__
+        f.attrs["module"] = type(datafile).__module__
+    return datafile

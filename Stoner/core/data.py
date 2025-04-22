@@ -12,6 +12,7 @@ import warnings
 from collections.abc import Iterable, Mapping, MutableSequence
 from textwrap import TextWrapper
 
+import h5py
 import numpy as np
 from numpy import nan  # NOQA pylint: disable=unused-import
 from numpy import ma
@@ -264,7 +265,7 @@ class Data(
         """Handle constructor with 1 argument - called from __init__."""
         test = ClassTester(ImageFile="Stoner.Image.core.ImageFile")
         match args[0]:
-            case str() | bool() | pathlib.Path() | bytes() | io.IOBase():
+            case str() | bool() | pathlib.Path() | bytes() | io.IOBase() | h5py.Group() | h5py.File():
                 self._init_load(args[0], **kargs)
             case Data():
                 self._init_datafile(args[0], **kargs)

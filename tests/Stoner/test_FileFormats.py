@@ -18,7 +18,7 @@ import pytest
 
 from Stoner.formats.attocube import AttocubeScan
 from Stoner.formats.maximus import MaximusStack
-from Stoner.tools.file import get_saver
+from Stoner.tools.file import get_saver, clear_routine
 from Stoner.core.exceptions import StonerLoadError
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 
@@ -144,6 +144,7 @@ def test_fail_to_load():
 
 def test_arb_class_load():
     _ = Data(datadir / "TDI_Format_RT.txt", filetype="dummy.ArbClass")
+    clear_routine("dummy.ArbClass")
 
 
 def test_url_load():
