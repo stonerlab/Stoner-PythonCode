@@ -10,7 +10,7 @@ to :py:class:`Stoner.Core.Data`.
 
 """
 
-__all__ = ["HDF5Folder", "HDFFileManager"]
+__all__ = ["HDF5Folder"]
 import importlib
 import os
 import os.path as path
@@ -20,7 +20,7 @@ import h5py
 from .compat import bytes2str, get_filedialog, path_types
 from .core.exceptions import StonerLoadError
 from .folders import DataFolder
-from .tools.file import HDFFileManager
+from .core.data import Data
 
 
 def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
@@ -49,17 +49,11 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
     return getattr(globals()[typ], "read_hdf5", default_loader)
 
 
-class HDF5FolderMixin:
-    """Provides a method to load and save data from a single HDF5 file with groups.
-
-    See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
-
-    Datalayout consistns of sub-groups that are either instances of HDF5Files (i.e. have a type attribute that
-    contains 'HDF5File') or are themsleves HDF5Folder instances (with a type attribute that reads 'HDF5Folder').
-    """
+class HDF5Folder(DataFolder):
+    """Just enforces the loader attriobute to be an HDF5File."""
 
     def __init__(self, *args, **kargs):
-        """Initialise the File aatribute."""
+        """Ensure the loader routine is set for HDF5Files."""
         self.File = None
         super().__init__(*args, **kargs)
 
@@ -244,12 +238,3 @@ class HDF5FolderMixin:
             self.File.close()
             self.File = None
         return self
-
-
-class HDF5Folder(HDF5FolderMixin, DataFolder):
-    """Just enforces the loader attriobute to be an HDF5File."""
-
-    def __init__(self, *args, **kargs):
-        """Ensure the loader routine is set for HDF5Files."""
-        # self.loader = HDF5File
-        super().__init__(*args, **kargs)

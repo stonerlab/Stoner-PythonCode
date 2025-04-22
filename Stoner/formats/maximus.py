@@ -15,9 +15,8 @@ from ..core.base import TypeHintedDict
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
-from ..HDF5 import HDFFileManager
 from ..Image import ImageArray, ImageFile, ImageStack
-from ..tools.file import FileManager, get_filename
+from ..tools.file import FileManager, get_filename, HDFFileManager
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
 
