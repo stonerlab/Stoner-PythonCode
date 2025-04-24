@@ -1115,7 +1115,7 @@ def save(datafile, filename=None, **kargs):
         datafile:
             The current :py:class:`DataFile` object
     """
-    as_loaded = kargs.pop("as_loaded", False)
+    as_loaded = kargs.pop("as_loaded", kargs.pop("filetype", False))
     if filename is None:
         filename = datafile.filename
     if filename is None or (isinstance(filename, bool) and not filename):

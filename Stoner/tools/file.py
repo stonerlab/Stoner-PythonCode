@@ -103,9 +103,9 @@ def get_file_name_type(
     filename: Filename, filetype: Union[Type[metadataObject], str], parent: Type[metadataObject]
 ) -> Tuple[pathlib.PurePath, Type[metadataObject]]:
     """Rationalise a filename and filetype."""
-    if isinstance(filename, string_types):
+    if isinstance(filename, str):
         filename = pathlib.Path(filename)
-    if isinstance(filetype, string_types):  # We can specify filetype as part of name
+    if isinstance(filetype, str):  # We can specify filetype as part of name
         filetype = get_loader(filetype).name
     if filename is None or (isinstance(filename, bool) and not filename):
         if filetype is None:
@@ -113,11 +113,11 @@ def get_file_name_type(
         filename = file_dialog("r", filename, filetype, parent)
     elif isinstance(filename, io.IOBase):  # Opened file
         filename = filename.name
-    try:
-        if not filename.exists():
-            raise IOError(f"Cannot find {filename} to load")
-    except AttributeError as err:
-        raise IOError(f"Unable to tell if file exists - {type(filename)}") from err
+    # try:
+    #     if not filename.exists():
+    #         raise IOError(f"Cannot find {filename} to load")
+    # except AttributeError as err:
+    #     raise IOError(f"Unable to tell if file exists - {type(filename)}") from err
     return filename, filetype
 
 

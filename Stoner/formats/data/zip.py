@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Loader for zip files."""
+import pathlib
 import os.path as path
 import zipfile as zf
 from traceback import format_exc
@@ -12,10 +13,25 @@ from ..decorators import register_loader, register_saver
 from ..utils.zip import test_is_zip
 
 
+def _split_filename(filename, **kargs):
+    """Try to get the member and filename parts."""
+    filename = pathlib.Path(filename)
+    if filename.suffix == ".zip":
+        return filename
+    for bit in filename.parents:
+        if bit.suffix == ".zip":
+            kargs["member"] = str(filename.relative_to(bit))
+            return bit
+    return filename
+
+
 @register_loader(patterns=(".zip", 16), mime_types=("application/zip", 16), name="ZippedFile", what="Data")
 def load_zipfile(new_data, *args, **kargs):
     """Load a file from the zip file, opening it as necessary."""
     filename, args, kargs = get_filename(args, kargs)
+    if isinstance(filename, path_types):
+        filename = _split_filename(filename, **kargs)
+
     new_data.filename = filename
     try:
         if isinstance(new_data.filename, zf.ZipFile):  # Loading from an ZipFile

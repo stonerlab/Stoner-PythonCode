@@ -18,13 +18,12 @@ tmpdir = tempfile.mkdtemp()
 
 def test_zipFile(tmpdir):
     d = Stoner.Data(Stoner.__datapath__ / "TDI_Format_RT.txt")
-    z = SZ.ZippedFile(d)
-    z.save(path.join(tmpdir, "TDI_Format_RT.zip"))
+    d.save(path.join(tmpdir, "TDI_Format_RT.zip"), filetype="ZippedFile")
 
     z2 = Stoner.Data(path.join(tmpdir, "TDI_Format_RT.zip"))
-    z["Loaded as"] = z2["Loaded as"]
-    z["Stoner.class"] = z2["Stoner.class"]
-    assert z == z2
+    d["Loaded as"] = z2["Loaded as"]
+    d["Stoner.class"] = z2["Stoner.class"]
+    assert d == z2
     with zf.ZipFile(path.join(tmpdir, "TDI_Format_RT.zip"), "r") as open_zipfile:
         z3 = Stoner.Data().load(open_zipfile, filetype="ZippedFile")
     z3["Stoner.class"] = z2["Stoner.class"]
