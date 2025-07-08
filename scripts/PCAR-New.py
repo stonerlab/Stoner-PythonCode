@@ -18,7 +18,7 @@ class working(Data):
 
     def __init__(self, *args, **kargs):
         """Initialise the fitting code."""
-        super(working, self).__init__(*args, **kargs)
+        super().__init__(*args, **kargs)
         inifile = __file__.replace(".py", ".ini")
         if not pathlib.Path(inifile).exists():
             raise RuntimeError(
@@ -26,7 +26,7 @@ class working(Data):
             )
 
         tmp = cfg_data_from_ini(inifile, filename=False)
-        self._setas = tmp.setas.clone
+        self.setas = tmp.setas.clone
         self.column_headers = tmp.column_headers
         self.metadata = tmp.metadata
         self.data = tmp.data
@@ -35,6 +35,9 @@ class working(Data):
         self.filename = tmp.filename
 
         model, p0 = cfg_model_from_ini(inifile, data=self)
+
+        for k in model.param_hints:
+            setattr(self, k, model.param_hints[k])
 
         config = ConfigParser.ConfigParser()
         config.read(inifile)
@@ -121,11 +124,24 @@ class working(Data):
                 poly=4,
                 peaks=True,
                 troughs=True,
+                full_data=False,
             )
-            peaks = filter(lambda x: abs(x) < 4 * self.delta["value"], peaks)
+            peaks = list(
+                filter(lambda x: abs(x) < 4 * self.delta["value"], peaks)
+            )
             offset = np.mean(np.array(peaks))
             print("Mean offset =" + str(offset))
-            self.apply(lambda x: x[self.vcol] - offset, self.vcol)
+            self[:, self.vcol] -= offset
+        return self
+
+    def Decompose(self):
+        """Optionally decompose the signal intro symmetric and antisymmetric parts."""
+        if self.config.has_option(
+            "Options", "decompose"
+        ) and self.config.getboolean("Options", "decompose"):
+            print("Doing decomposition")
+            self.decompose(xcol=self.vcol, ycol=self.gcol, sym=self.gcol)
+            self.setas(x=self.vcol, y=self.gcol)
         return self
 
     def plot_results(self):
@@ -151,7 +167,8 @@ class working(Data):
 
     def Fit(self):
         """Run the fitting code."""
-        self.Discard().Normalise().offset_correct()
+        # Run a pre-fitting data munge chain
+        self.Discard().Normalise().offset_correct().Decompose()
         chi2 = self.p0.shape[0] > 1
 
         method = getattr(self, self.method)

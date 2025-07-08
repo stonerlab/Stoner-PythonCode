@@ -103,7 +103,7 @@ def peaks(datafile, **kargs):
     if xcol is None:
         xdata = np.arange(len(datafile))
     else:
-        xdata = datafile.column(xcol)
+        xdata = datafile.column(xcol).ravel()
     xdata = sp_interp1d(np.arange(len(datafile)), xdata, kind="cubic")
 
     possible_peaks = np.array(threshold(0, d1, rising=troughs, falling=peaks))
