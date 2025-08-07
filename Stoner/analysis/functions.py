@@ -6,6 +6,7 @@ from warnings import warn
 import numpy as np
 from numpy import ma
 from scipy.integrate import cumulative_simpson, cumulative_trapezoid
+from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
 from ..core.exceptions import assertion
@@ -111,7 +112,7 @@ def clip(datafile, clipper, column=None):
     return datafile.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
 
 
-def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True, **kwords):
+def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True, hysteretic=False, **kwords):
     """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
 
     Keyword Arguments:
@@ -125,6 +126,8 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
             Index of column for asymmetric part of ata. Defaults to appending to end of data
         replace (bool):
             Overwrite data with output (true)
+        hysteretic (book)L
+            Look separately for outgoing and incoming data first.
 
     Returns:
         datafile: The newly modified :py:class:`AnalysisMixin`.
@@ -145,17 +148,42 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
         ycol = cols["ycol"]
     xcol = datafile.find_col(xcol)
     ycol = datafile.find_col(ycol)
-    if isinstance(ycol, list):
-        ycol = ycol[0]  # FIXME should work with multiple output columns
-    if np.abs((datafile // xcol).min()) < np.abs((datafile // xcol).max()):
-        pxdata = datafile.search(xcol, lambda x, r: x < 0, xcol)
+    if not isinstance(ycol, list):
+        ycol = [ycol]
+
+    if hysteretic:
+        from .Util import split_up_down
+
+        fldr = split_up_down(datafile, datafile.xcol)
+        for grp in ["rising", "falling"]:
+            for f in fldr[grp][1:]:
+                fldr[grp][0] += f
+        rising = fldr["rising"][0].sort(xcol)
+        falling = fldr["falling"][0].sort(xcol)
+        points = fldr["rising"][0].size
     else:
-        pxdata = datafile.search(xcol, lambda x, r: x > 0, xcol)
-    xdata = np.sort(np.append(-pxdata, pxdata))
-    datafile.data = datafile.interpolate(xdata, xcol=xcol)
-    ydata = datafile.data[:, ycol]
-    symd = (ydata + ydata[::-1]) / 2
-    asymd = (ydata - ydata[::-1]) / 2
+        rising = datafile.clone.sort(xcol)
+        falling = rising.clone
+        points = rising.x.size
+
+    rising_data = rising.deduplicate(xcol, clone=False)
+    falling_data = falling.deduplicate(xcol, clone=False)
+
+    falling_func = interp1d(
+        falling_data[:, xcol],
+        falling_data[:, ycol],
+        kind="linear",
+        bounds_error=False,
+        axis=0,
+    )
+
+    rising_func = interp1d(rising_data[:, xcol], rising_data[:, ycol], kind="linear", bounds_error=False, axis=0)
+    rising_vals = rising_func((datafile // xcol).view(np.ndarray))
+    falling_vals = falling_func(-(datafile // xcol).view(np.ndarray))
+
+    symd = (rising_vals + falling_vals) / 2
+    asymd = (rising_vals - falling_vals) / 2
+
     if sym is None:
         datafile &= symd
         datafile.column_headers[-1] = "Symmetric Data"
@@ -166,7 +194,6 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
         datafile.column_headers[-1] = "Asymmetric Data"
     else:
         datafile.add_column(asymd, header="Symmetric Data", index=asym, replace=replace)
-
     return datafile
 
 

@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 import copy
-from collections.abc import MutableSequence
+from collections.abc import MutableSequence, Iterable
 from typing import Any
 from typing import Iterable as IterableType
 from typing import List, Optional, Union
@@ -106,6 +106,8 @@ class TypedList(MutableSequence):
 
     def __getitem__(self, index: int) -> Any:
         """Get an item like in a list."""
+        if isinstance(index, Iterable):
+            return [self._store[i] for i in index]
         return self._store[index]
 
     def __len__(self) -> int:
