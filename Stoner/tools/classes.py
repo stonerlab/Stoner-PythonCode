@@ -12,7 +12,7 @@ __all__ = [
 
 import copy
 from typing import Optional, Any, List, Iterable as IterableType, Union
-from collections.abc import MutableSequence
+from collections.abc import MutableSequence, Iterable
 
 from .tests import all_type, isiterable
 
@@ -104,6 +104,8 @@ class typedList(MutableSequence):
 
     def __getitem__(self, index: int) -> Any:
         """Get an item like in a list."""
+        if isinstance(index, Iterable):
+            return [self._store[i] for i in index]
         return self._store[index]
 
     def __len__(self) -> int:

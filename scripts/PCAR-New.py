@@ -6,6 +6,7 @@ Gavin Burnell g.burnell@leeds.ac.uk
 # pylint: disable=invalid-name
 import configparser as ConfigParser
 import pathlib
+import inspect
 
 import numpy as np
 from Stoner import Data
@@ -18,15 +19,18 @@ class working(Data):
 
     def __init__(self, *args, **kargs):
         """Initialise the fitting code."""
-        super(working, self).__init__(*args, **kargs)
-        inifile = __file__.replace(".py", ".ini")
+        super().__init__(*args, **kargs)
+
+    def load_config(self):
+        my_file = inspect.getfile(self.__class__)
+        inifile = my_file.replace(".py", ".ini")
         if not pathlib.Path(inifile).exists():
             raise RuntimeError(
                 f"Could not find the fitting ini file {inifile}!"
             )
 
         tmp = cfg_data_from_ini(inifile, filename=False)
-        self._setas = tmp.setas.clone
+        self.setas = tmp.setas.clone
         self.column_headers = tmp.column_headers
         self.metadata = tmp.metadata
         self.data = tmp.data
@@ -35,6 +39,9 @@ class working(Data):
         self.filename = tmp.filename
 
         model, p0 = cfg_model_from_ini(inifile, data=self)
+
+        for k in model.param_hints:
+            setattr(self, k, model.param_hints[k])
 
         config = ConfigParser.ConfigParser()
         config.read(inifile)
@@ -62,6 +69,16 @@ class working(Data):
             self.del_rows(self.vcol, lambda x, y: abs(x) > v_limit)
         return self
 
+    def RescaleV(self):
+        """Rescale the voltage data if the options are set."""
+        if self.config.has_option(
+            "Options", "rescale_v"
+        ) and self.config.getboolean("Options", "rescale_v"):
+            vscale = self.config.getfloat("Data", "v_scale")
+            self.data[:, self.vcol] *= vscale
+            print(f"Rescaled voltage data by {vscale}")
+            return self
+
     def Normalise(self):
         """Normalise the data if the relevant options are turned on in the config file.
 
@@ -72,7 +89,6 @@ class working(Data):
         ) and self.config.getboolean("Options", "normalise"):
             print("Normalising Data")
             Gn = self.config.getfloat("Data", "Normal_conductance")
-            v_scale = self.config.getfloat("Data", "v_scale")
             if self.config.has_option(
                 "Options", "fancy_normaliser"
             ) and self.config.getboolean("Options", "fancy_normaliser"):
@@ -95,13 +111,14 @@ class working(Data):
                 self.apply(
                     lambda x: x[self.gcol] / quadratic(x[self.vcol], *p),
                     self.gcol,
+                    header=self.column_headers[self.gcol],
                 )
             else:
-                self.apply(lambda x: x[self.gcol] / Gn, self.gcol)
-            if self.config.has_option(
-                "Options", "rescale_v"
-            ) and self.config.getboolean("Options", "rescale_v"):
-                self.apply(lambda x: x[self.vcol] * v_scale, self.vcol)
+                self.apply(
+                    lambda x: x[self.gcol] / Gn,
+                    self.gcol,
+                    header=self.column_headers[self.gcol],
+                )
         return self
 
     def offset_correct(self):
@@ -121,11 +138,34 @@ class working(Data):
                 poly=4,
                 peaks=True,
                 troughs=True,
+                full_data=False,
             )
-            peaks = filter(lambda x: abs(x) < 4 * self.delta["value"], peaks)
-            offset = np.mean(np.array(peaks))
-            print("Mean offset =" + str(offset))
-            self.apply(lambda x: x[self.vcol] - offset, self.vcol)
+            peaks = list(
+                filter(lambda x: abs(x) < 4 * self.delta["value"], peaks)
+            )
+            if peaks:
+                offset = np.mean(np.array(peaks))
+                print(
+                    f"Removing offset by peaks method - Mean offset = {offset}"
+                )
+            else:
+                v_data = self // self.vcol
+                offset = (v_data.min() + v_data.max()) / 2
+                print(
+                    f"Removing offset by v-range method - Mean offset = {offset}"
+                )
+            self[:, self.vcol] -= offset
+        return self
+
+    def Decompose(self):
+        """Optionally decompose the signal intro symmetric and antisymmetric parts."""
+        if self.config.has_option(
+            "Options", "decompose"
+        ) and self.config.getboolean("Options", "decompose"):
+            print("Doing decomposition to symmetrize data")
+            self.decompose(xcol=self.vcol, ycol=self.gcol, sym=self.gcol)
+            self.setas(x=self.vcol, y=self.gcol)
+            self.data = self.data[~np.any(np.isnan(self.data), axis=1)]
         return self
 
     def plot_results(self):
@@ -151,7 +191,8 @@ class working(Data):
 
     def Fit(self):
         """Run the fitting code."""
-        self.Discard().Normalise().offset_correct()
+        # Run a pre-fitting data munge chain
+        self.RescaleV().Discard().offset_correct().Decompose().Normalise()
         chi2 = self.p0.shape[0] > 1
 
         method = getattr(self, self.method)
@@ -188,4 +229,5 @@ class working(Data):
 
 if __name__ == "__main__":
     d = working()
+    d.load_config()
     fit = d.Fit()

@@ -18,6 +18,79 @@ from Stoner.compat import int_types, string_types, get_func_params
 from .utils import outlier as _outlier, _twoD_fit, GetAffineTransform
 
 
+def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
+    """Do the actual work of binning the data.
+
+    Args:
+        x (1D array of N float):
+            x data values
+        y_vals (2D array (N,m) floats):
+            Y data values
+        bin_edges (1D array of n+1 float):
+            Edges of the new x value bins
+
+    Keyword Arguments:
+        y_errs (2D array (N,m) floats or None):
+            uncertainities in y values. Default value is None in which case all vbalues equally weighted.
+
+    Returns:
+        tuple[1D array of x, 2D array of y, 2D array of y_errs, binned_counts]
+    """
+    n_bins = bin_edges.size - 1
+    m = y_vals.shape[1]
+    if y_errs is None:
+        y_errs = np.ones_like(y_vals)
+
+    # Compute bin indices for each x
+    bin_indices = np.digitize(x, bin_edges) - 1
+
+    # Mask out-of-range values
+    valid = (bin_indices >= 0) & (bin_indices < n_bins)
+    x = x[valid]
+    y_vals = y_vals[valid]
+    y_errs = y_errs[valid]
+    bin_indices = bin_indices[valid]
+
+    # Deal with 0s in y_errs
+    min_y_err = 1 if y_errs.max() == 0 else y_errs.max() * 1e-8
+    y_errs = np.where(y_errs == 0, min_y_err, y_errs)
+
+    # Compute weights: inverse variance
+    weights = 1.0 / (y_errs**2)
+
+    # Prepare output arrays
+    binned_y = np.zeros((n_bins, m))
+    binned_err = np.zeros((n_bins, m))
+    binned_counts = np.zeros((n_bins, m))
+
+    # Use bincount for each column
+    for j in range(m):
+        w = weights[:, j]
+        yw = y_vals[:, j] * w
+
+        sum_w = np.bincount(bin_indices, weights=w, minlength=n_bins)
+        sum_w[sum_w <= 0] = np.nan
+        sum_yw = np.bincount(bin_indices, weights=yw, minlength=n_bins)
+        binned_counts[:, j] = np.bincount(bin_indices, minlength=n_bins)
+
+        binned_y[:, j] = sum_yw / sum_w
+
+        # Calculate the weighted uncertainity
+        variance = (y_vals[:, j] - binned_y[:, j][bin_indices]) ** 2
+
+        variance_n = variance / binned_counts[:, j][bin_indices] * w / sum_w[bin_indices]
+        variance_b = np.bincount(bin_indices, weights=variance_n, minlength=n_bins)
+        std_err = np.sqrt(variance_b)
+        std_err[np.isnan(std_err)] = 0.0
+
+        binned_err[:, j] = std_err
+
+    # Bin centers
+    bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+
+    return bin_centers, binned_y, binned_err, binned_counts
+
+
 class FilteringOpsMixin:
     """Provide additional filtering sndsmoothing methods to :py:class:`Stoner.Data`."""
 
@@ -82,7 +155,9 @@ class FilteringOpsMixin:
             data = self.column(list(col)).T
             data = np.vstack((data, np.arange(data.shape[1])))
 
-        ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
+        ddata = savgol_filter(
+            data, window_length=points, polyorder=poly, deriv=order, mode="interp", axis=len(data.shape) - 1
+        )
         if isinstance(pad, bool) and pad:
             offset = int(np.ceil(points * (order + 1) ** 2 / 8))
             padv = np.mean(ddata[:, offset:-offset], axis=1)
@@ -164,65 +239,99 @@ class FilteringOpsMixin:
                 ycol = cols["ycol"]
         yerr = kargs.pop("yerr", cols["yerr"] if cols["has_yerr"] else None)
 
-        bin_left, bin_right, bin_centres = self.make_bins(xcol, bins, mode, **kargs)
+        bin_edges, bin_centres = self.make_bins(xcol, bins, mode, **kargs)
 
-        ycol = self.find_col(ycol)
-        if yerr is not None:
-            yerr = self.find_col(yerr)
-
-        ybin = np.zeros((len(bin_left), len(ycol)))
-        ebin = np.zeros((len(bin_left), len(ycol)))
-        nbins = np.zeros((len(bin_left), len(ycol)))
         xcol = self.find_col(xcol)
-        i = 0
+        ycol = self.find_col(ycol, force_list=True)
+        if yerr is not None:
+            yerr = self.find_col(yerr, force_list=True)
+            yerr = self.data[:, yerr]
 
-        for limits in zip(bin_left, bin_right):
-            data = self.search(xcol, limits)
-            if len(data) > 1:
-                ok = np.logical_not(np.isnan(data.y))
-                data = data[ok]
-            elif len(data) == 0 or (len(data) == 1 and np.isnan(data.y)):
-                shape = list(data.shape)
-                shape[0] = 0
-                data = np.zeros(shape)
-            if yerr is not None:
-                w = 1.0 / data[:, yerr] ** 2
-                W = np.sum(w, axis=0)
-                if data.shape[0] > 3:
-                    e = max(np.std(data[:, ycol], axis=0) / np.sqrt(data.shape[0]), (1.0 / np.sqrt(W)) / data.shape[0])
-                else:
-                    e = 1.0 / np.sqrt(np.where(W > 0, W, np.nan))
+        bin_centres, y_vals, y_errs, bin_counts = _bin_weighted(
+            self.data[:, xcol], self.data[:, ycol], bin_edges, yerr
+        )
+
+        if not clone:
+            return bin_centres, y_vals, y_errs, bin_counts
+
+        ret = self.clone
+        ret.data = np.zeros((len(bin_centres), 3 * y_vals.shape[1]))
+        ret.data[:, 0] = bin_centres
+        ret.data[:, 1::3] = y_vals
+        ret.data[:, 2::3] = y_errs
+        ret.data[:, 3::3] = bin_counts
+
+        columns = np.zeros(ret.data.shape[1], dtype=str)
+        columns[0] = self.column_headers[xcol]
+        columns[1::3] = self.column_headers[ycol]
+        columns[2::3] = [f"d{h}" for h in self.column_headers[ycol]]
+        columns[3::3] = [f"#/bin {h}" for h in self.column_headers[ycol]]
+        setas = np.ones_like(columns, dtype=str)
+        setas[0] = "x"
+        setas[1::3] = "y"
+        setas[2::3] = "e"
+        setas[3::3] = "."
+        ret.setas = list(setas)
+        ret.column_headers = columns
+
+        return ret
+
+    def deduplicate(self, col, action="average", clone=True):
+        """Remove rows with duplicated values in the given column.
+
+        Args:
+            col (Index type):
+                Column to look for duplicate values.
+
+        Keyword Arguments:
+            action (str):
+                What to do with duplicate values:
+                    - *average* - work out the average of the rows which are duplicated
+                    - *median* - work out the median value of all the rows with duplicate search column values
+                    - *first*, *last* - use the first or last value of duplicated search column values
+            clone (bool):
+                Return a clone of the current AnalysisMixin with depuplicated data (True)
+                or just the data (False).
+
+        Returns:
+            (:py:class:`Stoner.Data` or tuple of 4 array-like):
+                Either a clone of the current data set with the depuplciated data, or just a data array.
+        """
+        cols = self.find_col(col, force_list=True)
+        idx = []
+        for row in self.data[:, cols]:
+            if row.size > 1:
+                idx.append((x for x in row))
             else:
-                w = np.ones((data.shape[0], len(ycol)))
-                W = data.shape[0]
-                if data[:, ycol].size > 1:
-                    e = np.std(data[:, ycol], axis=0) / np.sqrt(W)
-                else:
-                    e = np.nan
-            if data.shape[0] == 0 and self.debug:
-                warn(f"Empty bin at {limits}")
-            y = np.sum(data[:, ycol] * (w / W), axis=0)
-            ybin[i, :] = y
-            ebin[i, :] = e
-            nbins[i, :] = data.shape[0]
-            i += 1
+                idx.append(row)
+        idx = np.array(idx)
+        vals, rev, idy, nums = np.unique(idx, return_index=True, return_inverse=True, return_counts=True)
+
+        select = np.zeros_like(idx, dtype=bool)
+        select[rev] = True
+        ix = np.arange(len(self))
+        vals = vals[nums > 1]
+        nums = nums[nums > 1]
+        data = self.data.copy()
+        for val, i, num in zip(vals, idx, nums):
+            subset = data[idx == val]
+            indices = ix[idx == val]
+            match action:
+                case "average":
+                    data[indices] = np.average(subset, axis=0)
+                case "median":
+                    data[indices] = np.median(subset, axis=0)
+                case "first":
+                    data[indices] = data[indices.min()]
+                case "last":
+                    data[indices] = data[indices.max()]
+                case _:
+                    raise ValueError(f"Unknown deduplication action {action}")
         if clone:
             ret = self.clone
-            ret.data = np.atleast_2d(bin_centres).T
-            ret.column_headers = [self.column_headers[xcol]]
-            ret.setas = ["x"]
-            for i in range(ybin.shape[1]):
-                head = str(self.column_headers[ycol[i]])
-
-                ret.add_column(ybin[:, i], header=head)
-                ret.add_column(ebin[:, i], header=f"d{head}")
-                ret.add_column(nbins[:, i], header=f"#/bin {head}")
-                s = list(ret.setas)
-                s[-3:] = ["y", "e", "."]
-                ret.setas = s
-        else:
-            ret = (bin_centres, ybin, ebin, nbins)
-        return ret
+            ret.data = self.data[select, :]
+            return ret
+        return self.data[select, :]
 
     def extrapolate(self, new_x, xcol=None, ycol=None, yerr=None, overlap=20, kind="linear", errors=None):
         """Extrapolate data based on local fit to x,y data.
@@ -447,6 +556,13 @@ class FilteringOpsMixin:
                 bin_start = np.exp(bin_start)
                 bin_stop = np.exp(bin_stop)
                 bin_centres = np.exp(bin_centres)
+            elif mode.lower().startswith("spa"):  # Equal spacing mode
+                xdata = np.array(sorted(self // xcol))[
+                    [int(x) for x in np.round(np.linspace(0, len(self) - 1, bins + 1))]
+                ]
+                bin_start = xdata[:-1]
+                bin_stop = xdata[1:]
+                bin_centres = (bin_start + bin_stop) / 2
             else:
                 raise ValueError(f"mode should be either lin(ear) or log(arthimitc) not {mode}")
         elif isinstance(bins, float):  # Given a bin with as a flot
@@ -488,7 +604,8 @@ class FilteringOpsMixin:
             raise TypeError(f"bins must be either an integer or a float, not a {type(bins)}")
         if len(bin_start) > len(self):
             raise ValueError("Attempting to bin into more bins than there is data.")
-        return bin_start, bin_stop, bin_centres
+        bin_edges = np.append(bin_start, bin_stop[-1])
+        return bin_edges, bin_centres
 
     def outlier_detection(
         self, column=None, window=7, shape="boxcar", certainty=3.0, action="mask", width=1, func=None, **kargs

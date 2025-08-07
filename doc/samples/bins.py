@@ -23,6 +23,7 @@ for i, (binned, label) in enumerate(
     binned.subplot(411 + i)
     d.plot(fmt="k,", capsize=2.0)
     binned.fig = d.fig
+    binned.data = binned.data[binned.data[:, 2] != 0]
     binned.plot(plotter=errorfill, label=label, color="red")
 
     d.xlim = (1, 6)

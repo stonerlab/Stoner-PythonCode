@@ -70,11 +70,14 @@ def test_bins():
         testd.make_bins(0, bins=bins, mode="bad")
 
     b1 = testd.make_bins(0, bins=bins, mode="lin")
-    for element in b1:
-        assert len(element) == 10
+    for element,length in zip(b1,[11,10]):
+        assert len(element) == length
     b2 = testd.make_bins(0, bins=bins, mode="log")
-    for element in b2:
-        assert len(element) == 10
+    for element,length in zip(b2,[11,10]):
+        assert len(element) == length
+    b3 = testd.make_bins(0, bins=10, mode="spacing")
+    for element,length in zip(b3,[11,10]):
+        assert len(element) == length
     with pytest.raises(TypeError):
         testd.make_bins(0, "10", mode="bad")
     with pytest.raises(ValueError):

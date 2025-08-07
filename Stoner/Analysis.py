@@ -10,6 +10,7 @@ try:
 except ImportError:
     from scipy.integrate import cumulative_trapezoid as cumtrapz
 from scipy.optimize import curve_fit
+from scipy.interpolate import interp1d
 
 from .tools import isiterable, isTuple
 from .compat import string_types
@@ -126,7 +127,7 @@ class AnalysisMixin:
         clipper = (min(clipper), max(clipper))
         return self.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
 
-    def decompose(self, xcol=None, ycol=None, sym=None, asym=None, replace=True, **kwords):
+    def decompose(self, xcol=None, ycol=None, sym=None, asym=None, replace=True, hysteretic=False, **kwords):
         """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
 
         Keyword Arguments:
@@ -140,6 +141,8 @@ class AnalysisMixin:
                 Index of column for asymmetric part of ata. Defaults to appending to end of data
             replace (bool):
                 Overwrite data with output (true)
+            hysteretic (book)L
+                Look separately for outgoing and incoming data first.
 
         Returns:
             self: The newly modified :py:class:`AnalysisMixin`.
@@ -160,17 +163,42 @@ class AnalysisMixin:
             ycol = cols["ycol"]
         xcol = self.find_col(xcol)
         ycol = self.find_col(ycol)
-        if isinstance(ycol, list):
-            ycol = ycol[0]  # FIXME should work with multiple output columns
-        if np.abs((self // xcol).min()) < np.abs((self // xcol).max()):
-            pxdata = self.search(xcol, lambda x, r: x < 0, xcol)
+        if not isinstance(ycol, list):
+            ycol = [ycol]
+
+        if hysteretic:
+            from .Util import split_up_down
+
+            fldr = split_up_down(self, self.xcol)
+            for grp in ["rising", "falling"]:
+                for f in fldr[grp][1:]:
+                    fldr[grp][0] += f
+            rising = fldr["rising"][0].sort(xcol)
+            falling = fldr["falling"][0].sort(xcol)
+            points = fldr["rising"][0].size
         else:
-            pxdata = self.search(xcol, lambda x, r: x > 0, xcol)
-        xdata = np.sort(np.append(-pxdata, pxdata))
-        self.data = self.interpolate(xdata, xcol=xcol)
-        ydata = self.data[:, ycol]
-        symd = (ydata + ydata[::-1]) / 2
-        asymd = (ydata - ydata[::-1]) / 2
+            rising = self.clone.sort(xcol)
+            falling = rising.clone
+            points = rising.x.size
+
+        rising_data = rising.deduplicate(xcol, clone=False)
+        falling_data = falling.deduplicate(xcol, clone=False)
+
+        falling_func = interp1d(
+            falling_data[:, xcol],
+            falling_data[:, ycol],
+            kind="linear",
+            bounds_error=False,
+            axis=0,
+        )
+
+        rising_func = interp1d(rising_data[:, xcol], rising_data[:, ycol], kind="linear", bounds_error=False, axis=0)
+        rising_vals = rising_func((self // xcol).view(np.ndarray))
+        falling_vals = falling_func(-(self // xcol).view(np.ndarray))
+
+        symd = (rising_vals + falling_vals) / 2
+        asymd = (rising_vals - falling_vals) / 2
+
         if sym is None:
             self &= symd
             self.column_headers[-1] = "Symmetric Data"
@@ -181,7 +209,6 @@ class AnalysisMixin:
             self.column_headers[-1] = "Asymmetric Data"
         else:
             self.add_column(asymd, header="Symmetric Data", index=asym, replace=replace)
-
         return self
 
     def integrate(

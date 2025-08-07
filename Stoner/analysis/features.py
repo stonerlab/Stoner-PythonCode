@@ -109,7 +109,7 @@ class FeatureOpsMixin:
         if xcol is None:
             xdata = np.arange(len(self))
         else:
-            xdata = self.column(xcol)
+            xdata = self.column(xcol).ravel()
         xdata = interp1d(np.arange(len(self)), xdata, kind="cubic")
 
         possible_peaks = np.array(threshold(0, d1, rising=troughs, falling=peaks))
