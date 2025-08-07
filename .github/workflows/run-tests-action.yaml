@@ -34,6 +34,7 @@ jobs:
         run: pip install --no-deps .
       - name: Install headless server
         run: |
+           sudo apt-get update
            sudo apt-get install xvfb
            sudo apt-get install qtbase5-dev
       - name: Test with xvfb
