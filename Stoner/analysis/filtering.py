@@ -3,7 +3,6 @@
 """Filtering and smoothing functions for analysis code."""
 
 from copy import deepcopy as copy
-from warnings import warn
 
 import numpy as np
 from numpy import ma
@@ -285,7 +284,6 @@ def bin(datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kar
     See Also:
         User Guide section :ref:`binning_guide`
     """
-
     if None in (xcol, ycol):
         cols = datafile.setas._get_cols()
         if xcol is None:
@@ -361,7 +359,7 @@ def deduplicate(datafile, col, action="average", clone=True):
         else:
             idx.append(row)
     idx = np.array(idx)
-    vals, rev, idy, nums = np.unique(idx, return_index=True, return_inverse=True, return_counts=True)
+    vals, rev, _, nums = np.unique(idx, return_index=True, return_inverse=True, return_counts=True)
 
     select = np.zeros_like(idx, dtype=bool)
     select[rev] = True

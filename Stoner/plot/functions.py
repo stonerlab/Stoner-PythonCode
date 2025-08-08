@@ -260,7 +260,7 @@ def _fix_kargs(datafile, function=None, defaults=None, otherkargs=None, **kargs)
         dictionary of correct arguments, dictionary of all arguments,dictionary of keyword arguments
     """
     if defaults is None:
-        defaults = dict()
+        defaults = {}
     defaults.update(kargs)
 
     pass_fig_kargs = {}
@@ -875,8 +875,8 @@ def plot_matrix(
         plotter = partial(_surface_plotter, datafile)
     plotter(xdata, ydata, zdata, cmap=cmap, **kwords)
     labels = {"xlabel": (xlabel, "X Data"), "ylabel": (ylabel, "Y Data"), "zlabel": (zlabel, "Z Data")}
-    for label in labels:
-        (v, default) = labels[label]
+    for label, label_txt in labels.items():
+        (v, default) = label_txt
         if v is None:
             if label in datafile.metadata:
                 labels[label] = datafile[label]
@@ -1227,9 +1227,9 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
         "cstride": rstride,
     }
     coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
-    for k in coltypes:
-        if isinstance(coltypes[k], (int, str, _pattern_type)):
-            label = datafile._col_label(coltypes[k])
+    for k, coltype in coltypes.items():
+        if isinstance(coltype, (int, str, _pattern_type)):
+            label = datafile._col_label(coltype)
             if isinstance(label, list):
                 label = ",".join(label)
             defaults[k] = label
@@ -1418,9 +1418,9 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         }
         projection = kargs.pop("projection", "3d")
         coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
-        for k in coltypes:
-            if isinstance(coltypes[k], (int, str, _pattern_type)):
-                label = datafile._col_label(coltypes[k])
+        for k, coltype in coltypes.items():
+            if isinstance(coltype, (int, str, _pattern_type)):
+                label = datafile._col_label(coltype)
                 if isinstance(label, list):
                     label = ",".join(label)
                 defaults[k] = label

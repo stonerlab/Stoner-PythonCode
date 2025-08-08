@@ -55,7 +55,7 @@ def scan_dir(root):
 def discard_earlier(files):
     """Discard files where a similar named file with !#### exists."""
     search = re.compile(r"^(?P<basename>.*)\!(?P<rev>\d+)(?P<ext>\.[^\.]*)$")
-    dups = dict()
+    dups = {}
     ret = []
     for f in files:
         match = search.match(f)

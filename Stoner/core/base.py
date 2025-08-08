@@ -334,10 +334,10 @@ class TypeHintedDict(RegexpDict):
 
         Args:
             *args, **kargs:
-                Pass any parameters through to the dict() constructor.
+                Pass any parameters through to the{} constructor.
 
 
-        Calls the dict() constructor, then runs through the keys of the
+        Calls the{} constructor, then runs through the keys of the
         created dictionary and either uses the string type embedded in
         the keyname to generate the type hint (and remove the
         embedded string type from the keyname) or determines the likely
@@ -656,7 +656,7 @@ class metadataObject(MutableMapping):
     def __new__(cls, *args):
         """Pre initialisation routines."""
         self = super().__new__(cls)
-        self._public_attrs_real = dict()
+        self._public_attrs_real = {}
         self._metadata = TypeHintedDict()
         return self
 
@@ -673,7 +673,7 @@ class metadataObject(MutableMapping):
         try:
             return self._public_attrs_real  # pylint: disable=no-member
         except AttributeError:
-            self._public_attrs_real = dict()  # pylint: disable=attribute-defined-outside-init
+            self._public_attrs_real = {}  # pylint: disable=attribute-defined-outside-init
             return self._public_attrs_real
 
     @_public_attrs.setter

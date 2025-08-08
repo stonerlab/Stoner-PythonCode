@@ -231,8 +231,8 @@ def ocr_metadata(kerr_im, field_only=False):
             )
 
         metadata = {}  # now go through and process all keys
-        for key in text_areas:
-            im = kerr_im.crop(box=text_areas[key], copy=True)
+        for key, val in text_areas.items():
+            im = kerr_im.crop(box=val, copy=True)
             metadata[key] = _tesseract_image(kerr_im, key)
         metadata["ocr_scalebar_length_pixels"] = sb_length
         if isinstance(metadata["ocr_scalebar_length_microns"], float):

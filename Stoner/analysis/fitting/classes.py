@@ -20,7 +20,7 @@ class ODR_Model(odrModel):
 
     def __init__(self, *args, **kargs):
         """Initialise with lmfit_mod.Models.Model or callable."""
-        meta = kargs.pop("meta", dict())
+        meta = kargs.pop("meta", {})
         kargs = copy(kargs)
         for n in list(kargs.keys()):
             if n in ["replace", "header", "result", "output", "residuals", "prefix"]:

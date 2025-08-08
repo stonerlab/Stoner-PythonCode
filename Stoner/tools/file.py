@@ -56,9 +56,7 @@ def get_filename(args, kargs):
     return None, args, kargs
 
 
-def file_dialog(
-    mode: str, filename: Filename, filetype: str, baseclass: Type[metadataObject]
-) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
+def file_dialog(mode: str, filename: Filename, filetype: str) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
     """Create a file dialog box for loading or saving ~b DataFile objects.
 
     Args:
@@ -68,8 +66,6 @@ def file_dialog(
             The starting filename
         filetype (submclass of metadataObject, string):
             The filetype to open with - used to selectr file patterns
-        basclass (subclass of metadataObject):
-            Type of object we're looking to create'
 
     Returns:
         (pathlib.PurePath or None):
@@ -395,6 +391,8 @@ def clear_routine(name, loader=True, saver=True):
         [_loaders_by_pattern, _savers_by_pattern],
         [_loaders_by_type, None],
     ):
+        if not {"loader": loader, "saver": saver}[k]:
+            continue
         if not locals()[k]:
             continue
         func = lookup.pop(name, None)

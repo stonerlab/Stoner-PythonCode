@@ -65,7 +65,7 @@ def _curve_fit_p0_list(p0, model):
         return p0
 
     if isinstance(p0, Mapping):
-        p_new = dict()
+        p_new = {}
         for x, v in p0.items():
             p_new[x] = getattr(v, "value", float(v))
         ret = []

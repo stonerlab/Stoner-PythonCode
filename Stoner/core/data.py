@@ -287,7 +287,7 @@ class Data(
         """Two argument constructors handled here. Called form __init__."""
         (arg0, arg1) = args
         match args:
-            case (arg0, dict() as arg1):
+            case (arg0, {} as arg1):
                 self._init_single(arg0, **kargs)
                 self._init_single(arg1, **kargs)
             case (arg0, Iterable() as arg1) if all_type(arg1, str):
@@ -938,7 +938,7 @@ class Data(
         ):
             filename, filetype = get_file_name_type(filename, filetype, Data)
         if filename is None or not filename:
-            filename = file_dialog("r", filename, "Data", Data)
+            filename = file_dialog("r", filename, "Data")
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA

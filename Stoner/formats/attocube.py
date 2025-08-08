@@ -59,7 +59,7 @@ def _read_signal(scandata, g):
     metadata = g.require_group("metadata")
     typehints = g.get("typehints", None)
     if not isinstance(typehints, h5py.Group):
-        typehints = dict()
+        typehints = {}
     else:
         typehints = typehints.attrs
     for i in sorted(metadata.attrs):
@@ -425,9 +425,9 @@ class AttocubeScan(ImageStack):
                         parts = self._common_metadata.export(k).split("=")
                         metadata.attrs[k] = "=".join(parts[1:])
 
-            for g in self.groups:  # Recurse to save groups
+            for g, grp_item in self.groups.items():  # Recurse to save groups
                 grp = f.require_group(g)
-                self.groups[g].to_hdf5(grp)
+                grp_item.to_hdf5(grp)
 
             for ch in self.channels:
                 signal = f.require_group(ch)

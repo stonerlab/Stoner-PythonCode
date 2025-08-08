@@ -52,7 +52,7 @@ def apply(datafile, func, col=None, replace=True, header=None, **kargs):
     if col is None:
         col = datafile.setas.get("y", [0])[0]
     col = datafile.find_col(col)
-    kargs.update(kargs.pop("_extra", dict()))
+    kargs.update(kargs.pop("_extra", {}))
     # Check the dimension of the output
     ret = func(next(datafile.rows()), **kargs)
     try:

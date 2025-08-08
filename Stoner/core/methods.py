@@ -2,7 +2,6 @@
 """Mxinin classes for DataFile objects."""
 
 import copy
-import io
 import pathlib
 import re
 from collections.abc import Iterable
@@ -164,7 +163,7 @@ def find_duplicates(datafile, xcol=None, delta=1e-8):
     delta = np.atleast_1d(np.array(delta))
     if delta.size != search_data.shape[1]:
         delta = np.append(delta, np.ones(search_data.shape[1]) * delta[0])[: search_data.shape[1]]
-    results = dict()
+    results = {}
     for ix in range(search_data.shape[0]):
         row = np.atleast_1d(search_data[ix])
         if tuple(row) in results:
@@ -443,10 +442,10 @@ def select(datafile, *args, **kargs):
 
     result = datafile.clone
     res = np.zeros(len(datafile), dtype=bool)
-    for arg in kargs:
+    for arg, val in kargs.items():
         parts = arg.split("__")
         if parts == ["", ""]:
-            func = kargs[arg]
+            func = val
             res = np.logical_or(res, np.array([func(r) for r in datafile.data]))
             continue
         if len(parts) == 1 or parts[-1] not in operator:
@@ -458,10 +457,10 @@ def select(datafile, *args, **kargs):
             end = -1
             negate = False
         if parts[0] == "_i":
-            res = np.logical_or(res, np.logical_xor(negate, operator[parts[-1]](datafile.data.i, kargs[arg])))
+            res = np.logical_or(res, np.logical_xor(negate, operator[parts[-1]](datafile.data.i, val)))
         else:
             col = "__".join(parts[:end])
-            res = np.logical_or(res, np.logical_xor(negate, operator[parts[-1]](datafile.column(col), kargs[arg])))
+            res = np.logical_or(res, np.logical_xor(negate, operator[parts[-1]](datafile.column(col), val)))
     result.data = datafile.data[res, :]
     return result
 
@@ -572,7 +571,7 @@ def split(datafile, *args, final="files"):
     else:
         args = list(args)
         xcol = args.pop(0)
-    data = dict()
+    data = {}
 
     match xcol:
         case int() | str() | _pattern_type():
@@ -1120,7 +1119,7 @@ def save(datafile, filename=None, **kargs):
         filename = datafile.filename
     if filename is None or (isinstance(filename, bool) and not filename):
         # now go and ask for one
-        filename = file_dialog("w", datafile.filename, type(datafile), datafile.__class__)
+        filename = file_dialog("w", datafile.filename, type(datafile))
         if not filename:
             raise RuntimeError("Cannot get filename to save")
     match as_loaded:

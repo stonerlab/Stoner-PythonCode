@@ -201,8 +201,8 @@ def load_qdfile(new_data, *args, **kargs):
         new_data.data = data
     new_data.column_headers = column_headers
     s = new_data.setas
-    for k in setas:
-        for ix in setas[k]:
+    for k, v in setas.items():
+        for ix in v:
             s[ix - 1] = k
     new_data.setas = s
     return new_data

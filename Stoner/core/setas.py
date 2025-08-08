@@ -512,7 +512,7 @@ class setas(MutableMapping):
                 while other in new._setas:
                     new._setas[new._setas.index(other)] = "."
                 return new
-            case dict():
+            case {}:
                 me = new.to_dict()
                 other = new.clone(other, _self=True).to_dict()
                 for k, v in other.items():
@@ -752,16 +752,16 @@ class setas(MutableMapping):
         If multiple columns are assigned to the same type, then the column names are
         returned as a list. If column headers are duplicated.
         """
-        ret = dict()
+        ret = {}
         for k, ch in zip(self._setas, self._unique_headers):
             if k != ".":
                 if k in ret:
                     ret[k].append(ch)
                 else:
                     ret[k] = [ch]
-        for k in ret:
-            if len(ret[k]) == 1:
-                ret[k] = ret[k][0]
+        for k, v in ret.items():
+            if len(v) == 1:
+                ret[k] = v[0]
         return ret
 
     def to_list(self):

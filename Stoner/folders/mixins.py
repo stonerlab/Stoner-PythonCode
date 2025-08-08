@@ -101,7 +101,7 @@ class DiskBasedFolderMixin:
 
     _defaults = {
         "type": None,
-        "extra_args": dict(),
+        "extra_args": {},
         "pattern": ["*.*"],
         "exclude": ["*.tdms_index"],
         "read_means": False,
