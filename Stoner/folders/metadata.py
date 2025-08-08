@@ -117,11 +117,9 @@ class MetadataProxy(MutableMapping):
     def all(self):
         """List all the metadata dictionaries in the Folder."""
         if hasattr(self._folder, "_metadata"):  # Extra logic for Folders like Stack
-            for item in self._folder._metadata.items():
-                yield item
+            yield from self._folder._metadata.items()
         else:
-            for item in self._folder:
-                yield item.metadata
+            yield from self._folder
 
     @all.setter
     def all(self, value):
@@ -174,8 +172,7 @@ class MetadataProxy(MutableMapping):
 
     def __iter__(self):
         """Iterate over objects."""
-        for k in self.common_keys:
-            yield k
+        yield from self.common_keys
 
     def __len__(self):
         """Out length is our common_keys."""
@@ -239,8 +236,7 @@ class MetadataProxy(MutableMapping):
                 keys |= set(d.metadata.keys())
         else:
             keys = set()
-        for k in sorted(keys):
-            yield k
+        yield from sorted(keys)
 
     def all_items(self):
         """Return the result of indexing the metadata with all_keys().

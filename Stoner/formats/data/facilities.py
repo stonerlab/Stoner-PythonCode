@@ -265,7 +265,7 @@ def load_sns(new_data, *args, **kargs):
                 elif (
                     section == "Direct Beam Runs" or section == "Data Runs"
                 ):  # These are constructed into lists ofg dictionaries for each file
-                    sec = list()
+                    sec = []
                     header = next(data)
                     header = header[2:].strip()
                     keys = [s.strip() for s in header.split("  ") if s.strip()]

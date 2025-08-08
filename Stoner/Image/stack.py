@@ -33,7 +33,7 @@ class ImageStackMixin:
         self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
         self._metadata = RegexpDict()
         self._public_attrs_store = RegexpDict()
-        self._names = list()
+        self._names = []
         self._sizes = np.array([], dtype=int).reshape(0, 2)
 
         if not len(args):

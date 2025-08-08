@@ -799,7 +799,7 @@ def plot_matrix(
             ):  # We have a rectang, but we need to adjust the row origin
                 rectang[0] = yvals + 1
             yvals = datafile[yvals]  # change the yvals into a numpy array
-        case list() | tuple() | np.ndarray():
+        case [] | tuple() | np.ndarray():
             yvals = np.array(yvals)
         case None:
             if isinstance(xvals, (int, str, _pattern_type)):  # Do we have an xcolumn header to take away ?
@@ -955,7 +955,7 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
         "xlabel": datafile._col_label(datafile.find_col(c.xcol)),
         "ylabel": datafile._col_label(datafile.find_col(c.ycol), True),
     }
-    otherargs = []
+    otherargs = list()
     if "plotter" not in kargs and (
         c.xerr is not None or c.yerr is not None
     ):  # USe and errorbar blotter by default for errors

@@ -429,14 +429,12 @@ class BaseFolder(MutableSequence):
     @property
     def ls(self):
         """List just the names of the objects in the folder."""
-        for f in self.__names__():
-            yield f
+        yield from self.__names__()
 
     @property
     def lsgrp(self):
         """Return a list of the groups as a generator."""
-        for k in self.groups:
-            yield k
+        yield from self.groups
 
     @property
     def metadata(self):
@@ -1705,7 +1703,7 @@ class BaseFolder(MutableSequence):
                 self.directory = commonpath([path.realpath(path.join(self.directory, x)) for x in self.__names__()])
             names = self.__names__()
             relpaths = [path.relpath(path.join(self.directory, f), self.directory) for f in names]
-            dels = list()
+            dels = []
             for i, f in enumerate(relpaths):
                 ret = self.file(f, self.__getter__(names[i], instantiate=None))
                 if isinstance(ret, BaseFolder):  # filed ok

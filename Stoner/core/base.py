@@ -731,18 +731,15 @@ class metadataObject(MutableMapping):
 
     def keys(self) -> str:
         """Return the keys of the metadata dictionary."""
-        for k in self.metadata.keys():
-            yield k
+        yield from self.metadata.keys()
 
     def items(self) -> Tuple[str, Any]:
         """Make sure we implement an items that doesn't just iterate over self."""
-        for k, v in self.metadata.items():
-            yield k, v
+        yield from self.metadata.items()
 
     def values(self) -> Any:
         """Return the values of the metadata dictionary."""
-        for v in self.metadata.values():
-            yield v
+        yield from self.metadata.values()
 
     def save(self, filename: Filename = None, **kargs: Any):
         """Stub method for a save function."""
@@ -763,7 +760,7 @@ class SortedMultivalueDict(OrderedDict):
                 return [(p, item)]
             case [(int(p), item), *rest]:
                 return sorted([(p, item)] + cls._matching(rest))
-            case []:
+            case list():
                 return []
             case _:
                 raise TypeError("Can only add items that are a typle of int,value")

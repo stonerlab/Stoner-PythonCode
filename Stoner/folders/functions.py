@@ -68,7 +68,7 @@ def extract(folder, *metadata, **kargs):
         results.metadata = group[0].metadata
         headers = []
 
-        ok_data = list()
+        ok_data = []
         for m in metadata:  # Sanity check the metadata to include
             try:
                 test = results[m]

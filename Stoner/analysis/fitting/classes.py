@@ -77,7 +77,7 @@ class ODR_Model(odrModel):
         if not isinstance(p0, lmfit_mod.Parameters):  # This can happen if we are creating an ODR_Model in advance.
             tmp_model = AttributeStore(meta)
             p0 = _prep_lmfit_p0(tmp_model, None, None, p0, kargs)[0]
-        p_new = list()
+        p_new = []
         meta["params"] = copy(p0)
         for p in p0.values():
             p_new.append(p.value)
@@ -128,9 +128,9 @@ class MimizerAdaptor:
         """
         self.func = model.func
         hints = kargs.pop("params")
-        p0 = list()
-        upper = list()
-        lower = list()
+        p0 = []
+        upper = []
+        lower = []
         for name, hint in hints.items():
             if not isinstance(hint, lmfit_mod.Parameter):
                 hint = lmfit_mod.Parameter(**hint)

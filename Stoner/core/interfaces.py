@@ -104,8 +104,7 @@ class DataFileInterfacesMixin:
         Returns:
             Next row
         """
-        for r in self.rows(False):
-            yield r
+        yield from self.rows(False)
 
     def __len__(self):
         """Return the length of the data.

@@ -50,7 +50,7 @@ class setas(MutableMapping):
         self._row = row
         self._cols = AttributeStore()
         self._shape = tuple()
-        self._setas = list()
+        self._setas = []
         self._column_headers = TypedList(string_types)
         self._object = bless
         self._col_defaults = {
@@ -390,7 +390,7 @@ class setas(MutableMapping):
                     ret = ret[0]
                 return ret
             case "#x" | "y#" | "#z" | "#u" | "#v" | "#w" | "#d" | "#e" | "#f":
-                ret = list()
+                ret = []
                 name = name[1]
                 s = 0
                 while name in self._setas[s:]:
@@ -419,8 +419,7 @@ class setas(MutableMapping):
             the items.
         """
         _ = self.setas  # Force setas to fix size
-        for c in self._setas:
-            yield c
+        yield from self._setas
 
     def __ne__(self, other):
         """!= is the same as no ==."""
@@ -512,7 +511,7 @@ class setas(MutableMapping):
                 while other in new._setas:
                     new._setas[new._setas.index(other)] = "."
                 return new
-            case {}:
+            case dict():
                 me = new.to_dict()
                 other = new.clone(other, _self=True).to_dict()
                 for k, v in other.items():
@@ -541,7 +540,7 @@ class setas(MutableMapping):
                     if new is NotImplemented:
                         return NotImplemented
                 return new
-            case int() | slice() | list() | re.Pattern():
+            case int() | slice() | [] | re.Pattern():
                 try:
                     new._setas[new.find_col(other)] = "."
                     return new
@@ -649,24 +648,21 @@ class setas(MutableMapping):
 
         Mapping keys are the same as iterating over the unique headers
         """
-        for c in self._unique_headers:
-            yield c
+        yield from self._unique_headers
 
     def values(self):
         """Access mapping values.
 
         Mapping values are the same as iterating over setas.
         """
-        for v in self.setas:
-            yield v
+        yield from self.setas
 
     def items(self):
         """Access mapping items.
 
         Mapping items iterates over keys and values.
         """
-        for k, v in zip(self._unique_headers, self.setas):
-            yield k, v
+        yield from zip(self._unique_headers, self.setas)
 
     def pop(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""

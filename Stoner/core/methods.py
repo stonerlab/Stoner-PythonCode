@@ -38,7 +38,7 @@ def search_index(datafile, xcol=None, value=None, accuracy=0.0, invert=False):
             low = np.ones_like(v) * low
             u = np.ones_like(v) * u
             ix = np.logical_and(v > low, v <= u)
-        case list() | np.ndarray() if all_type(value, bool) and len(value) <= len(datafile):
+        case [] | np.ndarray() if all_type(value, bool) and len(value) <= len(datafile):
             if len(value) < len(datafile):  # Expand array if necessary
                 ix = np.append(value, [False] * len(datafile) - len(value))
             else:
@@ -715,7 +715,7 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         case (_, _):
             (dr, dc) = datafile.data.shape
         case _ if not datafile.data.shape:
-            datafile.data = np.array([[]])
+            datafile.data = np.array([list()])
             (dr, dc) = (0, 0)
         case _:
             raise ValueError("Data should be 1 or 2 dimensional")

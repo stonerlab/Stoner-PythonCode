@@ -278,8 +278,7 @@ class DefaultPlotStyle(MutableMapping):
         attrs = [x for x in dir(self) if self._allowed_attr(x)]
         attrs += list(plt.rcParams.keys())
         attrs.sort()
-        for f in attrs:
-            yield f
+        yield from attrs
 
     def __len__(self):
         """Implement a length of stylesheet."""
