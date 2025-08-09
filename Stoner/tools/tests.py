@@ -29,6 +29,11 @@ from ..compat import string_types
 from ..core.Typing import NumericArray
 
 
+def _get_shape(x):
+    """Just return x.shape."""
+    return x.shape
+
+
 def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -> bool:
     """Check whether each element of *iterator* is the same length/shape.
 
@@ -42,7 +47,7 @@ def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -
         True if all objects are the size specified (or the same size if size is None).
     """
     if hasattr(iterator[0], "shape"):
-        sizer = lambda x: x.shape
+        sizer = _get_shape
     else:
         sizer = len
 
@@ -149,10 +154,10 @@ def isnone(iterator: Optional[IterableType]) -> bool:
         ret = True
     elif isiterable(iterator) and not isinstance(iterator, string_types):
         try:
-            l = len(iterator)
+            iterator_len = len(iterator)
         except TypeError:
-            l = 0
-        if l == 0:  # pylint: disable=len-as-condition
+            iterator_len = 0
+        if iterator_len == 0:  # pylint: disable=len-as-condition
             ret = True
         else:
             for i in iterator:

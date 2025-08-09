@@ -1180,7 +1180,7 @@ class ImageFile(metadataObject):
         Note:
             The filename attribute of the current instance is updated by this method as well.
         """
-        self.filename = file_dialog(mode, self.filename, type(self), ImageFile)
+        self.filename = file_dialog(mode, self.filename, type(self))
         return self.filename
 
     @classmethod
@@ -1224,7 +1224,7 @@ class ImageFile(metadataObject):
         if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
             filename, filetype = get_file_name_type(filename, filetype, ImageFile)
         if filename is None or not filename:
-            filename = file_dialog("r", filename, "ImageFile", ImageFile)
+            filename = file_dialog("r", filename, "ImageFile")
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA

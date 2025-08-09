@@ -64,7 +64,7 @@ def file_dialog(mode: str, filename: Filename, filetype: str) -> Union[pathlib.P
             The mode of the file operation  'r' or 'w'
         filename (str, Path, bool):
             The starting filename
-        filetype (submclass of metadataObject, string):
+        filetype (subclass of metadataObject, string):
             The filetype to open with - used to selectr file patterns
 
     Returns:
@@ -106,7 +106,7 @@ def get_file_name_type(
     if filename is None or (isinstance(filename, bool) and not filename):
         if filetype is None:
             filetype = parent
-        filename = file_dialog("r", filename, filetype, parent)
+        filename = file_dialog("r", filename, filetype)
     elif isinstance(filename, io.IOBase):  # Opened file
         filename = filename.name
     # try:

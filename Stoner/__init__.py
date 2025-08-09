@@ -21,13 +21,12 @@ __all__ = [
     "get_option",
     "Options",
     "HDF5",
-    "ZIP",
+    "Zip",
 ]
 
 import pathlib
 
 # These fake the old namespace if you do an import Stoner
-from os import path as _path_
 
 from . import HDF5, Image, Zip, analysis, core, formats, plot, tools
 from .core.data import Data

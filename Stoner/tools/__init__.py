@@ -31,22 +31,7 @@ __all__ = [
     "file",
     "decorators",
 ]
-import inspect
-from collections.abc import Iterable, MutableSequence
-from copy import deepcopy
-from importlib import import_module
-
-from numpy import (  # pylint: disable=redefined-builtin
-    dtype,
-    floor,
-    isnan,
-    log10,
-    logical_and,
-    ndarray,
-    round,
-)
-
-from ..compat import bytes2str
+import numpy as np
 from . import decorators
 from .classes import Options, TypedList
 from .classes import attributeStore as AttributeStore
@@ -83,10 +68,10 @@ operator = {
     "le": lambda k, v: k <= v,
     "gt": lambda k, v: k > v,
     "ge": lambda k, v: k >= v,
-    "between": lambda k, v: logical_and(min(v) < k, k < max(v)),
-    "ibetween": lambda k, v: logical_and(min(v) <= k, k <= max(v)),
-    "ilbetween": lambda k, v: logical_and(min(v) <= k, k < max(v)),
-    "iubetween": lambda k, v: logical_and(min(v) < k, k <= max(v)),
+    "between": lambda k, v: np.logical_and(min(v) < k, k < max(v)),
+    "ibetween": lambda k, v: np.logical_and(min(v) <= k, k <= max(v)),
+    "ilbetween": lambda k, v: np.logical_and(min(v) <= k, k < max(v)),
+    "iubetween": lambda k, v: np.logical_and(min(v) < k, k <= max(v)),
     "startswith": lambda k, v: str(v).startswith(k),
     "istartswith": lambda k, v: str(v).upper().startswith(k.upper()),
     "endsswith": lambda k, v: str(v).endswith(k),

@@ -1000,7 +1000,7 @@ def get_filename(datafile, mode):
     Note:
         The filename attribute of the current instance is updated by this method as well.
     """
-    datafile.filename = file_dialog(mode, datafile.filename, datafile.get("Loaded as", "DataFile"), datafile.__class__)
+    datafile.filename = file_dialog(mode, datafile.filename, datafile.get("Loaded as", "DataFile"))
     return datafile.filename
 
 
@@ -1119,7 +1119,7 @@ def save(datafile, filename=None, **kargs):
         filename = datafile.filename
     if filename is None or (isinstance(filename, bool) and not filename):
         # now go and ask for one
-        filename = file_dialog("w", datafile.filename, type(datafile))
+        filename = file_dialog("w", datafile.filename, "Data")
         if not filename:
             raise RuntimeError("Cannot get filename to save")
     match as_loaded:

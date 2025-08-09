@@ -17,7 +17,7 @@ from ..compat import bytes2str, string_types
 from ..core.base import TypeHintedDict
 from ..core.exceptions import StonerLoadError
 from ..Image import ImageArray, ImageFile, ImageStack
-from ..tools.file import FileManager, get_filename, HDFFileManager
+from ..tools.file import FileManager, get_filename, HDFFileManager, file_dialog
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")
@@ -249,7 +249,7 @@ class AttocubeScan(ImageStack):
         """
         filename, args, kargs = get_filename(args, kargs)
         if filename is None or not filename:
-            self.get_filename("r")
+            self.filename = file_dialog("r", None, "AttocubeScan")
             filename = self.filename
         else:
             self.filename = filename
@@ -457,7 +457,7 @@ class AttocubeScan(ImageStack):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
         if filename is None or not filename:
-            self.get_filename("r")
+            self.filename = file_dialog("r", None, "HDF")
             filename = self.filename
         else:
             self.filename = filename

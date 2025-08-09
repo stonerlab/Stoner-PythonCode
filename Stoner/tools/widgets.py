@@ -23,7 +23,7 @@ except ImportError:
     pass
 if QT_VERSION is None:
     try:
-        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget
+        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget  #  noQA
 
         QT_VERSION = 6
     except ImportError:
@@ -83,6 +83,7 @@ else:
             self.initUI()
 
         def initUI(self) -> None:
+            """Initialise the UI and set the dialog box geometry."""
             self.dialog = QWidget()
             self.dialog.title = "PyQt5 file dialogs - pythonspot.com"
             self.dialog.left = 10

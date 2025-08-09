@@ -118,7 +118,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
     def getlist(self, recursive=None, directory=None, flatten=None):
         """Read the Zip File to construct a list of ZipFile objects."""
         if recursive is None:
-            recursive = self.recursive
+            recursive = getattr(self, "recursive", False)
         self.files = []
         self.groups = {}
 

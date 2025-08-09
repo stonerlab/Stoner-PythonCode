@@ -26,7 +26,7 @@ def send_event(image, names, **kargs):
 
 
 def _straight_ellipse(p, data):
-    """A non-rotated ellipse."""
+    """Calculate a non-rotated ellipse."""
     xc, yc, a, b = p
     x, y = data.T
     t1 = (x - xc) ** 2 / a**2
@@ -35,7 +35,7 @@ def _straight_ellipse(p, data):
 
 
 def _rotated_ellipse(p, data):
-    """A non-rotated ellipse."""
+    """Calcualte a rotated ellipse."""
     xc, yc, a, b, phi = p
     x, y = data.T
     t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a**2

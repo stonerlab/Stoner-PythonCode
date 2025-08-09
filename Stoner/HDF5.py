@@ -18,9 +18,9 @@ import os.path as path
 import h5py
 
 from .compat import bytes2str, get_filedialog, path_types
+from .core.data import Data  # NoQA
 from .core.exceptions import StonerLoadError
 from .folders import DataFolder
-from .core.data import Data
 
 
 def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
@@ -142,9 +142,13 @@ class HDF5Folder(DataFolder):
             cls = globals()[obj.attrs["type"]]
             if issubclass(self.loader, cls):
                 self.__setter__(obj.name, obj.name)
-            elif obj.attrs["type"] == "HDF5Folder" and self.recursive:
+            elif obj.attrs["type"] == "HDF5Folder" and getattr(self, "recursive", True):
                 self.groups[obj.name.split(path.sep)[-1]] = type(self)(
-                    obj, pattern=self.pattern, type=self.type, recursive=self.recursive, loader=self.loader
+                    obj,
+                    pattern=self.pattern,
+                    type=self.type,
+                    recursive=getattr(self, "recursive", True),
+                    loader=self.loader,
                 )
 
     def close(self):
@@ -158,7 +162,7 @@ class HDF5Folder(DataFolder):
     def getlist(self, recursive=None, directory=None, flatten=False):
         """Read the HDF5 File to construct a list of file HDF5File objects."""
         if recursive is None:
-            recursive = self.recursive
+            recursive = getattr(self, "recursive", True)
         self.files = []
         self.groups = {}
         closeme = True
