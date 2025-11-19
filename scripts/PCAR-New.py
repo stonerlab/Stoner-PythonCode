@@ -29,7 +29,7 @@ class working(Data):
                 f"Could not find the fitting ini file {inifile}!"
             )
 
-        tmp = cfg_data_from_ini(inifile, filename=False)
+        tmp = cfg_data_from_ini(inifile)
         self.setas = tmp.setas.clone
         self.column_headers = tmp.column_headers
         self.metadata = tmp.metadata
@@ -77,7 +77,14 @@ class working(Data):
             vscale = self.config.getfloat("Data", "v_scale")
             self.data[:, self.vcol] *= vscale
             print(f"Rescaled voltage data by {vscale}")
-            return self
+        return self
+
+    def Preprocess(self):
+        """Run an arbitart function over the data if the option is specified."""
+        if self.config.has_option("Options", "preprocessor"):
+            preprocessor = globals()[self.config.get("Options", "preprocessor")]
+            return preprocessor(self)
+        return self
 
     def Normalise(self):
         """Normalise the data if the relevant options are turned on in the config file.
@@ -92,11 +99,20 @@ class working(Data):
             if self.config.has_option(
                 "Options", "fancy_normaliser"
             ) and self.config.getboolean("Options", "fancy_normaliser"):
+                fraction = 1 - self.config.getfloat(
+                    "Data", "background_fraction", fallback=0.1
+                )
+                normaliser = globals()[
+                    self.config.get(
+                        "Options", "normaliser_function", fallback="quadratic"
+                    )
+                ]
                 vmax, _ = self.max(self.vcol)
                 vmin, _ = self.min(self.vcol)
                 p, pv = self.curve_fit(
-                    quadratic,
-                    bounds=lambda x, y: (x > 0.9 * vmax) or (x < 0.9 * vmin),
+                    normaliser,
+                    bounds=lambda x, y: (x > fraction * vmax)
+                    or (x < fraction * vmin),
                 )
                 print(
                     "Fitted normal conductance background of G="
@@ -109,7 +125,7 @@ class working(Data):
                 self["normalise.coeffs"] = p
                 self["normalise.coeffs_err"] = np.sqrt(np.diag(pv))
                 self.apply(
-                    lambda x: x[self.gcol] / quadratic(x[self.vcol], *p),
+                    lambda x: x[self.gcol] / normaliser(x[self.vcol], *p),
                     self.gcol,
                     header=self.column_headers[self.gcol],
                 )
@@ -192,7 +208,7 @@ class working(Data):
     def Fit(self):
         """Run the fitting code."""
         # Run a pre-fitting data munge chain
-        self.RescaleV().Discard().offset_correct().Decompose().Normalise()
+        self.Preprocess().RescaleV().Discard().offset_correct().Decompose().Normalise()
         chi2 = self.p0.shape[0] > 1
 
         method = getattr(self, self.method)
@@ -225,6 +241,24 @@ class working(Data):
         if self.save_fit:
             fit.filename = None
             fit.save(False)
+
+
+def quadratic_abs(x, a, b, c):
+    """A function that returns a quadratic expression, but in terms of abs(x)."""
+    x = np.abs(x)
+    return c + x * (b + a * x)
+
+
+def down_only(data):
+    """Selects only the down sweep data - this is a hack that works becuase Set V is not noisy"""
+    ix = np.where(np.diff(np.sign(np.diff(data["Set V"]))) != 0)[:2][0]
+    dix = np.diff(ix) > 10
+    dix = np.append(dix, True)
+    ix = ix[dix]
+    ix = ix[:2]
+
+    data.data = data.data[slice(*ix)]
+    return data
 
 
 if __name__ == "__main__":
