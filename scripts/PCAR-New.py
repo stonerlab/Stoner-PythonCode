@@ -7,6 +7,7 @@ Gavin Burnell g.burnell@leeds.ac.uk
 import configparser as ConfigParser
 import pathlib
 import inspect
+from importlib import import_module
 
 import numpy as np
 from Stoner import Data
@@ -81,10 +82,18 @@ class working(Data):
 
     def Preprocess(self):
         """Run an arbitart function over the data if the option is specified."""
-        if self.config.has_option("Options", "preprocessor"):
-            preprocessor = globals()[self.config.get("Options", "preprocessor")]
-            return preprocessor(self)
-        return self
+        preprocessor_name = self.config.get(
+            "Options", "preprocessor", fallback="_pass"
+        )
+        if "." in preprocessor_name:
+            module = ".".join(preprocessor_name.split(".")[:-1])
+            preprocessor = preprocessor_name.split(".")[-1]
+            module = import_module(module)
+            preprocessor = getattr(module, preprocessor)
+        else:
+            preprocessor = globals()[preprocessor_name]
+
+        return preprocessor(self)
 
     def Normalise(self):
         """Normalise the data if the relevant options are turned on in the config file.
@@ -102,11 +111,16 @@ class working(Data):
                 fraction = 1 - self.config.getfloat(
                     "Data", "background_fraction", fallback=0.1
                 )
-                normaliser = globals()[
-                    self.config.get(
-                        "Options", "normaliser_function", fallback="quadratic"
-                    )
-                ]
+                normaliser_name = self.config.get(
+                    "Options", "normaliser_function", fallback="quadratic"
+                )
+                if "." in normaliser_name:
+                    module = ".".join(normaliser_name.split(".")[:-1])
+                    normaliser = normaliser_name.split(".")[-1]
+                    module = import_module(module)
+                    normaliser = getattr(module, normaliser)
+                else:
+                    normaliser = globals()[normaliser_name]
                 vmax, _ = self.max(self.vcol)
                 vmin, _ = self.min(self.vcol)
                 p, pv = self.curve_fit(
@@ -114,16 +128,17 @@ class working(Data):
                     bounds=lambda x, y: (x > fraction * vmax)
                     or (x < fraction * vmin),
                 )
+                normaliser_repr = getattr(
+                    normaliser,
+                    "representation",
+                    f"{normaliser_name}(V,{','.join(p)})",
+                ).format(p)
                 print(
-                    "Fitted normal conductance background of G="
-                    + str(p[0])
-                    + "V^2 +"
-                    + str(p[1])
-                    + "V+"
-                    + str(p[2])
+                    f"Fitted normal conductance background of G={normaliser_repr}"
                 )
                 self["normalise.coeffs"] = p
                 self["normalise.coeffs_err"] = np.sqrt(np.diag(pv))
+                self["normaliser_name"] = normaliser_name
                 self.apply(
                     lambda x: x[self.gcol] / normaliser(x[self.vcol], *p),
                     self.gcol,
@@ -247,6 +262,11 @@ def quadratic_abs(x, a, b, c):
     """A function that returns a quadratic expression, but in terms of abs(x)."""
     x = np.abs(x)
     return c + x * (b + a * x)
+
+
+def _pass(x):
+    """A do nothing preprocess function."""
+    return x
 
 
 def down_only(data):
