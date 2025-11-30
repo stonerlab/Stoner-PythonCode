@@ -15,7 +15,7 @@ from lmfit.models import ExponentialModel
 
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import Linear
-from Stoner.Util import format_error
+from Stoner.analysis.utils import format_error
 
 filename = False
 sensitivity = 50

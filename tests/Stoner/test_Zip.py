@@ -6,7 +6,6 @@ import pytest
 import os.path as path
 import tempfile
 import Stoner
-import Stoner.Zip as SZ
 import zipfile as zf
 
 pth = path.dirname(__file__)
@@ -34,13 +33,13 @@ def test_zipFile(tmpdir):
 def test_zipfolder():
     # Test constructor from DataFolder
     sf = Stoner.DataFolder(sample_data, pattern="*.txt")
-    szf = SZ.ZipFolder(sf)
+    szf = Stoner.folders.zip.ZipFolder(sf)
     assert sf.shape == szf.shape, "ZipFolder created from DataFolder didn't keep the same shape"
     assert sf[0] == szf[0], "First element of ZipFolder created from DataFolder changed!"
     zipname = path.join(tmpdir, "test-zipfolder.zip")
     szf.save(zipname)
     assert sf.shape == szf.shape, "ZipFolder Changed shape when saving!"
-    szf_2 = SZ.ZipFolder(zipname).compress()
+    szf_2 = Stoner.folders.zip.ZipFolder(zipname).compress()
     assert szf_2.shape == szf.shape, "ZipFolder loaded from disc not same shape as ZipFolder in memory!"
     fname = path.basename(szf[0].filename)
     assert szf[fname] == szf_2[fname], "File from loaded ZipFolder not the same as in memory ZipFolder."

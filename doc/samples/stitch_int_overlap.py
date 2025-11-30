@@ -7,7 +7,7 @@ This example demonstrates specifying the overlap as an integer and scaling both 
 import matplotlib.pyplot as plt
 
 from Stoner import Data
-from Stoner.Util import format_error
+from Stoner.analysis.utils import format_error
 
 # Load and plot two sets of data
 s1 = Data("Stitch-scan1.txt", setas="xy")

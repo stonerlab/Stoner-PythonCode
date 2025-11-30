@@ -1,52 +1,23 @@
-"""Stoner.HDF5 - Defines classes that use the hdf5 file format to store data on disc.
+# -*- coding: utf-8 -*-
+"""Stoner.folders.hdf5 - Defines classes that use the hdf5 file format to store data on disk.
 
 Classes include
 
-* HDF5File - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from hdf5 files
 * HDF5Folder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single hdf5 file
 
 It is only necessary to import this module for the subclasses of :py:class:`Stoner.Core.DataFile` to become available
 to :py:class:`Stoner.Core.Data`.
-
 """
 
 __all__ = ["HDF5Folder"]
-import importlib
 import os
 import os.path as path
 
 import h5py
 
-from .compat import bytes2str, get_filedialog, path_types
-from .core.data import Data  # NoQA
-from .core.exceptions import StonerLoadError
-from .folders import DataFolder
-
-
-def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
-    """Look inside the open hdf file for details of what class to use to read this group.
-
-    Args:
-        f (h5py.File, h5py.Group):
-            Open hdf file to look for a type attribute that gives the class to use to read this group.
-
-    Returns:
-        (callable):
-            Callable function that can produce an object of an appropriate class.
-    """
-    if "type" not in f.attrs:
-        raise StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
-    typ = bytes2str(f.attrs.get("type", ""))
-    if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
-        raise StonerLoadError(
-            "HDF5 Group does not specify a recognized type and does not specify a module to use to load."
-        )
-
-    if "module" in f.attrs:
-        mod = importlib.import_module(bytes2str(f.attrs["module"]))
-        cls = getattr(mod, typ)
-        return getattr(cls, "read_hdf5", default_loader)
-    return getattr(globals()[typ], "read_hdf5", default_loader)
+from ..compat import get_filedialog, path_types
+from ..core.data import Data  # NoQA
+from .mixins import DataFolder
 
 
 class HDF5Folder(DataFolder):

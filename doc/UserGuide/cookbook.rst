@@ -8,9 +8,9 @@ done with the Stoner python module in just a few lines.
 The Util module
 ===============
 
-.. currentmodule:: Stoner.Util
+.. currentmodule:: Stoner.analysis.utils
 
-The **Stoner** package comes with an extra :py:mod:`Stoner.Util` module that includes some handy utility
+The **Stoner** package comes with an extra :py:mod:`Stoner.analysis.utils` module that includes some handy utility
 functions.
 
 The :py:class:`Data` Class
@@ -28,7 +28,7 @@ So far the module just contains one function that will take a single :py:class:`
 object and split it into a series of :py:class:`Stoner.Core.DataFile` objects where one column is either
 rising or falling. This is designed to help deal with analysis problems involving hysteretic data.::
 
-    from Stoner.Util import split_up_down
+    from Stoner.analysis.utils import split_up_down
     folder=split_up_down(data,column)
 
 In this example *folder* is a :py:class:`Stoner.DataFolder` instance with two groups, one for rising values of the column
@@ -42,7 +42,7 @@ Analysis of Hysteresis Loops
 Since much of our group's work is concerned with measuring magnetic hystersis loops, the :py:func:`hysteresis_correct` function
 provides a handy way to correct some instrumental artifacts and measure properties of hysteresis loops.::
 
-    from Stoner.Util import hysteresis_correct
+    from Stoner.analysis.utils import hysteresis_correct
     d=hysteresis_correct('QD-SQUID-VSM.dat',correct_background=False,correct_H=False)
     e=hysteresis_correct(d)
 
@@ -72,10 +72,10 @@ Formatting Error Values
 
 In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
 a measurement to one significant figure, and then quote the value to the same number of decimal places. Whilst doing this
-might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the :py:mod:`Stoner.Util` module
-provides the :py:func:`Stoner.Util.format_error` function.::
+might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the :py:mod:`Stoner.analysis.utils` module
+provides the :py:func:`Stoner.analysis.utils.format_error` function.::
 
-    from Stoner.Util import format_error
+    from Stoner.analysis.utils import format_error
     from scipy.constants import hbar,m_e,m_u
     print format_error(value,error)
     print format_error(m_e,hbar,latex=True)

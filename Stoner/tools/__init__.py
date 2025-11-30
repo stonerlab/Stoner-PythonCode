@@ -21,6 +21,7 @@ __all__ = [
     "isTuple",
     "copy_into",
     "make_Data",
+    "make_Class",
     "quantize",
     "tex_escape",
     "TypedList",
@@ -36,7 +37,7 @@ from . import decorators
 from .classes import Options, TypedList
 from .classes import attributeStore as AttributeStore
 from .classes import copy_into, get_option, set_option
-from .decorators import fix_signature, make_Data
+from .decorators import fix_signature, make_Data, make_Class
 from .formatting import (
     format_error,
     format_val,

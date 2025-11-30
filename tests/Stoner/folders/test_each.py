@@ -11,7 +11,7 @@ import os
 import pytest
 
 from Stoner import DataFolder
-from Stoner.Util import hysteresis_correct
+from Stoner.analysis.utils import hysteresis_correct
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../../"))

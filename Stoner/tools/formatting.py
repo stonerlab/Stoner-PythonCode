@@ -5,12 +5,10 @@ __all__ = ["format_error", "format_val", "quantize", "tex_escape", "ordinal"]
 
 import re
 from html import escape as html_escape
-from typing import Any, Optional
 
 from numpy import abs, floor, isnan, log10, round  # pylint: disable=redefined-builtin
 
 from ..compat import bytes2str
-from ..core.Typing import Numeric, NumericArray
 
 prefs = {
     "text": {
@@ -70,7 +68,7 @@ prefs = {
 }
 
 
-def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) -> str:
+def format_error(value, error=None, **kargs):
     r"""Format answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
 
     Args:
@@ -184,7 +182,7 @@ def format_error(value: Numeric, error: Optional[Numeric] = None, **kargs: Any) 
     return fmt_str.format(value, error)
 
 
-def format_val(value: Numeric, **kargs: Any) -> str:
+def format_val(value, **kargs):
     r"""Format a number as an SI quantity.
 
     Args:
@@ -276,7 +274,7 @@ def format_val(value: Numeric, **kargs: Any) -> str:
     return ret
 
 
-def quantize(number: NumericArray, quantum: Numeric) -> NumericArray:
+def quantize(number, quantum):
     """Round a number to the nearest multiple of a quantum.
 
     Args:

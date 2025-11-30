@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """General file related tools."""
+
 import io
 import os
 import pathlib
@@ -20,6 +21,7 @@ from .decorators import make_Data, make_Image
 from .widgets import fileDialog
 
 __all__ = [
+    "get_hdf_loader",
     "file_dialog",
     "get_file_name_type",
     "auto_load_classes",
@@ -44,6 +46,65 @@ except ImportError:
     filemagic = None
 
 URL_SCHEMES = ["http", "https"]
+
+
+def test_is_zip(filename, member=""):
+    """Recursively searches for a zipfile in the tree.
+
+    Args:
+        filename (str):
+            Path to test whether it is a zip file or not.
+
+    Keyword Arguments:
+        member (str):
+            Used in recursive calls to identify the path within the zip file
+
+    Returns:
+        False or (filename,member):
+            Returns False if not a zip file, otherwise the actual filename of the zip file and the nanme of the
+            member within that
+        zipfile.
+    """
+    if not filename or str(filename) == "":
+        return False
+    if zipfile.is_zipfile(filename):
+        return filename, member
+    part = os.path.basename(filename)
+    newfile = os.path.dirname(filename)
+    if newfile == filename:  # reached the end of the line
+        part = filename
+        newfile = ""
+    if member != "":
+        newmember = os.path.join(part, member)
+    else:
+        newmember = part
+    return test_is_zip(newfile, newmember)
+
+
+def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
+    """Look inside the open hdf file for details of what class to use to read this group.
+
+    Args:
+        f (h5py.File, h5py.Group):
+            Open hdf file to look for a type attribute that gives the class to use to read this group.
+
+    Returns:
+        (callable):
+            Callable function that can produce an object of an appropriate class.
+    """
+    if "type" not in f.attrs:
+        raise StonerLoadError("HDF5 Group does not specify the type attribute used to check we can load it.")
+    typ = bytes2str(f.attrs.get("type", ""))
+    if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
+        raise StonerLoadError(
+            "HDF5 Group does not specify a recognized type and does not specify a module to use to load."
+        )
+
+    if "module" in f.attrs:
+        mod = import_module(bytes2str(f.attrs["module"]))
+        cls = getattr(mod, typ)
+        return getattr(cls, "read_hdf5", default_loader)
+    return getattr(globals()[typ], "read_hdf5", default_loader)
 
 
 def get_filename(args, kargs):
@@ -176,7 +237,7 @@ def auto_load_classes(
                 print(f"Failed Load: {e}")
             continue
         except UnicodeDecodeError:
-            print(f"{loader.name, filename} Failed with a uncicode decode error for { format_exc()}\n")
+            print(f"{loader.name, filename} Failed with a uncicode decode error for {format_exc()}\n")
             continue
     else:
         raise StonerUnrecognisedFormat(

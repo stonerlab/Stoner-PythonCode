@@ -26,7 +26,6 @@ from numpy import (  # pylint: disable=redefined-builtin
 )
 
 from ..compat import string_types
-from ..core.Typing import NumericArray
 
 
 def _get_shape(x):
@@ -101,7 +100,7 @@ def isanynone(*args: Any) -> bool:
     return False
 
 
-def isComparable(v1: NumericArray, v2: NumericArray) -> bool:
+def isComparable(v1, v2) -> bool:
     """Return true if v1 and v2 can be compared sensibly.
 
     Args:
