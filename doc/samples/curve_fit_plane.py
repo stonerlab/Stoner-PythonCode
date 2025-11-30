@@ -1,9 +1,9 @@
 """Use curve_fit to fit a plane to some data."""
 
 # pylint: disable=invalid-name
-from numpy.random import normal, seed
-from numpy import linspace, meshgrid, column_stack, array
 import matplotlib.cm as cmap
+from numpy import array, column_stack, linspace, meshgrid
+from numpy.random import normal, seed
 
 from Stoner import Data
 

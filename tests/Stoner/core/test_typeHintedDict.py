@@ -6,8 +6,10 @@ Created on Sat Dec  8 15:20:15 2018
 @author: phygbu
 """
 
-import pytest
 import os.path as path
+
+import pytest
+
 from Stoner.core.base import TypeHintedDict
 
 pth = path.dirname(__file__)

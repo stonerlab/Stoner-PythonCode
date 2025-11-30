@@ -1,9 +1,9 @@
 """Extrapolate data example."""
 
 # pylint: disable=invalid-name
-from numpy import linspace, ones_like, column_stack, exp, sqrt
-from numpy.random import normal, seed
 import matplotlib.pyplot as plt
+from numpy import column_stack, exp, linspace, ones_like, sqrt
+from numpy.random import normal, seed
 
 from Stoner import Data
 from Stoner.plot.utils import errorfill

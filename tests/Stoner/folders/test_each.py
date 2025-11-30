@@ -5,9 +5,10 @@ Created on Sat Dec  8 20:59:16 2018
 @author: phygbu
 """
 
-import sys
-import os.path as path
 import os
+import os.path as path
+import sys
+
 import pytest
 
 from Stoner import DataFolder

@@ -33,11 +33,12 @@ __all__ = [
     "decorators",
 ]
 import numpy as np
+
 from . import decorators
 from .classes import Options, TypedList
 from .classes import attributeStore as AttributeStore
 from .classes import copy_into, get_option, set_option
-from .decorators import fix_signature, make_Data, make_Class
+from .decorators import fix_signature, make_Class, make_Data
 from .formatting import (
     format_error,
     format_val,

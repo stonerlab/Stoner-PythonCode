@@ -1,8 +1,10 @@
+import io
 import os
-from setuptools import setup, find_packages
 import re
-import sys, io
+import sys
 from os import environ as env
+
+from setuptools import find_packages, setup
 
 
 def get_version():

@@ -1,8 +1,8 @@
 """3D surface plot example."""
 
 # pylint: disable=invalid-name
-import numpy as np
 import matplotlib.cm
+import numpy as np
 
 from Stoner import Data
 

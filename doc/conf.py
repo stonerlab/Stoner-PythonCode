@@ -11,9 +11,10 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import os
 import os.path as path
 import shutil
+import sys
 
 my_path=path.dirname(__file__)
 
@@ -22,7 +23,6 @@ sys.path.append(my_path)
 sys.path.append(path.realpath(path.join(my_path,"..")))
 
 from better import better_theme_path
-
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

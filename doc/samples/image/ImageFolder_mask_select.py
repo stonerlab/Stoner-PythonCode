@@ -8,8 +8,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib_scalebar.scalebar import ScaleBar
 
-from Stoner import ImageFile
-from Stoner import ImageFolder, __datapath__
+from Stoner import ImageFile, ImageFolder, __datapath__
 from Stoner.Image.widgets import send_event as _event
 
 

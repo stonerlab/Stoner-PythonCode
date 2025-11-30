@@ -23,7 +23,7 @@ except ImportError:
     pass
 if QT_VERSION is None:
     try:
-        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget  #  noQA
+        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget  # noQA
 
         QT_VERSION = 6
     except ImportError:

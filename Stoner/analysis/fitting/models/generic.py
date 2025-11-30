@@ -25,7 +25,9 @@ from lmfit.models import (
 from lmfit.models import (
     QuadraticModel as _Quadratic,  # NOQA pylint: disable=unused-import
 )
-from lmfit.models import update_param_vals
+from lmfit.models import (
+    update_param_vals,
+)
 
 
 def linear(x, intercept, slope):

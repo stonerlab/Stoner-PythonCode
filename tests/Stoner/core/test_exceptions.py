@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test Stoner.core.exceptions module"""
 import pytest
+
 from Stoner.core.exceptions import assertion
 
 

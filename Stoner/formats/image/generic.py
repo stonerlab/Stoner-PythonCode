@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Implement DataFile classes for some generic file formats."""
+
 import contextlib
+from importlib import import_module
 import io
 import logging
 import re
@@ -9,8 +11,13 @@ import sys
 
 from ...core.exceptions import StonerLoadError
 from ...formats.decorators import register_loader
-from ...tools.file import get_filename
 from ...tools.decorators import make_Class
+from ...tools.file import get_filename
+
+try:
+    import rsciio
+except ImportError:
+    rsciio = None
 
 
 class _refuse_log(logging.Filter):
@@ -78,3 +85,39 @@ def load_imagefile(new_image, *args, **kargs):
     for k in new_image._image._public_attrs:
         setattr(new_image, k, getattr(new_image._image, k, None))
     return new_image
+
+
+if rsciio:
+    for plugin in rsciio.IO_PLUGINS:
+        patterns = [(f".{ext}", 64) for ext in plugin["file_extensions"]]
+        mime_types = []
+        name = plugin["name"]
+        what = "Image"
+
+        code = f'''
+def load_{name}file(new_image, *args, **kwargs):
+    """Use a RosettaSciIO plugin to load an image file."""
+    filename, args, kargs = get_filename(args, kwargs)
+    try:
+        api=import_module(plugin["api"])
+        data=api.file_reader(filename)[0]
+    except Exception as err:
+        print(name,err)
+        raise StonerLoadError
+    new_image._image=make_Class("Image.ImageArray",data["data"])
+    new_image.metadata.update(data["metadata"])
+    new_image.metadata["axes"]=data["axes"]
+    return new_image
+        '''
+        namespace = {
+            "get_filename": get_filename,
+            "import_module": import_module,
+            "plugin": plugin,
+            "name": name,
+            "make_Class": make_Class,
+            "StonerLoadError": StonerLoadError,
+        }
+        exec(code, namespace)
+        func = namespace[f"load_{name}file"]
+        register_loader(patterns=patterns, mime_types=mime_types, name=name, what=what)(func)
+        setattr(sys.modules[__name__], f"load_{name}file", func)

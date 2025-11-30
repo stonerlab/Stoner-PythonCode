@@ -13,7 +13,7 @@ from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import _pattern_type, int_types, str2bytes
 from ..tools import all_type, format_error, isiterable, operator
-from ..tools.file import best_saver, file_dialog, HDFFileManager
+from ..tools.file import HDFFileManager, best_saver, file_dialog
 from ..tools.widgets import RangeSelect
 from .array import DataArray
 

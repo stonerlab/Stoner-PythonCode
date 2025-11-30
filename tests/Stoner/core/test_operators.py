@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Teest stoner.core.operators module"""
 
-import pytest
-from os import path
 import re
+from os import path
+
 import numpy as np
+import pytest
 
 from Stoner import Data, __home__
 

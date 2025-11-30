@@ -6,21 +6,19 @@ Created on Tue Jan 07 22:05:55 2014
 @author: phygbu
 """
 
-import sys
-import pathlib
 import io
+import pathlib
+import sys
 import urllib
-
-from Stoner import Data, __homepath__, __datapath__, ImageFile
-from Stoner.compat import Hyperspy_ok
 
 import pytest
 
+from Stoner import Data, ImageFile, __datapath__, __homepath__
+from Stoner.compat import Hyperspy_ok
+from Stoner.core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from Stoner.formats.attocube import AttocubeScan
 from Stoner.formats.maximus import MaximusStack
-from Stoner.tools.file import get_saver, clear_routine
-from Stoner.core.exceptions import StonerLoadError
-from Stoner.core.exceptions import StonerUnrecognisedFormat
+from Stoner.tools.file import clear_routine, get_saver
 
 pth = __homepath__ / ".."
 datadir = __datapath__

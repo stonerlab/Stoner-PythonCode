@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """Test Util module"""
 
-import sys
 import os.path as path
+import sys
+
+import pytest
+
 from Stoner import Data
 from Stoner.analysis.utils import hysteresis_correct, split_up_down
-import pytest
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))

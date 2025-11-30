@@ -6,12 +6,12 @@ import os
 import pathlib
 import sys
 import urllib
+import zipfile
 from importlib import import_module
 from traceback import format_exc
 from typing import Callable, Dict, Optional, Sequence, Tuple, Type, Union
 
 import h5py
-import zipfile
 
 from ..compat import bytes2str, path_types, str2bytes, string_types
 from ..core.base import SortedMultivalueDict, metadataObject

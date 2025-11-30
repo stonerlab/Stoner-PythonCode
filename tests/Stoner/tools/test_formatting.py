@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Tests for Stoner.tools.formatting"""
 import pytest
+
 from Stoner.tools import formatting
 
 

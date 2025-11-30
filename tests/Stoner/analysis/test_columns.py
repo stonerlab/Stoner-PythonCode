@@ -8,12 +8,10 @@ Created on Sat Aug 24 22:56:59 2019
 
 @author: phygbu
 """
-import pytest
 import numpy as np
-
+import pytest
 
 from Stoner import Data
-
 
 x = np.linspace(1, 10, 10)
 y = 2 * x - 3

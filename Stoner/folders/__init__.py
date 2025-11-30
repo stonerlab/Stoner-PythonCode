@@ -2,5 +2,5 @@
 
 __all__ = ["core", "each", "groups", "hdf5", "metadata", "mixins", "utils", "zip", "DataFolder", "PlotFolder"]
 
-from . import mixins, core, each, groups, hdf5, metadata, utils, zip
+from . import core, each, groups, hdf5, metadata, mixins, utils, zip
 from .mixins import DataFolder, PlotFolder

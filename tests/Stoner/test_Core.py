@@ -4,21 +4,22 @@ Created on Tue Jan 07 22:05:55 2014
 @author: phygbu
 """
 
-import sys
 import os.path as path
-import numpy as np
 import re
+import sys
+from collections.abc import MutableMapping
+
+import numpy as np
 import pandas as pd
 import pytest
-from numpy import all, sqrt, nan
-from collections.abc import MutableMapping
+from numpy import all, nan, sqrt
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
 old_path = []
+import Stoner.compat
 from Stoner import Data, __home__
 from Stoner.core.base import metadataObject
-import Stoner.compat
 
 
 def mask_func(r):

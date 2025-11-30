@@ -24,15 +24,15 @@ __all__ = [
 
 import pathlib
 
-# These fake the old namespace if you do an import Stoner
-
-from . import tools
-from . import Image, analysis, core, formats, plot
+from . import Image, analysis, core, formats, plot, tools
 from .core.data import Data
 from .folders import DataFolder
 from .Image import ImageFile, ImageFolder, ImageStack
 from .tools import Options as _Options
 from .tools import get_option, set_option
+
+# These fake the old namespace if you do an import Stoner
+
 
 Options = _Options()
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Loader for zip files."""
-import pathlib
 import os.path as path
+import pathlib
 import zipfile as zf
 from traceback import format_exc
 

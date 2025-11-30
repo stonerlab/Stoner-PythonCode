@@ -2,9 +2,11 @@
 """Stiner.Image.folders test
 """
 
-from Stoner.Image import ImageArray, ImageFolder
-import pytest
 import os
+
+import pytest
+
+from Stoner.Image import ImageArray, ImageFolder
 
 knownkeys = [
     "Averaging",

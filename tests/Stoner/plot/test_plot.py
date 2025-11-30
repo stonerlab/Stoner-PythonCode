@@ -6,25 +6,25 @@ Created on Tue Jan 07 22:05:55 2014
 @author: phygbu
 """
 
-import pytest
+import os.path as path
 import sys
-import  os.path as path
-import numpy as np
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import warnings
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from matplotlib.figure import Figure
 
 warnings.filterwarnings("ignore")
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../../"))
 sys.path.insert(0, pth)
-from Stoner import Data, __home__, Options
+from Stoner import Data, Options, __home__
 from Stoner.core.base import TypeHintedDict
-from Stoner.plot.functions import hsl2rgb
 from Stoner.Image import ImageFile
-
 from Stoner.plot.formats import DefaultPlotStyle
+from Stoner.plot.functions import hsl2rgb
 
 datadir = path.join(pth, "sample-data")
 

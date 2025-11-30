@@ -5,19 +5,20 @@ Created on Fri May 27 17:09:04 2016
 @author: phyrct
 """
 
-from Stoner.Image import ImageArray, ImageFile
-from Stoner.core.base import TypeHintedDict
-from Stoner import Data, __home__
+import os
+import shutil
+import sys
+import tempfile
+from os import path
+
 import numpy as np
 import pytest
-from os import path
-import tempfile
-import os
-import sys
-import shutil
 from PIL import Image
-
 from scipy.version import version as spv
+
+from Stoner import Data, __home__
+from Stoner.core.base import TypeHintedDict
+from Stoner.Image import ImageArray, ImageFile
 
 spv = [int(x) for x in spv.split(".")]
 

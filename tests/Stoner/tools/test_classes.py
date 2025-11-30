@@ -3,8 +3,9 @@
 
 
 import pytest
-from Stoner.tools import classes
+
 from Stoner import Options
+from Stoner.tools import classes
 
 
 def test_TypedList_create():

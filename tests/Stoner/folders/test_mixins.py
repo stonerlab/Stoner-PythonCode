@@ -5,19 +5,20 @@ Created on Tue Dec 11 09:33:08 2018
 @author: phygbu
 """
 
-import sys
 import os.path as path
-import pytest
+import sys
 
+import pytest
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../../"))
 sys.path.insert(0, pth)
 
-from Stoner import Data, __home__, Options
-from Stoner.folders import PlotFolder
-from Stoner.plot.formats import TexEngFormatter, DefaultPlotStyle
 import matplotlib.pyplot as plt
+
+from Stoner import Data, Options, __home__
+from Stoner.folders import PlotFolder
+from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 
 
 def extra(i, j, d):

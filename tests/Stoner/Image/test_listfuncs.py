@@ -4,14 +4,16 @@ Created on Mon Jun 20 19:21:48 2016
 
 @author: phyrct
 """
-from types import MethodType
-from Stoner.Image import ImageArray, ImageFile
-from Stoner import __datapath__
-import pytest
 from os.path import dirname, join
-import numpy as np
-from lmfit.models import LorentzianModel
+from types import MethodType
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from lmfit.models import LorentzianModel
+
+from Stoner import __datapath__
+from Stoner.Image import ImageArray, ImageFile
 
 thisdir = dirname(__file__)
 

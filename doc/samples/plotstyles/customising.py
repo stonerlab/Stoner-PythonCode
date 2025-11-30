@@ -2,6 +2,7 @@
 
 # pylint: disable=invalid-name
 import os.path as path
+
 from cycler import cycler
 
 from Stoner import Data, __home__

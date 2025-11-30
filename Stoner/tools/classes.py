@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 import copy
-from collections.abc import MutableSequence, Iterable
+from collections.abc import Iterable, MutableSequence
 from typing import Any
 from typing import Iterable as IterableType
 from typing import List, Optional, Union

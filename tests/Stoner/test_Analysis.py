@@ -6,16 +6,16 @@ Created on Tue Jan 07 22:05:55 2014
 @author: phygbu
 """
 
-import pytest
-import sys
 import os.path as path
+import sys
+
 import numpy as np
+import pytest
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
 sys.path.insert(0, pth)
 from Stoner import Data
-
 
 """Path to sample Data File"""
 slfdatadir = path.join(pth, "sample-data")

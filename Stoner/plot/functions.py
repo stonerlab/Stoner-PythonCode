@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Stoner plotting code as functions."""
 import copy
-from inspect import getfullargspec
 import os
 import re
 from functools import partial
+from inspect import getfullargspec
 
 import numpy as np
 from matplotlib import cm, colormaps, colors
@@ -25,11 +25,9 @@ except ImportError:
     _3D = False
 
 
-from ..tools.tests import isanynone, isnone, isiterable
-from ..tools import AttributeStore
-
 from ..compat import _pattern_type
-
+from ..tools import AttributeStore
+from ..tools.tests import isanynone, isiterable, isnone
 from .utils import hsl2rgb
 
 

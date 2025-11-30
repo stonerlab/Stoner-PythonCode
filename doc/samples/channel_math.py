@@ -1,7 +1,7 @@
 """Demonstrate Channel math operations."""
 
 # pylint: disable=invalid-name
-from numpy import linspace, ones_like, sin, cos, pi
+from numpy import cos, linspace, ones_like, pi, sin
 from numpy.random import normal, seed
 
 from Stoner import Data

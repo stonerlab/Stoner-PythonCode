@@ -26,10 +26,9 @@ from ..tools import (
     isiterable,
 )
 from ..tools.decorators import class_modifier
-
+from . import functions
 from .formats import DefaultPlotStyle
 from .utils import errorfill
-from . import functions
 
 try:  # Check we've got 3D plotting
     import mpl_toolkits.axisartist as AA  # NOQA pylint: disable=unused-import

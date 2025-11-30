@@ -2,11 +2,11 @@
 """Test Stoner.tools.tests module."""
 
 
-import pytest
 import numpy as np
+import pytest
 
-from Stoner.tools import tests
 from Stoner import Data
+from Stoner.tools import tests
 
 
 def test_all_size():

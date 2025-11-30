@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Test for Stoner.analysis.filtering"""
 
-import pytest
-import numpy as np
-from Stoner import Data
 import warnings
+
+import numpy as np
+import pytest
+
+from Stoner import Data
 
 warnings.filterwarnings("error")
 

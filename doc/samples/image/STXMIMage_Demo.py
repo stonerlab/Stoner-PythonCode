@@ -1,15 +1,15 @@
 """Demonstrate STXM Image Processing - G.Burnell Nov. 2017"""
 
 # pylint: disable=invalid-name,no-member
-from os.path import join, dirname
+from os.path import dirname, join
 from types import MethodType
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from lmfit.models import LorentzianModel
 
-from Stoner.Image import ImageFolder
 from Stoner import ImageFile
+from Stoner.Image import ImageFolder
 
 # Load the images
 thisdir = dirname(__file__)

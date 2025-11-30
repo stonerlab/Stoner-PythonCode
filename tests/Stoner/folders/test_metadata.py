@@ -5,17 +5,16 @@ Created on Sun Dec  9 19:56:38 2018
 
 @author: phygbu
 """
-import sys
-import os.path as path
 import os
-import numpy as np
-from Stoner.compat import *
-from Stoner import DataFolder
-import pytest
+import os.path as path
+import sys
 
-from Stoner import Data
+import numpy as np
+import pytest
 from pandas import DataFrame, Series
 
+from Stoner import Data, DataFolder
+from Stoner.compat import *
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../../"))

@@ -19,8 +19,8 @@ v2 corrections: less automation saving time
 # pylint: disable=invalid-name, redefined-outer-name
 import os
 
-import numpy as np
 import matplotlib.pyplot as plot
+import numpy as np
 
 import Stoner
 

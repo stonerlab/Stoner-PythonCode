@@ -1,9 +1,9 @@
 """Example of using scale to overlap data."""
 
 # pylint: disable=invalid-name, no-member
-from numpy import linspace, sin, exp, pi, column_stack
-from numpy.random import normal, seed
 import matplotlib as mpl
+from numpy import column_stack, exp, linspace, pi, sin
+from numpy.random import normal, seed
 from tabulate import tabulate
 
 from Stoner import Data

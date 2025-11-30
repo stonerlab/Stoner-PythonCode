@@ -1,18 +1,18 @@
 """Fit a sphere with curve_fit."""
 
 # pylint: disable=invalid-name, redefined-outer-name
-from numpy import (
-    sin,
-    cos,
-    pi,
-    column_stack,
-    zeros_like,
-    ones_like,
-    meshgrid,
-    linspace,
-)
-from numpy.random import normal, uniform, seed
 import matplotlib.pyplot as plt
+from numpy import (
+    column_stack,
+    cos,
+    linspace,
+    meshgrid,
+    ones_like,
+    pi,
+    sin,
+    zeros_like,
+)
+from numpy.random import normal, seed, uniform
 
 from Stoner import Data
 

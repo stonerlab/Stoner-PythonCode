@@ -6,10 +6,11 @@ Created on Tue Jan 07 22:05:55 2014
 @author: phygbu
 """
 
-import sys
 import os.path as path
-import pytest
+import sys
+
 import numpy as np
+import pytest
 from numpy import all
 
 pth = path.dirname(__file__)

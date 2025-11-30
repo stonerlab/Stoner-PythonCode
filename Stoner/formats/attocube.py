@@ -17,7 +17,7 @@ from ..compat import bytes2str, string_types
 from ..core.base import TypeHintedDict
 from ..core.exceptions import StonerLoadError
 from ..Image import ImageArray, ImageFile, ImageStack
-from ..tools.file import FileManager, get_filename, HDFFileManager, file_dialog
+from ..tools.file import FileManager, HDFFileManager, file_dialog, get_filename
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
 SCAN_NO = re.compile(r"SC_(\d+)")

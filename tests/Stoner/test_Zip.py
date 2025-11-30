@@ -2,11 +2,13 @@
 """Test the ZIP module for zipfile compressed objects."""
 
 
-import pytest
 import os.path as path
 import tempfile
-import Stoner
 import zipfile as zf
+
+import pytest
+
+import Stoner
 
 pth = path.dirname(__file__)
 

@@ -4,8 +4,10 @@
 
 import os.path as path
 import tempfile
-import Stoner
+
 import pytest
+
+import Stoner
 
 Data = Stoner.Data
 

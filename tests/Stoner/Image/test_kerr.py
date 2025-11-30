@@ -5,15 +5,15 @@ Created on Fri May 27 17:09:04 2016
 @author: phyrct
 """
 
-from Stoner.Image.kerr import KerrArray, KerrImageFile, KerrStack
-from Stoner import Data, __home__
+import os
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-import os
-import matplotlib.pyplot as plt
-
 
 import Stoner
+from Stoner import Data, __home__
+from Stoner.Image.kerr import KerrArray, KerrImageFile, KerrStack
 
 Stoner.Options.multiprocessing = False
 

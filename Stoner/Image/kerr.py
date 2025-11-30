@@ -11,11 +11,12 @@ __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 import os
 
 import numpy as np
-from .core import ImageFile, ImageArray
-from .stack import ImageStack
+
 from ..tools import make_Data
 from ..tools.decorators import class_modifier, image_file_adaptor
 from . import kerrfuncs
+from .core import ImageArray, ImageFile
+from .stack import ImageStack
 
 try:
     import pytesseract  # pylint: disable=unused-import

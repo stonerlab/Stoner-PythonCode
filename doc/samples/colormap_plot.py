@@ -3,7 +3,6 @@
 # pylint: disable=invalid-name
 import numpy as np
 
-
 from Stoner import Data
 
 x, y = np.meshgrid(np.linspace(-2, 2, 100), np.linspace(-2, 2, 100))

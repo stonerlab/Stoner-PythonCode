@@ -8,17 +8,16 @@ Created on Sat Aug 24 22:56:59 2019
 
 @author: phygbu
 """
-import pytest
-import sys
 import os.path as path
-import numpy as np
+import sys
 
+import numpy as np
+import pytest
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
 sys.path.insert(0, pth)
 from Stoner import Data
-
 from Stoner.analysis.fitting.functions import _curve_fit_result
 
 

@@ -2,6 +2,7 @@
 
 # pylint: disable=invalid-name
 import os.path as path
+
 from Stoner import Data, __home__
 from Stoner.plot.formats import SketchPlot
 

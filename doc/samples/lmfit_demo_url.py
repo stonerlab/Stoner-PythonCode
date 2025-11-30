@@ -1,8 +1,8 @@
 """Demo of new Stoner.Data.lmfit."""
 
 # pylint: disable=invalid-name
-import urllib
 import io
+import urllib
 
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 

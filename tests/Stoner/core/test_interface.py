@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """Test Stoner.Data as a sequence and mapping structure."""
 
-import pytest
 import sys
 from os import path
+
 import numpy as np
+import pytest
 from numpy import all
 
 from Stoner import Data, __home__

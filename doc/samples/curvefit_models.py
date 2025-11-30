@@ -4,8 +4,8 @@
 from numpy import linspace, random
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.generic import PowerLaw
 from Stoner.analysis.fitting import ODR_Model
+from Stoner.analysis.fitting.models.generic import PowerLaw
 
 # Make some data
 x = linspace(0, 10.0, 101)

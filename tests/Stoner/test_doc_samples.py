@@ -1,11 +1,13 @@
-import os.path as path
 import os
+import os.path as path
 import runpy
-from Stoner.compat import listdir_recursive
-import matplotlib.pyplot as plt
-from traceback import format_exc
-import pytest
 import warnings
+from traceback import format_exc
+
+import matplotlib.pyplot as plt
+import pytest
+
+from Stoner.compat import listdir_recursive
 
 warnings.filterwarnings("ignore")
 

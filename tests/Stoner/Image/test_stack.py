@@ -5,11 +5,13 @@ Created on Tue Feb 20 21:22:18 2018
 
 @author: phygbu
 """
-from Stoner.Image import ImageFile, ImageFolder, ImageStack
-import numpy as np
 import os
-import Stoner
+
+import numpy as np
 import pytest
+
+import Stoner
+from Stoner.Image import ImageFile, ImageFolder, ImageStack
 
 Stoner.Options.multiprocessing = False
 

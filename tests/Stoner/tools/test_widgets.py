@@ -6,11 +6,13 @@ Created on Sun Apr 19 12:04:58 2020
 """
 
 import sys
-import pytest
-from matplotlib.backend_bases import Event
 import threading
 import time
+
 import numpy as np
+import pytest
+from matplotlib.backend_bases import Event
+
 import Stoner
 
 ret_pth = Stoner.__homepath__ / ".." / "sample-data" / "TDI_Format_RT.txt"

@@ -2,11 +2,12 @@
 
 # pylint: disable=invalid-name
 from os.path import join
+
 from matplotlib.pyplot import figure
 
-from Stoner import __home__, DataFolder, Data
-from Stoner.plot.formats import TexEngFormatter
+from Stoner import Data, DataFolder, __home__
 from Stoner.analysis.fitting.models.generic import Quadratic
+from Stoner.plot.formats import TexEngFormatter
 
 # Set up the directory with our data
 datafiles = join(__home__, "..", "sample-data", "NLIV")

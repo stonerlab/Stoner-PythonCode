@@ -8,25 +8,24 @@ Created on Mon Jul 18 14:13:39 2016
 """
 
 
-import sys
-import os.path as path
-import os
-import numpy as np
-import re
 import fnmatch
-from numpy import ceil
-from copy import copy
-from Stoner.compat import Hyperspy_ok
-import pytest
-from Stoner import DataFolder, __homepath__
-from Stoner.folders import PlotFolder
-
-from Stoner import Data
-from Stoner.core.base import RegexpDict
-from Stoner.folders.core import BaseFolder
-import matplotlib.pyplot as plt
-
+import os
+import os.path as path
+import re
+import sys
 import tempfile
+from copy import copy
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from numpy import ceil
+
+from Stoner import Data, DataFolder, __homepath__
+from Stoner.compat import Hyperspy_ok
+from Stoner.core.base import RegexpDict
+from Stoner.folders import PlotFolder
+from Stoner.folders.core import BaseFolder
 
 pth = __homepath__ / ".."
 sys.path.insert(0, pth)
