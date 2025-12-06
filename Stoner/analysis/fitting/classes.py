@@ -151,6 +151,8 @@ class MimizerAdaptor:
             beta = tuple(beta) + tuple(args)
             if sigma is None:
                 sigma = np.ones_like(x)
+            elif isinstance(sigma, float):
+                sigma = np.ones_like(x) * sigma
             sigma = sigma / sigma.sum()  # normalise uncertainties
             sigma += np.finfo(float).eps
             weights = 1.0 / sigma**2

@@ -92,6 +92,8 @@ def filter(datafile, func=None, cols=None, reset=True):
     """Set the mask on rows of data by evaluating a function for each row.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         func (callable):
             is a callable object that should take a single list as a p[parameter representing one row.
         cols (list):
@@ -119,7 +121,11 @@ def filter(datafile, func=None, cols=None, reset=True):
 def del_nan(datafile, col=None, clone=False):
     """Remove rows that have nan in them.
 
-    eyword Arguments:
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+
+    Keyword Arguments:
         col (index types or None):
             column(s) to look for nan's in. If None or not given, use setas columns.
         clone (boolean):
@@ -157,6 +163,8 @@ def SG_Filter(
     """Implement a Savitsky-Golay filtering of data for smoothing and differentiating data.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         col (column index):
             Column of Data to be filtered. if None, first y-column in setas is filtered.
         points (int):
@@ -174,6 +182,9 @@ def SG_Filter(
             leave as is.
         result (None,True, or column_index):
             If not None, column index to insert new data, or True to append as last column
+        replace (bool):
+            If true, then the current Stoner.Data's data is replaced with the  newly interpolated data and the
+            current Stoner.Data is returned.
         header (string or None):
             Header for new column if result is not None. If header is Nne, a suitable column header is generated.
 
@@ -246,10 +257,12 @@ def SG_Filter(
     return r
 
 
-def bin(datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
+def bin(datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, yerr=None, **kwargs):
     """Bin x-y data into new values of x with an error bar.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         xcol (index):
             Index of column of data with X values
         ycol (index):
@@ -269,6 +282,10 @@ def bin(datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kar
         clone (bool):
             Return a clone of the current AnalysisMixin with binned data (True)
             or just the numbers (False).
+        yerr (index):
+            Column to use for y-errors if not None.
+        **kwargs:
+            Other keyword arguments passed to make_bins
 
     Returns:
         (:py:class:`Stoner.Data` or tuple of 4 array-like):
@@ -290,15 +307,17 @@ def bin(datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kar
             xcol = cols["xcol"]
         if ycol is None:
             ycol = cols["ycol"]
-    yerr = kargs.pop("yerr", cols["yerr"] if cols["has_yerr"] else None)
+    yerr = yerr if yerr is not None else cols.get("yerr")
 
-    bin_edges, bin_centres = datafile.make_bins(xcol, bins, mode, **kargs)
+    bin_edges, bin_centres = datafile.make_bins(xcol, bins, mode, **kwargs)
 
     xcol = datafile.find_col(xcol)
     ycol = datafile.find_col(ycol, force_list=True)
-    if yerr is not None:
+    if yerr:
         yerr = datafile.find_col(yerr, force_list=True)
         yerr = datafile.data[:, yerr]
+    else:
+        yerr = None
 
     bin_centres, y_vals, y_errs, bin_counts = _bin_weighted(
         datafile.data[:, xcol], datafile.data[:, ycol], bin_edges, yerr
@@ -334,6 +353,8 @@ def deduplicate(datafile, col, action="average", clone=True):
     """Remove rows with duplicated values in the given column.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         col (Index type):
             Column to look for duplicate values.
 
@@ -392,6 +413,8 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
     """Extrapolate data based on local fit to x,y data.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         new_x (float or array):
             New values of x data.
 
@@ -502,7 +525,9 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
     """Interpolate a dataset to get a new set of values for a given set of x data.
 
     Args:
-        ewX (1D array or None):
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+        newX (1D array or None):
             Row indices or X column values to interpolate with. If None, then the
             :py:meth:`Stoner.Data.interpolate` returns an interpolation function. Unlike the raw interpolation
             function from scipy, this interpolation function will work with MaskedArrays by compressing them
@@ -572,10 +597,12 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
     return ret
 
 
-def make_bins(datafile, xcol, bins, mode="lin", **kargs):
+def make_bins(datafile, xcol, bins, mode="lin", bin_start=None, bin_stop=None):
     """Generate bin boundaries and centres along an axis.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         xcol (index):
             Column of data with X values
         bins (1d_)array or int or float):
@@ -594,8 +621,8 @@ def make_bins(datafile, xcol, bins, mode="lin", **kargs):
             bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
             boundaries and centres for each bin.
     """
-    xmin = kargs.pop("bin_start", (datafile // xcol).min())
-    xmax = kargs.pop("bin_sop", (datafile // xcol).max())
+    xmin = (datafile // xcol).min() if bin_start is None else bin_start
+    xmax = (datafile // xcol).max() if bin_stop is None else bin_stop
 
     if isinstance(bins, int):  # Given a number of bins
         if mode.lower().startswith("lin"):
@@ -666,11 +693,13 @@ def make_bins(datafile, xcol, bins, mode="lin", **kargs):
 
 
 def outlier_detection(
-    datafile, column=None, window=7, shape="boxcar", certainty=3.0, action="mask", width=1, func=None, **kargs
+    datafile, column=None, window=7, shape="boxcar", certainty=3.0, action="mask", width=1, func=None, **kwargs
 ):
     """Detect outliers in a column of data.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         column(column index):
             specifying column for outlier detection. If not set,
             defaults to the current y set column.
@@ -697,9 +726,11 @@ def outlier_detection(
             A function that determines if the current row is an outlier.
         action_args (tuple):
             if *action* is callable, then action_args can be used to pass extra arguments to the action callable
-        action_kargs (dict):
-            If *action* is callable, then action_kargs can be used to pass extra keyword arguments to the action
+        action_kwargs (dict):
+            If *action* is callable, then action_kwargs can be used to pass extra keyword arguments to the action
             callable.
+        **kwargs:
+            Keywords used to determine column assignments.
 
     Returns:
         (:py:class:`Stoner.Data`):
@@ -715,7 +746,7 @@ def outlier_detection(
 
     The outlier detection function has the signatrure::
 
-        def outlier(row,column,window,certainty,**kargs)
+        def outlier(row,column,window,certainty,**kwargs)
             #code
             return True # or False
 
@@ -723,7 +754,7 @@ def outlier_detection(
 
     IF *action* is a callable function then it should take the form of::
 
-        def action(i,column, data, *action_args, **action_kargs):
+        def action(i,column, data, *action_args, **action_kwargs):
             pass
 
     where *i* is the number of the outlier row, *column* the same value as above
@@ -741,24 +772,24 @@ def outlier_detection(
 
     if action not in ["delete", "mask", "mask row"] and not callable(action):
         raise ValueError(f"Do'n know what to do with action={action}")
-    _ = datafile._col_args(scalar=True, ycol=column, **kargs)
+    _ = datafile._col_args(scalar=True, ycol=column, **kwargs)
     column = _.ycol
     params = get_func_params(func)
     for p in params:
         if p in _:
-            kargs[p] = _[p]
-    kargs.setdefault("ycol", column)
-    if not callable(action) and ("action_args" in kargs or "acation_kargs" in kargs):
-        raise SyntaxError("Can only have action_args and action_kargs keywords in action is callable")
-    action_args = kargs.pop("action_args", ())
-    action_kargs = kargs.pop("action_kargs", {})
-    kargs["shape"] = shape
-    for k in list(kargs.keys()):
+            kwargs[p] = _[p]
+    kwargs.setdefault("ycol", column)
+    if not callable(action) and ("action_args" in kwargs or "acation_kwargs" in kwargs):
+        raise SyntaxError("Can only have action_args and action_kwargs keywords in action is callable")
+    action_args = kwargs.pop("action_args", ())
+    action_kwargs = kwargs.pop("action_kwargs", {})
+    kwargs["shape"] = shape
+    for k in list(kwargs.keys()):
         if k not in params:
-            kargs.pop(k)
+            kwargs.pop(k)
     index = np.zeros(len(datafile), dtype=bool)
     for i, t in enumerate(datafile.rolling_window(window, wrap=False, exclude_centre=width)):
-        index[i] = func(datafile.data[i], t, metric=certainty, **kargs)
+        index[i] = func(datafile.data[i], t, metric=certainty, **kwargs)
     datafile["outliers"] = np.arange(len(datafile))[index]  # add outlier indices to metadata
     if action == "mask" or action == "mask row":
         if action == "mask":
@@ -769,14 +800,28 @@ def outlier_detection(
         datafile.data = datafile.data[~index]
     elif callable(action):  # this will call the action function with each row in turn from back to start
         for i in np.arange(len(datafile))[index][::-1]:
-            action(i, column, datafile.data, *action_args, **action_kargs)
+            action(i, column, datafile.data, *action_args, **action_kwargs)
     return datafile
 
 
-def scale(datafile, other, xcol=None, ycol=None, **kargs):
+def scale(
+    datafile,
+    other,
+    xcol=None,
+    ycol=None,
+    xmode="linear",
+    ymode="linear",
+    use_estimate=False,
+    bounds=None,
+    otherbounds=None,
+    replace=True,
+    headers=None,
+):
     """Scale the x and y data in this DataFile to match the x and y data in another DataFile.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         other (DataFile):
             The other instance of a datafile to match to
 
@@ -819,13 +864,8 @@ def scale(datafile, other, xcol=None, ycol=None, **kargs):
     #
     # Sort out keyword srguments
     #
-    bounds = kargs.pop("bounds", lambda x, r: True)
-    otherbounds = kargs.pop("otherbounds", bounds)
-    replace = kargs.pop("replace", True)
-    headers = kargs.pop("headers", None)
-    xmode = kargs.pop("xmode", "linear")
-    ymode = kargs.pop("ymode", "linear")
-    use_estimate = kargs.pop("use_estimate", False)
+    bounds = lambda x, r: True if bounds is None else bounds
+    otherbounds = bounds if otherbounds is None else otherbounds
 
     # Get our working data from this DataFile and remove masked rows
 
@@ -891,6 +931,10 @@ def scale(datafile, other, xcol=None, ycol=None, **kargs):
         datafile.data[:, _.xcol] = new_data[:, 0]
         datafile.data[:, _.ycol] = new_data[:, 1]
         if headers:
+            if isinstance(headers, str):
+                headers = [headers]
+            if len(headers) == 1:
+                headers = [datafile.column_headers[_.xcol]] + headers
             datafile.column_headers[_.xcol] = headers[0]
             datafile.column_headers[_.ycol] = headers[1]
         ret = datafile
@@ -899,17 +943,19 @@ def scale(datafile, other, xcol=None, ycol=None, **kargs):
     return ret
 
 
-def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, **kargs):
+def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=True, result=True, header=None):
     """Smooth data by convoluting with a window.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         window (string or tuple):
             Defines the window type to use by passing to :py:func:`scipy.signal.get_window`.
 
     Keyword Arguments:
         xcol(column index or None):
             Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.Core.DataFile.setas`
-        ycvol (column index or None):
+        ycol (column index or None):
             Data to be smoothed
         size (int or float):
             If int, then the number of points to use in the smoothing window. If float, then the size in x-data
@@ -933,9 +979,7 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, **kargs):
         space X over the same range, smoothed and then interpoalted back to the original x values.
     """
     _ = datafile._col_args(xcol=xcol, ycol=ycol)
-    replace = kargs.pop("replace", True)
-    result = kargs.pop("result", True)  # overwrite existing y column data
-    header = kargs.pop("header", datafile.column_headers[_.ycol])
+    header = datafile.column_headers[_.ycol] if header is None else header
 
     # Sort out window size
     if isinstance(size, float):
@@ -975,8 +1019,24 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, **kargs):
     return datafile
 
 
-def spline(datafile, xcol=None, ycol=None, sigma=None, **kargs):
+def spline(
+    datafile,
+    xcol=None,
+    ycol=None,
+    sigma=None,
+    replace=True,
+    result=True,
+    header=None,
+    order=3,
+    smoothing=None,
+    ext="extrapolate",
+    bbox=None,
+):
     """Construct a spline through x and y data and replace, add new data or return spline function.
+
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
 
     Keyword Arguments:
         xcol (column index):
@@ -985,6 +1045,8 @@ def spline(datafile, xcol=None, ycol=None, sigma=None, **kargs):
             Column with y data or if None, use the setas attribute
         sigma (column index, or array of data):
             Column with weights, or if None use the 1/yerr column.
+        result (bool or column index):
+            Whether to add the smoothed data to the dataset and if so where.
         replace (Boolean or column index or None):
             If True then the y-column data is repalced, if a column index then the
             new data is added after the specified index, if False then the new y-data is returned and if None,
@@ -1015,16 +1077,11 @@ def spline(datafile, xcol=None, ycol=None, sigma=None, **kargs):
             sigma = 1.0 / (datafile // _.yerr)
         else:
             sigma = np.ones(len(datafile))
-    replace = kargs.pop("replace", True)
-    result = kargs.pop("result", True)  # overwrite existing y column data
-    header = kargs.pop("header", datafile.column_headers[_.ycol])
-    k = kargs.pop("order", 3)
-    s = kargs.pop("smoothing", None)
-    bbox = kargs.pop("bbox", [None] * 2)
-    ext = kargs.pop("ext", "extrapolate")
+    header = header if header is not None else datafile.column_headers[_.ycol]
+    bbox = [None] * 2 if bbox is None else bbox
     x = datafile // _.xcol
     y = datafile // (_.ycol)
-    spline = UnivariateSpline(x, y, w=sigma, bbox=bbox, k=k, s=s, ext=ext)
+    spline = UnivariateSpline(x, y, w=sigma, bbox=bbox, k=order, s=smoothing, ext=ext)
     new_y = spline(x)
 
     if header is None:

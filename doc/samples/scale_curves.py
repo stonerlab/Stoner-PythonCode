@@ -22,7 +22,7 @@ d2 = Data(x2, y2, column_headers=["Time", "Signal 2"], setas="xy")
 
 d.plot(label="1$^\\mathrm{st}$ signal")
 d2.plot(figure=d.fig, label="2$^\\mathrm{nd}$ signal")
-d3 = d2.scale(d, header="Signal 2 scaled", xmode="affine")
+d3 = d2.scale(d, headers="Signal 2 scaled", xmode="affine")
 d3.plot(figure=d.fig, label="1$^\\mathrm{st}$ scaled signals")
 d3["test"] = linspace(1, 10, 10)
 txt = tabulate(d3["Transform"], floatfmt=".2f", tablefmt="grid")
@@ -30,7 +30,7 @@ d3.text(10, 4, "Transform\n{}".format(txt), fontdict={"size": "x-small"})
 
 np_data = column_stack((x2, y2))
 d4 = d.scale(
-    np_data, header="Signal 2 scaled", xmode="affine", use_estimate=True
+    np_data, headers="Signal 2 scaled", xmode="affine", use_estimate=True
 )
 d4.plot(figure=d.fig, label="2$^\\mathrm{nd}$ scaled signal")
 d4.ylim = (-7, 9)

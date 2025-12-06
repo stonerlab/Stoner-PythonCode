@@ -29,7 +29,7 @@ def concatenate(folder, sort=None, reverse=False):
     if not isinstance(sort, bool) or sort:
         if isinstance(sort, bool) or sort is None:
             sort = folder[0].setas.cols["xcol"]
-        folder[0].sort(order=sort, reverse=reverse)
+        folder[0].sort(sort, reverse=reverse)
 
     return folder
 

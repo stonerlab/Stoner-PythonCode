@@ -70,6 +70,8 @@ def closest(datafile, value, xcol=None):
     """Return the row in a data file which has an x-column value closest to the given value.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         value (float):
             Value to search for.
 
@@ -95,6 +97,8 @@ def column(datafile, col):
     """Extract one or more columns of data from the datafile.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         col (int, string, list or re):
             is the column index as defined for :py:meth:`DataFile.find_col`
 
@@ -122,6 +126,8 @@ def find_col(datafile, col, force_list=False):
         in turn.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         col (int, a string, a re, a slice or a list):
             Which column(s) to retuirn indices for.
 
@@ -138,6 +144,10 @@ def find_col(datafile, col, force_list=False):
 
 def find_duplicates(datafile, xcol=None, delta=1e-8):
     """Find rows with duplicated values of the search column(s).
+
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
 
     Keyword Arguments:
         xcol (index types):
@@ -179,6 +189,10 @@ def find_duplicates(datafile, xcol=None, delta=1e-8):
 def remove_duplicates(datafile, xcol=None, delta=1e-8, strategy="keep first", ycol=None, yerr=None):
     """Find and remove rows with duplicated values of the search column(s).
 
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+
     Keyword Arguments:
         xcol (index types):
             The column)s) to search for duplicates in.
@@ -188,8 +202,10 @@ def remove_duplicates(datafile, xcol=None, delta=1e-8, strategy="keep first", yc
             What to do with duplicated rows. Options are:
                 - *keep first* - the first row is kept, others are discarded
                 - *average* - the duplicate rows are average together.
-        ycol, yerr (index types):
-            When using an average strategey identifies columns that represent values and uncertainties where
+        ycol (index):
+            When using an average strategey identifies columns that represent values.
+        yerr (index types):
+            When using an average strategey identifies columns  uncertainties where
             the proper weighted standard error should be done.
 
     Returns:
@@ -231,6 +247,10 @@ def remove_duplicates(datafile, xcol=None, delta=1e-8, strategy="keep first", yc
 
 def rolling_window(datafile, window=7, wrap=True, exclude_centre=False):
     """Iterate with a rolling window section of the data.
+
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
 
     Keyword Arguments:
         window (int):
@@ -291,6 +311,10 @@ def rolling_window(datafile, window=7, wrap=True, exclude_centre=False):
 def search(datafile, xcol=None, value=None, columns=None, accuracy=0.0):
     """Search the numerica data part of the file for lines that match and returns  the corresponding rows.
 
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+
     Keyword Arguments:
         xcol (index types, None):
             a Search Column Index. If None (default), use the current setas.x
@@ -329,8 +353,12 @@ def search(datafile, xcol=None, value=None, columns=None, accuracy=0.0):
     return data
 
 
-def section(datafile, **kargs):
+def section(datafile, x=None, y=None, z=None, r=None, accuracy=0.0, **kwargs):
     """Assuming data has x,y or x,y,z coordinates, return data from a section of the parameter space.
+
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
 
     Keyword Arguments:
         x (float, tuple, list or callable):
@@ -339,8 +367,11 @@ def section(datafile, **kargs):
             y values ,atch this condition are included inth e section
         z (float, tuple,list  or callable):
             z values ,atch this condition are included inth e section
-        r (callable): a
-        function that takes a tuple (x,y,z) and returns True if the line is to be included in section
+        r (callable):
+            a function that takes a tuple (x,y,z) and returns True
+            if the line is to be included in section
+        **kwargs:
+            Arguments to pass to :py:func:`Stoner.core.methods.select`.
 
     Returns:
         (DataFile):
@@ -363,36 +394,36 @@ def section(datafile, **kargs):
     ycol = cols["ycol"][0] if cols.has_ycol else None
     zcol = cols["zcol"][0] if cols.has_zcol else None
 
-    accuracy = kargs.pop("accuracy", 0.0)
-
-    if "x" in kargs:
-        tmp.data = tmp.search(xcol, kargs.pop("x"), accuracy=accuracy)
-    if "y" in kargs:
-        tmp.data = tmp.search(ycol, kargs.pop("y"), accuracy=accuracy)
-    if "z" in kargs:
-        tmp.data = tmp.search(zcol, kargs.pop("z"), accuracy=accuracy)
-    if "r" in kargs:
-        func = lambda x, r: kargs.pop("r")(r[xcol], r[ycol], r[zcol])
+    if x is not None:
+        tmp.data = tmp.search(xcol, x, accuracy=accuracy)
+    if y is not None:
+        tmp.data = tmp.search(ycol, y, accuracy=accuracy)
+    if z is not None:
+        tmp.data = tmp.search(zcol, z, accuracy=accuracy)
+    if r is not None:
+        func = lambda x, row: r(row[xcol], row[ycol], row[zcol])
         tmp.data = tmp.search(0, func, accuracy=accuracy)
 
-    if kargs:  # Fallback to working with select if nothing else.
-        tmp.select(**kargs)
+    if kwargs:  # Fallback to working with select if nothing else.
+        tmp.select(**kwargs)
     return tmp
 
 
-def select(datafile, *args, **kargs):
+def select(datafile, *args, **kwargs):
     """Produce a copy of the DataFile with only data rows that match a criteria.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         args (various):
             A single positional argument if present is interpreted as follows:
 
             -   If a callable function is given, the entire row is presented to it. If it evaluates True then that
                 row is selected. This allows arbitrary select operations
-            -   If a dict is given, then it and the kargs dictionary are merged and used to select the rows
+            -   If a dict is given, then it and the kwargs dictionary are merged and used to select the rows
 
     Keyword Arguments:
-        kargs (various):
+        kwargs (various):
             Arbitrary keyword arguments are interpreted as requestion matches against the corresponding
             columns. The keyword argument may have an additional *__operator** appended to it which is interpreted
             as follows:
@@ -427,22 +458,22 @@ def select(datafile, *args, **kargs):
 
         There is a "magic" column name "_i" which is interpreted as the row numbers of the data.
 
-    Example
+    Example:
         .. plot:: samples/select_example.py
             :include-source:
             :outname: select
     """
     match args:
         case (arg,) if callable(arg):
-            kargs["__"] = arg
+            kwargs["__"] = arg
         case (dict() as arg,):
-            kargs.update(arg)
+            kwargs.update(arg)
         case _:
             pass
 
     result = datafile.clone
     res = np.zeros(len(datafile), dtype=bool)
-    for arg, val in kargs.items():
+    for arg, val in kwargs.items():
         parts = arg.split("__")
         if parts == ["", ""]:
             func = val
@@ -465,10 +496,12 @@ def select(datafile, *args, **kargs):
     return result
 
 
-def sort(datafile, *order, **kargs):
+def sort(datafile, *order, reverse=False):
     """Sort the data by column name.
 
-    Arguments:
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         order (column index or list of indices or callable function):
             One or more sort order keys.
 
@@ -489,7 +522,6 @@ def sort(datafile, *order, **kargs):
         a list of column indices. If no sort orders are supplied then the data is sorted by the
         :py:attr:`DataFile.setas` attribute or if that is not set, then order of the columns in the data.
     """
-    reverse = kargs.pop("reverse", False)
     order = list(order)
     setas = datafile.setas.clone
     ch = copy.copy(datafile.column_headers)
@@ -530,6 +562,8 @@ def split(datafile, *args, final="files"):
     """Recursively splits the current DataFile into a :py:class:`Stoner.Folders.DataFolder`.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         *args (column index or function):
             Each argument is used in turn to find key values for the files in the DataFolder
 
@@ -618,13 +652,15 @@ def unique(datafile, col, return_index=False, return_inverse=False):
     """Return the unique values from the specified column - pass through for numpy.unique.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         col (index):
             Column to look for unique values in
 
     Keyword Arguments:
         return_index (bool):
             Pass through to :py:func:`np.unique`
-        reverse (bool):
+        return_inverse (bool):
             Pass through to :py:func:`np.unique`
 
     Returns:
@@ -638,6 +674,8 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
     """Append a column of data or inserts a column to a datafile instance.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         column_data (:py:class:`numpy.array` or list or callable):
             Data to append or insert or a callable function that will generate new data
 
@@ -785,8 +823,12 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
 def columns(datafile, not_masked=False, reset=False):
     """Iterate over the columns of data int he datafile.
 
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+
     Keyword Args:
-        no_masked (bool):
+        not_masked (bool):
             Only iterate over columns that don't have masked elements
         reset (bool):
             If true then reset the iterator (immediately stops the current iteration without returning any data)./
@@ -807,6 +849,8 @@ def del_column(datafile, col=None, duplicates=False):
     """Delete a column from the current :py:class:`DataFile` object.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         col (int, string, iterable of booleans, list or re):
             is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
 
@@ -882,6 +926,8 @@ def del_rows(datafile, col=None, val=None, invert=False):
     """Search in the numerica data for the lines that match and deletes the corresponding rows.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         col (list,slice,int,string, re, callable or None):
             Column containing values to search for.
         val (float or callable):
@@ -968,6 +1014,10 @@ def del_rows(datafile, col=None, val=None, invert=False):
 def dir(datafile, pattern=None):
     """Return a list of keys in the metadata, filtering with a regular expression if necessary.
 
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+
     Keyword Arguments:
         pattern (string or re):
             is a regular expression or None to list all keys
@@ -990,6 +1040,8 @@ def get_filename(datafile, mode):
     """Force the user to choose a new filename using a system dialog box.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         mode (string):
             The mode of file operation to be used when calling the dialog box
 
@@ -1008,6 +1060,8 @@ def insert_rows(datafile, row, new_data):
     """Insert new_data into the data array at position row. This is a wrapper for numpy.insert.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         row (int):
             Data row to insert into
         new_data (numpy array):
@@ -1026,6 +1080,8 @@ def rename(datafile, old_col, new_col):
     """Rename columns without changing the underlying data.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         old_col (string, int, re):
             Old column index or name (using standard rules)
         new_col (string):
@@ -1044,6 +1100,8 @@ def reorder_columns(datafile, cols, headers_too=True, setas_too=True):
     """Construct a new data array from the original data by assembling the columns in the order given.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         cols (list of column indices):
             (referred to the oriignal data set) from which to assemble the new data set
         headers_too (bool):
@@ -1076,6 +1134,10 @@ def reorder_columns(datafile, cols, headers_too=True, setas_too=True):
 def rows(datafile, not_masked=False, reset=False):
     """Iterate over rows of data.
 
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+
     Keyword Arguments:
         not_masked(bool):
             If a row is masked and this is true, then don't return this row.
@@ -1098,10 +1160,12 @@ def rows(datafile, not_masked=False, reset=False):
             yield row
 
 
-def save(datafile, filename=None, **kargs):
+def save(datafile, filename=None, as_loaded=None, filetype=False):
     """Save a string representation of the current DataFile object into the file 'filename'.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         filename (string, bool or None):
             Filename to save data as, if this is None then the current filename for the object is used. If this
             is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
@@ -1109,12 +1173,14 @@ def save(datafile, filename=None, **kargs):
             If True, then the *Loaded as* key is inspected to see what the original class of the DataFile was
             and then this class' save method is used to save the data. If a str then
             the keyword value is interpreted as the name of a subclass of the the current DataFile.
+        filetype (bool):
+            Fallback is as_loaded is not provided.
 
     Returns:
         datafile:
             The current :py:class:`DataFile` object
     """
-    as_loaded = kargs.pop("as_loaded", kargs.pop("filetype", False))
+    as_loaded = filetype if as_loaded is None else as_loaded
     if filename is None:
         filename = datafile.filename
     if filename is None or (isinstance(filename, bool) and not filename):
@@ -1133,25 +1199,31 @@ def save(datafile, filename=None, **kargs):
         case str():
             pass
         case _:
-            raise TypeError(f"Unable to use loadtype to work out best saving routine.")
+            raise TypeError("Unable to use loadtype to work out best saving routine.")
     saver = best_saver(filename, name=as_loaded, what="Data")
     ret = saver(datafile, filename)
     datafile.filename = ret.filename
     return datafile
 
 
-def swap_column(datafile, *swp, **kargs):
+def swap_column(datafile, *swp, headers_too=True, **kwargs):
     """Swap pairs of columns in the data.
 
     Useful for reordering data for idiot programs that expect columns in a fixed order.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         swp  (tuple of list of tuples of two elements):
             Each element will be iused as a column index (using the normal rules
             for matching columns).  The two elements represent the two
             columns that are to be swapped.
+
+    Keyword Arguments:
         headers_too (bool):
             Indicates the column headers are swapped as well
+        **kwargs:
+            Other keyword arguments passed to :py:meth:`Stoner.DataArray.swap_cokumns`.
 
     Returns:
         datafile:
@@ -1162,7 +1234,7 @@ def swap_column(datafile, *swp, **kargs):
         element of the list. Thus in principle the @swp could contain
         lists of lists of tuples
     """
-    datafile.data.swap_column(*swp, **kargs)
+    datafile.data.swap_column(*swp, headers_too=headers_too, **kwargs)
     return datafile
 
 
@@ -1190,10 +1262,16 @@ def to_pandas(datafile):
     return df
 
 
-def format(datafile, key, **kargs):
+def format(datafile, key, mode="float", units=None, prefix=None, latex=False, fmt=None, escape=False):
     r"""Return the contents of key pretty formatted using :py:func:`format_error`.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+        key (str):
+            Metadata key to get values from.
+
+    Keyword Argume3nts:
         fmt (str): Specify the output format, options are:
 
             *  "text" - plain text output
@@ -1213,6 +1291,9 @@ def format(datafile, key, **kargs):
         prefix (string):
             A prefix string that should be included before the value and error string. in LaTeX mode this is
             inside the math-mode markers, but not embedded in \mathrm.
+        latex (bool):
+            Whether to use latex formatting codes or not (mainly if the formatted text is going to be used
+            with matplotlib.)
 
     Returns:
         A pretty string representation.
@@ -1221,12 +1302,9 @@ def format(datafile, key, **kargs):
     datafile["key label"]+"=" or "key=", the units are datafile["key units"] or "".
 
     """
-    mode = kargs.pop("mode", "float")
-    units = kargs.pop("units", datafile.get(key + " units", ""))
-    prefix = kargs.pop("prefix", f"{datafile.get(key + ' label', f'{key}')} = ")
-    latex = kargs.pop("latex", False)
-    fmt = kargs.pop("fmt", "latex" if latex else "text")
-    escape = kargs.pop("escape", False)
+    units = datafile.get(key + " units", "") if units is None else units
+    prefix = f"{datafile.get(key + ' label', f'{key}')} = " if prefix is None else prefix
+    fmt = fmt if fmt is not None else "latex" if latex else "text"
 
     try:
         value = float(datafile[key])
@@ -1239,17 +1317,21 @@ def format(datafile, key, **kargs):
     return format_error(value, error, fmt=fmt, mode=mode, units=units, prefix=prefix, scape=escape)
 
 
-def to_hdf(datafile, filename=None, **kargs):  # pylint: disable=unused-argument
+def to_hdf(datafile, filename=None):  # pylint: disable=unused-argument
     """Write the current object into  an hdf5 file or group within a file.
 
     Writes the data in afashion that is compatible with being loaded in again.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+
+    Keyword Arguments:
         filename (string or h5py.Group):
             Either a string, of h5py.File or h5py.Group object into which to save the file. If this is a string,
             the corresponding file is opened for writing, written to and save again.
 
-    Returns
+    Returns:
         A copy of the object
     """
     if filename is None:

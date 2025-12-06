@@ -107,38 +107,6 @@ Image Classes
     :no-inheritance-diagram:
 
 
-The following modules offer specialised file and foler formats.
-
-HDF Support
-^^^^^^^^^^^
-
-.. automodapi:: Stoner.HDF5
-    :no-inheritance-diagram:
-   :no-main-docstr:
-    :headings: -~
-
-Zip File Support
-^^^^^^^^^^^^^^^^^
-
-.. automodapi:: Stoner.Zip
-    :no-inheritance-diagram:
-   :no-main-docstr:
-    :headings: -~
-
-
-Utility Functions
-^^^^^^^^^^^^^^^^^^^^
-
-.. automodapi:: Stoner.Util
-    :no-inheritance-diagram:
-   :no-main-docstr:
-    :headings: -~
-
-.. automodapi:: Stoner.tools
-   :allowed-package-names: Stoner.tools
-    :no-inheritance-diagram:
-    :headings: -~
-
 -------------------------------------
 Folders pacakge - Collections Classes
 -------------------------------------

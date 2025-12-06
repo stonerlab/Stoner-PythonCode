@@ -9,13 +9,14 @@ from Stoner.plot.utils import errorfill
 random.seed(12345)  # Ensure consistent random numbers!
 
 # Make some data
+func = lambda x, A, B, C: A + B * exp(-x / C)
+
 x = linspace(0, 10.0, 101)
-y = 2 + 4 * exp(-x / 1.7) + random.normal(scale=0.2, size=101)
+y = func(x, 2, 4, 1.5) + random.normal(scale=0.2, size=101)
 x += +random.normal(scale=0.1, size=101)
 
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
-func = lambda x, A, B, C: A + B * exp(-x / C)
 
 # Do the fitting and plot the result
 fit = d.odr(

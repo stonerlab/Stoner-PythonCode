@@ -55,8 +55,10 @@ def _curve_fit_p0_list(p0, model):
     """Take something containing an initial vector and turns it into a list for curve_fit.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         model (callable, lmfit/Model, odr.Model): miodel object for parameter names
-        o0 (list,array,type or Mapping): Object containing the parameter gues values
+        p0 (list,array,type or Mapping): Object containing the parameter gues values
 
     Returns:
         A list of starting values in the order in which they appear in the model.
@@ -117,7 +119,9 @@ def _get_curve_fit_data(datafile, xcol, ycol, bounds, sigma):
 def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigma_x=None):
     """Marshall the data for doing a curve_fit or equivalent.
 
-    Parameters:
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         xcol (index):
             Column with xdata in it
         ycol(index):
@@ -128,6 +132,8 @@ def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigm
             Used to select the data rows to fit
         scale_covar (bool,None):
             If set the flag to scale the covariance.
+        sigma_x (index or array-like):
+            column of x-errors or uncertainty values.
 
     Returns:
         (data,scale_covar,col_assignments):
@@ -153,8 +159,8 @@ def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigm
     elif not isnone(_.yerr):
         sigma = working[:, datafile.find_col(_.yerr)]
     else:
-        sigma = ma.ones(len(xdata))
-        scale_covar = True
+        sigma = 1.0
+        scale_covar = False
 
     if sigma_x is None:
         if _.xerr is None:
@@ -173,17 +179,35 @@ def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigm
             raise RuntimeError("Sigma_x should have been a column index or list of values")
 
     mask = np.invert(ydata.mask)
-    sigma = sigma[mask]
+    if isinstance(sigma, np.ndarray):
+        sigma = sigma[mask]
+        sigma_x = sigma_x[mask]
     ydata = ydata[mask]
     xdata = xdata[mask]  # lmfit doesn't seem to work well with masked data - here we just delete masked points
 
     return (xdata, ydata, sigma, sigma_x), scale_covar, _
 
 
-def __lmfit_one(datafile, model, data, params, prefix, columns, scale_covar, **kargs):
+def __lmfit_one(
+    datafile,
+    model,
+    data,
+    params,
+    prefix,
+    columns,
+    scale_covar,
+    replace=False,
+    result=False,
+    header="",
+    residuals=False,
+    output="row",
+    nan_policy="raise",
+):
     """Carry out a single fit wioth lmfit.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         model (lmfit_mod.Model):
             Configured model
         data (tuple of xdata,ydata,sigma):
@@ -194,7 +218,7 @@ def __lmfit_one(datafile, model, data, params, prefix, columns, scale_covar, **k
             Prefix for labels in metadata
         columns (attribute dict):
             Column assignments
-        scale_covat (bool):
+        scale_covar (bool):
             Whether sigmas are absolute or relative.
 
     Keyword Arguments:
@@ -206,6 +230,10 @@ def __lmfit_one(datafile, model, data, params, prefix, columns, scale_covar, **k
             whether to add new dataa
         output (str):
             What to return
+        residuals (bool):
+            Whether to also include residuals (default False)
+        nan_policy (str):
+            What to do about nan's in the fit - passed to lmfit (default "raise")
 
     Returns:
         (various):
@@ -214,14 +242,9 @@ def __lmfit_one(datafile, model, data, params, prefix, columns, scale_covar, **k
     if not _lmfit:
         raise RuntimeError("lmfit module not available.")
 
-    replace = kargs.pop("replace", False)
-    result = kargs.pop("result", False)
-    header = kargs.pop("header", "")
-    residuals = kargs.pop("residuals", False)
-    output = kargs.pop("output", "row")
-    nan_policy = kargs.pop("nan_policy", "raise")
-    kargs[model.independent_vars[0]] = data[0]
-    fit = model.fit(data[1], params, scale_covar=scale_covar, weights=1.0 / data[2], nan_policy=nan_policy, **kargs)
+    kwargs = {}
+    kwargs[model.independent_vars[0]] = data[0]
+    fit = model.fit(data[1], params, scale_covar=scale_covar, weights=1.0 / data[2], nan_policy=nan_policy, **kwargs)
     if fit.success:
         row = _record_curve_fit_result(
             datafile,
@@ -402,10 +425,26 @@ def _record_curve_fit_result(
     return row
 
 
-def _odr_one(datafile, data, model, prefix, _, **kargs):
+def _odr_one(
+    datafile,
+    data,
+    model,
+    prefix,
+    _,
+    result=None,
+    replace=False,
+    header=None,
+    residuals=False,
+    asrow=False,
+    output=None,
+    p0=None,
+    **kwargs,
+):
     """Carry out a single fit wioth odr.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         data (odr.Data):
             configured data
         model (odr.Model):
@@ -420,21 +459,32 @@ def _odr_one(datafile, data, model, prefix, _, **kargs):
             Name of new data column if used
         replace (bool):
             whether to add new dataa
+        residuals (bool):
+            Also calcualte the residuals from the fit - default False.
+        asrow (bool):
+            Return the fit results as a single 1D row array - default False.
         output (str):
-            What to return
+            What to return - default depends on asrow for either a row or the fit.
+        p0 (Iterable):
+            Estimated values for model. If not given, model.estimate is used.
+        **kwargs:
+            Other parameters to try to create a p0 with.
 
     Returns:
         (various):
             Results froma  fit or raises and exception.
     """
-    result = kargs.pop("result", None)
-    replace = kargs.pop("replace", False)
-    header = kargs.pop("header", None)
-    residuals = kargs.pop("residuals", False)
-    asrow = kargs.pop("asrow", False)
-    output = kargs.pop("output", "row" if asrow else "fit")
+    if output is None:
+        output = "row" if asrow else "fit"
 
-    fit = sp.odr.ODR(data, model, beta0=model.estimate)
+    if p0 is not None:
+        model.estimate = p0
+    else:
+        p0 = np.ones_like(model.param_names)
+        for ix, k in enumerate(model.param_names):
+            p0[ix] = kwargs.pop(k, 1.0)
+        model.estimate = p0
+    fit = sp.odr.ODR(data, model, beta0=[x.value for x in model.estimate.values()])
     try:
         fit_result = fit.run()
         fit_result.redchi = fit_result.sum_square / (len(fit_result.y) - len(fit_result.beta))
@@ -494,11 +544,13 @@ def _odr_one(datafile, data, model, prefix, _, **kargs):
     return retval[output]
 
 
-def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, **kargs):
+def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode="float", **kwargs):
     """Annotate a plot with some information about a fit.
 
     Args:
-        mode (callable or lmfit_mod.Model):
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+        model (callable or lmfit_mod.Model):
             The function/model used to describe the fit to be annotated.
 
     Keyword Parameters:
@@ -516,6 +568,10 @@ def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, **kar
         prefix(str):
             If given  overridges the prefix from the model to determine a prefix to the parameter names in the
             metadata
+        mode (str):
+            Formatting mode to use for numbers in fit - see :py:func:`Stoner.core.functions.format`.
+        **kwargs:
+            Other keyword arguments, such as `prefix`, `arrowprops`.
 
     Returns:
         (Datam, str):
@@ -525,23 +581,22 @@ def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, **kar
     otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
     are set to be 0.75 * maximum x and y limit of the plot.
     """
-    mode = kargs.pop("mode", "float")
     if isclass(model) and ((_lmfit and issubclass(model, Model)) or issubclass(model, odrModel)):
         model = model()  # Instantiate a bare class first
 
     if isinstance(model, odrModel):  # Get predix from odrModel
         model_prefix = model.meta.get("__name__", type(model).__name__)
-        prefix = kargs.pop("prefix", datafile.get("odr.prefix", model_prefix))
+        prefix = kwargs.pop("prefix", datafile.get("odr.prefix", model_prefix))
         param_names = model.meta.get("param_names", [])
         display_names = model.meta.get("display_names", param_names)
         units = model.meta.get("units", [""] * len(param_names))
     elif _lmfit and isinstance(model, Model):  # Get prefix from lmfit
-        prefix = kargs.pop("prefix", datafile.get("lmfit.prefix", type(model).__name__))
+        prefix = kwargs.pop("prefix", datafile.get("lmfit.prefix", type(model).__name__))
         param_names = model.param_names
         display_names = getattr(model, "display_names", model.param_names)
         units = getattr(model, "units", [""] * len(param_names))
     elif callable(model):  # Get prefix from callable name
-        prefix = kargs.pop("prefix", model.__name__)
+        prefix = kwargs.pop("prefix", model.__name__)
         model = Model(model)
         param_names = model.param_names
         display_names = getattr(model, "display_names", model.param_names)
@@ -595,22 +650,24 @@ def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, **kar
                 zb, zt = ax.properties()["zlim"]
                 z = 0.5 * (zt - zb) + zb
             ax.text3D(x, y, z, text)
-        elif "arrowprops" in kargs:
-            ax.annotate(text, xy=(x, y), **kargs)
+        elif "arrowprops" in kwargs:
+            ax.annotate(text, xy=(x, y), **kwargs)
         else:
-            kargs.pop("xycoords", None)
-            kargs["transform"] = ax.transAxes
-            ax.text(x, y, text, **kargs)
+            kwargs.pop("xycoords", None)
+            kwargs["transform"] = ax.transAxes
+            ax.text(x, y, text, **kwargs)
         ret = datafile
     else:
         ret = text
     return ret
 
 
-def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kargs):
+def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     """General curve fitting function passed through from scipy.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         func (callable, lmfit_mod.Model, odr.Model):
             The fitting function with the form def f(x,*p) where p is a list of fitting parameters
         xcol (index, Iterable):
@@ -643,6 +700,8 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kargs):
             the sigma parameter is the reciprocal of the absolute standard deviation.
         output (str, default "fit"):
             Specify what to return.
+        **kwargs:
+            Other arguments to pass to `curve_fit_result` or initial p0 values for curve_fit.
 
     Returns:
         (various):
@@ -693,22 +752,22 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kargs):
     _ = datafile._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma)
     xcol, ycol, sigma = _.xcol, _.ycol, _.yerr
 
-    bounds = kargs.pop("bounds", lambda x, y: True)
-    result = kargs.pop("result", None)
-    replace = kargs.pop("replace", False)
-    header = kargs.pop("header", None)
-    residuals = kargs.pop("residuals", False)
-    prefix = kargs.pop("prefix", None)
+    bounds = kwargs.pop("bounds", lambda x, y: True)
+    result = kwargs.pop("result", None)
+    replace = kwargs.pop("replace", False)
+    header = kwargs.pop("header", None)
+    residuals = kwargs.pop("residuals", False)
+    prefix = kwargs.pop("prefix", None)
 
     # Support either scale_covar or absolute_sigma, the latter wins if both supplied
     # If neither are specified, then if sigma is not given, absolute sigma will be False.
 
-    scale_covar = kargs.pop("scale_covar", sigma is not None)
-    absolute_sigma = kargs.pop("absolute_sigma", not scale_covar)
+    scale_covar = kwargs.pop("scale_covar", sigma is not None)
+    absolute_sigma = kwargs.pop("absolute_sigma", not scale_covar)
     # Support both asrow and output, the latter wins if both supplied
-    asrow = kargs.pop("asrow", False)
-    output = kargs.pop("output", "row" if asrow else "fit")
-    kargs["full_output"] = True
+    asrow = kwargs.pop("asrow", False)
+    output = kwargs.pop("output", "row" if asrow else "fit")
+    kwargs["full_output"] = True
 
     if not isinstance(ycol, list):
         ycol = [ycol]
@@ -723,11 +782,11 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kargs):
         def _func(x, *beta):
             return func.fcn(beta, x)
 
-        p0 = kargs.pop("p0", func.estimate)
+        p0 = kwargs.pop("p0", func.estimate)
     elif isinstance(func, Model):
         _func = func.func
         try:
-            if "p0" not in kargs:  # Avoid expensive guess if we have a p0
+            if "p0" not in kwargs:  # Avoid expensive guess if we have a p0
                 pguess = func.guess
             else:
                 pguess = None
@@ -742,10 +801,10 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kargs):
             ValueError,
         ):
             pguess = None
-        p0 = kargs.pop("p0", pguess)
+        p0 = kwargs.pop("p0", pguess)
     elif callable(func):
         _func = func
-        p0 = kargs.pop("p0", None)
+        p0 = kwargs.pop("p0", None)
     else:
         raise TypeError(
             "".join(
@@ -790,7 +849,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kargs):
         else:
             s = sigma
         report = _curve_fit_result(
-            *_curve_fit(_func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
+            *_curve_fit(_func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kwargs)
         )
         report.func = func
         if p0 is None:
@@ -810,16 +869,18 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kargs):
         try:
             retvals.append(getattr(report, output))
         except AttributeError as err:
-            raise RuntimeError(f"Specified output: {kargs['output']}, from curve_fit not recognised") from err
+            raise RuntimeError(f"Specified output: {kwargs['output']}, from curve_fit not recognised") from err
     if i == 0:
         retvals = retvals[0]
     return retvals
 
 
-def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
+def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
     """Fit model to the data using a differential evolution algorithm.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         model (lmfit_mod.Model):
             An instance of an lmfit_mod.Model that represents the model to be fitted to the data
         xcol (index or None):
@@ -850,6 +911,8 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
             whether to automatically scale covariance matrix (leastsq only)
         output (str, default "fit"):
             Specify what to return.
+        **kwargs:
+            Other arguments to pass to `curve_fit_result` or initial p0 values for curve_fit.
 
     Returns:
         ( various ) :
@@ -880,39 +943,39 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
             :include-source:
             :outname: diffev1
     """
-    bounds = kargs.pop("bounds", lambda x, y: True)
-    result = kargs.pop("result", None)
-    replace = kargs.pop("replace", False)
-    residuals = kargs.pop("residuals", False)
-    header = kargs.pop("header", None)
+    bounds = kwargs.pop("bounds", lambda x, y: True)
+    result = kwargs.pop("result", None)
+    replace = kwargs.pop("replace", False)
+    residuals = kwargs.pop("residuals", False)
+    header = kwargs.pop("header", None)
     # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
-    absolute_sigma = kargs.pop("absolute_sigma", True)
-    scale_covar = kargs.pop("scale_covar", not absolute_sigma)
+    absolute_sigma = kwargs.pop("absolute_sigma", True)
+    scale_covar = kwargs.pop("scale_covar", not absolute_sigma)
     # Support both asrow and output, the latter wins if both supplied
-    asrow = kargs.pop("asrow", False)
-    output = kargs.pop("output", "row" if asrow else "fit")
+    asrow = kwargs.pop("asrow", False)
+    output = kwargs.pop("output", "row" if asrow else "fit")
 
     data, scale_covar, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar)
     data = data[0:3]
-    model, prefix = _prep_lmfit_model(model, kargs)
-    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
+    model, prefix = _prep_lmfit_model(model, kwargs)
+    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
 
     for k in model.param_names:
-        kargs.pop(k, None)
+        kwargs.pop(k, None)
 
     diff_model = MimizerAdaptor(model, params=p0)
 
-    kargs["polish"] = kargs.get("polish", True)
+    kwargs["polish"] = kwargs.get("polish", True)
 
     if not single_fit:
         raise NotImplementedError("Sorry chi^2 mapping not implemented for differential evolution yet.")
-    fit = _differential_evolution(diff_model.minimize_func, diff_model.bounds, data, **kargs)
+    fit = _differential_evolution(diff_model.minimize_func, diff_model.bounds, data, **kwargs)
     if not fit.success:
         raise RuntimeError(fit.message)
-    kargs.pop("polish", None)
-    kargs["full_output"] = True
+    kwargs.pop("polish", None)
+    kwargs["full_output"] = True
     polish = _curve_fit_result(
-        *_curve_fit(model.func, data[0], data[1], sigma=data[2], p0=fit.x, absolute_sigma=not scale_covar, **kargs)
+        *_curve_fit(model.func, data[0], data[1], sigma=data[2], p0=fit.x, absolute_sigma=not scale_covar, **kwargs)
     )
 
     polish.func = model.func
@@ -952,10 +1015,12 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     return retval[output]
 
 
-def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
+def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
     r"""Wrap the lmfit module fitting.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         model (lmfit_mod.Model):
             An instance of an lmfit_mod.Model that represents the model to be fitted to the data
         xcol (index or None):
@@ -986,6 +1051,8 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
             whether to automatically scale covariance matrix (leastsq only)
         output (str, default "fit"):
             Specify what to return.
+        **kwargs:
+            Other arguments to pass to `curve_fit_result` or initial p0 values for curve_fit.
 
     Returns:
         ( various ) :
@@ -1017,22 +1084,22 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
             :include-source:
             :outname: lmfit2
     """
-    bounds = kargs.pop("bounds", lambda x, y: True)
-    result = kargs.pop("result", None)
-    replace = kargs.pop("replace", False)
-    residuals = kargs.pop("residuals", False)
-    header = kargs.pop("header", None)
+    bounds = kwargs.pop("bounds", lambda x, y: True)
+    result = kwargs.pop("result", None)
+    replace = kwargs.pop("replace", False)
+    residuals = kwargs.pop("residuals", False)
+    header = kwargs.pop("header", None)
     # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
-    absolute_sigma = kargs.pop("absolute_sigma", True)
-    scale_covar = kargs.pop("scale_covar", not absolute_sigma)
+    absolute_sigma = kwargs.pop("absolute_sigma", True)
+    scale_covar = kwargs.pop("scale_covar", not absolute_sigma)
     # Support both asrow and output, the latter wins if both supplied
-    asrow = kargs.pop("asrow", False)
-    output = kargs.pop("output", "row" if asrow else "fit")
+    asrow = kwargs.pop("asrow", False)
+    output = kwargs.pop("output", "row" if asrow else "fit")
 
     data, scale_covar, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar)
-    model, prefix = _prep_lmfit_model(model, kargs)
-    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
-    nan_policy = kargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
+    model, prefix = _prep_lmfit_model(model, kwargs)
+    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
+    nan_policy = kwargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
 
     if single_fit:
         ret_val = __lmfit_one(
@@ -1055,8 +1122,8 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kargs):
         ret_val = np.zeros((pn.shape[0], pn.shape[1] * 2 + 1))
         for i, pn_i in enumerate(pn):  # iterate over every row in the supplied p0 values
             p0, single_fit = _prep_lmfit_p0(
-                model, data[1], data[0], pn_i, kargs
-            )  # model, data, params, prefix, columns, scale_covar,**kargs)
+                model, data[1], data[0], pn_i, kwargs
+            )  # model, data, params, prefix, columns, scale_covar,**kwargs)
             ret_val[i, :] = __lmfit_one(
                 datafile, model, data, p0, prefix, _, scale_covar, nan_policy=nan_policy, output="row"
             )
@@ -1104,6 +1171,8 @@ def polyfit(
     """Pass through to numpy.polyfit.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         xcol (index):
             Index to the column in the data with the X data in it
         ycol (index):
@@ -1157,10 +1226,12 @@ def polyfit(
     return p
 
 
-def odr(datafile, model, xcol=None, ycol=None, **kargs):
+def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     """Wrap the scipy.odr orthogonal distance regression fitting.
 
     Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
         model (scipy.odr.Model, lmfit_mod.Models.Model or callable):
             The model that describes the data. See below for more details.
         xcol (index or None):
@@ -1191,6 +1262,8 @@ def odr(datafile, model, xcol=None, ycol=None, **kargs):
             If this is a string then it is used as the name of the fitted data. (default None)
         output (str, default "fit"):
             Specify what to return.
+        **kwargs:
+            Other arguments to pass to `_odr_one` or initial p0 values for curve_fit.
 
     Returns:
         ( various ) :
@@ -1228,20 +1301,20 @@ def odr(datafile, model, xcol=None, ycol=None, **kargs):
              :outname: odrfit1
     """
     # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
-    absolute_sigma = kargs.pop("absolute_sigma", True)
-    scale_covar = kargs.pop("scale_covar", not absolute_sigma)
     # Support both asrow and output, the latter wins if both supplied
-    sigma = kargs.pop("sigma", None)
-    sigma_x = kargs.pop("sigma_x", None)
-    bounds = kargs.pop("boinds", lambda x, r: True)
-    p0 = kargs.pop("p0", None)
+    sigma = kwargs.pop("sigma", None)
+    sigma_x = kwargs.pop("sigma_x", None)
+    absolute_sigma = kwargs.pop("absolute_sigma", sigma is not None)
+    scale_covar = kwargs.pop("scale_covar", not absolute_sigma)
+    bounds = kwargs.pop("bounds", lambda x, r: True)
+    p0 = kwargs.pop("p0", None)
     data, scale_covar, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigma_x=sigma_x)
     if not isinstance(model, odrModel):
-        model, prefix = _prep_lmfit_model(model, kargs)
+        model, prefix = _prep_lmfit_model(model, kwargs)
     else:
-        prefix = kargs.pop("prefix", getattr(model, "name", model.fcn.__name__))
-    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kargs)
-    kargs["p0"] = p0
+        prefix = kwargs.pop("prefix", getattr(model, "name", model.fcn.__name__))
+    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
+    kwargs["p0"] = p0
     model = ODR_Model(model, p0=p0)
     if not absolute_sigma:
         data = sp.odr.Data(data[0], data[1], wd=1 / data[3] ** 2, we=1 / data[2] ** 2)
@@ -1249,7 +1322,7 @@ def odr(datafile, model, xcol=None, ycol=None, **kargs):
         data = sp.odr.RealData(data[0], data[1], sx=data[3], sy=data[2])
 
     if single_fit:
-        ret_val = _odr_one(datafile, data, model, prefix, _, **kargs)
+        ret_val = _odr_one(datafile, data, model, prefix, _, **kwargs)
     else:  # chi^2 mode
         raise NotImplementedError("Sorry cannot do chi^2 mode for orthogonal distance regression yet!")
     return ret_val
