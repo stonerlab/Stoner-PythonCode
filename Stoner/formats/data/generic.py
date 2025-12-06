@@ -11,7 +11,7 @@ import sys
 import warnings
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple, Dict, Any
 
 import numpy as np
 import PIL
@@ -20,21 +20,24 @@ from ...compat import Hyperspy_ok, hs, hsload, str2bytes
 from ...core.array import DataArray
 from ...core.exceptions import StonerLoadError
 from ...core.utils import Tab_Delimited
-from ...tools import make_Data
+from ...core.data import Data
 from ...tools.file import FileManager, get_filename
 from ..decorators import register_loader, register_saver
+
+Args = Tuple[Any]
+Kwargs = Dict[str, Any]
 
 
 class _refuse_log(logging.Filter):
     """Refuse to log all records."""
 
-    def filter(self, record):
+    def filter(self, record: str) -> bool:
         """Do not log anything."""
         return False
 
 
 @contextlib.contextmanager
-def catch_sysout(*args):
+def catch_sysout(*args: Args) -> None:
     """Temporarily redirect sys.stdout and.sys.stdin."""
     stdout, stderr = sys.stdout, sys.stderr
     out = io.StringIO()
@@ -47,7 +50,7 @@ def catch_sysout(*args):
     return
 
 
-def _delim_detect(line):
+def _delim_detect(line: str) -> str:
     """Detect a delimiter in a line.
 
     Args:
@@ -83,12 +86,18 @@ def _delim_detect(line):
     name="DataFile",
     what="Data",
 )
-def load_tdi_format(new_data, *args, **kargs):
+def load_tdi_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Actually load the data from disc assuming a .tdi file format.
 
     Args:
-        filename (str):
-            Path to filename to be loaded. If None or False, a dialog bax is raised to ask for the filename.
+        new_data (Data):
+            A newly instantiated Data object into which the instance will be loaded.
+        *args:
+            Other arguments are used if filename is not specified.
+
+    Keyword Arguments:
+        **kwargs:
+            Other keyword arguments are passed to get_filename.
 
     Returns:
         DataFile:
@@ -103,7 +112,7 @@ def load_tdi_format(new_data, *args, **kargs):
         disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
         the loading class can try a different sub-class instead.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -166,9 +175,20 @@ def load_tdi_format(new_data, *args, **kargs):
     name="DataFile",
     what="Data",
 )
-def save_tdi_format(save_data, filename):
-    """Write out a DataFile to a tab delimited tdi text file."""
+def save_tdi_format(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
+    """Write out a DataFile to a tab delimited tdi text file.
 
+    Args:
+        save_data (Data):
+            A newly instantiated Data object into which the instance will be loaded.
+        *args:
+            Other arguments are used if filename is not specified.
+
+    Keyword Arguments:
+        **kwargs:
+            Other keyword arguments are passed to get_filename.
+    """
+    filename, args, kwargs = get_filename(args, kwargs)
     header = ["TDI Format 1.5"]
     header.extend(save_data.column_headers[: save_data.data.shape[1]])
     header = "\t".join(header)
@@ -198,30 +218,38 @@ def save_tdi_format(save_data, filename):
     name="CSVFile",
     what="Data",
 )
-def load_csvfile(new_data: "DataFile", *args, **kargs) -> "DataFile":
+def load_csvfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Load generic deliminated files.
 
     Args:
-        filename (string or bool): File to load. If None then the existing filename is used,
-            if False, then a file dialog will be used.
+        new_data (Data):
+            A newly instantiated Data object into which the instance will be loaded.
+        *args:
+            Other arguments are used if filename is not specified.
 
     Keyword Arguments:
-        header_line (int): The line in the file that contains the column headers.
+        header_line (int):
+            The line in the file that contains the column headers.
             If None, then column headers are automatically generated.
-        data_line (int): The line on which the data starts
-        data_delim (string): The delimiter used for separating data values
-        header_delim (strong): The delimiter used for separating header values
+        data_line (int):
+            The line on which the data starts
+        data_delim (string):
+            The delimiter used for separating data values
+        header_delim (strong):
+            The delimiter used for separating header values
+        **kwargs:
+            Other keyword arguments are passed to get_filename.
 
     Returns:
         A copy of the current object after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     _defaults = {"header_line": 0, "data_line": 1, "header_delim": ",", "data_delim": ","}
 
-    header_line = kargs.pop("header_line", _defaults["header_line"])
-    data_line = kargs.pop("data_line", _defaults["data_line"])
-    data_delim = kargs.pop("data_delim", _defaults["data_delim"])
-    header_delim = kargs.pop("header_delim", _defaults["header_delim"])
+    header_line = kwargs.pop("header_line", _defaults["header_line"])
+    data_line = kwargs.pop("data_line", _defaults["data_line"])
+    data_delim = kwargs.pop("data_delim", _defaults["data_delim"])
+    header_delim = kwargs.pop("header_delim", _defaults["header_delim"])
 
     new_data.filename = filename
 
@@ -255,7 +283,7 @@ def load_csvfile(new_data: "DataFile", *args, **kargs) -> "DataFile":
 
     new_data.data = data
     new_data.column_headers = column_headers
-    new_data.metadata |= kargs
+    new_data.metadata |= kwargs
     return new_data
 
 
@@ -265,30 +293,37 @@ def load_csvfile(new_data: "DataFile", *args, **kargs) -> "DataFile":
     name="JustNumbers",
     what="Data",
 )
-def load_numbersfile(new_data: "DataFile", *args, **kargs) -> "DataFile":
+def load_numbersfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Simple pass through for csv file."""
     return load_csvfile(new_data, *args, header_line=None, data_line=0, header_delim=None, data_delim=None)
 
 
 @register_saver(patterns=[(".csv", 32), (".txt", 256)], name="CSVFile", what="Data")
-def save_csvfile(save_data: "DataFile", *args, **kargs):
+def save_csvfile(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
     Args:
-        filename (string): Filename to save as (using the same rules as for the load routines)
+        save_data (Data):
+            Data instance to be saved.
+        *args:
+            Other arguments are used with get_filename
 
     Keyword Arguments:
-        deliminator (string): Record deliniminator (defaults to a comma)
-        no_header (bool): Whether to skip the headers, defaults to False (include colu,n headers)
+        delimiter (str):
+            Record deliniminator (defaults to a comma)
+        no_header (bool):
+            Whether to skip the headers, defaults to False (include colu,n headers)
+        **kwargs:
+            Other keyword arguments are passed to get_filename.
 
     Returns:
-        A copy of itsave_data.
+        A copy of save_data.
     """
-    filename, args, kargs = get_filename(args, kargs)
-    delimiter = kargs.pop("deliminator", ",")
+    filename, args, kwargs = get_filename(args, kwargs)
+    delimiter = kwargs.pop("delimiter", ",")
     if filename is None:
         filename = save_data.filename
-    no_header = kargs.get("no_header", False)
+    no_header = kwargs.get("no_header", False)
     if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
         filename = save_data.__file_dialog("w")
     with FileManager(filename, "w") as outfile:
@@ -309,45 +344,58 @@ def save_csvfile(save_data: "DataFile", *args, **kargs):
     name="JustNumbers",
     what="Data",
 )
-def load_justnumbers(new_data: "DataFile", *args, **kargs) -> "DataFile":
+def load_justnumbers(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Load generic deliminated files with no headers or metadata.
 
     Args:
-        filename (str):
-            File to load.
+        new_data (Data):
+            A newly instantiated Data object into which the instance will be loaded.
+        *args:
+            Other arguments are used if filename is not specified.
 
     Keyword Arguments:
-        data_delim (string): The delimiter used for separating data values
-        header_delim (strong): The delimiter used for separating header values
+        data_delim (string):
+            The delimiter used for separating data values
+        header_delim (strong):
+            The delimiter used for separating header values
+        **kwargs:
+            Other keyword arguments are passed to get_filename.
 
     Returns:
         A copy of the current object after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     _defaults = {"header_line": None, "data_line": 0, "data_delim": None}
     for karg, val in _defaults.items():
-        kargs.setdefault(karg, val)
-    return load_csvfile(new_data, filename, *args, **kargs)
+        kwargs.setdefault(karg, val)
+    return load_csvfile(new_data, filename, *args, **kwargs)
 
 
 @register_saver(patterns=[(".csv", 32), (".txt", 256)], name="JustNumbersFile", what="Data")
-def save_justnumbers(save_data: "DataFile", filename: Optional[str] = None, **kargs):
+def save_justnumbers(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Override the save method to allow JustNumbersFiles to be written out to disc (as a very mininmalist output).
 
     Args:
-        filename (string): Filename to save as (using the same rules as for the load routines)
+        save_data (Data):
+            Data instance to be saved.
+        *args:
+            Other arguments get passed to save_csv.
 
     Keyword Arguments:
-        deliminator (string): Record deliniminator (defaults to a comma)
+        deliminter (string):
+            Record deliniminator (defaults to a comma)
+        **kwargs:
+            Other keyword arguments are passed to save_csv.
 
     Returns:
         A copy of itsave_data.
     """
-    kargs["no_header"] = False
-    return save_csvfile(save_data, filename, **kargs)
+    kwargs["no_header"] = False
+    kwargs.setdefault("delimiter", ",")
+    return save_csvfile(save_data, *args, **kwargs)
 
 
-def _check_png_signature(filename):
+def _check_png_signature(filename: str) -> bool:
     """Check that this is a PNG file and raie a StonerLoadError if not."""
     try:
         with FileManager(filename, "rb") as test:
@@ -368,17 +416,23 @@ def _check_png_signature(filename):
     name="KermitPNGFile",
     what="Data",
 )
-def load_pngfile(new_data, *args, **kargs):
+def load_pngfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """PNG file loader routine.
 
     Args:
-        filename (string or bool): File to load. If None then the existing filename is used,
-            if False, then a file dialog will be used.
+        new_data (Data):
+            A newly instantiated Data object into which the instance will be loaded.
+        *args:
+            Other arguments are used if filename is not specified.
+
+    Keyword Arguments:
+        **kwargs:
+            Other keyword arguments are passed to get_filename.
 
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     _check_png_signature(filename)
     try:
@@ -395,22 +449,25 @@ def load_pngfile(new_data, *args, **kargs):
 
 @register_saver(patterns=(".png", 8), name="ImageFile", what="Image")
 @register_saver(patterns=(".png", 16), name="KermitPngFile", what="Data")
-def save_pngfile(save_data, filename=None, **kargs):
+def save_pngfile(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Override the save method to allow KermitPNGFiles to be written out to disc.
 
     Args:
-        filename (string): Filename to save as (using the same rules as for the load routines)
+        save_data (Data):
+            Data instance that is being saved.
+        *args:
+            Other arguments passed to get_filename
 
     Keyword Arguments:
-        deliminator (string): Record deliniminator (defaults to a comma)
+        filename (string):
+            Filename to save as (using the same rules as for the load routines)
+        **kwargs:
+            Other keyword arguments passed to get_filename
 
     Returns:
         A copy of itsave_data.
     """
-    if filename is None:
-        filename = save_data.filename
-    if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-        filename = save_data.__file_dialog("w")
+    filename, args, kwargs = get_filename(args, kwargs)
 
     metadata = PIL.PngImagePlugin.PngInfo()
     for k in save_data.metadata:
@@ -433,17 +490,23 @@ try:  # Optional tdms support
         name="TDMSFile",
         what="Data",
     )
-    def load_tdms(new_data, *args, **kargs):
+    def load_tdms(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         """TDMS file loader routine.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            new_data (Data):
+                A newly instantiated Data object into which the instance will be loaded.
+            *args:
+                Other arguments are used if filename is not specified.
+
+        Keyword Arguments:
+            **kwargs:
+                Other keyword arguments are passed to get_filename.
 
         Returns:
             A copy of the itnew_data after loading the data.
         """
-        filename, args, kargs = get_filename(args, kargs)
+        filename, args, kwargs = get_filename(args, kwargs)
         filename = Path(filename)
         if filename.suffix == ".tdms_index":
             filename = filename.parent / f"{filename.stem}.tdms"  # rewrite filename for not the index file!
@@ -455,12 +518,12 @@ try:  # Optional tdms support
                 if grp.path == "/":
                     pass  # skip the rooot group
                 elif grp.path == "/'TDI Format 1.5'":
-                    tmp = make_Data(grp.as_dataframe())
+                    tmp = Data(grp.as_dataframe())
                     new_data.data = tmp.data
                     new_data.column_headers = tmp.column_headers
                     new_data.metadata.update(grp.properties)
                 else:
-                    tmp = make_Data(grp.as_dataframe())
+                    tmp = Data(grp.as_dataframe())
                     new_data.data = tmp.data
                     new_data.column_headers = tmp.column_headers
         except (IOError, ValueError, TypeError, StonerLoadError) as err:
@@ -475,7 +538,7 @@ except ImportError:
 
 if Hyperspy_ok:
 
-    def _unpack_hyperspy_meta(new_data, root, value):
+    def _unpack_hyperspy_meta(new_data: Data, root: str, value: Any) -> None:
         """Recursively unpack a nested dict of metadata and append keys to new_data.metadata."""
         if isinstance(value, Mapping):
             for item in value.keys():
@@ -486,7 +549,7 @@ if Hyperspy_ok:
         else:
             new_data.metadata[root] = value
 
-    def _unpack_hyperspy_axes(newdata, ax_manager):
+    def _unpack_hyperspy_axes(newdata: Data, ax_manager) -> None:
         """Unpack the axes managber as metadata."""
         _axes_keys = ["name", "scale", "low_index", "low_value", "high_index", "high_value"]
         for ax in ax_manager.signal_axes:
@@ -499,17 +562,23 @@ if Hyperspy_ok:
         name="HyperSpyFile",
         what="Data",
     )
-    def hypersput_load(new_data, *args, **kargs):
+    def hypersput_load(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         """Load HyperSpy file loader routine.
 
         Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
+            new_data (Data):
+                A newly instantiated Data object into which the instance will be loaded.
+            *args:
+                Other arguments are used if filename is not specified.
+
+        Keyword Arguments:
+            **kwargs:
+                Other keyword arguments are passed to get_filename.
 
         Returns:
             A copy of the itnew_data after loading the data.
         """
-        filename, args, kargs = get_filename(args, kargs)
+        filename, args, kwargs = get_filename(args, kwargs)
         if filename is None or not filename:
             new_data.get_filename("r")
         else:

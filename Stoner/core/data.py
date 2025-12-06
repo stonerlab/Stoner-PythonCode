@@ -51,7 +51,6 @@ except ImportError:
 
 
 # Bring all the subclasses into memory (idnore unused imports warnings)
-from .. import formats  # NOQA pylint: disable=W0611
 from ..analysis import columns, features, filtering, functions
 from ..analysis.fitting import functions as fitting
 from ..plot import PlotMixin
