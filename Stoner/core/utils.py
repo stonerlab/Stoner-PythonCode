@@ -9,13 +9,14 @@ import csv
 import re
 from collections.abc import Mapping
 from typing import Callable
-from typing import Union, Mapping as MappingType
+from typing import Mapping as MappingType
+from typing import Union
 
 import numpy as np
 
 from ..compat import index_types, int_types
 from ..tools import all_type, copy_into
-from ..tools.typing import Index, Data, NumericArray
+from ..tools.typing import Data, Index, NumericArray
 
 
 def add_core(other: Union[Data, NumericArray, MappingType], newdata: Data) -> Data:

@@ -10,7 +10,7 @@ from ...core.data import Data
 from ...core.exceptions import StonerLoadError
 from ...tools import copy_into
 from ...tools.file import get_filename
-from ...tools.typing import Args, Kwargs, Filename
+from ...tools.typing import Args, Filename, Kwargs
 from ..decorators import register_loader, register_saver
 from ..utils.zip import test_is_zip
 

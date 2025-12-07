@@ -14,10 +14,10 @@ from scipy.interpolate import griddata as sp_griddata
 
 try:  # Check we've got 3D plotting
     import mpl_toolkits.axisartist as AA  # noqa: F401 pylint: disable=unused-import
-    from mpl_toolkits.axes_grid1 import (
+    from mpl_toolkits.axes_grid1 import (  # noqa: F401 pylint: disable=unused-import
         host_subplot,
         inset_locator,
-    )  # noqa: F401 pylint: disable=unused-import
+    )
     from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 pylint: disable=unused-import
 
     _3D = True
@@ -77,7 +77,7 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
         ax = kargs["ax"]
     C = kargs.pop("color", None)
     if isinstance(C, np.ndarray) and C.ndim == 1:  # replace colours with a colour mapped array
-        cmap = kargs.get("cmap", cm.viridis)
+        cmap = kargs.get("cmap", getattr(cm, "viridis"))
         C = cmap(C)
     vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, colors=C, **kargs)
 
@@ -185,7 +185,7 @@ def _vector_field_plotter(datafile, x_coord, y_coord, z_coord, u_comp, v_comp, w
         An mlab figure reference.
     """
     try:
-        from mayavi import mlab  # might not work !
+        from mayavi import mlab  # pylint: disable=import-outside-toplevel
     except ImportError:
         return None
     if "scalars" in kargs:
@@ -276,11 +276,11 @@ def _fix_kargs(datafile, function=None, defaults=None, otherkargs=None, **kargs)
             projection = kargs["projection"]
         else:
             projection = "rectilinear"
-        function = plt.axes(projection=projection).__getattribute__(function)
+        function = getattr(plt.axes(projection=projection), function)
         if datafile._figure is not plt.gcf():
             plt.close(plt.gcf())
 
-    (args, kwargs) = _getargspec(function)[:2]
+    (_, kwargs) = _getargspec(function)[:2]
     # Manually override the list of arguments that the plotting function takes if it takes keyword dictionary
     if isinstance(otherkargs, (list, tuple)):
         kwargs.extend(otherkargs)
@@ -505,7 +505,7 @@ def griddata(
     zlim = lims[2]
 
     if dims == 2:
-        pts = np.mgrid[xlim, ylim].T
+        pts = np.mgrid[xlim, ylim].T  # pylint: disable=no-member
         points = np.array([datafile.column(xcol), datafile.column(ycol)]).T
         if zcol is None:
             zdata = np.zeros(len(datafile))
@@ -522,8 +522,8 @@ def griddata(
 
         return pts[:, :, 0], pts[:, :, 1], Z
     elif dims == 3:
-        pts = np.mgrid[xlim, ylim, zlim].T
-        vpts = np.mgrid[extents[0], extents[1], extents[2]].T
+        pts = np.mgrid[xlim, ylim, zlim].T  # pylint: disable=no-member
+        vpts = np.mgrid[extents[0], extents[1], extents[2]].T  # pylint: disable=no-member
 
         points = np.array([datafile.column(xcol), datafile.column(ycol), datafile.column(zcol)]).T
         if ucol is None:
@@ -589,7 +589,7 @@ def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None,
         "interpolation": "bilinear",
         "plotter": plt.imshow,
         "title": datafile.filename,
-        "cmap": cm.jet,
+        "cmap": getattr(cm, "jet"),
         "figure": datafile._figure,
         "xlabel": datafile._col_label(datafile.find_col(xcol)),
         "ylabel": datafile._col_label(datafile.find_col(ycol)),
@@ -738,7 +738,7 @@ def plot_matrix(
     xvals=None,
     yvals=None,
     rectang=None,
-    cmap=plt.cm.plasma,
+    cmap=getattr(cm, "plasma"),
     show_plot=True,
     title="",
     xlabel=None,
@@ -1138,11 +1138,11 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
             if isinstance(temp_kwords[k], str) and "$" not in temp_kwords[k]:
                 temp_kwords[k] = temp_kwords[k].format(**datafile)
         temp_nonkargs = {}
-        for k in nonkargs:
-            if isinstance(nonkargs[k], str) and "$" not in nonkargs[k]:
-                temp_nonkargs[k] = nonkargs[k].format(**datafile)
+        for k, val in nonkargs.items():
+            if isinstance(val, str) and "$" not in val:
+                temp_nonkargs[k] = val.format(**datafile)
             else:
-                temp_nonkargs[k] = nonkargs[k]
+                temp_nonkargs[k] = val
 
         _Plot(datafile, c.xcol, c.ycol[ix], fmt_t, temp_nonkargs["plotter"], datafile._figure, **temp_kwords)
         _fix_titles(datafile, ix, multiple, **temp_nonkargs)
@@ -1220,7 +1220,7 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
         "figure": datafile._figure,
         "title": os.path.basename(datafile.filename),
         "save_filename": None,
-        "cmap": cm.jet,
+        "cmap": getattr(cm, "jet"),
         "rstride": cstride,
         "cstride": rstride,
     }
@@ -1251,7 +1251,7 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
     plotter = kargs.get("plotter", defaults["plotter"])
     datafile._figure, ax = _fix_fig(datafile, kargs.get("figure", defaults["figure"]), projection=projection)
     if isinstance(plotter, str):
-        plotter = ax.__getattribute__(plotter)
+        plotter = getattr(ax, plotter)
     kargs, nonkargs, _ = _fix_kargs(datafile, plotter, defaults, otherkargs=otherkargs, projection=projection, **kargs)
     datafile.plot3d = plotter(xdata, ydata, zdata, **kargs)
     if plotter is not partial(_surface_plotter, datafile):
@@ -1360,7 +1360,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         A mayavi scene instance
     """
     try:
-        from mayavi import core, mlab
+        from mayavi import core, mlab  # pylint: disable=import-outside-toplevel
 
         mlab.figure()
         mayavi = True
@@ -1406,7 +1406,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
             "figure": datafile._figure,
             "title": os.path.basename(datafile.filename),
             "save_filename": None,
-            "cmap": cm.jet,
+            "cmap": getattr(cm, "jet"),
             "scale": 1.0,
             "units": "xy",
             "color": hsl2rgb(
@@ -1459,7 +1459,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
     else:
         datafile._figure, ax = _fix_fig(datafile, nonkargs["figure"], projection=projection)
         if isinstance(plotter, str):
-            plotter = ax.__getattribute__(plotter)
+            plotter = getattr(ax, plotter)
 
     kargs["figure"] = figure
     plotter(
@@ -1519,7 +1519,7 @@ def plot_voxels(datafile, xcol=None, ycol=None, zcol=None, ucol=None, cmap=None,
         "ylabel": datafile._col_label(datafile.find_col(_.ycol)),
         "zlabel": datafile._col_label(datafile.find_col(_.zcol)),
         "save_filename": None,
-        "cmap": cm.viridis,
+        "cmap": getattr(cm, "viridis"),
         "f_alpha": 0.5,
         "e_alpha": 0.9,
         "filled": None,
@@ -1701,7 +1701,7 @@ def subplot2grid(datafile, *args, **kargs):
     return ret
 
 
-def x2(datafile):
+def x2(datafile):  # pylint: disable=invalid-name
     """Generate a new set of axes with a second x-scale.
 
     Returns:
@@ -1713,7 +1713,7 @@ def x2(datafile):
     return ax2
 
 
-def y2(datafile):
+def y2(datafile):  # pylint: disable=invalid-name
     """Generate a new set of axes with a second y-scale.
 
     Returns:

@@ -104,13 +104,24 @@ def threshold(threshold, data, rising=True, falling=False):
     index = np.arange(len(current))
     sdat = np.column_stack((index, current, previous))
     if rising and not falling:
-        expr = lambda x: (x[1] >= threshold) & (x[2] < threshold)
+
+        def _expr(x):
+            return (x[1] >= threshold) & (x[2] < threshold)
+
     elif rising and falling:
-        expr = lambda x: ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
+
+        def _expr(x):
+            return ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
+
     elif falling and not rising:
-        expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
+
+        def _expr(x):
+            return (x[1] <= threshold) & (x[2] > threshold)
+
     else:
-        expr = lambda x: False
+
+        def _expr(_):
+            return False
 
     # Now we refine the estimate of zero crossing with a cubic interpolation
     # and use Newton's root finding method to locate the zero in the interpolated data
@@ -118,7 +129,7 @@ def threshold(threshold, data, rising=True, falling=False):
     intr = interp1d(index, data.ravel() - threshold, kind="cubic")
     roots = []
     for ix, x in enumerate(sdat):
-        if ix > 0 and expr(x):  # There's a root somewhere here !
+        if ix > 0 and _expr(x):  # There's a root somewhere here !
             try:
                 roots.append(newton(intr, ix))
             except (ValueError, RuntimeError):  # fell off the end here
@@ -181,7 +192,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
         return np.array([[1, 0], [1, 0]]), np.zeros((2, 2)), lambda x: x
 
     mapping = xvarp[xmode] + yvarp[ymode]
-    mapping = [m for m in mapping if m != []]  # remove empty mappings
+    mapping = [m for m in mapping if m]  # remove empty mappings
     data = np.column_stack((xy1, xy2)).T
 
     if isinstance(m0, list):
@@ -222,12 +233,13 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     for pi, (u, v) in zip(perr, mapping):
         default_err[u, v] = pi
 
-    transform = lambda xy: ApplyAffineTransform(xy, default)
+    def _transform(xy):
+        return ApplyAffineTransform(xy, default)
 
-    return (default, default_err, transform)
+    return (default, default_err, _transform)
 
 
-def ApplyAffineTransform(xy, transform):
+def ApplyAffineTransform(xy, transform):  # pylint: disable=invalid-name
     """Apply a given afffine transform to a set of xy data points.
 
     Args:
@@ -245,7 +257,7 @@ def ApplyAffineTransform(xy, transform):
     return xyt.T
 
 
-def GetAffineTransform(p, pd):
+def GetAffineTransform(p, pd):  # pylint: disable=invalid-name
     """Calculate an affine transform from 2 sets of three points.
 
     Args:
@@ -295,17 +307,23 @@ def _h_sat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
 
     This method uses the intercept of the saturated state with zero field portions of the loop.
     """
-    from Stoner.analysis.fitting.models.generic import Linear
+    from Stoner.analysis.fitting.models.generic import Linear  # pylint: disable=import-outside-toplevel
 
     Ms, Ms_err, _ = Ms_vals
     Hsat, Hsat_err = Hsat_vals
 
     # Fit a straight line to the central fraction of the data
     if i == 1:
-        bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
+
+        def _bounds(_, r):
+            return np.abs(r.y) < np.abs(Ms) * h_sat_fraction
+
     else:
-        bounds = lambda x, r: np.abs(r.y) < np.abs(Ms) * h_sat_fraction
-    popt, pcov = d.lmfit(Linear, bounds=bounds)
+
+        def _bounds(_, r):
+            return np.abs(r.y) < np.abs(Ms) * h_sat_fraction
+
+    popt, pcov = d.lmfit(Linear, bounds=_bounds)
     perr = np.sqrt(np.diag(pcov))
     popt = popt[:2]
     pferr = perr / popt
@@ -480,7 +498,7 @@ def split_up_down(data, col=None, folder=None):
 Hickeyify = format_error
 
 
-def hysteresis_correct(data, **kargs):
+def hysteresis_correct(data, **kwargs):
     """Perform corrections to a hysteresis loop.
 
     Args:
@@ -528,12 +546,12 @@ def hysteresis_correct(data, **kargs):
     data = cls(data)
 
     # Get other keyword arguments
-    correct_background = kargs.pop("correct_background", True)
-    correct_H = kargs.pop("correct_H", True)
-    saturation_fraction = kargs.pop("saturated_fraction", 0.2)
+    correct_bg = kwargs.pop("correct_background", True)
+    correct_H = kwargs.pop("correct_H", True)
+    saturation_f = kwargs.pop("saturated_fraction", 0.2)
 
-    h_sat_method = kargs.pop("h_sat_method", "linear_intercept")
-    h_sat_fraction = kargs.pop("h_sat_fraction", 0.5 if h_sat_method == "linear_intercept" else 2.0)
+    h_sat_method = kwargs.pop("h_sat_method", "linear_intercept")
+    h_sat_fraction = kwargs.pop("h_sat_fraction", 0.5 if h_sat_method == "linear_intercept" else 2.0)
     hsat_methods = {
         "linear_intercept": _h_sat_linear,
         "susceptibility": _h_sat_susceptibility,
@@ -544,18 +562,18 @@ def hysteresis_correct(data, **kargs):
     else:
         raise ValueError("Saturation field method not recognized!")
 
-    for k in kargs:
+    for k, val in kwargs.items():
         try:
-            setattr(data, k, kargs[k])
+            setattr(data, k, val)
         except AttributeError:
             if data.debug:
-                print("Error setting attribute from keyword {k}={args[k]}")
-    if "setas" in kargs:  # Allow us to override the setas variable
-        data.setas = kargs.pop("setas")
+                print("Error setting attribute from keyword {k}={val}")
+    if "setas" in kwargs:  # Allow us to override the setas variable
+        data.setas = kwargs.pop("setas")
 
-    xcol = kargs.pop("xcol", data.setas.xcol)
-    ycol = kargs.pop("ycol", data.setas.ycol)
-    # Get xcol and ycols from kargs if specified
+    xcol = kwargs.pop("xcol", data.setas.xcol)
+    ycol = kwargs.pop("ycol", data.setas.ycol)
+    # Get xcol and ycols from kwargs if specified
     _ = data._col_args(xcol=xcol, ycol=ycol)
     data.setas(x=_.xcol, y=_.ycol, reset=False)
     # Split into two sets of data:
@@ -564,8 +582,8 @@ def hysteresis_correct(data, **kargs):
 
     mid = (data.x.max() + data.x.min()) / 2.0
     span = data.x.max() - data.x.min()
-    low = mid - span * (1 - saturation_fraction) / 2
-    high = mid + span * (1 - saturation_fraction) / 2
+    low = mid - span * (1 - saturation_f) / 2
+    high = mid + span * (1 - saturation_f) / 2
 
     popt, pcov = data.curve_fit(_step, bounds=lambda x, r: not low < x < high)
 
@@ -581,7 +599,7 @@ def hysteresis_correct(data, **kargs):
     data["Background susceptibility"] = popt[0]
     data["Background Susceptibility Error"] = perr[0]
 
-    if correct_background:
+    if correct_bg:
         fixes = [data, up, down]
     else:
         fixes = [up, down]

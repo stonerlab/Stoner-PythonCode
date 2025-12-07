@@ -18,12 +18,12 @@ import PIL
 
 from ...compat import Hyperspy_ok, hs, hsload, str2bytes
 from ...core.array import DataArray
+from ...core.data import Data
 from ...core.exceptions import StonerLoadError
 from ...core.utils import Tab_Delimited
-from ...core.data import Data
 from ...tools.file import FileManager, get_filename
+from ...tools.typing import Args, Filename, Kwargs
 from ..decorators import register_loader, register_saver
-from ...tools.typing import Args, Kwargs, Filename
 
 
 class _refuse_log(logging.Filter):

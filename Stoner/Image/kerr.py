@@ -10,14 +10,14 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 
 import os
-from typing import Self, Optional, Union, Tuple
+from typing import Optional, Self, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
 
 from ..tools import make_Data
 from ..tools.decorators import class_modifier, image_file_adaptor
-from ..tools.typing import Args, Kwargs, Filename, Data
+from ..tools.typing import Args, Data, Filename, Kwargs
 from . import kerrfuncs
 from .core import ImageArray, ImageFile
 from .stack import ImageStack

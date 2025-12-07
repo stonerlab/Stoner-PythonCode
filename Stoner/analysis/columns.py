@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Channel column operations functions for analysis code."""
+
+from typing import Callable, Optional, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
-from typing import Optional, Tuple, Callable, Union
 
 from ..compat import _pattern_type
 from ..tools import all_type, isiterable
@@ -238,9 +237,9 @@ def divide(
     return datafile
 
 
-def max(
+def max(  # pylint: disable=redefined-builtin
     datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None
-) -> Tuple[float, int]:  # pylint: disable==redefined-builtin
+) -> Tuple[float, int]:
     """Find maximum value and index in col_a column of data.
 
     Args:
@@ -332,9 +331,9 @@ def mean(
     return result
 
 
-def min(
+def min(  # pylint: disable=redefined-builtin
     datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None
-) -> Tuple[float, int]:  # pylint: disable=redefined-builtin
+) -> Tuple[float, int]:
     """Find minimum value and index in col_a column of data.
 
     Args:

@@ -2,6 +2,7 @@
 """Generic analysis functions for DataFiles."""
 
 from inspect import getfullargspec
+from typing import Callable, Optional, Tuple, Union
 from warnings import warn
 
 import numpy as np
@@ -9,7 +10,6 @@ from numpy import ma
 from scipy.integrate import cumulative_simpson, cumulative_trapezoid
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
-from typing import Callable, Union, Tuple, Optional
 
 from ..core.exceptions import assertion
 from ..tools import isiterable, isTuple
@@ -175,7 +175,7 @@ def decompose(
         ycol = [ycol]
 
     if hysteretic:
-        from .Util import split_up_down
+        from .Util import split_up_down  # pylint: disable=import-outside-toplevel
 
         fldr = split_up_down(datafile, datafile.xcol)
         for grp in ["rising", "falling"]:
@@ -292,7 +292,7 @@ def integrate(
                 datafile.add_column(resultdata, header=header, replace=False)
             else:
                 result_name = datafile.column_headers[datafile.find_col(result)]
-                datafile.add_column(resultdata, header=header, index=result, replace=(i == 0))
+                datafile.add_column(resultdata, header=header, index=result, replace=i == 0)
         final.append(resultdata[-1])
     if len(final) == 1:
         final = final[0]
@@ -594,6 +594,8 @@ def threshold(
     if xcol is None and _.has_xcol:
         xcol = _.xcol
 
+    if transpose:
+        col, xcol = xcol, col
     current = datafile.column(col)
 
     # Recursively call if we've got an iterable threshold

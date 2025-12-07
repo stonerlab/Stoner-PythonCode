@@ -12,10 +12,10 @@ import zipfile as zf
 
 from ..compat import _pattern_type, get_filedialog, path_types
 from ..core.data import Data
+from ..formats.utils.zip import test_is_zip
 from .core import BaseFolder
 from .mixins import DiskBasedFolderMixin
 from .utils import pathjoin
-from ..formats.utils.zip import test_is_zip
 
 
 class ZipFolder(DiskBasedFolderMixin, BaseFolder):

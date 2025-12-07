@@ -12,10 +12,12 @@ __all__ = [
 
 import copy
 from collections.abc import Iterable, MutableSequence
-from typing import Iterable as IterableType, Any, List, Optional, Union, Self
+from typing import Any
+from typing import Iterable as IterableType
+from typing import List, Optional, Self, Union
 
 from .tests import all_type, isiterable
-from .typing import Data, Args, Kwargs
+from .typing import Args, Data, Kwargs
 
 _options = {
     "short_repr": False,

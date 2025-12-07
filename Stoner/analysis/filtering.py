@@ -150,14 +150,14 @@ def del_nan(datafile, col=None, clone=False):
         dels = np.logical_or(
             dels, np.isnan(ret.data[:, ix])
         )  # dels contains True if any row contains a NaN in columns col
-    not_masked = np.logical_not(ma.mask_rows(ret.data).mask[:, 0])  # Get rows wqhich are not masked
+    not_masked = np.logical_not(ma.mask_rows(ret.data).mask[:, 0])  # pylint: disable=no-member
     dels = np.logical_and(not_masked, dels)  # And make dels just be unmasked rows with NaNs
 
     ret.del_rows(np.logical_not(dels))  # Del the those rows
     return ret
 
 
-def SG_Filter(
+def SG_Filter(  # pylint: disable=invalid-name
     datafile, col=None, xcol=None, points=15, poly=1, order=0, pad=True, result=None, replace=False, header=None
 ):
     """Implement a Savitsky-Golay filtering of data for smoothing and differentiating data.
@@ -390,7 +390,7 @@ def deduplicate(datafile, col, action="average", clone=True):
     vals = vals[nums > 1]
     nums = nums[nums > 1]
     data = datafile.data.copy()
-    for val, i, num in zip(vals, idx, nums):
+    for val, _, _ in zip(vals, idx, nums):
         subset = data[idx == val]
         indices = ix[idx == val]
         match action:
@@ -793,16 +793,18 @@ def outlier_detection(
     for i, t in enumerate(datafile.rolling_window(window, wrap=False, exclude_centre=width)):
         index[i] = func(datafile.data[i], t, metric=certainty, **kwargs)
     datafile["outliers"] = np.arange(len(datafile))[index]  # add outlier indices to metadata
-    if action == "mask" or action == "mask row":
-        if action == "mask":
+    match action:
+        case "mask":
             datafile.mask[index, column] = True
-        else:
+        case "mask row":
             datafile.mask[index, :] = True
-    elif action == "delete":
-        datafile.data = datafile.data[~index]
-    elif callable(action):  # this will call the action function with each row in turn from back to start
-        for i in np.arange(len(datafile))[index][::-1]:
-            action(i, column, datafile.data, *action_args, **action_kwargs)
+        case "delete":
+            datafile.data = datafile.data[~index]
+        case _ if callable(action):  # this will call the action function with each row in turn from back to start
+            for i in np.arange(len(datafile))[index][::-1]:
+                action(i, column, datafile.data, *action_args, **action_kwargs)
+        case _:
+            raise ValueError(f"Unrecognised action {action}")
     return datafile
 
 
@@ -866,7 +868,11 @@ def scale(
     #
     # Sort out keyword srguments
     #
-    bounds = lambda x, r: True if bounds is None else bounds
+    if bounds is None:
+
+        def bounds(_, __):
+            return True
+
     otherbounds = bounds if otherbounds is None else otherbounds
 
     # Get our working data from this DataFile and remove masked rows

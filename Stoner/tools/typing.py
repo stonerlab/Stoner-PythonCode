@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """Typing definitions."""
-from re import Pattern
 from pathlib import Path
-from typing import Any, Tuple, Union, Sequence, Mapping, TYPE_CHECKING
+from re import Pattern
+from typing import TYPE_CHECKING, Any, Mapping, Sequence, Tuple, Union
 
 from numpy.typing import NDArray
 
 if TYPE_CHECKING:
-    from ..core.setas import setas
     from ..core.data import Data
+    from ..core.setas import setas
     from ..image.core import ImageArray, ImageFile
 else:
     setas = type("setas", (), {})

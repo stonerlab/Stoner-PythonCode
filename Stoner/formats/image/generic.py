@@ -3,11 +3,11 @@
 """Implement DataFile classes for some generic file formats."""
 
 import contextlib
-from importlib import import_module
 import io
 import logging
 import re
 import sys
+from importlib import import_module
 
 from ...core.exceptions import StonerLoadError
 from ...formats.decorators import register_loader
