@@ -88,7 +88,7 @@ def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
     return bin_centers, binned_y, binned_err, binned_counts
 
 
-def filter(datafile, func=None, cols=None, reset=True):
+def filter(datafile, func=None, cols=None, reset=True):  # pylint: disable=redefined-builtin
     """Set the mask on rows of data by evaluating a function for each row.
 
     Args:
@@ -257,7 +257,9 @@ def SG_Filter(
     return r
 
 
-def bin(datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, yerr=None, **kwargs):
+def bin(
+    datafile, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, yerr=None, **kwargs
+):  # pylint: disable=redefined-builtin
     """Bin x-y data into new values of x with an error bar.
 
     Args:

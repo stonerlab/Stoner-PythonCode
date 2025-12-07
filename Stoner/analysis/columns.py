@@ -3,15 +3,17 @@
 """Channel column operations functions for analysis code."""
 
 import numpy as np
+from numpy.typing import NDArray
+from typing import Optional, Tuple, Callable, Union
 
-from Stoner.compat import _pattern_type
-from Stoner.tools import all_type, isiterable
+from ..compat import _pattern_type
+from ..tools import all_type, isiterable
+from ..tools.typing import Data, Index
 
 
-def _do_error_calc(datafile, col_a, col_b, error_type="relative"):
+def _do_error_calc(datafile: Data, col_a: Index, col_b: Index, error_type: str = "relative") -> NDArray[np.float64]:
     """Do an error calculation."""
     col_a = datafile.find_col(col_a)
-    error_calc = None
     if (
         isinstance(col_a, (list, tuple)) and isinstance(col_b, (list, tuple)) and len(col_a) == 2 and len(col_b) == 2
     ):  # Error columns on
@@ -43,16 +45,20 @@ def _do_error_calc(datafile, col_a, col_b, error_type="relative"):
 
             case _:
                 raise ValueError(f"Unknown error calculation mode {error_type}")
+    else:
+        error_calc = None
 
     adata, aname = __get_math_val(datafile, col_a)
     bdata, bname = __get_math_val(datafile, col_b)
     return adata, bdata, error_calc, aname, bname
 
 
-def __get_math_val(datafile, col):
+def __get_math_val(datafile: Data, col: Index) -> Tuple[Data, str]:
     """Interpret col as either col_a column index or value or an array of values.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         col (various):
             If col can be interpreted as col_a column index then return the first matching column.
             If col is col_a 1D array of the same length as the data then just return the data. If col is col_a
@@ -80,10 +86,19 @@ def __get_math_val(datafile, col):
     return data, name
 
 
-def add(datafile, col_a, col_b, replace=False, header=None, index=None):
+def add(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
     """Add one column, number or array (col_b) to another column (col_a).
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -122,10 +137,19 @@ def add(datafile, col_a, col_b, replace=False, header=None, index=None):
     return datafile
 
 
-def diffsum(datafile, col_a, col_b, replace=False, header=None, index=None):
+def diffsum(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
     r"""Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -164,10 +188,19 @@ def diffsum(datafile, col_a, col_b, replace=False, header=None, index=None):
     return datafile
 
 
-def divide(datafile, col_a, col_b, replace=False, header=None, index=None):
+def divide(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
     """Divide one column (col_a) by  another column, number or array (col_b).
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -205,10 +238,14 @@ def divide(datafile, col_a, col_b, replace=False, header=None, index=None):
     return datafile
 
 
-def max(datafile, column=None, bounds=None):
+def max(
+    datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None
+) -> Tuple[float, int]:  # pylint: disable==redefined-builtin
     """Find maximum value and index in col_a column of data.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -238,10 +275,17 @@ def max(datafile, column=None, bounds=None):
     return result
 
 
-def mean(datafile, column=None, sigma=None, bounds=None):
+def mean(
+    datafile: Data,
+    column: Optional[Index] = None,
+    sigma: Optional[Union[NDArray, Index]] = None,
+    bounds: Optional[Callable] = None,
+) -> float:
     """Find mean value of col_a data column.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -288,10 +332,14 @@ def mean(datafile, column=None, sigma=None, bounds=None):
     return result
 
 
-def min(datafile, column=None, bounds=None):
+def min(
+    datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None
+) -> Tuple[float, int]:  # pylint: disable=redefined-builtin
     """Find minimum value and index in col_a column of data.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -321,10 +369,19 @@ def min(datafile, column=None, bounds=None):
     return result
 
 
-def multiply(datafile, col_a, col_b, replace=False, header=None, index=None):
+def multiply(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
     """Multiply one column (col_a) by  another column, number or array (col_b).
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -363,10 +420,12 @@ def multiply(datafile, col_a, col_b, replace=False, header=None, index=None):
     return datafile
 
 
-def span(datafile, column=None, bounds=None):
+def span(datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None) -> Tuple[float, float]:
     """Return a tuple of the maximum and minimum values within the given column and bounds.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -389,10 +448,17 @@ def span(datafile, column=None, bounds=None):
     return (datafile.min(column, bounds)[0], datafile.max(column, bounds)[0])
 
 
-def std(datafile, column=None, sigma=None, bounds=None):
+def std(
+    datafile: Data,
+    column: Optional[Index] = None,
+    sigma: Optional[Union[NDArray, Index]] = None,
+    bounds: Optional[Callable] = None,
+):
     """Find standard deviation value of col_a data column.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -441,10 +507,19 @@ def std(datafile, column=None, sigma=None, bounds=None):
     return result
 
 
-def subtract(datafile, col_a, col_b, replace=False, header=None, index=None):
+def subtract(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
     """Subtract one column, number or array (col_b) from another column (col_a).
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):

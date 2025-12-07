@@ -13,16 +13,18 @@ from typing import Callable, Union, Tuple, Optional
 
 from ..core.exceptions import assertion
 from ..tools import isiterable, isTuple
-from ..tools.typing import Data, Index, Kwargs, Args, NumericArray
+from ..tools.typing import Data, Index, Kwargs, NumericArray
 from .utils import threshold as _threshold
 
 
 def apply(
-    datafile: Data, func: Callable, col: Index = None, replace: bool = True, header: str = None, **kargs: Kwargs
+    datafile: Data, func: Callable, col: Index = None, replace: bool = True, header: str = None, **kwargs: Kwargs
 ) -> Data:
     """Apply the given function to each row in the data set and adds to the data set.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         func (callable):
             The function to apply to each row of the data.
         col (index):
@@ -32,7 +34,10 @@ def apply(
         replace (bool):
             Either replace the existing column/complete data or create a new column or data file.
         header (string or None):
-            The new column header(s) (defaults to the name of the function func
+            The new column header(s) (defaults to the name of the function func).
+        **kwargs:
+            Other keyword arguments.
+
 
     Note:
         If any extra keyword arguments are supplied then these are passed to the function directly. If
@@ -57,9 +62,9 @@ def apply(
     if col is None:
         col = datafile.setas.get("y", [0])[0]
     col = datafile.find_col(col)
-    kargs.update(kargs.pop("_extra", {}))
+    kwargs.update(kwargs.pop("_extra", {}))
     # Check the dimension of the output
-    ret = func(next(datafile.rows()), **kargs)
+    ret = func(next(datafile.rows()), **kwargs)
     try:
         next(datafile.rows(reset=True))
     except (RuntimeError, StopIteration):
@@ -70,7 +75,7 @@ def apply(
         nc = np.zeros(len(datafile))
     # Evaluate the data row by row
     for ix, r in enumerate(datafile.rows()):
-        ret = func(r, **kargs)
+        ret = func(r, **kwargs)
         if isiterable(ret) and not isinstance(ret, np.ndarray):
             ret = np.ma.MaskedArray(ret)
         nc[ix] = ret
@@ -95,6 +100,8 @@ def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], colu
     """Clips the data based on the column and the clipper value.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
         clipper (tuple or array):
@@ -125,9 +132,13 @@ def decompose(
     asym: Optional[Index] = None,
     replace: bool = True,
     hysteretic: bool = False,
-    **kwords: Kwargs,
+    **kwargs: Kwargs,
 ) -> Data:
     """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
+
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
 
     Keyword Arguments:
         xcol (index):
@@ -140,8 +151,10 @@ def decompose(
             Index of column for asymmetric part of ata. Defaults to appending to end of data
         replace (bool):
             Overwrite data with output (true)
-        hysteretic (book)L
+        hysteretic (book):
             Look separately for outgoing and incoming data first.
+        **kwargs:
+            Other keyword arguments.
 
     Returns:
         datafile: The newly modified :py:class:`AnalysisMixin`.
@@ -152,11 +165,7 @@ def decompose(
             :outname: decompose
     """
     if xcol is None and ycol is None:
-        if "_startx" in kwords:
-            startx = kwords["_startx"]
-            del kwords["_startx"]
-        else:
-            startx = 0
+        startx = kwargs.pop("_startx", 0)
         cols = datafile.setas._get_cols(startx=startx)
         xcol = cols["xcol"]
         ycol = cols["ycol"]
@@ -224,10 +233,12 @@ def integrate(
     """Integrate a column of data, optionally returning the cumulative integral.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         xcol (index):
             The X data column index (or header)
-        ycol (index)
-        The Y data column index (or header)
+        ycol (index):
+            The Y data column index (or header)
 
     Keyword Arguments:
         result (index or None):
@@ -306,6 +317,8 @@ def normalise(
     """Normalise data columns by dividing through by a base column value.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
 
     Keyword Arguments:
         target (index):
@@ -385,10 +398,14 @@ def stitch(
     r"""Apply a scaling to this data set to make it stich to another dataset.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         other (DataFile):
             Another data set that is used as the base to stitch this one on to
-        xcol,ycol (index or None):
-            The x and y data columns. If left as None then the current setas attribute is used.
+        xcol (index or None):
+            The x data column. If left as None then the current setas attribute is used.
+        ycol (index or None):
+            The y data column. If left as None then the current setas attribute is used.
 
     Keyword Arguments:
         overlap (tuple of (lower,higher) or None):
@@ -535,6 +552,8 @@ def threshold(
     """Find partial indices where the data in column passes the threshold, rising or falling.
 
     Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
         threshold (float):
             Value to look for in column col
 
