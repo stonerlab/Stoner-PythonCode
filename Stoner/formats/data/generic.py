@@ -11,7 +11,7 @@ import sys
 import warnings
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Optional, Tuple, Dict, Any
+from typing import Any
 
 import numpy as np
 import PIL
@@ -23,9 +23,7 @@ from ...core.utils import Tab_Delimited
 from ...core.data import Data
 from ...tools.file import FileManager, get_filename
 from ..decorators import register_loader, register_saver
-
-Args = Tuple[Any]
-Kwargs = Dict[str, Any]
+from ...tools.typing import Args, Kwargs, Filename
 
 
 class _refuse_log(logging.Filter):
@@ -395,7 +393,7 @@ def save_justnumbers(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     return save_csvfile(save_data, *args, **kwargs)
 
 
-def _check_png_signature(filename: str) -> bool:
+def _check_png_signature(filename: Filename) -> bool:
     """Check that this is a PNG file and raie a StonerLoadError if not."""
     try:
         with FileManager(filename, "rb") as test:

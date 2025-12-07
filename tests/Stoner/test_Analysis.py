@@ -53,16 +53,16 @@ def test_threshold():
     d = Data(ar, setas="xy")
     assert len(d.threshold(0, rising=True, falling=False, all_vals=True) == 4)
     assert len(d.threshold(0, rising=False, falling=True, all_vals=True) == 4)
-    assert len(d.threshold(0, interpolate=False, rising=False, falling=True, all_vals=True) == 4)
+    assert len(d.threshold(0, rising=False, falling=True, all_vals=True) == 4)
     assert d.threshold(0, all_vals=True)[1] == 124.5
     _ = d
     assert (
         np.sum(d.threshold([0.0, 0.5, 1.0]) - np.array([[24.5, 36.74999999, 49.0]])) < 1e-6
     ), "Multiple threshold failed."
     assert np.isclose(
-        d.threshold(0, interpolate=False, all_vals=True)[1], 124.5, 6
+        d.threshold(0,  all_vals=True)[1], 124.5, 6
     ), "Threshold without interpolation failed."
-    result = d.threshold(0, interpolate=False, all_vals=True, xcol=False)
+    result = d.threshold(0, all_vals=True, xcol=False)
     assert np.allclose(
         result, np.array([[24.5, 0.0], [124.5, 0.0], [224.5, 0.0], [324.5, 0.0]])
     ), "Failed threshold with False scol - result was {}".format(result)

@@ -13,12 +13,12 @@ from matplotlib import pyplot as plt
 from scipy.interpolate import griddata as sp_griddata
 
 try:  # Check we've got 3D plotting
-    import mpl_toolkits.axisartist as AA  # NOQA pylint: disable=unused-import
-    from mpl_toolkits.axes_grid1 import (  # NOQA pylint: disable=unused-import
+    import mpl_toolkits.axisartist as AA  # noqa: F401 pylint: disable=unused-import
+    from mpl_toolkits.axes_grid1 import (  # noqa: F401 pylint: disable=unused-import
         host_subplot,
         inset_locator,
     )
-    from mpl_toolkits.mplot3d import Axes3D  # NOQA pylint: disable=unused-import
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 pylint: disable=unused-import
 
     _3D = True
 except ImportError:

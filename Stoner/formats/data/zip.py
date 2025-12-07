@@ -6,31 +6,48 @@ import zipfile as zf
 from traceback import format_exc
 
 from ...compat import path_types, str2bytes
+from ...core.data import Data
 from ...core.exceptions import StonerLoadError
-from ...tools import copy_into, make_Data
+from ...tools import copy_into
 from ...tools.file import get_filename
+from ...tools.typing import Args, Kwargs, Filename
 from ..decorators import register_loader, register_saver
 from ..utils.zip import test_is_zip
 
 
-def _split_filename(filename, **kargs):
+def _split_filename(filename: Filename, **kwargs: Kwargs) -> Filename:
     """Try to get the member and filename parts."""
     filename = pathlib.Path(filename)
     if filename.suffix == ".zip":
         return filename
     for bit in filename.parents:
         if bit.suffix == ".zip":
-            kargs["member"] = str(filename.relative_to(bit))
+            kwargs["member"] = str(filename.relative_to(bit))
             return bit
     return filename
 
 
 @register_loader(patterns=(".zip", 16), mime_types=("application/zip", 16), name="ZippedFile", what="Data")
-def load_zipfile(new_data, *args, **kargs):
-    """Load a file from the zip file, opening it as necessary."""
-    filename, args, kargs = get_filename(args, kargs)
+def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
+    """Load a file from the zip file, opening it as necessary.
+
+    Args:
+        new_data (Data):
+            Data instance into whoch to load the new data.
+        *args:
+            Other positional arguments passed to get_filename.
+
+    Keyword Arguments:
+        **kwargs:
+            Other keyword arguments passed to get_filename.
+
+    Returns:
+        (Data):
+            Loaded Data instance.
+    """
+    filename, args, kwargs = get_filename(args, kwargs)
     if isinstance(filename, path_types):
-        filename = _split_filename(filename, **kargs)
+        filename = _split_filename(filename, **kwargs)
 
     new_data.filename = filename
     try:
@@ -41,13 +58,13 @@ def load_zipfile(new_data, *args, **kargs):
             else:  # Zip file is already open
                 other = new_data.filename
                 close_me = False
-            member = kargs.get("member", other.namelist()[0])
+            member = kwargs.get("member", other.namelist()[0])
             solo_file = len(other.namelist()) == 1
         elif isinstance(new_data.filename, path_types) and zf.is_zipfile(
             new_data.filename
         ):  # filename is a string that is a zip file
             other = zf.ZipFile(new_data.filename, "a")
-            member = kargs.get("member", other.namelist()[0])
+            member = kwargs.get("member", other.namelist()[0])
             close_me = True
             solo_file = len(other.namelist()) == 1
         else:
@@ -64,7 +81,7 @@ def load_zipfile(new_data, *args, **kargs):
     # Ok we can try reading now
     info = other.getinfo(member)
     data = other.read(info)  # In Python 3 this would be a bytes
-    tmp = make_Data() << data.decode("utf-8")
+    tmp = Data() << data.decode("utf-8")
     copy_into(tmp, new_data)
     # new_data.__init__(tmp << data)
     new_data.filename = path.join(other.filename, member)
@@ -76,21 +93,24 @@ def load_zipfile(new_data, *args, **kargs):
 
 
 @register_saver(patterns=(".zip", 16), name="ZippedFile", what="Data")
-def save(save_data, filename=None, **kargs):
+def save(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Override the save method to allow ZippedFile to be written out to disc (as a mininmalist output).
 
     Args:
-        filename (string or zipfile.ZipFile instance):
-            Filename to save as (using the same rules as for the load routines)
+        save_data (Data):
+            Data instance to be saved.
+        *args:
+            Other positional arguments are passed to get_filename to work out the filename.
+
+    Keyword Arguments:
+        **kwargs:
+            Other keyword arguments are passed to get_filename to work out the filename.
 
     Returns:
-        A copy of itsave_data.
+        A copy of the isntance of Data that was saved.
     """
-    if filename is None:
-        filename = save_data.filename
-    if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-        filename = save_data.__file_dialog("w")
-    compression = kargs.pop("compression", zf.ZIP_DEFLATED)
+    filename, args, kwargs = get_filename(args, kwargs)
+    compression = kwargs.pop("compression", zf.ZIP_DEFLATED)
     try:
         if isinstance(filename, path_types):  # We;ve got a string filename
             if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename

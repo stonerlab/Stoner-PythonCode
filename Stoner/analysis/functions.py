@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Generic analysis functions for DataFiles."""
+
 from inspect import getfullargspec
 from warnings import warn
 
@@ -8,13 +9,17 @@ from numpy import ma
 from scipy.integrate import cumulative_simpson, cumulative_trapezoid
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
+from typing import Callable, Union, Tuple, Optional
 
 from ..core.exceptions import assertion
 from ..tools import isiterable, isTuple
+from ..tools.typing import Data, Index, Kwargs, Args, NumericArray
 from .utils import threshold as _threshold
 
 
-def apply(datafile, func, col=None, replace=True, header=None, **kargs):
+def apply(
+    datafile: Data, func: Callable, col: Index = None, replace: bool = True, header: str = None, **kargs: Kwargs
+) -> Data:
     """Apply the given function to each row in the data set and adds to the data set.
 
     Args:
@@ -42,7 +47,7 @@ def apply(datafile, func, col=None, replace=True, header=None, **kargs):
         or an array, in which case it is used to completely replace the row of data.
 
         If the function returns a complete row of data, then the *replace* parameter will cause the return
-        value to be a new datafile, leaving the original unchanged. The *headers* parameter can give the complete
+        value to be a new datafile:Data, leaving the original unchanged. The *headers* parameter can give the complete
         column headers for the new data file.
 
     Returns:
@@ -86,7 +91,7 @@ def apply(datafile, func, col=None, replace=True, header=None, **kargs):
     return ret
 
 
-def clip(datafile, clipper, column=None):
+def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], column: Index = None) -> Data:
     """Clips the data based on the column and the clipper value.
 
     Args:
@@ -112,7 +117,16 @@ def clip(datafile, clipper, column=None):
     return datafile.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
 
 
-def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True, hysteretic=False, **kwords):
+def decompose(
+    datafile: Data,
+    xcol: Optional[Index] = None,
+    ycol: Optional[Index] = None,
+    sym: Optional[Index] = None,
+    asym: Optional[Index] = None,
+    replace: bool = True,
+    hysteretic: bool = False,
+    **kwords: Kwargs,
+) -> Data:
     """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
 
     Keyword Arguments:
@@ -160,11 +174,9 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
                 fldr[grp][0] += f
         rising = fldr["rising"][0].sort(xcol)
         falling = fldr["falling"][0].sort(xcol)
-        points = fldr["rising"][0].size
     else:
         rising = datafile.clone.sort(xcol)
         falling = rising.clone
-        points = rising.x.size
 
     rising_data = rising.deduplicate(xcol, clone=False)
     falling_data = falling.deduplicate(xcol, clone=False)
@@ -198,17 +210,17 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
 
 
 def integrate(
-    datafile,
-    xcol=None,
-    ycol=None,
-    result=None,
-    header=None,
-    result_name=None,
-    output="data",
-    bounds=lambda x, y: True,
-    method="simpson",
-    **kargs,
-):
+    datafile: Data,
+    xcol: Optional[Index] = None,
+    ycol: Optional[Index] = None,
+    result: Optional[bool] = None,
+    header: Optional[str] = None,
+    result_name: Optional[str] = None,
+    output: str = "data",
+    bounds: Callable = lambda x, y: True,
+    method: str = "simpson",
+    **kargs: Kwargs,
+) -> Data:
     """Integrate a column of data, optionally returning the cumulative integral.
 
     Args:
@@ -282,15 +294,23 @@ def integrate(
     return datafile
 
 
-def normalise(datafile, target=None, base=None, replace=True, header=None, scale=None, limits=(0.0, 1.0)):
+def normalise(
+    datafile: Data,
+    target: Optional[Index] = None,
+    base: Optional[Index] = None,
+    replace: bool = True,
+    header: Optional[str] = None,
+    scale: Optional[Tuple[float, float]] = None,
+    limits: Tuple[float, float] = (0.0, 1.0),
+) -> Data:
     """Normalise data columns by dividing through by a base column value.
 
     Args:
+
+    Keyword Arguments:
         target (index):
             One or more target columns to normalise can be a string, integer or list of strings or integers.
             If None then the default 'y' column is used.
-
-    Keyword Arguments:
         base (index):
             The column to normalise to, can be an integer or string. **Deprecated** can also be a tuple (low,
             high) being the output range
@@ -351,7 +371,17 @@ def normalise(datafile, target=None, base=None, replace=True, header=None, scale
     return datafile
 
 
-def stitch(datafile, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0, mode="All", func=None, p0=None):
+def stitch(
+    datafile: Data,
+    other: Data,
+    xcol: Optional[Index] = None,
+    ycol: Optional[Index] = None,
+    overlap: Optional[Tuple[float, float]] = None,
+    min_overlap: float = 0.0,
+    mode: str = "All",
+    func: Optional[Callable] = None,
+    p0: Optional[NumericArray] = None,
+):
     r"""Apply a scaling to this data set to make it stich to another dataset.
 
     Args:
@@ -470,7 +500,7 @@ def stitch(datafile, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0,
     set2 = np.append(xp, yp)
     assertion(len(set1) == len(set2), "The number of points in the overlap are different in the two data sets")
 
-    def transform(set1, *p):
+    def _transform(set1, *p):
         """Construct the wrapper function to fit for transform."""
         m = int(len(set1) / 2)
         x = set1[:m]
@@ -479,7 +509,7 @@ def stitch(datafile, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0,
         out = np.append(tmp[0], tmp[1])
         return out
 
-    popt, pcov = curve_fit(transform, set1, set2, p0=p0)  # Curve fit for optimal A,B,C
+    popt, pcov = curve_fit(_transform, set1, set2, p0=p0)  # Curve fit for optimal A,B,C
     perr = np.sqrt(np.diagonal(pcov))
     datafile.data[:, _.xcol], datafile.data[:, _.ycol] = func(
         datafile.data[:, _.xcol], datafile.data[:, _.ycol], *popt
@@ -492,7 +522,16 @@ def stitch(datafile, other, xcol=None, ycol=None, overlap=None, min_overlap=0.0,
     return datafile
 
 
-def threshold(datafile, threshold, **kargs):
+def threshold(
+    datafile: Data,
+    threshold: float,
+    col: Optional[Index] = None,
+    rising: bool = True,
+    falling: bool = False,
+    xcol: Optional[Index] = None,
+    transpose: bool = False,
+    all_vals: bool = False,
+) -> Data:
     """Find partial indices where the data in column passes the threshold, rising or falling.
 
     Args:
@@ -530,17 +569,11 @@ def threshold(datafile, threshold, **kargs):
         present order.
     """
     DataArray = type(datafile.data)
-    col = kargs.pop("col", None)
-    xcol = kargs.pop("xcol", None)
     _ = datafile._col_args(xcol=xcol, ycol=col)
 
     col = _.ycol
     if xcol is None and _.has_xcol:
         xcol = _.xcol
-
-    rising = kargs.pop("rising", True)
-    falling = kargs.pop("falling", False)
-    all_vals = kargs.pop("all_vals", False)
 
     current = datafile.column(col)
 

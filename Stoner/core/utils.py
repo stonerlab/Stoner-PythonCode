@@ -8,18 +8,17 @@ import copy
 import csv
 import re
 from collections.abc import Mapping
-from typing import Callable, List
-from typing import Mapping as MappingType
-from typing import Union
+from typing import Callable
+from typing import Union, Mapping as MappingType
 
 import numpy as np
 
 from ..compat import index_types, int_types
 from ..tools import all_type, copy_into
-from .Typing import Column_Index, Int_Types, Numeric
+from ..tools.typing import Index, Data, NumericArray
 
 
-def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], newdata: "DataFile") -> "DataFile":
+def add_core(other: Union[Data, NumericArray, MappingType], newdata: Data) -> Data:
     """Implement the core work of adding other to self and modifying newdata.
 
     Args:
@@ -107,7 +106,7 @@ def add_core(other: Union["DataFile", np.ndarray, List[Numeric], MappingType], n
     return ret
 
 
-def and_core(other: Union["DataFile", np.ndarray], newdata: "DataFile") -> "DataFile":
+def and_core(other: Union[Data, NumericArray], newdata: Data) -> Data:
     """Implement the core of the & operator, returning data in newdata.
 
     Args:
@@ -181,7 +180,7 @@ def and_core(other: Union["DataFile", np.ndarray], newdata: "DataFile") -> "Data
     return newdata
 
 
-def mod_core(other: Column_Index, newdata: "DataFile") -> "DataFile":
+def mod_core(other: Index, newdata: Data) -> Data:
     """Implement the column deletion method."""
     if isinstance(other, index_types):
         newdata.del_column(other)
@@ -191,7 +190,7 @@ def mod_core(other: Column_Index, newdata: "DataFile") -> "DataFile":
     return newdata
 
 
-def sub_core(other: Union[Int_Types, slice, Callable], newdata: "DataFile") -> "DataFile":
+def sub_core(other: Union[int, slice, Callable], newdata: Data) -> Data:
     """Worker for the subtraction."""
     if isinstance(other, (slice, int_types)) or callable(other):
         newdata.del_rows(other)

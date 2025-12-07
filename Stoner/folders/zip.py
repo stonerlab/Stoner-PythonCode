@@ -15,6 +15,7 @@ from ..core.data import Data
 from .core import BaseFolder
 from .mixins import DiskBasedFolderMixin
 from .utils import pathjoin
+from ..formats.utils.zip import test_is_zip
 
 
 class ZipFolder(DiskBasedFolderMixin, BaseFolder):
