@@ -240,10 +240,10 @@ class Data(
         self.metadata["Stoner.class"] = type(self).__name__
         if kargs:  # set public attributes from keywords
             to_go = []
-            for k in kargs:
+            for k, val in kargs.items():
                 if k in self._public_attrs:
-                    if isinstance(kargs[k], self._public_attrs[k]):
-                        self.__setattr__(k, kargs[k])
+                    if isinstance(val, self._public_attrs[k]):
+                        self.__setattr__(k, val)
                     else:
                         self._raise_type_error(k)
                         to_go.append(k)
@@ -320,7 +320,7 @@ class Data(
         """Initialise from datafile."""
         for a in arg.__dict__:
             if not callable(a) and a != "_baseclass":
-                super().__setattr__(a, copy.copy(arg.__getattribute__(a)))
+                super().__setattr__(a, copy.copy(getattr(arg, a)))
         self.metadata = arg.metadata.copy()
         self.data = DataArray(arg.data, setas=arg.setas.clone)
         self.data.setas = arg.setas.clone
@@ -424,16 +424,16 @@ class Data(
         handler(*args, **kargs)
         if kargs:  # set public attributes from keywords
             myattrs = new_d._public_attrs
-            for k in kargs:
+            for k, val in kargs.items():
                 if k in myattrs:
-                    if isinstance(kargs[k], myattrs[k]):
-                        new_d.__setattr__(k, kargs[k])
+                    if isinstance(val, myattrs[k]):
+                        new_d.__setattr__(k, val)
                     else:
                         if isinstance(myattrs[k], tuple):
                             typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
                         else:
                             typ = f"a {type(myattrs[k])}"
-                        raise TypeError(f"{k} should be {typ} not a {type(kargs[k])}")
+                        raise TypeError(f"{k} should be {typ} not a {type(val)}")
 
         return new_d
 
@@ -456,13 +456,13 @@ class Data(
         attr = dir(type(self))
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
         if not self.setas.empty:
-            for k in col_check:
+            for k, val in col_check.items():
                 if k.startswith("x"):
                     if k in self._data._setas.cols and self._data._setas.cols[k] is not None:
-                        attr.append(col_check[k])
+                        attr.append(val)
                 else:
                     if k in self._data._setas.cols and self._data._setas.cols[k]:
-                        attr.append(col_check[k])
+                        attr.append(val)
         return sorted(set(attr))
 
     def __getattr__(self, name):
@@ -568,7 +568,7 @@ class Data(
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
         try:
-            return self._data.__getattr__(name)
+            return getattr(self._data, name)
         except StonerSetasError:
             return None
 
@@ -588,7 +588,7 @@ class Data(
             interesting = []
             last = -1
             for ix, typ in enumerate(self.setas):
-                if last != -1 and last != ix - 1:
+                if last not in [-1, ix - 1]:
                     interesting.append(-1)
                     last = -1
                 if typ != ".":
@@ -601,8 +601,7 @@ class Data(
             else:
                 c_start = 0
             interesting.extend(range(c_start, c))
-            if len(interesting) < cols:
-                cols = len(interesting)
+            cols = min(cols, len(interesting))
             if interesting[cols - 3] != -1:
                 interesting[cols - 2] = -1
             else:
@@ -755,10 +754,10 @@ class Data(
         interesting, col_assignments, cols = self._interesting_cols(cols)
         c = min(c, cols)
         if len(interesting) > 0:
-            c_w = max([len(self.column_headers[x]) for x in interesting if x > -1])
+            c_w = max((len(self.column_headers[x]) for x in interesting if x > -1))
         else:
             c_w = 0
-        wrapper = TextWrapper(subsequent_indent="\t", width=max(20, max(20, (80 - c_w * c))))
+        wrapper = TextWrapper(subsequent_indent="\t", width=max(20, (80 - c_w * c)))
         if r > rows:
             shorten = [True, False]
             r = rows + rows % 2

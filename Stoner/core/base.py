@@ -374,9 +374,9 @@ class TypeHintedDict(RegexpDict):
         typ = "Invalid Type"
         if value is None:
             return "Void"
-        for t in self.__types:
-            if isinstance(value, self.__types[t]):
-                if t == "Cluster" or t == "AnonCluster":
+        for t, val in self.__types.items():
+            if isinstance(value, val):
+                if t in ["Cluster", "AnonCluster"]:
                     elements = []
                     if isinstance(value, dict):
                         for k in value:
@@ -475,14 +475,14 @@ class TypeHintedDict(RegexpDict):
         key = name
         (name, typehint) = self._get_name_(name)
         name = self.__lookup__(name, True)
-        value = [super(TypeHintedDict, self).__getitem__(nm) for nm in name]
+        value = [super().__getitem__(nm) for nm in name]
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
         if len(value) == 0:  # pylint: disable=len-as-condition
             raise KeyError(f"{key} is not a valid key even when interpreted as a sregular expression!")
         if len(value) == 1:
             return value[0]
-        return {k: v for k, v in zip(name, value)}
+        return dict(zip(name, value))
 
     def __setitem__(self, name: Union[str, RegExp], value: Any) -> None:
         """Set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
@@ -540,10 +540,10 @@ class TypeHintedDict(RegexpDict):
         """
         cls = type(self)
         ret = cls()
-        for k in self.keys():
+        for k, val in self.items():
             t = self._typehints[k]
             ret._typehints[k] = t
-            super(TypeHintedDict, ret).__setitem__(k, copy.copy(self[k]))
+            super(TypeHintedDict, ret).__setitem__(k, copy.copy(val))
         return ret
 
     def filter(self, name: Union[str, RegExp, Callable]) -> None:
@@ -644,7 +644,7 @@ class TypeHintedDict(RegexpDict):
         self[k] = v
 
 
-class metadataObject(MutableMapping):
+class metadataObject(MutableMapping):  # pylint: disable=invalid-name
     """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.TypeHintedDict` object.
 
     Attributes:

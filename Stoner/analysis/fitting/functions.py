@@ -30,7 +30,7 @@ _lmfit = True
 def _get_model_parnames(model):
     """Get a list of the model parameter names."""
     if isinstance(model, type) and (issubclass(model, Model) or issubclass(model, odrModel)):
-        model = Model()
+        model = Model(func=model.func)
 
     if isinstance(model, Model):
         return model.param_names
@@ -487,8 +487,10 @@ def _odr_one(
     fit = sp.odr.ODR(data, model, beta0=[x.value for x in model.estimate.values()])
     try:
         fit_result = fit.run()
-        fit_result.redchi = fit_result.sum_square / (len(fit_result.y) - len(fit_result.beta))
-        fit_result.chisqr = fit_result.sum_square
+        fit_result.redchi = fit_result.sum_square / (
+            len(fit_result.y) - len(fit_result.beta)
+        )  # pylint: disable=no-member
+        fit_result.chisqr = fit_result.sum_square  # pylint: disable=no-member
 
         tmp = f"""Beta:{fit_result.beta}
         Beta Std Error:{fit_result.sd_beta}
@@ -501,7 +503,7 @@ def _odr_one(
             Reason(s) for Halting:
             """
             for r in fit_result.stopreason:
-                tmp += "  %s\n" % r
+                tmp += f"  {r}\n"
         tmp += f""""Sum of orthogonal distance (~chi^2):{fit_result.chisqr}
         Reduced Sum of Orthogonal distances (~reduced chi^2): {fit_result.redchi}"""
 

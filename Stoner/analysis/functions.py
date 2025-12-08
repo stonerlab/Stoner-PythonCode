@@ -526,7 +526,8 @@ def stitch(
         out = np.append(tmp[0], tmp[1])
         return out
 
-    popt, pcov = curve_fit(_transform, set1, set2, p0=p0)  # Curve fit for optimal A,B,C
+    # Curve fit for optimal A,B,C
+    popt, pcov = curve_fit(_transform, set1, set2, p0=p0)  # pylint: disable=unbalanced-tuple-unpacking
     perr = np.sqrt(np.diagonal(pcov))
     datafile.data[:, _.xcol], datafile.data[:, _.ycol] = func(
         datafile.data[:, _.xcol], datafile.data[:, _.ycol], *popt

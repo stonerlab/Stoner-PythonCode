@@ -172,6 +172,10 @@ class WLfit(Model):
             pars[p].min = 0.0
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class FluchsSondheimer(Model):
     """Evaluate a Fluchs-Sondheumer model function for conductivity.
@@ -201,10 +205,14 @@ class FluchsSondheimer(Model):
         """Configure Initial fitting function."""
         super().__init__(fluchsSondheimer, *args, **kwargs)
 
-    def guess(self, data, t=None, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever."""
         pars = self.make_params(l=10.0, p=0.5, sigma_0=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class BlochGrueneisen(Model):
@@ -249,3 +257,7 @@ class BlochGrueneisen(Model):
         pars["A"].min = 0
         pars["n"].vary = False
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

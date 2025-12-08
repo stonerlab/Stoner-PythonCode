@@ -117,9 +117,9 @@ class DataArray(ma.MaskedArray):
                     self.fill_value = np.nan
             self._setas.shape = getattr(self, "shape", (0,))
 
-    def __array_wrap__(self, out_arr, context=None, return_scalar=None):
+    def __array_wrap__(self, obj, context=None, return_scalar=None):
         """Make sure ufuncs do the right thing with DataArrays."""
-        ret = ma.MaskedArray.__array_wrap__(self, out_arr, context=context, return_scalar=return_scalar)
+        ret = ma.MaskedArray.__array_wrap__(self, obj, context=context, return_scalar=return_scalar)
         return ret
 
     def _prepare_index(self, ix):
@@ -182,8 +182,7 @@ class DataArray(ma.MaskedArray):
             raise StonerSetasError(
                 f"Insufficient axes defined in setas to calculate the r component. need 2 not {axes}"
             )
-        else:
-            return ret
+        return ret
 
     @property
     def q(self):
@@ -203,8 +202,7 @@ class DataArray(ma.MaskedArray):
             raise StonerSetasError(
                 f"Insufficient axes defined in setas to calculate the theta component. need 2 not {axes}"
             )
-        else:
-            return ret
+        return ret
 
     @property
     def p(self):
@@ -575,3 +573,8 @@ class DataArray(ma.MaskedArray):
                 "Swap parameter must be either a tuple or a \
             list of tuples"
             )
+
+    def tofile(self, fid, sep="", format="%s"):  # pylint: disable=redefined-builtin
+        """Silly pass through."""
+        self.data.tofile(fid, sep=sep, format=format)
+        np.ma.getmaskarray(self).tofile(fid, sep=sep, format=format)

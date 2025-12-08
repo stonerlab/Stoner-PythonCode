@@ -156,6 +156,10 @@ class Arrhenius(Model):
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class NDimArrhenius(Model):
     r"""Arrhenius Equation without T dependent prefactor for various dimensions.
@@ -194,6 +198,10 @@ class NDimArrhenius(Model):
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class ModArrhenius(Model):
     r"""Arrhenius Equation with a variable T power dependent prefactor.
@@ -231,6 +239,10 @@ class ModArrhenius(Model):
             d1, d2 = np.polyfit(-1.0 / x, np.log(data / x), 1)
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class VFTEquation(Model):
@@ -282,3 +294,7 @@ class VFTEquation(Model):
             d1, d2, x0 = popt
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

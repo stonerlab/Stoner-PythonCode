@@ -39,7 +39,10 @@ class ODR_Model(odrModel):
         if isinstance(model, Model):
             self.model = model
             self.func = model.func
-            modelfunc = lambda beta, x, **kargs: self.func(x, *beta, **kargs)
+
+            def modelfunc(beta, x, **kargs):
+                return self.func(x, *beta, **kargs)
+
             meta["param_names"] = self.model.param_names
             meta["param_hints"] = self.model.param_hints
             meta["name"] = type(self.model).__name__
@@ -144,7 +147,7 @@ class MimizerAdaptor:
             upper.append(hint_upper if not np.isinf(hint_upper) else max(limits))
             lower.append(hint_lower if not np.isinf(hint_lower) else min(limits))
         self.p0 = p0
-        self.bounds = [ix for ix in zip(lower, upper)]
+        self.bounds = list(zip(lower, upper))
 
         def wrapper(beta, x, y, sigma, *args):
             """Calculate a least-squares goodness from the model functiuon."""
@@ -370,7 +373,8 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
                     model.set_param_hint(p_name, value=kargs.get(p_name))
             try:
                 p0 = model.guess(ydata, x=xdata)
-            except Exception:  # pylint: disable=W0703  Don't be fussy here
+            except Exception:  # pylint: disable=W0703
+                # Don't be fussy here about the potential exceptions
                 p0 = lmfit_mod.Parameters()
                 for p_name in model.param_names:
                     if p_name in kargs:

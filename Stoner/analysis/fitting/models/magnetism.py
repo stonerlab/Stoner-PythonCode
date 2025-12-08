@@ -55,10 +55,14 @@ def langevin(H, M_s, m, T):
     r"""Langevin function for paramagnetic M-H loops.
 
     Args:
-        H (array): The applied magnetic field
-        M_s (float): Saturation magnetisation
-        m (float) is the moment of a cluster
-        T (float): Temperature
+        H (array):
+            The applied magnetic field
+        M_s (float):
+            Saturation magnetisation
+        m (float):
+            is the moment of a cluster
+        T (float):
+            Temperature
 
     Returns:
         Magnetic Momemnts (array).
@@ -131,10 +135,16 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
     r"""Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
-        H (array) magnetic field data
-        H_res (float): Resonance field of peak
-        Delta_H (float): Preak wideth
-        K_1, K_2 (float): Relative weighting of each component.
+        H (array):
+            magnetic field data
+        H_res (float):
+            Resonance field of peak
+        Delta_H (float):
+            Preak wideth
+        K_1 (float):
+            Relative weighting of each component.
+        K_2 (float):
+            Relative weighting of each component.
 
     Returns:
         Array of model absorption values.
@@ -234,6 +244,10 @@ class BlochLaw(Model):
         pars = self.make_params(**guesses)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class BlochLawThin(Model):
     r"""Bloch's law for spontaneous magnetism at low temperatures - thin film version.
@@ -310,6 +324,10 @@ class BlochLawThin(Model):
         )
         return 1.0 + (v_ws / (4 * np.pi * S * (nz - 1) * a)) * (k * T / D) * kz_sum
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class Langevin(Model):
     r"""The Langevin function for paramagnetic M-H loops.
@@ -357,6 +375,10 @@ class Langevin(Model):
         pars = self.make_params(M_s=M_s, m=m, T=T)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class KittelEquation(Model):
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
@@ -401,6 +423,10 @@ class KittelEquation(Model):
         pars["H_k"].max = M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class Inverse_Kittel(Model):
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
@@ -440,6 +466,10 @@ class Inverse_Kittel(Model):
         pars["H_k"].min = 0
         pars["H_k"].max = M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class FMR_Power(Model):
@@ -488,3 +518,7 @@ class FMR_Power(Model):
         pars["H_res"].min = np.min(x)
         pars["H_res"].max = np.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

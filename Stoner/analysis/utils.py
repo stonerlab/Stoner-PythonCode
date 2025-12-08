@@ -222,7 +222,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
         ret = np.sqrt(np.sum((xy2 - xyt) ** 2, axis=0))
         return ret
 
-    popt, pcov = curve_fit(transform, data, result, p0=p0)
+    popt, pcov = curve_fit(transform, data, result, p0=p0)  # pylint: disable=unbalanced-tuple-unpacking
     perr = np.sqrt(np.diag(pcov))
 
     # Initialise the return values

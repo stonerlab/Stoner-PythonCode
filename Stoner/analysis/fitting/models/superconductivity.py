@@ -275,7 +275,7 @@ def icRN_Clean(d_f, IcRn0, E_x, v_f, d_0):
     return IcRn0 * np.abs(np.sin(A * x)) / (A * x)
 
 
-def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
+def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):  # pylint: disable=unused-argument
     r"""Critical Current versus ferromagnetic narrier thickness, clean limit.
 
     Args:
@@ -301,12 +301,21 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
     """
     L = v_f * tau * 1e-9
     t = tau / hbar
-    w_m = lambda m: (2 * m + 1) * T * np.pi * kb
-    k_m = lambda m: (1 + 2 * np.abs(w_m(m)) * t) + (0 - 2j) * E_x * t
-    integrad = lambda mu, m: np.real(mu / (np.sinh(d_f * k_m(m) / (mu * L))))
-    prefactor = lambda m: delta**2 / (delta**2 + w_m(m) ** 2)
 
-    term = lambda m: prefactor(m) * quad(integrad, -1, 1, (m,))  # pylint: disable=W0612
+    def w_m(m):
+        return (2 * m + 1) * T * np.pi * kb
+
+    def k_m(m):
+        return (1 + 2 * np.abs(w_m(m)) * t) + (0 - 2j) * E_x * t
+
+    def integrad(mu, m):
+        return np.real(mu / (np.sinh(d_f * k_m(m) / (mu * L))))
+
+    def prefactor(m):
+        return delta**2 / (delta**2 + w_m(m) ** 2)
+
+    def term(m):
+        return prefactor(m) * quad(integrad, -1, 1, (m,))  # pylint: disable=W0612
 
 
 class Strijkers(Model):
@@ -340,7 +349,7 @@ class Strijkers(Model):
         """Configure Initial fitting function."""
         super().__init__(strijkers, *args, **kwargs)
 
-    def guess(self, data, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Guess starting values for a good Nb contact to a ferromagnet at 4.2K."""
         pars = self.make_params(omega=0.5, delta=1.50, P=0.42, Z=0.15)
         pars["omega"].min = 0.36
@@ -351,6 +360,10 @@ class Strijkers(Model):
         pars["P"].min = 0.0
         pars["P"].max = 1.0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class RSJ_Noiseless(Model):
@@ -383,9 +396,9 @@ class RSJ_Noiseless(Model):
         """Configure Initial fitting function."""
         super().__init__(rsj_noiseless, *args, **kwargs)
 
-    def guess(self, data, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
-        x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
+        x = np.linspace(1, len(data), len(data) + 1) if x is None else x
 
         v_offset_guess = np.mean(data)
         v = np.abs(data - v_offset_guess)
@@ -404,6 +417,10 @@ class RSJ_Noiseless(Model):
         pars["Ic_p"].min = 0
         pars["Ic_n"].max = 0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class RSJ_Simple(Model):
@@ -436,9 +453,9 @@ class RSJ_Simple(Model):
         """Configure Initial fitting function."""
         super().__init__(rsj_simple, *args, **kwargs)
 
-    def guess(self, data, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
-        x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
+        x = np.linspace(1, len(data), len(data) + 1) if x is None else x
 
         v_offset_guess = np.mean(data)
         v = np.abs(data - v_offset_guess)
@@ -456,6 +473,10 @@ class RSJ_Simple(Model):
         pars = self.make_params(Ic=ic_guess, Rn=rn_guess, V_offset=v_offset_guess)
         # pars["Ic"].min = 0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class Ic_B_Airy(Model):
@@ -494,9 +515,9 @@ class Ic_B_Airy(Model):
         """Configure Initial fitting function."""
         super().__init__(ic_B_airy, *args, **kwargs)
 
-    def guess(self, data, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess parameters as max(data), x[argmax(data)] and from FWHM of peak."""
-        x = kwargs.get("x", np.linspace(-len(data) / 2, len(data) / 2, len(data)))
+        x = np.linspace(-len(data) / 2, len(data) / 2, len(data)) if x is None else x
 
         Ic0_guess = data.max()
         B_offset_guess = x[data.argmax()]
@@ -507,3 +528,7 @@ class Ic_B_Airy(Model):
         pars = self.make_params(Ic0=Ic0_guess, B_offset=B_offset_guess, A=A_guess)
         pars["Ic0"].min = 0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

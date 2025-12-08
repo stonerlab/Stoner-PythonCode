@@ -151,10 +151,14 @@ class Simmons(Model):
         """Configure Initial fitting function."""
         super().__init__(simmons, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Set the A, phi and d values to typical answers for a small tunnel junction."""
         pars = self.make_params(A=1e3, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class BDR(Model):
@@ -185,10 +189,14 @@ class BDR(Model):
         """Configure Initial fitting function."""
         super().__init__(bdr, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction."""
         pars = self.make_params(A=1e-12, phi=3.0, d=10.0, dphi=1.0, mass=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class FowlerNordheim(Model):
@@ -213,10 +221,14 @@ class FowlerNordheim(Model):
         """Configure Initial fitting function."""
         super().__init__(fowlerNordheim, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Set the A, phi and d values to typical answers for a small tunnel junction."""
         pars = self.make_params(A=1e-12, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class TersoffHammann(Model):
@@ -234,7 +246,11 @@ class TersoffHammann(Model):
         """Configure Initial fitting function."""
         super().__init__(tersoffHammann, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Set the parameter values from an apporximate line."""
-        pars = self.make_params(A=np.mean(data / V))
+        pars = self.make_params(A=np.mean(data / x))
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
