@@ -841,160 +841,110 @@ class DataFile(
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
             the original DataFile Instance as well as returning it.
         """
-        # ===== Section 1: Normalize column_data input to numpy array =====
-        # Handle DataArray header extraction before conversion
+        if index is None or isinstance(index, bool) and index:  # Enure index is set
+            index = self.shape[1]
+            replace = False
+        elif isinstance(index, int_types) and index == self.shape[1]:
+            replace = False
+        else:
+            index = self.find_col(index)
+
+        # Sort out the data and get it into an array of values.
+        if isinstance(column_data, list):
+            column_data = np.array(column_data)
+
         if isinstance(column_data, DataArray) and header is None:
             header = column_data.column_headers
 
-        # Convert various input types to numpy array
-        if isinstance(column_data, list):
-            np_data = np.array(column_data)
-        elif isinstance(column_data, np.ndarray):
+        if isinstance(column_data, np.ndarray):
             np_data = column_data
         elif callable(column_data):
-            # Call function for each row to generate new column data
             if isinstance(func_args, dict):
                 new_data = [column_data(x, **func_args) for x in self]
             else:
                 new_data = [column_data(x) for x in self]
             np_data = np.array(new_data)
         else:
-            # Unsupported type
             return NotImplemented
 
-        # ===== Section 2: Validate and normalize index and setas parameters =====
-        # Normalize index: None or True means append to end
-        if index is None or (isinstance(index, bool) and index):
-            index = self.shape[1]
-            replace = False
-        elif isinstance(index, int_types) and index == self.shape[1]:
-            # Inserting at the end is the same as appending
-            replace = False
-        else:
-            # Resolve column name/pattern to column index
-            index = self.find_col(index)
-
-        # Ensure np_data is 2D and get its dimensions
+        # Sort out the sizes of the arrays
         if np_data.ndim == 1:
             np_data = np.atleast_2d(np_data).T
-        new_rows, new_cols = np_data.shape
+        cl, cw = np_data.shape
 
-        # Validate setas parameter
-        if setas is None:
-            setas = "." * new_cols
-        
-        if not (isiterable(setas) and len(setas) == new_cols):
+        # Make setas
+        setas = "." * cw if setas is None else setas
+
+        if isiterable(setas) and len(setas) == cw:
+            for s in setas:
+                if s not in ".-xyzuvwdefpqr":
+                    raise TypeError(
+                        f"setas parameter should be a string or list of letter in the set xyzdefuvw.-, not {setas}"
+                    )
+        else:
             raise TypeError(
-                f"setas parameter should be a string or list of letters the same length as the number of columns "
-                f"being added ({new_cols}), in the set xyzdefuvw.-, not {setas}"
+                f"""setas parameter should be a string or list of letter the same length as the number of columns
+                being added in the set xyzdefuvw.-, not {setas}"""
             )
-        
-        # Validate each character in setas
-        for s in setas:
-            if s not in ".-xyzuvwdefpqr":
-                raise TypeError(
-                    f"setas parameter should be a string or list of letters in the set xyzdefuvw.-, not {setas}"
-                )
 
-        # ===== Section 3: Normalize existing data shape =====
-        # Ensure self.data is at least 2D
+        # Make sure our current data is at least 2D and get its size
         if len(self.data.shape) == 1:
             self.data = np.atleast_2d(self.data).T
-        
-        # Handle edge case: empty data
-        if not self.data.shape:
+        if len(self.data.shape) == 2:
+            (dr, dc) = self.data.shape
+        elif not self.data.shape:
             self.data = np.array([[]])
-            existing_rows, existing_cols = 0, 0
-        elif len(self.data.shape) == 2:
-            existing_rows, existing_cols = self.data.shape
-        else:
-            existing_rows, existing_cols = 0, 0
+            (dr, dc) = (0, 0)
 
-        # ===== Section 4: Align row counts between existing and new data =====
-        # Determine target row count
-        target_rows = max(existing_rows, new_rows)
-        
-        # Expand existing data if new data has more rows
-        if new_rows > existing_rows:
-            if existing_cols > 0 and existing_rows > 0:
-                # Existing data is finite and too short - pad with zeros
-                padding = np.zeros((new_rows - existing_rows, existing_cols))
-                self.data = DataArray(np.append(self.data, padding, axis=0), setas=self.setas.clone)
-                existing_rows = new_rows
-            elif existing_cols == 0:
-                # Existing data has no width - create empty rows with correct height
-                self.data = DataArray(np.zeros((new_rows, 0)))
-                existing_rows = new_rows
-            elif existing_rows == 0:
-                # Existing data has no rows - expand to have correct height (this case seems unusual but preserved)
-                self.data = DataArray(np.append(self.data, np.zeros((new_rows, 0)), axis=0), setas=self.setas.clone)
-                existing_rows = new_rows
-        
-        # Expand new data if existing data has more rows
-        if new_rows < existing_rows:
-            padding = np.zeros((existing_rows - new_rows, new_cols))
-            np_data = np.append(np_data, padding, axis=0)
-            # Ensure still 2D after append
+        # Expand either our current data or new data to have the same number of rows
+        if cl > dr and dc * dr > 0:  # Existing data is finite and too short
+            self.data = DataArray(np.append(self.data, np.zeros((cl - dr, dc)), 0), setas=self.setas.clone)
+        elif cl < dr:  # New data is too short
+            np_data = np.append(np_data, np.zeros((dr - cl, cw)))
             if np_data.ndim == 1:
                 np_data = np.atleast_2d(np_data).T
+        elif dc == 0:  # Existing data has no width - replace with cl,0
+            self.data = DataArray(np.zeros((cl, 0)))
+        elif dr == 0:  # Existing data has no rows - expand existing data with zeros to have right length
+            self.data = DataArray(np.append(self.data, np.zeros((cl, dr)), axis=0), setas=self.setas.clone)
 
-        # ===== Section 5: Insert or replace column data =====
+        # If not replacing, then add extra columns to existing data.
         if not replace:
-            # Insert mode: shift existing columns and insert new ones
-            # Save current state
-            old_headers = copy.copy(self.column_headers)
+            columns = copy.copy(self.column_headers)
             old_setas = self.setas.clone
-            
-            if index == self.data.shape[1]:
-                # Appending to the end
+            if index == self.data.shape[1]:  # appending column
                 self.data = DataArray(np.append(self.data, np_data, axis=1), setas=self.setas.clone)
             else:
-                # Inserting in the middle: create space for new columns
-                # Approach: concatenate [data before index] + [new columns] + [data from index onward]
-                left_part = self.data[:, :index]
-                right_part = self.data[:, index:]
                 self.data = DataArray(
-                    np.append(left_part, np.append(np_data, right_part, axis=1), axis=1),
-                    setas=self.setas.clone
+                    np.append(
+                        self.data[:, :index], np.append(np.zeros_like(np_data), self.data[:, index:], axis=1), axis=1
+                    ),
+                    setas=self.setas.clone,
                 )
-            
-            # Restore headers and setas for columns that weren't affected
             for ix in range(0, index):
-                self.column_headers[ix] = old_headers[ix]
+                self.column_headers[ix] = columns[ix]
                 self.setas[ix] = old_setas[ix]
-            for ix in range(index, existing_cols):
-                self.column_headers[ix + new_cols] = old_headers[ix]
-                self.setas[ix + new_cols] = old_setas[ix]
-        else:
-            # Replace mode: overwrite existing columns or expand if needed
-            # Expand data array if we're replacing beyond current width
-            if index + new_cols > self.shape[1]:
-                cols_to_add = index + new_cols - self.shape[1]
-                padding = np.zeros((self.data.shape[0], cols_to_add))
-                self.data = DataArray(
-                    np.append(self.data, padding, axis=1),
-                    setas=self.setas.clone
-                )
-            
-            # Overwrite data at the specified index
-            self.data[:, index : index + new_cols] = np_data
+            for ix in range(index, dc):
+                self.column_headers[ix + cw] = columns[ix]
+                self.setas[ix + cw] = old_setas[ix]
+        # Check that we don't need to expand to overwrite with the new data
+        if index + cw > self.shape[1]:
+            self.data = DataArray(
+                np.append(self.data, np.zeros((self.data.shape[0], self.data.shape[1] - index + cw)), axis=1),
+                setas=self.setas.clone,
+            )
 
-        # ===== Section 6: Set column headers and setas =====
-        # Generate default headers if not provided
-        if header is None:
-            header = [f"Column {ix}" for ix in range(index, index + new_cols)]
-        
-        # Ensure header is a list
+        # Put the data into the array
+        self.data[:, index : index + cw] = np_data
+
+        if header is None:  # This will fix the header if not defined.
+            header = [f"Column {ix}" for ix in range(index, index + cw)]
         if isinstance(header, string_types):
             header = [header]
-        
-        # Extend header list if too short (bug fix: use correct variable in f-string)
-        if len(header) < new_cols:
-            header.extend([f"Column {index + ix}" for ix in range(len(header), new_cols)])
-        
-        # Apply headers and setas to the new/replaced columns
+        if len(header) != cw:
+            header.extend(["Column {ix}" for x in range(index, index + cw)])
         for ix, (hdr, s) in enumerate(zip(header, setas)):
-            self.column_headers[index + ix] = hdr
+            self.column_headers[ix + index] = hdr
             self.setas[index + ix] = s
 
         return self
