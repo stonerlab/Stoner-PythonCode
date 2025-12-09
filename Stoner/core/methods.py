@@ -12,7 +12,7 @@ from numpy import ma
 from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import _pattern_type, int_types, str2bytes
-from ..tools import all_type, format_error, isiterable, operator
+from ..tools import all_type, format_error, isiterable, operator, make_Class
 from ..tools.file import HDFFileManager, best_saver, file_dialog
 from ..tools.widgets import RangeSelect
 from .array import DataArray
@@ -401,7 +401,10 @@ def section(datafile, x=None, y=None, z=None, r=None, accuracy=0.0, **kwargs):
     if z is not None:
         tmp.data = tmp.search(zcol, z, accuracy=accuracy)
     if r is not None:
-        func = lambda x, row: r(row[xcol], row[ycol], row[zcol])
+
+        def func(_, row):
+            return r(row[xcol], row[ycol], row[zcol])
+
         tmp.data = tmp.search(0, func, accuracy=accuracy)
 
     if kwargs:  # Fallback to working with select if nothing else.
@@ -598,7 +601,7 @@ def split(datafile, *args, final="files"):
             There has been a change in the arguments for the split function  from version 0.8 of the Stoner
             Package.
     """
-    from Stoner import DataFolder
+    DataFolder = make_Class("DataFolder", None)
 
     if not args:
         xcol = datafile.setas._get_cols("xcol")
@@ -753,7 +756,7 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         case (_, _):
             (dr, dc) = datafile.data.shape
         case _ if not datafile.data.shape:
-            datafile.data = np.array([list()])
+            datafile.data = np.array([[]])
             (dr, dc) = (0, 0)
         case _:
             raise ValueError("Data should be 1 or 2 dimensional")
@@ -841,8 +844,7 @@ def columns(datafile, not_masked=False, reset=False):
             continue
         if reset:
             return
-        else:
-            yield datafile.column(ix)
+        yield datafile.column(ix)
 
 
 def del_column(datafile, col=None, duplicates=False):
@@ -903,11 +905,11 @@ def del_column(datafile, col=None, duplicates=False):
         datafile.column_headers = ch
     elif isiterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
         col = ~np.array(col)
+        col_hdrs = np.array(datafile.column_headers)[col]
         new_setas = np.array(datafile.setas)[col]
-        new_column_headers = np.array(datafile.column_headers)[col]
         datafile.data = datafile.data[:, col]
         datafile.setas = new_setas
-        datafile.column_headers = new_column_headers
+        datafile.column_headers = col_hdrs
     else:  # Otherwise find individual columns
         c = datafile.find_col(col)
         ch = datafile.column_headers
@@ -1011,7 +1013,7 @@ def del_rows(datafile, col=None, val=None, invert=False):
     return datafile
 
 
-def dir(datafile, pattern=None):
+def dir(datafile, pattern=None):  # pylint: disable=redefined-builtin
     """Return a list of keys in the metadata, filtering with a regular expression if necessary.
 
     Args:
@@ -1156,8 +1158,7 @@ def rows(datafile, not_masked=False, reset=False):
             continue
         if reset:
             return
-        else:
-            yield row
+        yield row
 
 
 def save(datafile, filename=None, as_loaded=None, filetype=False):
@@ -1262,7 +1263,9 @@ def to_pandas(datafile):
     return df
 
 
-def format(datafile, key, mode="float", units=None, prefix=None, latex=False, fmt=None, escape=False):
+def format(  # pylint: disable=redefined-builtin
+    datafile, key, mode="float", units=None, prefix=None, latex=False, fmt=None, escape=False
+):
     r"""Return the contents of key pretty formatted using :py:func:`format_error`.
 
     Args:
