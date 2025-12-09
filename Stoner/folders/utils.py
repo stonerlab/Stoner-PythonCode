@@ -10,7 +10,7 @@ __all__ = [
     "removeDisallowedFilenameChars",
 ]
 import fnmatch
-import os.path as path
+from os import path
 import pathlib
 import re
 import string
@@ -37,6 +37,7 @@ def pathjoin(*args):
     if len(args) > 1:
         tmp = path.join(args[0], *args[1:])
         return tmp.replace(path.sep, "/")
+    return None
 
 
 def scan_dir(root):
@@ -116,7 +117,7 @@ def get_pool(_serial=False):
             if get_option("threading"):
                 p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))
             else:
-                p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))
+                p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))  # pylint: disable=not-callable
             imap = p.imap
         except (ArithmeticError, AttributeError, LookupError, RuntimeError, NameError, OSError, TypeError, ValueError):
             # Fallback to non-multiprocessing if necessary
@@ -137,5 +138,5 @@ def removeDisallowedFilenameChars(filename):
     Returns:
         A filename with non ASCII characters stripped out
     """
-    validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-    return "".join([c for c in filename if c in validFilenameChars])
+    valid_fname_chars = f"-_.() {string.ascii_letters}{string.digits}"
+    return "".join([c for c in filename if c in valid_fname_chars])

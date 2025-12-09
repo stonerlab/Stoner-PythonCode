@@ -32,8 +32,8 @@ def add_core(other: Union[Data, NumericArray, MappingType], newdata: Data) -> Da
         newdata:
             A modified newdata
     """
-    if isinstance(other, np.ndarray):
-        if len(newdata) == 0:  # pylint: disable=len-as-condition
+    match other:
+        case np.ndarray() if len(newdata) == 0:  # pylint: disable=len-as-condition
             ch = getattr(other, "column_headers", [])
             setas = getattr(other, "setas", "")
             t = np.atleast_2d(other)
@@ -44,62 +44,60 @@ def add_core(other: Union[Data, NumericArray, MappingType], newdata: Data) -> Da
             newdata.setas = setas
             newdata.column_headers = ch
             ret = newdata
-        elif len(np.shape(other)) == 1:
+        case np.ndarray() if len(np.shape(other)) == 1:
             # 1D array, so assume a single row of data
             if np.shape(other)[0] == np.shape(newdata.data)[1]:
                 newdata.data = np.append(newdata.data, np.atleast_2d(other), 0)
                 ret = newdata
             else:
                 return NotImplemented
-        elif len(np.shape(other)) == 2 and np.shape(other)[1] == np.shape(newdata.data)[1]:
+        case np.ndarray() if len(np.shape(other)) == 2 and np.shape(other)[1] == np.shape(newdata.data)[1]:
             # DataFile + array with correct number of columns
             newdata.data = np.append(newdata.data, other, 0)
             ret = newdata
-        else:
-            return NotImplemented
-    elif isinstance(other, type(newdata)):  # Appending another DataFile
-        new_data = np.ones((other.shape[0], newdata.shape[1])) * np.nan
-        for i in range(newdata.shape[1]):
-            column = newdata.column_headers[i]
-            try:
-                new_data[:, i] = other.column(column)
-            except KeyError:
-                pass
-        newdata.metadata.update(other.metadata)
-        newdata.data = np.append(newdata.data, new_data, axis=0)
-        ret = newdata
-    elif isinstance(other, list):
-        for o in other:
-            newdata = newdata + o
-        ret = newdata
-    elif isinstance(other, Mapping):
-        # First check keys all in newdata
-        if len(newdata) == 0:
-            newdata.data = np.atleast_2d(list(other.values()))
-            newdata.column_headers = list(other.keys())
-        else:
-            order = {}
-            for k in other:
+        case _ if isinstance(other, type(newdata)):  # Appending another DataFile
+            new_data = np.ones((other.shape[0], newdata.shape[1])) * np.nan
+            for i in range(newdata.shape[1]):
+                column = newdata.column_headers[i]
                 try:
-                    order[k] = newdata.find_col(k)
-                except (KeyError, re.error):
-                    mask = newdata.mask
-                    newdata.add_column(np.ones(len(newdata)) * np.nan, header=k)
-                    newdata.mask[:, :-1] = mask
-                    newdata.mask[:, -1] = np.ones(len(newdata), dtype=bool)
-                    order[k] = newdata.shape[1] - 1
-            row = np.ones(newdata.shape[1]) * np.nan
-            mask = np.ones_like(row, dtype=bool)
-            for k in order:
-                row[order[k]] = other[k]
-                mask[order[k]] = False
-            old_mask = newdata.mask
-            newdata.data = np.ma.append(newdata.data, np.atleast_2d(row), axis=0)
-            newdata.mask[:-1, :] = old_mask
-            newdata.mask[-1] = mask
-        ret = newdata
-    else:
-        return NotImplemented
+                    new_data[:, i] = other.column(column)
+                except KeyError:
+                    pass
+            newdata.metadata.update(other.metadata)
+            newdata.data = np.append(newdata.data, new_data, axis=0)
+            ret = newdata
+        case list():
+            for o in other:
+                newdata = newdata + o
+            ret = newdata
+        case _ if isinstance(other, Mapping):
+            # First check keys all in newdata
+            if len(newdata) == 0:
+                newdata.data = np.atleast_2d(list(other.values()))
+                newdata.column_headers = list(other.keys())
+            else:
+                order = {}
+                for k in other:
+                    try:
+                        order[k] = newdata.find_col(k)
+                    except (KeyError, re.error):
+                        mask = newdata.mask
+                        newdata.add_column(np.ones(len(newdata)) * np.nan, header=k)
+                        newdata.mask[:, :-1] = mask
+                        newdata.mask[:, -1] = np.ones(len(newdata), dtype=bool)
+                        order[k] = newdata.shape[1] - 1
+                row = np.ones(newdata.shape[1]) * np.nan
+                mask = np.ones_like(row, dtype=bool)
+                for k, val in order.items():
+                    row[order[k]] = other[k]
+                    mask[val] = False
+                old_mask = newdata.mask
+                newdata.data = np.ma.append(newdata.data, np.atleast_2d(row), axis=0)
+                newdata.mask[:-1, :] = old_mask
+                newdata.mask[-1] = mask
+            ret = newdata
+        case _:
+            return NotImplemented
     ret._data._setas.shape = ret.shape
     for attr in newdata.__dict__:
         if attr not in ("setas", "metadata", "data", "column_headers", "mask") and not attr.startswith("_"):

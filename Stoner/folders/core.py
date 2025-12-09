@@ -3,7 +3,7 @@
 __all__ = ["BaseFolder"]
 
 import fnmatch
-import os.path as path
+from os import path
 import re
 from collections.abc import Iterable, MutableSequence
 from copy import copy, deepcopy
@@ -173,7 +173,11 @@ def _build_select_function(kargs, arg):
             op = "eq"
     func = operator[op]
     if negate:
-        func = lambda k, v: not func(k, v)
+
+        def _func(k, v):
+            return not func(k, v)
+
+        func = _func
     return func, arg
 
 
@@ -328,8 +332,8 @@ class BaseFolder(MutableSequence):
         self._object_attrs["debug"] = value
         for _, member in self.loaded:
             member.debug = value
-        for grp in self.groups:
-            self.groups[grp].debug = value
+        for val in self.groups.values():
+            val.debug = value
 
     @property
     def depth(self):
@@ -338,8 +342,8 @@ class BaseFolder(MutableSequence):
             r = 0
         else:
             r = 1
-            for g in self.groups:
-                r = max(r, self.groups[g].depth + 1)
+            for val in self.groups.values():
+                r = max(r, val.depth + 1)
         return r
 
     @property
@@ -451,8 +455,8 @@ class BaseFolder(MutableSequence):
             r = 0
         else:
             r = 1e6
-            for g in self.groups:
-                r = min(r, self.groups[g].depth + 1)
+            for val in self.groups.values():
+                r = min(r, val.depth + 1)
         return r
 
     @property
@@ -468,7 +472,7 @@ class BaseFolder(MutableSequence):
         for d in self:
             if len(d) == 0:
                 continue
-            yield (d)
+            yield d
 
     @property
     def objects(self):
@@ -514,7 +518,7 @@ class BaseFolder(MutableSequence):
         """Return the number of levels of group before a group with files is found."""
         if self.files:
             return 0
-        return min([grp.trunkdepth for grp in self.groups.values()]) + 1
+        return min((grp.trunkdepth for grp in self.groups.values())) + 1
 
     @property
     def type(self):
@@ -686,8 +690,8 @@ class BaseFolder(MutableSequence):
         for k in self._instance_attrs:
             setattr(other, k, getattr(self, k))
         if not attrs_only:
-            for g in self.groups:
-                other.groups[g] = self.groups[g].__clone__(other=type(other)(), attrs_only=attrs_only)
+            for g, val in self.groups.items():
+                other.groups[g] = val.__clone__(other=type(other)(), attrs_only=attrs_only)
             for k in self.__names__():
                 other.__setter__(k, self.__getter__(k, instantiate=None))
         return other
@@ -952,8 +956,8 @@ class BaseFolder(MutableSequence):
         if not short:
             for row in self.ls:
                 string += "\t" + row + "\n"
-        for g in self.groups:  # iterate over groups
-            r = self.groups[g].__repr__()
+        for val in self.groups.values():  # iterate over groups
+            r = val.__repr__()
             for line in r.split("\n"):  # indent each line by one tab
                 string += "\t" + line + "\n"
         return string.strip()
@@ -1023,11 +1027,11 @@ class BaseFolder(MutableSequence):
             if hasattr(obj, k):
                 setattr(obj, k, self.kargs[k])
         if hasattr(self, "_object_attrs") and isinstance(self._object_attrs, dict):
-            for k in self._object_attrs:
+            for k, val in self._object_attrs.items():
                 try:
-                    setattr(obj, k, self._object_attrs[k])
+                    setattr(obj, k, val)
                 except AttributeError as err:
-                    raise AttributeError(f"Can't set attribute {k} to {self._object_attrs[k]}") from err
+                    raise AttributeError(f"Can't set attribute {k} to {val}") from err
         return obj
 
     def __walk_groups(self, walker, **kargs):
@@ -1066,10 +1070,10 @@ class BaseFolder(MutableSequence):
             removeGroups = []
             if replace_terminal:
                 self.__clear__()
-            for g in self.groups:
+            for g, val in self.groups.items():
                 bcumb = copy(breadcrumb)
                 bcumb.append(g)
-                tmp = self.groups[g].__walk_groups(
+                tmp = val.__walk_groups(
                     walker, group=group, replace_terminal=replace_terminal, walker_args=walker_args, breadcrumb=bcumb
                 )
                 if group and replace_terminal and isinstance(tmp, metadataObject):
@@ -1308,17 +1312,17 @@ class BaseFolder(MutableSequence):
         if isinstance(depth, int_types):
             if self.depth <= depth:
                 return self.flatten()
-            for g in self.groups:
-                self.groups[g].flatten(depth)
+            for g, val in self.groups.items():
+                val.flatten(depth)
             return self
 
-        for g in self.groups:
+        for g, val in self.groups.items():
             if self.debug:
-                print(f"{self.key}->{self.groups[g].key}")
-            self.groups[g].flatten()
-            for n in self.groups[g].__names__():
-                value = self.groups[g].__getter__(n, instantiate=None)
-                old_name = pathjoin(self.groups[g].root, n)
+                print(f"{self.key}->{val.key}")
+            val.flatten()
+            for n in val.__names__():
+                value = val.__getter__(n, instantiate=None)
+                old_name = pathjoin(val.root, n)
                 new_name = path.relpath(old_name, start=self.root)
                 if self.debug:
                     print(f"\t{g}::{old_name}=>{new_name}")
@@ -1331,7 +1335,7 @@ class BaseFolder(MutableSequence):
                 ):  # We haven't loaded this yet, in which case change value to new_name
                     value = new_name
                 self.__setter__(new_name, value)
-            self.groups[g].__clear__()
+            val.__clear__()
         self.groups = {}
         return self
 
@@ -1369,7 +1373,11 @@ class BaseFolder(MutableSequence):
             next_keys = []
         if isinstance(key, string_types):
             k = key
-            key = lambda x: x.get(k, "None")
+
+            def _key(x):
+                return x.get(k, "None")
+
+            key = _key
         for x in self:
             v = key(x)
             if v not in self.groups:
@@ -1377,8 +1385,8 @@ class BaseFolder(MutableSequence):
             self.groups[v].append(x)
         self.__clear__()
         if len(next_keys) > 0:
-            for g in self.groups:
-                self.groups[g].group(next_keys)
+            for val in self.groups.values():
+                val.group(next_keys)
         return self
 
     def index(self, value, start=None, stop=None):
@@ -1571,8 +1579,8 @@ class BaseFolder(MutableSequence):
             gkargs.update(kargs)
             gkargs["negate"] = negate
             gkargs["recurse"] = True
-            for g in self.groups:
-                result.groups[g] = self.groups[g].select(*args, **gkargs)
+            for g, val in self.groups.items():
+                result.groups[g] = val.select(*args, **gkargs)
         if isinstance(self.pattern[0], regexp_type):
             pattern_keys = list(self.pattern[0].groupindex.keys())
             for karg in kargs:
@@ -1592,11 +1600,10 @@ class BaseFolder(MutableSequence):
                 match = self.pattern[0].search(f)
                 f = TypeHintedDict(match.groupdict())
 
-            for arg in kargs:
-                if callable(kargs[arg]) and kargs[arg](f):
+            for arg, val in kargs.items():
+                if callable(val) and val(f):
                     break
-                elif isinstance(arg, string_types):
-                    val = kargs[arg]
+                if isinstance(arg, string_types):
                     skargs = copy(kargs)
                     skargs["negate"] = negate
                     func, key = _build_select_function(skargs, arg)
@@ -1710,8 +1717,8 @@ class BaseFolder(MutableSequence):
                     dels.append(i)
             for i in sorted(dels, reverse=True):
                 del self[i]
-        for g in self.groups:
-            self.groups[g].unflatten()
+        for val in self.groups.values():
+            val.unflatten()
         return self
 
     def update(self, other):
@@ -1791,5 +1798,5 @@ class BaseFolder(MutableSequence):
         """
         if not isinstance(groups, list):
             raise SyntaxError("groups must be a list of groups")
-        grps = [[y for y in self.groups[x]] for x in groups]
+        grps = [list(self.groups[x]) for x in groups]
         return zip(*grps)

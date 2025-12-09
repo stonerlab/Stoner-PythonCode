@@ -36,7 +36,7 @@ def _fmt_as_dict(results):
 
 def _fmt_as_dataframe(results):
     """Format the return results as a DataFrame."""
-    from pandas import DataFrame
+    from pandas import DataFrame  # pylint: disable=import-outside-toplevel
 
     frame = DataFrame(results)
     return frame

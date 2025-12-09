@@ -9,12 +9,11 @@ __all__ = ["DataArray"]
 import copy
 
 import numpy as np
-import numpy.ma as ma
-
+from numpy import ma
 from ..compat import int_types
 from ..tools import AttributeStore, all_size, all_type, isiterable, isnone
 from .exceptions import StonerSetasError
-from .setas import setas as _setas
+from .setas import Setas as _setas
 
 
 class DataArray(ma.MaskedArray):

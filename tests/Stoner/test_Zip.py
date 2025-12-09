@@ -5,6 +5,7 @@
 import os.path as path
 import tempfile
 import zipfile as zf
+import numpy as np
 
 import pytest
 
@@ -44,7 +45,11 @@ def test_zipfolder():
     szf_2 = Stoner.folders.zip.ZipFolder(zipname).compress()
     assert szf_2.shape == szf.shape, "ZipFolder loaded from disc not same shape as ZipFolder in memory!"
     fname = path.basename(szf[0].filename)
-    assert szf[fname] == szf_2[fname], "File from loaded ZipFolder not the same as in memory ZipFolder."
+    m1=szf[fname]
+    m2=szf_2[fname]
+    assert np.all(np.isclose(m1.data,m2.data)), "Data from two zip files is too different."
+    m2["Loaded from"]=m1["Loaded from"]
+    assert m1.metadata==m2.metadata, f"Metadata differes {m1.metadata^m2.metadata}"
 
 
 if __name__ == "__main__":  # Run some tests manually to allow debugging

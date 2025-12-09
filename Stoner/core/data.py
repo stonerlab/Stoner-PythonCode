@@ -55,6 +55,7 @@ from ..analysis import columns, features, filtering, functions
 from ..analysis.fitting import functions as fitting
 from ..plot import PlotMixin
 from ..tools.decorators import class_modifier
+from ..tools.file import best_saver
 from . import methods
 
 
@@ -963,3 +964,52 @@ class Data(
             copy_into(ret, datafile)
             datafile.filetype = filetype
         return datafile
+
+    def save(self, filename=None, as_loaded=None, filetype=False, **kwargs):
+        """Save a string representation of the current self object into the file 'filename'.
+
+        Args:
+            self (Data):
+                Data object to work with if not being used as a bound method.
+
+        Keyword Arguments:
+            filename (string, bool or None):
+                Filename to save data as, if this is None then the current filename for the object is used. If this
+                is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
+            as_loaded (bool,str):
+                If True, then the *Loaded as* key is inspected to see what the original class of the self was
+                and then this class' save method is used to save the data. If a str then
+                the keyword value is interpreted as the name of a subclass of the the current self.
+            filetype (bool):
+                Fallback is as_loaded is not provided.
+            **kwargs:
+                Other keyword arguments are ignored.
+
+        Returns:
+            self:
+                The current :py:class:`self` object
+        """
+        as_loaded = filetype if as_loaded is None else as_loaded
+        if filename is None:
+            filename = self.filename
+        if filename is None or (isinstance(filename, bool) and not filename):
+            # now go and ask for one
+            filename = file_dialog("w", self.filename, "Data")
+            if not filename:
+                raise RuntimeError("Cannot get filename to save")
+        match as_loaded:
+            case False:
+                saver = best_saver(filename, name=None, what="Data")
+                ret = saver(self, filename)
+                self.filename = ret.filename
+                return self
+            case True:
+                as_loaded = self.get("Loaded as", "self")
+            case str():
+                pass
+            case _:
+                raise TypeError("Unable to use loadtype to work out best saving routine.")
+        saver = best_saver(filename, name=as_loaded, what="Data")
+        ret = saver(self, filename)
+        self.filename = ret.filename
+        return self

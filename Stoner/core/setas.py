@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """setas module provides the setas class for DataFile and friends."""
-__all__ = ["setas"]
+__all__ = ["Setas"]
 import copy
 import re
 from collections.abc import Iterable, MutableMapping
@@ -13,7 +13,7 @@ from ..tools import AttributeStore, TypedList, isiterable, isLikeList
 from .utils import decode_string
 
 
-class setas(MutableMapping):
+class Setas(MutableMapping):
     """A Class that provides a mechanism for managing the column assignments in a DataFile like object.
 
     Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).
@@ -163,9 +163,9 @@ class setas(MutableMapping):
         """Create an exact copy of the current object."""
         cls = type(self)
         new = cls()
-        for attr in self.__dict__:
-            if not callable(self.__dict__[attr]):
-                new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
+        for attr, val in self.__dict__.items():
+            if not callable(val):
+                new.__dict__[attr] = copy.deepcopy(val)
         return new
 
     @property
@@ -281,10 +281,10 @@ class setas(MutableMapping):
         return_self = kargs.pop("_self", False)
         if not (args or kargs):  # New - bare call to setas will return the current value.
             return self.setas
-        if len(args) == 1 and isinstance(args[0], setas):
+        if len(args) == 1 and isinstance(args[0], Setas):
             args = list(args)
             args[0] = args[0].to_list()
-        if len(args) == 1 and not (isinstance(args[0], string_types + (setas,)) or isiterable(args[0])):
+        if len(args) == 1 and not (isinstance(args[0], string_types + (Setas,)) or isiterable(args[0])):
             raise SyntaxError(
                 f"setas should be called with eother a string, iterable object or setas object, not a {type(args[0])}"
             )
@@ -311,7 +311,7 @@ class setas(MutableMapping):
             if len(value) > self._size:
                 value = value[: self._size]
             elif len(value) < self._size:
-                value = [v for v in value]  # Ensure value is now a list
+                value = list(value)  # Ensure value is now a list
                 value.extend(list("." * (self._size - len(value))))
             value = value[: self._size]
             for i, v in enumerate(value):
@@ -347,8 +347,8 @@ class setas(MutableMapping):
         """Check to see if this is the same object, or has the same headers and the same setas values."""
         ret = False
         if isinstance(other, string_types):  # Expand strings and convert to list
-            other = [c for c in decode_string(other)]
-        if not isinstance(other, setas):  # Ok, need to check whether items match
+            other = list(decode_string(other))
+        if not isinstance(other, Setas):  # Ok, need to check whether items match
             if isiterable(other) and len(other) <= self._size:
                 for m in self.setas[len(other) :]:  # Check that if other is short we don't have assignments there
                     if m != ".":
@@ -714,7 +714,7 @@ class setas(MutableMapping):
 
     def update(self, other=(), **kwds):  # pylint:  disable=arguments-differ
         """Replace any assignments in self with assignments from other."""
-        if isinstance(other, setas):
+        if isinstance(other, Setas):
             other = other.to_dict()
         elif isinstance(other, tuple) and len(other) == 0:
             other = kwds

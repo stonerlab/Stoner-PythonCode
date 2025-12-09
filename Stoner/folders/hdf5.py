@@ -11,12 +11,11 @@ to :py:class:`Stoner.Core.Data`.
 
 __all__ = ["HDF5Folder"]
 import os
-import os.path as path
-
+from os import path
 import h5py
 
 from ..compat import get_filedialog, path_types
-from ..core.data import Data  # NoQA
+from ..core.data import Data  # noqa pylint: disable=unused-import
 from .mixins import DataFolder
 
 
@@ -130,7 +129,7 @@ class HDF5Folder(DataFolder):
         else:
             raise IOError("HDF5 File not open!")
 
-    def getlist(self, recursive=None, directory=None, flatten=False):
+    def getlist(self, recursive=None, directory=None, flatten=False, **kwargs):  # pylint: disable=unused-argument
         """Read the HDF5 File to construct a list of file HDF5File objects."""
         if recursive is None:
             recursive = getattr(self, "recursive", True)
@@ -152,8 +151,8 @@ class HDF5Folder(DataFolder):
                 self.File = directory
                 closeme = True
             except OSError:
-                return super().getlist(recursive, directory, flatten)
-        elif isinstance(directory, h5py.File) or isinstance(directory, h5py.Group):  # Bug out here
+                return super().getlist(recursive=recursive, directory=directory, flatten=flatten)
+        elif isinstance(directory, (h5py.File, h5py.Group)):  # Bug out here
             self.File = directory.file
             self.directory = self.File.filename
             closeme = False
@@ -204,10 +203,10 @@ class HDF5Folder(DataFolder):
                 root.create_group(name)
             name = root[name]
             self.loader(obj).save(name)
-        for grp in self.groups:
+        for grp, val in self.groups.items():
             if grp not in root:
                 root.create_group(grp)
-            self.groups[grp].save(root[grp])
+            val.save(val)
 
         if closeme and self.File is not None:
             self.File.close()

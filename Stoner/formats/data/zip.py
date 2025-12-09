@@ -120,7 +120,7 @@ def save(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
             elif path.exists(filename):  # The fiule exists but isn't a zip file
                 raise IOError(f"{filename} Should either be a zip file or a new zip file")
             else:  # Path doesn't exist, use extension of file part to find where the zip file should be
-                parts = path.split(filename)
+                parts = pathlib.Path(filename).parts
                 for i, part in enumerate(parts):
                     if path.splitext(part)[1].lower() == ".zip":
                         break
@@ -149,7 +149,7 @@ def save(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         zipfile.writestr(member, str2bytes(str(save_data)))
         if close_me:
             zipfile.close()
-    except (zipfile.BadZipFile, IOError, TypeError, ValueError) as err:
+    except (zf.BadZipFile, IOError, TypeError, ValueError) as err:
         error = format_exc()
         try:
             zipfile.close()

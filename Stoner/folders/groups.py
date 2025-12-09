@@ -32,7 +32,7 @@ class GroupsDict(RegexpDict):
         """
         if base is None:
             base = self.base
-        if not len(self.base):
+        if not self.base:
             for g in list(self.keys()):
                 nk = path.join(key, g)
                 base.groups[nk] = self[g]
@@ -71,7 +71,7 @@ class GroupsDict(RegexpDict):
             else:
                 g = self[grp]
                 g.groups.keep(name)
-                if not len(g.groups):
+                if not g.groups:
                     del self[grp]
         self.base.groups = self
         return self.base
@@ -89,7 +89,7 @@ class GroupsDict(RegexpDict):
             if name is not None:
                 if fnmatch.fnmatch(grp, name):
                     del self[grp]
-            elif not len(g) and not len(g.groups):
+            elif not g and not g.groups:
                 del self[grp]
         self.base.groups = self
         return self.base

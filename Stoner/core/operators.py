@@ -257,7 +257,7 @@ class DataFileOperatorsMixin:
             readline = reader.__next__
 
         else:
-            return NotImplemented
+            raise NotImplementedError
         row = readline().split("\t")
         if row[0].strip() == "TDI Format 1.5":
             fmt = 1.5

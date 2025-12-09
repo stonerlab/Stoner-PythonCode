@@ -7,7 +7,7 @@ Classes Include
 """
 __all__ = ["ZipFolder"]
 import fnmatch
-import os.path as path
+from os import path
 import zipfile as zf
 
 from ..compat import _pattern_type, get_filedialog, path_types
@@ -49,12 +49,12 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
         return path.relpath(name, filename).replace(path.sep, "/")
 
     @property
-    def key(self):
+    def key(self):  # pylint: disable=invalid-overridden-method
         """Return the immediate filename of the stored file."""
         return path.basename(self.directory)
 
     @key.setter
-    def key(self, value):
+    def key(self, value):  # pylint: disable=invalid-overridden-method
         """Set the immediate filename that will be used when the file is saved."""
         self.path = pathjoin(self.directory, value)
 
@@ -78,12 +78,12 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
         dlg = get_filedialog(what=what, filetypes=file_wildcard)
         if dlg is not None:
             self.directory = dlg
-            self.File = zf.ZipFile(self.directory, mode)
-            self.File.close()
+            with zf.ZipFile(self.directory, mode) as f:
+                self.File = f
             return self.directory
         return None
 
-    def getlist(self, recursive=None, directory=None, flatten=None):
+    def getlist(self, recursive=None, directory=None, flatten=None, **_):
         """Read the Zip File to construct a list of ZipFile objects."""
         if recursive is None:
             recursive = getattr(self, "recursive", False)
@@ -104,7 +104,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
                 self.File = zf.ZipFile(directory, "r")
                 close_me = True
         elif isinstance(directory, path_types) and path.isdir(directory):  # Fall back to DataFolder
-            return super().getlist(recursive, directory, flatten)
+            return super().getlist(recursive=recursive, directory=directory, flatten=flatten)
         elif isinstance(directory, path_types) and zf.is_zipfile(directory):
             self.File = zf.ZipFile(directory, "r")
             close_me = True
@@ -112,7 +112,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             if self.File.fp:
                 close_me = False
             else:
-                self.File = zf.ZipFile(self.File.filename, "r")
+                self.File = zf.ZipFile(self.File.filename, "r")  # pylint: disable=R1732
                 close_me = True
         else:
             raise IOError(f"{directory} does not appear to be zip file!")
@@ -203,9 +203,8 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
                 return self.type(Data(path.join(self.File.filename, name), filetype="ZippedFile"))
             except AttributeError:  # closed zip file?
                 filename = test_is_zip(self.directory)[0]
-                self.File = zf.ZipFile(filename, "a")
-                tmp = self.type(Data(path.join(self.File.filename, name)), filetype="ZippedFile")
-                self.File.close()
+                with zf.ZipFile(filename, "a") as self.File:
+                    tmp = self.type(Data(path.join(self.File.filename, name)), filetype="ZippedFile")
                 return tmp
         else:
             return name
@@ -258,10 +257,8 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             root = self.File.filename
             self.File.close()
         mode = "a" if path.exists(root) else "w"
-        self.File = zf.ZipFile(root, mode)
-        self.File.close()  # Close the file having created it
-        tmp = self.walk_groups(self._save)
-        self.File.close()
+        with zf.ZipFile(root, mode) as self.File:
+            tmp = self.walk_groups(self._save)
         return tmp
 
     def _save(self, f, trail):

@@ -6,7 +6,7 @@ from __future__ import division
 __all__ = ["DiskBasedFolderMixin", "DataFolder", "PlotFolder"]
 
 import os
-import os.path as path
+from os import path
 from copy import deepcopy
 from functools import partial
 from importlib import import_module
@@ -323,7 +323,7 @@ class DiskBasedFolderMixin:
         elif isinstance(value, _pattern_type):
             self._pattern = (value,)
         elif isiterable(value):
-            self._pattern = [x for x in value]
+            self._pattern = list(value)
         else:
             raise ValueError(f"pattern should be a string, regular expression or iterable object not a {value}")
 
@@ -409,7 +409,7 @@ class DiskBasedFolderMixin:
         Returns:
             A copy of the DataFolder.
         """
-        files = [x for x in self.ls]
+        files = list(self.ls)
         keep = set(discard_earlier(files))
         for f in list(set(files) - keep):
             self.__deleter__(self.__lookup__(f))

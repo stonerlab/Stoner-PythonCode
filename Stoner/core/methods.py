@@ -13,7 +13,7 @@ from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import _pattern_type, int_types, str2bytes
 from ..tools import all_type, format_error, isiterable, operator, make_Class
-from ..tools.file import HDFFileManager, best_saver, file_dialog
+from ..tools.file import HDFFileManager, file_dialog
 from ..tools.widgets import RangeSelect
 from .array import DataArray
 
@@ -673,6 +673,59 @@ def unique(datafile, col, return_index=False, return_inverse=False):
     return np.unique(datafile.column(col), return_index, return_inverse)
 
 
+def _validate_index(datafile, index, replace):
+    match index:
+        case None | True:
+            index = datafile.shape[1]
+            replace = False
+        case int() if index == datafile.shape[1]:
+            replace = False
+        case _:
+            index = datafile.find_col(index)
+    return index, replace
+
+
+def _normalise_column_data(datafile, column_data, header, func_args):
+    """Sort out the data and get it into an array of values."""
+    if isinstance(column_data, list):
+        column_data = np.array(column_data)
+
+    if isinstance(column_data, DataArray) and header is None:
+        header = column_data.column_headers
+
+    match column_data:
+        case np.ndarray():
+            np_data = column_data
+        case _ if callable(column_data) and isinstance(func_args, dict):
+            new_data = [column_data(x, **func_args) for x in datafile]
+            np_data = np.array(new_data)
+        case _ if callable(column_data):
+            new_data = [column_data(x) for x in datafile]
+            np_data = np.array(new_data)
+        case _:
+            raise NotImplementedError
+
+    return np_data, header
+
+
+def _data_make_setas(setas, cw):
+    """Make setas based on the existing setas and the one supplied."""
+    setas = "." * cw if setas is None else setas
+
+    if isiterable(setas) and len(setas) == cw:
+        for s in setas:
+            if s not in ".-xyzuvwdefpqr":
+                raise TypeError(
+                    f"setas parameter should be a string or list of letter in the set xyzdefuvw.-, not {setas}"
+                )
+    else:
+        raise TypeError(
+            f"""setas parameter should be a string or list of letter the same length as the number of columns
+            being added in the set xyzdefuvw.-, not {setas}"""
+        )
+    return setas
+
+
 def add_column(datafile, column_data, header=None, index=None, func_args=None, replace=False, setas=None):
     """Append a column of data or inserts a column to a datafile instance.
 
@@ -704,50 +757,14 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
         the original DataFile Instance as well as returning it.
     """
-    if index is None or isinstance(index, bool) and index:  # Enure index is set
-        index = datafile.shape[1]
-        replace = False
-    elif isinstance(index, int_types) and index == datafile.shape[1]:
-        replace = False
-    else:
-        index = datafile.find_col(index)
 
-    # Sort out the data and get it into an array of values.
-    if isinstance(column_data, list):
-        column_data = np.array(column_data)
-
-    if isinstance(column_data, DataArray) and header is None:
-        header = column_data.column_headers
-
-    if isinstance(column_data, np.ndarray):
-        np_data = column_data
-    elif callable(column_data):
-        if isinstance(func_args, dict):
-            new_data = [column_data(x, **func_args) for x in datafile]
-        else:
-            new_data = [column_data(x) for x in datafile]
-        np_data = np.array(new_data)
-    else:
-        return NotImplemented
+    index, replace = _validate_index(datafile, index, replace)
+    np_data, header = _normalise_column_data(datafile, column_data, header, func_args)
 
     # Sort out the sizes of the arrays
     np_data = np.atleast_2d(np_data).T
     cl, cw = np_data.shape
-
-    # Make setas
-    setas = "." * cw if setas is None else setas
-
-    if isiterable(setas) and len(setas) == cw:
-        for s in setas:
-            if s not in ".-xyzuvwdefpqr":
-                raise TypeError(
-                    f"setas parameter should be a string or list of letter in the set xyzdefuvw.-, not {setas}"
-                )
-    else:
-        raise TypeError(
-            f"""setas parameter should be a string or list of letter the same length as the number of columns
-            being added in the set xyzdefuvw.-, not {setas}"""
-        )
+    setas = _data_make_setas(setas, cw)
 
     # Make sure our current data is at least 2D and get its size
     match datafile.data.shape:
@@ -1159,52 +1176,6 @@ def rows(datafile, not_masked=False, reset=False):
         if reset:
             return
         yield row
-
-
-def save(datafile, filename=None, as_loaded=None, filetype=False):
-    """Save a string representation of the current DataFile object into the file 'filename'.
-
-    Args:
-        datafile (Data):
-            Data object to work with if not being used as a bound method.
-        filename (string, bool or None):
-            Filename to save data as, if this is None then the current filename for the object is used. If this
-            is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
-        as_loaded (bool,str):
-            If True, then the *Loaded as* key is inspected to see what the original class of the DataFile was
-            and then this class' save method is used to save the data. If a str then
-            the keyword value is interpreted as the name of a subclass of the the current DataFile.
-        filetype (bool):
-            Fallback is as_loaded is not provided.
-
-    Returns:
-        datafile:
-            The current :py:class:`DataFile` object
-    """
-    as_loaded = filetype if as_loaded is None else as_loaded
-    if filename is None:
-        filename = datafile.filename
-    if filename is None or (isinstance(filename, bool) and not filename):
-        # now go and ask for one
-        filename = file_dialog("w", datafile.filename, "Data")
-        if not filename:
-            raise RuntimeError("Cannot get filename to save")
-    match as_loaded:
-        case False:
-            saver = best_saver(filename, name=None, what="Data")
-            ret = saver(datafile, filename)
-            datafile.filename = ret.filename
-            return datafile
-        case True:
-            as_loaded = datafile.get("Loaded as", "DataFile")
-        case str():
-            pass
-        case _:
-            raise TypeError("Unable to use loadtype to work out best saving routine.")
-    saver = best_saver(filename, name=as_loaded, what="Data")
-    ret = saver(datafile, filename)
-    datafile.filename = ret.filename
-    return datafile
 
 
 def swap_column(datafile, *swp, headers_too=True, **kwargs):
