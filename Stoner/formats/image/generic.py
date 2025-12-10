@@ -116,7 +116,7 @@ def load_{name}file(new_image, *args, **kwargs):
             "make_Class": make_Class,
             "StonerLoadError": StonerLoadError,
         }
-        exec(CODE, namespace)  # pylint: disable=exec-used
+        exec(CODE, namespace)  # nosec pylint: disable=exec-used
         func = namespace[f"load_{name}file"]
         register_loader(patterns=patterns, mime_types=mime_types, name=name, what=WHAT)(func)
         setattr(sys.modules[__name__], f"load_{name}file", func)

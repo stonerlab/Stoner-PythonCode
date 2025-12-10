@@ -156,7 +156,7 @@ def load_sls_stxm(new_data, *args, **kargs):
     items = list(f.items())
     if len(items) == 1 and items[0][0] == "entry1":
         group1 = list(f["entry1"])
-        if not "definition" in group1 or bytes2str(f["entry1"]["definition"][0]) != "NXstxm":  # Good HDF5
+        if "definition" not in group1 or bytes2str(f["entry1"]["definition"][0]) != "NXstxm":  # Good HDF5
             raise StonerLoadError("HDF5 file lacks single top level group called entry1")
     else:
         raise StonerLoadError("HDF5 file lacks single top level group called entry1")

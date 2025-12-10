@@ -191,9 +191,9 @@ class MaximusStack(ImageStack):
                         parts = self._common_metadata.export(k).split("=")
                         metadata.attrs[k] = "=".join(parts[1:])
 
-            for g in self.groups:  # Recurse to save groups
+            for g, group in self.groups.items():  # Recurse to save groups
                 grp = f.require_group(g)
-                self.groups[g].to_hdf5(grp)
+                group.to_hdf5(grp)
 
             for ch in self._names:
                 signal = f.require_group(ch)

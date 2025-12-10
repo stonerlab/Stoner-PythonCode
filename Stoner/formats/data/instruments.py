@@ -271,45 +271,45 @@ def _parse_header(new_data, matched, value, key):
         newvalue = literal_eval(value)
     if newvalue == "-":
         newvalue = np.nan  # trap for missing float value
-    if matched:
-        key = matched.groups()[0]
-        idx = int(matched.groups()[1])
-        if key in new_data.metadata and not isinstance(new_data[key], (np.ndarray, list)):
-            if isinstance(new_data[key], str):
-                new_data[key] = list([new_data[key]])
-                if idx > 1:
-                    new_data[key].extend([""] * idx - 1)
-            else:
-                new_data[key] = np.array(new_data[key])
-                if idx > 1:
-                    new_data[key] = np.append(new_data[key], np.ones(idx - 1) * np.nan)
-        if key not in new_data.metadata:
-            if isinstance(newvalue, str):
-                listval = [""] * (idx + 1)
-                listval[idx] = newvalue
-                new_data[key] = listval
-            else:
-                arrayval = np.ones(idx + 1) * np.nan
-                arrayval = arrayval.astype(type(newvalue))
-                arrayval[idx] = newvalue
-                new_data[key] = arrayval
-        else:
-            if isinstance(new_data[key][0], str) and isinstance(new_data[key], list):
-                if len(new_data[key]) < idx + 1:
-                    new_data[key].extend([""] * (idx + 1 - len(new_data[key])))
-                new_data[key][idx] = newvalue
-            else:
-                if idx + 1 > new_data[key].size:
-                    new_data[key] = np.append(
-                        new_data[key],
-                        (np.ones(idx + 1 - new_data[key].size) * np.nan).astype(new_data[key].dtype),
-                    )
-                try:
-                    new_data[key][idx] = newvalue
-                except ValueError:
-                    pass
-    else:
+    if not matched:
         new_data.metadata[key] = newvalue
+        return new_data
+    key = matched.groups()[0]
+    idx = int(matched.groups()[1])
+    if key in new_data.metadata and not isinstance(new_data[key], (np.ndarray, list)):
+        if isinstance(new_data[key], str):
+            new_data[key] = list([new_data[key]])
+            if idx > 1:
+                new_data[key].extend([""] * idx - 1)
+        else:
+            new_data[key] = np.array(new_data[key])
+            if idx > 1:
+                new_data[key] = np.append(new_data[key], np.ones(idx - 1) * np.nan)
+    if key not in new_data.metadata:
+        if isinstance(newvalue, str):
+            listval = [""] * (idx + 1)
+            listval[idx] = newvalue
+            new_data[key] = listval
+        else:
+            arrayval = np.ones(idx + 1) * np.nan
+            arrayval = arrayval.astype(type(newvalue))
+            arrayval[idx] = newvalue
+            new_data[key] = arrayval
+    else:
+        if isinstance(new_data[key][0], str) and isinstance(new_data[key], list):
+            if len(new_data[key]) < idx + 1:
+                new_data[key].extend([""] * (idx + 1 - len(new_data[key])))
+            new_data[key][idx] = newvalue
+        else:
+            if idx + 1 > new_data[key].size:
+                new_data[key] = np.append(
+                    new_data[key],
+                    (np.ones(idx + 1 - new_data[key].size) * np.nan).astype(new_data[key].dtype),
+                )
+            try:
+                new_data[key][idx] = newvalue
+            except ValueError:
+                pass
     return new_data
 
 

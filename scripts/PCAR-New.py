@@ -23,6 +23,7 @@ class working(Data):
         super().__init__(*args, **kargs)
 
     def load_config(self):
+        """Load the config file to set up the fitting."""
         my_file = inspect.getfile(self.__class__)
         inifile = my_file.replace(".py", ".ini")
         if not pathlib.Path(inifile).exists():
