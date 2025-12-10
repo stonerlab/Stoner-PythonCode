@@ -11,6 +11,7 @@ import sys
 import warnings
 from collections.abc import Mapping
 from pathlib import Path
+from traceback import format_exc
 from typing import Any
 
 import numpy as np
@@ -35,7 +36,7 @@ class _refuse_log(logging.Filter):
 
 
 @contextlib.contextmanager
-def catch_sysout(*args: Args) -> None:
+def catch_sysout() -> None:
     """Temporarily redirect sys.stdout and.sys.stdin."""
     stdout, stderr = sys.stdout, sys.stderr
     out = io.StringIO()
@@ -45,7 +46,6 @@ def catch_sysout(*args: Args) -> None:
     yield None
     logger.removeFilter(_refuse_log)
     sys.stdout, sys.stderr = stdout, stderr
-    return
 
 
 def _delim_detect(line: str) -> str:
@@ -291,7 +291,7 @@ def load_csvfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     name="JustNumbers",
     what="Data",
 )
-def load_numbersfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
+def load_numbersfile(new_data: Data, *args: Args, **_: Kwargs) -> Data:
     """Simple pass through for csv file."""
     return load_csvfile(new_data, *args, header_line=None, data_line=0, header_delim=None, data_delim=None)
 
@@ -398,11 +398,10 @@ def _check_png_signature(filename: Filename) -> bool:
     try:
         with FileManager(filename, "rb") as test:
             sig = test.read(8)
-        sig = [x for x in sig]
+        sig = list(sig)
         if sig != [137, 80, 78, 71, 13, 10, 26, 10]:
             raise StonerLoadError("Signature mismatrch")
     except (StonerLoadError, IOError) as err:
-        from traceback import format_exc
 
         raise StonerLoadError(f"Not a PNG file!>\n{format_exc()}") from err
     return True
@@ -525,8 +524,6 @@ try:  # Optional tdms support
                     new_data.data = tmp.data
                     new_data.column_headers = tmp.column_headers
         except (IOError, ValueError, TypeError, StonerLoadError) as err:
-            from traceback import format_exc
-
             raise StonerLoadError(f"Not a TDMS File \n{format_exc()}") from err
 
         return new_data
@@ -591,7 +588,8 @@ if Hyperspy_ok:
                 Signal2D = hs.api.signals.Signal2D
             if not isinstance(signal, Signal2D):
                 raise StonerLoadError("Not a 2D signal object - aborting!")
-        except Exception as err:  # pylint: disable=W0703 Pretty generic error catcher
+        except Exception as err:  # pylint: disable=W0703
+            # Pretty generic error catcher
             raise StonerLoadError(f"Not readable by HyperSpy error was {err}") from err
         new_data.data = signal.data
         _unpack_hyperspy_meta(new_data, "", signal.metadata.as_dictionary())

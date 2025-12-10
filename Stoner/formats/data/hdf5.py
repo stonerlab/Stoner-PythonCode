@@ -149,16 +149,14 @@ def load_sls_stxm(new_data, *args, **kargs):
             f = h5py.File(filename, "r")
         except IOError as err:
             raise StonerLoadError(f"Failed to open {filename} as a n hdf5 file") from err
-    elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+    elif isinstance(filename, (h5py.File, h5py.Group)):
         f = filename
     else:
         raise StonerLoadError(f"Couldn't interpret {filename} as a valid HDF5 file or group or filename")
-    items = [x for x in f.items()]
+    items = list(f.items())
     if len(items) == 1 and items[0][0] == "entry1":
-        group1 = [x for x in f["entry1"]]
-        if "definition" in group1 and bytes2str(f["entry1"]["definition"][0]) == "NXstxm":  # Good HDF5
-            pass
-        else:
+        group1 = list(f["entry1"])
+        if not "definition" in group1 or bytes2str(f["entry1"]["definition"][0]) != "NXstxm":  # Good HDF5
             raise StonerLoadError("HDF5 file lacks single top level group called entry1")
     else:
         raise StonerLoadError("HDF5 file lacks single top level group called entry1")

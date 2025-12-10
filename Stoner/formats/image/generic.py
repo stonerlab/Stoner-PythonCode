@@ -29,7 +29,7 @@ class _refuse_log(logging.Filter):
 
 
 @contextlib.contextmanager
-def catch_sysout(*args):
+def catch_sysout():
     """Temporarily redirect sys.stdout and.sys.stdin."""
     stdout, stderr = sys.stdout, sys.stderr
     out = io.StringIO()
@@ -39,7 +39,6 @@ def catch_sysout(*args):
     yield None
     logger.removeFilter(_refuse_log)
     sys.stdout, sys.stderr = stdout, stderr
-    return
 
 
 def _delim_detect(line):
@@ -92,9 +91,9 @@ if rsciio:
         patterns = [(f".{ext}", 64) for ext in plugin["file_extensions"]]
         mime_types = []
         name = plugin["name"]
-        what = "Image"
+        WHAT = "Image"
 
-        code = f'''
+        CODE = f'''
 def load_{name}file(new_image, *args, **kwargs):
     """Use a RosettaSciIO plugin to load an image file."""
     filename, args, kargs = get_filename(args, kwargs)
@@ -117,7 +116,7 @@ def load_{name}file(new_image, *args, **kwargs):
             "make_Class": make_Class,
             "StonerLoadError": StonerLoadError,
         }
-        exec(code, namespace)
+        exec(CODE, namespace)  # pylint: disable=exec-used
         func = namespace[f"load_{name}file"]
-        register_loader(patterns=patterns, mime_types=mime_types, name=name, what=what)(func)
+        register_loader(patterns=patterns, mime_types=mime_types, name=name, what=WHAT)(func)
         setattr(sys.modules[__name__], f"load_{name}file", func)

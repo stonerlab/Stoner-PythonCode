@@ -53,11 +53,11 @@ def _bnl_get_metadata(new_data):
     scanLine = linecache.getline(new_data.filename, new_data.line_numbers[2])
     dateLine = linecache.getline(new_data.filename, new_data.line_numbers[3])
     motorLine = linecache.getline(new_data.filename, new_data.line_numbers[4])
-    new_data.__setitem__("Snumber", scanLine.split()[1])
+    new_data["Snumber"] = scanLine.split()[1]
     tmp = "".join(scanLine.split()[2:])
-    new_data.__setitem__("Stype", "".join(tmp.split(",")))  # get rid of commas
-    new_data.__setitem__("Sdatetime", dateLine[3:-1])  # don't want \n at end of line so use -1
-    new_data.__setitem__("Smotor", motorLine.split()[3])
+    new_data["Stype"] = "".join(tmp.split(","))  # get rid of commas
+    new_data["Sdatetime"] = dateLine[3:-1]  # don't want \n at end of line so use -1
+    new_data["Smotor"] = motorLine.split()[3]
 
 
 def _parse_bnl_data(new_data):
@@ -146,9 +146,9 @@ def _read_mdaascii_metadata(data, new_data, i):
         line.strip()
         if line.strip() == "":
             continue
-        elif line.startswith("# Column Descriptions:"):
+        if line.startswith("# Column Descriptions:"):
             break  # Start of column headers now
-        elif "=" in line:
+        if "=" in line:
             parts = line[2:].split("=")
             new_data[parts[0].strip()] = string_to_type("".join(parts[1:]).strip())
     else:
@@ -164,9 +164,9 @@ def _read_mdaascii_columns(data, new_data, i):
         line.strip()
         if line.strip() == "":
             continue
-        elif line.startswith("# 1-D Scan Values"):
+        if line.startswith("# 1-D Scan Values"):
             break  # Start of data
-        elif res is not None:
+        if res is not None:
             if "," in res.group(2):
                 bits = [b.strip() for b in res.group(2).split(",")]
                 if bits[-2] == "":
@@ -260,11 +260,11 @@ def load_sns(new_data, *args, **kargs):
                         line = line[2:].strip()
                         if line.strip() == "":
                             break
-                        else:
-                            new_data[line[2:10].strip()] = line[11:].strip()
-                elif (
-                    section == "Direct Beam Runs" or section == "Data Runs"
-                ):  # These are constructed into lists ofg dictionaries for each file
+                        new_data[line[2:10].strip()] = line[11:].strip()
+                elif section in [
+                    "Direct Beam Runs",
+                    "Data Runs",
+                ]:  # These are constructed into lists ofg dictionaries for each file
                     sec = []
                     header = next(data)
                     header = header[2:].strip()
@@ -273,9 +273,8 @@ def load_sns(new_data, *args, **kargs):
                         line = line[2:].strip()
                         if line == "":
                             break
-                        else:
-                            values = [s.strip() for s in line.split("  ") if s.strip()]
-                            sec.append(dict(zip(keys, values)))
+                        values = [s.strip() for s in line.split("  ") if s.strip()]
+                        sec.append(dict(zip(keys, values)))
                     new_data[section] = sec
             else:  # We must still be in the opening un-labelled section of meta data
                 if ":" in line:

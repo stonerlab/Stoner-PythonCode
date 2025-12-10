@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Loader for zip files."""
-import os.path as path
+from os import path
 import pathlib
 import zipfile as zf
 from traceback import format_exc
@@ -63,7 +63,7 @@ def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         elif isinstance(new_data.filename, path_types) and zf.is_zipfile(
             new_data.filename
         ):  # filename is a string that is a zip file
-            other = zf.ZipFile(new_data.filename, "a")
+            other = zf.ZipFile(new_data.filename, "a")  # pylint: disable=consider-using-with
             member = kwargs.get("member", other.namelist()[0])
             close_me = True
             solo_file = len(other.namelist()) == 1
@@ -126,19 +126,21 @@ def save(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
                         break
                 else:
                     raise IOError(f"Can't figure out where the zip file is in {filename}")
-                zipfile = zf.ZipFile(path.join(*parts[: i + 1]), "w", compression, True)
+                zipfile = zf.ZipFile(
+                    path.join(*parts[: i + 1]), "w", compression, True
+                )  # pylint: disable=consider-using-with
                 close_me = True
                 member = path.join("/", *parts[i + 1 :])
         elif isinstance(filename, zf.ZipFile):  # Handle\ zipfile instance, opening if necessary
             if not filename.fp:
-                filename = zf.ZipFile(filename.filename, "a")
+                filename = zf.ZipFile(filename.filename, "a")  # pylint: disable=consider-using-with
                 close_me = True
             else:
                 close_me = False
             zipfile = filename
             member = ""
 
-        if member == "" or member == "/":  # Is our file object a bare zip file - if so create a default member name
+        if member in ["", "/"]:  # Is our file object a bare zip file - if so create a default member name
             if len(zipfile.namelist()) > 0:
                 member = zipfile.namelist()[-1]
                 save_data.filename = path.join(filename, member)

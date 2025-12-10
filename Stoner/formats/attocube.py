@@ -342,10 +342,7 @@ class AttocubeScan(ImageStack):
         Y = Y.ravel()
         Z = Z.ravel()
 
-        popt = curve_fit(method, (X, Y), Z)[0]
-
-        nZ = method((X, Y), *popt)
-        Z -= nZ
+        Z -= method((X, Y), *curve_fit(method, (X, Y), Z)[0])
 
         data.data = Z.reshape(xs, ys)
         return self
@@ -400,7 +397,7 @@ class AttocubeScan(ImageStack):
         if isinstance(filename, pathlib.PurePath):
             filename = str(filename)
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog("w")
+            filename = file_dialog(mode="w", filename=None, filetype="*.hdf5")
         if isinstance(filename, string_types):
             mode = "r+" if path.exists(filename) else "w"
         self.filename = filename

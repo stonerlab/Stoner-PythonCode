@@ -130,30 +130,29 @@ def _load(new_data, *args, **kargs):
                 data,
                 max_rows=new_data.metadata["xnodes"] * new_data.metadata["ynodes"] * new_data.metadata["znodes"],
             )
-    xmin, xmax, xstep = (
-        new_data.metadata["xmin"],
+    xrange = (
+        new_data.metadata["xmin"] + 0.5 * new_data.metadata["xstepsize"],
         new_data.metadata["xmax"],
         new_data.metadata["xstepsize"],
     )
-    ymin, ymax, ystep = (
-        new_data.metadata["ymin"],
+    yrange = (
+        new_data.metadata["ymin"] + 0.5 * new_data.metadata["ystepsize"],
         new_data.metadata["ymax"],
         new_data.metadata["ystepsize"],
     )
-    zmin, zmax, zstep = (
-        new_data.metadata["zmin"],
+    zrange = (
+        new_data.metadata["zmin"] + 0.5 * new_data.metadata["zstepsize"],
         new_data.metadata["zmax"],
         new_data.metadata["zstepsize"],
     )
     Z, Y, X = np.meshgrid(
-        np.arange(zmin + zstep / 2, zmax, zstep) * 1e9,
-        np.arange(ymin + ystep / 2, ymax, ystep) * 1e9,
-        np.arange(xmin + xstep / 2, xmax, xstep) * 1e9,
+        np.arange(*zrange) * 1e9,
+        np.arange(*yrange) * 1e9,
+        np.arange(*xrange) * 1e9,
         indexing="ij",
     )
     new_data.data = np.column_stack((X.ravel(), Y.ravel(), Z.ravel(), data))
 
-    column_headers = ["X (nm)", "Y (nm)", "Z (nm)", "U", "V", "W"]
     new_data.setas = "xyzuvw"
-    new_data.column_headers = column_headers
+    new_data.column_headers = ["X (nm)", "Y (nm)", "Z (nm)", "U", "V", "W"]
     return new_data

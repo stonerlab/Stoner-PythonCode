@@ -6,9 +6,10 @@ Gavin Burnell g.burnell@leeds.ac.uk
 # pylint: disable=invalid-name
 import configparser as ConfigParser
 import pathlib
+import inspect
+from importlib import import_module
 
 import numpy as np
-
 from Stoner import Data
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 from Stoner.analysis.fitting.models.generic import quadratic
@@ -20,13 +21,16 @@ class working(Data):
     def __init__(self, *args, **kargs):
         """Initialise the fitting code."""
         super().__init__(*args, **kargs)
-        inifile = __file__.replace(".py", ".ini")
+
+    def load_config(self):
+        my_file = inspect.getfile(self.__class__)
+        inifile = my_file.replace(".py", ".ini")
         if not pathlib.Path(inifile).exists():
             raise RuntimeError(
                 f"Could not find the fitting ini file {inifile}!"
             )
 
-        tmp = cfg_data_from_ini(inifile, filename=False)
+        tmp = cfg_data_from_ini(inifile)
         self.setas = tmp.setas.clone
         self.column_headers = tmp.column_headers
         self.metadata = tmp.metadata
@@ -58,13 +62,38 @@ class working(Data):
     def Discard(self):
         """Optionally throw out some high bias data."""
         discard = self.config.has_option(
-            "Data", "dicard"
+            "Data", "discard"
         ) and self.config.getboolean("Data", "discard")
         if discard:
             v_limit = self.config.get("Data", "v_limit")
             print("Discarding data beyond v_limit={}".format(v_limit))
             self.del_rows(self.vcol, lambda x, y: abs(x) > v_limit)
         return self
+
+    def RescaleV(self):
+        """Rescale the voltage data if the options are set."""
+        if self.config.has_option(
+            "Options", "rescale_v"
+        ) and self.config.getboolean("Options", "rescale_v"):
+            vscale = self.config.getfloat("Data", "v_scale")
+            self.data[:, self.vcol] *= vscale
+            print(f"Rescaled voltage data by {vscale}")
+        return self
+
+    def Preprocess(self):
+        """Run an arbitart function over the data if the option is specified."""
+        preprocessor_name = self.config.get(
+            "Options", "preprocessor", fallback="_pass"
+        )
+        if "." in preprocessor_name:
+            module = ".".join(preprocessor_name.split(".")[:-1])
+            preprocessor = preprocessor_name.split(".")[-1]
+            module = import_module(module)
+            preprocessor = getattr(module, preprocessor)
+        else:
+            preprocessor = globals()[preprocessor_name]
+
+        return preprocessor(self)
 
     def Normalise(self):
         """Normalise the data if the relevant options are turned on in the config file.
@@ -76,36 +105,51 @@ class working(Data):
         ) and self.config.getboolean("Options", "normalise"):
             print("Normalising Data")
             Gn = self.config.getfloat("Data", "Normal_conductance")
-            v_scale = self.config.getfloat("Data", "v_scale")
             if self.config.has_option(
                 "Options", "fancy_normaliser"
             ) and self.config.getboolean("Options", "fancy_normaliser"):
+                fraction = 1 - self.config.getfloat(
+                    "Data", "background_fraction", fallback=0.1
+                )
+                normaliser_name = self.config.get(
+                    "Options", "normaliser_function", fallback="quadratic"
+                )
+                if "." in normaliser_name:
+                    module = ".".join(normaliser_name.split(".")[:-1])
+                    normaliser = normaliser_name.split(".")[-1]
+                    module = import_module(module)
+                    normaliser = getattr(module, normaliser)
+                else:
+                    normaliser = globals()[normaliser_name]
                 vmax, _ = self.max(self.vcol)
                 vmin, _ = self.min(self.vcol)
                 p, pv = self.curve_fit(
-                    quadratic,
-                    bounds=lambda x, y: (x > 0.9 * vmax) or (x < 0.9 * vmin),
+                    normaliser,
+                    bounds=lambda x, y: (x > fraction * vmax)
+                    or (x < fraction * vmin),
                 )
+                normaliser_repr = getattr(
+                    normaliser,
+                    "representation",
+                    f"{normaliser_name}(V,{','.join(p)})",
+                ).format(p)
                 print(
-                    "Fitted normal conductance background of G="
-                    + str(p[0])
-                    + "V^2 +"
-                    + str(p[1])
-                    + "V+"
-                    + str(p[2])
+                    f"Fitted normal conductance background of G={normaliser_repr}"
                 )
                 self["normalise.coeffs"] = p
                 self["normalise.coeffs_err"] = np.sqrt(np.diag(pv))
+                self["normaliser_name"] = normaliser_name
                 self.apply(
-                    lambda x: x[self.gcol] / quadratic(x[self.vcol], *p),
+                    lambda x: x[self.gcol] / normaliser(x[self.vcol], *p),
                     self.gcol,
+                    header=self.column_headers[self.gcol],
                 )
             else:
-                self.apply(lambda x: x[self.gcol] / Gn, self.gcol)
-            if self.config.has_option(
-                "Options", "rescale_v"
-            ) and self.config.getboolean("Options", "rescale_v"):
-                self.apply(lambda x: x[self.vcol] * v_scale, self.vcol)
+                self.apply(
+                    lambda x: x[self.gcol] / Gn,
+                    self.gcol,
+                    header=self.column_headers[self.gcol],
+                )
         return self
 
     def offset_correct(self):
@@ -130,8 +174,17 @@ class working(Data):
             peaks = list(
                 filter(lambda x: abs(x) < 4 * self.delta["value"], peaks)
             )
-            offset = np.mean(np.array(peaks))
-            print("Mean offset =" + str(offset))
+            if peaks:
+                offset = np.mean(np.array(peaks))
+                print(
+                    f"Removing offset by peaks method - Mean offset = {offset}"
+                )
+            else:
+                v_data = self // self.vcol
+                offset = (v_data.min() + v_data.max()) / 2
+                print(
+                    f"Removing offset by v-range method - Mean offset = {offset}"
+                )
             self[:, self.vcol] -= offset
         return self
 
@@ -140,9 +193,12 @@ class working(Data):
         if self.config.has_option(
             "Options", "decompose"
         ) and self.config.getboolean("Options", "decompose"):
-            print("Doing decomposition")
+            print("Doing decomposition to symmetrize data")
             self.decompose(xcol=self.vcol, ycol=self.gcol, sym=self.gcol)
             self.setas(x=self.vcol, y=self.gcol)
+            self.data = self.data[
+                ~np.any(np.isnan([self.data[:, self.gcol]]), axis=1)
+            ]
         return self
 
     def plot_results(self):
@@ -169,7 +225,7 @@ class working(Data):
     def Fit(self):
         """Run the fitting code."""
         # Run a pre-fitting data munge chain
-        self.Discard().Normalise().offset_correct().Decompose()
+        self.Preprocess().RescaleV().Discard().offset_correct().Decompose().Normalise()
         chi2 = self.p0.shape[0] > 1
 
         method = getattr(self, self.method)
@@ -204,6 +260,30 @@ class working(Data):
             fit.save(False)
 
 
+def quadratic_abs(x, a, b, c):
+    """A function that returns a quadratic expression, but in terms of abs(x)."""
+    x = np.abs(x)
+    return c + x * (b + a * x)
+
+
+def _pass(x):
+    """A do nothing preprocess function."""
+    return x
+
+
+def down_only(data):
+    """Selects only the down sweep data - this is a hack that works becuase Set V is not noisy"""
+    ix = np.where(np.diff(np.sign(np.diff(data["Set V"]))) != 0)[:2][0]
+    dix = np.diff(ix) > 10
+    dix = np.append(dix, True)
+    ix = ix[dix]
+    ix = ix[:2]
+
+    data.data = data.data[slice(*ix)]
+    return data
+
+
 if __name__ == "__main__":
     d = working()
+    d.load_config()
     fit = d.Fit()

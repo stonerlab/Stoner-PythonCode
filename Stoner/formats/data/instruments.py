@@ -58,7 +58,7 @@ def load_340(new_data, *args, **kargs):
 
 
 @register_saver(patterns=".340", name="LSTemperatureFile", what="Data")
-def save_340(save_data, filename=None, **kargs):
+def save_340(save_data, filename=None, **_):
     """Override the save method to allow CSVFiles to be written out to disc (as a mininmalist output).
 
     Args:
@@ -125,6 +125,79 @@ def save_340(save_data, filename=None, **kargs):
     return save_data
 
 
+def _parse_line(line: str, setas: dict):
+    """Parse a comma-separated line into (key, value), updating setas where needed.
+
+    Args:
+         line (str):
+             Input line of text containing comma-separated fields.
+         setas dict():
+             Mutable dictionary that will be updated for STARTUPAXIS lines.
+
+     Returns:
+         key, value tuple[str, str]:
+             The parsed key/value pair.
+
+     Raises:
+         StonerLoadError
+             If an INFO line has insufficient fields or for unknown formats.
+    """
+    parts = [p.strip() for p in line.split(",")]
+
+    match parts:
+        case [_, part1, *_] if part1.split(":", 1)[0] == "SEQUENCE FILE":
+            tag, value = part1.split(":", 1)
+            key = tag.title()
+            return key, value
+
+        # INFO with APPNAME special-case: swap -> key="Info.Appname", value=<appname>
+        # Original behavior: parts[1], parts[2] = parts[2], parts[1]
+        # After swap: parts -> ["INFO", <appname>, "APPNAME", ...]
+        case ["INFO", "APPNAME", appname, *rest]:
+            key = "Info.Appname"
+            value = appname
+            return key, value
+
+        # General INFO: needs at least 3 fields -> key="Info.<third>", value=<second>
+        case ["INFO", value, field, *rest]:
+            key = f"Info.{field.title()}"
+            return key, value
+
+        # INFO with too few fields -> raise as in original
+        case ["INFO"] | ["INFO", _]:
+            raise StonerLoadError("No data in file!")
+
+        # BYAPP or FILEOPENTIME -> key is titlecased token, value is remaining joined by spaces
+        case [kind, *rest] if kind in {"BYAPP", "FILEOPENTIME"}:
+            key = kind.title()
+            value = " ".join(rest)
+            return key, value
+
+        # FIELDGROUP -> key="Fieldgroup.<group>", value="[a,b,c]"
+        case ["FIELDGROUP", group, *fields]:
+            key = f"Fieldgroup.{group}".title()
+            value = f'[{",".join(fields)}]'
+            return key, value
+
+        # STARTUPAXIS -> update setas and return index
+        case ["STARTUPAXIS", axis_name, index, *rest]:
+            axis = axis_name[0].lower()
+            setas[axis] = setas.get(axis, []) + [int(index)]
+            key = f"Startupaxis-{axis_name}"
+            value = index
+            return key, value
+
+        # Fallback: key="<first>,<second>" (titlecased), value is rest joined by spaces
+        case [first, second, *rest]:
+            key = f"{first},{second}".title()
+            value = " ".join(rest)
+            return key, value
+
+        # If we get here, there's not enough structure to parse
+        case _:
+            raise StonerLoadError(f"Unrecognized line format: {line!r}")
+
+
 @register_loader(
     patterns=(".dat", 16),
     mime_types=[("application/x-wine-extension-ini", 15), ("text/plain", 16)],
@@ -150,40 +223,11 @@ def load_qdfile(new_data, *args, **kargs):
             line = line.strip()
             if i == 0 and line != "[Header]":
                 raise StonerLoadError("Not a Quantum Design File !")
-            if line == "[Header]" or line.startswith(";") or line == "":
+            if line in ["[Header]", ""] or line.startswith(";"):
                 continue
             if "[Data]" in line:
                 break
-            if "," not in line:
-                raise StonerLoadError("No data in file!")
-            parts = [x.strip() for x in line.split(",")]
-            if parts[1].split(":")[0] == "SEQUENCE FILE":
-                key = parts[1].split(":")[0].title()
-                value = parts[1].split(":")[1]
-            elif parts[0] == "INFO":
-                if parts[1] == "APPNAME":
-                    parts[1], parts[2] = parts[2], parts[1]
-                if len(parts) > 2:
-                    key = f"{parts[0]}.{parts[2]}"
-                else:
-                    raise StonerLoadError("No data in file!")
-                key = key.title()
-                value = parts[1]
-            elif parts[0] in ["BYAPP", "FILEOPENTIME"]:
-                key = parts[0].title()
-                value = " ".join(parts[1:])
-            elif parts[0] == "FIELDGROUP":
-                key = f"{parts[0]}.{parts[1]}".title()
-                value = f'[{",".join(parts[2:])}]'
-            elif parts[0] == "STARTUPAXIS":
-                axis = parts[1][0].lower()
-                setas[axis] = setas.get(axis, []) + [int(parts[2])]
-                key = f"Startupaxis-{parts[1].strip()}"
-                value = parts[2].strip()
-            else:
-                key = parts[0] + "," + parts[1]
-                key = key.title()
-                value = " ".join(parts[2:])
+            key, value = _parse_line(line, setas)
             new_data.metadata[key] = string_to_type(value)
         else:
             raise StonerLoadError("No data in file!")
@@ -219,6 +263,56 @@ def _to_Q(new_data, wavelength=1.540593):
     )
 
 
+def _parse_header(new_data, matched, value, key):
+    """Attempt to add a value from the header to the new data instance."""
+    try:
+        newvalue = literal_eval(value.strip('"'))
+    except (TypeError, ValueError, SyntaxError):
+        newvalue = literal_eval(value)
+    if newvalue == "-":
+        newvalue = np.nan  # trap for missing float value
+    if matched:
+        key = matched.groups()[0]
+        idx = int(matched.groups()[1])
+        if key in new_data.metadata and not isinstance(new_data[key], (np.ndarray, list)):
+            if isinstance(new_data[key], str):
+                new_data[key] = list([new_data[key]])
+                if idx > 1:
+                    new_data[key].extend([""] * idx - 1)
+            else:
+                new_data[key] = np.array(new_data[key])
+                if idx > 1:
+                    new_data[key] = np.append(new_data[key], np.ones(idx - 1) * np.nan)
+        if key not in new_data.metadata:
+            if isinstance(newvalue, str):
+                listval = [""] * (idx + 1)
+                listval[idx] = newvalue
+                new_data[key] = listval
+            else:
+                arrayval = np.ones(idx + 1) * np.nan
+                arrayval = arrayval.astype(type(newvalue))
+                arrayval[idx] = newvalue
+                new_data[key] = arrayval
+        else:
+            if isinstance(new_data[key][0], str) and isinstance(new_data[key], list):
+                if len(new_data[key]) < idx + 1:
+                    new_data[key].extend([""] * (idx + 1 - len(new_data[key])))
+                new_data[key][idx] = newvalue
+            else:
+                if idx + 1 > new_data[key].size:
+                    new_data[key] = np.append(
+                        new_data[key],
+                        (np.ones(idx + 1 - new_data[key].size) * np.nan).astype(new_data[key].dtype),
+                    )
+                try:
+                    new_data[key][idx] = newvalue
+                except ValueError:
+                    pass
+    else:
+        new_data.metadata[key] = newvalue
+    return new_data
+
+
 @register_loader(
     patterns=(".ras", 16),
     mime_types=[("application/x-wine-extension-ini", 16), ("text/plain", 16)],
@@ -250,67 +344,19 @@ def load_rigaku(new_data, *args, **kargs):
                 break
         for line in f:
             line = bytes2str(line).strip()
-            m = sh.match(line)
-            if m:
-                key = m.groups()[0].lower().replace("_", ".")
+            if matched := sh.match(line):
+                key = matched.groups()[0].lower().replace("_", ".")
                 try:
-                    value = m.groups()[1].decode("utf-8", "ignore")
+                    value = matched.groups()[1].decode("utf-8", "ignore")
                 except AttributeError:
-                    value = m.groups()[1]
+                    value = matched.groups()[1]
                 header[key] = value
             if "*RAS_INT_START" in line:
                 break
         keys = list(header.keys())
         keys.sort()
         for key in keys:
-            m = ka.match(key)
-            value = header[key].strip()
-            try:
-                newvalue = literal_eval(value.strip('"'))
-            except (TypeError, ValueError, SyntaxError):
-                newvalue = literal_eval(value)
-            if newvalue == "-":
-                newvalue = np.nan  # trap for missing float value
-            if m:
-                key = m.groups()[0]
-                idx = int(m.groups()[1])
-                if key in new_data.metadata and not (isinstance(new_data[key], (np.ndarray, list))):
-                    if isinstance(new_data[key], str):
-                        new_data[key] = list([new_data[key]])
-                        if idx > 1:
-                            new_data[key].extend([""] * idx - 1)
-                    else:
-                        new_data[key] = np.array(new_data[key])
-                        if idx > 1:
-                            new_data[key] = np.append(new_data[key], np.ones(idx - 1) * np.nan)
-                if key not in new_data.metadata:
-                    if isinstance(newvalue, str):
-                        listval = [""] * (idx + 1)
-                        listval[idx] = newvalue
-                        new_data[key] = listval
-                    else:
-                        arrayval = np.ones(idx + 1) * np.nan
-                        arrayval = arrayval.astype(type(newvalue))
-                        arrayval[idx] = newvalue
-                        new_data[key] = arrayval
-                else:
-                    if isinstance(new_data[key][0], str) and isinstance(new_data[key], list):
-                        if len(new_data[key]) < idx + 1:
-                            new_data[key].extend([""] * (idx + 1 - len(new_data[key])))
-                        new_data[key][idx] = newvalue
-                    else:
-                        if idx + 1 > new_data[key].size:
-                            new_data[key] = np.append(
-                                new_data[key],
-                                (np.ones(idx + 1 - new_data[key].size) * np.nan).astype(new_data[key].dtype),
-                            )
-                        try:
-                            new_data[key][idx] = newvalue
-                        except ValueError:
-                            pass
-            else:
-                new_data.metadata[key] = newvalue
-
+            new_data = _parse_header(new_data, ka.match(key), header[key].strip(), key)
         pos = f.tell()
         max_rows = 0
         for max_rows, line in enumerate(f):
