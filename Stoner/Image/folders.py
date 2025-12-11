@@ -19,6 +19,35 @@ from . import ImageFile
 from .core import ImageArray
 
 
+def _prep_figure(self, kargs):
+    plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
+    self.plots_per_page = plts
+    plts = min(plts, len(self))
+
+    fig_num = kargs.pop("figure", getattr(self, "_figure", None))
+    if isinstance(fig_num, Figure):
+        kargs.setdefault("figsize", tuple(fig_num.get_size_inches()))
+        kargs.setdefault("facecolor", fig_num.get_facecolor())
+        kargs.setdefault("edgecolor", fig_num.get_edgecolor())
+        kargs.setdefault("frameon", fig_num.get_frameon())
+        kargs.setdefault("FigureClass", fig_num.__class__)
+        fig_num = fig_num.number
+
+    fig_args = getattr(self, "_fig_args", [])
+    fig_kargs = getattr(self, "_fig_kargs", {"layout": "constrained"})
+    for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
+        if arg in kargs:
+            fig_kargs[arg] = kargs.pop(arg)
+    if fig_num is None:
+        fig = figure(*fig_args, **fig_kargs)
+    elif fig_num in get_fignums():
+        fig = figure(fig_num)
+    else:
+        fig = figure(fig_num, **fig_kargs)
+    kargs["figure"] = fig_num
+    return fig, plts
+
+
 class ImageFolderMixin:
     """Mixin to provide a folder object for images.
 
@@ -256,7 +285,7 @@ class ImageFolderMixin:
                 image = np.asarray(img)
                 if image.ndim == 3:
                     if image.shape[2] < 4:  # Need to add a dummy alpha channel
-                        image = np.append(np.zeros_like(image[:, :, 0]), axis=2)
+                        image = np.append(image, np.zeros_like(image[:, :, 0]), axis=2)
                     image = image.view(dtype=np.uint32).reshape(image.shape[:-1])
 
                 if isinstance(self.type, np.ndarray):
@@ -326,31 +355,10 @@ class ImageFolderMixin:
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
         """
-        plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
-        plts = min(plts, len(self))
+        fig, plts = _prep_figure(self, kargs)
 
         plot_extra = kargs.pop("plot_extra", lambda i, j, d: None)
 
-        fig_num = kargs.pop("figure", getattr(self, "_figure", None))
-        if isinstance(fig_num, Figure):
-            kargs.setdefault("figsize", tuple(fig_num.get_size_inches()))
-            kargs.setdefault("facecolor", fig_num.get_facecolor())
-            kargs.setdefault("edgecolor", fig_num.get_edgecolor())
-            kargs.setdefault("frameon", fig_num.get_frameon())
-            kargs.setdefault("FigureClass", fig_num.__class__)
-            fig_num = fig_num.number
-
-        fig_args = getattr(self, "_fig_args", [])
-        fig_kargs = getattr(self, "_fig_kargs", {"layout": "constrained"})
-        for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
-            if arg in kargs:
-                fig_kargs[arg] = kargs.pop(arg)
-        if fig_num is None:
-            fig = figure(*fig_args, **fig_kargs)
-        elif fig_num in get_fignums():
-            fig = figure(fig_num)
-        else:
-            fig = figure(fig_num, **fig_kargs)
         w, h = fig.get_size_inches()
         plt_x = int(np.floor(np.sqrt(plts) * w / h))
         plt_y = int(np.ceil(plts / plt_x))
@@ -362,7 +370,7 @@ class ImageFolderMixin:
         for i, d in enumerate(self):
             plt_kargs = copy(kargs)
             if i % plts == 0 and i != 0:
-                fig = figure(*fig_args, **fig_kargs)
+                fig, _ = _prep_figure(self, kargs)
                 fignum = fig.number
                 j = 1
             else:

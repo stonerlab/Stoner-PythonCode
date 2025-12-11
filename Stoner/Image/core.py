@@ -2,6 +2,7 @@
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
 __all__ = ["ImageArray", "ImageFile"]
 import inspect
+from json import loads
 import os
 import urllib
 from collections.abc import Iterable
@@ -288,7 +289,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         close as possible.
         """
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
-        array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
+        array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs}
         user_metadata = kargs.get("metadata", {})
 
         # 0 args initialisation
@@ -451,8 +452,6 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 image = io.imread(filename).view(np.uint32)[:, :, 0]  # Workaround for issues with more recent pillow
             tags = img.tag_v2
             if 270 in tags:
-                from json import loads
-
                 try:
                     userdata = loads(tags[270])
                     typ = userdata.get("type", cls.__name__)
@@ -508,7 +507,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             - False: The user can select a region of interest
             - (iterable of length 4) - assumed to give 4 integers to describe a specific box
         """
-        if len(args) == 0 and "box" in kargs.keys():
+        if len(args) == 0 and "box" in kargs:
             args = (kargs["box"],)  # back compatibility
         if len(args) == 0 or (len(args) == 1 and args[0] is None):
             args = tuple(RegionSelect()(self))
@@ -518,7 +517,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     case bool() if not box:
                         return slice(None, None, None), slice(None, None, None)
                     case Iterable() if len(box) == 4 and not isinstance(box, str):
-                        box = [x for x in box]
+                        box = list(box)
                     case int() | np.int16() | np.int32() | np.int64():
                         box = [box, self.shape[1] - box, box, self.shape[0] - box]
                     case str():
@@ -531,7 +530,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                             round(self.shape[1] * box / 2),
                             round(self.shape[1] * (1 - box / 2)),
                         ]
-                        box = list([int(x) for x in box])
+                        box = list((int(x) for x in box))
                     case _:
                         raise ValueError(f"crop accepts tuple of length 4, {len(args)} given.")
             case tuple() if len(args) in [2, 4]:
@@ -629,13 +628,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @property
     @clones
-    def CW(self):
+    def CW(self):  # pylint: disable=invalid-name
         """Clone the image and then rotate the imaage 90 degrees clockwise."""
         return self.clone.T[:, ::-1]
 
     @property
     @clones
-    def CCW(self):
+    def CCW(self):  # pylint: disable=invalid-name
         """Clone the image and then rotate the imaage 90 degrees counter clockwise."""
         return self.clone.T[::-1, :]
 

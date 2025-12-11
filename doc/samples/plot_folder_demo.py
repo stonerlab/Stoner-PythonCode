@@ -10,7 +10,7 @@ from scipy.stats import gmean
 from Stoner import Data, __home__
 from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel
-from Stoner.Folders import PlotFolder
+from Stoner.folders import PlotFolder
 from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 
 # Customise a plot template
@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
         # Now plot all the fits
         subfldr.setas[12] = "y"
-        subfldr.plots_per_page = 6  # Plot results
+        subfldr.plots_per_page = 9  # Plot results
         subfldr.plot(
             figsize=(8, 8), fmt=["k.", "r-"], markersize=1, extra=extra
         )
