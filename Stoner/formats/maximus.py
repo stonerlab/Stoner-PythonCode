@@ -163,7 +163,7 @@ class MaximusStack(ImageStack):
         if isinstance(filename, Path):
             filename = str(filename)
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = file_dialog("w")
+            filename = file_dialog("w", None)
             self.filename = filename
         if isinstance(filename, string_types):
             mode = "r+" if path.exists(filename) else "w"
