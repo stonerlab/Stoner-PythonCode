@@ -16,7 +16,7 @@ from ..core.base import TypeHintedDict
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
 from ..Image import ImageArray, ImageFile, ImageStack
-from ..tools.file import FileManager, HDFFileManager, get_filename
+from ..tools.file import FileManager, HDFFileManager, get_filename, file_dialog
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
 
@@ -163,7 +163,7 @@ class MaximusStack(ImageStack):
         if isinstance(filename, Path):
             filename = str(filename)
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
-            filename = self.__file_dialog("w")
+            filename = file_dialog("w")
             self.filename = filename
         if isinstance(filename, string_types):
             mode = "r+" if path.exists(filename) else "w"

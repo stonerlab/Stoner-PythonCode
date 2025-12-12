@@ -7,7 +7,7 @@ from inspect import getfullargspec, isclass
 
 import lmfit as lmfit_mod
 import numpy as np
-import numpy.ma as ma
+from numpy import ma
 import scipy as sp
 from lmfit.model import Model
 from scipy.odr import Model as odrModel

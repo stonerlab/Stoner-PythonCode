@@ -16,6 +16,7 @@ __all__ = [
 from collections.abc import Mapping
 from configparser import ConfigParser as SafeConfigParser
 from functools import wraps
+from importlib import import_module
 from io import IOBase
 
 import numpy as np
@@ -50,7 +51,8 @@ def _get_model_(model):
         parts = model.split(".")
         model = parts[-1]
         module = ".".join(parts[:-1])
-        model = __import__(module, globals(), locals(), (model)).__getattribute__(model)
+        module = import_module(module)
+        model = getattr(module, model)
     if type(model).__name__ == "type" and issubclass(
         model, Model
     ):  # ok perhaps we've got a model class rather than an instance
@@ -94,7 +96,7 @@ def make_model(model_func):
         Finally the new model_func class can be instantiated or just passed to :py:meth:`Data.lmfit` etc. directly.
     """
 
-    class _ModelDecorator(Model):
+    class _ModelDecorator(Model):  # pylint: disable=abstract-method
         __doc__ = model_func.__doc__
 
         def __init__(self, *args, **kargs):
@@ -104,11 +106,12 @@ def make_model(model_func):
                     self.set_param_hint(param, **limit)
             self.__name__ = self.func.__name__
 
-        def guess(self, y, x=None):  # pylint: disable=unused-argument
-            """A default parameter guess method.
+        def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
+            """Make a default parameter guess method.
 
-            Just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does."""
-            return np.ones(len(self.param_names))
+            Just guesses 1.0 for everything like :py:func:`scipy.optimize.curve_fit` does.
+            """
+            return np.ones_like(self.param_names)
 
         @classmethod
         def hinter(cls, func):
@@ -165,7 +168,7 @@ def make_model(model_func):
             def guess_proxy(self, *args, **kargs):
                 """A magic proxy call around a function to guess initial parameters."""
                 guesses = func(*args, **kargs)
-                pars = {x: y for x, y in zip(self.param_names, guesses)}
+                pars = dict(zip(self.param_names, guesses))
                 pars = self.make_params(**pars)
                 return update_param_vals(pars, self.prefix, **kargs)
 
@@ -242,6 +245,48 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
     return data
 
 
+def _setup_one_param(data, config, p, prefix, vals):
+    if not config.has_section(p):
+        raise RuntimeError(f"Config file does not have a section for parameter {p}")
+    keys = {
+        "vary": bool,
+        "value": float,
+        "min": float,
+        "max": float,
+        "expr": str,
+        "step": float,
+        "label": str,
+        "units": str,
+    }
+    kargs = {}
+    for k, val in keys.items():
+        if config.has_option(p, k):
+            if val == bool:
+                kargs[k] = config.getboolean(p, k)
+            elif val == float:
+                kargs[k] = config.getfloat(p, k)
+            elif val == str:
+                kargs[k] = config.get(p, k)
+    if isinstance(data, make_Data(None)):  # stuff the parameter hint data into metadata
+        for k in keys:  # remove keywords not needed
+            if k in kargs:
+                data[f"{prefix}{p} {k}"] = kargs[k]
+        if "lmfit.prerfix" in data:
+            data["lmfit.prefix"].append(prefix)
+        else:
+            data["lmfit.prefix"] = [prefix]
+    if "step" in kargs:  # We use step for creating a chi^2 mapping, but not for a parameter hint
+        step = kargs.pop("step")
+        if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]:  # Make chi^2?
+            vals.append(np.arange(kargs["min"], kargs["max"] + step / 10, step))
+        else:  # Nope, just make a single value step here
+            vals.append(np.array(kargs["value"]))
+    else:  # Nope, just make a single value step here
+        vals.append(np.array(kargs["value"]))
+    kargs = {k: v for k, v in kargs.items() if k in ["value", "max", "min", "vary"]}
+    return kargs
+
+
 def cfg_model_from_ini(inifile, model=None, data=None):
     r"""Utility function to configure an lmfit Model from an inifile.
 
@@ -292,44 +337,7 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     prefix += ":"
     vals = []
     for p in model.param_names:
-        if not config.has_section(p):
-            raise RuntimeError(f"Config file does not have a section for parameter {p}")
-        keys = {
-            "vary": bool,
-            "value": float,
-            "min": float,
-            "max": float,
-            "expr": str,
-            "step": float,
-            "label": str,
-            "units": str,
-        }
-        kargs = {}
-        for k in keys:
-            if config.has_option(p, k):
-                if keys[k] == bool:
-                    kargs[k] = config.getboolean(p, k)
-                elif keys[k] == float:
-                    kargs[k] = config.getfloat(p, k)
-                elif keys[k] == str:
-                    kargs[k] = config.get(p, k)
-        if isinstance(data, make_Data(None)):  # stuff the parameter hint data into metadata
-            for k in keys:  # remove keywords not needed
-                if k in kargs:
-                    data[f"{prefix}{p} {k}"] = kargs[k]
-            if "lmfit.prerfix" in data:
-                data["lmfit.prefix"].append(prefix)
-            else:
-                data["lmfit.prefix"] = [prefix]
-        if "step" in kargs:  # We use step for creating a chi^2 mapping, but not for a parameter hint
-            step = kargs.pop("step")
-            if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]:  # Make chi^2?
-                vals.append(np.arange(kargs["min"], kargs["max"] + step / 10, step))
-            else:  # Nope, just make a single value step here
-                vals.append(np.array(kargs["value"]))
-        else:  # Nope, just make a single value step here
-            vals.append(np.array(kargs["value"]))
-        kargs = {k: kargs[k] for k in kargs if k in ["value", "max", "min", "vary"]}
+        kargs = _setup_one_param(data, config, p, prefix, vals)
         model.set_param_hint(p, **kargs)  # set the model parameter hint
     msh = np.meshgrid(*vals)  # make a mesh of all possible parameter values to test
     msh = [m.ravel() for m in msh]  # tidy it up and combine into one 2D array

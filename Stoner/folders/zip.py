@@ -260,10 +260,10 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             self.File.close()
         mode = "a" if path.exists(root) else "w"
         with zf.ZipFile(root, mode) as self.File:
-            tmp = self.walk_groups(self._save)
+            tmp = self.walk_groups(self._saver)
         return tmp
 
-    def _save(self, f, trail, root=None):
+    def _saver(self, f, trail):
         """Create a virtual path of groups in the Zip file and save data.
 
         Args:
@@ -271,8 +271,6 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
                 A DataFile instance to save
             trail (list):
                 The trail of groups
-            root (string or None):
-                a replacement root directory
 
         Returns:
             The new filename of the saved DataFile.
@@ -294,6 +292,5 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
                 continue
             bits[ix] = b[1:]
         member = path.join(*bits)
-        f = Data(f)
         f.save(member, filetype="ZippedFile")
         return f.filename
