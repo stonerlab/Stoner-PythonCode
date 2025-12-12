@@ -12,7 +12,10 @@ y = 2 + 4 * exp(-x / 1.7) + random.normal(scale=0.2, size=101)
 
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
-func = lambda x, A, B, C: A + B * exp(-x / C)
+
+def func(x, A, B, C):
+    """Quick fitting function."""
+    return A + B * exp(-x / C)
 
 
 # Do the fitting and plot the result

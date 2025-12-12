@@ -29,7 +29,7 @@ def field_sign(r):
 def extra(_, __, d):
     """Customise each individual plot."""
     d.axvline(x=d["cut"], ls="--")
-    d.title = r"$\nu={:.1f}\,$GHz".format(d.mean("Frequency") / 1e9)
+    d.title = rf"$\nu={d.mean('Frequency') / 1e9:.1f}\,$GHz"
     d.xlabel = r"Field $\mu_0H\,$"
     d.ylabel = "Abs. (arb)"
     d.plt_legend(loc=3)
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         subfldr = fldr[s]
         subfldr.metadata["Field Sign"] = s
 
-        print("s={}".format(s))
+        print(f"s={s}")
         (do_fit @ subfldr.each)()
         result = subfldr.metadata.slice("Frequency", FMR_Power, output="Data")
         result.metadata.update(

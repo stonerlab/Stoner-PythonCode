@@ -18,7 +18,7 @@ d.plot()
 d.text(
     -6,
     -800,
-    "Coefficients\n{}".format(str_coeffs),
+    f"Coefficients\n{str_coeffs}",
     fontdict={"size": "x-small"},
 )
 d.ylabel = "Data"

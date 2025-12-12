@@ -12,15 +12,26 @@ from importlib import import_module
 import numpy as np
 from Stoner import Data
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
-from Stoner.analysis.fitting.models.generic import quadratic
 
 
 class working(Data):
     """Utility class to manipulate data and plot it."""
 
-    def __init__(self, *args, **kargs):
-        """Initialise the fitting code."""
-        super().__init__(*args, **kargs)
+    def __init__(self, *args, **kwargs):
+        """Define local attributes."""
+        super().__init__(*args, **kwargs)
+        self.vcol = None
+        self.gcol = None
+        self.config = None
+        self.show_plot = True
+        self.save_fit = True
+        self.report = True
+        self.fancyresults = True
+        self.method = "lmfit"
+        self.model = (
+            "Stoner.analysis.fitting.models.superconductivity.Strijkers"
+        )
+        self.p0 = None
 
     def load_config(self):
         """Load the config file to set up the fitting."""
@@ -67,7 +78,7 @@ class working(Data):
         ) and self.config.getboolean("Data", "discard")
         if discard:
             v_limit = self.config.get("Data", "v_limit")
-            print("Discarding data beyond v_limit={}".format(v_limit))
+            print(f"Discarding data beyond v_limit={v_limit}")
             self.del_rows(self.vcol, lambda x, y: abs(x) > v_limit)
         return self
 
@@ -211,7 +222,12 @@ class working(Data):
             fmt=["ro", "b-"],
             label=["Data", "Fit"],
         )
-        bbox_props = dict(boxstyle="square,pad=0.3", fc="white", ec="b", lw=2)
+        bbox_props = {
+            "boxstyle": "square,pad=0.3",
+            "fc": "white",
+            "ec": "b",
+            "lw": 2,
+        }
         if self.fancyresults:
             self.annotate_fit(
                 self.model,
@@ -259,6 +275,7 @@ class working(Data):
         if self.save_fit:
             fit.filename = None
             fit.save(False)
+        return None
 
 
 def quadratic_abs(x, a, b, c):

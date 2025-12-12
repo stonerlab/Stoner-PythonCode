@@ -22,34 +22,30 @@ while True:
         filename = input(
             "Enter the filename (including extension) for your file\r\n"
         )
-        mainFP = open(filename, "r", encoding="utf-8")
         break
     except IOError:
         print("Oops I couldn't find that file.")
-if "BNLSplitFiles" not in os.listdir(directory):
-    os.mkdir("BNLSplitFiles")
-os.chdir("BNLSplitFiles")
-
-# Main algorithm ###########
-
-# writeName=re.split(r'[.]',filename)
-writeFP = open(
+with open(filename, "r", encoding="utf-8") as mainFP, open(
     "title.txt", "w", encoding="utf-8"
-)  # title sequence goes in this file
-counter = 1  # this will label the files
-for line in mainFP:
-    if line[0:2] == "#S":
-        if int(line.split()[1]) != counter:
-            raise ValueError  # check for inconsistencies with filenames and scan numbers
-        writeFP.close()
-        writeFP = open(str(counter) + ".bnl", "w", encoding="utf-8")
-        counter += 1
-    if line[0:2] != "#C":
-        writeFP.write(line)
-        # ignore #C statements which are usually abort and rarely useful, they come
-        # after data and before the next #S"""
-writeFP.close()
-mainFP.close()
+) as writeFP:
+
+    if "BNLSplitFiles" not in os.listdir(directory):
+        os.mkdir("BNLSplitFiles")
+    os.chdir("BNLSplitFiles")
+
+    # writeName=re.split(r'[.]',filename)
+    counter = 1  # this will label the files
+    for line in mainFP:
+        if line[0:2] == "#S":
+            if int(line.split()[1]) != counter:
+                raise ValueError  # check for inconsistencies with filenames and scan numbers
+            writeFP.close()
+            writeFP = open(str(counter) + ".bnl", "w", encoding="utf-8")
+            counter += 1
+        if line[0:2] != "#C":
+            writeFP.write(line)
+            # ignore #C statements which are usually abort and rarely useful, they come
+            # after data and before the next #S"""
 
 # test files
 filelist = os.listdir(os.getcwd())
@@ -61,12 +57,12 @@ for filename in filelist:
             filename, filetype="BNLFile"
         )  # will throw suitable errors if there are problems
         if len(np.shape(d.data)) == 1:
-            print("Removing file {} due to lack of data".format(filename))
+            print(f"Removing file {filename} due to lack of data")
             d = 0
             os.remove(
                 filename
             )  # delete files with only 1 dimensional data (or with
             # no data), they'll cause problems later
             continue
-        print("{} OK".format(filename))
+        print(f"{filename} OK")
 print("Done.")

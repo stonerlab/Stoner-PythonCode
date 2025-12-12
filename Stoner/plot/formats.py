@@ -510,8 +510,8 @@ class DefaultPlotStyle(MutableMapping):
         if no_axes:
             fig = plt.figure(figsize=figsize, **kargs)
             # Remove any auto-created axes if present (defensive)
-            for ax in list(fig.axes):
-                ax.remove()
+            for axis in list(fig.axes):
+                axis.remove()
             return fig, None
 
         # Standard 2D case: prefer subplots for users expecting a (fig, ax) pair

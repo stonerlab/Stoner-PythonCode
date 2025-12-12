@@ -16,7 +16,7 @@ import h5py
 from ..compat import bytes2str, path_types, str2bytes, string_types
 from ..core.base import SortedMultivalueDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..core.Typing import Filename
+from ..tools.typing import Filename
 from .decorators import make_Data, make_Image
 from .widgets import fileDialog
 

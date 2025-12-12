@@ -1,6 +1,6 @@
 """3D surface plot example."""
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, no-name-in-module, no-member
 import matplotlib.cm
 import numpy as np
 

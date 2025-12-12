@@ -21,7 +21,7 @@ __all__ = [
     "Typing",
 ]
 
-from . import Typing, array, base, exceptions, utils
+from . import array, base, exceptions, utils
 from .array import DataArray
 from .base import RegexpDict, TypeHintedDict, metadataObject, string_to_type
 from .setas import Setas as _setas

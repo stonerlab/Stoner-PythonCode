@@ -6,20 +6,15 @@ import urllib
 
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 
-config = io.StringIO(
-    urllib.request.urlopen(  # pylint: disable=urllib_urlopen
-        "https://raw.githubusercontent.com/stonerlab/Stoner-PythonCode/master/scripts/PCAR-chi%5E2.ini"
-    )
-    .read()
-    .decode()
-)
-datafile = io.StringIO(  # pylint: disable=urllib_urlopen
-    urllib.request.urlopen(
-        "https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/PCAR%20Co%20Data.csv"
-    )
-    .read()
-    .decode()
-)
+with urllib.request.urlopen(
+    "https://raw.githubusercontent.com/stonerlab/Stoner-PythonCode/master/scripts/PCAR-chi%5E2.ini"
+) as uri:
+    config = io.StringIO(uri.read().decode())
+
+with urllib.request.urlopen(
+    "https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/PCAR%20Co%20Data.csv"
+) as uri:
+    datafile = io.StringIO(uri.read().decode())
 
 d = cfg_data_from_ini(config, datafile)
 model, p0 = cfg_model_from_ini(config, data=d)

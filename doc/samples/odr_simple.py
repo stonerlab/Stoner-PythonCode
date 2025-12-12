@@ -8,8 +8,12 @@ from Stoner.plot.utils import errorfill
 
 random.seed(12345)  # Ensure consistent random numbers!
 
+
 # Make some data
-func = lambda x, A, B, C: A + B * exp(-x / C)
+def func(x, A, B, C):
+    """Simple fitting function."""
+    return A + B * exp(-x / C)
+
 
 x = linspace(0, 10.0, 101)
 y = func(x, 2, 4, 1.5) + random.normal(scale=0.2, size=101)

@@ -3,10 +3,10 @@
 """Demonstrates the interactive mask selection code."""
 
 from Stoner import __homepath__
-from Stoner.HDF5 import STXMImage
+from Stoner import ImageFile
 
 # Load a single helicity STXM image
-img = STXMImage(
+img = ImageFile(
     __homepath__ / ".." / "sample-data" / "Sample_Image_2017-10-15_100.hdf5"
 )
 

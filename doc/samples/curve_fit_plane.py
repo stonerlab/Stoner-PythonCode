@@ -1,6 +1,6 @@
 """Use curve_fit to fit a plane to some data."""
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, no-name-in-module, no-member
 import matplotlib.cm as cmap
 from numpy import array, column_stack, linspace, meshgrid
 from numpy.random import normal, seed
@@ -43,9 +43,7 @@ e.column_headers = d.column_headers
 e.plot_xyz(linewidth=0, cmap=cmap.jet, alpha=0.5, figure=d.fig)
 
 txt = "$z=c-ax+by$\n"
-txt += "\n".join(
-    [d.format("plane:{}".format(k), latex=True) for k in ["a", "b", "c"]]
-)
+txt += "\n".join([d.format(f"plane:{k}", latex=True) for k in ["a", "b", "c"]])
 
 ax = d.axes[0]
 ax.text(-30, -10, 10, txt)

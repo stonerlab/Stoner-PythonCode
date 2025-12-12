@@ -63,10 +63,7 @@ def alt_norm(f, _, **kargs):
 
 def norm_group(pos, _, **kargs):
     """Take the drain current for each file in group and builds an analysis file and works out the mean drain."""
-    if "signal" in kargs:
-        signal = kargs["signal"]
-    else:
-        signal = "fluo"
+    signal = kargs.get("signal", "fluo")
     lfit = kargs["lfit"]
     rfit = kargs["rfit"]
 
@@ -174,6 +171,6 @@ fldr.walk_groups(
 )
 
 for f in fldr:
-    f.filename = "Run 2 Compiled Fluorescence Data {}.txt".format(f["Position"])
+    f.filename = "Run 2 Compiled Fluorescence Data {f['Position']}.txt"
     f.save()
 # norm_data=fldr.walk_groups(alt_norm,walker_args={"rfit":(660,670),"lfit":(615,630),"signal":"fluo"})

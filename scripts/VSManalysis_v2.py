@@ -198,18 +198,16 @@ timeout = 0
 while True:
     path = filenames[fCounter]
     fCounter += 1
-    fr = open(path, "r", encoding="utf-8")
-    data = fr.readlines()  # Get the file into an array
-    fr.close()
+    with open(path, "r", encoding="utf-8") as fr:
+        data = fr.readlines()  # Get the file into an array
     pathsplit = splitFileName(path)
-    fw = open(  # pylint: disable=unspecified-encoding
+    with open(  # pylint: disable=unspecified-encoding
         "EditedFiles/" + pathsplit[0] + "_edit.txt", "w", enconcoding="utf-8"
-    )
-    data = deleteCorruptLines(data)
-    fw.writelines(
-        data
-    )  # put the uncorrupted lines into the file so that Stoner can open it
-    fw.close()
+    ) as fw:
+        data = deleteCorruptLines(data)
+        fw.writelines(
+            data
+        )  # put the uncorrupted lines into the file so that Stoner can open it
     while True:  # open the file
         try:
             Data = Stoner.Data("EditedFiles/" + pathsplit[0] + "_edit.txt")
@@ -226,7 +224,7 @@ while True:
     fw.close()
     while True:
         plotmH(Data)
-        if not ("Original m (emu)" in Data.column_headers):
+        if not "Original m (emu)" in Data.column_headers:
             Data.add_column(Data.column("m (emu)"), "Original m (emu)")
         print(
             "\nOK you have 5 options here, have a look at the plot and please tell me which ones ",
@@ -262,11 +260,7 @@ while True:
         break
     if (
         whatNext == "q"
-        or input(
-            "Press enter to do file {} or q to quit:".format(
-                filenames[fCounter]
-            )
-        )
+        or input(f"Press enter to do file {filenames[fCounter]} or q to quit:")
         == "q"
     ):
         break

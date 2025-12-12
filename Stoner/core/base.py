@@ -22,7 +22,7 @@ except ImportError:
 from ..compat import _pattern_type, int_types, string_types
 from ..tools import iscomparable, isiterable
 from .exceptions import StonerAssertionError
-from .Typing import Filename, RegExp, String_Types
+from ..tools.typing import Filename, RegExp
 
 try:
     from blist import sorteddict as SortedDict
@@ -65,7 +65,7 @@ def literal_eval(string: str) -> Any:
         raise ValueError(f"Cannot interpret {string} as valid Python") from err
 
 
-def string_to_type(value: String_Types) -> Any:
+def string_to_type(value: str) -> Any:
     """Given a string value try to work out if there is a better python type dor the value.
 
     First of all the first character is checked to see if it is a [ or { which would
