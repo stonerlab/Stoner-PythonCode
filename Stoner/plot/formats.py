@@ -406,7 +406,10 @@ class DefaultPlotStyle(MutableMapping):
                     if k in dir(self) and not callable(getattr(self, k)):
                         setattr(self, k, val)
                     elif not k.startswith("_"):
-                        setattr(self, f"template_{k}", val)
+                        try:
+                            setattr(self, f"template_{k}", val)
+                        except AttributeError:
+                            pass
             case _:
                 raise SyntaxError(
                     "Only one posotional argument which should be a Mapping subclass can be supplied toi update."

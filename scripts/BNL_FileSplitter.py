@@ -25,9 +25,9 @@ while True:
         break
     except IOError:
         print("Oops I couldn't find that file.")
-with open(filename, "r", encoding="utf-8") as mainFP, open(
+with open(filename, "r", encoding="utf-8") as main_fp, open(
     "title.txt", "w", encoding="utf-8"
-) as writeFP:
+) as write_fp:
 
     if "BNLSplitFiles" not in os.listdir(directory):
         os.mkdir("BNLSplitFiles")
@@ -35,15 +35,15 @@ with open(filename, "r", encoding="utf-8") as mainFP, open(
 
     # writeName=re.split(r'[.]',filename)
     counter = 1  # this will label the files
-    for line in mainFP:
+    for line in main_fp:
         if line[0:2] == "#S":
             if int(line.split()[1]) != counter:
                 raise ValueError  # check for inconsistencies with filenames and scan numbers
-            writeFP.close()
-            writeFP = open(str(counter) + ".bnl", "w", encoding="utf-8")
+            write_fp.close()
+            write_fp = open(str(counter) + ".bnl", "w", encoding="utf-8")
             counter += 1
         if line[0:2] != "#C":
-            writeFP.write(line)
+            write_fp.write(line)
             # ignore #C statements which are usually abort and rarely useful, they come
             # after data and before the next #S"""
 

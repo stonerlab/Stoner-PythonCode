@@ -35,3 +35,4 @@ dependencies:
   - urllib3 >=1.26
   - looseversion >=1.0
   - rosettasciio
+  - fabio

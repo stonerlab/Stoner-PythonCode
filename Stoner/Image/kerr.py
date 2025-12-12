@@ -115,7 +115,7 @@ class KerrImageFile(ImageFile):
         return self._image.view(KerrArray)
 
     @ImageFile.image.setter
-    def image(self: Self, v) -> None:  # noqa F811 pylint: disable=function-redefined
+    def image(self: Self, v) -> None:  # noqa: F811  # pylint: disable=redefined-outer-name
         """Ensure stored image is always an ImageArray."""
         filename = self.filename
         v = KerrArray(v)

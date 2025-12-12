@@ -75,10 +75,7 @@ class MaximusStack(ImageStack):
     def _load(self, *args, **kargs):
         """Load an ImageStack from either an hdf file or textfiles."""
         filename, args, kargs = get_filename(args, kargs)
-        if filename is None or not filename:
-            self.get_filename("r")
-        else:
-            self.filename = filename
+        self.filename = filename
         pth = Path(self.filename)
         if h5py.is_hdf5(self.filename):
             return self.__class__.read_hdf5(self.filename)
@@ -219,14 +216,11 @@ class MaximusStack(ImageStack):
         return self
 
     @classmethod
-    def read_hdf5(cls, filename, *args, **kargs):
+    def read_hdf5(cls, *args, **kargs):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
-        if filename is None or not filename:
-            self.get_filename("r")
-            filename = self.filename
-        else:
-            self.filename = filename
+        filename, args, kargs = get_filename(args, kargs)
+        self.filename = filename
         with HDFFileManager(self.filename, "r") as f:
             self.scan_no = f.attrs["scan_no"]
             if "groups" in f.attrs:

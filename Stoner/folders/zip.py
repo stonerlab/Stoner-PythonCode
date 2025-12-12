@@ -39,6 +39,8 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
     def __init__(self, *args, **kargs):
         """Initialise the file attribute."""
         self.File = None
+        self.exclude = []
+        self.flat = False
         super().__init__(*args, **kargs)
 
     @property
@@ -58,7 +60,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
         """Set the immediate filename that will be used when the file is saved."""
         self.path = pathjoin(self.directory, value)
 
-    def _dialog(self, mode="r"):
+    def _zip_file_dialog(self, mode="r"):
         """Create a file dialog box for working with.
 
         Args:
@@ -94,7 +96,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             flatten = self.flat
 
         if self.File is None and directory is None:
-            self.File = zf.ZipFile(self._dialog(), "r")
+            self.File = zf.ZipFile(self._zip_file_dialog(), "r")
             close_me = True
         elif isinstance(directory, zf.ZipFile):
             if directory.fp:
@@ -252,7 +254,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             A list of group paths in the Zip file
         """
         if root is None:
-            root = self._dialog(mode="w")
+            root = self._zip_file_dialog(mode="w")
         elif isinstance(root, bool) and not root and isinstance(self.File, zf.ZipFile):
             root = self.File.filename
             self.File.close()
@@ -261,7 +263,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             tmp = self.walk_groups(self._save)
         return tmp
 
-    def _save(self, f, trail):
+    def _save(self, f, trail, root=None):
         """Create a virtual path of groups in the Zip file and save data.
 
         Args:
@@ -269,6 +271,8 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
                 A DataFile instance to save
             trail (list):
                 The trail of groups
+            root (string or None):
+                a replacement root directory
 
         Returns:
             The new filename of the saved DataFile.

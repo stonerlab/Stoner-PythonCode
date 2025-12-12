@@ -224,7 +224,7 @@ while True:
     fw.close()
     while True:
         plotmH(Data)
-        if not "Original m (emu)" in Data.column_headers:
+        if "Original m (emu)" not in Data.column_headers:
             Data.add_column(Data.column("m (emu)"), "Original m (emu)")
         print(
             "\nOK you have 5 options here, have a look at the plot and please tell me which ones ",

@@ -18,7 +18,6 @@ __all__ = [
     "string_to_type",
     "exceptions",
     "utils",
-    "Typing",
 ]
 
 from . import array, base, exceptions, utils

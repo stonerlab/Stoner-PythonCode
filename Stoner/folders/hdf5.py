@@ -15,8 +15,8 @@ from os import path
 import h5py
 
 from ..compat import get_filedialog, path_types
-from ..core.data import Data  # noqa pylint: disable=unused-import
 from .mixins import DataFolder
+from ..tools import make_Class
 
 
 class HDF5Folder(DataFolder):
@@ -109,7 +109,7 @@ class HDF5Folder(DataFolder):
     def _visit_func(self, name, obj):  # pylint: disable=unused-argument
         """Walker of the HDF5 tree."""
         if isinstance(obj, h5py.Group) and "type" in obj.attrs:
-            cls = globals()[obj.attrs["type"]]
+            cls = make_Class(obj.attrs["type"], None)
             if issubclass(self.loader, cls):
                 self.__setter__(obj.name, obj.name)
             elif obj.attrs["type"] == "HDF5Folder" and getattr(self, "recursive", True):

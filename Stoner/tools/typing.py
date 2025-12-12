@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     from ..core.data import Data
-    from ..core.setas import setas
+    from ..core.setas import Setas
     from ..image.core import ImageArray, ImageFile
 else:
     Setas = type("Setas", (), {})

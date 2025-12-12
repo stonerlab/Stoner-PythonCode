@@ -686,7 +686,7 @@ class Data(
                     invalid_raise=False,
                     comments="\0",
                     missing_values=[""],
-                    filling_values=[np.nan],
+                    filling_values=[nan],
                     max_rows=max_rows,
                 )
         if data.ndim < 2:
