@@ -94,7 +94,7 @@ def reduce_metadata(kerr_im):
         (:py:class:`TypeHintedDict`): the new metadata
     """
     newmet = {}
-    if not all([k in kerr_im.keys() for k in _test_keys]):
+    if not all((k in kerr_im.keys() for k in _test_keys)):
         return kerr_im.metadata  # we've not got a standard Labview output, not safe to reduce
     for key in _useful_keys:
         if key in kerr_im.keys():

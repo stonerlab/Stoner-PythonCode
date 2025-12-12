@@ -10,6 +10,7 @@ from matplotlib.colors import to_rgba
 from matplotlib.widgets import Cursor, RectangleSelector
 from scipy.optimize import minimize
 from skimage import draw
+from ..tools.decorators import label
 
 
 def send_event(image, names, **kargs):
@@ -357,6 +358,7 @@ class ShapeSelect:
             self.ov_layer.set_array(np.ones(self.shape + (4,)))
             self.finished = True
             return self.draw(event)
+        return None
 
     def on_click(self, event):
         """Habndle mouse click events.
@@ -431,6 +433,7 @@ class ShapeSelect:
             cc = np.append(cc, c)
         return rr, cc
 
+    @label(min_vertices=3, instructions="Click to add vertices in order.")
     def draw_poly(self, vertices):
         """Draw a polygon method using the specified vertices.
 
@@ -444,52 +447,45 @@ class ShapeSelect:
             rr, cc = draw.polygon(vertices[:, 1], vertices[:, 0], self.shape)
         return rr, cc
 
-    draw_poly.min_vertices = 3
-    draw_poly.instructions = "Click to add vertices in order."
-
+    @label(min_vertices=2, instructions="2 or 3 perimeter vertices to define a circle\n4 or more to define an ellipse")
     def draw_circle(self, vertices):
-        """Draw a circule or elipsoid."""
-        if len(vertices) < 2:
+        """Draw a circle or ellipse."""
+        n = len(vertices)
+        if n < 2:
             return ([], [])
-        if len(vertices) == 2:  # Circle mode
-            c0, r0 = vertices[0]
-            c1, r1 = vertices[1]
-            cc = (c0 + c1) // 2
-            rc = (r0 + r1) // 2
-            r = np.sqrt((rc - r1) ** 2 + (cc - c1) ** 2)
+
+        if n == 2:  # Circle mode
+            (c0, r0), (c1, r1) = vertices
+            cc, rc = (c0 + c1) // 2, (r0 + r1) // 2
+            r = np.hypot(rc - r1, cc - c1)
             return draw.disk((rc, cc), r, shape=self.shape)
-        if len(vertices) == 3:
-            p0 = vertices[0]
-            p1 = vertices[1]
-            p2 = vertices[2]
-            bc = (np.dot(p0, p0) - np.dot(p1, p1)) / 2
-            cd = (np.dot(p1, p1) - np.dot(p2, p2)) / 2
-            det = (p0[0] - p1[0]) * (p1[1] - p2[1]) - (p1[0] - p2[0]) * (p0[1] - p1[1])
+
+        if n == 3:
+            bc = (np.dot(vertices[0], vertices[0]) - np.dot(vertices[1], vertices[1])) / 2
+            cd = (np.dot(vertices[1], vertices[1]) - np.dot(vertices[2], vertices[2])) / 2
+            det = (vertices[0][0] - vertices[1][0]) * (vertices[1][1] - vertices[2][1]) - (
+                vertices[1][0] - vertices[2][0]
+            ) * (vertices[0][1] - vertices[1][1])
             if abs(det) < 1.0e-6:
                 return ([], [])
-            cx = (bc * (p1[1] - p2[1]) - cd * (p0[1] - p1[1])) / det
-            cy = ((p0[0] - p1[0]) * cd - (p1[0] - p2[0]) * bc) / det
-            r = np.sqrt((cx - p1[0]) ** 2 + (cy - p1[1]) ** 2)
+            cx = (bc * (vertices[1][1] - vertices[2][1]) - cd * (vertices[0][1] - vertices[1][1])) / det
+            cy = ((vertices[0][0] - vertices[1][0]) * cd - (vertices[1][0] - vertices[2][0]) * bc) / det
+            r = np.hypot(cx - vertices[1][0], cy - vertices[1][1])
             return draw.disk((cy, cx), r, shape=self.shape)
-        if len(vertices) == 4:
-            xc, yc = vertices.mean(axis=0)
-            a, b = vertices.max(axis=0) - vertices.min(axis=0)
-            x0 = [xc, yc, a, b]
-            result = minimize(_straight_ellipse, x0=x0, args=(vertices,))
-            xc, yc, a, b = result.x
-            return draw.ellipse(yc, xc, b, a, shape=self.shape)
-        if len(vertices) > 4:
-            xc, yc = vertices.mean(axis=0)
-            a, b = vertices.max(axis=0) - vertices.min(axis=0)
-            phi = 0
-            x0 = [xc, yc, a, b, phi]
-            result = minimize(_rotated_ellipse, x0=x0, args=(vertices,))
-            xc, yc, a, b, phi = result.x
-            return draw.ellipse(yc, xc, b, a, shape=self.shape, rotation=phi)
 
-    draw_circle.min_vertices = 2
-    draw_circle.instructions = "2 or 3 perimeter vertices to define a circle\n4 or more to define an ellipse"
+        # For 4 or more points, compute center and axes directly
+        xc, yc = vertices.mean(axis=0)
+        a, b = vertices.max(axis=0) - vertices.min(axis=0)
 
+        if n == 4:
+            res = minimize(_straight_ellipse, x0=[xc, yc, a, b], args=(vertices,))
+            return draw.ellipse(res.x[1], res.x[0], res.x[3], res.x[2], shape=self.shape)
+
+        # n > 4
+        res = minimize(_rotated_ellipse, x0=[xc, yc, a, b, 0], args=(vertices,))
+        return draw.ellipse(res.x[1], res.x[0], res.x[3], res.x[2], shape=self.shape, rotation=res.x[4])
+
+    @label(min_vertices=2, instructions="Click to add corner vertices.")
     def draw_rectangle(self, vertices):
         """Calculate the coordinates for a rectangle from the vertices."""
         if len(vertices) < 2:
@@ -513,9 +509,6 @@ class ShapeSelect:
             yvert = np.array([r0, r1, r2, r3], dtype=int)
             rr, cc = draw.polygon(yvert, xvert, shape=self.shape)
         return rr.astype(int), cc.astype(int)
-
-    draw_rectangle.min_vertices = 2
-    draw_rectangle.instructions = "Click to add corner vertices."
 
     def get_mask(self):
         """Convert a list of vertices to a mask array."""

@@ -7,7 +7,7 @@ from scipy.interpolate import interp1d as sp_interp1d
 from scipy.signal import find_peaks as sp_find_peaks
 
 from Stoner.core.exceptions import assertion
-from Stoner.tools import isiterable, isTuple
+from Stoner.tools import isiterable, istuple
 
 from .utils import threshold
 
@@ -220,7 +220,7 @@ def find_peaks(datafile, **kargs):
     if isinstance(width, float):  # Convert a floating point width unto an integer.
         xmin, xmax = datafile.span(xcol)
         width = int(len(datafile) * width / (xmax - xmin))
-    elif isTuple(width, float, float):
+    elif istuple(width, float, float):
         xmin, xmax = datafile.span(xcol)
         width = int(len(datafile) * width[0] / (xmax - xmin)), int(len(datafile) * width[1] / (xmax - xmin))
     if width is not None:
@@ -235,7 +235,7 @@ def find_peaks(datafile, **kargs):
     if isinstance(plateau_size, float):  # Convert a floating point plateau_size unto an integer.
         xmin, xmax = datafile.span(xcol)
         plateau_size = int(len(datafile) * plateau_size / (xmax - xmin))
-    elif isTuple(plateau_size, float, float):
+    elif istuple(plateau_size, float, float):
         xmin, xmax = datafile.span(xcol)
         plateau_size = (
             int(len(datafile) * plateau_size[0] / (xmax - xmin)),

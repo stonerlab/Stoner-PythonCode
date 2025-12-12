@@ -9,7 +9,7 @@ from collections.abc import Iterable, MutableMapping
 import numpy as np
 
 from ..compat import _pattern_type, index_types, string_types
-from ..tools import AttributeStore, TypedList, isiterable, isLikeList
+from ..tools import AttributeStore, TypedList, isiterable, islistlike
 from .utils import decode_string
 
 
@@ -436,7 +436,7 @@ class Setas(MutableMapping):
         """
         match name:
             case Iterable() if not isinstance(name, str):
-                if isLikeList(value) and len(value) == len(name):
+                if islistlike(value) and len(value) == len(name):
                     for n, v in zip(name, value):
                         self._setas[n] = v
                 else:

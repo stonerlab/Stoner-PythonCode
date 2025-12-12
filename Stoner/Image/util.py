@@ -53,14 +53,14 @@ def sign_loss(dtypeobj_in, dtypeobj):
     if Options().warnings:
         warn(
             "Possible sign loss when converting negative image of type "
-            "%s to positive image of type %s." % (dtypeobj_in, dtypeobj)
+            f"{dtypeobj_in} to positive image of type {dtypeobj}."
         )
 
 
 def prec_loss(dtypeobj_in, dtypeobj):
     """Warn over precision loss when converting image."""
     if Options().warnings:
-        warn("Possible precision loss when converting from " "%s to %s" % (dtypeobj_in, dtypeobj))
+        warn(f"Possible precision loss when converting from {dtypeobj_in} to {dtypeobj}")
 
 
 def _dtype(itemsize, *dtypes):
@@ -74,8 +74,11 @@ def _dtype(itemsize, *dtypes):
 
 def _dtype2(kind, bits, itemsize=1):
     """Return dtype of `kind` that can store a `bits` wide unsigned int."""
-    c = lambda x, y: x <= y if kind == "u" else x < y
-    s = next(i for i in (itemsize,) + (2, 4, 8) if c(bits, i * 8))
+
+    def _calc(x, y):
+        return x <= y if kind == "u" else x < y
+
+    s = next(i for i in (itemsize,) + (2, 4, 8) if _calc(bits, i * 8))
     return np.dtype(kind + str(s))
 
 

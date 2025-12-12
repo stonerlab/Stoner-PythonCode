@@ -63,7 +63,7 @@ from scipy.interpolate import griddata, interp1d
 from scipy.ndimage import gaussian_filter
 from skimage import filters, measure, transform
 
-from ..tools import isiterable, isTuple, make_Data
+from ..tools import isiterable, istuple, make_Data
 
 from ..compat import (  # Some things to help with Python2 and Python3 compatibility
     get_filedialog,
@@ -857,7 +857,7 @@ def normalise(im, scale=None, sample=False, limits=(0.0, 1.0), scale_masked=Fals
         high = section.max()
         low = section.min()
 
-    if not isTuple(scale, float, float, strict=False):
+    if not istuple(scale, float, float, strict=False):
         raise ValueError("scale should be a 2-tuple of floats.")
     scaled = (im.data - low) / (high - low)
     delta = scale[1] - scale[0]
@@ -930,9 +930,9 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
         dst = (dst, dst)
     dst = _scale(dst, scale)
     src = _scale(src, scale)
-    if not isTuple(src, int, int):
+    if not istuple(src, int, int):
         raise ValueError("src coordinates are not a 2-tuple of ints.")
-    if not isTuple(dst, int, int):
+    if not istuple(dst, int, int):
         raise ValueError("dst coordinates are not a 2-tuple of ints.")
 
     if constrain:

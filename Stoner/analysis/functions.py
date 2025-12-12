@@ -12,7 +12,7 @@ from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
 from ..core.exceptions import assertion
-from ..tools import isiterable, isTuple
+from ..tools import isiterable, istuple
 from ..tools.typing import Data, Index, Kwargs, NumericArray
 from .utils import threshold as _threshold
 
@@ -356,14 +356,14 @@ def normalise(
             header = datafile.column_headers[datafile.find_col(t)] + "(norm)"
         else:
             header = str(header)
-        if not isTuple(base, float, float) and base is not None:
+        if not istuple(base, float, float) and base is not None:
             datafile.divide(t, base, header=header, replace=replace)
         else:
-            if isTuple(base, float, float):
+            if istuple(base, float, float):
                 scale = base
             elif scale is None:
                 scale = (-1.0, 1.0)
-            if not isTuple(scale, float, float):
+            if not istuple(scale, float, float):
                 raise ValueError("limit parameter is either None, or limit or base is a tuple of two floats.")
             data = datafile.column(t).ravel()
             data = np.sort(data[~np.isnan(data)])

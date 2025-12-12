@@ -10,7 +10,7 @@ from lmfit import Model
 
 from ..compat import string_types
 from ..core import TypeHintedDict, metadataObject
-from ..tools import isiterable, isLikeList, make_Data
+from ..tools import isiterable, islistlike, make_Data
 
 
 def _fmt_as_list(results):
@@ -340,7 +340,7 @@ class MetadataProxy(MutableMapping):
 
         for r in results:  # Expand the results where a result contains a list
             for k in keys:
-                if k in r and isLikeList(r[k]) and len(r[k]) > 0:
+                if k in r and islistlike(r[k]) and len(r[k]) > 0:
                     v = r[k]
                     del r[k]
                     r.update({f"{k}[{i}]": vi for i, vi in enumerate(v)})

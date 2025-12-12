@@ -128,12 +128,12 @@ class PlotMixin:
         return ret
 
     @property
-    def cmap(self):  # pylint: disable=r0201
+    def cmap(self):
         """Get the current cmap."""
         return plt.get_cmap()
 
     @cmap.setter
-    def cmap(self, cmap):  # pylint: disable=r0201
+    def cmap(self, cmap):
         """Set the plot cmap."""
         return plt.set_cmap(cmap)
 
@@ -397,10 +397,10 @@ class PlotMixin:
                 self.figure()
             fig = self.fig
             func = fig.__getattribute__(f"set_{name}")
-
         if o_name in dir(type(self)) or func is None:
             try:
-                return super().__setattr__(o_name, value)
+                super().__setattr__(o_name, value)
+                return
             except AttributeError:
                 pass
 

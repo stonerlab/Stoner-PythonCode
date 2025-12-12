@@ -66,7 +66,8 @@ def image_file_adaptor(workingfunc):
             ret = make_Data(r)
             ret.metadata = self.metadata.copy()
             ret.column_headers[0] = workingfunc.__name__
-        elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
+            return self
+        if isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
             if isinstance(r, type(im)) and np.shares_memory(r, im):  # Assume everything was inplace
@@ -86,8 +87,7 @@ def image_file_adaptor(workingfunc):
             metadata.update(r.metadata)
             ret.metadata = metadata
             return ret
-        else:
-            return r
+        return r
 
     return fix_signature(gen_func, workingfunc)
 
@@ -266,13 +266,29 @@ def image_array_adaptor(workingfunc):
     return fix_signature(gen_func, workingfunc)
 
 
+def label(**kwargs):
+    """A decoratory that adds attributes to a callable.
+
+    Keywrod Arguments:
+        **kwargs:
+            All keyword arguments are added to the functions __dict__.
+    """
+
+    def _decorator(func):
+        """Actual decorator."""
+        func.__dict__.update(kwargs)
+        return func
+
+    return _decorator
+
+
 def class_modifier(
     module,
     adaptor=image_array_adaptor,
     transpose=False,
     overload=False,
     proxy_cls=None,
-    RTD_restrictions=True,
+    RTD_restrictions=True,  # pylint: disable=invalid-name
     no_long_names=False,
     alias=None,
 ):
@@ -301,8 +317,8 @@ def class_modifier(
         RTD_Restrictions (bool):
             If True (default), do not add members from outside our own package when on ReadTheDocs.
         no_long_names (bool):
-            To avoid name collision the default is to create two entries in the class __dict__ - one for the standard name
-            and one to include the full module path. This disables the latter.
+            To avoid name collision the default is to create two entries in the class __dict__ - one for the
+            standard name and one to include the full module path. This disables the latter.
 
 
     Returns:

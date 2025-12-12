@@ -10,7 +10,7 @@ from scipy.interpolate import UnivariateSpline, interp1d
 from scipy.signal import convolve, get_window, savgol_filter
 
 from ..compat import get_func_params, int_types, string_types
-from ..tools import isiterable, isLikeList, isnone, ordinal
+from ..tools import isiterable, islistlike, isnone, ordinal
 from .utils import GetAffineTransform, _twoD_fit
 from .utils import outlier as _outlier
 
@@ -142,7 +142,7 @@ def del_nan(datafile, col=None, clone=False):
 
     if col is None:  # If col is still None, use all columns that are set to any value in datafile.setas
         col = [ix for ix, col in enumerate(datafile.setas) if col != "."]
-    if not isLikeList(col):  # If col isn't a list, make it one now
+    if not islistlike(col):  # If col isn't a list, make it one now
         col = [col]
     col = [ret.find_col(c) for c in col]  # Normalise col to be a list of integers
     dels = np.zeros(len(ret)).astype(bool)

@@ -12,6 +12,7 @@ from ..folders.core import BaseFolder
 from ..folders.mixins import DiskBasedFolderMixin
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
+from .imagefuncs import convert
 
 IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
@@ -36,9 +37,9 @@ class ImageStackMixin:
         self._names = []
         self._sizes = np.array([], dtype=int).reshape(0, 2)
 
-        if not len(args):
+        if not args:
             super().__init__(**kargs)
-            return None  # No further initialisation
+            return
         other = args[0]
         if isinstance(other, ImageStackMixin):
             super().__init__(*args[1:], **kargs)
@@ -183,6 +184,7 @@ class ImageStackMixin:
         self._stack[:row, :col, idx] = value
         self._stack.mask = np.ma.getmaskarray(self._stack)
         self._stack.mask[:row, :col, idx] = mask
+        return None
 
     def __inserter__(self, ix, name, value):
         """Provide an efficient insert into the stack.
@@ -298,7 +300,7 @@ class ImageStackMixin:
             return new_size
         if dtype is None:
             dtype = self._stack.dtype
-        row, col, pag = tuple([min(o, n) for o, n in zip(old_size, new_size)])
+        row, col, pag = tuple((min(o, n) for o, n in zip(old_size, new_size)))
 
         new = np.ma.zeros(new_size, dtype=dtype).view(ImageArray)
         new[:row, :col, :pag] = self._stack[:row, :col, :pag]
@@ -376,7 +378,6 @@ class ImageStackMixin:
             4,  Dirty Pixels. J. Blinn.
                 In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
         """
-        from .imagefuncs import convert
 
         # Actually this is just a pass through for the imagefuncs.convert routine
         mask = self._stack.mask

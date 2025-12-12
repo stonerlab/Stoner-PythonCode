@@ -15,7 +15,7 @@ from scipy.optimize import curve_fit as _curve_fit
 from scipy.optimize import differential_evolution as _differential_evolution
 
 from ...compat import index_types, string_types
-from ...tools import isiterable, isLikeList, isnone, ordinal
+from ...tools import isiterable, islistlike, isnone, ordinal
 from .classes import (
     MimizerAdaptor,
     ODR_Model,
@@ -384,14 +384,14 @@ def _record_curve_fit_result(
         tmp_mask = np.column_stack((tmp_mask, col_mask))
     else:  # Inserting data
         tmp_mask = np.column_stack((tmp_mask[:, 0:result], col_mask, tmp_mask[:, result:]))
-    if isLikeList(xcol):
+    if islistlike(xcol):
         new_col = func(datafile[:, xcol], *popt)
     else:
         new_col = func(datafile.column(xcol), *popt)
     if result:
         datafile.add_column(new_col, index=result, replace=replace, header=header)
     if residuals and result:
-        if not isLikeList(ycol):
+        if not islistlike(ycol):
             ycol = [ycol]
         for yc in ycol:
             residual_vals = datafile.column(yc) - new_col

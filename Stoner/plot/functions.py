@@ -272,10 +272,7 @@ def _fix_kargs(datafile, function=None, defaults=None, otherkargs=None, **kargs)
     if function is None:
         function = defaults["plotter"]
     if isinstance(function, str):
-        if "projection" in kargs:
-            projection = kargs["projection"]
-        else:
-            projection = "rectilinear"
+        projection = kargs.get("projection", "rectilinear")
         function = getattr(plt.axes(projection=projection), function)
         if datafile._figure is not plt.gcf():
             plt.close(plt.gcf())
@@ -521,7 +518,7 @@ def griddata(
                 Z[:, :, i] = sp_griddata(points, zdata[:, i], pts, method=method)
 
         return pts[:, :, 0], pts[:, :, 1], Z
-    elif dims == 3:
+    if dims == 3:
         pts = np.mgrid[xlim, ylim, zlim].T  # pylint: disable=no-member
         vpts = np.mgrid[extents[0], extents[1], extents[2]].T  # pylint: disable=no-member
 
@@ -540,6 +537,7 @@ def griddata(
                 U[:, :, i] = sp_griddata(points, udata[:, i], pts, method=method)
 
         return vpts[:, :, :, 0], vpts[:, :, :, 1], vpts[:, :, :, 2], U
+    return None
 
 
 def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, **kargs):
@@ -618,7 +616,7 @@ def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None,
     return fig
 
 
-def inset(datafile, parent=None, loc=None, width=0.35, height=0.30, **kargs):  # pylint: disable=r0201
+def inset(_, parent=None, loc=None, width=0.35, height=0.30, **kargs):
     """Add a new set of axes as an inset to the current plot.
 
     Keyword Arguments:
@@ -741,11 +739,6 @@ def plot_matrix(
     cmap=getattr(cm, "plasma"),
     show_plot=True,
     title="",
-    xlabel=None,
-    ylabel=None,
-    zlabel=None,
-    figure=None,
-    plotter=None,
     **kwords,
 ):
     """Plot a surface plot by assuming that the current dataset represents a regular matrix of points.
@@ -787,6 +780,12 @@ def plot_matrix(
         Returns:
             The matplotib figure with the data plotted
     """
+    xlabel = kwords.pop("xlabel", None)
+    ylabel = kwords.pop("ylabel", None)
+    zlabel = kwords.pop("zlabel", None)
+    figure = kwords.pop("figure", None)
+    plotter = kwords.pop("plotter", None)
+
     # Sortout yvals values
     match yvals:
         case int() | str() | _pattern_type():
@@ -953,7 +952,7 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
         "xlabel": datafile._col_label(datafile.find_col(c.xcol)),
         "ylabel": datafile._col_label(datafile.find_col(c.ycol), True),
     }
-    otherargs = list()
+    otherargs = []
     if "plotter" not in kargs and (
         c.xerr is not None or c.yerr is not None
     ):  # USe and errorbar blotter by default for errors

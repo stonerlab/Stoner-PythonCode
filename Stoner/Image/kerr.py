@@ -110,7 +110,7 @@ class KerrImageFile(ImageFile):
         self._image = self.image.view(KerrArray)
 
     @ImageFile.image.getter
-    def image(self: Self) -> ImageArray:  # pylint disable=invalid-overridden-method
+    def image(self: Self) -> ImageArray:  # pylint: disable=invalid-overridden-method
         """Access the image data."""
         return self._image.view(KerrArray)
 
@@ -260,7 +260,7 @@ class KerrStackMixin:
         mask[abs(self[last] - self[first]) < tolerance] = True
         return mask
 
-    def HcMap(
+    def HcMap(  # pylint: disable=invalid-name
         self: Self,
         threshold: float = 0.5,
         correct_drift: bool = False,
@@ -302,7 +302,7 @@ class KerrStackMixin:
             ks.apply_all("correct_drift", ref=baseimage, quiet=quiet)
             if not quiet:
                 print("drift correct done")
-        masks = self.denoise_thresh(denoise_weight=0.1, thresh=threshold, invert=not (saturation_white))
+        masks = self.denoise_thresh(denoise_weight=0.1, thresh=threshold, invert=not saturation_white)
         if not quiet:
             print("thresholding done")
         si, sp = masks.switch_index(saturation_end=saturation_end)
@@ -313,7 +313,9 @@ class KerrStackMixin:
             return Hcmap, ei
         return Hcmap
 
-    def average_Hcmap(self: Self, weights: Optional[NDArray] = None, ignore_zeros: bool = False) -> Self:
+    def average_Hcmap(  # pylint: disable=invalid-name
+        self: Self, weights: Optional[NDArray] = None, ignore_zeros: bool = False
+    ) -> Self:
         """Get an array of average pixel values for the stack.
 
         Keyword Arguments:

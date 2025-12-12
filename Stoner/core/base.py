@@ -20,7 +20,7 @@ except ImportError:
     pd = None
 
 from ..compat import _pattern_type, int_types, string_types
-from ..tools import isComparable, isiterable
+from ..tools import iscomparable, isiterable
 from .exceptions import StonerAssertionError
 from .Typing import Filename, RegExp, String_Types
 
@@ -224,7 +224,7 @@ class RegexpDict(SortedDict):
         # Do values differ?
         ret = type(self)()
         for (mk, mv), (ok, ov) in zip(sorted(self.items()), sorted(other.items())):
-            if np.any(mv != ov) and isComparable(mv, ov):
+            if np.any(mv != ov) and iscomparable(mv, ov):
                 ret[mk] = (mv, ov)
         return ret
 

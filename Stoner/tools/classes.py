@@ -2,7 +2,7 @@
 """Useful Utility classes."""
 
 __all__ = [
-    "attributeStore",
+    "AttributeStore",
     "TypedList",
     "Options",
     "get_option",
@@ -31,7 +31,7 @@ _options = {
 }
 
 
-class attributeStore(dict):
+class AttributeStore(dict):
     """A dictionary=like class that provides attributes that work like indices.
 
     Used to implement the mapping of column types to indices in the setas attriobutes.
@@ -152,7 +152,7 @@ class TypedList(MutableSequence):
 
 def get_option(name: str) -> bool:
     """Return the option value."""
-    if name not in _options.keys():
+    if name not in _options:
         raise IndexError(f"{name} is not a valid package option")
     return _options[name]
 
@@ -174,7 +174,7 @@ def set_option(name: str, value: bool) -> None:
         value (depends on name):
             The value to set (see *name*)
     """
-    if name not in _options.keys():
+    if name not in _options:
         raise IndexError(f"{name} is not a valid package option")
     if not isinstance(value, bool):
         raise ValueError(f"{name} takes a boolean value not a {type(value)}")
@@ -191,7 +191,8 @@ class Options:
     def __setattr__(self: Self, name: str, value: bool) -> None:
         """Set an option value."""
         if name.startswith("_"):
-            return super().__setattr__(name, value)
+            super().__setattr__(name, value)
+            return
         if name not in _options:
             raise AttributeError(f"{name} is not a recognised option.")
         if not isinstance(value, type(_options[name])):

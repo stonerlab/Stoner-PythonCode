@@ -34,13 +34,13 @@ def test_is_AnyNone():
 def test_is_Comparable():
     x1 = np.ones(10)
     x2 = np.zeros(10)
-    assert tests.isComparable(x1, x2), "is_Comparable with arrays failed."
+    assert tests.iscomparable(x1, x2), "is_Comparable with arrays failed."
     x1 = "Hello"
     x2 = "World"
-    assert tests.isComparable(x1, x2), "Failed is_Comparable with type error."
+    assert tests.iscomparable(x1, x2), "Failed is_Comparable with type error."
     x1 = 3
     x2 = 5
-    assert tests.isComparable(x1, x2), "is_Comparable failed with integers"
+    assert tests.iscomparable(x1, x2), "is_Comparable failed with integers"
 
 
 def test_is_Iterable():
@@ -48,7 +48,7 @@ def test_is_Iterable():
 
 
 def test_is_like_list():
-    assert tests.isLikeList(tuple()), "isLikeList failed."
+    assert tests.islistlike(tuple()), "islistlike failed."
 
 
 def test_is_None():
@@ -69,11 +69,11 @@ def test_is_property():
 
 
 def test_is_tuple():
-    assert not tests.isTuple(5), "isTuple though 5 was a tuple"
-    assert not tests.isTuple((5,), int, int), "isTuple failed to short circuit length check"
-    assert tests.isTuple((5,)), "isTuple didn't think (5,) is a tuple"
-    assert tests.isTuple((4, "Hi"), int, str), "isTuple failed to match types"
-    assert not tests.isTuple((4, "Hi"), str, int), "isTuple failed to match types as bad"
+    assert not tests.istuple(5), "istuple though 5 was a tuple"
+    assert not tests.istuple((5,), int, int), "istuple failed to short circuit length check"
+    assert tests.istuple((5,)), "istuple didn't think (5,) is a tuple"
+    assert tests.istuple((4, "Hi"), int, str), "istuple failed to match types"
+    assert not tests.istuple((4, "Hi"), str, int), "istuple failed to match types as bad"
 
 
 if __name__ == "__main__":

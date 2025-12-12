@@ -13,12 +13,12 @@ __all__ = [
     "format_val",
     "html_escape",
     "isanynone",
-    "isComparable",
+    "iscomparable",
     "isnone",
     "isiterable",
-    "isLikeList",
+    "islistlike",
     "isproperty",
-    "isTuple",
+    "istuple",
     "copy_into",
     "make_Data",
     "make_Class",
@@ -36,7 +36,7 @@ import numpy as np
 
 from . import decorators
 from .classes import Options, TypedList
-from .classes import attributeStore as AttributeStore
+from .classes import AttributeStore
 from .classes import copy_into, get_option, set_option
 from .decorators import fix_signature, make_Class, make_Data
 from .formatting import (
@@ -51,12 +51,12 @@ from .tests import (
     all_size,
     all_type,
     isanynone,
-    isComparable,
+    iscomparable,
     isiterable,
-    isLikeList,
+    islistlike,
     isnone,
     isproperty,
-    isTuple,
+    istuple,
 )
 
 operator = {

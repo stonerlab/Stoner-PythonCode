@@ -40,7 +40,7 @@ from ..compat import (  # Some things to help with Python2 and Python3 compatibi
 )
 from ..core.base import TypeHintedDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..tools import isTuple, make_Data
+from ..tools import istuple, make_Data
 from ..tools.classes import Options
 from ..tools.decorators import (
     class_modifier,
@@ -1121,7 +1121,7 @@ class ImageFile(metadataObject):
         data.setas(x=_.xcol, y=_.ycol, z=_.zcol)  # pylint: disable=not-callable
         if isinstance(shape, string_types) and shape == "unique":
             shape = (len(np.unique(data.x)), len(np.unique(data.y)))
-        elif isTuple(shape, int_types, int_types):
+        elif istuple(shape, int_types, int_types):
             pass
         else:
             shape = None

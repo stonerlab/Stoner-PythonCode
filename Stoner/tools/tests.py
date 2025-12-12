@@ -5,12 +5,12 @@ __all__ = [
     "all_size",
     "all_type",
     "isanynone",
-    "isComparable",
+    "iscomparable",
     "isiterable",
-    "isLikeList",
+    "islistlike",
     "isnone",
     "isproperty",
-    "isTuple",
+    "istuple",
 ]
 from collections.abc import Iterable
 from importlib import import_module
@@ -100,7 +100,7 @@ def isanynone(*args: Any) -> bool:
     return False
 
 
-def isComparable(v1, v2) -> bool:
+def iscomparable(v1, v2) -> bool:
     """Return true if v1 and v2 can be compared sensibly.
 
     Args:
@@ -135,7 +135,7 @@ def isiterable(value: Any) -> bool:
     return isinstance(value, Iterable)
 
 
-def isLikeList(value: Any) -> bool:
+def islistlike(value: Any) -> bool:
     """Return True if value is an iterable but not a string."""
     return isiterable(value) and not isinstance(value, string_types)
 
@@ -190,7 +190,7 @@ def isproperty(obj: Any, name: str) -> bool:
     return hasattr(obj, name) and isinstance(getattr(obj, name), property)
 
 
-def isTuple(obj: Any, *args: type, strict: bool = True) -> bool:
+def istuple(obj: Any, *args: type, strict: bool = True) -> bool:
     """Determine if obj is a tuple of a certain signature.
 
     Args:
