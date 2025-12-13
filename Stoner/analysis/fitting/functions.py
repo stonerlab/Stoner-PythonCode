@@ -15,7 +15,7 @@ from scipy.optimize import curve_fit as _curve_fit
 from scipy.optimize import differential_evolution as _differential_evolution
 
 from ...compat import index_types, string_types
-from ...tools import isiterable, islistlike, isnone, ordinal
+from ...tools import isiterable, islistlike, ordinal
 from .classes import (
     MimizerAdaptor,
     ODR_Model,
@@ -30,7 +30,7 @@ _lmfit = True
 def _get_model_parnames(model):
     """Get a list of the model parameter names."""
     if isinstance(model, type) and (issubclass(model, Model) or issubclass(model, odrModel)):
-        model = Model(func=model.func)
+        model = model()
 
     if isinstance(model, Model):
         return model.param_names
@@ -79,44 +79,119 @@ def _curve_fit_p0_list(p0, model):
     raise RuntimeError("Shouldn't have returned None from _curve_fit_p0_list!")
 
 
-def _get_curve_fit_data(datafile, xcol, ycol, bounds, sigma):
-    """Gather up the xdata and sigma columns for curve_fit."""
+def _get_curve_fit_data(datafile, xcol, ycol, sigma, **kwargs):
+    """Gather up the xdata and sigma columns for curve_fit.
+
+    Returns:
+        (array[n float],2-Arrat[m x n float],2D-Array[m x n float] or None):
+            x-data, y-data, sigma data.
+
+    y-data is always converted to m columns by n rows, sigma will be if it isn't None.'
+    """
+    bounds = kwargs.pop("bounds", lambda x, y: True)
     working = datafile.search(xcol, bounds)
     working = ma.mask_rowcols(working, axis=0)
-    if not isnone(sigma):
-        sigma = working[:, datafile.find_col(sigma)]
-    else:
-        sigma = None
-    if isinstance(xcol, string_types):
-        xdat = working[:, datafile.find_col(xcol)]
-    elif isiterable(xcol):
-        for ix, c in enumerate(xcol):
-            if ix == 0:
-                xdat = working[:, datafile.find_col(c)]
-            else:
-                xdat = np.column_stack((xdat, working[:, datafile.find_col(c)]))
-    else:
-        xdat = working[:, datafile.find_col(xcol)]
+    match xcol:
+        case _ if isinstance(xcol, index_types):
+            xdat = working[:, datafile.find_col(xcol)]
+        case np.ndarray(ndim=1, size=len(working)):
+            xdat = xcol
+        case _ if isiterable(xcol):
+            for ix, c in enumerate(xcol):
+                if ix == 0:
+                    xdat = working[:, datafile.find_col(c)]
+                else:
+                    xdat = np.column_stack((xdat, working[:, datafile.find_col(c)]))
+        case _:
+            raise TypeError("Unable to idneify x-data for fitting.")
 
     for i, yc in enumerate(ycol):
-        if isinstance(yc, index_types):
-            ydat = working[:, datafile.find_col(yc)]
-        elif isinstance(yc, np.ndarray) and yc.ndim == 1 and len(yc) == len(datafile):
-            ydat = yc
-        else:
-            raise RuntimeError(
-                """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
-                length as the dataset"""
-            )
+        match yc:
+            case _ if isinstance(yc, index_types):
+                ydat = working[:, datafile.find_col(yc)]
+            case np.ndarray() if yc.ndim == 1 and yc.size == len(working):
+                ydat = yc
+            case _:
+                raise TypeError(
+                    """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
+                    length as the dataset"""
+                )
         if i == 0:
             ydata = np.atleast_2d(ydat)
         else:
             ydata = np.vstack([ydata, ydat])
+        match sigma:
+            case list() if len(sigma) == 0:
+                sdat = None
+            case list() if all(isinstance(s, index_types) for s in sigma) and len(sigma) == len(ycol):
+                sdat = working[:, datafile.find_col(sigma[i])]
+            case _ if isinstance(sigma, index_types):
+                sdat = working[:, datafile.find_col(sigma)]
+            case float():
+                sdat = np.ones_like(ydata) * sigma
+            case np.ndarray() if sigma.size == ydat:
+                sdat = sigma
+            case np.ndarray() if sigma.ndims == 2 and sigma.shape[1] == len(ycol):
+                sdat = sigma[:, i]
+            case None:
+                sdat = None
+            case _:
+                raise TypeError("Unable to recognise the y-error data.")
+        if i == 0 and sigma is not None:
+            sdata = np.atleast_2d(sdat)
+        elif sigma is not None:
+            sdata = np.vstack([sdata, sdat])
+        else:
+            sdata = None
 
-    return xdat, ydata, sigma
+    return xdat, ydata, sdata
 
 
-def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigma_x=None):
+def _get_curve_fit_func(func, kwargs):
+    """Construct a fitting function and initial guess set for simple curve_fit.
+
+    Args:
+        func (fitting model or callable):
+            The model we are trying to use to fit the data.
+        kwargs (dict):
+            The Keyword Arguments pass to the cuve_fit method.
+
+    Returns:
+        (callable,list|callable):
+            fitting function in the correct form for scipy.optimize.curve)fit and the initial guesses.
+    """
+    if isinstance(func, type) and issubclass(func, (Model, sp.odr.Model)):
+        func = func()
+    match func:
+        case sp.odr.Model():
+
+            def _func(x, *beta):
+                return func.fcn(beta, x)
+
+            return _func, kwargs.pop("p0", func.estimate)
+        case Model():
+            _func = func.func
+            try:
+                if "p0" not in kwargs:  # Avoid expensive guess if we have a p0
+                    pguess = func.guess
+                else:
+                    pguess = None
+            except (
+                ArithmeticError,
+                RuntimeError,
+                ValueError,
+            ):
+                pguess = None
+            return _func, kwargs.pop("p0", pguess)
+        case _ if callable(func):
+            return func, kwargs.pop("p0", None)
+        case _:
+            raise TypeError(
+                "curve_fit model must be either a Model class from lmfit or scipy.odr or a callable and not a {yupe(func)}"
+            )
+
+
+def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, sigma_x=None, **kwargs):
     """Marshall the data for doing a curve_fit or equivalent.
 
     Args:
@@ -130,62 +205,101 @@ def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigm
             column of y-errors or uncertainty values.
         bounds (callable):
             Used to select the data rows to fit
-        scale_covar (bool,None):
-            If set the flag to scale the covariance.
         sigma_x (index or array-like):
             column of x-errors or uncertainty values.
 
     Returns:
-        (data,scale_covar,col_assignments):
+        (data,kwargs,col_assignments):
             data is a tuple of (x,y,sigma). scale_covar is False if sigma is real errors.
     """
-    _ = datafile._col_args(xcol=xcol, ycol=ycol)
+    # Special case for doing a fit where we're matching a function to a value not in data.
+    if ycol is not None and isinstance(ycol[0], np.ndarray) and len(ycol[0]) == len(datafile):
+        ydata = ycol[0]
+        sdata = None
+        sxdata = None
+        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=None, yerr=sigma, xerr=sigma_x)
+        xcol, ycol, sigma, sigma_x = _.xcol, [], _.yerr, _.xerr
+    else:
+        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma, xerr=sigma_x)
+        xcol, ycol, sigma, sigma_x = _.xcol, _.ycol, _.yerr, _.xerr
+
+    bounds = kwargs.pop("bounds", lambda x, y: True)
     working = datafile.search(_.xcol, bounds)
     working = ma.mask_rowcols(working, axis=0)
-    xdata = working[:, datafile.find_col(_.xcol)]
-    ydata = working[:, datafile.find_col(_.ycol)]
     # Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
 
-    if sigma is not None:
-        if isinstance(sigma, index_types):
-            _ = datafile._col(xcol=xcol, ycol=ycol, yerr=sigma)
-            sigma = working[:, datafile.find_col(sigma)]
-        elif isinstance(sigma, (list, tuple)):
-            sigma = ma.array(sigma)
-        elif isinstance(sigma, np.ndarray):
-            sigma = ma.array(sigma)  # ensure masked
+    match xcol:
+        case _ if isinstance(xcol, index_types):
+            xdat = working[:, datafile.find_col(xcol)]
+        case np.ndarray(ndim=1, size=len(working)):
+            xdat = xcol
+        case _ if isiterable(xcol):
+            for ix, c in enumerate(xcol):
+                if ix == 0:
+                    xdat = working[:, datafile.find_col(c)]
+                else:
+                    xdat = np.column_stack((xdat, working[:, datafile.find_col(c)]))
+        case _:
+            raise TypeError("Unable to idneify x-data for fitting.")
+    xdata = xdat
+    for i, yc in enumerate(ycol):
+        match yc:
+            case _ if isinstance(yc, index_types):
+                ydat = working[:, datafile.find_col(yc)]
+            case np.ndarray() if yc.ndim == 1 and yc.size == len(working):
+                ydat = yc
+            case _:
+                raise TypeError(
+                    """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
+                    length as the dataset"""
+                )
+        if i == 0:
+            ydata = np.atleast_2d(ydat)
         else:
-            raise RuntimeError("Sigma should have been a column index or list of values")
-    elif not isnone(_.yerr):
-        sigma = working[:, datafile.find_col(_.yerr)]
-    else:
-        sigma = 1.0
-        scale_covar = False
-
-    if sigma_x is None:
-        if _.xerr is None:
-            sigma_x = sigma
-        else:
-            sigma_x = working[:, datafile.find_col(_.xerr)]
-    else:
-        if isinstance(sigma_x, index_types):
-            _ = datafile._col(xcol=xcol, ycol=ycol, yerr=_.yerr, xerr=sigma_x)
-            sigma_x = working[:, datafile.find_col(sigma_x)]
-        elif isinstance(sigma_x, (list, tuple)):
-            sigma_x = ma.array(sigma_x)
-        elif isinstance(sigma_x, np.ndarray):
-            sigma_x = ma.array(sigma_x)  # ensure masked
-        else:
-            raise RuntimeError("Sigma_x should have been a column index or list of values")
+            ydata = np.vstack([ydata, ydat])
+        for isigma, sigma_n in enumerate([sigma, sigma_x]):
+            match sigma_n:
+                case None:
+                    sdat = np.ones_like(ydat)
+                    kwargs["scale_covar"] = True
+                case list() if len(sigma_n) == 0:
+                    sdat = np.ones_like(ydat)
+                    kwargs["scale_covar"] = True
+                case list() if all(isinstance(s, index_types) for s in sigma_n) and len(sigma_n) == len(ycol):
+                    sdat = working[:, datafile.find_col(sigma_n[i])]
+                case _ if isinstance(sigma_n, index_types):
+                    sdat = working[:, datafile.find_col(sigma_n)]
+                case float():
+                    sdat = np.ones_like(ydata) * sigma_n
+                case np.ndarray() if sigma_n.size == ydat:
+                    sdat = sigma_n
+                case np.ndarray() if sigma_n.ndims == 2 and sigma_n.shape[1] == len(ycol):
+                    sdat = sigma_n[:, i]
+                case _:
+                    raise TypeError("Unable to recognise the y-error data.")
+            match (i, isigma):
+                case (0, 0):
+                    sdata = np.atleast_2d(sdat)
+                case (0, 1):
+                    sxdata = np.atleast_2d(sdat)
+                case (_, 0):
+                    sdata = np.vstack([sdata, sdat])
+                case (_, 1):
+                    sxdata = np.vstack([sdata, sdat])
 
     mask = np.invert(ydata.mask)
-    if isinstance(sigma, np.ndarray):
-        sigma = sigma[mask]
-        sigma_x = sigma_x[mask]
-    ydata = ydata[mask]
-    xdata = xdata[mask]  # lmfit doesn't seem to work well with masked data - here we just delete masked points
+    if np.any(~mask):
+        if isinstance(sdata, np.ndarray) and sdata.size == xdata.size:
+            sdata = sdata[mask]
+        if isinstance(sxdata, np.ndarray) and sxdata.size == xdata.size:
+            sxdata = sxdata[mask]
+        ydata = ydata[mask]
+        xdata = xdata[
+            mask.ravel()
+        ]  # lmfit doesn't seem to work well with masked data - here we just delete masked points
 
-    return (xdata, ydata, sigma, sigma_x), scale_covar, _
+    kwargs.setdefault("absolute_sigma", not kwargs.pop("scale_covar", sigma is not None))
+    return [xdata, ydata, sdata, sxdata], kwargs, _
 
 
 def __lmfit_one(
@@ -302,8 +416,8 @@ def _record_curve_fit_result(
         f_name = func.__name__
         labels = getattr(func, "labels", None)
         units = getattr(func, "units", None)
+        func = func().func
         args = getfullargspec(func)[0]  # pylint: disable=W1505
-        func = func.func
         if args[0] == "datafile":
             del args[0]
         if len(args) > 0:
@@ -751,10 +865,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         *   :py:meth:`Stoner.Data.differential_evolution`
         *   User guide section :ref:`curve_fit_guide`
     """
-    _ = datafile._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma)
-    xcol, ycol, sigma = _.xcol, _.ycol, _.yerr
 
-    bounds = kwargs.pop("bounds", lambda x, y: True)
     result = kwargs.pop("result", None)
     replace = kwargs.pop("replace", False)
     header = kwargs.pop("header", None)
@@ -764,109 +875,71 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     # Support either scale_covar or absolute_sigma, the latter wins if both supplied
     # If neither are specified, then if sigma is not given, absolute sigma will be False.
 
-    scale_covar = kwargs.pop("scale_covar", sigma is not None)
-    absolute_sigma = kwargs.pop("absolute_sigma", not scale_covar)
     # Support both asrow and output, the latter wins if both supplied
-    asrow = kwargs.pop("asrow", False)
-    output = kwargs.pop("output", "row" if asrow else "fit")
+    output = kwargs.pop("output", "row" if kwargs.pop("asrow", False) else "fit")
     kwargs["full_output"] = True
 
     if not isinstance(ycol, list):
         ycol = [ycol]
 
-    xdat, ydata, sigma = _get_curve_fit_data(datafile, xcol, ycol, bounds, sigma)
+    # Collect data, function and p0 together.
+    data, kwargs, cols = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, **kwargs)
+    _func, p0 = _get_curve_fit_func(func, kwargs)
 
-    # Support any of our alternatives for the fitting function
-    if isinstance(func, type) and issubclass(func, (Model, sp.odr.Model)):
-        func = func()
-    if isinstance(func, sp.odr.Model):  # scipy othrothogonal model hack
-
-        def _func(x, *beta):
-            return func.fcn(beta, x)
-
-        p0 = kwargs.pop("p0", func.estimate)
-    elif isinstance(func, Model):
-        _func = func.func
-        try:
-            if "p0" not in kwargs:  # Avoid expensive guess if we have a p0
-                pguess = func.guess
-            else:
-                pguess = None
-        except (
-            ArithmeticError,
-            AttributeError,
-            LookupError,
-            RuntimeError,
-            NameError,
-            OSError,
-            TypeError,
-            ValueError,
-        ):
-            pguess = None
-        p0 = kwargs.pop("p0", pguess)
-    elif callable(func):
-        _func = func
-        p0 = kwargs.pop("p0", None)
-    else:
-        raise TypeError(
-            "".join(
-                [
-                    "curve_fit parameter 1 must be either a Model class from",
-                    f" lmfit or scipy.odr, or a callable, not a {type(func)}",
-                ]
-            )
-        )
+    if data[1].ndim == 1:
+        for i in [1, 2, 3]:
+            if isinstance(data[i], np.ndarray):
+                data[i] = np.atleast_2d(data[i])
 
     if callable(p0):  # Allow the user to supply p0 as a callanble function
-        if ydata.ndim != 1:
-            yy = ydata.ravel()
-        else:
-            yy = ydata
         try:  # Skip the guess if it fails
-            p0 = p0(yy, xdat)
+            p0 = p0(data[1].ravel(), np.tile(data[0], data[1].size // data[0].size))
         except (
             ArithmeticError,
-            AttributeError,
-            LookupError,
             RuntimeError,
-            NameError,
-            OSError,
-            TypeError,
             ValueError,
-        ):
+        ):  # Allowable exceptions
             p0 = None
 
     p0 = _curve_fit_p0_list(p0, func)
 
     retvals = []
     i = None
-    for i, ydat in enumerate(ydata):
-        if isinstance(sigma, np.ndarray) and sigma.shape[0] > 1:
-            if sigma.shape[0] == len(ycol):
-                s = sigma[i]
-            elif sigma.ndim == 2 and sigma.shape[1] == len(ycol):
-                s = sigma[:, i]
-            else:
-                s = sigma  # probably this will fail!
+    xdat = data[0]
+    if p0:
+        kwargs["p0"] = p0
+
+    for i, ydat in enumerate(data[1]):
+        if data[2] is not None:
+            kwargs["sigma"] = data[2][i]
         else:
-            s = sigma
-        report = _curve_fit_result(
-            *_curve_fit(_func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kwargs)
-        )
+            sigma = None
+
+        kwargs.pop("scale_covar", None)
+        report = _curve_fit_result(*_curve_fit(_func, xdat, ydat, **kwargs))
         report.func = func
         if p0 is None:
             report.p0 = np.ones(len(report.popt))
         else:
             report.p0 = p0
         report.data = datafile
-        report.residual_vals = ydata - report.fvec
+        report.residual_vals = data[1] - report.fvec
         report.chisq = (report.residual_vals**2).sum()
         report.nfree = len(datafile) - len(report.popt)
         report.chisq /= report.nfree
 
         if result is not None:
             _record_curve_fit_result(
-                datafile, func, report, xcol, header, result, replace, residuals=residuals, ycol=ycol, prefix=prefix
+                datafile,
+                func,
+                report,
+                cols.xcol,
+                header,
+                result,
+                replace,
+                residuals=residuals,
+                ycol=cols.ycol,
+                prefix=prefix,
             )
         try:
             retvals.append(getattr(report, output))
@@ -950,14 +1023,11 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     replace = kwargs.pop("replace", False)
     residuals = kwargs.pop("residuals", False)
     header = kwargs.pop("header", None)
-    # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
-    absolute_sigma = kwargs.pop("absolute_sigma", True)
-    scale_covar = kwargs.pop("scale_covar", not absolute_sigma)
     # Support both asrow and output, the latter wins if both supplied
     asrow = kwargs.pop("asrow", False)
     output = kwargs.pop("output", "row" if asrow else "fit")
 
-    data, scale_covar, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar)
+    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds=bounds, **kwargs)
     data = data[0:3]
     model, prefix = _prep_lmfit_model(model, kwargs)
     p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
@@ -967,7 +1037,8 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
 
     diff_model = MimizerAdaptor(model, params=p0)
 
-    kwargs["polish"] = kwargs.get("polish", True)
+    kwargs.setdefault("polish", True)
+    abs_sigma = kwargs.pop("absolute_sigma", False)
 
     if not single_fit:
         raise NotImplementedError("Sorry chi^2 mapping not implemented for differential evolution yet.")
@@ -976,9 +1047,8 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
         raise RuntimeError(fit.message)
     kwargs.pop("polish", None)
     kwargs["full_output"] = True
-    polish = _curve_fit_result(
-        *_curve_fit(model.func, data[0], data[1], sigma=data[2], p0=fit.x, absolute_sigma=not scale_covar, **kwargs)
-    )
+    kwargs["absolute_sigma"] = abs_sigma
+    polish = _curve_fit_result(*_curve_fit(model.func, data[0], data[1][0], sigma=data[2][0], p0=fit.x, **kwargs))
 
     polish.func = model.func
     polish.p0 = p0
@@ -1086,19 +1156,15 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
             :include-source:
             :outname: lmfit2
     """
-    bounds = kwargs.pop("bounds", lambda x, y: True)
     result = kwargs.pop("result", None)
     replace = kwargs.pop("replace", False)
     residuals = kwargs.pop("residuals", False)
     header = kwargs.pop("header", None)
-    # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
-    absolute_sigma = kwargs.pop("absolute_sigma", True)
-    scale_covar = kwargs.pop("scale_covar", not absolute_sigma)
     # Support both asrow and output, the latter wins if both supplied
     asrow = kwargs.pop("asrow", False)
     output = kwargs.pop("output", "row" if asrow else "fit")
 
-    data, scale_covar, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar)
+    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, **kwargs)
     model, prefix = _prep_lmfit_model(model, kwargs)
     p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
     nan_policy = kwargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
@@ -1111,7 +1177,7 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
             p0,
             prefix,
             _,
-            scale_covar,
+            kwargs.get("scale_covar", not kwargs.get("absolute_sigma", False)),
             result=result,
             header=header,
             replace=replace,
@@ -1127,7 +1193,15 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
                 model, data[1], data[0], pn_i, kwargs
             )  # model, data, params, prefix, columns, scale_covar,**kwargs)
             ret_val[i, :] = __lmfit_one(
-                datafile, model, data, p0, prefix, _, scale_covar, nan_policy=nan_policy, output="row"
+                datafile,
+                model,
+                data,
+                p0,
+                prefix,
+                _,
+                kwargs.get("scale_covar", not kwargs.get("absolute_sigma", False)),
+                nan_policy=nan_policy,
+                output="row",
             )
         if output == "data":  # Create a data object and seet column headers etc correctly
             ret = datafile.clone
@@ -1306,11 +1380,9 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     # Support both asrow and output, the latter wins if both supplied
     sigma = kwargs.pop("sigma", None)
     sigma_x = kwargs.pop("sigma_x", None)
-    absolute_sigma = kwargs.pop("absolute_sigma", sigma is not None)
-    scale_covar = kwargs.pop("scale_covar", not absolute_sigma)
     bounds = kwargs.pop("bounds", lambda x, r: True)
     p0 = kwargs.pop("p0", None)
-    data, scale_covar, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds, scale_covar, sigma_x=sigma_x)
+    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds=bounds, sigma_x=sigma_x, **kwargs)
     if not isinstance(model, odrModel):
         model, prefix = _prep_lmfit_model(model, kwargs)
     else:
@@ -1318,7 +1390,7 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
     kwargs["p0"] = p0
     model = ODR_Model(model, p0=p0)
-    if not absolute_sigma:
+    if kwargs.get("scale_covar", True):
         data = sp.odr.Data(data[0], data[1], wd=1 / data[3] ** 2, we=1 / data[2] ** 2)
     else:
         data = sp.odr.RealData(data[0], data[1], sx=data[3], sy=data[2])

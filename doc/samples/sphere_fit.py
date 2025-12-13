@@ -37,7 +37,7 @@ def sphere(coords, a, b, c, r):
 num = 25
 q = uniform(low=-pi / 2, high=pi / 2, size=num)
 p = uniform(low=0, high=2 * pi, size=num)
-r = normal(loc=3.0, size=num, scale=0.1)
+r = normal(loc=3.0, size=num, scale=0.2)
 
 x, y, z = transform(r, q, p)
 
@@ -57,7 +57,7 @@ d.template.fig_height = 5.0  # Square aspect ratio
 d.plot_xyz(plotter="scatter", marker=",", griddata=False)
 d.set_box_aspect((1, 1, 1.0))  # Passing through to the current axes
 # curve_fit does the hard work
-popt, pcov = d.curve_fit(sphere, (0, 1, 2), zeros_like(d.x))
+popt, pcov = d.curve_fit(sphere, (0, 1, 2), zeros_like(d.x), result=True)
 
 # This manually constructs the best fit sphere
 a, b, c, r = popt
@@ -75,3 +75,4 @@ ax.plot_surface(
     x, y, z, rstride=1, cstride=1, color=(1.0, 0.0, 0.0, 0.25), linewidth=0
 )
 plt.draw()
+d.annotate_fit(sphere, prefix="sphere", x=-4.5, y=-4, z=3)
