@@ -79,74 +79,6 @@ def _curve_fit_p0_list(p0, model):
     raise RuntimeError("Shouldn't have returned None from _curve_fit_p0_list!")
 
 
-def _get_curve_fit_data(datafile, xcol, ycol, sigma, **kwargs):
-    """Gather up the xdata and sigma columns for curve_fit.
-
-    Returns:
-        (array[n float],2-Arrat[m x n float],2D-Array[m x n float] or None):
-            x-data, y-data, sigma data.
-
-    y-data is always converted to m columns by n rows, sigma will be if it isn't None.'
-    """
-    bounds = kwargs.pop("bounds", lambda x, y: True)
-    working = datafile.search(xcol, bounds)
-    working = ma.mask_rowcols(working, axis=0)
-    match xcol:
-        case _ if isinstance(xcol, index_types):
-            xdat = working[:, datafile.find_col(xcol)]
-        case np.ndarray(ndim=1, size=len(working)):
-            xdat = xcol
-        case _ if isiterable(xcol):
-            for ix, c in enumerate(xcol):
-                if ix == 0:
-                    xdat = working[:, datafile.find_col(c)]
-                else:
-                    xdat = np.column_stack((xdat, working[:, datafile.find_col(c)]))
-        case _:
-            raise TypeError("Unable to idneify x-data for fitting.")
-
-    for i, yc in enumerate(ycol):
-        match yc:
-            case _ if isinstance(yc, index_types):
-                ydat = working[:, datafile.find_col(yc)]
-            case np.ndarray() if yc.ndim == 1 and yc.size == len(working):
-                ydat = yc
-            case _:
-                raise TypeError(
-                    """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
-                    length as the dataset"""
-                )
-        if i == 0:
-            ydata = np.atleast_2d(ydat)
-        else:
-            ydata = np.vstack([ydata, ydat])
-        match sigma:
-            case list() if len(sigma) == 0:
-                sdat = None
-            case list() if all(isinstance(s, index_types) for s in sigma) and len(sigma) == len(ycol):
-                sdat = working[:, datafile.find_col(sigma[i])]
-            case _ if isinstance(sigma, index_types):
-                sdat = working[:, datafile.find_col(sigma)]
-            case float():
-                sdat = np.ones_like(ydata) * sigma
-            case np.ndarray() if sigma.size == ydat:
-                sdat = sigma
-            case np.ndarray() if sigma.ndims == 2 and sigma.shape[1] == len(ycol):
-                sdat = sigma[:, i]
-            case None:
-                sdat = None
-            case _:
-                raise TypeError("Unable to recognise the y-error data.")
-        if i == 0 and sigma is not None:
-            sdata = np.atleast_2d(sdat)
-        elif sigma is not None:
-            sdata = np.vstack([sdata, sdat])
-        else:
-            sdata = None
-
-    return xdat, ydata, sdata
-
-
 def _get_curve_fit_func(func, kwargs):
     """Construct a fitting function and initial guess set for simple curve_fit.
 
@@ -187,7 +119,8 @@ def _get_curve_fit_func(func, kwargs):
             return func, kwargs.pop("p0", None)
         case _:
             raise TypeError(
-                "curve_fit model must be either a Model class from lmfit or scipy.odr or a callable and not a {yupe(func)}"
+                "curve_fit model must be either a Model class from lmfit or scipy.odr or a"
+                "callable and not a {yupe(func)}"
             )
 
 
@@ -205,8 +138,12 @@ def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, sigma_x=None, **kwargs):
             column of y-errors or uncertainty values.
         bounds (callable):
             Used to select the data rows to fit
+
+    Keyword Args:
         sigma_x (index or array-like):
             column of x-errors or uncertainty values.
+        kwargs:
+            Other keyword arguments to set the scale_covar/absolute_sigma.
 
     Returns:
         (data,kwargs,col_assignments):
