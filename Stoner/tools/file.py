@@ -395,6 +395,7 @@ def get_loader(filetype, silent=False):
                 pass
         if not silent:
             raise StonerLoadError(f"Cannot locate a loader function for {filetype}") from err
+    return None
 
 
 def get_saver(filetype, silent=False):
@@ -427,6 +428,7 @@ def get_saver(filetype, silent=False):
                 pass
         if not silent:
             raise StonerLoadError(f"Cannot locate a loader function for {filetype}") from err
+    return None
 
 
 def clear_routine(name, loader=True, saver=True):
@@ -490,7 +492,7 @@ class FileManager:
             if parsed.scheme not in URL_SCHEMES:
                 filename = pathlib.Path(filename)
             else:
-                filename = urllib.request.urlopen(filename)
+                filename = urllib.request.urlopen(filename)  # pylint: disable=consider-using-with
         match filename:
             case str() | pathlib.Path():
                 self.mode = "open"

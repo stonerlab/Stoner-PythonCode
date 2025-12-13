@@ -126,9 +126,9 @@ def save(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
                         break
                 else:
                     raise IOError(f"Can't figure out where the zip file is in {filename}")
-                zipfile = zf.ZipFile(
+                zipfile = zf.ZipFile(  # pylint: disable=consider-using-with
                     path.join(*parts[: i + 1]), "w", compression, True
-                )  # pylint: disable=consider-using-with
+                )
                 close_me = True
                 member = path.join("/", *parts[i + 1 :])
         elif isinstance(filename, zf.ZipFile):  # Handle\ zipfile instance, opening if necessary

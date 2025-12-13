@@ -493,6 +493,12 @@ class PlotFolder(DataFolder):
 
     _defaults = {"plots_per_page": 12, "fig_defaults": {"figsize": (8, 6)}}
 
+    def __init__(self, *args, **kwargs):
+        """Fixup attributes."""
+        super().__init__(*args, **kwargs)
+        self._figure = getattr(self, "_figure", [])
+        self._fig_args = getattr(self, "_fig_args", [])
+
     def figure(self, *args, **kargs):
         """Pass through for :py:func:`matplotlib.pyplot.figure` but also takes a note of the arguments for later."""
         self._fig_args = args
