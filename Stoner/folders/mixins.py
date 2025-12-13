@@ -498,6 +498,7 @@ class PlotFolder(DataFolder):
         super().__init__(*args, **kwargs)
         self._figure = getattr(self, "_figure", [])
         self._fig_args = getattr(self, "_fig_args", [])
+        self._fig_kargs = getattr(self, "_fig_kargs", {})
 
     def figure(self, *args, **kargs):
         """Pass through for :py:func:`matplotlib.pyplot.figure` but also takes a note of the arguments for later."""

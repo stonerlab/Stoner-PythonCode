@@ -330,11 +330,11 @@ def dialog_patterns(pattern: str = "*", name: Optional[str] = None, what: str = 
     """Build a list of patterns and names for a dialog box."""
     out = {}
     for func in next_filer(pattern=pattern, name=name, what=what, mode=mode):
-        for pattern in func.patterns:
-            if pattern in out:
-                out[pattern] += f",{func.name}"
+        for pat in func.patterns:
+            if pat in out:
+                out[pat] += f",{func.name}"
             else:
-                out[pattern] = f"{func.name}"
+                out[pat] = f"{func.name}"
     return out
 
 
@@ -467,8 +467,8 @@ def clear_routine(name, loader=True, saver=True):
                 continue
             for _, values in _loaders_by_pattern.items():
                 remove = []
-                for ix, (_, loader) in enumerate(values):
-                    if loader is func:
+                for ix, (_, loade_f) in enumerate(values):
+                    if loade_f is func:
                         remove.append(ix)
                 if remove:
                     remove.reverse()

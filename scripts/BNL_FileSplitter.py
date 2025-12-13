@@ -40,7 +40,9 @@ with open(filename, "r", encoding="utf-8") as main_fp, open(
             if int(line.split()[1]) != counter:
                 raise ValueError  # check for inconsistencies with filenames and scan numbers
             write_fp.close()
-            write_fp = open(str(counter) + ".bnl", "w", encoding="utf-8")
+            write_fp = open(
+                str(counter) + ".bnl", "w", encoding="utf-8"
+            )  # pylint: disable=consider-using-with
             counter += 1
         if line[0:2] != "#C":
             write_fp.write(line)
