@@ -179,8 +179,8 @@ def __lmfit_one(
         raise RuntimeError("lmfit module not available.")
 
     kwargs = {}
-    kwargs[model.independent_vars[0]] = data[0]
-    fit = model.fit(data[1], params, scale_covar=scale_covar, weights=1.0 / data[2], nan_policy=nan_policy, **kwargs)
+    kwargs[model.independent_vars[0]] = data.x
+    fit = model.fit(data.y, params, scale_covar=scale_covar, weights=1.0 / data.e, nan_policy=nan_policy, **kwargs)
     if fit.success:
         row = _record_curve_fit_result(
             datafile,
@@ -708,13 +708,13 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     data, kwargs, cols = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
     _func, p0 = _get_curve_fit_func(func, kwargs)
 
-    if getattr(data[1], "ndim", 0) == 1:
+    if getattr(data.y, "ndim", 0) == 1:
         for i in [1, 2, 3]:
             if isinstance(data[i], np.ndarray):
                 data[i] = np.atleast_2d(data[i])
     if callable(p0):  # Allow the user to supply p0 as a callanble function
         try:  # Skip the guess if it fails
-            p0 = p0(data[1].ravel(), np.tile(data[0], data[1].size // data[0].size))
+            p0 = p0(data.y.ravel(), np.tile(data.x, data.y.size // data.x.size))
         except (
             ArithmeticError,
             RuntimeError,
@@ -726,12 +726,12 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
 
     retvals = []
     i = None
-    xdat = data[0]
+    xdat = data.x
     if p0:
         kwargs["p0"] = p0
-    for i, ydat in enumerate(data[1]):
-        if data[2] is not None:
-            kwargs["sigma"] = data[2][i]
+    for i, ydat in enumerate(data.y):
+        if data.e is not None:
+            kwargs["sigma"] = data.e[i]
         else:
             sigma = None
         for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "scale_covar"]:
@@ -743,7 +743,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         else:
             report.p0 = p0
         report.data = datafile
-        report.residual_vals = data[1] - report.fvec
+        report.residual_vals = data.y - report.fvec
         report.chisq = (report.residual_vals**2).sum()
         report.nfree = len(datafile) - len(report.popt)
         report.chisq /= report.nfree
@@ -848,9 +848,8 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     output = kwargs.pop("output", "row" if asrow else "fit")
 
     data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, sigma=sigma, bounds=bounds, **kwargs)
-    data = data[0:3]
     model, prefix = _prep_lmfit_model(model, kwargs)
-    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
+    p0, single_fit = _prep_lmfit_p0(model, data.y, data.x, p0, kwargs)
 
     for k in model.param_names:
         kwargs.pop(k, None)
@@ -864,18 +863,27 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
 
     if not single_fit:
         raise NotImplementedError("Sorry chi^2 mapping not implemented for differential evolution yet.")
-    fit = _differential_evolution(diff_model.minimize_func, diff_model.bounds, data, **kwargs)
+    fit = _differential_evolution(
+        diff_model.minimize_func,
+        diff_model.bounds,
+        args=(
+            data.x,
+            data.y,
+            data.e,
+        ),
+        **kwargs,
+    )
     if not fit.success:
         raise RuntimeError(fit.message)
     kwargs.pop("polish", None)
     kwargs["full_output"] = True
     kwargs["absolute_sigma"] = abs_sigma
-    polish = _curve_fit_result(*_curve_fit(model.func, data[0], data[1][0], sigma=data[2][0], p0=fit.x, **kwargs))
+    polish = _curve_fit_result(*_curve_fit(model.func, data.x, data.y[0], sigma=data.e[0], p0=fit.x, **kwargs))
 
     polish.func = model.func
     polish.p0 = p0
     polish.data = datafile
-    polish.residual_vals = data[1] - polish.fvec
+    polish.residual_vals = data.y - polish.fvec
     polish.chisq = (polish.residual_vals**2).sum()
     polish.nfree = len(datafile) - len(polish.popt)
     polish.chisq /= polish.nfree
@@ -988,7 +996,7 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
 
     data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
     model, prefix = _prep_lmfit_model(model, kwargs)
-    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
+    p0, single_fit = _prep_lmfit_p0(model, data.y, data.x, p0, kwargs)
     nan_policy = kwargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
 
     if single_fit:
@@ -1012,7 +1020,7 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
         ret_val = np.zeros((pn.shape[0], pn.shape[1] * 2 + 1))
         for i, pn_i in enumerate(pn):  # iterate over every row in the supplied p0 values
             p0, single_fit = _prep_lmfit_p0(
-                model, data[1], data[0], pn_i, kwargs
+                model, data.y, data.x, pn_i, kwargs
             )  # model, data, params, prefix, columns, scale_covar,**kwargs)
             ret_val[i, :] = __lmfit_one(
                 datafile,
@@ -1211,13 +1219,13 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
         model, prefix = _prep_lmfit_model(model, kwargs)
     else:
         prefix = kwargs.pop("prefix", getattr(model, "name", model.fcn.__name__))
-    p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
+    p0, single_fit = _prep_lmfit_p0(model, data.y, data.x, p0, kwargs)
     kwargs["p0"] = p0
     model = ODR_Model(model, p0=p0)
     if kwargs.get("scale_covar", True):
-        data = sp.odr.Data(data[0], data[1], wd=1 / data[3] ** 2, we=1 / data[2] ** 2)
+        data = sp.odr.Data(data.x, data.y, wd=1 / data.d**2, we=1 / data.e**2)
     else:
-        data = sp.odr.RealData(data[0], data[1], sx=data[3], sy=data[2])
+        data = sp.odr.RealData(data.x, data.y, sx=data.d, sy=data.e)
 
     if single_fit:
         ret_val = _odr_one(datafile, data, model, prefix, _, **kwargs)
