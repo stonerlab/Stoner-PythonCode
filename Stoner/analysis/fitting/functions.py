@@ -7,14 +7,14 @@ from inspect import getfullargspec, isclass
 
 import lmfit as lmfit_mod
 import numpy as np
-from numpy import ma
 import scipy as sp
 from lmfit.model import Model
 from scipy.odr import Model as odrModel
 from scipy.optimize import curve_fit as _curve_fit
 from scipy.optimize import differential_evolution as _differential_evolution
 
-from ...compat import index_types, string_types
+from ...compat import string_types
+from ...core.utils import assemnle_data as _assemnle_data_to_fit
 from ...tools import isiterable, islistlike, ordinal
 from .classes import (
     MimizerAdaptor,
@@ -122,121 +122,6 @@ def _get_curve_fit_func(func, kwargs):
                 "curve_fit model must be either a Model class from lmfit or scipy.odr or a"
                 "callable and not a {yupe(func)}"
             )
-
-
-def _assemnle_data_to_fit(datafile, xcol, ycol, sigma, sigma_x=None, **kwargs):
-    """Marshall the data for doing a curve_fit or equivalent.
-
-    Args:
-        datafile (Data):
-            Data object to work with if not being used as a bound method.
-        xcol (index):
-            Column with xdata in it
-        ycol(index):
-            Column with ydata in it
-        sigma (index or array-like):
-            column of y-errors or uncertainty values.
-        bounds (callable):
-            Used to select the data rows to fit
-
-    Keyword Args:
-        sigma_x (index or array-like):
-            column of x-errors or uncertainty values.
-        kwargs:
-            Other keyword arguments to set the scale_covar/absolute_sigma.
-
-    Returns:
-        (data,kwargs,col_assignments):
-            data is a tuple of (x,y,sigma). scale_covar is False if sigma is real errors.
-    """
-    # Special case for doing a fit where we're matching a function to a value not in data.
-    if ycol is not None and isinstance(ycol[0], np.ndarray) and len(ycol[0]) == len(datafile):
-        ydata = ycol[0]
-        sdata = None
-        sxdata = None
-        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=None, yerr=sigma, xerr=sigma_x)
-        xcol, ycol, sigma, sigma_x = _.xcol, [], _.yerr, _.xerr
-    else:
-        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma, xerr=sigma_x)
-        xcol, ycol, sigma, sigma_x = _.xcol, _.ycol, _.yerr, _.xerr
-
-    bounds = kwargs.pop("bounds", lambda x, y: True)
-    working = datafile.search(_.xcol, bounds)
-    working = ma.mask_rowcols(working, axis=0)
-    # Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
-
-    match xcol:
-        case _ if isinstance(xcol, index_types):
-            xdat = working[:, datafile.find_col(xcol)]
-        case np.ndarray(ndim=1, size=len(working)):
-            xdat = xcol
-        case _ if isiterable(xcol):
-            for ix, c in enumerate(xcol):
-                if ix == 0:
-                    xdat = working[:, datafile.find_col(c)]
-                else:
-                    xdat = np.column_stack((xdat, working[:, datafile.find_col(c)]))
-        case _:
-            raise TypeError("Unable to idneify x-data for fitting.")
-    xdata = xdat
-    for i, yc in enumerate(ycol):
-        match yc:
-            case _ if isinstance(yc, index_types):
-                ydat = working[:, datafile.find_col(yc)]
-            case np.ndarray() if yc.ndim == 1 and yc.size == len(working):
-                ydat = yc
-            case _:
-                raise TypeError(
-                    """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
-                    length as the dataset"""
-                )
-        if i == 0:
-            ydata = np.atleast_2d(ydat)
-        else:
-            ydata = np.vstack([ydata, ydat])
-        for isigma, sigma_n in enumerate([sigma, sigma_x]):
-            match sigma_n:
-                case None:
-                    sdat = np.ones_like(ydat)
-                    kwargs["scale_covar"] = True
-                case list() if len(sigma_n) == 0:
-                    sdat = np.ones_like(ydat)
-                    kwargs["scale_covar"] = True
-                case list() if all(isinstance(s, index_types) for s in sigma_n) and len(sigma_n) == len(ycol):
-                    sdat = working[:, datafile.find_col(sigma_n[i])]
-                case _ if isinstance(sigma_n, index_types):
-                    sdat = working[:, datafile.find_col(sigma_n)]
-                case float():
-                    sdat = np.ones_like(ydata) * sigma_n
-                case np.ndarray() if sigma_n.size == ydat:
-                    sdat = sigma_n
-                case np.ndarray() if sigma_n.ndims == 2 and sigma_n.shape[1] == len(ycol):
-                    sdat = sigma_n[:, i]
-                case _:
-                    raise TypeError("Unable to recognise the y-error data.")
-            match (i, isigma):
-                case (0, 0):
-                    sdata = np.atleast_2d(sdat)
-                case (0, 1):
-                    sxdata = np.atleast_2d(sdat)
-                case (_, 0):
-                    sdata = np.vstack([sdata, sdat])
-                case (_, 1):
-                    sxdata = np.vstack([sdata, sdat])
-
-    mask = np.invert(ydata.mask)
-    if np.any(~mask):
-        if isinstance(sdata, np.ndarray) and sdata.size == xdata.size:
-            sdata = sdata[mask]
-        if isinstance(sxdata, np.ndarray) and sxdata.size == xdata.size:
-            sxdata = sxdata[mask]
-        ydata = ydata[mask]
-        xdata = xdata[
-            mask.ravel()
-        ]  # lmfit doesn't seem to work well with masked data - here we just delete masked points
-
-    kwargs.setdefault("absolute_sigma", not kwargs.pop("scale_covar", sigma is not None))
-    return [xdata, ydata, sdata, sxdata], kwargs, _
 
 
 def __lmfit_one(
@@ -823,11 +708,10 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     data, kwargs, cols = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, **kwargs)
     _func, p0 = _get_curve_fit_func(func, kwargs)
 
-    if data[1].ndim == 1:
+    if getattr(data[1], "ndim", 0) == 1:
         for i in [1, 2, 3]:
             if isinstance(data[i], np.ndarray):
                 data[i] = np.atleast_2d(data[i])
-
     if callable(p0):  # Allow the user to supply p0 as a callanble function
         try:  # Skip the guess if it fails
             p0 = p0(data[1].ravel(), np.tile(data[0], data[1].size // data[0].size))

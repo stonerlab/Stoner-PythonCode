@@ -6,17 +6,159 @@ __all__ = ["add_core", "and_core", "sub_core", "mod_core", "copy_into", "Tab_Del
 
 import copy
 import csv
+from dataclasses import dataclass
 import re
 from collections.abc import Mapping
 from typing import Callable
-from typing import Mapping as MappingType
-from typing import Union
+from typing import Mapping as MappingType, Union, Optional
 
 import numpy as np
+from numpy.typing import NDArray
+from numpy import ma
 
 from ..compat import index_types, int_types
-from ..tools import all_type, copy_into
+from ..tools import all_type, copy_into, isiterable
 from ..tools.typing import Data, Index, NumericArray
+
+
+@dataclass
+class _WorkingData:
+
+    x: Optional[NDArray] = None
+    y: Optional[NDArray] = None
+    z: Optional[NDArray] = None
+    d: Optional[NDArray] = None
+    e: Optional[NDArray] = None
+    f: Optional[NDArray] = None
+    u: Optional[NDArray] = None
+    v: Optional[NDArray] = None
+    w: Optional[NDArray] = None
+
+    def __getitem__(self, index):
+        """Use either integer or string mapping to get item."""
+        mapping = "xyedzfuvw"
+        match index:
+            case int() if -len(mapping) <= index < len(mapping):
+                return getattr(self, mapping[index])
+            case str() if len(index) == 1 and index in "xyzdefuvw":
+                return getattr(self, index)
+            case slice():
+                return [self[ix] for ix in range(*index.indices(len(mapping)))]
+            case _:
+                raise IndexError(f"{index} is out of range for WorkingData.")
+
+    def __setitem__(self, index, value):
+        """Use either integer or string to set items."""
+        mapping = "xyedzfuvw"
+        match index:
+            case int() if -len(mapping) <= index < len(mapping):
+                setattr(self, mapping[index], value)
+            case str() if len(index) == 1 and index in "xyzdefuvw":
+                setattr(self, index, value)
+            case _:
+                raise IndexError(f"{index} is out of range for WorkingData.")
+
+
+def assemnle_data(datafile, xcol, ycol, sigma, sigma_x=None, **kwargs):
+    """Marshall the data for doing a curve_fit or equivalent.
+
+    Args:
+        datafile (Data):
+            Data object to work with if not being used as a bound method.
+        xcol (index):
+            Column with xdata in it
+        ycol(index):
+            Column with ydata in it
+        sigma (index or array-like):
+            column of y-errors or uncertainty values.
+        bounds (callable):
+            Used to select the data rows to fit
+
+    Keyword Args:
+        sigma_x (index or array-like):
+            column of x-errors or uncertainty values.
+        kwargs:
+            Other keyword arguments to set the scale_covar/absolute_sigma.
+
+    Returns:
+        (data,kwargs,col_assignments):
+            data is a tuple of (x,y,sigma). scale_covar is False if sigma is real errors.
+    """
+    # Special case for doing a fit where we're matching a function to a value not in data.
+    return_data = _WorkingData()
+    if ycol is not None and isinstance(ycol[0], np.ndarray) and len(ycol[0]) == len(datafile):
+        return_data.y = ycol[0]
+        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=None, yerr=sigma, xerr=sigma_x)
+        xcol, ycol, sigma, sigma_x = _.xcol, [], _.yerr, _.xerr
+    else:
+        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma, xerr=sigma_x)
+        xcol, ycol, sigma, sigma_x = _.xcol, _.ycol, _.yerr, _.xerr
+
+    bounds = kwargs.pop("bounds", lambda x, y: True)
+    working = datafile.search(_.xcol, bounds)
+    working = ma.mask_rowcols(working, axis=0)
+    working = working[~working.mask[:, 0]]
+    # Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
+    match xcol:
+        case _ if isinstance(xcol, index_types):
+            return_data.x = working[:, datafile.find_col(xcol)]
+        case np.ndarray(ndim=1, size=len(working)):
+            return_data.x = xcol
+        case _ if isiterable(xcol):
+            for ix, c in enumerate(xcol):
+                if ix == 0:
+                    return_data.x = working[:, datafile.find_col(c)]
+                else:
+                    return_data.x = np.column_stack((return_data.x, working[:, datafile.find_col(c)]))
+        case _:
+            raise TypeError("Unable to idneify x-data for fitting.")
+    for i, yc in enumerate(ycol):
+        match yc:
+            case _ if isinstance(yc, index_types):
+                ydat = working[:, datafile.find_col(yc)]
+            case np.ndarray() if yc.ndim == 1 and yc.size == len(working):
+                ydat = yc
+            case _:
+                raise TypeError(
+                    """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
+                    length as the dataset"""
+                )
+        if i == 0:
+            return_data.y = np.atleast_2d(ydat)
+        else:
+            return_data.y = np.vstack([return_data.y, ydat])
+        for isigma, sigma_n in enumerate([sigma, sigma_x]):
+            match sigma_n:
+                case None:
+                    sdat = np.ones_like(ydat)
+                    kwargs["scale_covar"] = True
+                case list() if len(sigma_n) == 0:
+                    sdat = np.ones_like(ydat)
+                    kwargs["scale_covar"] = True
+                case list() if all(isinstance(s, index_types) for s in sigma_n) and len(sigma_n) == len(ycol):
+                    sdat = working[:, datafile.find_col(sigma_n[i])]
+                case _ if isinstance(sigma_n, index_types):
+                    sdat = working[:, datafile.find_col(sigma_n)]
+                case float():
+                    sdat = np.ones_like(ydata) * sigma_n
+                case np.ndarray() if sigma_n.size == ydat:
+                    sdat = sigma_n
+                case np.ndarray() if sigma_n.ndims == 2 and sigma_n.shape[1] == len(ycol):
+                    sdat = sigma_n[:, i]
+                case _:
+                    raise TypeError("Unable to recognise the y-error data.")
+            match (i, isigma):
+                case (0, 0):
+                    return_data.e = np.atleast_2d(sdat)
+                case (0, 1):
+                    return_data.d = np.atleast_2d(sdat)
+                case (_, 0):
+                    return_data.e = np.vstack([return_data.e, sdat])
+                case (_, 1):
+                    return_data.d = np.vstack([return_data.d, sdat])
+
+    kwargs.setdefault("absolute_sigma", not kwargs.pop("scale_covar", sigma is not None))
+    return return_data, kwargs, _
 
 
 def add_core(other: Union[Data, NumericArray, MappingType], newdata: Data) -> Data:
