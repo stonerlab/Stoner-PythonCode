@@ -247,7 +247,7 @@ class DataFileOperatorsMixin:
         ret.setas = setas
         return ret  #
 
-    def __read_iterable(self, reader):
+    def __read_iterable(self, reader):  # pylint: disable=unused-private-member
         """Read a string representation of py:class:`DataFile` in line by line."""
         if isiterable(reader):
             reader = iter(reader)

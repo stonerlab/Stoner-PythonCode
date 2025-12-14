@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """:py:class:`lmfit.Model` model classes and functions for various superconductivity related models."""
+
 # pylint: disable=invalid-name
 # This module can be used with Stoner v.0.9.0 asa standalone module
 __all__ = [
@@ -39,6 +40,12 @@ except ImportError:
     float64 = _dummy()
 
 
+@jit(float64[:](float64[:], float64, float64), nopython=True, parallel=True, nogil=True)
+def _normalized_gaussian(x, mu=0, sigma=1):
+    """Normalised gaussian function."""
+    return (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu) ** 2) / (2 * sigma**2))
+
+
 @jit(float64[:](float64[:], float64, float64, float64, float64), nopython=True, parallel=True, nogil=True)
 def _strijkers_core(V, omega, delta, P, Z):
     """Implement strijkers Model for point-contact Andreev Reflection Spectroscopy.
@@ -62,8 +69,7 @@ def _strijkers_core(V, omega, delta, P, Z):
 
     mv = np.max(np.abs(V))  # Limit for evaluating the integrals
     E = np.linspace(-2 * mv, 2 * mv, V.size * 20)  # Energy range in meV - we use a mesh 20x denser than data points
-    gauss = np.exp(-(E**2 / (2 * omega**2)))
-    gauss /= gauss.sum()  # Normalised gaussian for the convolution
+    gauss = _normalized_gaussian(E, 0, omega)
 
     # Conductance calculation
     #    For ease of calculation, epsilon = E/(sqrt(E^2 - delta^2))
@@ -74,12 +80,13 @@ def _strijkers_core(V, omega, delta, P, Z):
     #    Ap is always zero as the polarised current has 0 prob for an Andreev
     #    event
 
-    Au1 = (delta**2) / ((E**2) + (((delta**2) - (E**2)) * (1 + 2 * (Z**2)) ** 2))
-    Au2 = (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) ** 2) - 1) / (
-        ((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2
+    Au = (
+        (delta**2) / ((E**2) + (((delta**2) - (E**2)) * (1 + 2 * (Z**2)) ** 2)),
+        (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) ** 2) - 1)
+        / (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2),
     )
     Bu2 = (4 * (Z**2) * (1 + (Z**2))) / (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2)
-    Bp2 = Bu2 / (1 - Au2)
+    Bp2 = Bu2 / (1 - Au[1])
 
     unpolarised_prefactor = (1 - P) * (1 + (Z**2))
     polarised_prefactor = 1 * (P) * (1 + (Z**2))
@@ -89,21 +96,18 @@ def _strijkers_core(V, omega, delta, P, Z):
         + polarised_prefactor
         + +np.where(
             np.abs(E) <= delta,
-            unpolarised_prefactor * (2 * Au1 - 1) - np.ones_like(E) * polarised_prefactor,
-            unpolarised_prefactor * (Au2 - Bu2) - Bp2 * polarised_prefactor,
+            unpolarised_prefactor * (2 * Au[0] - 1) - np.ones_like(E) * polarised_prefactor,
+            unpolarised_prefactor * (Au[1] - Bu2) - Bp2 * polarised_prefactor,
         )
     )
 
     # Convolve and chop out the central section
-    cond = np.convolve(G, gauss)
-    cond = cond[(E.size // 2) : 3 * (E.size // 2)]
+    cond = np.convolve(G, gauss)[(E.size // 2) : 3 * (E.size // 2)]
     # Linear interpolation back onto the V data point
     matches = np.searchsorted(E, V)
-    condl = cond[matches - 1]
-    condh = cond[matches]
-    El = E[matches - 1]
-    Er = E[matches]
-    cond = (condh - condl) / (Er - El) * (V - El) + condl
+    cond = (cond[matches] - cond[matches - 1]) / (E[matches] - E[matches - 1]) * (V - E[matches - 1]) + cond[
+        matches - 1
+    ]
     return cond
 
 
@@ -314,7 +318,7 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):  # pylint: disable=un
     def prefactor(m):
         return delta**2 / (delta**2 + w_m(m) ** 2)
 
-    def term(m):
+    def term(m):  # pylint: disable=unused-variable
         return prefactor(m) * quad(integrad, -1, 1, (m,))  # pylint: disable=W0612
 
 

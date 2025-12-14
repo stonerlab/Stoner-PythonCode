@@ -165,7 +165,7 @@ def assemnle_data(datafile, **kwargs):
     return_data.working = return_data.working[~return_data.working.mask[:, 0]]
     # Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
     _assemble_x_data(_.xcol, datafile, return_data)
-    for i, yc in enumerate(ycol):
+    for i in range(len(ycol)):
         for col, attr in zip(["ycol", "zcol", "ucol", "vcol", "wcol"], "yzuvw"):
             col = getattr(_, col)
             if isinstance(col, list) and len(col) > i:

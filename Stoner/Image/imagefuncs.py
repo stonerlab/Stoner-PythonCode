@@ -644,7 +644,6 @@ def imshow(
     im,
     figure="new",
     ax=None,
-    show_axis=False,
     title=None,
     title_args=None,
     cmap="gray",
