@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """:py:class:`lmfit.Model` model classes and functions for various superconductivity related models."""
+
 # pylint: disable=invalid-name
 # This module can be used with Stoner v.0.9.0 asa standalone module
 __all__ = [
@@ -59,36 +60,41 @@ def _strijkers_core(V, omega, delta, P, Z):
     This version only uses 1 delta, not modified for proximity
     """
     #   Parameters
-    E = np.linspace(-2 * np.max(np.abs(V)), 2 * np.max(np.abs(V)), V.size * 20)
-    gauss = np.exp(-(E**2) / (2 * omega**2))
-    gauss /= gauss.sum()
+    E = np.linspace(
+        -2 * np.max(np.abs(V)), 2 * np.max(np.abs(V)), V.size * 20
+    )  # Energy range in meV - we use a mesh 20x denser than data points
+    gauss = np.exp(-(E**2 / (2 * omega**2)))
+    gauss /= gauss.sum()  # Normalised gaussian for the convolution
 
-    absE = np.abs(E)
-    E2 = E**2
-    delta2 = delta**2
-    Z2 = Z**2
-    Zfac = 1 + 2 * Z2
-    denom = np.sqrt(E2 - delta2)
-    eps = absE / denom
+    U = (
+        (delta**2) / ((E**2) + (((delta**2) - (E**2)) * (1 + 2 * (Z**2)) ** 2)),
+        (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) ** 2) - 1)
+        / (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2),
+        (4 * (Z**2) * (1 + (Z**2))) / (((np.abs(E) / (np.sqrt((E**2) - (delta**2)))) + (1 + 2 * (Z**2))) ** 2),
+    )
 
-    Au1 = delta2 / (E2 + (delta2 - E2) * Zfac**2)
-    eps2 = eps**2
-    Au2 = (eps2 - 1) / (eps + Zfac) ** 2
-    Bu2 = 4 * Z2 * (1 + Z2) / (eps + Zfac) ** 2
-    Bp2 = Bu2 / (1 - Au2)
+    # Optimised for a single use of np.where
+    G = (
+        (1 - P) * (1 + (Z**2))
+        + 1 * (P) * (1 + (Z**2))
+        + +np.where(
+            np.abs(E) <= delta,
+            (1 - P) * (1 + (Z**2)) * (2 * U[0] - 1) - np.ones_like(E) * 1 * (P) * (1 + (Z**2)),
+            (1 - P) * (1 + (Z**2)) * (U[1] - U[2]) - (U[2] / (1 - U[1])) * 1 * (P) * (1 + (Z**2)),
+        )
+    )
 
-    up = (1 - P) * (1 + Z2)
-    pp = P * (1 + Z2)
-
-    G = up + pp + np.where(absE <= delta, up * (2 * Au1 - 1) - pp, up * (Au2 - Bu2) - pp * Bp2)
-
-    conv = np.convolve(G, gauss)
-    conv = conv[(E.size // 2) : (3 * E.size // 2)]
-
-    idx = np.searchsorted(E, V)
-    El, Er = E[idx - 1], E[idx]
-    Gl, Gr = conv[idx - 1], conv[idx]
-    return (Gr - Gl) / (Er - El) * (V - El) + Gl
+    # Convolve and chop out the central section
+    cond = np.convolve(G, gauss)
+    cond = cond[(E.size // 2) : 3 * (E.size // 2)]
+    # Linear interpolation back onto the V data point
+    matches = np.searchsorted(E, V)
+    condl = cond[matches - 1]
+    condh = cond[matches]
+    El = E[matches - 1]
+    Er = E[matches]
+    cond = (condh - condl) / (Er - El) * (V - El) + condl
+    return cond
 
 
 def strijkers(V, omega, delta, P, Z):
@@ -259,7 +265,7 @@ def icRN_Clean(d_f, IcRn0, E_x, v_f, d_0):
     return IcRn0 * np.abs(np.sin(A * x)) / (A * x)
 
 
-def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
+def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):  # pylint: disable=unused-argument
     r"""Critical Current versus ferromagnetic narrier thickness, clean limit.
 
     Args:
@@ -285,12 +291,21 @@ def ic_RN_Dirty(d_f, IcRn0, E_x, v_f, d_0, tau, delta, T):
     """
     L = v_f * tau * 1e-9
     t = tau / hbar
-    w_m = lambda m: (2 * m + 1) * T * np.pi * kb
-    k_m = lambda m: (1 + 2 * np.abs(w_m(m)) * t) + (0 - 2j) * E_x * t
-    integrad = lambda mu, m: np.real(mu / (np.sinh(d_f * k_m(m) / (mu * L))))
-    prefactor = lambda m: delta**2 / (delta**2 + w_m(m) ** 2)
 
-    term = lambda m: prefactor(m) * quad(integrad, -1, 1, (m,))  # pylint: disable=W0612
+    def _w_m(m):
+        return (2 * m + 1) * T * np.pi * kb
+
+    def _k_m(m):
+        return (1 + 2 * np.abs(_w_m(m)) * t) + (0 - 2j) * E_x * t
+
+    def _integrad(mu, m):
+        return np.real(mu / (np.sinh(d_f * _k_m(m) / (mu * L))))
+
+    def _prefactor(m):
+        return delta**2 / (delta**2 + _w_m(m) ** 2)
+
+    def term(m):  # pylint: disable=unused-variable
+        return _prefactor(m) * quad(_integrad, -1, 1, (m,))  # pylint
 
 
 class Strijkers(Model):
@@ -324,7 +339,7 @@ class Strijkers(Model):
         """Configure Initial fitting function."""
         super().__init__(strijkers, *args, **kwargs)
 
-    def guess(self, data, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Guess starting values for a good Nb contact to a ferromagnet at 4.2K."""
         pars = self.make_params(omega=0.5, delta=1.50, P=0.42, Z=0.15)
         pars["omega"].min = 0.36
@@ -335,6 +350,10 @@ class Strijkers(Model):
         pars["P"].min = 0.0
         pars["P"].max = 1.0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class RSJ_Noiseless(Model):
@@ -367,9 +386,8 @@ class RSJ_Noiseless(Model):
         """Configure Initial fitting function."""
         super().__init__(rsj_noiseless, *args, **kwargs)
 
-    def guess(self, data, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
-        x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
 
         v_offset_guess = np.mean(data)
         v = np.abs(data - v_offset_guess)
@@ -388,6 +406,10 @@ class RSJ_Noiseless(Model):
         pars["Ic_p"].min = 0
         pars["Ic_n"].max = 0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class RSJ_Simple(Model):
@@ -420,9 +442,8 @@ class RSJ_Simple(Model):
         """Configure Initial fitting function."""
         super().__init__(rsj_simple, *args, **kwargs)
 
-    def guess(self, data, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H."""
-        x = kwargs.get("x", np.linspace(1, len(data), len(data) + 1))
 
         v_offset_guess = np.mean(data)
         v = np.abs(data - v_offset_guess)
@@ -440,6 +461,10 @@ class RSJ_Simple(Model):
         pars = self.make_params(Ic=ic_guess, Rn=rn_guess, V_offset=v_offset_guess)
         # pars["Ic"].min = 0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class Ic_B_Airy(Model):
@@ -478,9 +503,8 @@ class Ic_B_Airy(Model):
         """Configure Initial fitting function."""
         super().__init__(ic_B_airy, *args, **kwargs)
 
-    def guess(self, data, **kwargs):
+    def guess(self, data, x=None, **kwargs):
         """Guess parameters as max(data), x[argmax(data)] and from FWHM of peak."""
-        x = kwargs.get("x", np.linspace(-len(data) / 2, len(data) / 2, len(data)))
 
         Ic0_guess = data.max()
         B_offset_guess = x[data.argmax()]
@@ -491,3 +515,7 @@ class Ic_B_Airy(Model):
         pars = self.make_params(Ic0=Ic0_guess, B_offset=B_offset_guess, A=A_guess)
         pars["Ic0"].min = 0
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
