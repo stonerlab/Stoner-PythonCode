@@ -33,6 +33,7 @@ class _WorkingData:
     u: Optional[NDArray] = None
     v: Optional[NDArray] = None
     w: Optional[NDArray] = None
+    working: Optional[NDArray] = None
 
     def __getitem__(self, index):
         """Use either integer or string mapping to get item."""
@@ -59,7 +60,66 @@ class _WorkingData:
                 raise IndexError(f"{index} is out of range for WorkingData.")
 
 
-def assemnle_data(datafile, xcol, ycol, sigma, sigma_x=None, **kwargs):
+def _assemble_x_data(xcol, datafile, return_data):
+    """Asse,ble x data from a working set and datafile settings."""
+    match xcol:
+        case _ if isinstance(xcol, index_types):
+            return_data.x = return_data.working[:, datafile.find_col(xcol)]
+        case np.ndarray(ndim=1, size=len(return_data.working)):
+            return_data.x = xcol
+        case _ if isiterable(xcol):
+            for ix, c in enumerate(xcol):
+                if ix == 0:
+                    return_data.x = return_data.working[:, datafile.find_col(c)]
+                else:
+                    return_data.x = np.column_stack((return_data.x, return_data.working[:, datafile.find_col(c)]))
+        case _:
+            raise TypeError("Unable to idneify x-data for fitting.")
+
+
+def _assemble_col_data(col, datafile, return_data, attr):
+    """Add one column to the y data."""
+    match col:
+        case _ if isinstance(col, index_types):
+            ydat = return_data.working[:, datafile.find_col(col)]
+        case np.ndarray() if col.ndim == 1 and col.size == len(return_data.working):
+            ydat = col
+        case _:
+            raise TypeError(
+                """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
+                length as the dataset"""
+            )
+    if not isinstance(getattr(return_data, attr), np.ndarray):
+        setattr(return_data, attr, np.atleast_2d(ydat))
+    else:
+        setattr(return_data, attr, np.vstack([getattr(return_data, attr), ydat]))
+
+
+def _assemble_sigma(sigma_n, datafile, return_data, col, ix, kwargs):
+    """Assemble the sigma data."""
+    match sigma_n:
+        case None:
+            sdat = np.ones_like(return_data.y)
+            kwargs["scale_covar"] = True
+        case list() if len(sigma_n) == 0:
+            sdat = np.ones_like(return_data.y)
+            kwargs["scale_covar"] = True
+        case list() if all(isinstance(s, index_types) for s in sigma_n) and len(sigma_n) == len(col):
+            sdat = return_data.working[:, datafile.find_col(sigma_n[ix])]
+        case _ if isinstance(sigma_n, index_types):
+            sdat = return_data.working[:, datafile.find_col(sigma_n)]
+        case float():
+            sdat = np.ones_like(return_data.y) * sigma_n
+        case np.ndarray() if sigma_n.size == return_data.y.size:
+            sdat = sigma_n
+        case np.ndarray() if sigma_n.ndims == 2 and sigma_n.shape[1] == len(col):
+            sdat = sigma_n[:, ix]
+        case _:
+            raise TypeError("Unable to recognise the y-error data.")
+    return sdat
+
+
+def assemnle_data(datafile, **kwargs):
     """Marshall the data for doing a curve_fit or equivalent.
 
     Args:
@@ -67,7 +127,7 @@ def assemnle_data(datafile, xcol, ycol, sigma, sigma_x=None, **kwargs):
             Data object to work with if not being used as a bound method.
         xcol (index):
             Column with xdata in it
-        ycol(index):
+        col(index):
             Column with ydata in it
         sigma (index or array-like):
             column of y-errors or uncertainty values.
@@ -86,78 +146,48 @@ def assemnle_data(datafile, xcol, ycol, sigma, sigma_x=None, **kwargs):
     """
     # Special case for doing a fit where we're matching a function to a value not in data.
     return_data = _WorkingData()
+    ycol = kwargs.get("ycol", None)
+    kwargs.setdefault("xerr", kwargs.get("sigma_x"))
+    kwargs.setdefault("yerr", kwargs.get("sigma"))
+    kwargs.setdefault("zerr", kwargs.get("sigma_z"))
     if ycol is not None and isinstance(ycol[0], np.ndarray) and len(ycol[0]) == len(datafile):
         return_data.y = ycol[0]
-        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=None, yerr=sigma, xerr=sigma_x)
-        xcol, ycol, sigma, sigma_x = _.xcol, [], _.yerr, _.xerr
+        kwargs["ycol"] = None
+        _ = datafile._col_args(scalar=False, **kwargs)
+        ycol = []
     else:
-        _ = datafile._col_args(scalar=False, xcol=xcol, ycol=ycol, yerr=sigma, xerr=sigma_x)
-        xcol, ycol, sigma, sigma_x = _.xcol, _.ycol, _.yerr, _.xerr
+        _ = datafile._col_args(scalar=False, **kwargs)
+        ycol = _.ycol
 
     bounds = kwargs.pop("bounds", lambda x, y: True)
-    working = datafile.search(_.xcol, bounds)
-    working = ma.mask_rowcols(working, axis=0)
-    working = working[~working.mask[:, 0]]
+    return_data.working = datafile.search(_.xcol, bounds)
+    return_data.working = ma.mask_rowcols(return_data.working, axis=0)
+    return_data.working = return_data.working[~return_data.working.mask[:, 0]]
     # Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)
-    match xcol:
-        case _ if isinstance(xcol, index_types):
-            return_data.x = working[:, datafile.find_col(xcol)]
-        case np.ndarray(ndim=1, size=len(working)):
-            return_data.x = xcol
-        case _ if isiterable(xcol):
-            for ix, c in enumerate(xcol):
-                if ix == 0:
-                    return_data.x = working[:, datafile.find_col(c)]
-                else:
-                    return_data.x = np.column_stack((return_data.x, working[:, datafile.find_col(c)]))
-        case _:
-            raise TypeError("Unable to idneify x-data for fitting.")
+    _assemble_x_data(_.xcol, datafile, return_data)
     for i, yc in enumerate(ycol):
-        match yc:
-            case _ if isinstance(yc, index_types):
-                ydat = working[:, datafile.find_col(yc)]
-            case np.ndarray() if yc.ndim == 1 and yc.size == len(working):
-                ydat = yc
-            case _:
-                raise TypeError(
-                    """Y-data for fitting not defined - should either be an index or a 1D numpy array of the same
-                    length as the dataset"""
-                )
-        if i == 0:
-            return_data.y = np.atleast_2d(ydat)
-        else:
-            return_data.y = np.vstack([return_data.y, ydat])
-        for isigma, sigma_n in enumerate([sigma, sigma_x]):
-            match sigma_n:
-                case None:
-                    sdat = np.ones_like(ydat)
-                    kwargs["scale_covar"] = True
-                case list() if len(sigma_n) == 0:
-                    sdat = np.ones_like(ydat)
-                    kwargs["scale_covar"] = True
-                case list() if all(isinstance(s, index_types) for s in sigma_n) and len(sigma_n) == len(ycol):
-                    sdat = working[:, datafile.find_col(sigma_n[i])]
-                case _ if isinstance(sigma_n, index_types):
-                    sdat = working[:, datafile.find_col(sigma_n)]
-                case float():
-                    sdat = np.ones_like(ydata) * sigma_n
-                case np.ndarray() if sigma_n.size == ydat:
-                    sdat = sigma_n
-                case np.ndarray() if sigma_n.ndims == 2 and sigma_n.shape[1] == len(ycol):
-                    sdat = sigma_n[:, i]
-                case _:
-                    raise TypeError("Unable to recognise the y-error data.")
+        for col, attr in zip(["ycol", "zcol", "ucol", "vcol", "wcol"], "yzuvw"):
+            col = getattr(_, col)
+            if isinstance(col, list) and len(col) > i:
+                _assemble_col_data(col[i], datafile, return_data, attr)
+
+        for isigma, sigma_n in enumerate([_.xerr, _.yerr, _.zerr]):
+            sdat = _assemble_sigma(sigma_n, datafile, return_data, ycol, i, kwargs)
             match (i, isigma):
                 case (0, 0):
-                    return_data.e = np.atleast_2d(sdat)
-                case (0, 1):
                     return_data.d = np.atleast_2d(sdat)
+                case (0, 1):
+                    return_data.e = np.atleast_2d(sdat)
+                case (0, 2):
+                    return_data.f = np.atleast_2d(sdat)
                 case (_, 0):
-                    return_data.e = np.vstack([return_data.e, sdat])
-                case (_, 1):
                     return_data.d = np.vstack([return_data.d, sdat])
+                case (_, 1):
+                    return_data.e = np.vstack([return_data.e, sdat])
+                case (_, 2):
+                    return_data.f = np.vstack([return_data.f, sdat])
 
-    kwargs.setdefault("absolute_sigma", not kwargs.pop("scale_covar", sigma is not None))
+    kwargs.setdefault("absolute_sigma", not kwargs.pop("scale_covar", return_data.e is not None))
     return return_data, kwargs, _
 
 

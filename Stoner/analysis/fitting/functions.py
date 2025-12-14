@@ -705,7 +705,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         ycol = [ycol]
 
     # Collect data, function and p0 together.
-    data, kwargs, cols = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, **kwargs)
+    data, kwargs, cols = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
     _func, p0 = _get_curve_fit_func(func, kwargs)
 
     if getattr(data[1], "ndim", 0) == 1:
@@ -729,14 +729,13 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     xdat = data[0]
     if p0:
         kwargs["p0"] = p0
-
     for i, ydat in enumerate(data[1]):
         if data[2] is not None:
             kwargs["sigma"] = data[2][i]
         else:
             sigma = None
-
-        kwargs.pop("scale_covar", None)
+        for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "scale_covar"]:
+            kwargs.pop(var, None)
         report = _curve_fit_result(*_curve_fit(_func, xdat, ydat, **kwargs))
         report.func = func
         if p0 is None:
@@ -848,7 +847,7 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     asrow = kwargs.pop("asrow", False)
     output = kwargs.pop("output", "row" if asrow else "fit")
 
-    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds=bounds, **kwargs)
+    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, sigma=sigma, bounds=bounds, **kwargs)
     data = data[0:3]
     model, prefix = _prep_lmfit_model(model, kwargs)
     p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
@@ -859,6 +858,8 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     diff_model = MimizerAdaptor(model, params=p0)
 
     kwargs.setdefault("polish", True)
+    for arg in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "sigma", "sigma_x", "sigma_z"]:
+        kwargs.pop(arg, [])
     abs_sigma = kwargs.pop("absolute_sigma", False)
 
     if not single_fit:
@@ -985,7 +986,7 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
     asrow = kwargs.pop("asrow", False)
     output = kwargs.pop("output", "row" if asrow else "fit")
 
-    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, **kwargs)
+    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
     model, prefix = _prep_lmfit_model(model, kwargs)
     p0, single_fit = _prep_lmfit_p0(model, data[1], data[0], p0, kwargs)
     nan_policy = kwargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
@@ -1203,7 +1204,9 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     sigma_x = kwargs.pop("sigma_x", None)
     bounds = kwargs.pop("bounds", lambda x, r: True)
     p0 = kwargs.pop("p0", None)
-    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol, ycol, sigma, bounds=bounds, sigma_x=sigma_x, **kwargs)
+    data, kwargs, _ = _assemnle_data_to_fit(
+        datafile, xcol=xcol, ycol=ycol, xerr=sigma, bounds=bounds, sigma_x=sigma_x, **kwargs
+    )
     if not isinstance(model, odrModel):
         model, prefix = _prep_lmfit_model(model, kwargs)
     else:

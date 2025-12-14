@@ -21,6 +21,7 @@ d.annotate_fit(nDimArrhenius, x=0.25, y=0.3, mode="eng")
 # lmfit using lmfit guesses
 fit = NDimArrhenius()
 p0 = fit.guess(R, x=T)
+d.setas = "xy"
 d.lmfit(fit, result=True, header="lmfit")
 d.setas = "x..y"
 d.plot(fmt="g-")
