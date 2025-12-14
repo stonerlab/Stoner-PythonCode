@@ -132,6 +132,7 @@ def __lmfit_one(
     prefix,
     columns,
     scale_covar,
+    *,
     replace=False,
     result=False,
     header="",
@@ -213,102 +214,119 @@ def __lmfit_one(
         }
         if output not in retval:
             raise RuntimeError(f"Failed to recognise output format:{output}")
-        else:
-            return retval[output]
-    else:
-        raise RuntimeError(f"Failed to complete fit. Error was:\n{fit.lmdif_message}\n{fit.message}")
+        return retval[output]
+    raise RuntimeError(f"Failed to complete fit. Error was:\n{fit.lmdif_message}\n{fit.message}")
+
+
+def _normalise_model_func(func, prefix, result_obj):
+    """ "Normalise the model function and parameters."""
+    match func:
+        case lmfit_mod.Model():
+            f_name = prefix or type(func).__name__
+            labels = getattr(type(func), "labels", None)
+            units = getattr(type(func), "units", None)
+            func = func.func
+            args = getfullargspec(func)[0]  # pylint: disable=W1505
+            if args[0] in ["datafile", "self"]:
+                del args[0]
+            if len(args) > 0:
+                del args[0]
+        case _ if isclass(func) and issubclass(func, lmfit_mod.Model):
+            f_name = prefix or func.__name__
+            labels = getattr(func, "labels", None)
+            units = getattr(func, "units", None)
+            func = func().func
+            args = getfullargspec(func)[0]  # pylint: disable=W1505
+            if args[0] == "datafile":
+                del args[0]
+            if len(args) > 0:
+                del args[0]
+        case sp.odr.Model():
+            f_name = prefix or func.meta["name"]
+            labels = getattr(func, "labels", None)
+            units = getattr(func, "units", None)
+            args = func.meta["param_names"]
+            model = func
+
+            def _func(x, *beta):
+                return model.fcn(beta, x)
+
+            func = _func
+        case _:
+            f_name = prefix or func.__name__
+            labels = getattr(func, "labels", None)
+            units = getattr(func, "units", None)
+            args = getfullargspec(func)[0]  # pylint: disable=W1505
+            if args[0] in ["datafile", "self"]:
+                del args[0]
+            if len(args) > 0:
+                del args[0]
+    labels = labels or args
+    units = units or [""] * len(args)
+    result_obj.func = func
+    result_obj.f_name = f_name
+    result_obj.labels = labels
+    result_obj.units = units
+    result_obj.args = args
+    return result_obj
+
+
+def _normalise_fit_result(datafile, xcol, ycol, fit, result_obj):
+    """Normalise the fit results based on the fit instance."""
+    func = result_obj.func
+    args = result_obj.args
+    result_obj.data = datafile.data[:, ycol]
+    result_obj.xdata = datafile.data[:, xcol]
+
+    match fit:
+        case _curve_fit_result():
+            popt = fit.popt
+            perr = fit.perr
+            nfev = fit.nfev
+            nfree = len(datafile) - len(popt)
+            chisq = fit.chisq
+        case lmfit_mod.model.ModelResult():
+            popt = [fit.params[x].value for x in args]
+            perr = [fit.params[x].stderr for x in args]
+            nfev = fit.nfev
+            nfree = len(datafile) - len(popt)
+            chisq = fit.redchi
+        case sp.odr.Output():
+            popt = fit.beta
+            perr = fit.sd_beta
+            delta, eps = fit.delta, fit.eps
+            nfree = len(delta) - len(popt)
+            chisq = np.sum((delta**2 + eps**2)) / nfree
+            nfev = None
+        case sp.optimize.OptimizeResult():
+            popt = fit.popt
+            perr = fit.perr
+            nfev = fit.nfev
+            nfree = len(datafile) - len(popt)
+            fit_data = func(result_obj.xdata, *popt)
+            chisq = np.sum((result_obj.data - fit_data) ** 2) / nfree
+        case _:
+            raise RuntimeError("Unable to understand {type(fit)} as a fitting result")
+    result_obj.popt = popt
+    result_obj.perr = perr
+    result_obj.nfev = nfev
+    result_obj.chisq = chisq
+    result_obj.nfree = nfree
+    return result_obj
 
 
 def _record_curve_fit_result(
     datafile, func, fit, xcol, header, result, replace, residuals=False, ycol=None, prefix=None
 ):
     """Annotate the DataFile object with the curve_fit result."""
-    if isinstance(func, (lmfit_mod.Model)):
-        f_name = type(func).__name__
-        labels = getattr(type(func), "labels", None)
-        units = getattr(type(func), "units", None)
-        func = func.func
-        args = getfullargspec(func)[0]  # pylint: disable=W1505
-        if args[0] in ["datafile", "self"]:
-            del args[0]
-        if len(args) > 0:
-            del args[0]
+    result_obj = _curve_fit_result()
+    result_obj = _normalise_model_func(func, prefix, result_obj)
+    result_obj = _normalise_fit_result(datafile, xcol, ycol, fit, result_obj)
 
-    elif isclass(func) and issubclass(func, lmfit_mod.Model):
-        f_name = func.__name__
-        labels = getattr(func, "labels", None)
-        units = getattr(func, "units", None)
-        func = func().func
-        args = getfullargspec(func)[0]  # pylint: disable=W1505
-        if args[0] == "datafile":
-            del args[0]
-        if len(args) > 0:
-            del args[0]
-
-    elif isinstance(func, (sp.odr.Model)):
-        f_name = func.meta["name"]
-        labels = getattr(func, "labels", None)
-        units = getattr(func, "units", None)
-        args = func.meta["param_names"]
-        model = func
-
-        def _func(x, *beta):
-            return model.fcn(beta, x)
-
-        func = _func
-    else:
-        f_name = func.__name__
-        labels = getattr(func, "labels", None)
-        units = getattr(func, "units", None)
-        args = getfullargspec(func)[0]  # pylint: disable=W1505
-        if args[0] in ["datafile", "self"]:
-            del args[0]
-        if len(args) > 0:
-            del args[0]
-
-    if prefix is not None:
-        f_name = prefix
-
-    if labels is None:
-        labels = args
-    if units is None:
-        units = [""] * len(args)
-    if isinstance(fit, _curve_fit_result):  # Come from curve_fit
-        popt = fit.popt
-        perr = fit.perr
-        nfev = fit.nfev
-        chisq = fit.chisq
-    elif isinstance(fit, lmfit_mod.model.ModelResult):  # Come form an lmfit operation
-        popt = [fit.params[x].value for x in args]
-        perr = [fit.params[x].stderr for x in args]
-        nfev = fit.nfev
-        chisq = fit.redchi
-    elif isinstance(fit, sp.odr.Output):
-        popt = fit.beta
-        perr = fit.sd_beta
-        delta, eps = fit.delta, fit.eps
-        nfree = len(delta) - len(popt)
-        chisq = np.sum((delta**2 + eps**2)) / nfree
-        nfev = None
-    elif isinstance(fit, sp.optimize.OptimizeResult):
-        popt = fit.popt
-        perr = fit.perr
-        nfev = fit.nfev
-        nfree = len(datafile) - len(popt)
-        data = datafile.data[:, ycol]
-        fit_data = func(datafile.data[:, xcol], *popt)
-        chisq = np.sum((data - fit_data) ** 2) / nfree
-    else:
-        raise RuntimeError("Unable to understand {type(fit)} as a fitting result")
-
-    for val, err, name, label, unit in zip(popt, perr, args, labels, units):
-        datafile[f"{f_name}:{name}"] = val
-        datafile[f"{f_name}:{name} err"] = err
-        datafile[f"{f_name}:{name} label"] = datafile.metadata.get(f"{f_name}:{name} label", label)
-        datafile[f"{f_name}:{name} unit"] = datafile.metadata.get(f"{f_name}:{name} unit", unit)
+    result_obj.add_metadata(datafile)
 
     if not isinstance(header, string_types):
-        header = "Fitted with " + func.__name__
+        header = f"Fitted with {result_obj.f_name}"
 
     # Store our current mask, calculate new column's mask and turn off mask
     tmp_mask = datafile.mask
@@ -320,10 +338,7 @@ def _record_curve_fit_result(
         tmp_mask = np.column_stack((tmp_mask, col_mask))
     else:  # Inserting data
         tmp_mask = np.column_stack((tmp_mask[:, 0:result], col_mask, tmp_mask[:, result:]))
-    if islistlike(xcol):
-        new_col = func(datafile[:, xcol], *popt)
-    else:
-        new_col = func(datafile.column(xcol), *popt)
+    new_col = result_obj.fit_values
     if result:
         datafile.add_column(new_col, index=result, replace=replace, header=header)
     if residuals and result:
@@ -339,26 +354,14 @@ def _record_curve_fit_result(
             else:
                 residuals_idx = residuals
             datafile.add_column(residual_vals, index=residuals_idx, replace=False, header=header + ":residuals")
-            datafile[f"{f_name}:mean residual"] = np.mean(residual_vals)
-            datafile[f"{f_name}:std residual"] = np.std(residual_vals)
-            datafile[f"{f_name}:chi^2"] = chisq
-            datafile[f"{f_name}:chi^2 err"] = np.sqrt(2 / len(residual_vals)) * chisq
-    if nfev is not None:
-        datafile[f"{f_name}:nfev"] = nfev
+            datafile[f"{result_obj.f_name}:mean residual"] = np.mean(residual_vals)
+            datafile[f"{result_obj.f_name}:std residual"] = np.std(residual_vals)
+            datafile[f"{result_obj.f_name}:chi^2"] = result_obj.chisq
+            datafile[f"{result_obj.f_name}:chi^2 err"] = np.sqrt(2 / len(residual_vals)) * result_obj.chisq
 
     datafile.mask = tmp_mask
     # Make row object
-    row = []
-    ch = []
-    for v, e, a in zip(popt, perr, args):
-        row.extend([v, e])
-        ch.extend([a, f"{a} stderr"])
-    row.append(chisq)
-    ch.append("$\\chi^2$")
-    cls = type(datafile.data)
-    row = cls(row)
-    row.column_headers = ch
-    return row
+    return result_obj.row
 
 
 def _odr_one(

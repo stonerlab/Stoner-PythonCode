@@ -30,7 +30,7 @@ class ODR_Model(odrModel):
             args = list(args)
             model = args.pop(0)
         else:
-            raise RuntimeError("Need at least one argument to make a fitting model." "")
+            raise RuntimeError("Need at least one argument to make a fitting model.")
 
         if isclass(model) and issubclass(model, Model):  # Instantiate if only a class passed in
             model = model()
@@ -170,7 +170,7 @@ class _curve_fit_result:
     as a class to make handling easier.
     """
 
-    def __init__(self, popt, pcov, infodict, mesg, ier):
+    def __init__(self, popt=None, pcov=None, infodict=None, mesg=None, ier=None):
         """Store the results of the curve fit full_output fit.
 
         Args:
@@ -187,7 +187,10 @@ class _curve_fit_result:
         """
         self.popt = popt
         self.pcov = pcov
-        self.perr = np.sqrt(np.diag(pcov))
+        if pcov is not None:
+            self.perr = np.sqrt(np.diag(pcov))
+        else:
+            self.perr = None
         self.mesg = mesg
         self.ier = ier
         self.nfev = None
@@ -197,12 +200,16 @@ class _curve_fit_result:
         self.qtf = None
         self.func = None
         self.p0 = None
-        self.residual_vals = None
+        self._residual_vals = None
         self.chisq = None
         self.nfree = None
-        self.infodict = infodict
-        for k in infodict:
-            setattr(self, k, infodict[k])
+        self._infodict = infodict
+        if infodict:
+            for k in infodict:
+                setattr(self, k, infodict[k])
+        self.xdata = None
+        self.labels = None
+        self.units = None
 
     # Following properties used to return desired information
 
@@ -231,15 +238,37 @@ class _curve_fit_result:
     @property
     def row(self):
         """Optimal parameters and errors as a single row."""
-        ret = np.zeros(self.popt.size * 2)
-        ret[0::2] = self.popt
+        ret = np.zeros(len(self.popt) * 2 + 1)
+        ret[0:-2:2] = self.popt
         ret[1::2] = self.perr
+        ret[-1] = self.chisq
         return ret
+
+    @property
+    def infodict(self):
+        """Wrapper infodict."""
+        return getattr(self, "_infodict", None)
+
+    @infodict.setter
+    def infodict(self, value):
+        """Wrapper for setting infodict and subkeys."""
+        if isinstance(value, dict):
+            for k in value:
+                setattr(self, k, value[k])
 
     @property
     def fit(self):
         """Copy of the fit report and optimal parameters and covariance."""
         return (self.popt, self.pcov)
+
+    @property
+    def fit_values(self):
+        """Return the fit values if x data is set."""
+        if self.xdata is None or self.func is None or self.popt is None:
+            raise ValueError(
+                "Need to have some x-data, the fitting functions and optimal parameters  before calculating fit"
+            )
+        return self.func(self.xdata, *self.popt)
 
     @property
     def data(self):
@@ -256,6 +285,18 @@ class _curve_fit_result:
     def report(self):
         """Copy of the fit report."""
         return self
+
+    @property
+    def residual_vals(self):
+        """If we have residual values, return the,."""
+        if self._residual_vals is None and self.data is not None:
+            self._residual_vals = self.data - self.fit_values
+        return getattr(self, "_residual_vals", None)
+
+    @residual_vals.setter
+    def residual_vals(self, values):
+        """Update residual values."""
+        self._residual_vals = values
 
     @property
     def N(self):
@@ -313,6 +354,27 @@ class _curve_fit_result:
                 if np.abs(self.pcov[i, j]) > 0.1:
                     template += f"\t({p},{list(self.params)[j]})\t\t={self.pcov[i, j]:.3f}"
         return template
+
+    def add_metadata(self, datafile):
+        """Adds metadata keys to datafile based on this fit report.
+
+        Args:
+            datafile (Data):
+                Data instance to add metadata keys to.
+
+        Returns:
+            (Data):
+                Updated data file.
+        """
+        f_name = self.f_name
+        for val, err, name, label, unit in zip(self.popt, self.perr, self.args, self.labels, self.units):
+            datafile[f"{f_name}:{name}"] = val
+            datafile[f"{f_name}:{name} err"] = err
+            datafile[f"{f_name}:{name} label"] = datafile.metadata.get(f"{f_name}:{name} label", label)
+            datafile[f"{f_name}:{name} unit"] = datafile.metadata.get(f"{f_name}:{name} unit", unit)
+        if self.nfev is not None:
+            datafile[f"{f_name}:nfev"] = self.nfev
+        return datafile
 
 
 def _prep_lmfit_model(model, kargs):
