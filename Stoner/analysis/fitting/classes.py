@@ -2,7 +2,9 @@
 """Classes to support data fitting."""
 
 from copy import deepcopy as copy
+from dataclasses import dataclass, field
 from inspect import getfullargspec, isclass
+from typing import Union, Optional
 
 import lmfit as lmfit_mod
 import numpy as np
@@ -165,7 +167,7 @@ class MimizerAdaptor:
         self.minimize_func = wrapper
 
 
-class _curve_fit_result:
+class _Curve_Fit_Result:
     """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit`
     as a class to make handling easier.
     """
@@ -203,6 +205,7 @@ class _curve_fit_result:
         self._residual_vals = None
         self.chisq = None
         self.nfree = None
+        self.f_name = None
         self._infodict = infodict
         if infodict:
             for k in infodict:
@@ -375,6 +378,22 @@ class _curve_fit_result:
         if self.nfev is not None:
             datafile[f"{f_name}:nfev"] = self.nfev
         return datafile
+
+
+@dataclass
+class _Curve_Fit_Output:
+    """Dataclass for gathering together information about the output from a curve fitting operation."""
+
+    prefix: str = ""
+    columns: AttributeStore = field(default_factory=dict)
+    result: Union[bool, str, None] = None
+    replace: bool = False
+    header: Optional[str] = None
+    residuals: bool = False
+    asrow: bool = False
+    output: str = "row"
+    scale_covar: bool = True
+    nan_policy: str = "raise"
 
 
 def _prep_lmfit_model(model, kargs):

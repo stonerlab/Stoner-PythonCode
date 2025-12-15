@@ -28,8 +28,8 @@ fit = d.odr(
     result=True,
     header="Fit",
     A=1,
-    B=1,
-    C=1,
+    B=3,
+    C=1.2,
     prefix="Model",
     residuals=True,
 )

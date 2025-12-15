@@ -19,7 +19,8 @@ from ...tools import isiterable, islistlike, ordinal
 from .classes import (
     MimizerAdaptor,
     ODR_Model,
-    _curve_fit_result,
+    _Curve_Fit_Result,
+    _Curve_Fit_Output,
     _prep_lmfit_model,
     _prep_lmfit_p0,
 )
@@ -129,16 +130,7 @@ def __lmfit_one(
     model,
     data,
     params,
-    prefix,
-    columns,
-    scale_covar,
-    *,
-    replace=False,
-    result=False,
-    header="",
-    residuals=False,
-    output="row",
-    nan_policy="raise",
+    settings,
 ):
     """Carry out a single fit wioth lmfit.
 
@@ -151,26 +143,8 @@ def __lmfit_one(
             Data and errors to use in fitting
         params (lmfit_mod.Parameters):
             The parameters to use on the model for the fitting.
-        prefix (str):
-            Prefix for labels in metadata
-        columns (attribute dict):
-            Column assignments
-        scale_covar (bool):
-            Whether sigmas are absolute or relative.
-
-    Keyword Arguments:
-        result (bool,str):
-            Where the result goes
-        header (str):
-            Name of new data column if used
-        replace (bool):
-            whether to add new dataa
-        output (str):
-            What to return
-        residuals (bool):
-            Whether to also include residuals (default False)
-        nan_policy (str):
-            What to do about nan's in the fit - passed to lmfit (default "raise")
+        settings (str):
+            Dataclass with output settings from fit.
 
     Returns:
         (various):
@@ -181,20 +155,16 @@ def __lmfit_one(
 
     kwargs = {}
     kwargs[model.independent_vars[0]] = data.x
-    fit = model.fit(data.y, params, scale_covar=scale_covar, weights=1.0 / data.e, nan_policy=nan_policy, **kwargs)
+    fit = model.fit(
+        data.y,
+        params,
+        scale_covar=settings.scale_covar,
+        weights=1.0 / data.e,
+        nan_policy=settings.nan_policy,
+        **kwargs,
+    )
     if fit.success:
-        row = _record_curve_fit_result(
-            datafile,
-            model,
-            fit,
-            columns.xcol,
-            header,
-            result,
-            replace,
-            residuals=residuals,
-            prefix=prefix,
-            ycol=columns.ycol,
-        )
+        row = _record_curve_fit_result(datafile, model, fit, settings)
 
         res_dict = {}
         for p in fit.params:
@@ -212,9 +182,9 @@ def __lmfit_one(
             "data": datafile,
             "dict": res_dict,
         }
-        if output not in retval:
-            raise RuntimeError(f"Failed to recognise output format:{output}")
-        return retval[output]
+        if settings.output not in retval:
+            raise RuntimeError(f"Failed to recognise output format:{settings.output}")
+        return retval[settings.output]
     raise RuntimeError(f"Failed to complete fit. Error was:\n{fit.lmdif_message}\n{fit.message}")
 
 
@@ -279,7 +249,7 @@ def _normalise_fit_result(datafile, xcol, ycol, fit, result_obj):
     result_obj.xdata = datafile.data[:, xcol]
 
     match fit:
-        case _curve_fit_result():
+        case _Curve_Fit_Result():
             popt = fit.popt
             perr = fit.perr
             nfev = fit.nfev
@@ -315,45 +285,48 @@ def _normalise_fit_result(datafile, xcol, ycol, fit, result_obj):
     return result_obj
 
 
-def _record_curve_fit_result(
-    datafile, func, fit, xcol, header, result, replace, residuals=False, ycol=None, prefix=None
-):
+def _record_curve_fit_result(datafile, func, fit, settings):
     """Annotate the DataFile object with the curve_fit result."""
-    result_obj = _curve_fit_result()
-    result_obj = _normalise_model_func(func, prefix, result_obj)
-    result_obj = _normalise_fit_result(datafile, xcol, ycol, fit, result_obj)
+    result_obj = _Curve_Fit_Result()
+    result_obj = _normalise_model_func(func, settings.prefix, result_obj)
+    result_obj = _normalise_fit_result(datafile, settings.columns.xcol, settings.columns.ycol, fit, result_obj)
 
     result_obj.add_metadata(datafile)
 
-    if not isinstance(header, string_types):
-        header = f"Fitted with {result_obj.f_name}"
+    if not isinstance(settings.header, string_types):
+        settings.header = f"Fitted with {result_obj.f_name}"
 
     # Store our current mask, calculate new column's mask and turn off mask
     tmp_mask = datafile.mask
     col_mask = np.any(tmp_mask, axis=1)
     datafile.mask = False
 
-    if isinstance(result, bool) and result:  # Appending data to end of data
-        result = datafile.shape[1]
+    if isinstance(settings.result, bool) and settings.result:  # Appending data to end of data
+        settings.result = datafile.shape[1]
         tmp_mask = np.column_stack((tmp_mask, col_mask))
     else:  # Inserting data
-        tmp_mask = np.column_stack((tmp_mask[:, 0:result], col_mask, tmp_mask[:, result:]))
+        tmp_mask = np.column_stack((tmp_mask[:, 0 : settings.result], col_mask, tmp_mask[:, settings.result :]))
     new_col = result_obj.fit_values
-    if result:
-        datafile.add_column(new_col, index=result, replace=replace, header=header)
-    if residuals and result:
-        if not islistlike(ycol):
-            ycol = [ycol]
-        for yc in ycol:
+    if settings.result:
+        datafile.add_column(new_col, index=settings.result, replace=settings.replace, header=settings.header)
+    if settings.residuals and settings.result:
+        if not islistlike(settings.columns.ycol):
+            settings.columns.ycol = [settings.columns.ycol]
+        for yc in settings.columns.ycol:
             residual_vals = datafile.column(yc) - new_col
-            if isinstance(residuals, bool) and residuals:
-                if result is None:
-                    residuals_idx = None
-                else:
-                    residuals_idx = datafile.find_col(result) + 1
+            if isinstance(settings.residuals, bool) and settings.residuals:
+                match settings.result:
+                    case None:
+                        residuals_idx = None
+                    case True:
+                        residuals_idx = len(datafile.column_headers)
+                    case _:
+                        residuals_idx = datafile.find_col(settings.result) + 1
             else:
-                residuals_idx = residuals
-            datafile.add_column(residual_vals, index=residuals_idx, replace=False, header=header + ":residuals")
+                residuals_idx = settings.residuals
+            datafile.add_column(
+                residual_vals, index=residuals_idx, replace=False, header=settings.header + ":residuals"
+            )
             datafile[f"{result_obj.f_name}:mean residual"] = np.mean(residual_vals)
             datafile[f"{result_obj.f_name}:std residual"] = np.std(residual_vals)
             datafile[f"{result_obj.f_name}:chi^2"] = result_obj.chisq
@@ -368,14 +341,7 @@ def _odr_one(
     datafile,
     data,
     model,
-    prefix,
-    _,
-    result=None,
-    replace=False,
-    header=None,
-    residuals=False,
-    asrow=False,
-    output=None,
+    settings,
     p0=None,
     **kwargs,
 ):
@@ -388,22 +354,10 @@ def _odr_one(
             configured data
         model (odr.Model):
             Configured model
-        prefix (str):
-            Prefix for labels in metadata
+        settings (_Curve_Fit_Output):
+            Dataclass with output settings from fit.
 
     Keyword Arguments:
-        result (bool,str):
-            Where the result goes
-        header (str):
-            Name of new data column if used
-        replace (bool):
-            whether to add new dataa
-        residuals (bool):
-            Also calcualte the residuals from the fit - default False.
-        asrow (bool):
-            Return the fit results as a single 1D row array - default False.
-        output (str):
-            What to return - default depends on asrow for either a row or the fit.
         p0 (Iterable):
             Estimated values for model. If not given, model.estimate is used.
         **kwargs:
@@ -413,8 +367,8 @@ def _odr_one(
         (various):
             Results froma  fit or raises and exception.
     """
-    if output is None:
-        output = "row" if asrow else "fit"
+    if settings.output is None:
+        settings.output = "row" if settings.asrow else "fit"
 
     if p0 is not None:
         model.estimate = p0
@@ -426,9 +380,9 @@ def _odr_one(
     fit = sp.odr.ODR(data, model, beta0=[x.value for x in model.estimate.values()])
     try:
         fit_result = fit.run()
-        fit_result.redchi = fit_result.sum_square / (
-            len(fit_result.y) - len(fit_result.beta)
-        )  # pylint: disable=no-member
+        fit_result.redchi = fit_result.sum_square / (  # pylint: disable=no-member
+            len(fit_result.y) - len(fit_result.beta)  # pylint: disable=no-member
+        )
         fit_result.chisqr = fit_result.sum_square  # pylint: disable=no-member
 
         tmp = f"""Beta:{fit_result.beta}
@@ -454,9 +408,7 @@ def _odr_one(
     except sp.odr.OdrStop as err:
         print(err)
         return None
-    _record_curve_fit_result(
-        datafile, model, fit_result, _.xcol, header, result, replace, residuals, ycol=_.ycol, prefix=prefix
-    )
+    _record_curve_fit_result(datafile, model, fit_result, settings)
 
     row = []
     # Store our current mask, calculate new column's mask and turn off mask
@@ -480,9 +432,39 @@ def _odr_one(
         "data": datafile,
         "dict": ret_dict,
     }
-    if output not in retval:
-        raise RuntimeError(f"Failed to recognise output format:{output}")
-    return retval[output]
+    if settings.output not in retval:
+        raise RuntimeError(f"Failed to recognise output format:{settings.output}")
+    return retval[settings.output]
+
+
+def _chi2_fit_to_data(datafile, ret_val, model):
+    """Convert a chi^2 fit to a Data instance."""
+    ret = datafile.clone
+    ret.data = ret_val
+    ret.column_headers = []
+    ret.setas = ""
+    prefix = ret["lmfit.prefix"][-1]
+    ix = fixed = 0
+    for ix, p in enumerate(model.param_names):
+        label = datafile.metadata.get(f"{prefix}{p} label", p)
+        units = datafile.metadata.get(f"{prefix}{p} units", "")
+        # Set columns
+        ret.column_headers[2 * ix] = rf"${label} {units}$"
+        ret.column_headers[2 * ix + 1] = rf"$\delta{label} {units}$"
+        if not ret[f"{prefix}{p} vary"]:
+            fixed = 2 * ix
+    ret.column_headers[-1] = "$\\chi^2$"
+    ret.labels = ret.column_headers
+    # Workout which columns are y,e and x
+    plots = list(range(0, ix * 2 + 1, 2))
+    errors = list(range(1, ix * 2 + 2, 2))
+    plots.append(ix * 2 + 2)
+    plots.remove(fixed)
+    errors.remove(fixed + 1)
+    ret.setas[plots] = "y"
+    ret.setas[errors] = "e"
+    ret.setas[fixed] = "x"
+    return ret
 
 
 def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode="float", **kwargs):
@@ -690,25 +672,25 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         *   :py:meth:`Stoner.Data.differential_evolution`
         *   User guide section :ref:`curve_fit_guide`
     """
-
-    result = kwargs.pop("result", None)
-    replace = kwargs.pop("replace", False)
-    header = kwargs.pop("header", None)
-    residuals = kwargs.pop("residuals", False)
-    prefix = kwargs.pop("prefix", None)
+    settings = _Curve_Fit_Output()
+    settings.result = kwargs.pop("result", None)
+    settings.replace = kwargs.pop("replace", False)
+    settings.header = kwargs.pop("header", None)
+    settings.residuals = kwargs.pop("residuals", False)
+    settings.prefix = kwargs.pop("prefix", None)
 
     # Support either scale_covar or absolute_sigma, the latter wins if both supplied
     # If neither are specified, then if sigma is not given, absolute sigma will be False.
 
     # Support both asrow and output, the latter wins if both supplied
-    output = kwargs.pop("output", "row" if kwargs.pop("asrow", False) else "fit")
+    settings.output = kwargs.pop("output", "row" if kwargs.pop("asrow", False) else "fit")
     kwargs["full_output"] = True
 
     if not isinstance(ycol, list):
         ycol = [ycol]
 
     # Collect data, function and p0 together.
-    data, kwargs, cols = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
+    data, kwargs, settings.columns = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
     _func, p0 = _get_curve_fit_func(func, kwargs)
 
     if getattr(data.y, "ndim", 0) == 1:
@@ -739,7 +721,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
             sigma = None
         for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "scale_covar"]:
             kwargs.pop(var, None)
-        report = _curve_fit_result(*_curve_fit(_func, xdat, ydat, **kwargs))
+        report = _Curve_Fit_Result(*_curve_fit(_func, xdat, ydat, **kwargs))
         report.func = func
         if p0 is None:
             report.p0 = np.ones(len(report.popt))
@@ -751,23 +733,17 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         report.nfree = len(datafile) - len(report.popt)
         report.chisq /= report.nfree
 
-        if result is not None:
+        if settings.result is not None:
             _record_curve_fit_result(
                 datafile,
                 func,
                 report,
-                cols.xcol,
-                header,
-                result,
-                replace,
-                residuals=residuals,
-                ycol=cols.ycol,
-                prefix=prefix,
+                settings,
             )
         try:
-            retvals.append(getattr(report, output))
+            retvals.append(getattr(report, settings.output))
         except AttributeError as err:
-            raise RuntimeError(f"Specified output: {kwargs['output']}, from curve_fit not recognised") from err
+            raise RuntimeError(f"Specified output: {settings.output}, from curve_fit not recognised") from err
     if i == 0:
         retvals = retvals[0]
     return retvals
@@ -841,17 +817,20 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
             :include-source:
             :outname: diffev1
     """
+    settings = _Curve_Fit_Output()
     bounds = kwargs.pop("bounds", lambda x, y: True)
-    result = kwargs.pop("result", None)
-    replace = kwargs.pop("replace", False)
-    residuals = kwargs.pop("residuals", False)
-    header = kwargs.pop("header", None)
+    settings.result = kwargs.pop("result", None)
+    settings.replace = kwargs.pop("replace", False)
+    settings.residuals = kwargs.pop("residuals", False)
+    settings.header = kwargs.pop("header", None)
     # Support both asrow and output, the latter wins if both supplied
-    asrow = kwargs.pop("asrow", False)
-    output = kwargs.pop("output", "row" if asrow else "fit")
+    settings.asrow = kwargs.pop("asrow", False)
+    settings.output = kwargs.pop("output", "row" if settings.asrow else "fit")
 
-    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, sigma=sigma, bounds=bounds, **kwargs)
-    model, prefix = _prep_lmfit_model(model, kwargs)
+    data, kwargs, settings.columns = _assemnle_data_to_fit(
+        datafile, xcol=xcol, ycol=ycol, sigma=sigma, bounds=bounds, **kwargs
+    )
+    model, settings.prefix = _prep_lmfit_model(model, kwargs)
     p0, single_fit = _prep_lmfit_p0(model, data.y, data.x, p0, kwargs)
 
     for k in model.param_names:
@@ -881,7 +860,7 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     kwargs.pop("polish", None)
     kwargs["full_output"] = True
     kwargs["absolute_sigma"] = abs_sigma
-    polish = _curve_fit_result(*_curve_fit(model.func, data.x, data.y[0], sigma=data.e[0], p0=fit.x, **kwargs))
+    polish = _Curve_Fit_Result(*_curve_fit(model.func, data.x, data.y[0], sigma=data.e[0], p0=fit.x, **kwargs))
 
     polish.func = model.func
     polish.p0 = p0
@@ -896,9 +875,7 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     fit.popt = polish.popt
     fit.perr = polish.perr
     fit.fit_report = polish.fit_report
-    row = _record_curve_fit_result(
-        datafile, model, fit, _.xcol, header, result, replace, residuals=residuals, prefix=prefix, ycol=_.ycol
-    )
+    row = _record_curve_fit_result(datafile, model, fit, settings)
     ret_dict = {}
     for i, p in enumerate(model.param_names):
         ret_dict[p], ret_dict[f"d_{p}"] = row[2 * i], row[2 * i + 1]
@@ -915,9 +892,9 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
         "data": datafile,
         "dict": fit.dict,
     }
-    if output not in retval:
-        raise RuntimeError(f"Failed to recognise output format:{output}")
-    return retval[output]
+    if settings.output not in retval:
+        raise RuntimeError(f"Failed to recognise output format:{settings.output}")
+    return retval[settings.output]
 
 
 def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
@@ -989,81 +966,47 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
             :include-source:
             :outname: lmfit2
     """
-    result = kwargs.pop("result", None)
-    replace = kwargs.pop("replace", False)
-    residuals = kwargs.pop("residuals", False)
-    header = kwargs.pop("header", None)
+    settings = _Curve_Fit_Output()
+    settings.result = kwargs.pop("result", None)
+    settings.replace = kwargs.pop("replace", False)
+    settings.residuals = kwargs.pop("residuals", False)
+    settings.header = kwargs.pop("header", None)
     # Support both asrow and output, the latter wins if both supplied
-    asrow = kwargs.pop("asrow", False)
-    output = kwargs.pop("output", "row" if asrow else "fit")
+    settings.asrow = kwargs.pop("asrow", False)
+    settings.output = kwargs.pop("output", "row" if settings.asrow else "fit")
 
-    data, kwargs, _ = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
-    model, prefix = _prep_lmfit_model(model, kwargs)
+    data, kwargs, settings.columns = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
+    model, settings.prefix = _prep_lmfit_model(model, kwargs)
     p0, single_fit = _prep_lmfit_p0(model, data.y, data.x, p0, kwargs)
-    nan_policy = kwargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
+    settings.nan_policy = kwargs.pop("nan_policy", getattr(model, "nan_policy", "omit"))
+    settings.scale_covar = kwargs.get("scale_covar", not kwargs.get("absolute_sigma", False))
 
     if single_fit:
-        ret_val = __lmfit_one(
+        return __lmfit_one(
             datafile,
             model,
             data,
             p0,
-            prefix,
-            _,
-            kwargs.get("scale_covar", not kwargs.get("absolute_sigma", False)),
-            result=result,
-            header=header,
-            replace=replace,
-            output=output,
-            residuals=residuals,
-            nan_policy=nan_policy,
+            settings,
         )
-    else:  # chi^2 mode
-        pn = p0
-        ret_val = np.zeros((pn.shape[0], pn.shape[1] * 2 + 1))
-        for i, pn_i in enumerate(pn):  # iterate over every row in the supplied p0 values
-            p0, single_fit = _prep_lmfit_p0(
-                model, data.y, data.x, pn_i, kwargs
-            )  # model, data, params, prefix, columns, scale_covar,**kwargs)
-            ret_val[i, :] = __lmfit_one(
-                datafile,
-                model,
-                data,
-                p0,
-                prefix,
-                _,
-                kwargs.get("scale_covar", not kwargs.get("absolute_sigma", False)),
-                nan_policy=nan_policy,
-                output="row",
-            )
-        if output == "data":  # Create a data object and seet column headers etc correctly
-            ret = datafile.clone
-            ret.data = ret_val
-            ret.column_headers = []
-            ret.setas = ""
-            prefix = ret["lmfit.prefix"][-1]
-            ix = fixed = 0
-            for ix, p in enumerate(model.param_names):
-                label = datafile.metadata.get(f"{prefix}{p} label", p)
-                units = datafile.metadata.get(f"{prefix}{p} units", "")
-                # Set columns
-                ret.column_headers[2 * ix] = rf"${label} {units}$"
-                ret.column_headers[2 * ix + 1] = rf"$\delta{label} {units}$"
-                if not ret[f"{prefix}{p} vary"]:
-                    fixed = 2 * ix
-            ret.column_headers[-1] = "$\\chi^2$"
-            ret.labels = ret.column_headers
-            # Workout which columns are y,e and x
-            plots = list(range(0, ix * 2 + 1, 2))
-            errors = list(range(1, ix * 2 + 2, 2))
-            plots.append(ix * 2 + 2)
-            plots.remove(fixed)
-            errors.remove(fixed + 1)
-            ret.setas[plots] = "y"
-            ret.setas[errors] = "e"
-            ret.setas[fixed] = "x"
-            ret_val = ret
-
+    # chi^2 mode
+    pn = p0
+    ret_val = np.zeros((pn.shape[0], pn.shape[1] * 2 + 1))
+    output = settings.output
+    settings.output = "row"
+    for i, pn_i in enumerate(pn):  # iterate over every row in the supplied p0 values
+        p0, single_fit = _prep_lmfit_p0(
+            model, data.y, data.x, pn_i, kwargs
+        )  # model, data, params, prefix, columns, scale_covar,**kwargs)
+        ret_val[i, :] = __lmfit_one(
+            datafile,
+            model,
+            data,
+            p0,
+            settings,
+        )
+    if output == "data":  # Create a data object and seet column headers etc correctly
+        return _chi2_fit_to_data(datafile, ret_val, model)
     return ret_val
 
 
@@ -1211,27 +1154,34 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     """
     # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
     # Support both asrow and output, the latter wins if both supplied
+    settings = _Curve_Fit_Output()
+    settings.result = kwargs.pop("result", None)
+    settings.replace = kwargs.pop("replace", False)
+    settings.residuals = kwargs.pop("residuals", False)
+    settings.header = kwargs.pop("header", None)
+    # Support both asrow and output, the latter wins if both supplied
+    settings.asrow = kwargs.pop("asrow", False)
+    settings.output = kwargs.pop("output", "row" if settings.asrow else "fit")
     sigma = kwargs.pop("sigma", None)
     sigma_x = kwargs.pop("sigma_x", None)
     bounds = kwargs.pop("bounds", lambda x, r: True)
     p0 = kwargs.pop("p0", None)
-    data, kwargs, _ = _assemnle_data_to_fit(
-        datafile, xcol=xcol, ycol=ycol, xerr=sigma, bounds=bounds, sigma_x=sigma_x, **kwargs
+    data, kwargs, settings.columns = _assemnle_data_to_fit(
+        datafile, xcol=xcol, ycol=ycol, yerr=sigma, bounds=bounds, sigma_x=sigma_x, **kwargs
     )
     if not isinstance(model, odrModel):
-        model, prefix = _prep_lmfit_model(model, kwargs)
+        model, settings.prefix = _prep_lmfit_model(model, kwargs)
     else:
-        prefix = kwargs.pop("prefix", getattr(model, "name", model.fcn.__name__))
+        settings.prefix = kwargs.pop("prefix", getattr(model, "name", model.fcn.__name__))
     p0, single_fit = _prep_lmfit_p0(model, data.y, data.x, p0, kwargs)
-    kwargs["p0"] = p0
     model = ODR_Model(model, p0=p0)
     if kwargs.get("scale_covar", True):
-        data = sp.odr.Data(data.x, data.y, wd=1 / data.d**2, we=1 / data.e**2)
+        data = sp.odr.Data(data.x, data.y, wd=1 / data.d[0] ** 2, we=1 / data.e**2)
     else:
         data = sp.odr.RealData(data.x, data.y, sx=data.d, sy=data.e)
 
     if single_fit:
-        ret_val = _odr_one(datafile, data, model, prefix, _, **kwargs)
+        ret_val = _odr_one(datafile, data, model, settings, p0, **kwargs)
     else:  # chi^2 mode
         raise NotImplementedError("Sorry cannot do chi^2 mode for orthogonal distance regression yet!")
     return ret_val

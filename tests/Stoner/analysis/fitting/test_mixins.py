@@ -18,7 +18,7 @@ pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
 sys.path.insert(0, pth)
 from Stoner import Data
-from Stoner.analysis.fitting.functions import _curve_fit_result
+from Stoner.analysis.fitting.functions import _Curve_Fit_Result
 
 
 def fit(x, a, b, c):
