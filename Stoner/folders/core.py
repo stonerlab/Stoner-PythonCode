@@ -682,56 +682,29 @@ class BaseFolder(MutableSequence):
         """
         if name in self.groups and not isinstance(name, int_types):
             return self.groups[name]
-        if isinstance(name, string_types + regexp_type):
-            if name in self.objects:
+        match name:
+            case str():
                 name = self.__lookup__(name)
                 return self.__getter__(name)
-            name = self.__lookup__(name)
-            return self.__getter__(name)
-        if isinstance(name, int_types):
-            if -len(self) < name < len(self):
-                return self.__getter__(self.__lookup__(name), instantiate=True)
-            raise IndexError(f"{name} is out of range.")
-        if isinstance(name, slice):  # Possibly ought to return another Folder?
-            other = self.__clone__(attrs_only=True)
-            for iname in islice(self.__names__(), name.start, name.stop, name.step):
-                item = self.__getter__(iname)
-                if hasattr(item, "filename"):
-                    item.filename = iname
-                other.append(item)
-            return other
-        if isinstance(name, tuple):  # recurse indexing through tree with a tuple
-            item = self[name[0]]
-            if len(name) > 2:
-                name = tuple(name[1:])
-            elif len(name) == 1:
-                return item
-            else:
-                name = name[1]
-            if isinstance(item, self._type):
-                return item[name]
-            if isinstance(item, type(self)):
-                if all_type(name, (int_types, slice)):  # Looks like we're accessing data arrays
-                    test = (len(item),) + item[0].data[name].shape
-                    output = np.array([]).view(item[0].data.__class__)
-                    for data in item:
-                        append = data[name]
-                        if not isinstance(append, np.ndarray):
-                            append = append.asarray()
-                        output = np.append(output, append)
-                    output = output.reshape(test)
-                    return output
-                try:
-                    return item[name]
-                except KeyError:
-                    if name in item.metadata.common_keys:
-                        return item.metadata.slice(name, output="Data")
-                    if self.debug:
-                        print(name)
-                    raise
-            raise KeyError(f"Can't index the BaseFolder with {name}")
-
-        raise KeyError(f"Can't index the BaseFolder with {name}")
+            case _ if isinstance(name, regexp_type):
+                name = self.__lookup__(name)
+                return self.__getter__(name)
+            case int():
+                if -len(self) < name < len(self):
+                    return self.__getter__(self.__lookup__(name), instantiate=True)
+                raise IndexError(f"{name} is out of range.")
+            case slice():
+                other = self.__clone__(attrs_only=True)
+                for iname in islice(self.__names__(), name.start, name.stop, name.step):
+                    item = self.__getter__(iname)
+                    if hasattr(item, "filename"):
+                        item.filename = iname
+                    other.append(item)
+                return other
+            case tuple():
+                return self._recursive_getitem(name)
+            case _:
+                raise KeyError(f"Can't index the BaseFolder with {name}")
 
     def __setitem__(self, name, value):
         """Attempt to store a value in either the groups or objects.
@@ -939,6 +912,37 @@ class BaseFolder(MutableSequence):
 
     ###########################################################################
     ###################### Private Methods ####################################
+
+    def _recursive_getitem(self, name):
+        item = self[name[0]]
+        if len(name) > 2:
+            name = tuple(name[1:])
+        elif len(name) == 1:
+            return item
+        else:
+            name = name[1]
+        if isinstance(item, self._type):
+            return item[name]
+        if isinstance(item, type(self)):
+            if all_type(name, (int_types, slice)):  # Looks like we're accessing data arrays
+                test = (len(item),) + item[0].data[name].shape
+                output = np.array([]).view(item[0].data.__class__)
+                for data in item:
+                    append = data[name]
+                    if not isinstance(append, np.ndarray):
+                        append = append.asarray()
+                    output = np.append(output, append)
+                output = output.reshape(test)
+                return output
+            try:
+                return item[name]
+            except KeyError:
+                if name in item.metadata.common_keys:
+                    return item.metadata.slice(name, output="Data")
+                if self.debug:
+                    print(name)
+                raise
+        raise KeyError(f"Can't index the BaseFolder with {name}")
 
     def __init_from_other(self, other):
         other.__clone__(other=self)
