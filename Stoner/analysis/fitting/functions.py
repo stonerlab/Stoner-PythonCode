@@ -1176,7 +1176,15 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     p0, single_fit = _prep_lmfit_p0(model, data.y, data.x, p0, kwargs)
     model = ODR_Model(model, p0=p0)
     if kwargs.get("scale_covar", True):
-        data = sp.odr.Data(data.x, data.y, wd=1 / data.d[0] ** 2, we=1 / data.e**2)
+        if np.all(np.isclose(data.d, data.d.ravel()[0])):
+            wd = None
+        else:
+            wd = 1 / data.d[0] ** 2
+        if np.all(np.isclose(data.e, data.e.ravel()[0])):
+            we = None
+        else:
+            we = 1 / data.e**2
+        data = sp.odr.Data(data.x, data.y, wd=wd, we=we)
     else:
         data = sp.odr.RealData(data.x, data.y, sx=data.d, sy=data.e)
 
