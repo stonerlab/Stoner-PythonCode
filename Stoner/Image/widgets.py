@@ -10,10 +10,11 @@ from matplotlib.colors import to_rgba
 from matplotlib.widgets import Cursor, RectangleSelector
 from scipy.optimize import minimize
 from skimage import draw
+
 from ..tools.decorators import label
 
 
-def send_event(image, names, **kargs):
+def send_event(image, names, **kwargs):
     """Make a fake event."""
     time.sleep(0.05)
     select = image._image._select
@@ -21,7 +22,7 @@ def send_event(image, names, **kargs):
     if not isinstance(names, list):
         names = [names]
     for name in names:
-        for k, v in kargs.items():
+        for k, v in kwargs.items():
             setattr(event, k, v)
         getattr(select, name)(event)
 
@@ -59,15 +60,15 @@ class LineSelect:
         self.fig = None
         self.crs = None
         self.mode = "xy"
-        self.kargs = {}
+        self.kwargs = {}
 
-    def __call__(self, image, **kargs):
+    def __call__(self, image, **kwargs):
         """Do the actual line selection.
 
         Args:
             image (ImageArray, ImageFile):
                 The image to shopw to the user for the selection
-            **kargs (mixed):
+            **kwargs (mixed):
                 Other keywords to pass to the line drawing.
 
         Returns:
@@ -77,7 +78,7 @@ class LineSelect:
         """
         self.fig = image.imshow()
         self.ax = plt.gca()
-        self.kargs = kargs
+        self.kwargs = kwargs
         image._select = self  # allows us to hook to the selector.
         self.crs = Cursor(self.ax)
         self.crs.connect_event("button_press_event", self.on_click)
@@ -160,9 +161,9 @@ class LineSelect:
         if len(self.ax.lines) > 2:  # Rremove the old line
             self.ax.lines[2].remove()
 
-        self.kargs.setdefault("linewidth", 2)
-        self.kargs.setdefault("linestyle", "dash")
-        self.kargs.setdefault("")
+        self.kwargs.setdefault("linewidth", 2)
+        self.kwargs.setdefault("linestyle", "dash")
+        self.kwargs.setdefault("")
 
         xc, yc = event.xdata, event.ydata
         xs, ys = self.started
@@ -184,15 +185,15 @@ class RegionSelect:
         self.ax = None
         self.fig = None
         self.select = None
-        self.kargs = {}
+        self.kwargs = {}
 
-    def __call__(self, image, **kargs):
+    def __call__(self, image, **kwargs):
         """Actuall do the region selection.
 
         Args:
             image (ImageArray, ImageFile):
                 The image to shopw to the user for the selection
-            **kargs (mixed):
+            **kwargs (mixed):
                 Other keywords to pass to the line drawing.
 
         Returns:
@@ -203,7 +204,7 @@ class RegionSelect:
         self.fig = image.imshow()
         plt.title("Click and drag to select region and press return")
         self.ax = plt.gca()
-        self.kargs = kargs
+        self.kwargs = kwargs
         image._select = self  # allows us to hook to the selector.
         self.select = RectangleSelector(
             self.ax, self.on_select, button=[1], minspanx=5, minspany=5, useblit=True, interactive=True
@@ -275,15 +276,15 @@ class ShapeSelect:
         self.fig = None
         self.crs = None
         self.mode = "xy"
-        self.kargs = {}
+        self.kwargs = {}
 
-    def __call__(self, image, **kargs):
+    def __call__(self, image, **kwargs):
         """Do the work of the polygon selection.
 
         Args:
             image (ImageArray, ImageFile):
                 The image to shopw to the user for the selection
-            **kargs (mixed):
+            **kwargs (mixed):
                 Other keywords to pass to the drawing.
 
         Returns:
@@ -295,8 +296,8 @@ class ShapeSelect:
         self.shape = image.shape
         self.ax = plt.gca()
         # Sort colours out
-        self.colour = kargs.pop("colour", getattr(image.mask, "colour", "red"))
-        self.alpha = kargs.pop("alpha", 0.5)
+        self.colour = kwargs.pop("colour", getattr(image.mask, "colour", "red"))
+        self.alpha = kwargs.pop("alpha", 0.5)
         self.colour = np.array(to_rgba(self.colour))
         self.colour[3] = self.alpha
         # Create overlay plot
@@ -304,7 +305,7 @@ class ShapeSelect:
         self.ax.imshow(overlay)
         self.ov_layer = self.ax.images[-1]
 
-        self.kargs = kargs
+        self.kwargs = kwargs
         image._select = self  # allows us to hook to the selector.
         self.crs = Cursor(self.ax)
         plt.title(self.draw_poly.instructions)

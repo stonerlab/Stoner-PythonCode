@@ -34,7 +34,7 @@ def concatenate(folder, sort=None, reverse=False):
     return folder
 
 
-def extract(folder, *metadata, **kargs):
+def extract(folder, *metadata, **kwargs):
     """Extract metadata from each of the files in the terminal group.
 
     Walks through the terminal group and gets the listed metadata from each file and constructsa replacement
@@ -51,7 +51,7 @@ def extract(folder, *metadata, **kargs):
     Returns:
         An instance of a metadataObject like object.
     """
-    copy = kargs.pop("copy", True)
+    copy = kwargs.pop("copy", True)
 
     args = []
     for m in metadata:
@@ -116,7 +116,7 @@ def gather(folder, xcol=None, ycol=None):
 
     """
 
-    def _gatherer(group, _, xcol=None, ycol=None, xerr=None, yerr=None, **kargs):
+    def _gatherer(group, _, xcol=None, ycol=None, xerr=None, yerr=None, **kwargs):
         yerr = None
         xerr = None
         cols = group[0]._col_args(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False)
@@ -128,7 +128,7 @@ def gather(folder, xcol=None, ycol=None):
         else:
             xerr = None
 
-        common_x = kargs.pop("common_x", True)
+        common_x = kwargs.pop("common_x", True)
 
         results = group.type()
         results.metadata = group[0].metadata

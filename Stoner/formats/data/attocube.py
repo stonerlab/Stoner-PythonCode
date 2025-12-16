@@ -23,7 +23,7 @@ def plane(X, a, b, c):
 
 
 @register_loader(patterns=(".txt", 32), mime_types=("text/plain", 32), name="AttocubeScanParametersFile", what="Data")
-def load_attocube_parameters(new_data, *args, **kargs):
+def load_attocube_parameters(new_data, *args, **kwargs):
     """Load the scan parameters text file as the metadata for a Data File.
 
     Args:
@@ -34,7 +34,7 @@ def load_attocube_parameters(new_data, *args, **kargs):
         new_data:
             The modififed scan stack.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     with FileManager(filename, "r") as parameters:
         if not parameters.readline().startswith("Daisy Parameter Snapshot"):

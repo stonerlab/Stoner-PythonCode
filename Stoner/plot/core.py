@@ -50,7 +50,7 @@ class PlotMixin:
     Args:
         args(tuple):
             Arguments to pass to :py:meth:`Stoner.Core.DataFile.__init__`
-        kargs (dict):
+        kwargs (dict):
             keyword arguments to pass to \b DataFile.__init__
 
     Attributes:
@@ -80,10 +80,10 @@ class PlotMixin:
     _legend = True
     multiple = "common"
 
-    def __init__(self, *args, **kargs):  # Do the import of plt here to speed module load
+    def __init__(self, *args, **kwargs):  # Do the import of plt here to speed module load
         """Import plt and then calls the parent constructor."""
         self._figure = None
-        self._showfig = kargs.pop("showfig", True)  # Retains previous behaviour
+        self._showfig = kwargs.pop("showfig", True)  # Retains previous behaviour
         self._subplots = []
         self._public_attrs = {
             "fig": (int, mplfig.Figure),
@@ -96,7 +96,7 @@ class PlotMixin:
             "ylabel": str,
             "_showfig": bool,
         }
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
         self._labels = TypedList(str, [])
         if self.debug:
             print("Done PlotMixin init")
@@ -348,8 +348,8 @@ class PlotMixin:
             return func
 
         @wraps(func)
-        def _proxy(*args, **kargs):
-            ret = func(*args, **kargs)
+        def _proxy(*args, **kwargs):
+            ret = func(*args, **kwargs)
             return ret
 
         return fix_signature(_proxy, func)

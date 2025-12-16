@@ -18,10 +18,10 @@ IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 
 
-def _load_ImageArray(f, **kargs):
+def _load_ImageArray(f, **kwargs):
     """Create and image array."""
-    kargs.pop("Img_num", None)  # REemove img_num if it exists
-    return ImageArray(f, **kargs)
+    kwargs.pop("Img_num", None)  # REemove img_num if it exists
+    return ImageArray(f, **kwargs)
 
 
 class ImageStackMixin:
@@ -29,7 +29,7 @@ class ImageStackMixin:
 
     _defaults = {"type": ImageFile}
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Initialise an ImageStack's pricate data and provide a type argument."""
         self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
         self._metadata = RegexpDict()
@@ -38,21 +38,21 @@ class ImageStackMixin:
         self._sizes = np.array([], dtype=int).reshape(0, 2)
 
         if not args:
-            super().__init__(**kargs)
+            super().__init__(**kwargs)
             return
         other = args[0]
         if isinstance(other, ImageStackMixin):
-            super().__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kwargs)
             self._stack = other._stack
             self._metadata = other._metadata
             self._names = other._names
             self._sizes = other._sizes
         elif isinstance(other, ImageFolder):  # ImageFolder can already init from itself
-            super().__init__(*args, **kargs)
+            super().__init__(*args, **kwargs)
         elif (
             isinstance(other, np.ndarray) and other.ndim == 3
         ):  # Initialise with 3D numpy array, first coordinate is number of images
-            super().__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kwargs)
             self.imarray = other
             self._sizes = np.ones((other.shape[0], 2), dtype=int) * other.shape[1:]
             self._names = [f"Untitled-{d}" for d in range(other.shape[0])]
@@ -63,12 +63,12 @@ class ImageStackMixin:
                 other = [ImageFile(i) for i in other]
             except (TypeError, ValueError, RuntimeError) as err:
                 raise ValueError("Failed to initialise ImageStack with list input") from err
-            super().__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kwargs)
             for ot in other:
                 self.append(ot)
 
         else:
-            super().__init__(*args, **kargs)
+            super().__init__(*args, **kwargs)
 
     def __lookup__(self, name):
         """Stub for other classes to implement.
@@ -387,7 +387,7 @@ class ImageStackMixin:
         self._stack.mask = mask
         return self
 
-    def asfloat(self, normalise=True, clip=False, clip_negative=False, **kargs):
+    def asfloat(self, normalise=True, clip=False, clip_negative=False, **kwargs):
         """Convert stack to floating point type.
 
         Keyword Arguments:
@@ -411,12 +411,12 @@ class ImageStackMixin:
             pass
         else:
             self.convert(dtype=np.float64, normalise=normalise)
-        if "clip_neg" in kargs:
+        if "clip_neg" in kwargs:
             warnings.warn(
                 "clip_neg argument renamed to clip_negative in ImageStack. This will cause an error in future"
                 + "versions of the Stoner Package."
             )
-            clip_negative = kargs.pop("clip_neg")
+            clip_negative = kwargs.pop("clip_neg")
         if clip or clip_negative:
             self.each.clip_intensity(clip_negative=clip_negative)
         return self

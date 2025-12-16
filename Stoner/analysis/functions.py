@@ -46,7 +46,7 @@ def apply(
 
         The callable *func* should have a signature::
 
-            def func(row,**kargs):
+            def func(row,**kwargs):
 
         and should return either a single float, in which case it will be used to repalce the specified column,
         or an array, in which case it is used to completely replace the row of data.
@@ -228,7 +228,7 @@ def integrate(
     output: str = "data",
     bounds: Callable = lambda x, y: True,
     method: str = "simpson",
-    **kargs: Kwargs,
+    **kwargs: Kwargs,
 ) -> Data:
     """Integrate a column of data, optionally returning the cumulative integral.
 
@@ -254,7 +254,7 @@ def integrate(
             A function that evaluates for each row to determine if the data should be integrated over.
         method (str):
             Either "simpson" (default) or "trapezoid" to select the integration method. See Note.
-        **kargs:
+        **kwargs:
             Other keyword arguments are fed direct to the scipy.integrate.cumtrapz method
 
     Returns:
@@ -284,7 +284,7 @@ def integrate(
     final = []
     for i in range(ydat.shape[1]):
         yd = ydat[:, i]
-        resultdata = func(yd, x=xdat, **kargs)
+        resultdata = func(yd, x=xdat, **kwargs)
         resultdata = np.append(np.array([0]), resultdata)
         if result is not None:
             header = header if header is not None else f"Integral of {datafile.column_headers[_.ycol]}"

@@ -18,9 +18,9 @@ from ..decorators import register_loader, register_saver
     name="HDF5File",
     what="Data",
 )
-def load_hdf(new_data, *args, **kargs):  # pylint: disable=unused-argument
+def load_hdf(new_data, *args, **kwargs):  # pylint: disable=unused-argument
     """Create a new HDF5File from an actual HDF file."""
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     with HDFFileManager(filename, "r") as f:
         if "data" in f.keys():
             data = f["data"]
@@ -61,7 +61,7 @@ def load_hdf(new_data, *args, **kargs):  # pylint: disable=unused-argument
 
 
 @register_saver(patterns=[(".hdf", 16), (".hf5", 16), (".hdf5", 16)], name="HDF5File", what="Data")
-def save_hdf(save_data, filename=None, **kargs):  # pylint: disable=unused-argument
+def save_hdf(save_data, filename=None, **kwargs):  # pylint: disable=unused-argument
     """Write the current object into  an hdf5 file or group within a file.
 
     Writes the data in afashion that is compatible with being loaded in again.
@@ -132,7 +132,7 @@ def _scan_SLS_meta(new_data, group):
     name="SLS_STXMFile",
     what="Data",
 )
-def load_sls_stxm(new_data, *args, **kargs):
+def load_sls_stxm(new_data, *args, **kwargs):
     """Load data from the hdf5 file produced by Pollux.
 
     Args:
@@ -142,7 +142,7 @@ def load_sls_stxm(new_data, *args, **kargs):
     Returns:
         itnew_data after having loaded the data
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     if isinstance(filename, path_types):  # We got a string, so we'll treat it like a file...
         try:
@@ -247,7 +247,7 @@ def _hgx_main_data(new_data, data_grp):
     name="HGXFile",
     what="Data",
 )
-def _load(new_data, *args, **kargs):
+def _load(new_data, *args, **kwargs):
     """Load a GenX HDF file.
 
     Args:
@@ -257,7 +257,7 @@ def _load(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     new_data.seen = []
     with HDFFileManager(new_data.filename, "r") as f:

@@ -36,9 +36,9 @@ def image_file_adaptor(workingfunc):
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
-        box = kargs.pop("_box", False)
+        box = kwargs.pop("_box", False)
         transpose = getattr(workingfunc, "transpose", False)
         if isinstance(box, bool) and not box:
             im = self.image
@@ -51,12 +51,12 @@ def image_file_adaptor(workingfunc):
             if isinstance(a, type(self)):
                 args[ix] = a.image
 
-        if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
+        if getattr(workingfunc, "changes_size", False) and "_" not in kwargs:
             # special case for common function crop which will change the array shape
             force = True
         else:
-            force = kargs.pop("_", False)
-        r = workingfunc(im, *args, **kargs)
+            force = kwargs.pop("_", False)
+        r = workingfunc(im, *args, **kwargs)
         if getattr(workingfunc, "keep_class", False):
             return r
         if isinstance(r, type(self.image)):
@@ -112,9 +112,9 @@ def image_file_raw_adaptor(workingfunc):
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
-        box = kargs.pop("_box", False)
+        box = kwargs.pop("_box", False)
         transpose = getattr(workingfunc, "transpose", False)
         clones = getattr(workingfunc, "clones", False)
         if isinstance(box, bool) and not box:
@@ -128,12 +128,12 @@ def image_file_raw_adaptor(workingfunc):
             if isinstance(a, type(self)):
                 args[ix] = a.image
 
-        if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
+        if getattr(workingfunc, "changes_size", False) and "_" not in kwargs:
             # special case for common function crop which will change the array shape
             force = True
         else:
-            force = kargs.pop("_", False)
-        r = workingfunc(im, *args, **kargs)
+            force = kwargs.pop("_", False)
+        r = workingfunc(im, *args, **kwargs)
         if getattr(workingfunc, "keep_class", False):
             return r
         if isinstance(r, np.ndarray) and r.ndim != 2:  # 1D Array goes back straight
@@ -179,7 +179,7 @@ def array_file_property(workingfunc):
         return None
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kwargs):
         """Wrap magic proxy function call."""
         transpose = getattr(workingfunc, "transpose", False)
         clones = getattr(workingfunc, "clones", False)
@@ -191,7 +191,7 @@ def array_file_property(workingfunc):
             if isinstance(a, type(self)):
                 args[ix] = a.image
 
-        ret = workingfunc(im, *args, **kargs)
+        ret = workingfunc(im, *args, **kwargs)
         # This shouldn't in fact be returning anything
         return ret
 
@@ -444,27 +444,27 @@ def fix_signature(proxy_func, wrapped_func):
     return proxy_func
 
 
-def make_Data(*args, **kargs):
+def make_Data(*args, **kwargs):
     """Return an instance of Stoner.Data passig through constructor arguments.
 
     Calling make_Data(None) is a special case to return the Data class ratther than an instance
     """
     if len(args) == 1 and args[0] is None:
         return import_module("Stoner.core.data").Data
-    return import_module("Stoner.core.data").Data(*args, **kargs)
+    return import_module("Stoner.core.data").Data(*args, **kwargs)
 
 
-def make_Image(*args, **kargs):
+def make_Image(*args, **kwargs):
     """Return an instance of Stoner.Data passig through constructor arguments.
 
     Calling make_Data(None) is a special case to return the Data class ratther than an instance
     """
     if len(args) == 1 and args[0] is None:
         return import_module("Stoner.Image.core").ImageFile
-    return import_module("Stoner.Image.core").ImageFile(*args, **kargs)
+    return import_module("Stoner.Image.core").ImageFile(*args, **kwargs)
 
 
-def make_Class(cls, *args, **kargs):
+def make_Class(cls, *args, **kwargs):
     """Return an instance of Stoner.Data passig through constructor arguments.
 
     Calling make_Data(None) is a special case to return the Data class ratther than an instance
@@ -475,4 +475,4 @@ def make_Class(cls, *args, **kargs):
 
     if len(args) == 1 and args[0] is None:
         return getattr(import_module(mod), cls)
-    return getattr(import_module(mod), cls)(*args, **kargs)
+    return getattr(import_module(mod), cls)(*args, **kwargs)

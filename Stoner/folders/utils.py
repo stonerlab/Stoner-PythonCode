@@ -10,11 +10,11 @@ __all__ = [
     "removeDisallowedFilenameChars",
 ]
 import fnmatch
-from os import path
 import pathlib
 import re
 import string
 from multiprocessing.pool import ThreadPool
+from os import path
 
 import multiprocess as multiprocessing
 from numpy import array

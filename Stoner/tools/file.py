@@ -81,7 +81,7 @@ def test_is_zip(filename, member=""):
     return test_is_zip(newfile, newmember)
 
 
-def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
+def get_hdf_loader(f, default_loader=lambda *args, **kwargs: None):
     """Look inside the open hdf file for details of what class to use to read this group.
 
     Args:
@@ -107,14 +107,14 @@ def get_hdf_loader(f, default_loader=lambda *args, **kargs: None):
     return getattr(globals()[typ], "read_hdf5", default_loader)
 
 
-def get_filename(args, kargs):
+def get_filename(args, kwargs):
     """Extract a filename from the function arguments."""
-    if "filename" in kargs:
-        return kargs.pop("filename"), args, kargs
+    if "filename" in kwargs:
+        return kwargs.pop("filename"), args, kwargs
     if len(args):
         args = list(args)
-        return args.pop(0), args, kargs
-    return None, args, kargs
+        return args.pop(0), args, kwargs
+    return None, args, kwargs
 
 
 def file_dialog(mode: str, filename: Filename, filetype: str) -> Union[pathlib.Path, Sequence[pathlib.Path], None]:
@@ -183,12 +183,12 @@ def auto_load_classes(
     baseclass: Type[metadataObject],
     debug: bool = False,
     args: Optional[Tuple] = None,
-    kargs: Optional[Dict] = None,
+    kwargs: Optional[Dict] = None,
 ) -> Type[metadataObject]:
     """Work through subclasses of parent to find one that will load this file."""
     mimetype = get_mime_type(filename, debug=debug)
     args = args if args is not None else ()
-    kargs = kargs if kargs is not None else {}
+    kwargs = kwargs if kwargs is not None else {}
     match filename:
         case str() | pathlib.Path():
             pattern = pathlib.Path(filename).suffix
@@ -217,10 +217,10 @@ def auto_load_classes(
                     test = make_Image()
                 case _:
                     raise ValueError(f"Unable to figure out what data type to look at for {baseclass}")
-            test = loader(test, filename, *args, **kargs)
+            test = loader(test, filename, *args, **kwargs)
             try:
-                kargs = test._kargs
-                delattr(test, "_kargs")
+                kwargs = test._kwargs
+                delattr(test, "_kwargs")
             except AttributeError:
                 pass
 
@@ -480,11 +480,11 @@ def clear_routine(name, loader=True, saver=True):
 class FileManager:
     """Simple context manager that allows opening files or working with already open string buffers."""
 
-    def __init__(self, filename, *args, **kargs):
+    def __init__(self, filename, *args, **kwargs):
         """Store the parameters passed to the context manager."""
         self.filename = filename
         self.args = args
-        self.kargs = kargs
+        self.kwargs = kwargs
         self.file = None
         self.binary = len(args) > 0 and args[0].endswith("b")
         if isinstance(filename, path_types):
@@ -512,7 +512,7 @@ class FileManager:
                     self.mode = "text"
                 filename.response = self.filename
             case bytes():
-                if (len(args) > 0 and args[0][-1] == "b") or self.kargs.pop("mode", "").endswith("b"):
+                if (len(args) > 0 and args[0][-1] == "b") or self.kwargs.pop("mode", "").endswith("b"):
                     self.filename = filename
                     self.mode = "bytes"
                 else:
@@ -525,8 +525,8 @@ class FileManager:
         """Either open the file or reset the buffer."""
         if self.mode == "open":
             if len(self.args) > 0 and "b" not in self.args[0]:
-                self.kargs.setdefault("encoding", "utf-8")
-            self.file = open(self.filename, *self.args, **self.kargs)  # pylint: disable=unspecified-encoding
+                self.kwargs.setdefault("encoding", "utf-8")
+            self.file = open(self.filename, *self.args, **self.kwargs)  # pylint: disable=unspecified-encoding
         elif self.mode == "text":
             self.file = io.StringIO(self.filename)
         elif self.mode == "bytes":

@@ -11,9 +11,9 @@ from ..utils.maximus import flatten_header, hdr_to_dict, read_scan
 @register_loader(
     patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Image"
 )
-def load_maximus_image(new_data, *args, **kargs):
+def load_maximus_image(new_data, *args, **kwargs):
     """Load an ImageFile by calling the ImageArray method instead."""
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     try:
         new_data.filename = filename
         pth = Path(new_data.filename)

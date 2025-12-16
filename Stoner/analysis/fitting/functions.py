@@ -19,8 +19,8 @@ from ...tools import isiterable, islistlike, ordinal
 from .classes import (
     MimizerAdaptor,
     ODR_Model,
-    _Curve_Fit_Result,
     _Curve_Fit_Output,
+    _Curve_Fit_Result,
     _prep_lmfit_model,
     _prep_lmfit_p0,
 )

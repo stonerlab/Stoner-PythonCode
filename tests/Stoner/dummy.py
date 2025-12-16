@@ -11,5 +11,5 @@ from Stoner.formats.decorators import register_loader
     name="dummy.ArbClass",
     what="Data",
 )
-def load_arbclass_format(new_data, *args, **kargs):
-    return load_tdi_format(new_data, *args, **kargs)
+def load_arbclass_format(new_data, *args, **kwargs):
+    return load_tdi_format(new_data, *args, **kwargs)

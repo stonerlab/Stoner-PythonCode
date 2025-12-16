@@ -31,7 +31,7 @@ def test_filedialog():
             "getSaveFileName": None,
             "getExistingDirectory": ret_pth.parent,
         }
-        return lambda *args, **kargs: (modes[mode], None)
+        return lambda *args, **kwargs: (modes[mode], None)
 
     modes = {
         "OpenFile": {
@@ -91,11 +91,11 @@ def test_loader():
     assert fldr.shape == (1, {}), "multifile mode failed!"
 
 
-def _event(data, name, **kargs):
+def _event(data, name, **kwargs):
     """Make a fake event."""
     select = data._select
     event = Event("fake", select.data.fig.canvas)
-    for k, v in kargs.items():
+    for k, v in kwargs.items():
         setattr(event, k, v)
     try:
         getattr(select, name)(event)

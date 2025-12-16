@@ -83,7 +83,7 @@ def make_model(model_func):
         a :py:meth:`lmfit.Model.guess` method. If using this decorator, the function that does the guessing should
         take the form::
 
-            def guesser_function(y_data,x=x_data,**kargs):
+            def guesser_function(y_data,x=x_data,**kwargs):
                 return (param_1,param_2,....,pram_n)
 
         Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a
@@ -99,8 +99,8 @@ def make_model(model_func):
     class _ModelDecorator(Model):  # pylint: disable=abstract-method
         __doc__ = model_func.__doc__
 
-        def __init__(self, *args, **kargs):
-            super().__init__(model_func, *args, **kargs)
+        def __init__(self, *args, **kwargs):
+            super().__init__(model_func, *args, **kwargs)
             if hasattr(self, "_limits"):
                 for param, limit in self._limits().items():
                     self.set_param_hint(param, **limit)
@@ -133,8 +133,8 @@ def make_model(model_func):
             """
 
             @wraps(func)
-            def _limits_proxy(self, **kargs):
-                limits = func(**kargs)
+            def _limits_proxy(self, **kwargs):
+                limits = func(**kwargs)
                 for param in limits:
                     if param not in self.param_names:
                         raise RuntimeError(f"Unrecognised parameter in hinter function: {param}")
@@ -165,12 +165,12 @@ def make_model(model_func):
             """
 
             @wraps(func)
-            def guess_proxy(self, *args, **kargs):
+            def guess_proxy(self, *args, **kwargs):
                 """A magic proxy call around a function to guess initial parameters."""
-                guesses = func(*args, **kargs)
+                guesses = func(*args, **kwargs)
                 pars = dict(zip(self.param_names, guesses))
                 pars = self.make_params(**pars)
-                return update_param_vals(pars, self.prefix, **kargs)
+                return update_param_vals(pars, self.prefix, **kwargs)
 
             cls.guess = guess_proxy
             return guess_proxy
@@ -178,7 +178,7 @@ def make_model(model_func):
     return _ModelDecorator
 
 
-def cfg_data_from_ini(inifile, filename=None, **kargs):
+def cfg_data_from_ini(inifile, filename=None, **kwargs):
     """Read an inifile and load and configure a DataFile from it.
 
     Args:
@@ -188,7 +188,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
     Keyword Arguments:
         filename (string,boolean or None):
             File to load that contains the data.
-        **kargs:
+        **kwargs:
             All other keywords are passed to the Data constructor
 
     Returns:
@@ -218,7 +218,7 @@ def cfg_data_from_ini(inifile, filename=None, **kargs):
         typ = typ[-1]
     else:
         typ = "Data"
-    data = make_Data(**kargs)
+    data = make_Data(**kwargs)
     if filename is None:
         if not config.has_option("Data", "filename"):
             filename = False
@@ -258,33 +258,33 @@ def _setup_one_param(data, config, p, prefix, vals):
         "label": str,
         "units": str,
     }
-    kargs = {}
+    kwargs = {}
     for k, val in keys.items():
         if config.has_option(p, k):
             if val == bool:
-                kargs[k] = config.getboolean(p, k)
+                kwargs[k] = config.getboolean(p, k)
             elif val == float:
-                kargs[k] = config.getfloat(p, k)
+                kwargs[k] = config.getfloat(p, k)
             elif val == str:
-                kargs[k] = config.get(p, k)
+                kwargs[k] = config.get(p, k)
     if isinstance(data, make_Data(None)):  # stuff the parameter hint data into metadata
         for k in keys:  # remove keywords not needed
-            if k in kargs:
-                data[f"{prefix}{p} {k}"] = kargs[k]
+            if k in kwargs:
+                data[f"{prefix}{p} {k}"] = kwargs[k]
         if "lmfit.prerfix" in data:
             data["lmfit.prefix"].append(prefix)
         else:
             data["lmfit.prefix"] = [prefix]
-    if "step" in kargs:  # We use step for creating a chi^2 mapping, but not for a parameter hint
-        step = kargs.pop("step")
-        if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]:  # Make chi^2?
-            vals.append(np.arange(kargs["min"], kargs["max"] + step / 10, step))
+    if "step" in kwargs:  # We use step for creating a chi^2 mapping, but not for a parameter hint
+        step = kwargs.pop("step")
+        if "vary" in kwargs and "min" in kwargs and "max" in kwargs and not kwargs["vary"]:  # Make chi^2?
+            vals.append(np.arange(kwargs["min"], kwargs["max"] + step / 10, step))
         else:  # Nope, just make a single value step here
-            vals.append(np.array(kargs["value"]))
+            vals.append(np.array(kwargs["value"]))
     else:  # Nope, just make a single value step here
-        vals.append(np.array(kargs["value"]))
-    kargs = {k: v for k, v in kargs.items() if k in ["value", "max", "min", "vary"]}
-    return kargs
+        vals.append(np.array(kwargs["value"]))
+    kwargs = {k: v for k, v in kwargs.items() if k in ["value", "max", "min", "vary"]}
+    return kwargs
 
 
 def cfg_model_from_ini(inifile, model=None, data=None):
@@ -337,8 +337,8 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     prefix += ":"
     vals = []
     for p in model.param_names:
-        kargs = _setup_one_param(data, config, p, prefix, vals)
-        model.set_param_hint(p, **kargs)  # set the model parameter hint
+        kwargs = _setup_one_param(data, config, p, prefix, vals)
+        model.set_param_hint(p, **kwargs)  # set the model parameter hint
     msh = np.meshgrid(*vals)  # make a mesh of all possible parameter values to test
     msh = [m.ravel() for m in msh]  # tidy it up and combine into one 2D array
     msh = np.column_stack(msh)

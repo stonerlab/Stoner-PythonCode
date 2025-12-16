@@ -21,8 +21,8 @@ except ImportError:
 
 from ..compat import _pattern_type, int_types, string_types
 from ..tools import iscomparable, isiterable
-from .exceptions import StonerAssertionError
 from ..tools.typing import Filename, RegExp
+from .exceptions import StonerAssertionError
 
 try:
     from blist import sorteddict as SortedDict
@@ -119,7 +119,7 @@ class RegexpDict(SortedDict):
     ) -> Union[Any, List[Any]]:
         """Lookup name and find a matching key or raise KeyError.
 
-        Parameters:
+        Args:
             name (str, _pattern_type):
                 The name to be searched for
 
@@ -329,12 +329,14 @@ class TypeHintedDict(RegexpDict):
     # This is used to work out the correct python class for
     # some string types
 
-    def __init__(self, *args: Any, **kargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Construct the TypeHintedDict.
 
         Args:
-            *args, **kargs:
+            *args:
                 Pass any parameters through to the{} constructor.
+            **kwargs:
+                Pass any keyword parameters through to the{} constructor.
 
 
         Calls the{} constructor, then runs through the keys of the
@@ -344,7 +346,7 @@ class TypeHintedDict(RegexpDict):
         type hint from the value of the dict element.
         """
         self._typehints = SortedDict()
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
         for key in list(self.keys()):  # Check through all the keys and see if they contain
             # type hints. If they do, move them to the
             # _typehint dict
@@ -660,9 +662,9 @@ class metadataObject(MutableMapping):  # pylint: disable=invalid-name
         self._metadata = TypeHintedDict()
         return self
 
-    def __init__(self, *args: Any, **kargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Initialise the current metadata attribute."""
-        metadata = kargs.pop("metadata", {})
+        metadata = kwargs.pop("metadata", {})
         self._metadata = getattr(self, "_metadata", TypeHintedDict())
         self.metadata.update(metadata)
         super().__init__()
@@ -741,11 +743,11 @@ class metadataObject(MutableMapping):  # pylint: disable=invalid-name
         """Return the values of the metadata dictionary."""
         yield from self.metadata.values()
 
-    def save(self, filename: Filename = None, **kargs: Any):
+    def save(self, filename: Filename = None, **kwargs: Any):
         """Stub method for a save function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
-    def _load(self, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
+    def _load(self, filename: Filename, *args: Any, **kwargs: Any) -> "metadataObject":
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 

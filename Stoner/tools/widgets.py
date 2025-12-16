@@ -73,8 +73,8 @@ else:
             },
         }
 
-        def __init__(self, *args: Any, **kargs: Any) -> None:
-            super().__init__([""], *args, **kargs)
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__([""], *args, **kwargs)
             self.title = "PyQt5 file dialogs - pythonspot.com"
             self.left = 10
             self.top = 10
@@ -190,15 +190,15 @@ class RangeSelect:
         self.data.title = "Select Data and press Enter to confirm\nEsc to cancel, i to invert selection."
         self.ax = self.data.axes[-1]
         if mpl_version.minor >= 5:
-            kargs = {"props": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
+            kwargs = {"props": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
         else:
-            kargs = {"rectprops": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
+            kwargs = {"rectprops": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
         self.selector = SpanSelector(
             self.ax,
             self.onselect,
             "horizontal",
             useblit=True,
-            **kargs,
+            **kwargs,
         )
         fig.canvas.mpl_connect("key_press_event", self.keypress)
         while not self.finished:

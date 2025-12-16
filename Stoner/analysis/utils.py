@@ -307,7 +307,9 @@ def _h_sat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
 
     This method uses the intercept of the saturated state with zero field portions of the loop.
     """
-    from Stoner.analysis.fitting.models.generic import Linear  # pylint: disable=import-outside-toplevel
+    from Stoner.analysis.fitting.models.generic import (
+        Linear,  # pylint: disable=import-outside-toplevel
+    )
 
     Ms, Ms_err, _ = Ms_vals
     Hsat, Hsat_err = Hsat_vals

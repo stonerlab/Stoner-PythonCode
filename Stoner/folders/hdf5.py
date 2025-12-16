@@ -12,20 +12,21 @@ to :py:class:`Stoner.Core.Data`.
 __all__ = ["HDF5Folder"]
 import os
 from os import path
+
 import h5py
 
 from ..compat import get_filedialog, path_types
-from .mixins import DataFolder
 from ..tools import make_Class
+from .mixins import DataFolder
 
 
 class HDF5Folder(DataFolder):
     """Just enforces the loader attriobute to be an HDF5File."""
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Ensure the loader routine is set for HDF5Files."""
         self.File = None
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
 
     def __getter__(self, name, instantiate=True):
         """Load the specified name from a file on disk.

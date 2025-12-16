@@ -52,18 +52,16 @@ import os
 import sys
 import warnings
 
+import numpy as np
 from matplotlib import cm
 from matplotlib import pyplot as plt
 from matplotlib.colors import to_rgba
-import numpy as np
 from PIL import Image, PngImagePlugin
 from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from scipy import signal
 from scipy.interpolate import griddata, interp1d
 from scipy.ndimage import gaussian_filter
 from skimage import filters, measure, transform
-
-from ..tools import isiterable, istuple, make_Data
 
 from ..compat import (  # Some things to help with Python2 and Python3 compatibility
     get_filedialog,
@@ -73,6 +71,7 @@ from ..compat import (  # Some things to help with Python2 and Python3 compatibi
 # from .core import ImageArray
 from ..core.base import metadataObject
 from ..plot.utils import auto_fit_fontsize
+from ..tools import isiterable, istuple, make_Data
 from ..tools.decorators import changes_size, keep_return_type
 from .util import _dtype, _dtype2
 from .util import _scale as im_scale

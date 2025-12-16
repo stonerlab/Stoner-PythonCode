@@ -68,7 +68,7 @@ prefs = {
 }
 
 
-def format_error(value, error=None, **kargs):
+def format_error(value, error=None, **kwargs):
     r"""Format answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
 
     Args:
@@ -100,16 +100,16 @@ def format_error(value, error=None, **kargs):
     Returns:
         String containing the formatted number with the eorr to one s.f. and value to no more d.p. than the error.
     """
-    mode = kargs.get("mode", "float")
-    units = kargs.get("units", "")
-    prefix = kargs.get("prefix", "")
-    latex = kargs.get("latex", False)
-    fmt = kargs.get("fmt", "latex" if latex else "text")
-    escape = kargs.get("escape", False)
+    mode = kwargs.get("mode", "float")
+    units = kwargs.get("units", "")
+    prefix = kwargs.get("prefix", "")
+    latex = kwargs.get("latex", False)
+    fmt = kwargs.get("fmt", "latex" if latex else "text")
+    escape = kwargs.get("escape", False)
     escape_func = {"latex": tex_escape, "html": html_escape}.get(fmt, lambda x: x)
 
     if error == 0.0 or isnan(error):  # special case for zero uncertainty
-        return format_val(value, **kargs)
+        return format_val(value, **kwargs)
 
     if escape:
         prefix = escape_func(prefix)
@@ -182,7 +182,7 @@ def format_error(value, error=None, **kargs):
     return fmt_str.format(value, error)
 
 
-def format_val(value, **kargs):
+def format_val(value, **kwargs):
     r"""Format a number as an SI quantity.
 
     Args:
@@ -212,13 +212,13 @@ def format_val(value, **kargs):
     Returns:
         (str): The formatted value.
     """
-    mode = kargs.pop("mode", "float")
-    units = kargs.pop("units", "")
-    prefix = kargs.pop("prefix", "")
-    latex = kargs.pop("latex", False)
-    fmt = kargs.pop("fmt", "latex" if latex else "text")
-    places = kargs.pop("places", False)
-    escape = kargs.pop("escape", False)
+    mode = kwargs.pop("mode", "float")
+    units = kwargs.pop("units", "")
+    prefix = kwargs.pop("prefix", "")
+    latex = kwargs.pop("latex", False)
+    fmt = kwargs.pop("fmt", "latex" if latex else "text")
+    places = kwargs.pop("places", False)
+    escape = kwargs.pop("escape", False)
     escape_func = {"latex": tex_escape, "html": html_escape}.get(fmt, lambda x: x)
 
     if escape:

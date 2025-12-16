@@ -4,7 +4,7 @@
 from copy import deepcopy as copy
 from dataclasses import dataclass, field
 from inspect import getfullargspec, isclass
-from typing import Union, Optional
+from typing import Optional, Union
 
 import lmfit as lmfit_mod
 import numpy as np
@@ -20,14 +20,14 @@ _lmfit = True
 class ODR_Model(odrModel):
     """A wrapper for converting lmfit models to odr models."""
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Initialise with lmfit_mod.Models.Model or callable."""
-        meta = kargs.pop("meta", {})
-        kargs = copy(kargs)
-        for n in list(kargs.keys()):
+        meta = kwargs.pop("meta", {})
+        kwargs = copy(kwargs)
+        for n in list(kwargs.keys()):
             if n in ["replace", "header", "result", "output", "residuals", "prefix"]:
-                del kargs[n]
-        p0 = kargs.pop("p0", kargs.pop("estimate", None))
+                del kwargs[n]
+        p0 = kwargs.pop("p0", kwargs.pop("estimate", None))
         if args:
             args = list(args)
             model = args.pop(0)
@@ -42,8 +42,8 @@ class ODR_Model(odrModel):
             self.model = model
             self.func = model.func
 
-            def modelfunc(beta, x, **kargs):
-                return self.func(x, *beta, **kargs)
+            def modelfunc(beta, x, **kwargs):
+                return self.func(x, *beta, **kwargs)
 
             meta["param_names"] = self.model.param_names
             meta["param_hints"] = self.model.param_hints
@@ -81,17 +81,17 @@ class ODR_Model(odrModel):
             )
         if not isinstance(p0, lmfit_mod.Parameters):  # This can happen if we are creating an ODR_Model in advance.
             tmp_model = AttributeStore(meta)
-            p0 = _prep_lmfit_p0(tmp_model, None, None, p0, kargs)[0]
+            p0 = _prep_lmfit_p0(tmp_model, None, None, p0, kwargs)[0]
         p_new = []
         meta["params"] = copy(p0)
         for p in p0.values():
             p_new.append(p.value)
         p0 = p_new
-        kargs["estimate"] = p0
+        kwargs["estimate"] = p0
 
-        kargs["meta"] = meta
+        kwargs["meta"] = meta
 
-        super().__init__(modelfunc, *args, **kargs)
+        super().__init__(modelfunc, *args, **kwargs)
 
     @property
     def p0(self):
@@ -112,7 +112,7 @@ class MimizerAdaptor:
     variables from information int he lmfit_mod.Model.
     """
 
-    def __init__(self, model, *args, **kargs):  # pylint: disable=unused-argument
+    def __init__(self, model, *args, **kwargs):  # pylint: disable=unused-argument
         """Prepare the wrapper from the minimuzer.
 
         Args:
@@ -124,7 +124,7 @@ class MimizerAdaptor:
         Keyword Arguments:
             params (lmfit:parameter or dict):
                 Parameters used to fit model.
-            **kargs (dict):
+            **kwargs (dict):
                 Keyword arguments to initialise the result object/.
 
         Raises:
@@ -132,7 +132,7 @@ class MimizerAdaptor:
                 Fails if a *params* Parameter does not supply a fitted value.
         """
         self.func = model.func
-        hints = kargs.pop("params")
+        hints = kwargs.pop("params")
         p0 = []
         upper = []
         lower = []
@@ -416,13 +416,13 @@ class _Curve_Fit_Output:
     nan_policy: str = "raise"
 
 
-def _prep_lmfit_model(model, kargs):
+def _prep_lmfit_model(model, kwargs):
     """Prepare an lmfit model instance.
 
     Arguments:
         model (lmfit Model class or instance, or callable): the model to be fitted to the data.
         p0 (iterable or floats): The initial values of the fitting parameters.
-        kargs (dict):Other keyword arguments passed to the fitting function
+        kwargs (dict):Other keyword arguments passed to the fitting function
 
     Returns:
         model,p0, prefix (lmfit_mod.Model instance, iterable, str)
@@ -447,18 +447,18 @@ def _prep_lmfit_model(model, kargs):
         raise TypeError(f"{model} must be an instance of lmfit_mod.Model or a cllable function!")
     # Nprmalise p0 to be lmfit_mod.Parameters
     # Get a default prefix for the model
-    prefix = str(kargs.pop("prefix", type(model).__name__))
+    prefix = str(kwargs.pop("prefix", type(model).__name__))
     return model, prefix
 
 
-def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
+def _prep_lmfit_p0(model, ydata, xdata, p0, kwargs):
     """Prepare the initial start vector for an lmfit.
 
     Arguments:
         model (lmfit_mod.Model instance): model to fit with
         ydata,xdata (array): y and x data ppoints for fitting
         p0 (iterable of float): Existing p0 vector if defined
-        kargs (dict): Other keyword arguments for the lmfit method.
+        kwargs (dict): Other keyword arguments for the lmfit method.
 
     Returns:
         p0,single_fit (iterable of floats, bool): The revised initial starting vector and whether this is a single
@@ -470,16 +470,16 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
             p0 = model.estimate
         else:
             for p_name in model.param_names:
-                if p_name in kargs:
-                    model.set_param_hint(p_name, value=kargs.get(p_name))
+                if p_name in kwargs:
+                    model.set_param_hint(p_name, value=kwargs.get(p_name))
             try:
                 p0 = model.guess(ydata[0], x=xdata)
             except Exception:  # pylint: disable=W0703
                 # Don't be fussy here about the potential exceptions
                 p0 = lmfit_mod.Parameters()
                 for p_name in model.param_names:
-                    if p_name in kargs:
-                        p0[p_name] = lmfit_mod.Parameter(name=p_name, value=kargs.get(p_name))
+                    if p_name in kwargs:
+                        p0[p_name] = lmfit_mod.Parameter(name=p_name, value=kwargs.get(p_name))
         single_fit = True
 
     if callable(p0):
@@ -501,8 +501,8 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kargs):
             p_new[n] = lmfit_mod.Parameter(**hint)
         p0 = p_new
         for p_name in model.param_names:
-            if p_name in kargs:
-                p0[p_name] = lmfit_mod.Parameter(p_name, value=kargs.pop(p_name))
+            if p_name in kwargs:
+                p0[p_name] = lmfit_mod.Parameter(p_name, value=kwargs.pop(p_name))
     elif isinstance(p0, np.ndarray) and p0.ndim == 2:  # chi^2 mapping
         single_fit = False
         return p0, single_fit

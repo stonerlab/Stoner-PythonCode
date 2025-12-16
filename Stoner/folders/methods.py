@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Additional methods for BaseFolder."""
 import fnmatch
+import re
+from collections.abc import Iterable, Mapping
 from copy import copy, deepcopy
 from os import path
-import re
-from collections.abc import Mapping, Iterable
 
 from ..compat import _pattern_type, commonpath, int_types, string_types
 from ..core.base import TypeHintedDict, metadataObject

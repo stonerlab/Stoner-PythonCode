@@ -20,9 +20,9 @@ if fabio:
         name="FabioImage",
         what="Image",
     )
-    def load_fabio(new_data, *args, **kargs):
+    def load_fabio(new_data, *args, **kwargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
-        filename, args, kargs = get_filename(args, kargs)
+        filename, args, kwargs = get_filename(args, kwargs)
         if filename is None or not filename:
             new_data.get_filename("r")
         else:

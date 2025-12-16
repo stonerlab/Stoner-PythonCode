@@ -6,15 +6,16 @@ __all__ = ["add_core", "and_core", "sub_core", "mod_core", "copy_into", "Tab_Del
 
 import copy
 import csv
-from dataclasses import dataclass
 import re
 from collections.abc import Mapping
+from dataclasses import dataclass
 from typing import Callable
-from typing import Mapping as MappingType, Union, Optional
+from typing import Mapping as MappingType
+from typing import Optional, Union
 
 import numpy as np
-from numpy.typing import NDArray
 from numpy import ma
+from numpy.typing import NDArray
 
 from ..compat import index_types, int_types
 from ..tools import all_type, copy_into, isiterable

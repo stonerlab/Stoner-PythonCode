@@ -21,9 +21,7 @@ import numpy as np
 from lmfit import Model
 from lmfit.models import LinearModel as _Linear
 from lmfit.models import PowerLawModel as _PowerLaw
-
 from lmfit.models import QuadraticModel as _Quadratic
-
 from lmfit.models import (
     update_param_vals,
 )

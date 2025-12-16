@@ -116,9 +116,9 @@ class Setas(MutableMapping):
             },
         }  # xyzuvw
 
-    def _prepare_call(self, args, kargs):
+    def _prepare_call(self, args, kwargs):
         """Extract a value to be used to evaluate the setas attribute during a call."""
-        reset = kargs.pop("reset", True)
+        reset = kwargs.pop("reset", True)
         if not isinstance(reset, bool):
             reset = True
 
@@ -129,7 +129,7 @@ class Setas(MutableMapping):
                     self.setas = []
                 value = decode_string(value)
         else:
-            value = kargs
+            value = kwargs
             if reset:
                 self.setas = []
         return value
@@ -261,7 +261,7 @@ class Setas(MutableMapping):
         else:
             raise AttributeError(f"shape attribute should be a 2-tuple not a {value}-tuple")
 
-    def __call__(self, *args, **kargs):
+    def __call__(self, *args, **kwargs):
         """Treat the current instance as a callable object and assign columns accordingly.
 
         Variois forms of this method are accepted::
@@ -278,8 +278,8 @@ class Setas(MutableMapping):
                 If False then preserve the existing set columns and simply add the new ones. Otherwise, clear
                 all column assignments before setting new ones (default).
         """
-        return_self = kargs.pop("_self", False)
-        if not (args or kargs):  # New - bare call to setas will return the current value.
+        return_self = kwargs.pop("_self", False)
+        if not (args or kwargs):  # New - bare call to setas will return the current value.
             return self.setas
         if len(args) == 1 and isinstance(args[0], Setas):
             args = list(args)
@@ -289,8 +289,8 @@ class Setas(MutableMapping):
                 f"setas should be called with eother a string, iterable object or setas object, not a {type(args[0])}"
             )
 
-        # If reset is neither in kargs nor a False boolean, then clear the existing setas assignments
-        value = self._prepare_call(args, kargs)
+        # If reset is neither in kwargs nor a False boolean, then clear the existing setas assignments
+        value = self._prepare_call(args, kwargs)
         _ = self.setas  # Forxce setas to be the right length
         if isinstance(value, dict):
             for k, v in value.items():

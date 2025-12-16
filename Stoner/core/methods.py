@@ -12,7 +12,7 @@ from numpy import ma
 from statsmodels.stats.weightstats import DescrStatsW
 
 from ..compat import _pattern_type, int_types, str2bytes
-from ..tools import all_type, format_error, isiterable, operator, make_Class
+from ..tools import all_type, format_error, isiterable, make_Class, operator
 from ..tools.file import HDFFileManager, file_dialog
 from ..tools.widgets import RangeSelect
 from .array import DataArray

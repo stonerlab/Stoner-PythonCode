@@ -10,6 +10,7 @@ import copy
 
 import numpy as np
 from numpy import ma
+
 from ..compat import int_types
 from ..tools import AttributeStore, all_size, all_type, isiterable, isnone
 from .exceptions import StonerSetasError
@@ -55,23 +56,23 @@ class DataArray(ma.MaskedArray):
     ############################           Object Construction                       ###############################
     # ==============================================================================================================
 
-    def __new__(cls, input_array, *args, **kargs):
+    def __new__(cls, input_array, *args, **kwargs):
         """Create the new instance of the DataArray."""
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
-        setas = kargs.pop("setas", _setas())
+        setas = kwargs.pop("setas", _setas())
         if isinstance(input_array, ma.MaskedArray):
             default_mask = input_array.mask
         else:
             default_mask = None
-        mask = np.copy(kargs.pop("mask", default_mask))
-        column_headers = kargs.pop("column_headers", [])
-        _row = kargs.pop("isrow", False)
+        mask = np.copy(kwargs.pop("mask", default_mask))
+        column_headers = kwargs.pop("column_headers", [])
+        _row = kwargs.pop("isrow", False)
         if isinstance(input_array, DataArray):
             i = input_array.i
         else:
             i = 0
-        obj = ma.asarray(input_array, *args, **kargs).view(cls)
+        obj = ma.asarray(input_array, *args, **kwargs).view(cls)
         # add the new attribute to the created instance
         setas.shape = obj.shape
         obj._setas = setas
@@ -460,7 +461,7 @@ class DataArray(ma.MaskedArray):
         xerr=None,
         yerr=None,
         zerr=None,
-        **kargs,
+        **kwargs,
     ):  # pylint: disable=unused-argument
         """Create an object which has keys  based either on arguments or setas attribute."""
         cols = {
@@ -474,14 +475,14 @@ class DataArray(ma.MaskedArray):
             "yerr": yerr,
             "zerr": zerr,
         }
-        no_guess = kargs.get("no_guess", True)
+        no_guess = kwargs.get("no_guess", True)
         for i in cols.values():
             if i is not None:  # User specification wins out
                 break
         else:  # User didn't set any values, setas will win
-            no_guess = kargs.get("no_guess", False)
+            no_guess = kwargs.get("no_guess", False)
         ret = AttributeStore(self.setas._get_cols(no_guess=no_guess))
-        force_list = kargs.get("force_list", not scalar)
+        force_list = kwargs.get("force_list", not scalar)
         for c in list(cols.keys()):
             if isnone(cols[c]):  # Not defined, fallback on setas
                 del cols[c]
@@ -526,7 +527,7 @@ class DataArray(ma.MaskedArray):
         """Return a list of column headers."""
         return self._setas.column_headers
 
-    def swap_column(self, *swp, **kargs):
+    def swap_column(self, *swp, **kwargs):
         """Swap pairs of columns in the data.
 
         Useful for reordering data for idiot programs that expect columns in a fixed order.
@@ -548,8 +549,8 @@ class DataArray(ma.MaskedArray):
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples
         """
-        headers_too = kargs.pop("headers_too", True)
-        setas_too = kargs.pop("setas_too", True)
+        headers_too = kwargs.pop("headers_too", True)
+        setas_too = kwargs.pop("setas_too", True)
 
         if len(swp) == 1:
             swp = swp[0]

@@ -82,7 +82,7 @@ def _parse_bnl_data(new_data):
 
 
 @register_loader(patterns=(".txt", 64), mime_types=("text/plain", 64), name="BNLFile", what="Data")
-def load_bnl(new_data, *args, **kargs):  # pylint: disable=unused-argument
+def load_bnl(new_data, *args, **kwargs):  # pylint: disable=unused-argument
     """Load the file from disc.
 
     Args:
@@ -100,7 +100,7 @@ def load_bnl(new_data, *args, **kargs):  # pylint: disable=unused-argument
         to load data but unfortunately Brookhaven data isn't very plain so there's
         a new method below.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     try:
         _parse_bnl_data(new_data)  # call an internal function rather than put it in load function
@@ -186,9 +186,9 @@ def _read_mdaascii_columns(data, new_data, i):
 
 
 @register_loader(patterns=(".txt", 32), mime_types=("text/plain", 32), name="MDAASCIIFile", what="Data")
-def load_mdaasci(new_data, *args, **kargs):  # pylint: disable=unused-argument
+def load_mdaasci(new_data, *args, **kwargs):  # pylint: disable=unused-argument
     """Load function. File format has space delimited columns from row 3 onwards."""
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     i = [0, 0, 0, 0]
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
@@ -202,7 +202,7 @@ def load_mdaasci(new_data, *args, **kargs):  # pylint: disable=unused-argument
 
 
 @register_loader(patterns=(".dat", 16), mime_types=("text/plain", 16), name="OpenGDAFile", what="Data")
-def load_gda(new_data, *args, **kargs):
+def load_gda(new_data, *args, **kwargs):
     """Load an OpenGDA file.
 
     Args:
@@ -212,7 +212,7 @@ def load_gda(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     i = 0
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as f:
@@ -235,9 +235,9 @@ def load_gda(new_data, *args, **kargs):
 
 
 @register_loader(patterns=(".dat", 16), mime_types=("text/plain", 16), name="SNSFile", what="Data")
-def load_sns(new_data, *args, **kargs):
+def load_sns(new_data, *args, **kwargs):
     """Load function. File format has space delimited columns from row 3 onwards."""
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as data:  # Slightly ugly text handling
         line = data.readline()
@@ -294,9 +294,9 @@ if fabio:
         name="ESRF_DataFile",
         what="Data",
     )
-    def load_esrf(self, *args, **kargs):
+    def load_esrf(self, *args, **kwargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
-        filename, args, kargs = get_filename(args, kargs)
+        filename, args, kwargs = get_filename(args, kwargs)
         if filename is None or not filename:
             self.get_filename("r")
         else:

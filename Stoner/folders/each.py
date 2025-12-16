@@ -19,17 +19,17 @@ def _worker(d, **kwargs):
     if byname:
         func = getattr(d, func, lambda x: x)
     args = kwargs.get("args", tuple())
-    kargs = kwargs.get("kargs", dict)
+    kwargs = kwargs.get("kwargs", dict)
     if hasattr(d, "setas"):
         d["setas"] = list(d.setas)
     d["args"] = args
-    d["kargs"] = kargs
+    d["kwargs"] = kwargs
     d["func"] = func.__name__
     try:
         if byname:  # Ut's an instance bound moethod
-            ret = func(*args, **kargs)
+            ret = func(*args, **kwargs)
         else:  # It's an arbitrary function
-            ret = func(d, *args, **kargs)
+            ret = func(d, *args, **kwargs)
     except Exception as e:  # pylint: disable=W0703 # Ok to be broad as user func could do anything
         ret = e, format_exc()
     return (d, ret)
@@ -43,11 +43,11 @@ class SetasWrapper(MutableSequence):
         self._each = parent
         self._folder = parent._folder
 
-    def __call__(self, *args, **kargs):
+    def __call__(self, *args, **kwargs):
         """Pass through the calls the setas method of each item in our folder."""
         _ = self._folder._object_attrs.pop("setas", None)
         for obj in self._folder:
-            obj.setas(*args, **kargs)
+            obj.setas(*args, **kwargs)
         self._folder._object_attrs["setas"] = self.collapse()
 
         return self._folder
@@ -137,7 +137,7 @@ class Item:
         self._folder._object_attrs["setas"] = setas.collapse()
         return setas
 
-    def __call__(self, func, *args, **kargs):
+    def __call__(self, func, *args, **kwargs):
         """Iterate over the BaseFolder, calling func on each item.
 
         Args:
@@ -159,12 +159,12 @@ class Item:
             string. then return result is stored in the corresponding name.
         """
         # Just call the iter generator but assemble into a list.
-        if isinstance(func, string_types) and "_byname" not in kargs:
+        if isinstance(func, string_types) and "_byname" not in kwargs:
             if func in globals() and callable(globals()[func]):
                 func = globals()[func]
             else:
                 func = getattr(self, func)
-        return list(self.iter(func, *args, **kargs))
+        return list(self.iter(func, *args, **kwargs))
 
     def __dir__(self):
         """Return a list of the common set of attributes of the instances in the folder."""
@@ -294,7 +294,7 @@ class Item:
         meth = getattr(self._folder.instance, item, None)
 
         @wraps(meth)
-        def _wrapper_(*args, **kargs):
+        def _wrapper_(*args, **kwargs):
             """Wrap a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
@@ -304,8 +304,8 @@ class Item:
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
-            kargs["_byname"] = True
-            return self(item, *args, **kargs)  # Develove to self.__call__ where we have multiprocess magic
+            kwargs["_byname"] = True
+            return self(item, *args, **kwargs)  # Develove to self.__call__ where we have multiprocess magic
 
         # Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
@@ -320,7 +320,7 @@ class Item:
             return NotImplemented
 
         @wraps(other)
-        def _wrapper_(*args, **kargs):
+        def _wrapper_(*args, **kwargs):
             """Wrap a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
@@ -330,13 +330,13 @@ class Item:
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
-            kargs["_byname"] = False  # Force the __call__ to use the callable function
-            return self(other, *args, **kargs)  # Delegate to self.__call__ which has multiprocess magic.
+            kwargs["_byname"] = False  # Force the __call__ to use the callable function
+            return self(other, *args, **kwargs)  # Delegate to self.__call__ which has multiprocess magic.
 
         # Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
-    def iter(self, func, *args, **kargs):
+    def iter(self, func, *args, **kwargs):
         """Iterate over the BaseFolder, calling func on each item.
 
         Args:
@@ -355,13 +355,13 @@ class Item:
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
-        _return = kargs.pop("_return", None)
-        _byname = kargs.pop("_byname", False)
-        _serial = kargs.pop("_serial", False)
+        _return = kwargs.pop("_return", None)
+        _byname = kwargs.pop("_byname", False)
+        _serial = kwargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
         p, imap = get_pool(_serial)
         for ix, (new_d, ret) in enumerate(
-            imap(partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder)
+            imap(partial(_worker, func=func, args=args, kwargs=kwargs, byname=_byname), self._folder)
         ):
             if self._folder.debug:
                 print(ix, type(ret))

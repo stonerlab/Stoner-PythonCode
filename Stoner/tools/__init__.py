@@ -35,9 +35,14 @@ __all__ = [
 import numpy as np
 
 from . import decorators
-from .classes import Options, TypedList
-from .classes import AttributeStore
-from .classes import copy_into, get_option, set_option
+from .classes import (
+    AttributeStore,
+    Options,
+    TypedList,
+    copy_into,
+    get_option,
+    set_option,
+)
 from .decorators import fix_signature, make_Class, make_Data
 from .formatting import (
     format_error,

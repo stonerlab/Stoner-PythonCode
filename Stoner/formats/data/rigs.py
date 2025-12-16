@@ -18,7 +18,7 @@ from ..decorators import register_loader
 @register_loader(
     patterns=[(".dat", 64), (".iv", 64), (".rvt", 64)], mime_types=("text/plain", 64), name="BigBlueFile", what="Data"
 )
-def load_bigblue(new_data, *args, **kargs):
+def load_bigblue(new_data, *args, **kwargs):
     """Just call the parent class but with the right parameters set.
 
     Args:
@@ -28,7 +28,7 @@ def load_bigblue(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
 
     new_data = load_csvfile(new_data, filename, *args, header_line=3, data_line=7, data_delim=" ", header_delim=",")
@@ -38,7 +38,7 @@ def load_bigblue(new_data, *args, **kargs):
 
 
 @register_loader(patterns=(".dat", 32), mime_types=("text/plain", 32), name="BirgeIVFile", what="Data")
-def load_birge(new_data, *args, **kargs):
+def load_birge(new_data, *args, **kwargs):
     """File loader for PinkLib.
 
     Args:
@@ -48,7 +48,7 @@ def load_birge(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     ix = 0
     with FileManager(new_data.filename, "r", errors="ignore", encoding="utf-8") as f:  # Read filename linewise
@@ -91,7 +91,7 @@ def load_birge(new_data, *args, **kargs):
 
 
 @register_loader(patterns=[(".dat", 16), (".txt", 16)], mime_types=("text/plain", 16), name="MokeFile", what="Data")
-def load_old_moke(new_data, *args, **kargs):
+def load_old_moke(new_data, *args, **kwargs):
     """Leeds  MOKE file loader routine.
 
     Args:
@@ -101,7 +101,7 @@ def load_old_moke(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     with FileManager(new_data.filename, mode="rb") as f:
         line = bytes2str(f.readline()).strip()
@@ -122,7 +122,7 @@ def load_old_moke(new_data, *args, **kargs):
 
 
 @register_loader(patterns=(".dat", 16), mime_types=("text/plain", 16), name="FmokeFile", what="Data")
-def load_fmoke(new_data, *args, **kargs):
+def load_fmoke(new_data, *args, **kwargs):
     """Sheffield Focussed MOKE file loader routine.
 
     Args:
@@ -132,7 +132,7 @@ def load_fmoke(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -191,11 +191,11 @@ def _sa_cmd(new_data, parts):
 
 
 @register_loader(patterns=("*", 64), mime_types=("text/plain", 64), name="EasyPlotFile", what="Data")
-def load_easyplot(new_data, *args, **kargs):
+def load_easyplot(new_data, *args, **kwargs):
     """Private loader method."""
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
-    delimiter = kargs.pop("delimiter", None)
+    delimiter = kwargs.pop("delimiter", None)
 
     datastart = -1
     dataend = -1
@@ -248,7 +248,7 @@ def load_easyplot(new_data, *args, **kargs):
 
 
 @register_loader(patterns=(".dat", 64), mime_types=("text/plain", 64), name="PinkLibFile", what="Data")
-def load_pinklib(new_data, *args, **kargs):
+def load_pinklib(new_data, *args, **kwargs):
     """File loader for PinkLib.
 
     Args:
@@ -258,7 +258,7 @@ def load_pinklib(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:

@@ -12,7 +12,7 @@ from Stoner.tools import isiterable, istuple
 from .utils import threshold
 
 
-def peaks(datafile, **kargs):
+def peaks(datafile, **kwargs):
     """Locates peaks and/or troughs in a column of data by using SG-differentiation.
 
     Args:
@@ -57,16 +57,16 @@ def peaks(datafile, **kargs):
     See Also:
         User guide section :ref:`peak_finding`
     """
-    width = kargs.pop("width", int(len(datafile) / 20))
-    peaks = kargs.pop("peaks", True)
-    troughs = kargs.pop("troughs", False)
-    poly = kargs.pop("poly", 2)
+    width = kwargs.pop("width", int(len(datafile) / 20))
+    peaks = kwargs.pop("peaks", True)
+    troughs = kwargs.pop("troughs", False)
+    poly = kwargs.pop("poly", 2)
     assertion(poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or through")
 
-    sort = kargs.pop("sort", False)
-    modify = kargs.pop("modify", False)
-    full_data = kargs.pop("full_data", True)
-    _ = datafile._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
+    sort = kwargs.pop("sort", False)
+    modify = kwargs.pop("modify", False)
+    full_data = kwargs.pop("full_data", True)
+    _ = datafile._col_args(scalar=False, xcol=kwargs.pop("xcol", None), ycol=kwargs.pop("ycol", None))
     xcol, ycol = _.xcol, _.ycol
     if isiterable(ycol):
         ycol = ycol[0]
@@ -92,7 +92,7 @@ def peaks(datafile, **kargs):
     d2[-index_offset:] = pad
 
     # Set the significance from the 2nd ifferential if not already set
-    significance = kargs.pop(
+    significance = kwargs.pop(
         "significance", np.max(np.abs(d2)) / (2 * width)
     )  # Base an apriori significance on max d2y/dx2 / 20
     if isinstance(significance, int):  # integer significance is inverse to floating
@@ -130,7 +130,7 @@ def peaks(datafile, **kargs):
     return ret
 
 
-def find_peaks(datafile, **kargs):
+def find_peaks(datafile, **kwargs):
     """Interface to :py:func:`scipy.signal.find_peaks` for locating peaks in data.
 
     Args:
@@ -204,15 +204,15 @@ def find_peaks(datafile, **kargs):
     See Also:
         User guide section :ref:`peak_finding`
     """
-    distance = kargs.pop("distance", None)
-    width = kargs.pop("width", None)
-    plateau_size = kargs.pop("plateau_size", None)
-    sort = kargs.pop("sort", False)
-    modify = kargs.pop("modify", False)
-    bounds = kargs.pop("bounds", lambda x, y: True)
-    prefix = kargs.pop("prefix", None)
-    full_data = kargs.pop("full_data", True)
-    _ = datafile._col_args(scalar=False, xcol=kargs.pop("xcol", None), ycol=kargs.pop("ycol", None))
+    distance = kwargs.pop("distance", None)
+    width = kwargs.pop("width", None)
+    plateau_size = kwargs.pop("plateau_size", None)
+    sort = kwargs.pop("sort", False)
+    modify = kwargs.pop("modify", False)
+    bounds = kwargs.pop("bounds", lambda x, y: True)
+    prefix = kwargs.pop("prefix", None)
+    full_data = kwargs.pop("full_data", True)
+    _ = datafile._col_args(scalar=False, xcol=kwargs.pop("xcol", None), ycol=kwargs.pop("ycol", None))
     xcol, ycol = _.xcol, _.ycol
     if isiterable(ycol):
         ycol = ycol[0]
@@ -224,13 +224,13 @@ def find_peaks(datafile, **kargs):
         xmin, xmax = datafile.span(xcol)
         width = int(len(datafile) * width[0] / (xmax - xmin)), int(len(datafile) * width[1] / (xmax - xmin))
     if width is not None:
-        kargs["width"] = width
+        kwargs["width"] = width
 
     if isinstance(distance, float):  # Convert a floating point width unto an integer.
         xmin, xmax = datafile.span(xcol)
         distance = int(np.ceil(len(datafile) * distance / (xmax - xmin)))
     if distance is not None:
-        kargs["distance"] = distance
+        kwargs["distance"] = distance
 
     if isinstance(plateau_size, float):  # Convert a floating point plateau_size unto an integer.
         xmin, xmax = datafile.span(xcol)
@@ -242,10 +242,10 @@ def find_peaks(datafile, **kargs):
             int(len(datafile) * plateau_size[1] / (xmax - xmin)),
         )
     if plateau_size is not None:
-        kargs["plateau_size"] = plateau_size
+        kwargs["plateau_size"] = plateau_size
 
     seek = datafile.search(xcol, bounds)
-    peaks, data = sp_find_peaks(seek[:, ycol], **kargs)
+    peaks, data = sp_find_peaks(seek[:, ycol], **kwargs)
     peaks = datafile.data.i[seek.i[peaks]]  # de-reference frombounded data back to main dataset
 
     for sort_key in ["prominences", "peak_heights", "widths"]:

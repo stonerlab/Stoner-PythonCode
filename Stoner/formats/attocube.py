@@ -173,7 +173,7 @@ class AttocubeScan(ImageStack):
             The lelbel of compression to use (depends on compression algorithm)
     """
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Construct the attocube subclass of ImageStack."""
         args = list(args)
         if len(args) > 0:
@@ -191,12 +191,12 @@ class AttocubeScan(ImageStack):
             scan = args.pop(0)
             root_name = f"SC_{scan:03d}"
         else:
-            root_name = kargs.pop("root", None)
-            scan = kargs.pop("scan", -1)
+            root_name = kwargs.pop("root", None)
+            scan = kwargs.pop("scan", -1)
 
-        regrid = kargs.pop("regrid", False)
+        regrid = kwargs.pop("regrid", False)
 
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
 
         self._common_metadata = TypeHintedDict()
 
@@ -237,7 +237,7 @@ class AttocubeScan(ImageStack):
             return self.metadata.slice("display", values_only=True)
         return []
 
-    def _load(self, *args, **kargs):
+    def _load(self, *args, **kwargs):
         """Load data from a hdf5 file.
 
         Args:
@@ -247,7 +247,7 @@ class AttocubeScan(ImageStack):
         Returns:
             itself after having loaded the data
         """
-        filename, args, kargs = get_filename(args, kargs)
+        filename, args, kwargs = get_filename(args, kwargs)
         if filename is None or not filename:
             self.filename = file_dialog("r", None, "AttocubeScan")
             filename = self.filename
@@ -272,7 +272,7 @@ class AttocubeScan(ImageStack):
             if loader is None:
                 raise StonerLoadError("Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
 
-        return loader(f, *args, **kargs)
+        return loader(f, *args, **kwargs)
 
     def _instantiate(self, idx):
         """Reconstructs the data type."""
@@ -347,7 +347,7 @@ class AttocubeScan(ImageStack):
         data.data = Z.reshape(xs, ys)
         return self
 
-    def regrid(self, **kargs):
+    def regrid(self, **kwargs):
         """Regrid the data sets based on PosX and PosY channels.
 
         Keyword Parameters:
@@ -363,7 +363,7 @@ class AttocubeScan(ImageStack):
             (AttocubeScan):
                 Scan object with regridded data. May be the same as the source object if in_place is True.
         """
-        if not kargs.get("in_place", False):
+        if not kwargs.get("in_place", False):
             new = self.clone
         else:
             new = self
@@ -373,8 +373,8 @@ class AttocubeScan(ImageStack):
         except KeyError:  # Can't get X and Y data
             return new
 
-        xrange = kargs.pop("x_range", (x[:, 0].max(), x[:, -1].min(), x.shape[1]))
-        yrange = kargs.pop("y_range", (y[0].max(), y[-1].min(), y.shape[0]))
+        xrange = kwargs.pop("x_range", (x[:, 0].max(), x[:, -1].min(), x.shape[1]))
+        yrange = kwargs.pop("y_range", (y[0].max(), y[-1].min(), y.shape[0]))
         nx, ny = meshgrid(linspace(*xrange), linspace(*yrange))
         for data in self.channels:
             if "PosX" in data or "PosY" in data:
@@ -450,7 +450,7 @@ class AttocubeScan(ImageStack):
         return self
 
     @classmethod
-    def read_hdf5(cls, filename, *args, **kargs):
+    def read_hdf5(cls, filename, *args, **kwargs):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
         if filename is None or not filename:
@@ -488,7 +488,7 @@ class AttocubeScan(ImageStack):
                 sub_grps = grps
             for grp in sub_grps:
                 if "type" in f[grp].attrs:
-                    self.groups[grp] = cls.read_hdf5(f[grp], *args, **kargs)
+                    self.groups[grp] = cls.read_hdf5(f[grp], *args, **kwargs)
                     continue
                 g = f[grp]
                 self.append(_read_signal(self, g))

@@ -19,32 +19,32 @@ from . import ImageFile
 from .core import ImageArray
 
 
-def _prep_figure(self, kargs):
-    plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
+def _prep_figure(self, kwargs):
+    plts = kwargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
     self.plots_per_page = plts
     plts = min(plts, len(self))
 
-    fig_num = kargs.pop("figure", getattr(self, "_figure", None))
+    fig_num = kwargs.pop("figure", getattr(self, "_figure", None))
     if isinstance(fig_num, Figure):
-        kargs.setdefault("figsize", tuple(fig_num.get_size_inches()))
-        kargs.setdefault("facecolor", fig_num.get_facecolor())
-        kargs.setdefault("edgecolor", fig_num.get_edgecolor())
-        kargs.setdefault("frameon", fig_num.get_frameon())
-        kargs.setdefault("FigureClass", fig_num.__class__)
+        kwargs.setdefault("figsize", tuple(fig_num.get_size_inches()))
+        kwargs.setdefault("facecolor", fig_num.get_facecolor())
+        kwargs.setdefault("edgecolor", fig_num.get_edgecolor())
+        kwargs.setdefault("frameon", fig_num.get_frameon())
+        kwargs.setdefault("FigureClass", fig_num.__class__)
         fig_num = fig_num.number
 
     fig_args = getattr(self, "_fig_args", [])
-    fig_kargs = getattr(self, "_fig_kargs", {"layout": "constrained"})
+    fig_kwargs = getattr(self, "_fig_kwargs", {"layout": "constrained"})
     for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
-        if arg in kargs:
-            fig_kargs[arg] = kargs.pop(arg)
+        if arg in kwargs:
+            fig_kwargs[arg] = kwargs.pop(arg)
     if fig_num is None:
-        fig = figure(*fig_args, **fig_kargs)
+        fig = figure(*fig_args, **fig_kwargs)
     elif fig_num in get_fignums():
         fig = figure(fig_num)
     else:
-        fig = figure(fig_num, **fig_kargs)
-    kargs["figure"] = fig_num
+        fig = figure(fig_num, **fig_kwargs)
+    kwargs["figure"] = fig_num
     return fig, plts
 
 
@@ -138,7 +138,7 @@ class ImageFolderMixin:
             ret._title = name
         return ret
 
-    def align(self, *args, **kargs):
+    def align(self, *args, **kwargs):
         """Align each image in the folder to the reference image.
 
         Args:
@@ -184,7 +184,7 @@ class ImageFolderMixin:
             except (TypeError, ValueError) as err:
                 raise TypeError(f"Cannot interpret {type(ref)} as reference image data.") from err
         # Call align on each object
-        self.each.align(ref_data, **kargs)
+        self.each.align(ref_data, **kwargs)
         limits = self.metadata.slice("translation_limits", output="array")
         stack_limits = np.zeros(4)
         stack_limits[::2] = limits.max(axis=0)[::2]
@@ -195,7 +195,7 @@ class ImageFolderMixin:
         self.metadata["align_box"] = tuple(stack_limits.astype(int))
         return self
 
-    def apply_all(self, func, *args, **kargs):
+    def apply_all(self, func, *args, **kwargs):
         """Apply function to all images in the stack.
 
         Args:
@@ -205,10 +205,10 @@ class ImageFolderMixin:
                 if False print '.' for every iteration
 
         Note:
-            Further args, kargs are passed through to the function
+            Further args, kwargs are passed through to the function
         """
         warn("apply_all is deprecated and will be removed in a future version. Use ImageFolder.each() instead")
-        return self.each(func, *args, **kargs)
+        return self.each(func, *args, **kwargs)
 
     def average(self, weights=None, _box=False, _metadata="first"):
         """Get an array of average pixel values for the stack.
@@ -256,9 +256,9 @@ class ImageFolderMixin:
         return k
 
     @classmethod
-    def from_tiff(cls, filename, **kargs):
+    def from_tiff(cls, filename, **kwargs):
         """Create a new ImageArray from a tiff file."""
-        self = cls(**kargs)
+        self = cls(**kwargs)
         with Image.open(filename, "r") as img:
             tags = img.tag_v2
             if 270 in tags:
@@ -321,12 +321,12 @@ class ImageFolderMixin:
         """
         return self.average(_box=_box, _metadata=_metadata)
 
-    def montage(self, *args, **kargs):
+    def montage(self, *args, **kwargs):
         """Call the plot method for each metadataObject, but switching to a subplot each time.
 
         Args:
             args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
-            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+            kwargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
 
         Keyword Arguments:
             plot_extra (callable(i,j,d)):
@@ -355,36 +355,36 @@ class ImageFolderMixin:
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
         """
-        fig, plts = _prep_figure(self, kargs)
+        fig, plts = _prep_figure(self, kwargs)
 
-        plot_extra = kargs.pop("plot_extra", lambda i, j, d: None)
+        plot_extra = kwargs.pop("plot_extra", lambda i, j, d: None)
 
         w, h = fig.get_size_inches()
         plt_x = int(np.floor(np.sqrt(plts) * w / h))
         plt_y = int(np.ceil(plts / plt_x))
 
-        kargs["figure"] = fig
+        kwargs["figure"] = fig
         ret = []
         j = 0
         fignum = fig.number
         for i, d in enumerate(self):
-            plt_kargs = copy(kargs)
+            plt_kwargs = copy(kwargs)
             if i % plts == 0 and i != 0:
-                fig, _ = _prep_figure(self, kargs)
+                fig, _ = _prep_figure(self, kwargs)
                 fignum = fig.number
                 j = 1
             else:
                 j += 1
             fig = figure(fignum)
             ax = subplot(plt_y, plt_x, j)
-            plt_kargs["figure"] = fig
-            plt_kargs["ax"] = ax
-            if "title" in kargs:
-                if isinstance(kargs["title"], str):
-                    plt_kargs["title"] = kargs["title"].format(**d)
-                elif callable(kargs["title"]):
-                    plt_kargs["title"] = kargs["title"](d)
-            ret.append(d.imshow(*args, **plt_kargs))
+            plt_kwargs["figure"] = fig
+            plt_kwargs["ax"] = ax
+            if "title" in kwargs:
+                if isinstance(kwargs["title"], str):
+                    plt_kwargs["title"] = kwargs["title"].format(**d)
+                elif callable(kwargs["title"]):
+                    plt_kwargs["title"] = kwargs["title"](d)
+            ret.append(d.imshow(*args, **plt_kwargs))
             plot_extra(i, j, d)
         return ret
 

@@ -232,7 +232,7 @@ class DefaultPlotStyle(MutableMapping):
         },
     }
 
-    def __init__(self, *_, **kargs):
+    def __init__(self, *_, **kwargs):
         """Create a template instance of this template.
 
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
@@ -243,11 +243,11 @@ class DefaultPlotStyle(MutableMapping):
         # self.fig_width = None
         # self.fig_height = None
 
-        self.update(kargs)
+        self.update(kwargs)
 
-    def __call__(self, **kargs):
+    def __call__(self, **kwargs):
         """Call the template object can manipulate the rcParams that will be set."""
-        for k, v in kargs.items():
+        for k, v in kwargs.items():
             if k.startswith("template_"):
                 nk = _add_dots(k[:9])
                 if nk in plt.rcParams:
@@ -429,7 +429,7 @@ class DefaultPlotStyle(MutableMapping):
         if hasattr(self, "fig_width") and hasattr(self, "fig_height"):
             self.template_figure__figsize = (self.fig_width, self.fig_height)
 
-    def _setup_figure(self, figure, projection, no_axes, figsize, **kargs):
+    def _setup_figure(self, figure, projection, no_axes, figsize, **kwargs):
         """---- Case 1: a specific figure identifier is provided ----."""
         if figure in plt.get_fignums():
             fig = plt.figure(figure)  # reuse
@@ -448,10 +448,10 @@ class DefaultPlotStyle(MutableMapping):
             # No axes on the figure—create appropriately
             return _add_axes_3d(fig, no_axes) if projection == "3d" else _add_axes_2d(fig, no_axes)
         # Create the requested figure number
-        fig = plt.figure(figure, figsize=figsize, **kargs)
+        fig = plt.figure(figure, figsize=figsize, **kwargs)
         return _add_axes_3d(fig, no_axes) if projection == "3d" else _add_axes_2d(fig, no_axes)
 
-    def new_figure(self, figure=False, projection="rectilinear", figsize=None, no_axes=False, ax=None, **kargs):
+    def new_figure(self, figure=False, projection="rectilinear", figsize=None, no_axes=False, ax=None, **kwargs):
         """Create a new figure.
 
         Keyword Args:
@@ -490,7 +490,7 @@ class DefaultPlotStyle(MutableMapping):
         figsize = figsize or getattr(self, "template_figure__figsize", None)
 
         # Ensure a sensible default for layout unless the caller overrides it
-        kargs.setdefault("layout", "constrained")
+        kwargs.setdefault("layout", "constrained")
 
         # ---- If an Axes is provided, just use it ----
         if isinstance(ax, (Axes3D, plt.Axes)):
@@ -502,23 +502,23 @@ class DefaultPlotStyle(MutableMapping):
 
         # ---- Case 1: a specific figure identifier is provided ----
         if figure is not None:
-            return self._setup_figure(figure, projection, no_axes, figsize, **kargs)
+            return self._setup_figure(figure, projection, no_axes, figsize, **kwargs)
 
         # ---- Case 2: no specific figure provided; build a fresh one ----
         if projection == "3d":
-            fig = plt.figure(figsize=figsize, **kargs)
+            fig = plt.figure(figsize=figsize, **kwargs)
             return _add_axes_3d(fig, no_axes)
 
         # 2D: the original used subplots when no existing figure was specified
         if no_axes:
-            fig = plt.figure(figsize=figsize, **kargs)
+            fig = plt.figure(figsize=figsize, **kwargs)
             # Remove any auto-created axes if present (defensive)
             for axis in list(fig.axes):
                 axis.remove()
             return fig, None
 
         # Standard 2D case: prefer subplots for users expecting a (fig, ax) pair
-        return plt.subplots(figsize=figsize, **kargs)
+        return plt.subplots(figsize=figsize, **kwargs)
 
     def apply(self):
         """Update matplotlib rc parameters from any attributes starting template_."""
@@ -573,7 +573,7 @@ class DefaultPlotStyle(MutableMapping):
             ax.set_zticklabels(ax.get_zticks(), size=self.template_ztick__labelsize)
             ax.zaxis.set_major_formatter(self.zformatter())
 
-    def annotate(self, ix, multiple, plot, **kargs):
+    def annotate(self, ix, multiple, plot, **kwargs):
         """Call all the routines necessary to annotate the axes etc.
 
         Args:
@@ -595,14 +595,14 @@ class DefaultPlotStyle(MutableMapping):
         else:
             settings = {"xlabel": True, "ylabel": True, "zlabel": True, "title": True}
         try:
-            if "xlabel" in kargs and self.show_xlabel and settings["xlabel"]:
-                plt.xlabel(str(kargs["xlabel"]), size=self.template_axes__labelsize)
-            if "ylabel" in kargs and self.show_ylabel and settings["ylabel"]:
-                plt.ylabel(str(kargs["ylabel"]), size=self.template_axes__labelsize)
-            if "zlabel" in kargs and self.show_zlabel and settings["zlabel"]:
-                plot.fig.axes[0].set_zlabel(kargs["zlabel"], size=self.template_axes__labelsize)
-            if "title" in kargs and self.show_title and settings["title"]:
-                plt.title(kargs["title"])
+            if "xlabel" in kwargs and self.show_xlabel and settings["xlabel"]:
+                plt.xlabel(str(kwargs["xlabel"]), size=self.template_axes__labelsize)
+            if "ylabel" in kwargs and self.show_ylabel and settings["ylabel"]:
+                plt.ylabel(str(kwargs["ylabel"]), size=self.template_axes__labelsize)
+            if "zlabel" in kwargs and self.show_zlabel and settings["zlabel"]:
+                plot.fig.axes[0].set_zlabel(kwargs["zlabel"], size=self.template_axes__labelsize)
+            if "title" in kwargs and self.show_title and settings["title"]:
+                plt.title(kwargs["title"])
             if self.showlegend:
                 plt.legend()
         except AttributeError:

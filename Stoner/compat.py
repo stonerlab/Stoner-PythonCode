@@ -188,10 +188,10 @@ class _dummy:
         """Null decorator function."""
         return func
 
-    def __call__(self, *args, **kargs):
+    def __call__(self, *args, **kwargs):
         """Handle jit lines that call the type."""
         return self.jit
 
-    def __getitem__(self, *args, **kargs):
+    def __getitem__(self, *args, **kwargs):
         """Hande jit calls to array types."""
         return self

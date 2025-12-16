@@ -13,7 +13,7 @@ from ..utils.maximus import flatten_header, hdr_to_dict, read_scan
 @register_loader(
     patterns=[(".hdr", 16), (".xsp", 16)], mime_types=("text/plain", 16), name="MaximusSpectra", what="Data"
 )
-def load_maximus_spectra(new_data, *args, **kargs):
+def load_maximus_spectra(new_data, *args, **kwargs):
     """Maximus xsp file loader routine.
 
     Args:
@@ -23,7 +23,7 @@ def load_maximus_spectra(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -59,9 +59,9 @@ def load_maximus_spectra(new_data, *args, **kargs):
 @register_loader(
     patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Data"
 )
-def load_maximus_data(new_data, *args, **kargs):
+def load_maximus_data(new_data, *args, **kwargs):
     """Load a maximus image, but to a Data object."""
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     try:
         new_data.filename = filename
         pth = Path(new_data.filename)

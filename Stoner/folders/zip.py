@@ -7,8 +7,8 @@ Classes Include
 """
 __all__ = ["ZipFolder"]
 import fnmatch
-from os import path
 import zipfile as zf
+from os import path
 
 from ..compat import _pattern_type, get_filedialog, path_types
 from ..core.data import Data
@@ -36,12 +36,12 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
         "readlist": True,
     }
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Initialise the file attribute."""
         self.File = None
         self.exclude = []
         self.flat = False
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def full_key(self):

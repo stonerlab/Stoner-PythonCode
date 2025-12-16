@@ -2,13 +2,13 @@
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
 __all__ = ["ImageArray", "ImageFile"]
 import inspect
-from json import loads
 import os
 import urllib
 from collections.abc import Iterable
 from copy import copy, deepcopy
 from importlib import import_module
 from io import BytesIO as StreamIO
+from json import loads
 from pathlib import Path
 from warnings import warn
 
@@ -282,15 +282,15 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     # now initialise class
 
-    def __new__(cls, *args, **kargs):
+    def __new__(cls, *args, **kwargs):
         """Construct an ImageArray object.
 
         We're using __new__ rather than __init__ to imitate a numpy array as
         close as possible.
         """
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
-        array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs}
-        user_metadata = kargs.get("metadata", {})
+        array_args = {k: kwargs.pop(k) for k in array_arg_keys if k in kwargs}
+        user_metadata = kwargs.get("metadata", {})
 
         # 0 args initialisation
         match args:
@@ -305,8 +305,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     ret = np.atleast_2d(args[0]).view(ImageArray)
                 else:
                     ret = args[0].view(ImageArray)
-                kargs["metadata"] = getattr(args[0], "metadata", TypeHintedDict())
-                kargs["metadata"].update(user_metadata)
+                kwargs["metadata"] = getattr(args[0], "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
             case (bool(),) if not args[0]:
                 patterns = (("png", "*.png"), ("npy", "*.npy"))
                 arg = get_filedialog(what="r", filetypes=patterns)
@@ -317,21 +317,21 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                     raise ValueError(f"File path does not exist {arg}")
                 ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(arg, **array_args)  # pylint: disable=no-member
-                kargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
-                kargs["metadata"].update(user_metadata)
+                kwargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
             case (str(),) | (Path(),):
                 # Filename- load datafile
                 if not os.path.exists(args[0]):
                     raise ValueError(f"File path does not exist {args[0]}")
                 ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(args[0], **array_args)  # pylint: disable=no-member
-                kargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
-                kargs["metadata"].update(user_metadata)
+                kwargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
             case (ImageFile(),):
                 # extract the image
                 ret = args[0].image
-                kargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
-                kargs["metadata"].update(user_metadata)
+                kwargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
             case (_,):
                 try:  # try converting to a numpy array (eg a list type)
                     ret = np.asarray(args[0], **array_args).view(cls)
@@ -342,13 +342,13 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             case _:
                 raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
 
-        asfloat = kargs.pop("asfloat", False) or kargs.pop(
+        asfloat = kwargs.pop("asfloat", False) or kwargs.pop(
             "convert_float", False
         )  # convert_float for back compatibility
         if asfloat and ret.dtype.kind != "f":  # convert to float type in place
             ret = ret.convert(np.float64)
 
-        ret.__dict__["kargs"] = kargs
+        ret.__dict__["kwargs"] = kwargs
         return ret
 
     def __array_finalize__(self, obj):
@@ -364,16 +364,16 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         if not hasattr(self, "_optinfo"):
             setattr(self, "_optinfo", {"metadata": TypeHintedDict({}), "filename": ""})
 
-        kargs = self.__dict__.pop("kargs", {})  # pylint: disable=access-member-before-definition
+        kwargs = self.__dict__.pop("kwargs", {})  # pylint: disable=access-member-before-definition
         tmp = metadataObject.__new__(metadataObject)
         tmp.__dict__.update(self.__dict__)  # pylint: disable=access-member-before-definition
         self.__dict__ = tmp.__dict__
 
         # Deal with kwargs
-        user_metadata = kargs.pop("metadata", {})
+        user_metadata = kwargs.pop("metadata", {})
 
-        _debug = kargs.pop("debug", False)
-        _title = kargs.pop("title", None)
+        _debug = kwargs.pop("debug", False)
+        _title = kwargs.pop("title", None)
 
         self.metadata.update(user_metadata)
 
@@ -396,27 +396,27 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
         super().__array_finalize__(obj=obj)
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, filename, *args, **kwargs):
         """Load an image from a file and return as a ImageArray."""
         cls = type(self)
-        fmt = kargs.pop("fmt", os.path.splitext(filename)[1][1:])
+        fmt = kwargs.pop("fmt", os.path.splitext(filename)[1][1:])
         handlers = {"npy": cls._load_npy, "png": cls._load_png, "tiff": cls._load_tiff, "tif": cls._load_tiff}
         if fmt not in handlers:
             raise StonerLoadError(f"{fmt} is not a recognised format for loading.")
-        ret = handlers[fmt](filename, **kargs)
+        ret = handlers[fmt](filename, **kwargs)
         return ret
 
     @classmethod
-    def _load_npy(cls, filename, **kargs):
+    def _load_npy(cls, filename, **kwargs):
         """Load image data from a numpy file."""
         image = np.load(filename)
-        image = np.array(image, **kargs).view(cls)
+        image = np.array(image, **kwargs).view(cls)
         image.metadata["Loaded from"] = os.path.realpath(filename)  # pylint: disable=no-member
         image.filename = os.path.realpath(filename)
         return image
 
     @classmethod
-    def _load_png(cls, filename, **kargs):  # pylint: disable=unused-argument
+    def _load_png(cls, filename, **kwargs):  # pylint: disable=unused-argument
         """Create a new ImageArray from a png file."""
         with Image.open(filename, "r") as img:
             image = np.asarray(img).view(cls)
@@ -443,7 +443,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return image
 
     @classmethod
-    def _load_tiff(cls, filename, **kargs):  # pylint: disable=unused-argument
+    def _load_tiff(cls, filename, **kwargs):  # pylint: disable=unused-argument
         """Create a new ImageArray from a tiff file."""
         metadict = TypeHintedDict({})
         with Image.open(filename, "r") as img:
@@ -496,7 +496,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         image.filename = os.path.realpath(filename)
         return image
 
-    def _box(self, *args, **kargs):
+    def _box(self, *args, **kwargs):
         """Construct and indexing tuple for selecting areas for cropping and boxing.
 
         The box can be specified as:
@@ -507,8 +507,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             - False: The user can select a region of interest
             - (iterable of length 4) - assumed to give 4 integers to describe a specific box
         """
-        if len(args) == 0 and "box" in kargs:
-            args = (kargs["box"],)  # back compatibility
+        if len(args) == 0 and "box" in kwargs:
+            args = (kwargs["box"],)  # back compatibility
         if len(args) == 0 or (len(args) == 1 and args[0] is None):
             args = tuple(RegionSelect()(self))
         match args:
@@ -708,7 +708,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         else:
             super().__delitem__(index)
 
-    def save(self, filename=None, **kargs):
+    def save(self, filename=None, **kwargs):
         """Stub method for a save function."""
         raise NotImplementedError(f"Save is not implemented in {self.__class__}")
 
@@ -816,7 +816,7 @@ class ImageFile(metadataObject):
     mime_type = ["image/png", "image/jpeg", "image/tiff", "application/octet-stream"]
     priority = 32
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Mostly a pass through to ImageArray constructor.
 
         Local attribute is image. All other attributes and calls are passed
@@ -831,33 +831,33 @@ class ImageFile(metadataObject):
 
         """
         self._image = ImageArray()  # Ensire we have the image data in place
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
         args = list(args)
         if len(args) == 0:
             pass
         elif len(args) > 0 and isinstance(args[0], path_types):
             try:
-                copy_into(self.__class__.load(args[0], **kargs), self)
+                copy_into(self.__class__.load(args[0], **kwargs), self)
                 self._public_attrs = {"title": str, "filename": str}
-                self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
+                self._fromstack = kwargs.pop("_fromstack", False)  # for use by ImageStack
                 return
             except StonerLoadError:
-                args[0] = ImageArray(*args, **kargs)
+                args[0] = ImageArray(*args, **kwargs)
         if len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
             self._image = args[0].image
             for k in args[0]._public_attrs:
                 setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(args[0], np.ndarray):  # Fixing type
-            self._image = ImageArray(*args, **kargs)
+            self._image = ImageArray(*args, **kwargs)
             if isinstance(args[0], ImageArray):
                 for k in args[0]._public_attrs:
                     setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(
             args[0], make_Data(None)
         ):  # Support initing from a DataFile that defines x,y,z coordinates
-            self._init_from_datafile(*args, **kargs)
+            self._init_from_datafile(*args, **kwargs)
         self._public_attrs = {"title": str, "filename": str}
-        self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
+        self._fromstack = kwargs.pop("_fromstack", False)  # for use by ImageStack
 
     ###################################################################################################################
     ############################# Properties #### #####################################################################
@@ -1098,7 +1098,7 @@ class ImageFile(metadataObject):
     ###################################################################################################################
     ############################# Private methods #####################################################################
 
-    def _init_from_datafile(self, *args, **kargs):
+    def _init_from_datafile(self, *args, **kwargs):
         """Initialise ImageFile from DataFile defining x,y,z coordinates.
 
         Args:
@@ -1115,9 +1115,9 @@ class ImageFile(metadataObject):
                 Column in the datafile that defines the intensity
         """
         data = make_Data(args[0])
-        shape = kargs.pop("shape", "unique")
+        shape = kwargs.pop("shape", "unique")
 
-        _ = data._col_args(**kargs)
+        _ = data._col_args(**kwargs)
         data.setas(x=_.xcol, y=_.ycol, z=_.zcol)  # pylint: disable=not-callable
         if isinstance(shape, string_types) and shape == "unique":
             shape = (len(np.unique(data.x)), len(np.unique(data.y)))
@@ -1131,9 +1131,9 @@ class ImageFile(metadataObject):
         self["x_vector"] = np.unique(X)
         self["y_vector"] = np.unique(Y)
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, filename, *args, **kwargs):
         """Load an ImageFile by calling the ImageArray method instead."""
-        self._image = ImageArray(filename, *args, **kargs)
+        self._image = ImageArray(filename, *args, **kwargs)
         for k in self._image._public_attrs:
             setattr(self, k, getattr(self._image, k, None))
         return self
@@ -1183,7 +1183,7 @@ class ImageFile(metadataObject):
         return self.filename
 
     @classmethod
-    def load(cls, *args, **kargs):
+    def load(cls, *args, **kwargs):
         """Create a :py:class:`ImageFile` from file abnd guessing a better subclass if necessary.
 
         Args:
@@ -1216,10 +1216,10 @@ class ImageFile(metadataObject):
 
             If no class can load a file successfully then a RunttimeError exception is raised.
         """
-        filename, args, kargs = get_filename(args, kargs)
-        filetype = kargs.pop("filetype", None)
-        debug = kargs.pop("debug", False)
-        auto_load = kargs.pop("auto_load", filetype is None)
+        filename, args, kwargs = get_filename(args, kwargs)
+        filetype = kwargs.pop("filetype", None)
+        debug = kwargs.pop("debug", False)
+        auto_load = kwargs.pop("auto_load", filetype is None)
         if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
             filename, filetype = get_file_name_type(filename, filetype, ImageFile)
         if filename is None or not filename:
@@ -1228,10 +1228,10 @@ class ImageFile(metadataObject):
             raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA
             try:
-                ret = auto_load_classes(filename, "Image", debug=debug, args=args, kargs=kargs)
+                ret = auto_load_classes(filename, "Image", debug=debug, args=args, kwargs=kwargs)
             except StonerUnrecognisedFormat:
                 ret = ImageFile()
-                ret = ret._load(filename, *args, **kargs)
+                ret = ret._load(filename, *args, **kwargs)
                 ret["Loaded as"] = filetype.__name__
         else:
             if isinstance(filetype, type) and issubclass(filetype, ImageFile):
@@ -1242,18 +1242,18 @@ class ImageFile(metadataObject):
                 raise TypeError(f"Unable to work out how to load {filetype}")
             loader = get_loader(filetype)
             try:
-                ret = loader(make_Image(), filename, *args, **kargs)
+                ret = loader(make_Image(), filename, *args, **kwargs)
                 ret["Loaded as"] = filetype
             except StonerLoadError as err:
                 raise ValueError(f"Unable to load {filename}") from err
 
-        for k, i in kargs.items():
+        for k, i in kwargs.items():
             if not callable(getattr(ret, k, lambda x: False)):
                 setattr(ret, k, i)
-        ret._kargs = kargs
+        ret._kwargs = kwargs
         return ret
 
-    def save(self, filename=None, **kargs):
+    def save(self, filename=None, **kwargs):
         """Save the image into the file 'filename'.
 
         Args:
@@ -1275,4 +1275,4 @@ class ImageFile(metadataObject):
             saved.
         """
         # catch before metadataObject tries to take over.
-        self.image.save(filename, **kargs)
+        self.image.save(filename, **kwargs)

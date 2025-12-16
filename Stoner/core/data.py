@@ -158,18 +158,18 @@ class Data(
     ############################     Object Construction   ###############################
     # ====================================================================================
 
-    def __new__(cls, *args, **kargs):
+    def __new__(cls, *args, **kwargs):
         """Prepare the basic Data instance before the mixins add their bits."""
         self = metadataObject.__new__(cls, *args)
-        object.__setattr__(self, "debug", kargs.pop("debug", False))
+        object.__setattr__(self, "debug", kwargs.pop("debug", False))
         self._masks = [False]
         self._filename = None
         object.__setattr__(self, "_data", DataArray([]))
         self._baseclass = Data
-        self._kargs = kargs
+        self._kwargs = kwargs
         return self
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Initialise the Data from arrays, dictionaries and filenames.
 
         Various forms are recognised:
@@ -211,11 +211,11 @@ class Data(
         Args:
             args (positional arguments):
                 Variable number of arguments that match one of the definitions above
-            kargs (keyword Arguments):
+            kwargs (keyword Arguments):
                 All keyword arguments that match public attributes are used to set those public attributes.
         """
         # init instance attributes
-        super().__init__(**kargs)  # initialise self.metadata)
+        super().__init__(**kwargs)  # initialise self.metadata)
         self._public_attrs = {
             "data": np.ndarray,
             "filetype": str,
@@ -227,21 +227,21 @@ class Data(
             "mask": (np.ndarray, bool),
         }
         self._repr_limits = (256, 6)
-        handler = [lambda *args, **kargs: None, self._init_single, self._init_double, self._init_many][
+        handler = [lambda *args, **kwargs: None, self._init_single, self._init_double, self._init_many][
             min(len(args), 3)
         ]
         self.mask = False
         self.data._setas._get_cols()
-        handler(*args, **kargs)
+        handler(*args, **kwargs)
         try:
-            kargs = self._kargs
-            delattr(self, "_kargs")
+            kwargs = self._kwargs
+            delattr(self, "_kwargs")
         except AttributeError:
             pass
         self.metadata["Stoner.class"] = type(self).__name__
-        if kargs:  # set public attributes from keywords
+        if kwargs:  # set public attributes from keywords
             to_go = []
-            for k, val in kargs.items():
+            for k, val in kwargs.items():
                 if k in self._public_attrs:
                     if isinstance(val, self._public_attrs[k]):
                         self.__setattr__(k, val)
@@ -250,10 +250,10 @@ class Data(
                         to_go.append(k)
                 else:
                     raise AttributeError(f"{k} is not an allowed attribute of {self._public_attrs}")
-                    # self._public_attrs[k]=type(kargs[k])
-                    # self.__setattr__(k, kargs[k])
+                    # self._public_attrs[k]=type(kwargs[k])
+                    # self.__setattr__(k, kwargs[k])
             for k in to_go:
-                del kargs[k]
+                del kwargs[k]
         if self.debug:
             print("Done Data init")
 
@@ -261,53 +261,53 @@ class Data(
     ############################   Constructor Methods ###########################################
     # ============================================================================================
 
-    def _init_single(self, *args, **kargs):
+    def _init_single(self, *args, **kwargs):
         """Handle constructor with 1 argument - called from __init__."""
         test = ClassTester(ImageFile="Stoner.Image.core.ImageFile")
         match args[0]:
             case str() | bool() | pathlib.Path() | bytes() | io.IOBase() | h5py.Group() | h5py.File():
-                self._init_load(args[0], **kargs)
+                self._init_load(args[0], **kwargs)
             case Data():
-                self._init_datafile(args[0], **kargs)
+                self._init_datafile(args[0], **kwargs)
             case pd.DataFrame():
-                self._init_pandas(args[0], **kargs)
+                self._init_pandas(args[0], **kwargs)
             case test.ImageFile():
-                self._init_imagefile(args[0], **kargs)
+                self._init_imagefile(args[0], **kwargs)
             case np.ndarray():
-                self._init_array(args[0], **kargs)
+                self._init_array(args[0], **kwargs)
             case Mapping():
-                self._init_dict(args[0], **kargs)
+                self._init_dict(args[0], **kwargs)
             case Iterable():
-                self._init_list(args[0], **kargs)
+                self._init_list(args[0], **kwargs)
             case _:
                 raise TypeError(f"No constructor for {type(args[0])}")
         self.data._setas.cols.update(self.setas._get_cols())
 
-    def _init_double(self, *args, **kargs):
+    def _init_double(self, *args, **kwargs):
         """Two argument constructors handled here. Called form __init__."""
         (arg0, arg1) = args
         match args:
             case (arg0, {} as arg1):
-                self._init_single(arg0, **kargs)
-                self._init_single(arg1, **kargs)
+                self._init_single(arg0, **kwargs)
+                self._init_single(arg1, **kwargs)
             case (arg0, Iterable() as arg1) if all_type(arg1, str):
-                self._init_single(arg0, **kargs)
-                self._init_single(arg1, **kargs)
+                self._init_single(arg0, **kwargs)
+                self._init_single(arg1, **kwargs)
             case (np.ndarray() as arg0, np.ndarray() as arg1) if arg0.ndim == 1 and arg1.ndim == 1:
-                self._init_many(*args, **kargs)
+                self._init_many(*args, **kwargs)
             case _:
                 raise TypeError(f"Unable to decide how to initialise {type(args)}")
 
-    def _init_many(self, *args, **kargs):
+    def _init_many(self, *args, **kwargs):
         """Handle more than two arguments to the constructor - called from init."""
         for a in args:
             if not (isinstance(a, np.ndarray) and a.ndim == 1):
-                copy_into(self.__class__.load(a, **kargs), self)
+                copy_into(self.__class__.load(a, **kwargs), self)
                 break
         else:
             self.data = np.column_stack(args)
 
-    def _init_array(self, arg, **kargs):  # pylint: disable=unused-argument
+    def _init_array(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from a single numpy array."""
         # numpy.array - set data
         if np.issubdtype(arg.dtype, np.number):
@@ -317,7 +317,7 @@ class Data(
             for row in arg:
                 self += row
 
-    def _init_datafile(self, arg, **kargs):  # pylint: disable=unused-argument
+    def _init_datafile(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from datafile."""
         for a in arg.__dict__:
             if not callable(a) and a != "_baseclass":
@@ -326,7 +326,7 @@ class Data(
         self.data = DataArray(arg.data, setas=arg.setas.clone)
         self.data.setas = arg.setas.clone
 
-    def _init_dict(self, arg, **kargs):  # pylint: disable=unused-argument
+    def _init_dict(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from dictionary."""
         if (
             all_type(arg.keys(), string_types)
@@ -338,7 +338,7 @@ class Data(
         else:
             self.metadata = arg.copy()
 
-    def _init_imagefile(self, arg, **kargs):  # pylint: disable=unused-argument
+    def _init_imagefile(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from an ImageFile."""
         x = arg.get("x_vector", np.arange(arg.shape[1]))
         y = arg.get("y_vector", np.arange(arg.shape[0]))
@@ -350,7 +350,7 @@ class Data(
         self.column_headers = ["X", "Y", "Image Intensity"]
         self.setas = "xyz"
 
-    def _init_pandas(self, arg, **kargs):  # pylint: disable=unused-argument
+    def _init_pandas(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from a pandas dataframe."""
         self.data = arg.values
         ch = []
@@ -375,7 +375,7 @@ class Data(
             else:
                 self.setas = list(arg.columns.get_level_values(1))
 
-    def _init_load(self, arg, **kargs):
+    def _init_load(self, arg, **kwargs):
         """Load data from a file-like source.
 
         arg(str, PurePath, IOBase, bool):
@@ -387,14 +387,14 @@ class Data(
                 raise ValueError("Cannot construct a Data with a single argument of True")
         elif isinstance(arg, pathlib.PurePath):
             arg = str(arg)
-        copy_into(self.__class__.load(filename=arg, **kargs), self)
+        copy_into(self.__class__.load(filename=arg, **kwargs), self)
 
-    def _init_list(self, arg, **kargs):
+    def _init_list(self, arg, **kwargs):
         """Initialise from a list or other ioterable."""
         if all_type(arg, string_types):
             self.column_headers = list(arg)
         elif all_type(arg, np.ndarray):
-            self._init_many(*arg, **kargs)
+            self._init_many(*arg, **kwargs)
         else:
             raise TypeError(f"Unable to construct Data from a {type(arg)}")
 
@@ -402,13 +402,13 @@ class Data(
     ############################   Special Methods ###############################################
     # ============================================================================================
 
-    def __call__(self, *args, **kargs):
+    def __call__(self, *args, **kwargs):
         """Clone the Data, but allowing additional arguments to modify the new clone.
 
         Args:
             *args (tuple):
                 Positional arguments to pass through to the new clone.
-            **kargs (dict):
+            **kwargs (dict):
                 Keyword arguments to pass through to the new clone.
 
         Raises:
@@ -419,13 +419,13 @@ class Data(
                 Modified clone of the current object.
         """
         new_d = self.clone
-        handler = [lambda *args, **kargs: None, new_d._init_single, new_d._init_double, new_d._init_many][
+        handler = [lambda *args, **kwargs: None, new_d._init_single, new_d._init_double, new_d._init_many][
             min(len(args), 2)
         ]
-        handler(*args, **kargs)
-        if kargs:  # set public attributes from keywords
+        handler(*args, **kwargs)
+        if kwargs:  # set public attributes from keywords
             myattrs = new_d._public_attrs
-            for k, val in kargs.items():
+            for k, val in kwargs.items():
                 if k in myattrs:
                     if isinstance(val, myattrs[k]):
                         new_d.__setattr__(k, val)
@@ -562,9 +562,9 @@ class Data(
     ############################ Private Methods #################################################
     # ============================================================================================
 
-    def _col_args(self, *args, **kargs):
+    def _col_args(self, *args, **kwargs):
         """Create an object which has keys  based either on arguments or setas attribute."""
-        return self.data._col_args(*args, **kargs)  # Now just pass through to DataArray
+        return self.data._col_args(*args, **kwargs)  # Now just pass through to DataArray
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
@@ -624,7 +624,7 @@ class Data(
                 col_assignments.append("")
         return interesting, col_assignments, cols
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, filename, *args, **kwargs):
         """Actually load the data from disc assuming a .tdi file format.
 
         Args:
@@ -893,7 +893,7 @@ class Data(
         raise TypeError(f"{k} should be {typ}")
 
     @classmethod
-    def load(cls, *args, **kargs):
+    def load(cls, *args, **kwargs):
         """Create a new :py:class:`Data` from a file on disc guessing a better subclass if necessary.
 
         Args:
@@ -926,11 +926,11 @@ class Data(
 
             If no class can load a file successfully then a StonerUnrecognisedFormat exception is raised.
         """
-        filename, args, kargs = get_filename(args, kargs)
-        debug = kargs.pop("debug", False)
-        filetype = kargs.pop("filetype", None)
-        auto_load = kargs.pop("auto_load", filetype is None)
-        loaded_class = kargs.pop("loaded_class", False)
+        filename, args, kwargs = get_filename(args, kwargs)
+        debug = kwargs.pop("debug", False)
+        filetype = kwargs.pop("filetype", None)
+        auto_load = kwargs.pop("auto_load", filetype is None)
+        loaded_class = kwargs.pop("loaded_class", False)
         if (
             isinstance(filename, (str, pathlib.Path))
             and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES
@@ -941,20 +941,20 @@ class Data(
         elif not auto_load and not filetype:
             raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA
-            ret = auto_load_classes(filename, "Data", debug=debug, args=args, kargs=kargs)
+            ret = auto_load_classes(filename, "Data", debug=debug, args=args, kwargs=kwargs)
             if not isinstance(ret, Data):  # autoload returned something that wasn't a data file!
                 return ret
         else:
             loader = get_loader(filetype)
             try:
-                ret = loader(make_Data(), filename, *args, **kargs)
+                ret = loader(make_Data(), filename, *args, **kwargs)
             except StonerLoadError as err:
                 raise ValueError(f"Unable to load {filename}") from err
 
-        for k, i in kargs.items():
+        for k, i in kwargs.items():
             if not callable(getattr(ret, k, lambda x: False)):
                 setattr(ret, k, i)
-        ret._kargs = kargs
+        ret._kwargs = kwargs
         filetype = ret.__class__.__name__
         if loaded_class:
             datafile = ret

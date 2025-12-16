@@ -16,7 +16,7 @@ from ..core.base import TypeHintedDict
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
 from ..Image import ImageArray, ImageFile, ImageStack
-from ..tools.file import FileManager, HDFFileManager, get_filename, file_dialog
+from ..tools.file import FileManager, HDFFileManager, file_dialog, get_filename
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
 
@@ -37,7 +37,7 @@ class MaximusStack(ImageStack):
 
     _defaults = {"type": ImageFile, "pattern": "*.hdr"}
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Construct the attocube subclass of ImageStack."""
         args = list(args)
         if len(args) > 0:
@@ -55,10 +55,10 @@ class MaximusStack(ImageStack):
             scan = args.pop(0)
             root_name = f"MPI_{scan:039d}"
         else:
-            root_name = kargs.pop("root", None)
-            scan = kargs.pop("scan", -1)
+            root_name = kwargs.pop("root", None)
+            scan = kwargs.pop("scan", -1)
 
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
 
         self._common_metadata = TypeHintedDict()
 
@@ -72,9 +72,9 @@ class MaximusStack(ImageStack):
         self.compression = "gzip"
         self.compression_opts = 6
 
-    def _load(self, *args, **kargs):
+    def _load(self, *args, **kwargs):
         """Load an ImageStack from either an hdf file or textfiles."""
-        filename, args, kargs = get_filename(args, kargs)
+        filename, args, kwargs = get_filename(args, kwargs)
         self.filename = filename
         pth = Path(self.filename)
         if h5py.is_hdf5(self.filename):
@@ -216,10 +216,10 @@ class MaximusStack(ImageStack):
         return self
 
     @classmethod
-    def read_hdf5(cls, *args, **kargs):
+    def read_hdf5(cls, *args, **kwargs):
         """Create a new instance from an hdf file."""
         self = cls(regrid=False)
-        filename, args, kargs = get_filename(args, kargs)
+        filename, args, kwargs = get_filename(args, kwargs)
         self.filename = filename
         with HDFFileManager(self.filename, "r") as f:
             self.scan_no = f.attrs["scan_no"]
@@ -251,7 +251,7 @@ class MaximusStack(ImageStack):
                 sub_grps = grps
             for grp in sub_grps:
                 if "type" in f[grp].attrs:
-                    self.groups[grp] = cls.read_hdf5(f[grp], *args, **kargs)
+                    self.groups[grp] = cls.read_hdf5(f[grp], *args, **kwargs)
                     continue
                 g = f[grp]
                 self.append(self._read_image(g))

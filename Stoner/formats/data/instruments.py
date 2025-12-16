@@ -19,9 +19,9 @@ from ..decorators import register_loader, register_saver
 
 
 @register_loader(patterns=(".340", 16), mime_types=("text/plain", 32), name="LSTemperatureFile", what="Data")
-def load_340(new_data, *args, **kargs):
+def load_340(new_data, *args, **kwargs):
     """Load data for 340 files."""
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     with FileManager(new_data.filename, "rb") as data:
         keys = []
@@ -204,7 +204,7 @@ def _parse_line(line: str, setas: dict):
     name="QDFile",
     what="Data",
 )
-def load_qdfile(new_data, *args, **kargs):
+def load_qdfile(new_data, *args, **kwargs):
     """QD system file loader routine.
 
     Args:
@@ -214,7 +214,7 @@ def load_qdfile(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     setas = {}
     i = 0
     new_data.filename = filename
@@ -319,7 +319,7 @@ def _parse_header(new_data, matched, value, key):
     name="RigakuFile",
     what="Data",
 )
-def load_rigaku(new_data, *args, **kargs):
+def load_rigaku(new_data, *args, **kwargs):
     """Read a Rigaku ras file including handling the metadata nicely.
 
     Args:
@@ -329,7 +329,7 @@ def load_rigaku(new_data, *args, **kargs):
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     sh = re.compile(r"^\*([^\s]+)\s+(.*)$")  # Regexp to grab the keys
     ka = re.compile(r"(.*)\-(\d+)$")
     header = {}
@@ -380,7 +380,7 @@ def load_rigaku(new_data, *args, **kargs):
         new_data["_endpos"] = pos
         if hasattr(filename, "seekable") and filename.seekable():
             filename.seek(pos)
-    if kargs.pop("add_Q", False):
+    if kwargs.pop("add_Q", False):
         _to_Q(new_data)
     return new_data
 
@@ -472,7 +472,7 @@ def _read_spc_loginfo(new_data, f):
 
 
 @register_loader(patterns=(".spc", 16), mime_types=("application/octet-stream", 16), name="SPCFile", what="Data")
-def load_spc(new_data, *args, **kargs):
+def load_spc(new_data, *args, **kwargs):
     """Read a .scf file produced by the Renishaw Raman system (among others).
 
     Args:
@@ -488,7 +488,7 @@ def load_spc(new_data, *args, **kargs):
     Notes:
         Metadata keys are pretty much as specified in the spc.h file that defines the filerformat.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -640,7 +640,7 @@ def load_spc(new_data, *args, **kargs):
 
 
 @register_loader(patterns=[(".fld", 16), (".dat", 32)], mime_types=("text/plain", 16), name="VSMFile", what="Data")
-def load_vsm(new_data, *args, header_line=3, data_line=3, header_delim=",", **kargs):
+def load_vsm(new_data, *args, header_line=3, data_line=3, header_delim=",", **kwargs):
     """VSM file loader routine.
 
     Args:
@@ -659,7 +659,7 @@ def load_vsm(new_data, *args, header_line=3, data_line=3, header_delim=",", **ka
     Returns:
         A copy of the itnew_data after loading the data.
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     new_data.filename = filename
     try:
         with FileManager(filename, errors="ignore", encoding="utf-8") as f:
@@ -707,7 +707,7 @@ def load_vsm(new_data, *args, header_line=3, data_line=3, header_delim=",", **ka
     name="XRDFile",
     what="Data",
 )
-def load_xrd(new_data, *args, **kargs):
+def load_xrd(new_data, *args, **kwargs):
     """Read an XRD DataFile as produced by the Brucker diffractometer.
 
     Args:
@@ -721,7 +721,7 @@ def load_xrd(new_data, *args, **kargs):
         Format is ini file like but not enough to do standard inifile processing - in particular
         one can have multiple sections with the same name (!)
     """
-    filename, args, kargs = get_filename(args, kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     if filename is None or not filename:
         new_data.get_filename("r")
     else:
@@ -765,6 +765,6 @@ def load_xrd(new_data, *args, **kargs):
     new_data._public_attrs = {"four_bounce": bool}
     new_data.four_bounce = new_data["HardwareConfiguration:Monochromator"] == 1
     new_data.column_headers = column_headers
-    if kargs.pop("Q", False):
+    if kwargs.pop("Q", False):
         _to_Q(new_data)
     return new_data

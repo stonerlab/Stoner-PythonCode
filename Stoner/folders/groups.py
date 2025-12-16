@@ -13,10 +13,10 @@ from Stoner.core.base import RegexpDict
 class GroupsDict(RegexpDict):
     """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.BaseFolder` objects."""
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Capture a *base* keyuword that sets the parent :py:class:`Stoner.DataFolder` instance."""
-        self.base = kargs.pop("base", None)
-        super().__init__(*args, **kargs)
+        self.base = kwargs.pop("base", None)
+        super().__init__(*args, **kwargs)
 
     def __setitem__(self, name, value):
         """Enforce type checking on values."""

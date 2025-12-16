@@ -6,10 +6,10 @@ from __future__ import division
 __all__ = ["DiskBasedFolderMixin", "DataFolder", "PlotFolder"]
 
 import os
-from os import path
 from copy import deepcopy
 from functools import partial
 from importlib import import_module
+from os import path
 
 from matplotlib.pyplot import figure, subplots
 from numpy import ceil, floor, mean, sqrt, std
@@ -115,7 +115,7 @@ class DiskBasedFolderMixin:
         "discard_earlier": False,
     }
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Additional constructor for DiskBasedFolderMixins."""
         _ = self.defaults  # Force the default store to be populated.
         if "directory" in self._default_store and self._default_store["directory"] is None:
@@ -124,21 +124,21 @@ class DiskBasedFolderMixin:
             self._default_store["type"] = make_Data(None)
         elif self._type != metadataObject:  # Looks like we've already set our type in a subbclass
             self._default_store.pop("type")
-        flat = kargs.pop("flat", self._default_store.get("flat", False))
-        prefetch = kargs.pop("prefetch", self._default_store.get("prefetch", False))
-        if "type" in kargs and isinstance(kargs["type"], str):
-            if "." in kargs["type"]:
-                mod = ".".join(kargs["type"].split(".")[:-1])
-                cls = kargs["type"].split(".")[-1]
+        flat = kwargs.pop("flat", self._default_store.get("flat", False))
+        prefetch = kwargs.pop("prefetch", self._default_store.get("prefetch", False))
+        if "type" in kwargs and isinstance(kwargs["type"], str):
+            if "." in kwargs["type"]:
+                mod = ".".join(kwargs["type"].split(".")[:-1])
+                cls = kwargs["type"].split(".")[-1]
                 mod = import_module(mod)
-                kargs["type"] = getattr(mod, cls)
+                kwargs["type"] = getattr(mod, cls)
             else:
-                kargs["type"] = globals()[kargs["type"]]
+                kwargs["type"] = globals()[kwargs["type"]]
 
         # Adjust the default pattern depending on the specified type
-        if "type" in kargs and "pattern" not in kargs:
-            kargs["pattern"] = kargs["type"]._patterns
-        super().__init__(*args, **kargs)  # initialise before __clone__ is called in getlist
+        if "type" in kwargs and "pattern" not in kwargs:
+            kwargs["pattern"] = kwargs["type"]._patterns
+        super().__init__(*args, **kwargs)  # initialise before __clone__ is called in getlist
         if self.readlist and len(args) > 0 and isinstance(args[0], path_types):
             self.getlist(directory=args[0])
         if len(args) > 0 and isinstance(args[0], bool) and not args[0]:
@@ -344,7 +344,7 @@ class DiskBasedFolderMixin:
             p.join()
         return self
 
-    def getlist(self, **kargs):
+    def getlist(self, **kwargs):
         """Scan the current directory, optionally recursively to build a list of filenames.
 
         Keyword Arguments:
@@ -365,10 +365,10 @@ class DiskBasedFolderMixin:
         directory.
         """
         self.__clear__()
-        recursive = kargs.pop("recursive", self.recursive)
-        discard = kargs.pop("discard_earlier", self.discard_earlier)
-        flatten = kargs.pop("flatten", getattr(self, "flat", False))
-        directory = kargs.pop("directory", getattr(self, "directory", None))
+        recursive = kwargs.pop("recursive", self.recursive)
+        discard = kwargs.pop("discard_earlier", self.discard_earlier)
+        flatten = kwargs.pop("flatten", getattr(self, "flat", False))
+        directory = kwargs.pop("directory", getattr(self, "directory", None))
         self.directory = directory
 
         if self.multifile or isinstance(directory, bool) and not directory:
@@ -483,9 +483,9 @@ class DataFolder(DiskBasedFolderMixin, BaseFolder):
 
     """
 
-    def __init__(self, *args, **kargs):
-        self.type = kargs.pop("type", make_Data(None))
-        super().__init__(*args, **kargs)
+    def __init__(self, *args, **kwargs):
+        self.type = kwargs.pop("type", make_Data(None))
+        super().__init__(*args, **kwargs)
 
 
 class PlotFolder(DataFolder):
@@ -498,25 +498,25 @@ class PlotFolder(DataFolder):
         super().__init__(*args, **kwargs)
         self._figure = getattr(self, "_figure", [])
         self._fig_args = getattr(self, "_fig_args", [])
-        self._fig_kargs = getattr(self, "_fig_kargs", {})
+        self._fig_kwargs = getattr(self, "_fig_kwargs", {})
 
-    def figure(self, *args, **kargs):
+    def figure(self, *args, **kwargs):
         """Pass through for :py:func:`matplotlib.pyplot.figure` but also takes a note of the arguments for later."""
         self._fig_args = args
 
-        self._fig_kargs = getattr(self, "fig_defaults", {})
-        self._fig_kargs.update(kargs)
-        fig = figure(*self._fig_args, **self._fig_kargs)
+        self._fig_kwargs = getattr(self, "fig_defaults", {})
+        self._fig_kwargs.update(kwargs)
+        fig = figure(*self._fig_args, **self._fig_kwargs)
         self.each.fig = fig
         self._figure = fig
         return self._figure
 
-    def plot(self, *args, **kargs):
+    def plot(self, *args, **kwargs):
         """Call the plot method for each metadataObject, but switching to a subplot each time.
 
         Args:
             args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
-            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+            kwargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
 
         Keyword Arguments:
             plot_extra (callable(i,j,d)):
@@ -545,38 +545,38 @@ class PlotFolder(DataFolder):
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
         """
-        plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
+        plts = kwargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
         plts = min(plts, len(self))
 
         if not hasattr(self.type, "plot"):  # switch the objects to being Stoner.Data instances
             for i, d in enumerate(self):
                 self[i] = make_Data(d)
 
-        plot_extra = kargs.pop("plot_extra", lambda i, j, d: None)
+        plot_extra = kwargs.pop("plot_extra", lambda i, j, d: None)
 
         fig_args = getattr(self, "_fig_args", [])
-        fig_kargs = getattr(self, "_fig_kargs", {})
+        fig_kwargs = getattr(self, "_fig_kwargs", {})
         for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
-            if arg in kargs:
-                fig_kargs[arg] = kargs.pop(arg)
-        w, h = fig_kargs.setdefault("figsize", (18, 12))
+            if arg in kwargs:
+                fig_kwargs[arg] = kwargs.pop(arg)
+        w, h = fig_kwargs.setdefault("figsize", (18, 12))
         plt_x = int(floor(sqrt(plts * w / h)))
         plt_y = int(ceil(plts / plt_x))
         ret = []
         j = -1
-        fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
+        fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kwargs)
         fignum = fig.number
         for i, d in enumerate(self):
             if i % plts == 0 and i != 0:
-                fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kargs)
+                fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kwargs)
                 fignum = fig.number
                 j = 0
             else:
                 j += 1
             fig = figure(fignum)
-            kargs["figure"] = fig
-            kargs["ax"] = axs.ravel()[j]
-            ret.append(d.plot(*args, **kargs))
+            kwargs["figure"] = fig
+            kwargs["ax"] = axs.ravel()[j]
+            ret.append(d.plot(*args, **kwargs))
             plot_extra(i, j, d)
         for n in range(j + 1, plt_x * plt_y):
             axs.ravel()[n].remove()

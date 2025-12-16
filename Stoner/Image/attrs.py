@@ -21,9 +21,9 @@ def _draw_apaptor(func):
     """Adapt methods for DrawProxy class to bind :py:mod:`skimage.draw` functions."""
 
     @wraps(func)
-    def _proxy(self, *args, **kargs):
-        value = kargs.pop("value", np.ones(1, dtype=self._img.dtype)[0])
-        coords = func(*args, **kargs)
+    def _proxy(self, *args, **kwargs):
+        value = kwargs.pop("value", np.ones(1, dtype=self._img.dtype)[0])
+        coords = func(*args, **kwargs)
         if len(coords) == 3:
             rr, cc, vv = coords
             if len(rr) == len(cc):
@@ -58,7 +58,7 @@ class DrawProxy:
     is saved.
     """
 
-    def __init__(self, *args, **kargs):  # pylint: disable=unused-argument
+    def __init__(self, *args, **kwargs):  # pylint: disable=unused-argument
         """Grab the parent image from the constructor."""
         self._img = args[0]
         self._parent = args[1]
@@ -300,8 +300,8 @@ class MaskProxy:
             raise AttributeError(f"{name} not a callable mask method.")
 
         @wraps(func)
-        def _proxy_call(*args, **kargs):
-            retval = func(self._mask.astype(float).view(type(self._imagearray)) * 1000, *args, **kargs)
+        def _proxy_call(*args, **kwargs):
+            retval = func(self._mask.astype(float).view(type(self._imagearray)) * 1000, *args, **kwargs)
             if isinstance(retval, np.ndarray) and retval.shape == self._imagearray.shape:
                 retval.normalise()
                 self._imagearray.mask = retval > 0
@@ -356,7 +356,7 @@ class MaskProxy:
         """Invert the mask."""
         self._imagearray.mask = ~self._imagearray.mask
 
-    def select(self, **kargs):
+    def select(self, **kwargs):
         """Interactive selection mode.
 
         This method allows the user to interactively choose a mask region on the image. It will require the
@@ -382,7 +382,7 @@ class MaskProxy:
 
         This method directly sets the mask and then returns a copy of the parent :py:class:`Stoner.ImageFile`.
         """
-        selection = kargs.get("_selection", [])
+        selection = kwargs.get("_selection", [])
         if len(selection) == 0:
             selector = ShapeSelect()
             self._imagearray.mask = selector(self._imagearray)

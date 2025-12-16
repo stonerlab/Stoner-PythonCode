@@ -230,13 +230,13 @@ def istuple(obj: Any, *args: type, strict: bool = True) -> bool:
 class ClassTester:
     """Dynamically load classes on attribute access for structural pattern matching."""
 
-    def __init__(self, **kargs):
+    def __init__(self, **kwargs):
         """Store a mapping of attribute name to a string of dot notation classes."""
-        self._kargs = kargs
+        self._kwargs = kwargs
 
-    def __call__(self, **kargs):
+    def __call__(self, **kwargs):
         """Update the mapping of attribute names and class mappings."""
-        self._kargs |= kargs
+        self._kwargs |= kwargs
 
     def __getattr__(self, name):
         """Lookup an attribute name in the stored name-class name mapping and return it.
@@ -253,13 +253,13 @@ class ClassTester:
         sys.modules then just get the module from there, otherwise, load it with importlib machinery. Finally
         get the class as an attribute in the module and return it. Also, set the type into the stored mapping.
         """
-        if name not in self._kargs:
+        if name not in self._kwargs:
             return AttributeError(f"{name} is not an attrbute or mapped class alias.")
-        mod = self._kargs[name]
+        mod = self._kwargs[name]
         if isinstance(mod, str):
             parts = mod.split(".")
             cls = parts.pop()
             mod = ".".join(parts)
             mod = import_module(mod)
-            self._kargs[name] = getattr(mod, cls)
-        return self._kargs[name]
+            self._kwargs[name] = getattr(mod, cls)
+        return self._kwargs[name]

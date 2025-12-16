@@ -77,10 +77,10 @@ def _delim_detect(line):
     name="ImageFile",
     what="Image",
 )
-def load_imagefile(new_image, *args, **kargs):
+def load_imagefile(new_image, *args, **kwargs):
     """Load an ImageFile by calling the ImageArray method instead."""
-    filename, args, kargs = get_filename(args, kargs)
-    new_image._image = make_Class("Image.ImageArray", filename, *args, **kargs)
+    filename, args, kwargs = get_filename(args, kwargs)
+    new_image._image = make_Class("Image.ImageArray", filename, *args, **kwargs)
     for k in new_image._image._public_attrs:
         setattr(new_image, k, getattr(new_image._image, k, None))
     return new_image
@@ -96,7 +96,7 @@ if rsciio:
         CODE = f'''
 def load_{name}file(new_image, *args, **kwargs):
     """Use a RosettaSciIO plugin to load an image file."""
-    filename, args, kargs = get_filename(args, kwargs)
+    filename, args, kwargs = get_filename(args, kwargs)
     try:
         api=import_module(plugin["api"])
         data=api.file_reader(filename)[0]

@@ -69,7 +69,7 @@ def errorfill(
     label="",
     label_fill="",
     ax=None,
-    **kargs
+    **kwargs
 ):
     """Plot data with errors marked by a filled region.
 
@@ -110,7 +110,7 @@ def errorfill(
         ls = plt.rcParams["lines.linestyle"]
     if lw is None:
         lw = plt.rcParams["lines.linewidth"]
-    ax.plot(x, y, color, linestyle=ls, linewidth=lw, alpha=alpha, label=label, **kargs)
+    ax.plot(x, y, color, linestyle=ls, linewidth=lw, alpha=alpha, label=label, **kwargs)
 
     if yerr is not None and xerr is not None:
         msg = "Setting both `yerr` and `xerr` is not supported. Ignore `xerr`."
@@ -225,7 +225,7 @@ def hsl2rgb(hue, sat, lum, alpha=False):
     return output
 
 
-def joy_division(x, y, z, **kargs):
+def joy_division(x, y, z, **kwargs):
     """Produce a classic black and white water fall plot.
 
     Parameters:
@@ -253,13 +253,13 @@ def joy_division(x, y, z, **kargs):
 
     Constructors a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
     """
-    ax = kargs.pop("ax", plt.gca())
-    y_shift = kargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
-    bg_colour = kargs.pop("bg_color", "k")
-    color = kargs.pop("color", kargs.pop("colour", "w"))
-    axes_colour = kargs.pop("axes_color", color)
-    lw = kargs.pop("linewidth", 2)
-    legend_fmt = kargs.pop("legend_fmt", "{}")
+    ax = kwargs.pop("ax", plt.gca())
+    y_shift = kwargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
+    bg_colour = kwargs.pop("bg_color", "k")
+    color = kwargs.pop("color", kwargs.pop("colour", "w"))
+    axes_colour = kwargs.pop("axes_color", color)
+    lw = kwargs.pop("linewidth", 2)
+    legend_fmt = kwargs.pop("legend_fmt", "{}")
 
     ax.figure.set_facecolor(bg_colour)
     ax.set_facecolor(bg_colour)

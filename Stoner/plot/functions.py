@@ -31,9 +31,9 @@ from ..tools.tests import isanynone, isiterable, isnone
 from .utils import hsl2rgb
 
 
-def _getargspec(*args, **kargs):
+def _getargspec(*args, **kwargs):
     """Get the function signature spec."""
-    ret = getfullargspec(*args, **kargs)
+    ret = getfullargspec(*args, **kwargs)
     if ret.args and ret.args[0] == "self":  # remove self for bound methods
         del ret.args[0]
     deflen = len(ret.defaults) if ret.defaults else 0
@@ -49,7 +49,7 @@ def _getargspec(*args, **kargs):
 FIG_KARGS = _getargspec(plt.figure)[1] + ["ax"]
 
 
-def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
+def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs):
     """Plot vector fields using mpltoolkit.quiver.
 
     Args:
@@ -71,15 +71,15 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
     """
     if not _3D:
         raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-    if "ax" not in kargs:
+    if "ax" not in kwargs:
         ax = plt.axes(projection="3d")
     else:
-        ax = kargs["ax"]
-    C = kargs.pop("color", None)
+        ax = kwargs["ax"]
+    C = kwargs.pop("color", None)
     if isinstance(C, np.ndarray) and C.ndim == 1:  # replace colours with a colour mapped array
-        cmap = kargs.get("cmap", getattr(cm, "viridis"))
+        cmap = kwargs.get("cmap", getattr(cm, "viridis"))
         C = cmap(C)
-    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, colors=C, **kargs)
+    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, colors=C, **kwargs)
 
     return vector_field
 
@@ -128,13 +128,13 @@ def _Plot(datafile, ix, iy, fmt, plotter, figure, **kwords):
         datafile.template.customise_axes(ax, datafile)
 
 
-def _surface_plotter(datafile, x_coord, y_coord, z_coord, **kargs):
+def _surface_plotter(datafile, x_coord, y_coord, z_coord, **kwargs):
     """Plot a 3D color mapped surface.
 
     Args:
         x_coord, y_coord, z_coord (array):
             Data point coordinates
-        kargs (dict):
+        kwargs (dict):
             Other keywords to pass through
 
     ReturnsL
@@ -149,15 +149,15 @@ def _surface_plotter(datafile, x_coord, y_coord, z_coord, **kargs):
     else:
         ax = datafile._figure.gca()
     z_coord = np.nan_to_num(z_coord)
-    surf = ax.plot_surface(x_coord, y_coord, z_coord, **kargs)
+    surf = ax.plot_surface(x_coord, y_coord, z_coord, **kwargs)
     datafile.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
 
     return surf
 
 
-def _vector_color(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
+def _vector_color(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kwargs):
     """Map a vector direction in the data to a value for use with a colormnap."""
-    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
+    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kwargs)
 
     if isinstance(c.wcol, (int, str, _pattern_type)):  # 3D vector field
         wdata = datafile.column(c.wcol)
@@ -172,7 +172,7 @@ def _vector_color(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=Non
     return Z
 
 
-def _vector_field_plotter(datafile, x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs):
+def _vector_field_plotter(datafile, x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs):
     """Plot vector fields using mayavi.mlab.
 
     Args:
@@ -188,12 +188,12 @@ def _vector_field_plotter(datafile, x_coord, y_coord, z_coord, u_comp, v_comp, w
         from mayavi import mlab  # pylint: disable=import-outside-toplevel
     except ImportError:
         return None
-    if "scalars" in kargs:
+    if "scalars" in kwargs:
         col_mode = "color_by_scalar"
     else:
         col_mode = "color_by_vector"
-    if "scalars" in kargs and isinstance(kargs["scalars"], bool) and kargs["scalars"]:  # fancy mode on
-        kargs["scalars"] = np.arange(len(datafile))
+    if "scalars" in kwargs and isinstance(kwargs["scalars"], bool) and kwargs["scalars"]:  # fancy mode on
+        kwargs["scalars"] = np.arange(len(datafile))
         colors = (
             _vector_color(
                 datafile,
@@ -201,57 +201,57 @@ def _vector_field_plotter(datafile, x_coord, y_coord, z_coord, u_comp, v_comp, w
             * 255
         )
         colors = np.column_stack((colors, np.ones(len(datafile)) * 255))
-        quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs)
+        quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs)
         quiv.glyph.color_mode = col_mode
         quiv.module_manager.scalar_lut_manager.lut.table = colors
     else:
-        quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kargs)
+        quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs)
         quiv.glyph.color_mode = col_mode
     return quiv
 
 
-def _fix_cols(datafile, scalar=True, **kargs):
+def _fix_cols(datafile, scalar=True, **kwargs):
     """Sorts out axis specs, replacing with contents from setas as necessary."""
-    startx = kargs.pop("startx", 0)
+    startx = kwargs.pop("startx", 0)
 
     c = datafile.setas._get_cols(startx=startx)
     for k in "xcol", "xerr":
-        if k in kargs and kargs[k] is None:
-            kargs[k] = c[k]
+        if k in kwargs and kwargs[k] is None:
+            kwargs[k] = c[k]
     for k in ["ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"]:
-        if k in kargs and kargs[k] is None and isiterable(c[k]) and len(c[k]) > 0:
-            if kargs.get("multi_y", not scalar):
-                kargs[k] = c[k]
+        if k in kwargs and kwargs[k] is None and isiterable(c[k]) and len(c[k]) > 0:
+            if kwargs.get("multi_y", not scalar):
+                kwargs[k] = c[k]
             else:
-                kargs[k] = c[k][0]
-        elif k in c and k in kargs and kargs[k] is None:
-            kargs[k] = c[k]
-    for k in list(kargs.keys()):
+                kwargs[k] = c[k][0]
+        elif k in c and k in kwargs and kwargs[k] is None:
+            kwargs[k] = c[k]
+    for k in list(kwargs.keys()):
         if k not in ["xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "xerr", "yerr", "zerr"]:
-            del kargs[k]
-    return AttributeStore(kargs)
+            del kwargs[k]
+    return AttributeStore(kwargs)
 
 
-def _fix_fig(datafile, figure, **kargs):
+def _fix_fig(datafile, figure, **kwargs):
     """Sorts out the matplotlib figure handling."""
     match figure:
         case bool() if not figure:
-            figure, ax = datafile.template.new_figure(None, **kargs)
+            figure, ax = datafile.template.new_figure(None, **kwargs)
         case int() if not isinstance(figure, bool):
-            figure, ax = datafile.template.new_figure(figure, **kargs)
+            figure, ax = datafile.template.new_figure(figure, **kwargs)
         case mplfig.Figure():
-            figure, ax = datafile.template.new_figure(figure.number, **kargs)
+            figure, ax = datafile.template.new_figure(figure.number, **kwargs)
         case _ if isinstance(datafile._figure, mplfig.Figure):
             figure = datafile._figure
-            ax = datafile._figure.gca(**kargs)
+            ax = datafile._figure.gca(**kwargs)
         case _:
-            figure, ax = datafile.template.new_figure(None, **kargs)
+            figure, ax = datafile.template.new_figure(None, **kwargs)
     datafile._figure = figure
     figure.sca(ax)  # Esur4e we're set for plotting on the correct axes
     return figure, ax
 
 
-def _fix_kargs(datafile, function=None, defaults=None, otherkargs=None, **kargs):
+def _fix_kwargs(datafile, function=None, defaults=None, otherkwargs=None, **kwargs):
     """Fix parameters to the plotting function to provide defaults and no extransous arguments.
 
     Returns:
@@ -259,47 +259,47 @@ def _fix_kargs(datafile, function=None, defaults=None, otherkargs=None, **kargs)
     """
     if defaults is None:
         defaults = {}
-    defaults.update(kargs)
+    defaults.update(kwargs)
 
-    pass_fig_kargs = {}
-    for k in set(FIG_KARGS) & set(kargs.keys()):
-        pass_fig_kargs[k] = kargs[k]
-        if k not in otherkargs and k not in defaults:
-            del kargs[k]
+    pass_fig_kwargs = {}
+    for k in set(FIG_KARGS) & set(kwargs.keys()):
+        pass_fig_kwargs[k] = kwargs[k]
+        if k not in otherkwargs and k not in defaults:
+            del kwargs[k]
 
     # Defaults now a dictionary of default arguments overlaid with keyword argument values
     # Now inspect the plotting function to see what it takes.
     if function is None:
         function = defaults["plotter"]
     if isinstance(function, str):
-        projection = kargs.get("projection", "rectilinear")
+        projection = kwargs.get("projection", "rectilinear")
         function = getattr(plt.axes(projection=projection), function)
         if datafile._figure is not plt.gcf():
             plt.close(plt.gcf())
 
     (_, kwargs) = _getargspec(function)[:2]
     # Manually override the list of arguments that the plotting function takes if it takes keyword dictionary
-    if isinstance(otherkargs, (list, tuple)):
-        kwargs.extend(otherkargs)
-    nonkargs = {}
+    if isinstance(otherkwargs, (list, tuple)):
+        kwargs.extend(otherkwargs)
+    nonkwargs = {}
     func_kwargs = {}
     for key, value in defaults.items():
         if key in kwargs:
             func_kwargs[key] = value
         else:
-            nonkargs[key] = value
-    return func_kwargs, nonkargs, pass_fig_kargs
+            nonkwargs[key] = value
+    return func_kwargs, nonkwargs, pass_fig_kwargs
 
 
-def _fix_titles(datafile, ix, multiple, **kargs):
+def _fix_titles(datafile, ix, multiple, **kwargs):
     """Do the titling and labelling for a matplotlib plot."""
-    datafile.template.annotate(ix, multiple, datafile, **kargs)
-    if "show_plot" in kargs and kargs["show_plot"]:
+    datafile.template.annotate(ix, multiple, datafile, **kwargs)
+    if "show_plot" in kwargs and kwargs["show_plot"]:
         plt.ion()
         plt.draw()
         plt.show()
-    if "save_filename" in kargs and kargs["save_filename"] is not None:
-        plt.savefig(str(kargs["save_filename"]))
+    if "save_filename" in kwargs and kwargs["save_filename"] is not None:
+        plt.savefig(str(kwargs["save_filename"]))
 
 
 #  #########################################################################################
@@ -307,7 +307,7 @@ def _fix_titles(datafile, ix, multiple, **kargs):
 #  #########################################################################################
 
 
-def colormap_xyz(datafile, xcol=None, ycol=None, zcol=None, **kargs):
+def colormap_xyz(datafile, xcol=None, ycol=None, zcol=None, **kwargs):
     """Make a xyz plot that forces the use of plt.colormap.
 
     Args:
@@ -336,25 +336,25 @@ def colormap_xyz(datafile, xcol=None, ycol=None, zcol=None, **kargs):
             If set to a string, save the plot with this filename
         figure (integer or matplotlib.figure or boolean):
             Controls which figure is used for the plot, or if a new figure is opened.
-        **kargs (dict):
+        **kwargs (dict):
             Other arguments are passed on to the plotter.
 
     Returns:
         A matplotlib figure
     """
-    kargs["plotter"] = kargs.get("plotter", plt.pcolor)
-    kargs["projection"] = kargs.get("projection", "rectilinear")
-    xlim = kargs.pop("xlim", None)
-    ylim = kargs.pop("ylim", None)
-    shape = kargs.pop("shape", None)
-    colorbar = kargs.pop("colorbar", True)
-    ax = datafile.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
+    kwargs["plotter"] = kwargs.get("plotter", plt.pcolor)
+    kwargs["projection"] = kwargs.get("projection", "rectilinear")
+    xlim = kwargs.pop("xlim", None)
+    ylim = kwargs.pop("ylim", None)
+    shape = kwargs.pop("shape", None)
+    colorbar = kwargs.pop("colorbar", True)
+    ax = datafile.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kwargs)
     if colorbar:
         plt.colorbar()
     return ax
 
 
-def contour_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
+def contour_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kwargs):
     """Make a xyz plot that forces the use of plt.contour.
 
      Args:
@@ -381,7 +381,7 @@ def contour_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None
             If set to a string, save the plot with this filename
         figure (integer or matplotlib.figure or boolean):
             Controls which figure is used for the plot, or if a new figure is opened.
-        **kargs (dict):
+        **kwargs (dict):
             Other arguments are passed on to the plotter.
 
     Returns:
@@ -389,11 +389,11 @@ def contour_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None
     """
     if plotter is None:
         plotter = plt.contour
-    kargs["plotter"] = plotter
-    return datafile.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
+    kwargs["plotter"] = plotter
+    return datafile.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kwargs)
 
 
-def figure(datafile, figure=None, projection="rectilinear", **kargs):
+def figure(datafile, figure=None, projection="rectilinear", **kwargs):
     """Set the figure used by :py:class:`Stoner.plot.PlotMixin`.
 
     Args:
@@ -405,11 +405,11 @@ def figure(datafile, figure=None, projection="rectilinear", **kargs):
     """
     match figure:
         case None:
-            figure = datafile.template.new_figure(None, projection=projection, **kargs)[0]
+            figure = datafile.template.new_figure(None, projection=projection, **kwargs)[0]
         case int():
-            figure = datafile.template.new_figure(figure, projection=projection, **kargs)[0]
+            figure = datafile.template.new_figure(figure, projection=projection, **kwargs)[0]
         case mplfig.Figure():
-            figure = datafile.template.new_figure(figure.number, projection=projection, **kargs)[0]
+            figure = datafile.template.new_figure(figure.number, projection=projection, **kwargs)[0]
         case _:
             raise ValueError(f"Unable to interpret {figure=}")
     datafile._figure = figure
@@ -427,7 +427,7 @@ def griddata(
     ylim=None,
     zlim=None,
     method="linear",
-    **kargs,
+    **kwargs,
 ):
     """Convert xyz data onto a regular grid.
 
@@ -463,7 +463,7 @@ def griddata(
         Depending on whether 3 or 4 columns of data can be identified, this method will produce data for a
         :math:`Z(X,Y)` plot or a :math:`M(X,Y,Z)` volumetric plot.
     """
-    startx = kargs.pop("startx", 0)
+    startx = kwargs.pop("startx", 0)
     cols = datafile.setas._get_cols(startx=startx)
     if isanynone(xcol, ycol, zcol):
         if xcol is None:
@@ -540,7 +540,7 @@ def griddata(
     return None
 
 
-def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, **kargs):
+def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, **kwargs):
     """Grid up the three columns of data and plot.
 
     Args:
@@ -573,13 +573,13 @@ def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None,
             If set to a string, save the plot with this filename
         figure (integer or matplotlib.figure or boolean):
             Controls which figure is used for the plot, or if a new figure is opened.
-        **kargs (dict):
+        **kwargs (dict):
             Other arguments are passed on to the plotter.
 
     Returns:
         A matplotlib figure
     """
-    locals().update(_fix_cols(datafile, xcol=xcol, ycol=ycol, **kargs))
+    locals().update(_fix_cols(datafile, xcol=xcol, ycol=ycol, **kwargs))
 
     X, Y, Z = datafile.griddata(xcol, ycol, zcol, shape, xlim, ylim)
     defaults = {
@@ -593,13 +593,13 @@ def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None,
         "ylabel": datafile._col_label(datafile.find_col(ycol)),
         "extents": [datafile.x.min(), datafile.x.max(), datafile.y.min(), datafile.y.max()],
     }
-    kargs, nonkargs, _ = _fix_kargs(datafile, None, defaults, **kargs)
-    plotter = nonkargs["plotter"]
-    datafile._figure = _fix_fig(datafile, nonkargs["figure"])[0]
-    if "cmap" in kargs and isinstance(kargs["cmap"], str):
-        cmap = colormaps[kargs["cmap"]]
-    elif "cmap" in nonkargs and isinstance(kargs["cmap"], str):
-        cmap = colormaps(nonkargs["cmap"])
+    kwargs, nonkwargs, _ = _fix_kwargs(datafile, None, defaults, **kwargs)
+    plotter = nonkwargs["plotter"]
+    datafile._figure = _fix_fig(datafile, nonkwargs["figure"])[0]
+    if "cmap" in kwargs and isinstance(kwargs["cmap"], str):
+        cmap = colormaps[kwargs["cmap"]]
+    elif "cmap" in nonkwargs and isinstance(kwargs["cmap"], str):
+        cmap = colormaps(nonkwargs["cmap"])
     else:
         cmap = colormaps["viridis"]
     if Z.ndim == 2:
@@ -611,12 +611,12 @@ def image_plot(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None,
     ymin = np.min(Y.ravel())
     ymax = np.max(Y.ravel())
     extent = [xmin, xmax, ymin, ymax]
-    fig = plotter(Z, extent=extent, aspect="auto", **kargs)
-    _fix_titles(datafile, 0, "none", **nonkargs)
+    fig = plotter(Z, extent=extent, aspect="auto", **kwargs)
+    _fix_titles(datafile, 0, "none", **nonkwargs)
     return fig
 
 
-def inset(_, parent=None, loc=None, width=0.35, height=0.30, **kargs):
+def inset(_, parent=None, loc=None, width=0.35, height=0.30, **kwargs):
     """Add a new set of axes as an inset to the current plot.
 
     Keyword Arguments:
@@ -627,7 +627,7 @@ def inset(_, parent=None, loc=None, width=0.35, height=0.30, **kargs):
         width,height (int,float or string):
             the dimensions of the inset specified as a integer %, or floating point fraction of the parent axes,
             or as a string measurement.
-        kargs (dictionary):
+        kwargs (dictionary):
             all other keywords are passed through to inset_locator.inset_axes
 
     Returns:
@@ -687,16 +687,16 @@ def inset(_, parent=None, loc=None, width=0.35, height=0.30, **kargs):
             raise RuntimeError("didn't Recognize height specification {height=}")
     if parent is None:
         parent = plt.gca()
-    return inset_locator.inset_axes(parent, width, height, loc, **kargs)
+    return inset_locator.inset_axes(parent, width, height, loc, **kwargs)
 
 
-def legend(datafile, *args, **kargs):
+def legend(datafile, *args, **kwargs):
     """Pass Through to stop attribute access over-riding a handy method."""
-    datafile.gca().legend(*args, **kargs)
+    datafile.gca().legend(*args, **kwargs)
     return datafile
 
 
-def plot(datafile, *args, **kargs):
+def plot(datafile, *args, **kwargs):
     """Try to make an appropriate plot based on the defined column assignments.
 
     The column assignments are examined to determine whether to plot and x,y plot or an x,y,z plot
@@ -706,10 +706,10 @@ def plot(datafile, *args, **kargs):
     if len(args) != 0:
         axes = len(args)
     else:
-        _ = datafile._col_args(**kargs)
+        _ = datafile._col_args(**kwargs)
         axes = _.axes
-    if "template" in kargs:
-        datafile.template = kargs.pop("template")
+    if "template" in kwargs:
+        datafile.template = kwargs.pop("template")
 
     if axes == 3 and ("ucol" in args or _.has_ucol):
         axes = 7  # trick to allow voxel plot for xyzu
@@ -724,7 +724,7 @@ def plot(datafile, *args, **kargs):
     }
     try:
         plotter = plotters.get(axes, None)
-        ret = plotter(*args, **kargs)
+        ret = plotter(*args, **kwargs)
         plt.show()
     except KeyError as err:
         raise RuntimeError("Unable to work out plot type !") from err
@@ -895,7 +895,7 @@ def plot_matrix(
     return datafile.showfig
 
 
-def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **kargs):
+def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **kwargs):
     """Makesa simple X-Y plot of the specified data.
 
     Args:
@@ -930,17 +930,17 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
                 -  *sub plots* sub plots
                 -  *y2* single axes with 2 y scales
 
-        **kargs (dict):
+        **kwargs (dict):
             Other arguments are passed on to the plotter.
 
     Returns:
         A matplotlib.figure instance
     """
-    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False, **kargs)
-    (kargs["xerr"], kargs["yerr"]) = (c.xerr, c.yerr)
+    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False, **kwargs)
+    (kwargs["xerr"], kwargs["yerr"]) = (c.xerr, c.yerr)
 
-    datafile.template = kargs.pop("template", datafile.template)
-    title = kargs.pop("title", datafile.basename)
+    datafile.template = kwargs.pop("template", datafile.template)
+    title = kwargs.pop("title", datafile.basename)
 
     defaults = {
         "capsize": 4,
@@ -953,10 +953,10 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
         "ylabel": datafile._col_label(datafile.find_col(c.ycol), True),
     }
     otherargs = []
-    if "plotter" not in kargs and (
+    if "plotter" not in kwargs and (
         c.xerr is not None or c.yerr is not None
     ):  # USe and errorbar blotter by default for errors
-        kargs["plotter"] = plt.errorbar
+        kwargs["plotter"] = plt.errorbar
         otherargs = [
             "agg_filter",
             "alpha",
@@ -1009,8 +1009,8 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
             "ydata",
             "zorder",
         ]
-    elif "plotter" not in kargs:
-        kargs["plotter"] = plt.plot
+    elif "plotter" not in kwargs:
+        kwargs["plotter"] = plt.plot
         otherargs = [
             "agg_filter",
             "alpha",
@@ -1064,50 +1064,50 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
             "zorder",
         ]
 
-    multiple = kargs.pop("multiple", datafile.multiple)
+    multiple = kwargs.pop("multiple", datafile.multiple)
 
-    kargs, nonkargs, fig_kargs = _fix_kargs(datafile, None, defaults, otherargs, **kargs)
+    kwargs, nonkwargs, fig_kwargs = _fix_kwargs(datafile, None, defaults, otherargs, **kwargs)
 
     for err in ["xerr", "yerr"]:  # Check for x and y error keywords
-        if isnone(kargs.get(err, None)):
-            kargs.pop(err, None)
+        if isnone(kwargs.get(err, None)):
+            kwargs.pop(err, None)
 
-        elif isinstance(kargs[err], (int, str, _pattern_type)):
-            kargs[err] = datafile.column(kargs[err])
-        elif isiterable(kargs[err]) and isinstance(c.ycol, list) and len(kargs[err]) <= len(c.ycol):
+        elif isinstance(kwargs[err], (int, str, _pattern_type)):
+            kwargs[err] = datafile.column(kwargs[err])
+        elif isiterable(kwargs[err]) and isinstance(c.ycol, list) and len(kwargs[err]) <= len(c.ycol):
             # Ok, so it's a list, so redo the check for each  item.
-            kargs[err].extend([None] * (len(c.ycol) - len(kargs[err])))
-            for i in range(len(kargs[err])):
-                if isinstance(kargs[err][i], (int, str, _pattern_type)):
-                    kargs[err][i] = datafile.column(kargs[err][i])
+            kwargs[err].extend([None] * (len(c.ycol) - len(kwargs[err])))
+            for i in range(len(kwargs[err])):
+                if isinstance(kwargs[err][i], (int, str, _pattern_type)):
+                    kwargs[err][i] = datafile.column(kwargs[err][i])
                 else:
-                    kargs[err][i] = np.zeros(len(datafile))
-        elif isiterable(kargs[err]) and len(kargs[err]) == len(datafile):
-            kargs[err] = np.array(kargs[err])
-        elif isinstance(kargs[err], float):
-            kargs[err] = np.ones(len(datafile)) * kargs[err]
+                    kwargs[err][i] = np.zeros(len(datafile))
+        elif isiterable(kwargs[err]) and len(kwargs[err]) == len(datafile):
+            kwargs[err] = np.array(kwargs[err])
+        elif isinstance(kwargs[err], float):
+            kwargs[err] = np.ones(len(datafile)) * kwargs[err]
         else:
-            kargs[err] = np.zeros(len(datafile))
+            kwargs[err] = np.zeros(len(datafile))
 
-    temp_kwords = copy.copy(kargs)
+    temp_kwords = copy.copy(kwargs)
     if isinstance(c.ycol, ((int, str, _pattern_type))):
         c.ycol = [c.ycol]
     if len(c.ycol) > 1:
         if multiple == "panels":
             datafile._figure, _ = plt.subplots(
-                nrows=len(c.ycol), sharex=True, gridspec_kw={"hspace": 0}, layout="constrained", **fig_kargs
+                nrows=len(c.ycol), sharex=True, gridspec_kw={"hspace": 0}, layout="constrained", **fig_kwargs
             )
         elif multiple == "subplots":
             m = int(np.floor(np.sqrt(len(c.ycol))))
             n = int(np.ceil(len(c.ycol) / m))
-            datafile._figure, _ = plt.subplots(nrows=m, ncols=n, layout="constrained", **fig_kargs)
+            datafile._figure, _ = plt.subplots(nrows=m, ncols=n, layout="constrained", **fig_kwargs)
         else:
-            datafile._figure, _ = _fix_fig(datafile, nonkargs["figure"], **fig_kargs)
+            datafile._figure, _ = _fix_fig(datafile, nonkwargs["figure"], **fig_kwargs)
     else:
-        datafile._figure, _ = _fix_fig(datafile, nonkargs["figure"], **fig_kargs)
+        datafile._figure, _ = _fix_fig(datafile, nonkwargs["figure"], **fig_kwargs)
     for ix, this_yc in enumerate(c.ycol):
         if multiple != "common":
-            nonkargs["ylabel"] = datafile._col_label(this_yc)
+            nonkwargs["ylabel"] = datafile._col_label(this_yc)
         if ix > 0:
             if multiple == "y2" and ix == 1:
                 datafile.y2()
@@ -1126,25 +1126,25 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
             fmt_t = fmt[ix]
         else:
             fmt_t = fmt
-        if "label" in kargs and isinstance(kargs["label"], list):  # Fix label keywords
-            temp_kwords["label"] = kargs["label"][ix]
-        if "yerr" in kargs and isinstance(kargs["yerr"], list):  # Fix yerr keywords
-            temp_kwords["yerr"] = kargs["yerr"][ix]
+        if "label" in kwargs and isinstance(kwargs["label"], list):  # Fix label keywords
+            temp_kwords["label"] = kwargs["label"][ix]
+        if "yerr" in kwargs and isinstance(kwargs["yerr"], list):  # Fix yerr keywords
+            temp_kwords["yerr"] = kwargs["yerr"][ix]
         # Call plot
 
         # Do interpolation of metadata
         for k in temp_kwords:
             if isinstance(temp_kwords[k], str) and "$" not in temp_kwords[k]:
                 temp_kwords[k] = temp_kwords[k].format(**datafile)
-        temp_nonkargs = {}
-        for k, val in nonkargs.items():
+        temp_nonkwargs = {}
+        for k, val in nonkwargs.items():
             if isinstance(val, str) and "$" not in val:
-                temp_nonkargs[k] = val.format(**datafile)
+                temp_nonkwargs[k] = val.format(**datafile)
             else:
-                temp_nonkargs[k] = val
+                temp_nonkwargs[k] = val
 
-        _Plot(datafile, c.xcol, c.ycol[ix], fmt_t, temp_nonkargs["plotter"], datafile._figure, **temp_kwords)
-        _fix_titles(datafile, ix, multiple, **temp_nonkargs)
+        _Plot(datafile, c.xcol, c.ycol[ix], fmt_t, temp_nonkwargs["plotter"], datafile._figure, **temp_kwords)
+        _fix_titles(datafile, ix, multiple, **temp_nonkwargs)
         if ix > 0:  # Hooks for multiple subplots
             if multiple == "panels":
                 loc, lab = plt.yticks()
@@ -1153,7 +1153,7 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **ka
     return datafile.showfig
 
 
-def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, projection="3d", **kargs):
+def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, projection="3d", **kwargs):
     """Plot a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().
 
     Args:
@@ -1190,7 +1190,7 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
             plotter, but contour plot and pcolormesh also work.
         projection (string or None):
             Whether to use a 3D projection or regular 2D axes (default is 3D)
-        **kargs (dict):
+        **kwargs (dict):
             A dictionary of other keyword arguments to pass into the plot function.
 
     Returns:
@@ -1198,8 +1198,8 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
     """
     if not _3D:
         raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, zcol=zcol, scalar=True, **kargs)
-    if kargs.pop("griddata", True):
+    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, zcol=zcol, scalar=True, **kwargs)
+    if kwargs.pop("griddata", True):
         xdata, ydata, zdata = datafile.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
         cstride = int(max(1, zdata.shape[0] / 50))
         rstride = int(max(1, zdata.shape[1] / 50))
@@ -1210,8 +1210,8 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
         cstride = 1
         rstride = 1
 
-    if "template" in kargs:  # Catch template in kargs
-        datafile.template = kargs.pop("template")
+    if "template" in kwargs:  # Catch template in kwargs
+        datafile.template = kwargs.pop("template")
 
     defaults = {
         "plotter": partial(_surface_plotter, datafile),
@@ -1230,8 +1230,8 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
             if isinstance(label, list):
                 label = ",".join(label)
             defaults[k] = label
-    if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] is partial(_surface_plotter, datafile)):
-        otherkargs = [
+    if "plotter" not in kwargs or ("plotter" in kwargs and kwargs["plotter"] is partial(_surface_plotter, datafile)):
+        otherkwargs = [
             "rstride",
             "cstride",
             "color",
@@ -1246,20 +1246,22 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
             "alpha",
         ]
     else:
-        otherkargs = ["vmin", "vmax", "shade", "color", "linewidth", "marker"]
-    plotter = kargs.get("plotter", defaults["plotter"])
-    datafile._figure, ax = _fix_fig(datafile, kargs.get("figure", defaults["figure"]), projection=projection)
+        otherkwargs = ["vmin", "vmax", "shade", "color", "linewidth", "marker"]
+    plotter = kwargs.get("plotter", defaults["plotter"])
+    datafile._figure, ax = _fix_fig(datafile, kwargs.get("figure", defaults["figure"]), projection=projection)
     if isinstance(plotter, str):
         plotter = getattr(ax, plotter)
-    kargs, nonkargs, _ = _fix_kargs(datafile, plotter, defaults, otherkargs=otherkargs, projection=projection, **kargs)
-    datafile.plot3d = plotter(xdata, ydata, zdata, **kargs)
+    kwargs, nonkwargs, _ = _fix_kwargs(
+        datafile, plotter, defaults, otherkwargs=otherkwargs, projection=projection, **kwargs
+    )
+    datafile.plot3d = plotter(xdata, ydata, zdata, **kwargs)
     if plotter is not partial(_surface_plotter, datafile):
-        del nonkargs["zlabel"]
-    _fix_titles(datafile, 0, "none", **nonkargs)
+        del nonkwargs["zlabel"]
+    _fix_titles(datafile, 0, "none", **nonkwargs)
     return datafile.showfig
 
 
-def plot_xyuv(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
+def plot_xyuv(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kwargs):
     """Make an overlaid image and quiver plot.
 
       Args:
@@ -1292,26 +1294,26 @@ def plot_xyuv(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, *
           plotter (callable):
               Optional argument that passes a plotting function into the routine. Default is a 3d surface plotter,
               but contour plot and pcolormesh also work.
-          **kargs (dict):
+          **kwargs (dict):
               A dictionary of other keyword arguments to pass into the plot function.
     """
-    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
+    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kwargs)
     Z = _vector_color(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol)
-    if "template" in kargs:  # Catch template in kargs
-        datafile.template = kargs.pop("template")
-    no_quiver = kargs.pop("no_quiver", False)
+    if "template" in kwargs:  # Catch template in kwargs
+        datafile.template = kwargs.pop("template")
+    no_quiver = kwargs.pop("no_quiver", False)
 
-    if "save_filename" in kargs:
-        save = kargs["save_filename"]
-        del kargs["save_filename"]
+    if "save_filename" in kwargs:
+        save = kwargs["save_filename"]
+        del kwargs["save_filename"]
     else:
         save = None
-    kargs.setdefault("alpha", 0.75)
-    fig = datafile.image_plot(c.xcol, c.ycol, Z, **kargs)
+    kwargs.setdefault("alpha", 0.75)
+    fig = datafile.image_plot(c.xcol, c.ycol, Z, **kwargs)
     if save is not None:  # stop saving file twice
-        kargs["save_filename"] = save
+        kwargs["save_filename"] = save
     if not no_quiver:
-        fig = datafile.quiver_plot(c.xcol, c.ycol, c.ucol, c.vcol, **kargs)
+        fig = datafile.quiver_plot(c.xcol, c.ycol, c.ucol, c.vcol, **kwargs)
 
     return fig
 
@@ -1319,7 +1321,7 @@ def plot_xyuv(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, *
 plot_xyuvw = plot_xyuv
 
 
-def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kargs):
+def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kwargs):
     """Plot a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.
 
     Args:
@@ -1352,7 +1354,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         plotter (callable):
             Optional argument that passes a plotting function into the routine. Sensible choices might be
             plt.plot (default), py.semilogy, plt.semilogx
-        kargs (dict):
+        kwargs (dict):
             A dictionary of other keyword arguments to pass into the plot function.
 
     Returns:
@@ -1365,10 +1367,10 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         mayavi = True
     except ImportError:
         mayavi = False
-    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, scalar=True, **kargs)
+    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, scalar=True, **kwargs)
 
-    if "template" in kargs:  # Catch template in kargs
-        datafile.template = kargs.pop("template")
+    if "template" in kwargs:  # Catch template in kwargs
+        datafile.template = kwargs.pop("template")
 
     if mayavi:
         defaults = {
@@ -1379,7 +1381,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
             "scale_factor": 1.0,
             "colors": True,
         }
-        otherkargs = [
+        otherkwargs = [
             "color",
             "colormap",
             "extent",
@@ -1413,7 +1415,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
             )
             / 255.0,
         }
-        projection = kargs.pop("projection", "3d")
+        projection = kwargs.pop("projection", "3d")
         coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
         for k, coltype in coltypes.items():
             if isinstance(coltype, (int, str, _pattern_type)):
@@ -1421,13 +1423,13 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
                 if isinstance(label, list):
                     label = ",".join(label)
                 defaults[k] = label
-        if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] is __mpl3DQuiver):
-            otherkargs = ["color", "cmap", "linewidth", "ax", "length", "pivot", "arrow_length_ratio"]
+        if "plotter" not in kwargs or ("plotter" in kwargs and kwargs["plotter"] is __mpl3DQuiver):
+            otherkwargs = ["color", "cmap", "linewidth", "ax", "length", "pivot", "arrow_length_ratio"]
         else:
-            otherkargs = ["color", "linewidth"]
+            otherkwargs = ["color", "linewidth"]
 
-    kargs, nonkargs, _ = _fix_kargs(datafile, None, defaults, otherkargs=otherkargs, **kargs)
-    colors = nonkargs.pop("color", True)
+    kwargs, nonkwargs, _ = _fix_kwargs(datafile, None, defaults, otherkwargs=otherkwargs, **kwargs)
+    colors = nonkwargs.pop("color", True)
     if isinstance(colors, bool) and colors:
         pass
     elif isinstance(colors, (int, str, _pattern_type)):
@@ -1439,9 +1441,9 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
     else:
         raise RuntimeError("Do not recognise what to do with the colors keyword.")
     if mayavi:
-        kargs["scalars"] = colors
-    figure = nonkargs["figure"]
-    plotter = nonkargs["plotter"]
+        kwargs["scalars"] = colors
+    figure = nonkwargs["figure"]
+    plotter = nonkwargs["plotter"]
     if mayavi:
         if isinstance(figure, int):
             figure = mlab.figure(figure)
@@ -1456,11 +1458,11 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         datafile._figure = figure
 
     else:
-        datafile._figure, ax = _fix_fig(datafile, nonkargs["figure"], projection=projection)
+        datafile._figure, ax = _fix_fig(datafile, nonkwargs["figure"], projection=projection)
         if isinstance(plotter, str):
             plotter = getattr(ax, plotter)
 
-    kargs["figure"] = figure
+    kwargs["figure"] = figure
     plotter(
         datafile.column(c.xcol),
         datafile.column(c.ycol),
@@ -1468,9 +1470,9 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         datafile.column(c.ucol),
         datafile.column(c.vcol),
         datafile.column(c.wcol),
-        **kargs,
+        **kwargs,
     )
-    if nonkargs["show_plot"]:
+    if nonkwargs["show_plot"]:
         if mayavi:
             mlab.show()
         else:
@@ -1478,7 +1480,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
     return datafile.showfig
 
 
-def plot_voxels(datafile, xcol=None, ycol=None, zcol=None, ucol=None, cmap=None, **kargs):
+def plot_voxels(datafile, xcol=None, ycol=None, zcol=None, ucol=None, cmap=None, **kwargs):
     """Make a volumetric plot of data arranged as x,y,z,u.
 
     Args:
@@ -1508,7 +1510,7 @@ def plot_voxels(datafile, xcol=None, ycol=None, zcol=None, ucol=None, cmap=None,
 
 
     """
-    _ = _fix_cols(datafile, xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, **kargs)
+    _ = _fix_cols(datafile, xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, **kwargs)
     defaults = {
         "plotter": datafile.plot_voxels,
         "show_plot": True,
@@ -1523,15 +1525,15 @@ def plot_voxels(datafile, xcol=None, ycol=None, zcol=None, ucol=None, cmap=None,
         "e_alpha": 0.9,
         "filled": None,
     }
-    otherkargs = {}
-    shape = kargs.pop("shape", None)
-    xlim = kargs.pop("xlim", None)
-    ylim = kargs.pop("ylim", None)
-    zlim = kargs.pop("zlim", None)
+    otherkwargs = {}
+    shape = kwargs.pop("shape", None)
+    xlim = kwargs.pop("xlim", None)
+    ylim = kwargs.pop("ylim", None)
+    zlim = kwargs.pop("zlim", None)
     X, Y, Z, U = datafile.griddata(_.xcol, _.ycol, _.zcol, _.ucol, shape=shape, xlim=xlim, ylim=ylim, zlim=zlim)
 
-    if callable(kargs.get("visible", False)):
-        visible = kargs.pop("visible")
+    if callable(kwargs.get("visible", False)):
+        visible = kwargs.pop("visible")
         try:
             filled = visible(datafile // _, xcol, datafile // _.ycol, datafile // _.zcol)
         except (ValueError, TypeError, RuntimeError):
@@ -1541,26 +1543,26 @@ def plot_voxels(datafile, xcol=None, ycol=None, zcol=None, ucol=None, cmap=None,
             datafile.griddata(_.xcol, _.ycol, _.zcol, filled, shape=shape, xlim=xlim, ylim=ylim, zlim=zlim)[3] >= 0.5
         )
     else:
-        filled = kargs.pop("filled", np.ones_like(U, dtype=bool))
+        filled = kwargs.pop("filled", np.ones_like(U, dtype=bool))
 
-    if "template" in kargs:  # Catch template in kargs
-        datafile.template = kargs.pop("template")
-    kargs, nonkargs, _ = _fix_kargs(datafile, None, defaults, otherkargs=otherkargs, **kargs)
-    datafile._figure, ax = _fix_fig(datafile, nonkargs["figure"], projection="3d")
+    if "template" in kwargs:  # Catch template in kwargs
+        datafile.template = kwargs.pop("template")
+    kwargs, nonkwargs, _ = _fix_kwargs(datafile, None, defaults, otherkwargs=otherkwargs, **kwargs)
+    datafile._figure, ax = _fix_fig(datafile, nonkwargs["figure"], projection="3d")
 
     norm = colors.Normalize(vmin=U.min(), vmax=U.max(), clip=True)
-    mapper = cm.ScalarMappable(norm=norm, cmap=kargs.get("cmap", cmap))
+    mapper = cm.ScalarMappable(norm=norm, cmap=kwargs.get("cmap", cmap))
     cshape = U.shape + (4,)
-    facecolors = mapper.to_rgba(U.ravel(), alpha=nonkargs["f_alpha"]).reshape(cshape)
-    edgecolors = mapper.to_rgba(U.ravel(), alpha=nonkargs["e_alpha"]).reshape(cshape)
+    facecolors = mapper.to_rgba(U.ravel(), alpha=nonkwargs["f_alpha"]).reshape(cshape)
+    edgecolors = mapper.to_rgba(U.ravel(), alpha=nonkwargs["e_alpha"]).reshape(cshape)
 
     ax.voxels(X, Y, Z, filled=filled, edgecolors=edgecolors, facecolors=facecolors)
 
-    _fix_titles(datafile, 0, "none", **nonkargs)
+    _fix_titles(datafile, 0, "none", **nonkwargs)
     return datafile.showfig
 
 
-def quiver_plot(datafile, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
+def quiver_plot(datafile, xcol=None, ycol=None, ucol=None, vcol=None, **kwargs):
     """Make a 2D Quiver plot from the data.
 
     Args:
@@ -1594,7 +1596,7 @@ def quiver_plot(datafile, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
             If set to a string, save the plot with this filename
         figure (integer or matplotlib.figure or boolean):
             Controls which figure is used for the plot, or if a new figure is opened.
-        **kargs (dict):
+        **kwargs (dict):
             Other arguments are passed on to the plotter.
 
 
@@ -1604,7 +1606,7 @@ def quiver_plot(datafile, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
     Keyword arguments are all passed through to :py:func:`matplotlib.plt.quiver`.
 
     """
-    locals().update(_fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, **kargs))
+    locals().update(_fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, **kwargs))
     defaults = {
         "pivot": "mid",
         "color": (0, 0, 0),
@@ -1619,7 +1621,7 @@ def quiver_plot(datafile, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
         "xlabel": datafile._col_label(datafile.find_col(xcol)),
         "ylabel": datafile._col_label(datafile.find_col(ycol)),
     }
-    otherkargs = [
+    otherkwargs = [
         "units",
         "angles",
         "scale",
@@ -1634,12 +1636,12 @@ def quiver_plot(datafile, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
         "color",
     ]
 
-    if "template" in kargs:  # Catch template in kargs
-        datafile.template = kargs.pop("template")
+    if "template" in kwargs:  # Catch template in kwargs
+        datafile.template = kwargs.pop("template")
 
-    kargs, nonkargs, _ = _fix_kargs(datafile, None, defaults, otherkargs=otherkargs, **kargs)
-    plotter = nonkargs["plotter"]
-    datafile._figure, _ = _fix_fig(datafile, nonkargs["figure"])
+    kwargs, nonkwargs, _ = _fix_kwargs(datafile, None, defaults, otherkwargs=otherkwargs, **kwargs)
+    plotter = nonkwargs["plotter"]
+    datafile._figure, _ = _fix_fig(datafile, nonkwargs["figure"])
     data = np.column_stack([datafile // xcol, datafile // ycol, datafile // ucol, datafile // vcol])
 
     fig = plotter(
@@ -1647,13 +1649,13 @@ def quiver_plot(datafile, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
         data[:, 1],
         data[:, 2],
         data[:, 3],
-        **kargs,
+        **kwargs,
     )
-    _fix_titles(datafile, 0, "non", **nonkargs)
+    _fix_titles(datafile, 0, "non", **nonkwargs)
     return fig
 
 
-def subplot(datafile, *args, **kargs):
+def subplot(datafile, *args, **kwargs):
     """Pass throuygh for :py:func:`matplotlib.pyplot.subplot`.
 
     Args:
@@ -1673,7 +1675,7 @@ def subplot(datafile, *args, **kargs):
     function maintains a list of the current sub-plot axes via the subplots attribute.
     """
     datafile.template.new_figure(datafile._figure.number, no_axes=True)
-    sp = plt.subplot(*args, **kargs)
+    sp = plt.subplot(*args, **kwargs)
     if len(args) == 1:
         rows = args[0] // 100
         cols = (args[0] // 10) % 10
@@ -1688,7 +1690,7 @@ def subplot(datafile, *args, **kargs):
     return sp
 
 
-def subplot2grid(datafile, *args, **kargs):
+def subplot2grid(datafile, *args, **kwargs):
     """Provide a pass through to :py:func:`matplotlib.pyplot.subplot2grid`."""
     if datafile._figure is None:
         datafile.figure(no_axes=True)
@@ -1696,7 +1698,7 @@ def subplot2grid(datafile, *args, **kargs):
     figure = datafile.template.new_figure(datafile._figure.number, no_axes=True)[0]
 
     plt.figure(figure.number)
-    ret = plt.subplot2grid(*args, **kargs)
+    ret = plt.subplot2grid(*args, **kwargs)
     return ret
 
 
