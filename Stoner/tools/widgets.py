@@ -31,11 +31,11 @@ if QT_VERSION is None:
 if QT_VERSION is None:
 
     class App:
-        """Mock App that raises an error when you try to call openDialog on it."""
+        """Mock App that raises an error when you try to call open_dialog on it."""
 
         modes: Dict = {}
 
-        def openDialog(
+        def open_dialog(
             self,
             title: Optional[str] = None,
             start: Union[str, pathlib.Path] = "",
@@ -80,9 +80,9 @@ else:
             self.top = 10
             self.width = 640
             self.height = 480
-            self.initUI()
+            self.init_ui()
 
-        def initUI(self) -> None:
+        def init_ui(self) -> None:
             """Initialise the UI and set the dialog box geometry."""
             self.dialog = QWidget()
             self.dialog.title = "PyQt5 file dialogs - pythonspot.com"
@@ -94,7 +94,7 @@ else:
             self.dialog.setWindowTitle(self.title)
             self.dialog.setGeometry(self.left, self.top, self.width, self.height)
 
-        def openDialog(
+        def open_dialog(
             self,
             title: Optional[str] = None,
             start: Union[str, pathlib.Path] = "",

@@ -152,7 +152,7 @@ def file_dialog(mode: str, filename: Filename, filetype: str) -> Union[pathlib.P
         mode = "SaveFile"
     else:
         mode = "SelectDirectory"
-    filename = fileDialog.openDialog(start=dirname, mode=mode, patterns=patterns)
+    filename = fileDialog.open_dialog(start=dirname, mode=mode, patterns=patterns)
     return filename if filename else None
 
 

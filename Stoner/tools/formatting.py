@@ -339,4 +339,4 @@ def ordinal(value: int) -> str:
     else:
         suffix = ["th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"][last_digit]
 
-    return "{}{}".format(value, suffix)
+    return f"{value}{suffix}"

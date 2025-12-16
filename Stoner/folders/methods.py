@@ -84,7 +84,7 @@ def add_group(fldr, key):
     return fldr
 
 
-def all(fldr):
+def all(fldr):  # pylint: disable=redefined-builtin
     """Iterate over all the files in the Folder and all it's sub Folders recursely.
 
     Args:
@@ -224,9 +224,9 @@ def file(fldr, name, value, create=True, pathsplit=None):
     return tmp
 
 
-def filter(
+def filter(  # pylint: disable=redefined-builtin
     fldr, filter=None, invert=False, copy=False, recurse=False, prune=True
-):  # pylint: disable=redefined-builtin
+):
     r"""Filter the current set of files by some criterion.
 
     Args:

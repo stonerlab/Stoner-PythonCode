@@ -185,7 +185,7 @@ i = 0
 for item in filenames:
     print(i, ". ", item)
     i += 1
-fCounter = int(
+f_counter = int(
     input(
         "Enter the number of the file you wish to start at (program will cycle through files from that point.):\n"
     )
@@ -196,8 +196,8 @@ if "EditedFiles" not in filenames:
 timeout = 0
 # Main program loop, cycle through selected files
 while True:
-    path = filenames[fCounter]
-    fCounter += 1
+    path = filenames[f_counter]
+    f_counter += 1
     with open(path, "r", encoding="utf-8") as fr:
         data = fr.readlines()  # Get the file into an array
     pathsplit = splitFileName(path)
@@ -246,12 +246,12 @@ while True:
         t = Data.clone  # edit a copied array.
         t = editData(t, operations)
         plotmH(t)
-        whatNext = input(
+        what_next = input(
             "Press enter to save changes, r to restart or q to quit the program:  "
         )
-        if whatNext == "r":
+        if what_next == "r":
             continue
-        if whatNext == "q":
+        if what_next == "q":
             break
         Data = t
         Data.save(
@@ -259,8 +259,8 @@ while True:
         )  # overwrite the file created earlier
         break
     if (
-        whatNext == "q"
-        or input(f"Press enter to do file {filenames[fCounter]} or q to quit:")
+        what_next == "q"
+        or input(f"Press enter to do file {filenames[f_counter]} or q to quit:")
         == "q"
     ):
         break

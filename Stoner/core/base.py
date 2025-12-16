@@ -259,23 +259,23 @@ class TypeHintedDict(RegexpDict):
     Attributes:
         _typehints (dict):
             The backing store for the type hint information
-        __regexGetType (re):
+        _regex_get_type (re):
             Used to extract the type hint from a string
-        __regexSignedInt (re):
+        _regex_signed_int (re):
             matches type hint strings for signed integers
-        __regexUnsignedInt (re):
+        _regex_unsigned_int (re):
             matches the type hint string for unsigned integers
-        __regexFloat (re):
+        _regex_float (re):
             matches the type hint strings for floats
-        __regexBoolean (re):
+        _regex_boolean (re):
             matches the type hint string for a boolean
-        __regexStrng (re):
+        _regex_strng (re):
             matches the type hint string for a string variable
-        __regexEvaluatable (re):
+        _regex_evaluatable (re):
             matches the type hint string for a compoind data type
-        __types (dict):
+        _types (dict):
             mapping of type hinted types to actual Python types
-        __tests (dict):
+        _tests (dict):
             mapping of the regex patterns to actual python types
 
     Notes:
@@ -287,20 +287,20 @@ class TypeHintedDict(RegexpDict):
     allowed_keys: Tuple = string_types
     # Force metadata keys to be strings
 
-    __regexGetType: RegExp = re.compile(r"([^\{]*)\{([^\}]*)\}")
+    _regex_get_type: RegExp = re.compile(r"([^\{]*)\{([^\}]*)\}")
     # Match the contents of the inner most{}
-    __regexSignedInt: RegExp = re.compile(r"^I\d+")
+    _regex_signed_int: RegExp = re.compile(r"^I\d+")
     # Matches all signed integers
     __regexUnsignedInt: RegExp = re.compile(r"^U / d+")
     # Match unsigned integers
-    __regexFloat: RegExp = re.compile(r"^(Extended|Double|Single)\sFloat")
+    _regex_float: RegExp = re.compile(r"^(Extended|Double|Single)\sFloat")
     # Match floating point types
-    __regexBoolean: RegExp = re.compile(r"^Boolean")
+    _regex_boolean: RegExp = re.compile(r"^Boolean")
     __regexString = re.compile(r"^(String|Path|Enum)")
     __regexTimestamp: RegExp = re.compile(r"Timestamp")
-    __regexEvaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
+    _regex_evaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
 
-    __types: Dict[str, Type] = dict(
+    _types: Dict[str, Type] = dict(
         [  # Key order does matter here!
             ("Boolean", bool),
             ("I32", int),
@@ -313,17 +313,17 @@ class TypeHintedDict(RegexpDict):
             ("String", str),
         ]
     )
-    # This is the inverse of the __tests below - this gives
+    # This is the inverse of the _tests below - this gives
     # the string type for standard Python classes
 
-    __tests: List[Tuple] = [
-        (__regexSignedInt, int),
+    _tests: List[Tuple] = [
+        (_regex_signed_int, int),
         (__regexUnsignedInt, int),
-        (__regexFloat, float),
-        (__regexBoolean, bool),
+        (_regex_float, float),
+        (_regex_boolean, bool),
         (__regexTimestamp, datetime.datetime),
         (__regexString, str),
-        (__regexEvaluatable, _evaluatable()),
+        (_regex_evaluatable, _evaluatable()),
     ]
 
     # This is used to work out the correct python class for
@@ -374,7 +374,7 @@ class TypeHintedDict(RegexpDict):
         typ = "Invalid Type"
         if value is None:
             return "Void"
-        for t, val in self.__types.items():
+        for t, val in self._types.items():
             if isinstance(value, val):
                 if t in ["Cluster", "AnonCluster"]:
                     elements = []
@@ -415,7 +415,7 @@ class TypeHintedDict(RegexpDict):
         """
         if typ == "Invalid Type":  # Short circuit here
             return repr(value)
-        for regexp, valuetype in self.__tests:
+        for regexp, valuetype in self._tests:
             if regexp.search(typ) is None:
                 continue
             if isinstance(valuetype, _evaluatable):
@@ -455,7 +455,7 @@ class TypeHintedDict(RegexpDict):
                 the type hint string),
         """
         search = str(name)
-        m = self.__regexGetType.search(search)
+        m = self._regex_get_type.search(search)
         if m is not None:
             return m.group(1), m.group(2)
         if not isinstance(name, string_types + int_types):

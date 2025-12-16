@@ -129,7 +129,7 @@ def get_filedialog(what="file", **opts):
     funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
     if what not in funcs:
         raise RuntimeError(f"Unable to recognise required file dialog type:{what}")
-    return fileDialog.openDialog(mode=funcs[what], **opts)
+    return fileDialog.open_dialog(mode=funcs[what], **opts)
 
 
 if np_version.major >= 2:

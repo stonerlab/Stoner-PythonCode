@@ -23,7 +23,7 @@ d.plot(fmt="m-", label="Polyfit")
 d.text(
     -9,
     450,
-    "Polynominal co-efficients\n{}".format(d["2nd-order polyfit coefficients"]),
+    "Polynominal co-efficients\n{d['2nd-order polyfit coefficients']}",
     fontdict={"size": "x-small", "color": "magenta"},
 )
 

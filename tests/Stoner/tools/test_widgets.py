@@ -60,14 +60,14 @@ def test_filedialog():
     app = getattr(widgets, "App")
     setattr(app, "modes", modes)
 
-    assert widgets.fileDialog.openDialog() == ret_pth
-    assert widgets.fileDialog.openDialog(title="Test", start=".") == ret_pth
-    assert widgets.fileDialog.openDialog(patterns={"*.bad": "Very bad files"}) == ret_pth
-    assert widgets.fileDialog.openDialog(mode="OpenFiles") == [ret_pth]
-    assert widgets.fileDialog.openDialog(mode="SaveFile") is None
-    assert widgets.fileDialog.openDialog(mode="SelectDirectory") == ret_pth.parent
+    assert widgets.fileDialog.open_dialog() == ret_pth
+    assert widgets.fileDialog.open_dialog(title="Test", start=".") == ret_pth
+    assert widgets.fileDialog.open_dialog(patterns={"*.bad": "Very bad files"}) == ret_pth
+    assert widgets.fileDialog.open_dialog(mode="OpenFiles") == [ret_pth]
+    assert widgets.fileDialog.open_dialog(mode="SaveFile") is None
+    assert widgets.fileDialog.open_dialog(mode="SelectDirectory") == ret_pth.parent
     with pytest.raises(ValueError):
-        widgets.fileDialog.openDialog(mode="Whateve")
+        widgets.fileDialog.open_dialog(mode="Whateve")
 
 
 def test_loader():
