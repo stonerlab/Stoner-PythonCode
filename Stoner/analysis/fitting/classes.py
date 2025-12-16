@@ -172,7 +172,7 @@ class _Curve_Fit_Result:
     as a class to make handling easier.
     """
 
-    def __init__(self, infodict=None, mesg=None, ier=None, results=None):
+    def __init__(self):
         """Store the results of the curve fit full_output fit.
 
         Args:
@@ -197,10 +197,8 @@ class _Curve_Fit_Result:
         self.f_name = None
         self._infodict = {}
         self._results = {}
-        self.infodict = {k: None for k in ["mfev", "fvec", "fjac", "ipvt", "qtf"]} if infodict is None else infodict
-        self.results = (
-            {k: None for k in ["pop", "perr", "pcov", "mesg", "ier", "chisq", "nfree"]} if results is None else results
-        )
+        self.infodict = {k: None for k in ["mfev", "fvec", "fjac", "ipvt", "qtf"]}
+        self.results = {k: None for k in ["pop", "perr", "pcov", "mesg", "ier", "chisq", "nfree"]}
         self.data = None
         self.labels = None
         self.units = None
