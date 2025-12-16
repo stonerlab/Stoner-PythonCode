@@ -172,7 +172,7 @@ class _Curve_Fit_Result:
     as a class to make handling easier.
     """
 
-    def __init__(self, popt=None, pcov=None, infodict=None, mesg=None, ier=None):
+    def __init__(self, infodict=None, mesg=None, ier=None, results=None):
         """Store the results of the curve fit full_output fit.
 
         Args:
@@ -187,30 +187,21 @@ class _Curve_Fit_Result:
             ier (int):
                 Numerical error message.
         """
-        self.popt = popt
-        self.pcov = pcov
-        if pcov is not None:
-            self.perr = np.sqrt(np.diag(pcov))
-        else:
-            self.perr = None
-        self.mesg = mesg
-        self.ier = ier
-        self.nfev = None
-        self.fvec = None
-        self.fjac = None
-        self.ipvt = None
-        self.qtf = None
-        self.func = None
+        self._mapping = {}
+        self.func = lambda *args: None
+        self.f_name = None
+        self.args = []
+        self.kwargs = {}
         self.p0 = None
         self._residual_vals = None
-        self.chisq = None
-        self.nfree = None
         self.f_name = None
-        self._infodict = infodict
-        if infodict:
-            for k in infodict:
-                setattr(self, k, infodict[k])
-        self.xdata = None
+        self._infodict = {}
+        self._results = {}
+        self.infodict = {k: None for k in ["mfev", "fvec", "fjac", "ipvt", "qtf"]} if infodict is None else infodict
+        self.results = (
+            {k: None for k in ["pop", "perr", "pcov", "mesg", "ier", "chisq", "nfree"]} if results is None else results
+        )
+        self.data = None
         self.labels = None
         self.units = None
 
@@ -250,14 +241,28 @@ class _Curve_Fit_Result:
     @property
     def infodict(self):
         """Wrapper infodict."""
-        return getattr(self, "_infodict", None)
+        return self._infodict
 
     @infodict.setter
     def infodict(self, value):
         """Wrapper for setting infodict and subkeys."""
+        self._infodict = value
         if isinstance(value, dict):
             for k in value:
-                setattr(self, k, value[k])
+                self._mapping[k] = "_infodict"
+
+    @property
+    def results(self):
+        """Wrapper for a results dictionary."""
+        return self._results
+
+    @results.setter
+    def results(self, value):
+        """Wrapper for setting results dictionary and nting keys."""
+        self._results = value
+        if isinstance(value, dict):
+            for k in value:
+                self._mapping[k] = "_results"
 
     @property
     def fit(self):
@@ -267,22 +272,18 @@ class _Curve_Fit_Result:
     @property
     def fit_values(self):
         """Return the fit values if x data is set."""
-        if self.xdata is None or self.func is None or self.popt is None:
+        if self.data is None or self.func is None or self.popt is None:
             raise ValueError(
                 "Need to have some x-data, the fitting functions and optimal parameters  before calculating fit"
             )
-        return self.func(self.xdata, *self.popt)
+        return self.func(self.data.data[:, self.settings.columns.xcol], *self.popt)
 
     @property
-    def data(self):
-        """Return the data that was fitted."""
-        self._data = getattr(self, "_data", np.array([]))
-        return self._data
-
-    @data.setter
-    def data(self, data):
-        """Return the data that was fitted."""
-        self._data = data
+    def perr(self):
+        """Return standar error from covariance matrix."""
+        if "perr" in self.results and self.results["perr"] is not None:
+            return self.results["perr"]
+        return np.sqrt(np.diag(self.pcov))
 
     @property
     def report(self):
@@ -335,6 +336,27 @@ class _Curve_Fit_Result:
     def params(self):
         """List the parameter class objects."""
         return get_func_params(self.func)
+
+    def __dir__(self):
+        """Extend the attribute directory."""
+        return super().__dir__() + list(self._mapping.keys())
+
+    def __getattr__(self, name):
+        """Defer to using things we're tracking in the mapping."""
+        try:
+            return super().__getattr__(name)
+        except AttributeError:
+            pass
+        if name in self._mapping:
+            return getattr(self, self._mapping[name]).get(name, None)
+        raise AttributeError(f"{name} is not an attribute or {self.__class__.__name__}.")
+
+    def __setattr__(self, name, value):
+        """Pass through if an atrbute is already set."""
+        if name != "_mapping" and name in self._mapping:
+            getattr(self, self._mapping[name])[name] = value
+            return
+        super().__setattr__(name, value)
 
     def fit_report(self):
         """Create a Fit report like lmfit does."""

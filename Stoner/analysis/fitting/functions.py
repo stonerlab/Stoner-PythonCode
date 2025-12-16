@@ -241,12 +241,12 @@ def _normalise_model_func(func, prefix, result_obj):
     return result_obj
 
 
-def _normalise_fit_result(datafile, xcol, ycol, fit, result_obj):
+def _normalise_fit_result(datafile, settings, fit, result_obj):
     """Normalise the fit results based on the fit instance."""
     func = result_obj.func
     args = result_obj.args
-    result_obj.data = datafile.data[:, ycol]
-    result_obj.xdata = datafile.data[:, xcol]
+    result_obj.data = datafile
+    result_obj.settings = settings
 
     match fit:
         case _Curve_Fit_Result():
@@ -273,15 +273,11 @@ def _normalise_fit_result(datafile, xcol, ycol, fit, result_obj):
             perr = fit.perr
             nfev = fit.nfev
             nfree = len(datafile) - len(popt)
-            fit_data = func(result_obj.xdata, *popt)
-            chisq = np.sum((result_obj.data - fit_data) ** 2) / nfree
+            fit_data = func(datafile // settings.columns.xcol, *popt)
+            chisq = np.sum((datafile.data[:, settings.columns.ycol] - fit_data) ** 2) / nfree
         case _:
             raise RuntimeError("Unable to understand {type(fit)} as a fitting result")
-    result_obj.popt = popt
-    result_obj.perr = perr
-    result_obj.nfev = nfev
-    result_obj.chisq = chisq
-    result_obj.nfree = nfree
+    result_obj.results = {"popt": popt, "perr": perr, "nfev": nfev, "chisq": chisq, "nfree": nfree}
     return result_obj
 
 
@@ -289,7 +285,7 @@ def _record_curve_fit_result(datafile, func, fit, settings):
     """Annotate the DataFile object with the curve_fit result."""
     result_obj = _Curve_Fit_Result()
     result_obj = _normalise_model_func(func, settings.prefix, result_obj)
-    result_obj = _normalise_fit_result(datafile, settings.columns.xcol, settings.columns.ycol, fit, result_obj)
+    result_obj = _normalise_fit_result(datafile, settings, fit, result_obj)
 
     result_obj.add_metadata(datafile)
 
@@ -721,14 +717,15 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
             sigma = None
         for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "scale_covar"]:
             kwargs.pop(var, None)
-        report = _Curve_Fit_Result(*_curve_fit(_func, xdat, ydat, **kwargs))
+        popt, pcov, infodict, msg, ier = _curve_fit(_func, xdat, ydat, **kwargs)
+        report = _Curve_Fit_Result()
+        report.settings = settings
         report.func = func
-        if p0 is None:
-            report.p0 = np.ones(len(report.popt))
-        else:
-            report.p0 = p0
+        report.results = {"popt": popt, "pcov": pcov, "mesg": msg, "ier": ier}
+        report.infodict = infodict
+        report.p0 = np.ones(len(report.popt)) if p0 is None else p0
         report.data = datafile
-        report.residual_vals = data.y - report.fvec
+        report.residual_vals = ydat - report.fvec
         report.chisq = (report.residual_vals**2).sum()
         report.nfree = len(datafile) - len(report.popt)
         report.chisq /= report.nfree
@@ -860,11 +857,15 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     kwargs.pop("polish", None)
     kwargs["full_output"] = True
     kwargs["absolute_sigma"] = abs_sigma
-    polish = _Curve_Fit_Result(*_curve_fit(model.func, data.x, data.y[0], sigma=data.e[0], p0=fit.x, **kwargs))
+    popt, pcov, infodict, mesg, ier = _curve_fit(model.func, data.x, data.y[0], sigma=data.e[0], p0=fit.x, **kwargs)
+    polish = _Curve_Fit_Result()
+    polish.results = {"popt": popt, "pcov": pcov, "mesg": mesg, "ier": ier}
+    polish.infodict = infodict
+    polish.data = datafile
+    polish.settings = settings
 
     polish.func = model.func
     polish.p0 = p0
-    polish.data = datafile
     polish.residual_vals = data.y - polish.fvec
     polish.chisq = (polish.residual_vals**2).sum()
     polish.nfree = len(datafile) - len(polish.popt)
