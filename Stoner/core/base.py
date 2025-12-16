@@ -291,13 +291,13 @@ class TypeHintedDict(RegexpDict):
     # Match the contents of the inner most{}
     _regex_signed_int: RegExp = re.compile(r"^I\d+")
     # Matches all signed integers
-    __regexUnsignedInt: RegExp = re.compile(r"^U / d+")
+    _regex_unsigned_int: RegExp = re.compile(r"^U / d+")
     # Match unsigned integers
     _regex_float: RegExp = re.compile(r"^(Extended|Double|Single)\sFloat")
     # Match floating point types
     _regex_boolean: RegExp = re.compile(r"^Boolean")
-    __regexString = re.compile(r"^(String|Path|Enum)")
-    __regexTimestamp: RegExp = re.compile(r"Timestamp")
+    _regex_string = re.compile(r"^(String|Path|Enum)")
+    _regex_timestamp: RegExp = re.compile(r"Timestamp")
     _regex_evaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
 
     _types: Dict[str, Type] = dict(
@@ -318,11 +318,11 @@ class TypeHintedDict(RegexpDict):
 
     _tests: List[Tuple] = [
         (_regex_signed_int, int),
-        (__regexUnsignedInt, int),
+        (_regex_unsigned_int, int),
         (_regex_float, float),
         (_regex_boolean, bool),
-        (__regexTimestamp, datetime.datetime),
-        (__regexString, str),
+        (_regex_timestamp, datetime.datetime),
+        (_regex_string, str),
         (_regex_evaluatable, _evaluatable()),
     ]
 
