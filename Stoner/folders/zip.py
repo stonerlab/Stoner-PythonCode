@@ -9,13 +9,54 @@ __all__ = ["ZipFolder"]
 import fnmatch
 import zipfile as zf
 from os import path
+from pathlib import Path
 
-from ..compat import _pattern_type, get_filedialog, path_types
+from ..compat import _pattern_type, get_filedialog
 from ..core.data import Data
 from ..formats.utils.zip import test_is_zip
 from .core import BaseFolder
 from .mixins import DiskBasedFolderMixin
 from .utils import pathjoin
+
+
+def _prune_list(p, files):
+    """Prune the files list of entries that match pattern p."""
+    if isinstance(p, str):
+        for f in list(fnmatch.filter(files, p)):
+            del files[files.index(f)]
+    if isinstance(p, _pattern_type):
+        matched = []
+        # For reg expts we iterate over all files, but we can't delete matched
+        # files as we go as we're iterating over them - so we store the
+        # indices and delete them later.
+        for f in files:
+            if p.search(f):
+                matched.append(files.index(f))
+        matched.sort(reverse=True)
+        for i in matched:  # reverse sort the matching indices to safely delete
+            del files[i]
+
+
+def _build_list(fldr, p, files):
+    """Add matching files from the list to folder if matching pattern p."""
+    if isinstance(p, str):
+        for f in fnmatch.filter(files, p):
+            del files[files.index(f)]
+            f.replace(path.sep, "/")
+            fldr.append(f)
+    elif isinstance(p, _pattern_type):
+        matched = []
+        # For reg expts we iterate over all files, but we can't delete matched
+        # files as we go as we're iterating over them - so we store the
+        # indices and delete them later.
+        for ix, f in enumerate(files):
+            if p.search(f):
+                f.replace(path.sep, "/")
+                fldr.append(f)
+            else:
+                matched.append(ix)
+        for i in reversed(matched):  # reverse sort the matching indices to safely delete
+            del files[i]
 
 
 class ZipFolder(DiskBasedFolderMixin, BaseFolder):
@@ -95,72 +136,39 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
         if flatten is None:
             flatten = self.flat
 
-        if self.File is None and directory is None:
-            self.File = zf.ZipFile(self._zip_file_dialog(), "r")
-            close_me = True
-        elif isinstance(directory, zf.ZipFile):
-            if directory.fp:
+        match directory:
+            case None if self.File is None:
+                self.File = zf.ZipFile(self._zip_file_dialog(), "r")  # pylint: disable=R1732
+                close_me = True
+            case zf.ZipFile() if directory.fp:
                 self.File = directory
                 close_me = False
-            else:
-                self.File = zf.ZipFile(directory, "r")
+            case zf.ZipFile():
+                self.File = zf.ZipFile(directory, "r")  # pylint: disable=R1732
                 close_me = True
-        elif isinstance(directory, path_types) and path.isdir(directory):  # Fall back to DataFolder
-            return super().getlist(recursive=recursive, directory=directory, flatten=flatten)
-        elif isinstance(directory, path_types) and zf.is_zipfile(directory):
-            self.File = zf.ZipFile(directory, "r")
-            close_me = True
-        elif isinstance(self.File, zf.ZipFile):
-            if self.File.fp:
+            case str() | Path() if path.isdir(directory):
+                return super().getlist(recursive=recursive, directory=directory, flatten=flatten)
+            case str() | Path() if zf.is_zipfile(directory):
+                self.File = zf.ZipFile(directory, "r")  # pylint: disable=R1732
+                close_me = True
+            case _ if isinstance(self.File, zf.ZipFile) and self.File.fp:
                 close_me = False
-            else:
+            case _ if isinstance(self.File, zf.ZipFile):
                 self.File = zf.ZipFile(self.File.filename, "r")  # pylint: disable=R1732
                 close_me = True
-        else:
-            raise IOError(f"{directory} does not appear to be zip file!")
+            case _:
+                raise IOError(f"{directory} does not appear to be zip file!")
         # At this point directory contains an open h5py.File object, or possibly a group
         self.path = self.File.filename
         files = [x.filename for x in self.File.filelist]
         for p in self.exclude:  # Remove excluded files
-            if isinstance(p, str):
-                for f in list(fnmatch.filter(files, p)):
-                    del files[files.index(f)]
-            if isinstance(p, _pattern_type):
-                matched = []
-                # For reg expts we iterate over all files, but we can't delete matched
-                # files as we go as we're iterating over them - so we store the
-                # indices and delete them later.
-                for f in files:
-                    if p.search(f):
-                        matched.append(files.index(f))
-                matched.sort(reverse=True)
-                for i in matched:  # reverse sort the matching indices to safely delete
-                    del files[i]
-
+            _prune_list(p, files)
         for p in self.pattern:  # pattern is a list of strings and regeps
-            if isinstance(p, str):
-                for f in fnmatch.filter(files, p):
-                    del files[files.index(f)]
-                    f.replace(path.sep, "/")
-                    self.append(f)
-            elif isinstance(p, _pattern_type):
-                matched = []
-                # For reg expts we iterate over all files, but we can't delete matched
-                # files as we go as we're iterating over them - so we store the
-                # indices and delete them later.
-                for ix, f in enumerate(files):
-                    if p.search(f):
-                        f.replace(path.sep, "/")
-                        self.append(f)
-                    else:
-                        matched.append(ix)
-                for i in reversed(matched):  # reverse sort the matching indices to safely delete
-                    del files[i]
-
+            _build_list(self, p, files)
         self._zip_contents = files
 
         if flatten is None or not flatten:
-            self.unflatten()
+            self.unflatten()  # pylint: disable=no-member
         if close_me:
             self.File.close()
         return self
@@ -260,7 +268,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             self.File.close()
         mode = "a" if path.exists(root) else "w"
         with zf.ZipFile(root, mode) as self.File:
-            tmp = self.walk_groups(self._saver)
+            tmp = self.walk_groups(self._saver)  # pylint: disable=no-member
         return tmp
 
     def _saver(self, f, trail):

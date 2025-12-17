@@ -3,7 +3,7 @@
 
 Code based on the PyQt5 Tutorial code,
 """
-__all__ = ["fileDialog"]
+__all__ = ["file_dialog"]
 import pathlib
 from typing import Any, Dict, Optional, Type, Union
 
@@ -253,4 +253,4 @@ class RangeSelect:
                 p.update({"color": col, "facecolor": col})
 
 
-fileDialog: Type[App] = App()
+file_dialog: Type[App] = App()
