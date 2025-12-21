@@ -147,12 +147,12 @@ def test_arb_class_load():
 
 def test_url_load():
     """Test URL scheme openers."""
-    t1 = Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/hairboRaman.spc")
+    t1 = Data("https://github.com/stonerlab/Stoner-PythonCode/raw/main/sample-data/hairboRaman.spc")
     assert t1 == Data(__datapath__ / "hairboRaman.spc")
-    t2 = Data("https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql")
+    t2 = Data("https://github.com/stonerlab/Stoner-PythonCode/raw/main/sample-data/New-XRay-Data.dql")
     assert t2 == Data(__datapath__ / "New-XRay-Data.dql")
     resp = urllib.request.urlopen(
-        "https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/New-XRay-Data.dql"
+        "https://github.com/stonerlab/Stoner-PythonCode/raw/main/sample-data/New-XRay-Data.dql"
     )
     t3 = Data(resp)
     assert t3 == t2
