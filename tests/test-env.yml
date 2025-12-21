@@ -18,7 +18,7 @@ dependencies:
   - matplotlib >= 3.4.3
   - memoization >= 0.3.1
   - multiprocess >= 0.70.12.2
-  - nptdms == 1.1.0
+  - nptdms >= 1.1.0
   - numpy >= 1.21.2
   - pytest >= 6.2.4
   - pytest-cov >= 2.12.1
