@@ -160,7 +160,7 @@ class HDF5Folder(DataFolder):
         # At this point directory contains an open h5py.File object, or possibly a group
         directory.visititems(self._visit_func)
         if flatten:
-            self.flatten()
+            self.flatten()  # pylint: disable=no-member
         if closeme:
             self.File.close()
             self.File = None

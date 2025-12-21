@@ -18,7 +18,7 @@ from ..core.base import SortedMultivalueDict, metadataObject
 from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
 from ..tools.typing import Filename
 from .decorators import make_Data, make_Image
-from .widgets import fileDialog
+from .widgets import file_dialog as _file_dialog
 
 __all__ = [
     "get_hdf_loader",
@@ -152,7 +152,7 @@ def file_dialog(mode: str, filename: Filename, filetype: str) -> Union[pathlib.P
         mode = "SaveFile"
     else:
         mode = "SelectDirectory"
-    filename = fileDialog.open_dialog(start=dirname, mode=mode, patterns=patterns)
+    filename = _file_dialog.open_dialog(start=dirname, mode=mode, patterns=patterns)
     return filename if filename else None
 
 

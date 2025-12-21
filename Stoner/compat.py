@@ -124,12 +124,12 @@ def get_filedialog(what="file", **opts):
     Returns:
         A file name or directory or list of files.
     """
-    from .tools.widgets import fileDialog
+    from .tools.widgets import file_dialog
 
     funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
     if what not in funcs:
         raise RuntimeError(f"Unable to recognise required file dialog type:{what}")
-    return fileDialog.open_dialog(mode=funcs[what], **opts)
+    return file_dialog.open_dialog(mode=funcs[what], **opts)
 
 
 if np_version.major >= 2:

@@ -1,6 +1,6 @@
 """Simple XMCD Data reduction example."""
 
-# pylint: disable=invalid-name, redefined-outer-name
+# pylint: disable=invalid-name, redefined-outer-name,no-member
 import re
 
 import numpy as np
@@ -141,7 +141,7 @@ lfit = (615, 630)
 
 # Read the directory of data files and sort by run number
 fldr = DataFolder(directory, pattern=pattern, read_means=True)
-fldr.sort("run")
+fldr.sort("run")  # pylint: disable=no-member
 # Remove files outside of the run number range
 fldr.filterout(lambda f: f["run"] > endrun or f["run"] < startrun)
 # group the files by position, temperatures and polarisations

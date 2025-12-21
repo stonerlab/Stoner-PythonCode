@@ -102,7 +102,7 @@ def diamag_background_rem(data, N):
     min_harg = int(np.argmin(data[:, 1]))
 
     # linear fit to saturated data (+- N points from max/min field)
-    highFit = np.polyfit(
+    high_fit = np.polyfit(
         data[max_harg - N : max_harg + N, 1],
         data[max_harg - N : max_harg + N, 2],
         1,
@@ -113,7 +113,7 @@ def diamag_background_rem(data, N):
         1,
     )
     # Average grad
-    fit_grad = (highFit[0] + low_fit[0]) / 2
+    fit_grad = (high_fit[0] + low_fit[0]) / 2
     # Delete linear grad from all data
     data[:, 2] = data[:, 2] - (fit_grad * data[:, 1])
     return data
@@ -128,7 +128,7 @@ def invert(data):
     return data
 
 
-def makeTruem(data):
+def make_true_m(data):
     """VSM takes m from lock in X, this takes m from lock in R, useful if theta!=0."""
     vsm_calibration = (
         data.data[5, data.find_col("m (emu)")]
@@ -141,7 +141,7 @@ def makeTruem(data):
     return data
 
 
-def plotmH(data):
+def plot_m_h(data):
     """Take a stoner type data source."""
     plot.clf()
     plot.xlabel("H(T)")
@@ -157,9 +157,9 @@ def split_filename(my_filename):
     """
     for i in range(len(my_filename) - 1, -1, -1):
         if my_filename[i] == ".":
-            fileName = my_filename[:i]
-            fileExt = my_filename[i:]
-            return [fileName, fileExt]
+            filename = my_filename[:i]
+            file_ext = my_filename[i:]
+            return [filename, file_ext]
     return [my_filename, ""]
 
 
@@ -169,7 +169,7 @@ def edit_data(data, operations):
         return data
     N = int(input("Input the number of saturated data points on each arm:   "))
     if 1 in operations:
-        data = makeTruem(data)
+        data = make_true_m(data)
     if 2 in operations:
         data.data = drift_eliminator(data.data, N)
     if 3 in operations:
@@ -234,7 +234,7 @@ if __name__ == "__main__":
                         break
         fw.close()
         while True:
-            plotmH(data)
+            plot_m_h(data)
             if "Original m (emu)" not in data.column_headers:
                 data.add_column(data.column("m (emu)"), "Original m (emu)")
             print(
@@ -250,13 +250,13 @@ if __name__ == "__main__":
                 "5.  Reflect graph in y axis \n",
             )
 
-            strOp = input("")
+            str_op = input("")
             operations = []  # array of options selected
-            for i in range(len(strOp.strip())):
-                operations.append(int(strOp[i]))
+            for i in range(len(str_op.strip())):
+                operations.append(int(str_op[i]))
             t = data.clone  # edit a copied array.
             t = edit_data(t, operations)
-            plotmH(t)
+            plot_m_h(t)
             what_next = input(
                 "Press enter to save changes, r to restart or q to quit the program:  "
             )
