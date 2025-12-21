@@ -8,14 +8,14 @@ from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
 
 config = io.StringIO(
     urllib.request.urlopen(  # pylint: disable=urllib_urlopen
-        "https://raw.githubusercontent.com/stonerlab/Stoner-PythonCode/master/scripts/PCAR-chi%5E2.ini"
+        "https://raw.githubusercontent.com/stonerlab/Stoner-PythonCode/main/scripts/PCAR-chi%5E2.ini"
     )
     .read()
     .decode()
 )
 datafile = io.StringIO(  # pylint: disable=urllib_urlopen
     urllib.request.urlopen(
-        "https://github.com/stonerlab/Stoner-PythonCode/raw/master/sample-data/PCAR%20Co%20Data.csv"
+        "https://github.com/stonerlab/Stoner-PythonCode/raw/main/sample-data/PCAR%20Co%20Data.csv"
     )
     .read()
     .decode()

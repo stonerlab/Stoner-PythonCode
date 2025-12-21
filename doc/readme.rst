@@ -1,8 +1,8 @@
 .. image:: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml/badge.svg?branch=stable
     :target: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml
 
-.. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
-    :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
+.. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=main
+    :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=main
 
 .. image:: https://app.codacy.com/project/badge/Grade/a9069a1567114a22b25d63fd4c50b228
     :target: https://app.codacy.com/gh/stonerlab/Stoner-PythonCode/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
@@ -106,12 +106,12 @@ contrasr, traditional functional programming thinks in terms of various function
 .. note::
     This is rather similar to pandas DataFrames and the package provides methods to easily convert to and from
     DataFrames. Unlike a DataFrame, a **Stoner.Data** object maintains a dictionary of additional metadata
-    attached to the dataset (e.g. of instrument settings, experimental ort environmental; conditions 
+    attached to the dataset (e.g. of instrument settings, experimental ort environmental; conditions
     when thedata was taken). To assist with exporting to pandas DataFrames, the package will add a custom
     attrobute handler to pandas DataFrames **DataFrame.metadata** to hold this additional data.
-    
+
     Unlike Pandas, the **Stoner** package's default is to operate in-place and also to return the object
-    from method calls to facilitate "chaining" of data methods into short single line pipelines. 
+    from method calls to facilitate "chaining" of data methods into short single line pipelines.
 
 Data and Friends
 ----------------
@@ -194,7 +194,7 @@ making beta packages available.
 Development Version
 -------------------
 
-The current development version is hosted in the master branch of the repository and will become version 0.11.
+The current development version is hosted in the main branch of the repository and will become version 0.11.
 
 At the moment the development version is maily broen....
 
