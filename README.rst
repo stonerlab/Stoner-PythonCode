@@ -1,8 +1,8 @@
 .. image:: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml/badge.svg?branch=stable
     :target: https://github.com/stonerlab/Stoner-PythonCode/actions/workflows/run-tests-action.yaml
 
-.. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=master
-    :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=master
+.. image:: https://coveralls.io/repos/github/stonerlab/Stoner-PythonCode/badge.svg?branch=main
+    :target: https://coveralls.io/github/stonerlab/Stoner-PythonCode?branch=main
 
 .. image:: https://app.codacy.com/project/badge/Grade/a9069a1567114a22b25d63fd4c50b228
     :target: https://app.codacy.com/gh/stonerlab/Stoner-PythonCode/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
@@ -199,7 +199,7 @@ making beta packages available.
 Development Version
 -------------------
 
-The current development version is currently on a stable branch and is version 0.11.x. The master branch contains work
+The current development version is currently on a stable branch and is version 0.11.x. The main branch contains work
 in progress to migrate to using Pandas dataframes as the underlying data store - this is however largely broken!
 
 Build Status
