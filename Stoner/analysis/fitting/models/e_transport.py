@@ -5,25 +5,25 @@
 __all__ = ["BlochGrueneisen", "FluchsSondheimer", "WLfit", "blochGrueneisen", "fluchsSondheimer", "wlfit"]
 
 import numpy as np
+from lmfit import Model
+from lmfit.models import update_param_vals
 from scipy.integrate import quad
 from scipy.special import digamma
 
-from lmfit import Model
-from lmfit.models import update_param_vals
-
 try:  # numba is an optional dependency
-    from numba import jit, float64, int64
+    from numba import float64, int64, jit
 except ImportError:
-    from ....compat import _dummy, _jit as jit
+    from ....compat import _dummy
+    from ....compat import _jit as jit
 
     float64 = _dummy()
     int64 = _dummy()
 
 
-@jit(float64(float64, int64))
+@jit(float64(float64, int64), nopython=True)
 def _bgintegrand(x, n):
     """Calculate the integrand for the Bloch Grueneisen model."""
-    return x ** n / ((np.exp(x) - 1) * (1 - np.exp(-x)))
+    return x**n / ((np.exp(x) - 1) * (1 - np.exp(-x)))
 
 
 def wlfit(B, s0, DS, B1, B2):
@@ -66,7 +66,7 @@ def wlfit(B, s0, DS, B1, B2):
         WLpt3 = np.log(B2 / B1)
 
         # Calculates fermi level smearing
-        cond[tt] = (e ** 2 / (h * np.pi)) * (WLpt1 - WLpt2 - WLpt3)
+        cond[tt] = (e**2 / (h * np.pi)) * (WLpt1 - WLpt2 - WLpt3)
     # cond = s0*cond / min(cond)
     cond = s0 + DS * cond
     return cond
@@ -94,7 +94,8 @@ def fluchsSondheimer(t, l, p, sigma_0):
     """
     k = t / l
 
-    kernel = lambda x, k: (x - x ** 3) * np.exp(-k * x) / (1 - np.exp(-k * x))
+    def kernel(x, k):
+        return (x - x**3) * np.exp(-k * x) / (1 - np.exp(-k * x))
 
     result = np.zeros(k.shape)
     for i, v in enumerate(k):
@@ -130,7 +131,6 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
 
 class WLfit(Model):
-
     """Weak localisation model class.
 
     Args:
@@ -172,9 +172,12 @@ class WLfit(Model):
             pars[p].min = 0.0
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class FluchsSondheimer(Model):
-
     """Evaluate a Fluchs-Sondheumer model function for conductivity.
 
     Args:
@@ -202,14 +205,17 @@ class FluchsSondheimer(Model):
         """Configure Initial fitting function."""
         super().__init__(fluchsSondheimer, *args, **kwargs)
 
-    def guess(self, data, t=None, **kwargs):  # pylint: disable=unused-argument
+    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever."""
         pars = self.make_params(l=10.0, p=0.5, sigma_0=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class BlochGrueneisen(Model):
-
     """BlochGrueneiseen Function for fitting R(T).
 
     Args:
@@ -251,3 +257,7 @@ class BlochGrueneisen(Model):
         pars["A"].min = 0
         pars["n"].vary = False
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

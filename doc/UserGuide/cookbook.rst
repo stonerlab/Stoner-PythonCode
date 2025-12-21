@@ -8,18 +8,15 @@ done with the Stoner python module in just a few lines.
 The Util module
 ===============
 
-.. currentmodule:: Stoner.Util
+.. currentmodule:: Stoner.analysis.utils
 
-The **Stoner** package comes with an extra :py:mod:`Stoner.Util` module that includes some handy utility
+The **Stoner** package comes with an extra :py:mod:`Stoner.analysis.utils` module that includes some handy utility
 functions.
 
 The :py:class:`Data` Class
 --------------------------
 
-In practice, one often requires both the analysis functions of :py:class:`Stoner.Analysis.AnalysisMixin` and
-the plotting functions of :py:class:`Stoner.plot.PlotMixin`. This can be done easily by creating a
-subclass that inherits from both, but for convenience, the :py:mod:`Stoner.Util` module provides the :py:class:`Data`
-class that does this for you.::
+The :py:class:`Stoner.Data` class provides the core object for analysing data.
 
     from Stoner.Core import Data
     d=Data("File-of-data.txt")
@@ -31,10 +28,10 @@ So far the module just contains one function that will take a single :py:class:`
 object and split it into a series of :py:class:`Stoner.Core.DataFile` objects where one column is either
 rising or falling. This is designed to help deal with analysis problems involving hysteretic data.::
 
-    from Stoner.Util import split_up_down
+    from Stoner.analysis.utils import split_up_down
     folder=split_up_down(data,column)
 
-In this example *folder* is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
+In this example *folder* is a :py:class:`Stoner.DataFolder` instance with two groups, one for rising values of the column
 and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter
 which is an existing :py:class:`Stoner.Core.DataFolder` instance to which the new groups (if they
 don't already exist) and files will be added.
@@ -45,7 +42,7 @@ Analysis of Hysteresis Loops
 Since much of our group's work is concerned with measuring magnetic hystersis loops, the :py:func:`hysteresis_correct` function
 provides a handy way to correct some instrumental artifacts and measure properties of hysteresis loops.::
 
-    from Stoner.Util import hysteresis_correct
+    from Stoner.analysis.utils import hysteresis_correct
     d=hysteresis_correct('QD-SQUID-VSM.dat',correct_background=False,correct_H=False)
     e=hysteresis_correct(d)
 
@@ -58,13 +55,13 @@ and any offset in H (e.g. due to trapped flux in the magnetometer). The latter o
 also remove the effect of any eexhange bias that moves the coercive field. As well as performing the corrections, the code
 will add metadata items for:
 
-    * Background susceptibility (from fitting striaght lines to the out part of the data)
+    * Background susceptibility (from fitting straight lines to the out part of the data)
     * Saturation magnetisation and uncertainty (also from fitting lines to the out part of the data)
     * Coervice Fields (H for zero M)
     * Remenance (M for zero H)
     * Saturation Fields (H where M deviates by the standard error from saturation)
     * Maximum BH product (the point where -H * M is maximum)
-    * Loop Area (from integrating the area inside the hysteresis loop - only valide for complete loops)
+    * Loop Area (from integrating the area inside the hysteresis loop - only valid for complete loops)
 
 Some of these parameters are determined by fitting a straight line to the outer portions of the data (i.e. at the
 extrema in H). The keyword parameter *saturation_fraction* controls the extent of the data assumed to be saturated.
@@ -74,11 +71,11 @@ Formatting Error Values
 -----------------------
 
 In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
-a measurement to one signficant figure, and then quote the value to the same number of decimal places. Whilst doing this
-might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the :py:mod:`Stoner.Util` module
-provides the :py:func:`Stoner.Util.format_error` function.::
+a measurement to one significant figure, and then quote the value to the same number of decimal places. Whilst doing this
+might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the :py:mod:`Stoner.analysis.utils` module
+provides the :py:func:`Stoner.analysis.utils.format_error` function.::
 
-    from Stoner.Util import format_error
+    from Stoner.analysis.utils import format_error
     from scipy.constants import hbar,m_e,m_u
     print format_error(value,error)
     print format_error(m_e,hbar,latex=True)
@@ -100,7 +97,7 @@ Fitting Tricks
 Fitting 3D Data
 ---------------
 
-:py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+:py:meth:`Stoner.Data.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
 variables. In order to do this, the *xcol* parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.
@@ -124,7 +121,7 @@ For example:
     :outname:  curvefit_sphere_2
 
 
-Other Recipies
+Other Recipes
 ==============
 
 Extract X-Y(Z) from X-Y-Z data
@@ -206,7 +203,7 @@ to quickly examine the output data::
     import Stoner.plot
     p=SP.PlotFile('my_simulation.ovf')
     p.setas="xyzuvw"
-    p=p.section(z=10.5) # Take a slice inthe xy plane where z is 10.5 nm
+    p=p.section(z=10.5) # Take a slice in the xy plane where z is 10.5 nm
     p.plot() # A 3D plot with cones
     p.setas="xy.uvw"
     p.plot() # a 2D colour wheel plot with triangular glyphs showing vector direction.

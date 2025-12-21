@@ -18,7 +18,7 @@ Once this is done, the plotting methods will use these to try to make a sensible
     p.setas="xye"
     p.plot()
 
-:py:meth:`Data.plot` is simply a wrapper that insepects the available columns and calls either :py:meth:`Data.plot_xy` or
+:py:meth:`Data.plot` is simply a wrapper that inspects the available columns and calls either :py:meth:`Data.plot_xy` or
 :py:meth:`Data.plot_xyz` as appropriate. All keyword arguments to :py:meth:`Data.plot` are passed on to the actual plotting method.
 
 Each :py:class:`Data` instance maintains it's own :py:class:`matplotlib.pyplot.Figure` in the :py:attr:`Data.fig` attribute, if no
@@ -71,7 +71,7 @@ are a number of useful plotter functions that will work like this
 *   [:py:func:`matplotlib.pyplot.loglog`] Like the semi-log plots, this will produce a log-log plot.
 *   [:py:func:`matplotlib.pyplot.errorbar`] this particularly useful plotting function will draw error bars. The values for
     the error bars are passed as keyword arguments, *xerr* or *yerr*. In standard matplotlib, these can be numpy arrays or constants.
-    :py:meth:`Data.plot_xy` extends this by intercepting these arguements and offering some short cuts::
+    :py:meth:`Data.plot_xy` extends this by intercepting these arguments and offering some short cuts::
 
          p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',xerr=[5,'dTemp+'])
 
@@ -99,7 +99,7 @@ these on a surface plot or 3D plot. The :py:meth:`Data.plot_xyz` method can be u
     :outname: colormap
 
 By default the :py:meth:`Data.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
-(specifically, the matplotlib provided *matplotlib.cm.jet* colour-map. This can be overriden with the *cmap* keyword
+(specifically, the matplotlib provided *matplotlib.cm.jet* colour-map. This can be overridden with the *cmap* keyword
 parameter. If a simple 2D surface plot is required, then the *plotter* parameter should be set to a suitable function
 such as **pyplot.pcolor**.
 
@@ -139,7 +139,7 @@ the y values for each column are found from the column headers interpreted as a 
 to the built in 'jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set
 either from the meta data item 'ylabel or to 'Y Data'. Likewise the z axis label is set from the corresponding metadata
 item or defaults to 'Z Data;. In the second form these parameters are all set explicitly. The *xvals* parameter can be
-either a column index (integer or sring) or a list, tuple or numpy array. The *yvals* parameter can be either a row number
+either a column index (integer or string) or a list, tuple or numpy array. The *yvals* parameter can be either a row number
 (integer) or list,tuple or numpy array. Other parameters (including *plotter*, *figure* etc) work as for the
 :py:meth:`Data.plot_xyz` method. The *rectang* parameter is used to select only part of the data array to use as the matrix.
 It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth
@@ -153,10 +153,10 @@ Plotting 3D Scalar Fields
 
 A 3D scalar field is a some :math:`F(x,y,z)` where the function returns a scalar value. One option is to plot this as a
 volumetric plot where a colour is interpolated over a volume. For this purpose, :py:meth:`Data.voxel_plot` is provided.
-The function will accept x,y and z column indices for the co-ordinates (or take them from the :py:attr:`Data.setas`
+The function will accept x,y and z column indices for the coordinates (or take them from the :py:attr:`Data.setas`
 attribute) and a fourth, *u* column index (or the column defined as holding the *u* data in the :py:attr:`Data.setas`
 attribute). Keyword arguments *visible* or $filled$ indicate whether a particular voxel will be plotted or not to
-allow a cross section of the 3D co-ordinate space to be show.
+allow a cross section of the 3D coordinate space to be show.
 
 .. plot:: samples/voxel_plot.py
     :include-source:
@@ -167,7 +167,7 @@ Plotting Vector Fields
 
 For these purposes a vector field is a set of points $(x,y,z)$ at which a 3D vector $(u,v,w)$ is defined. Often vector
 fields are visualised by using quiver plots, where a small arrow points in the direction of the vector and whose length
-is proportional to the magnitude. This can also be suplemented by colour information - in one scheme a hue-saturation-luminence
+is proportional to the magnitude. This can also be supplemented by colour information - in one scheme a hue-saturation-luminence
 space is used, where hue described a direction in the x-y plane, the luminence describes the vertical component and the
 saturation, the relative magnitude. This is a common scheme in micro-magnetics, so is supported in the Stoner package.
 Following the naming convention above, the :py:meth:`Data.plot_xyzuvw` method handles these plots.::
@@ -184,7 +184,7 @@ Enthought. The import is done when the plot is required to speed loading times f
 2D plotting only is required. If the mayavi package is not available, then matplotlib's 3D quiver plot is used as a fall back.
 
 The first example above will result in a plot using flat arroiws coloured according to the vector magnitude. The second
-examnple will instead color them using the specified column from the data. The third example demonstrates passing in
+example will instead color them using the specified column from the data. The third example demonstrates passing in
 a separate list of colour data. In both of these cases the relative magnitude of the colors data is mapped to a colour map
 (which can be given via a colormap keyword parameter).
 
@@ -246,7 +246,7 @@ instance. When setting the attribute, lists and tuples will be assumed to contai
 keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
 element tuple.
 
-Particualrly useful attributes include:
+Particularly useful attributes include:
 
 -   :py:attr:`Data.xlabel`, :py:attr:`Data.ylabel` will set the x and y axes labels
 -   :py:attr:`Data.title` will set the plot title
@@ -332,9 +332,9 @@ or refer to a file on disc. The template will search for the file (named *<style
     #. the stylelib subfolder of the Stoner package directory.
 
 Where a template class is a subclass of the  :py:class:`DefaultPlotStyle`, the stylesheets are inherited in the same order as the
-class heirarchy.
+class hierarchy.
 
-Changing the value of Lpy:attr:`DefaultPlotStyle.stylename` will force the tempalte to recalculate the stylesheet heirarchy, refidning
+Changing the value of Lpy:attr:`DefaultPlotStyle.stylename` will force the template to recalculate the stylesheet hierarchy, refidning
 the paths to the stylesheets. You can also do any in-place modifications to the template stylesheet list (e.g. appending or extending it).
 
 Further customisation is possible by creating a subclass of :py:class:`DefaultPlotStyle` and overriding the

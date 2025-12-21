@@ -6,14 +6,14 @@ import time
 
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib_scalebar.scalebar import ScaleBar
 
-from Stoner import ImageFolder, __datapath__
-from Stoner.HDF5 import STXMImage
+from Stoner import ImageFile, ImageFolder, __datapath__
 from Stoner.Image.widgets import send_event as _event
 
 
 def fake_user_action(image):
-    """Send events to the selection widget to sumulate a user."""
+    """Send events to the selection widget to simulate a user."""
     time.sleep(1)
     _event(
         image,
@@ -41,8 +41,16 @@ def fake_user_action(image):
     )
 
 
+def extra_ops(i, j, image):
+    """Add Extra operation to image."""
+    pixel_size = np.diff(image["sample_x"]).mean() * 1e-6
+    ax = image["ax"]
+    scalebar = ScaleBar(pixel_size)
+    ax.add_artist(scalebar)
+
+
 fldr = ImageFolder(
-    __datapath__, pattern="Sample*.hdf5", type=STXMImage, recursive=False
+    __datapath__, pattern="Sample*.hdf5", type=ImageFile, recursive=False
 )
 
 # Start the scripted control
@@ -54,4 +62,4 @@ for i in range(4):
     fldr += fldr[0]
     fldr += fldr[1]
 fig = plt.figure(figsize=(8, 4))
-fldr.montage(figure=fig, plots_per_page=4)
+fldr.montage(figure=fig, plots_per_page=4, plot_extra=extra_ops)

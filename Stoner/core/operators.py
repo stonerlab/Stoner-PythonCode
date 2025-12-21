@@ -5,13 +5,12 @@ __all__ = ["DataFileOperatorsMixin"]
 import numpy as np
 
 from ..compat import index_types, string_types
-from ..tools import isiterable
+from ..tools import isiterable, make_Data
+from . import DataArray, _setas
 from .utils import add_core, and_core, mod_core, sub_core
-from . import _setas, DataArray
 
 
 class DataFileOperatorsMixin:
-
     """Provides the operator mixins for DataFile like objects."""
 
     def __add__(self, other):
@@ -237,6 +236,8 @@ class DataFileOperatorsMixin:
             swaps = zip(["ycol", "yerr"], ["x", "d"])
         elif cols["axes"] >= 3:
             swaps = zip(["ycol", "zcol", "yerr", "zerr"], ["z", "x", "f", "d"])
+        else:
+            raise ValueError("Cannot invert unless at least two columns are identified in setas")
         setas[cols["xcol"]] = "y"
         if cols["has_xerr"]:
             setas[cols["xerr"]] = "e"
@@ -246,7 +247,7 @@ class DataFileOperatorsMixin:
         ret.setas = setas
         return ret  #
 
-    def __read_iterable(self, reader):
+    def __read_iterable(self, reader):  # pylint: disable=unused-private-member
         """Read a string representation of py:class:`DataFile` in line by line."""
         if isiterable(reader):
             reader = iter(reader)
@@ -256,7 +257,7 @@ class DataFileOperatorsMixin:
             readline = reader.__next__
 
         else:
-            return NotImplemented
+            raise NotImplementedError
         row = readline().split("\t")
         if row[0].strip() == "TDI Format 1.5":
             fmt = 1.5
@@ -292,3 +293,19 @@ class DataFileOperatorsMixin:
         for i, head_temp in enumerate(col_headers_tmp):
             self.column_headers[i] = head_temp
         self["TDI Format"] = fmt
+
+    def __xor__(self, other):
+        """Implement an XOR operator for Data objects."""
+        Data = make_Data(None)
+        match other:
+            case Data():
+                new = make_Data()
+                if np.all(self.data == other.data):
+                    new.data = np.ma.empty_like(self.data)
+                else:
+                    new.data = self.data == other.data
+                new.metadata = self.metadata ^ other.metadata
+                new.column_headers = [str(s == o) for s, o in zip(self.column_headers, other.column_headers)]
+                return new
+            case _:
+                return NotImplemented

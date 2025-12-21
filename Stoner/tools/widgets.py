@@ -3,25 +3,39 @@
 
 Code based on the PyQt5 Tutorial code,
 """
-__all__ = ["fileDialog"]
+__all__ = ["file_dialog"]
 import pathlib
-from typing import Any, Union, Optional, Dict, Type
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.widgets import SpanSelector
-from matplotlib.patches import Rectangle
+from typing import Any, Dict, Optional, Type, Union
 
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Rectangle
+from matplotlib.widgets import SpanSelector
+
+from ..compat import mpl_version
+
+QT_VERSION = None
 try:
-    from PyQt5.QtWidgets import QWidget, QFileDialog, QApplication
+    from PyQt5.QtWidgets import QApplication, QFileDialog, QWidget
+
+    QT_VERSION = 5
 except ImportError:
+    pass
+if QT_VERSION is None:
+    try:
+        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget  # noQA
+
+        QT_VERSION = 6
+    except ImportError:
+        pass
+if QT_VERSION is None:
 
     class App:
+        """Mock App that raises an error when you try to call open_dialog on it."""
 
-        """Mock App that raises an error when you try to call openDialog on it."""
+        modes: Dict = {}
 
-        modes: Dict = dict()
-
-        def openDialog(
+        def open_dialog(
             self,
             title: Optional[str] = None,
             start: Union[str, pathlib.Path] = "",
@@ -31,11 +45,9 @@ except ImportError:
             """Raise and error because PyQT5 not present."""
             raise ValueError("Cammpt open a dialog box because PqQt5 library missing!")
 
-
 else:
 
     class App(QApplication):
-
         """Placehold PyQT5 Application for producing filedialog boxes."""
 
         modes = {
@@ -61,16 +73,17 @@ else:
             },
         }
 
-        def __init__(self, *args: Any, **kargs: Any) -> None:
-            super().__init__([""], *args, **kargs)
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__([""], *args, **kwargs)
             self.title = "PyQt5 file dialogs - pythonspot.com"
             self.left = 10
             self.top = 10
             self.width = 640
             self.height = 480
-            self.initUI()
+            self.init_ui()
 
-        def initUI(self) -> None:
+        def init_ui(self) -> None:
+            """Initialise the UI and set the dialog box geometry."""
             self.dialog = QWidget()
             self.dialog.title = "PyQt5 file dialogs - pythonspot.com"
             self.dialog.left = 10
@@ -81,7 +94,7 @@ else:
             self.dialog.setWindowTitle(self.title)
             self.dialog.setGeometry(self.left, self.top, self.width, self.height)
 
-        def openDialog(
+        def open_dialog(
             self,
             title: Optional[str] = None,
             start: Union[str, pathlib.Path] = "",
@@ -119,9 +132,12 @@ else:
             if patterns is None:
                 patterns = {"*.*": "All Files", "*.py": "Python Files"}
             patterns = ";;".join([f"{v} ({k})" for k, v in patterns.items()])
-            options = QFileDialog.Options()
+            try:
+                options = QFileDialog.Options()
+            except AttributeError:
+                options = QFileDialog().options()
 
-            kwargs = {"caption": title, "directory": start, "filter": patterns, "options": options, "modal": True}
+            kwargs = {"caption": title, "directory": str(start), "filter": patterns, "options": options, "modal": True}
             kwargs = {k: kwargs[k] for k in (set(kwargs.keys()) & set(self.modes[mode]["arg"]))}
 
             ret = method(self.dialog, **kwargs)
@@ -140,7 +156,6 @@ else:
 
 
 class RangeSelect:
-
     """A simple class to allow a matplotlib graph to be used to select data."""
 
     def __init__(self):
@@ -174,17 +189,21 @@ class RangeSelect:
         self.data.plot(self.xcol, self.ycol, figure=fig)
         self.data.title = "Select Data and press Enter to confirm\nEsc to cancel, i to invert selection."
         self.ax = self.data.axes[-1]
+        if mpl_version.minor >= 5:
+            kwargs = {"props": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
+        else:
+            kwargs = {"rectprops": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
         self.selector = SpanSelector(
             self.ax,
             self.onselect,
             "horizontal",
             useblit=True,
-            rectprops={"edgecolor": col, "facecolor": col, "alpha": 0.5},
+            **kwargs,
         )
         fig.canvas.mpl_connect("key_press_event", self.keypress)
         while not self.finished:
             plt.pause(0.1)
-        # Clean up and resotre the figure settings
+        # Clean up and restore the figure settings
         plt.close(self.data.fig.number)
         if fig_tmp[0] is not None and fig_tmp[0] in plt.get_fignums():
             self.data.fig = fig_tmp[0]
@@ -192,9 +211,9 @@ class RangeSelect:
         idx = np.ones(len(self.data), dtype=bool)
         for ix, selection in enumerate(self.selection):
             if ix == 0:
-                idx = self.data._search_index(xcol, selection, accuracy, invert=self.invert)
+                idx = self.data.search_index(xcol, selection, accuracy, invert=self.invert)
             else:
-                idx = np.logical_or(idx, self.data._search_index(xcol, selection, accuracy, invert=self.invert))
+                idx = np.logical_or(idx, self.data.search_index(xcol, selection, accuracy, invert=self.invert))
         return idx
 
     def onselect(self, xmin, xmax):
@@ -225,13 +244,13 @@ class RangeSelect:
         elif event.key.lower() == "backspace":  # Delete last selection
             if len(self.selection) > 0:
                 del self.selection[-1]
-                del self.ax.patches[-1]
+                self.ax.patches[-1].remove()
                 self.data.fig.canvas.draw()
         elif event.key.lower() == "i":  # Invert selection
-            self.invert = ~self.invert
+            self.invert = not self.invert
             col = "red" if self.invert else "green"
             for p in self.ax.patches:
                 p.update({"color": col, "facecolor": col})
 
 
-fileDialog: Type[App] = App()
+file_dialog: Type[App] = App()

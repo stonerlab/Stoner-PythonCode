@@ -1,0 +1,11 @@
+name: build-environment
+channels:
+    - defaults
+    - phygbu
+    - conda-forge
+dependencies:
+   - conda-build
+   - anaconda-client
+   - setuptools
+   - wheel
+   - twine

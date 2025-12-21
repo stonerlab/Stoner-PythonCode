@@ -1,6 +1,7 @@
-"""Core support for wokring with collections of files in the :py:class:`Stoner.DataFolder`."""
+"""Core support for working with collections of files in the :py:class:`Stoner.DataFolder`."""
 
-__all__ = ["core", "each", "groups", "metadata", "mixins", "utils", "DataFolder", "PlotFolder"]
+# pylint: disable=redefined-builtin
+__all__ = ["core", "each", "groups", "hdf5", "metadata", "mixins", "utils", "zip", "DataFolder", "PlotFolder"]
 
-from . import mixins
+from . import core, each, groups, hdf5, metadata, mixins, utils, zip
 from .mixins import DataFolder, PlotFolder

@@ -4,8 +4,8 @@
 
 __all__ = [
     "metadataObject",
-    "typeHintedDict",
-    "regexpDict",
+    "TypeHintedDict",
+    "RegexpDict",
     "_setas",
     "DataArray",
     "array",
@@ -18,11 +18,9 @@ __all__ = [
     "string_to_type",
     "exceptions",
     "utils",
-    "Typing",
 ]
 
-from .base import regexpDict, typeHintedDict, metadataObject, string_to_type
-from .setas import setas as _setas
+from . import array, base, exceptions, utils
 from .array import DataArray
-from . import utils, exceptions, base, array
-from . import Typing
+from .base import RegexpDict, TypeHintedDict, metadataObject, string_to_type
+from .setas import Setas as _setas

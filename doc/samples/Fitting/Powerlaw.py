@@ -1,4 +1,5 @@
 """Example of PowerLaw Fit."""
+
 # pylint: disable=invalid-name
 from numpy import linspace
 from numpy.random import normal
@@ -20,6 +21,7 @@ d.annotate_fit(powerLaw, x=0.5, y=0.25)
 # lmfit using lmfit guesses
 fit = PowerLaw()
 p0 = fit.guess(R, x=T)
+d.setas = "xy"
 d.lmfit(fit, p0=p0, result=True, header="lmfit")
 d.setas = "x..y"
 d.plot(fmt="g-")

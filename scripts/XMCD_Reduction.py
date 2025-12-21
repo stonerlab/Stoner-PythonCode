@@ -1,6 +1,8 @@
 """Simple XMCD Data reduction example."""
-# pylint: disable=invalid-name, redefined-outer-name
+
+# pylint: disable=invalid-name, redefined-outer-name,no-member
 import re
+
 import numpy as np
 import scipy
 
@@ -40,12 +42,12 @@ def cycle(f):
     return "cycle1"
 
 
-def alt_norm(f, _, **kargs):
+def alt_norm(f, _, **kwargs):
     """Just do the normalisation per file and report run number and normalisation constants."""
     run = f["run"]
-    signal = kargs["signal"]
-    lfit = kargs["lfit"]
-    rfit = kargs["rfit"]
+    signal = kwargs["signal"]
+    lfit = kwargs["lfit"]
+    rfit = kwargs["rfit"]
     ec = 0
 
     md = f.find_col(signal)
@@ -59,14 +61,11 @@ def alt_norm(f, _, **kargs):
     return ret
 
 
-def norm_group(pos, _, **kargs):
+def norm_group(pos, _, **kwargs):
     """Take the drain current for each file in group and builds an analysis file and works out the mean drain."""
-    if "signal" in kargs:
-        signal = kargs["signal"]
-    else:
-        signal = "fluo"
-    lfit = kargs["lfit"]
-    rfit = kargs["rfit"]
+    signal = kwargs.get("signal", "fluo")
+    lfit = kwargs["lfit"]
+    rfit = kwargs["rfit"]
 
     posfile = Data()
     posfile.metadata = pos[0].metadata
@@ -85,12 +84,12 @@ def norm_group(pos, _, **kargs):
     highend = posfile.mean("minus", lambda r: rfit[0] <= r[ec] <= rfit[1])
     ml = posfile.find_col("minus linear")
     posfile.add_column(lambda r: r[ml] / highend, "normalised")
-    if "group_key" in kargs:
-        posfile[kargs["group_key"]] = pos.key
+    if "group_key" in kwargs:
+        posfile[kwargs["group_key"]] = pos.key
     return posfile
 
 
-def asym(grp, trail, **kargs):
+def asym(grp, trail, **kwargs):
     """Take a group of two files for Pos and Neg helicity and calcualtes the Asymmetry ratio."""
     posfile = grp["Pos"]
     negfile = grp["Neg"]
@@ -104,26 +103,26 @@ def asym(grp, trail, **kargs):
     ret.column_headers = ["Energy", "I+", "I-"]
     ret.add_column(lambda r: (r[1] - r[2]), "Asymmetry")
     ret.filename = "-".join(trail)
-    if "group_key" in kargs:
-        ret[kargs["group_key"]] = grp.key
+    if "group_key" in kwargs:
+        ret[kwargs["group_key"]] = grp.key
     ret.title = ret.filename
-    if "save" in kargs and kargs["save"]:
+    if "save" in kwargs and kwargs["save"]:
         ret.save()
     return ret
 
 
-def collate(grp, trail, **kargs):
+def collate(grp, trail, **kwargs):
     """Gather all the data up again."""
     grp.sort()
     final = Data()
     final.add_column(grp[0].column("Energy"), "Energy")
     for g in grp:
         final.add_column(g.column("Asym"), g.title)
-    if "group_key" in kargs:
-        final[kargs["group_key"]] = grp.key
+    if "group_key" in kwargs:
+        final[kwargs["group_key"]] = grp.key
     final["path"] = trail
-    if "save" in kargs and kargs["save"]:
-        final.save(kargs["filename"])
+    if "save" in kwargs and kwargs["save"]:
+        final.save(kwargs["filename"])
     return final
 
 
@@ -142,7 +141,7 @@ lfit = (615, 630)
 
 # Read the directory of data files and sort by run number
 fldr = DataFolder(directory, pattern=pattern, read_means=True)
-fldr.sort("run")
+fldr.sort("run")  # pylint: disable=no-member
 # Remove files outside of the run number range
 fldr.filterout(lambda f: f["run"] > endrun or f["run"] < startrun)
 # group the files by position, temperatures and polarisations
@@ -172,6 +171,6 @@ fldr.walk_groups(
 )
 
 for f in fldr:
-    f.filename = "Run 2 Compiled Fluorescence Data {}.txt".format(f["Position"])
+    f.filename = "Run 2 Compiled Fluorescence Data {f['Position']}.txt"
     f.save()
 # norm_data=fldr.walk_groups(alt_norm,walker_args={"rfit":(660,670),"lfit":(615,630),"signal":"fluo"})

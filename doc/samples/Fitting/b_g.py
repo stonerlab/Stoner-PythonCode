@@ -1,4 +1,5 @@
 """Test Weak-localisation fitting."""
+
 # pylint: disable=invalid-name
 from copy import deepcopy
 
@@ -7,8 +8,8 @@ from numpy.random import normal
 
 from Stoner import Data
 from Stoner.analysis.fitting.models.e_transport import (
-    blochGrueneisen,
     BlochGrueneisen,
+    blochGrueneisen,
 )
 
 T = linspace(4.2, 300, 101)
@@ -41,4 +42,3 @@ d.annotate_fit(
     prefix="BlochGrueneisen",
 )
 d.title = "Bloch-Grueneisen Fit"
-d.tight_layout()

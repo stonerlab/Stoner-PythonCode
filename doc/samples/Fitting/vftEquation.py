@@ -1,14 +1,15 @@
 """Example of Arrhenius Fit."""
+
 # pylint: disable=invalid-name
-from numpy import logspace, log10
+from numpy import log10, logspace
 from numpy.random import normal
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.thermal import vftEquation, VFTEquation
+from Stoner.analysis.fitting.models.thermal import VFTEquation, vftEquation
 
 # Make some data
-T = logspace(log10(200), log10(350), 51)
-params = (1e16, 0.5, 150)
+T = logspace(log10(200), log10(350), 101)
+params = (1e15, 0.5, 150)
 noise = 0.5
 R = vftEquation(T, *params) * normal(size=len(T), scale=noise, loc=1.0)
 dR = vftEquation(T, *params) * noise

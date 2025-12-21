@@ -17,12 +17,11 @@ __all__ = [
 
 import numpy as np
 import scipy.constants as cnst
-from scipy.special import zeta, gamma
-from scipy.constants import k, mu_0, e, electron_mass, hbar
-from scipy.signal import savgol_filter
-
 from lmfit import Model
 from lmfit.models import update_param_vals
+from scipy.constants import e, electron_mass, hbar, k, mu_0
+from scipy.signal import savgol_filter
+from scipy.special import gamma, zeta
 
 mu_B = cnst.physical_constants["Bohr magneton"][0]
 
@@ -56,10 +55,14 @@ def langevin(H, M_s, m, T):
     r"""Langevin function for paramagnetic M-H loops.
 
     Args:
-        H (array): The applied magnetic field
-        M_s (float): Saturation magnetisation
-        m (float) is the moment of a cluster
-        T (float): Temperature
+        H (array):
+            The applied magnetic field
+        M_s (float):
+            Saturation magnetisation
+        m (float):
+            is the moment of a cluster
+        T (float):
+            Temperature
 
     Returns:
         Magnetic Momemnts (array).
@@ -117,29 +120,31 @@ def inverse_kittel(f, g, M_s, H_k):
         In practice one often measures FMR by sweepign field for constant frequency and then locates the
         peak in H by fitting a suitable Lorentzian type peak. In this case, one returns a
         :math:`H_{res}\pm \Delta H_{res}`
-        In order to make use of this data with :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit` or
-        :py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit`
+        In order to make use of this data with :py:meth:`Stoner.Analysis.Stoner.Data.lmfit` or
+        :py:meth:`Stoner.Analysis.Stoner.Data.curve_fit`
         it makes more sense to fit the Kittel Equation written in terms of H than frequency.
 
        :math:`H_{res}=- H_{k} - \frac{M_{s}}{2} + \frac{1}{2 \gamma \mu_{0}} \sqrt{M_{s}^{2}
        \gamma^{2} \mu_{0}^{2} + 16 \pi^{2} f^{2}}`
     """
     gamma = g * cnst.e / (2 * cnst.m_e)
-    return (
-        -H_k
-        - M_s / 2
-        + np.sqrt(M_s ** 2 * gamma ** 2 * cnst.mu_0 ** 2 + 16 * np.pi ** 2 * f ** 2) / (2 * gamma * cnst.mu_0)
-    )
+    return -H_k - M_s / 2 + np.sqrt(M_s**2 * gamma**2 * cnst.mu_0**2 + 16 * np.pi**2 * f**2) / (2 * gamma * cnst.mu_0)
 
 
 def fmr_power(H, H_res, Delta_H, K_1, K_2):
     r"""Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
-        H (array) magnetic field data
-        H_res (float): Resonance field of peak
-        Delta_H (float): Preak wideth
-        K_1, K_2 (float): Relative weighting of each component.
+        H (array):
+            magnetic field data
+        H_res (float):
+            Resonance field of peak
+        Delta_H (float):
+            Preak wideth
+        K_1 (float):
+            Relative weighting of each component.
+        K_2 (float):
+            Relative weighting of each component.
 
     Returns:
         Array of model absorption values.
@@ -149,13 +154,12 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
     \left(\Delta_{H}^{2} + 4 \left(H - H_{res}\right)^{2}\right)^{2}}`
     """
     return (
-        4 * Delta_H * K_1 * (H - H_res) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
-        - K_2 * (Delta_H ** 2 - 4 * (H - H_res) ** 2) / (Delta_H ** 2 + 4 * (H - H_res) ** 2) ** 2
+        4 * Delta_H * K_1 * (H - H_res) / (Delta_H**2 + 4 * (H - H_res) ** 2) ** 2
+        - K_2 * (Delta_H**2 - 4 * (H - H_res) ** 2) / (Delta_H**2 + 4 * (H - H_res) ** 2) ** 2
     )
 
 
 class BlochLaw(Model):
-
     r"""Bloch's law for spontaneous magnetism at low temperatures.
 
     Args:
@@ -190,7 +194,7 @@ class BlochLaw(Model):
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
-        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_bulk(self, T, g, A, Ms):
         r"""Bloch's Law in bulk systems.
@@ -240,9 +244,12 @@ class BlochLaw(Model):
         pars = self.make_params(**guesses)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class BlochLawThin(Model):
-
     r"""Bloch's law for spontaneous magnetism at low temperatures - thin film version.
 
     Args:
@@ -269,15 +276,15 @@ class BlochLawThin(Model):
     """
 
     def __init__(self, *args, **kwargs):
-        """Setup the model."""
+        """Initialise the model."""
         super().__init__(self.blochs_law_thinfilm, *args, **kwargs)
         self.set_param_hint("g", vary=False, value=2.0)
         self.set_param_hint("A", vary=True, min=0)
         self.set_param_hint("Ms", vary=True, min=0)
-        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi ** 2)
+        self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_thinfilm(self, T, D, Bz, S, v_ws, a, nz):
-        """Thin film version of Blopch's Law.
+        r"""Thin film version of Blopch's Law.
 
         Parameters:
             T (array):
@@ -312,15 +319,17 @@ class BlochLawThin(Model):
                         ln\left[1-\exp\left( -\frac{1}{k_B T}\left(g\mu_B B_z+D\left(\frac{m \pi}{a(n_z-1)}\right)^2
                                                                    \right)\right) \right]`
         """
-
         kz_sum = sum(
             np.log(1.0 - np.exp(-(D * (m * np.pi / ((nz - 1) * a)) ** 2 + Bz) / (k * T))) for m in range(0, nz - 1)
         )
         return 1.0 + (v_ws / (4 * np.pi * S * (nz - 1) * a)) * (k * T / D) * kz_sum
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class Langevin(Model):
-
     r"""The Langevin function for paramagnetic M-H loops.
 
     Args:
@@ -349,10 +358,11 @@ class Langevin(Model):
         r"""Guess some starting values.
 
         M_s is taken as half the difference of the range of thew M data,
-        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`,"""
+        we can find m/T from the susceptibility :math:`chi= M_s \mu_o m / kT`
+        """
         M_s = (np.max(data) - np.min(data)) / 2.0
         if x is not None:
-            d = np.sort(np.row_stack((x, data)))
+            d = np.sort(np.vstack((x, data)))
             dd = savgol_filter(d, 7, 1)
             yd = dd[1] / dd[0]
             chi = np.interp(np.array([0]), d[0], yd)[0]
@@ -365,9 +375,12 @@ class Langevin(Model):
         pars = self.make_params(M_s=M_s, m=m, T=T)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class KittelEquation(Model):
-
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -398,8 +411,8 @@ class KittelEquation(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * np.pi ** 2 * data ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (x ** 2 + 2 * x * H_k + H_k ** 2)) / (
-            gamma ** 2 * cnst.mu_0 ** 2 * (x + H_k)
+        M_s = (4 * np.pi**2 * data**2 - gamma**2 * cnst.mu_0**2 * (x**2 + 2 * x * H_k + H_k**2)) / (
+            gamma**2 * cnst.mu_0**2 * (x + H_k)
         )
         M_s = np.mean(M_s)
 
@@ -410,9 +423,12 @@ class KittelEquation(Model):
         pars["H_k"].max = M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class Inverse_Kittel(Model):
-
     r"""Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -439,8 +455,8 @@ class Inverse_Kittel(Model):
         g = 2
         H_k = 100
         gamma = g * cnst.e / (2 * cnst.m_e)
-        M_s = (4 * np.pi ** 2 * x ** 2 - gamma ** 2 * cnst.mu_0 ** 2 * (data ** 2 + 2 * data * H_k + H_k ** 2)) / (
-            gamma ** 2 * cnst.mu_0 ** 2 * (data + H_k)
+        M_s = (4 * np.pi**2 * x**2 - gamma**2 * cnst.mu_0**2 * (data**2 + 2 * data * H_k + H_k**2)) / (
+            gamma**2 * cnst.mu_0**2 * (data + H_k)
         )
         M_s = np.mean(M_s)
 
@@ -451,9 +467,12 @@ class Inverse_Kittel(Model):
         pars["H_k"].max = M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class FMR_Power(Model):
-
     r"""Combine a Lorentzian and differential Lorenztion peak as measured in an FMR experiment.
 
     Args:
@@ -488,7 +507,7 @@ class FMR_Power(Model):
         y1 = np.max(data)
         y2 = np.min(data)
         dy = y1 - y2
-        K_2 = dy * (4 * np.pi * Delta_H ** 2) / (3 * np.sqrt(3))
+        K_2 = dy * (4 * np.pi * Delta_H**2) / (3 * np.sqrt(3))
         ay = (y1 + y2) / 2
         K_1 = ay * np.pi / Delta_H
 
@@ -499,3 +518,7 @@ class FMR_Power(Model):
         pars["H_res"].min = np.min(x)
         pars["H_res"].max = np.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

@@ -1,4 +1,5 @@
 """Example of using lmfit to do a bounded fit."""
+
 # pylint: disable=invalid-name
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import StretchedExp

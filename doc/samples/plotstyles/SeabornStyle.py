@@ -1,4 +1,5 @@
 """Example plot style using Seaborn plot styling template."""
+
 # pylint: disable=invalid-name
 import os.path as path
 

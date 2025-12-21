@@ -1,27 +1,26 @@
 # -*- coding: utf-8 -*-
-"""Provides the classes and support functions for the :py:attr:`Stoner.DataFolder.grups` magic attribute."""
+"""Provides the classes and support functions for the :py:attr:`Stoner.DataFolder.groups` magic attribute."""
 
 __all__ = ["GroupsDict"]
 
-from collections.abc import Iterable
 import fnmatch
+from collections.abc import Iterable
 from os import path
 
-from Stoner.core.base import regexpDict
+from Stoner.core.base import RegexpDict
 
 
-class GroupsDict(regexpDict):
+class GroupsDict(RegexpDict):
+    """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.BaseFolder` objects."""
 
-    """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.baseFolder` objects."""
-
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Capture a *base* keyuword that sets the parent :py:class:`Stoner.DataFolder` instance."""
-        self.base = kargs.pop("base", None)
-        super().__init__(*args, **kargs)
+        self.base = kwargs.pop("base", None)
+        super().__init__(*args, **kwargs)
 
     def __setitem__(self, name, value):
         """Enforce type checking on values."""
-        if not isinstance(value, type(self.base)):
+        if not isinstance(value, type(self.base)) and self.base:
             raise ValueError(f"groups attribute can only contain {type(type(self.base))} objects not {type(value)}")
         super().__setitem__(name, value)
 
@@ -33,7 +32,7 @@ class GroupsDict(regexpDict):
         """
         if base is None:
             base = self.base
-        if not len(self.base):
+        if not self.base:
             for g in list(self.keys()):
                 nk = path.join(key, g)
                 base.groups[nk] = self[g]
@@ -47,7 +46,7 @@ class GroupsDict(regexpDict):
                         base.groups[nk].__deleter__(f)
                 if len(base.groups[nk]) == 0 and len(base.groups[nk].groups) == 0:
                     del base.groups[nk]
-        self.base.grups = self
+        self.base.groups = self
         return self.base
 
     def keep(self, name):
@@ -58,7 +57,7 @@ class GroupsDict(regexpDict):
                 Name(s) (or glob patterns) of groups to keep.
 
         Returns:
-            A copy of the  baseFolder with the retained groups.
+            A copy of the  BaseFolder with the retained groups.
         """
         keys = list(self.keys())
         if isinstance(name, str):
@@ -72,9 +71,9 @@ class GroupsDict(regexpDict):
             else:
                 g = self[grp]
                 g.groups.keep(name)
-                if not len(g.groups):
+                if not g.groups:
                     del self[grp]
-        self.base.grups = self
+        self.base.groups = self
         return self.base
 
     def prune(self, name=None):
@@ -90,7 +89,7 @@ class GroupsDict(regexpDict):
             if name is not None:
                 if fnmatch.fnmatch(grp, name):
                     del self[grp]
-            elif not len(g) and not len(g.groups):
+            elif not g and not g.groups:
                 del self[grp]
-        self.base.grups = self
+        self.base.groups = self
         return self.base

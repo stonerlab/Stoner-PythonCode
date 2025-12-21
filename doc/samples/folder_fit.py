@@ -1,11 +1,13 @@
 """Demo of Fitting a directory of files."""
+
 # pylint: disable=invalid-name
 from os.path import join
+
 from matplotlib.pyplot import figure
 
-from Stoner import __home__, DataFolder, Data
-from Stoner.plot.formats import TexEngFormatter
+from Stoner import Data, DataFolder, __home__
 from Stoner.analysis.fitting.models.generic import Quadratic
+from Stoner.plot.formats import TexEngFormatter
 
 # Set up the directory with our data
 datafiles = join(__home__, "..", "sample-data", "NLIV")
@@ -38,7 +40,7 @@ result.plot(fmt="k.", capsize=2)
 # An alternative way to run the Analysis - this time with
 # an orthogonal didstance regression algorithm
 
-# Run the fitt for each file in the fldr. Set the outpout to "data" to
+# Run the fitt for each file in the fldr. Set the output to "data" to
 # Have the amended results replace the existing data files
 fldr.each.odr(Quadratic, output="data", result=True, header="fit", _serial=True)
 fig = figure()

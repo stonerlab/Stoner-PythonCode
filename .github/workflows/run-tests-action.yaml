@@ -1,0 +1,92 @@
+name: pytest
+on: push
+jobs:
+  run_pytest:
+    name: run-tests (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12","3.13"]
+        os: ["ubuntu-latest"]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Install Conda environment with Micromamba
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: tests/test-env.yml
+          python: ${{ matrix.python-version }}
+          channels: conda-forge,phygbu
+          channel-priority: flexible
+          activate-environment: test-environment
+          auto-activate-base: false
+      - name: Conda information
+        run: |
+          conda info
+          conda list
+          conda config --show-sources
+          conda config --show
+      - name: install package
+        run: pip install --no-deps .
+      - name: Install headless server
+        run: |
+           sudo apt-get update
+           sudo apt-get install xvfb
+           sudo apt-get install qtbase5-dev
+      - name: Test with xvfb
+        run: |
+           xvfb-run --auto-servernum /usr/share/miniconda/envs/test-environment/bin/pytest  -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml
+           coverage xml
+        env:
+            TZ: Europe/London
+            LC_CTYPE: en_GB.UTF-8
+            GH_ACTION: True
+      - name: Cleanup X11 server
+        uses: bcomnes/cleanup-xvfb@v1
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v2
+        with:
+          flag-name: run-${{ join(matrix.*, '-') }}
+          format: cobertura
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unit Test Results (Python ${{ matrix.python-version }})
+          path: pytest.xml
+      - name: Post Coveraage result to Codacy
+        run: |
+          export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage.xml
+
+  publish-test-results:
+    name: "Publish Unit Tests Results"
+    needs: run_pytest
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: artifacts/**/*.xml
+
+  coverage-finish:
+    needs: run_pytest
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
+        carryforward: "run-1,run-2"

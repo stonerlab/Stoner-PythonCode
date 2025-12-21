@@ -1,480 +1,558 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Channel column operations functions for analysis code."""
 
-__all__ = ["ColumnOpsMixin"]
+from typing import Callable, Optional, Tuple, Union
 
 import numpy as np
+from numpy.typing import NDArray
 
-from Stoner.tools import isiterable, all_type
-from Stoner.compat import index_types
+from ..compat import _pattern_type
+from ..tools import all_type, isiterable
+from ..tools.typing import Data, Index
 
 
-class ColumnOpsMixin:
-
-    """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional stats methods."""
-
-    def _do_error_calc(self, col_a, col_b, error_type="relative"):
-        """Do an error calculation."""
-        col_a = self.find_col(col_a)
-        error_calc = None
-        if (
-            isinstance(col_a, (list, tuple))
-            and isinstance(col_b, (list, tuple))
-            and len(col_a) == 2
-            and len(col_b) == 2
-        ):  # Error columns on
-            (col_a, e1) = col_a
-            (col_b, e2) = col_b
-            e1data = self.__get_math_val(e1)[0]
-            e2data = self.__get_math_val(e2)[0]
-            if error_type == "relative":
+def _do_error_calc(datafile: Data, col_a: Index, col_b: Index, error_type: str = "relative") -> NDArray[np.float64]:
+    """Do an error calculation."""
+    col_a = datafile.find_col(col_a)
+    if (
+        isinstance(col_a, (list, tuple)) and isinstance(col_b, (list, tuple)) and len(col_a) == 2 and len(col_b) == 2
+    ):  # Error columns on
+        (col_a, e1) = col_a
+        (col_b, e2) = col_b
+        e1data = __get_math_val(datafile, e1)[0]
+        e2data = __get_math_val(datafile, e2)[0]
+        match error_type:
+            case "relative":
 
                 def error_calc(adata, bdata):  # pylint: disable=function-redefined
                     """Relative error summation."""
                     return np.sqrt((e1data / adata) ** 2 + (e2data / bdata) ** 2)
 
-            elif error_type == "absolute":
+            case "absolute":
 
                 def error_calc(adata, bdata):  # pylint: disable=function-redefined, unused-argument
                     """Sum absolute errors."""
-                    return np.sqrt(e1data ** 2 + e2data ** 2)
+                    return np.sqrt(e1data**2 + e2data**2)
 
-            elif error_type == "diffsum":
+            case "diffsum":
 
                 def error_calc(adata, bdata):  # pylint: disable=function-redefined
                     """Calculate error for difference over sum."""
                     return np.sqrt(
-                        (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data ** 2
-                        + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data ** 2
+                        (1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e1data**2
+                        + (-1.0 / (adata + bdata) - (adata - bdata) / (adata + bdata) ** 2) ** 2 * e2data**2
                     )
 
-            else:
-                raise ValueError(f"Unknown error caclulation mode {error_type}")
+            case _:
+                raise ValueError(f"Unknown error calculation mode {error_type}")
+    else:
+        error_calc = None
 
-        adata, aname = self.__get_math_val(col_a)
-        bdata, bname = self.__get_math_val(col_b)
-        return adata, bdata, error_calc, aname, bname
+    adata, aname = __get_math_val(datafile, col_a)
+    bdata, bname = __get_math_val(datafile, col_b)
+    return adata, bdata, error_calc, aname, bname
 
-    def __get_math_val(self, col):
-        """Interpret col as either col_a column index or value or an array of values.
 
-        Args:
-            col (various):
-                If col can be interpreted as col_a column index then return the first matching column.
-                If col is col_a 1D array of the same length as the data then just return the data. If col is col_a
-                float then just return it as col_a float.
+def __get_math_val(datafile: Data, col: Index) -> Tuple[Data, str]:
+    """Interpret col as either col_a column index or value or an array of values.
 
-        Returns:
-            (tuple of (:py:class:`Stoner.cpre.DataArray`,str)):
-                The matching data.
-        """
-        if isinstance(col, index_types):
-            col = self.find_col(col)
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        col (various):
+            If col can be interpreted as col_a column index then return the first matching column.
+            If col is col_a 1D array of the same length as the data then just return the data. If col is col_a
+            float then just return it as col_a float.
+
+    Returns:
+        (tuple of (:py:class:`Stoner.cpre.DataArray`,str)):
+            The matching data.
+    """
+    match col:
+        case int() | str() | _pattern_type():
+            col = datafile.find_col(col)
             if isinstance(col, list):
                 col = col[0]
-            data = self.column(col)
-            name = self.column_headers[col]
-        elif isinstance(col, np.ndarray) and col.ndim == 1 and len(col) == len(self):
+            data = datafile.column(col)
+            name = datafile.column_headers[col]
+        case np.ndarray() if col.ndim == 1 and len(col) == len(datafile):
             data = col
             name = "data"
-        elif isinstance(col, float):
-            data = col * np.ones(len(self))
+        case float():
+            data = col * np.ones(len(datafile))
             name = str(col)
-        else:
+        case _:
             raise RuntimeError(f"Bad column index: {col}")
-        return data, name
+    return data, name
 
-    def add(self, col_a, col_b, replace=False, header=None, index=None):
-        """Add one column, number or array (col_b) to another column (col_a).
 
-        Args:
-            col_a (index):
-                First column to work with
-            col_b (index, float or 1D array):
-                Second column to work with.
+def add(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
+    """Add one column, number or array (col_b) to another column (col_a).
 
-        Keyword Arguments:
-            header (string or None):
-                new column header  (defaults to a-b
-            replace (bool):
-                Replace the col_a column with the new data
-            index (column index or None):
-                Column to insert new data at.
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        col_a (index):
+            First column to work with
+        col_b (index, float or 1D array):
+            Second column to work with.
 
-        Returns:
-            (:py:class:`Stoner.Data`):
-                The newly modified Data object.
+    Keyword Arguments:
+        header (string or None):
+            new column header  (defaults to a-b
+        replace (bool):
+            Replace the col_a column with the new data
+        index (column index or None):
+            Column to insert new data at.
 
-        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data.
-        """
-        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="absolute")
-        err_header = None
-        if isinstance(header, tuple) and len(header) == 2:
-            header, err_header = header
-        if header is None:
-            header = f"{aname}+{bname}"
-        if err_calc is not None and err_header is None:
-            err_header = "Error in " + header
-        index = self.shape[1] if index is None else self.find_col(index)
-        if err_calc is not None:
-            err_data = err_calc(adata, bdata)
-        self.add_column((adata + bdata), header=header, index=index, replace=replace)
-        if err_calc is not None:
-            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
-        return self
+    Returns:
+        (:py:class:`Stoner.Data`):
+            The newly modified Data object.
 
-    def diffsum(self, col_a, col_b, replace=False, header=None, index=None):
-        r"""Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.
+    If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
+    the second element an uncertainty in the value. The uncertainties will then be propagated and an
+    additional column with the uncertainites will be added to the data.
+    """
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="absolute")
+    err_header = None
+    if isinstance(header, tuple) and len(header) == 2:
+        header, err_header = header
+    if header is None:
+        header = f"{aname}+{bname}"
+    if err_calc is not None and err_header is None:
+        err_header = "Error in " + header
+    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    if err_calc is not None:
+        err_data = err_calc(adata, bdata)
+    datafile.add_column((adata + bdata), header=header, index=index, replace=replace)
+    if err_calc is not None:
+        datafile.add_column(err_data, header=err_header, index=index + 1, replace=False)
+    return datafile
 
-        Args:
-            col_a (index):
-                First column to work with
-            col_b (index, float or 1D array):
-                Second column to work with.
 
-        Keyword Arguments:
-            header (string or None):
-                new column header  (defaults to a-b
-            replace (bool):
-                Replace the col_a column with the new data
-            index (column index or None):
-                Column to insert new data at.
+def diffsum(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
+    r"""Calculate :math:`\frac{a-b}{a+b}` for the two columns *a* and *b*.
 
-        Returns:
-            (:py:class:`Stoner.Data`):
-                The newly modified Data object.
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        col_a (index):
+            First column to work with
+        col_b (index, float or 1D array):
+            Second column to work with.
 
-        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data.
-        """
-        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="diffsum")
-        err_header = None
-        if isinstance(header, tuple) and len(header) == 2:
-            header, err_header = header
-        if header is None:
-            header = f"({aname}-{bname})/({aname}+{bname})"
-        if err_calc is not None and err_header is None:
-            err_header = "Error in " + header
-        if err_calc is not None:
-            err_data = err_calc(adata, bdata)
-        index = self.shape[1] if index is None else self.find_col(index)
-        self.add_column((adata - bdata) / (adata + bdata), header=header, index=index, replace=replace)
-        if err_calc is not None:
-            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
-        return self
+    Keyword Arguments:
+        header (string or None):
+            new column header  (defaults to a-b
+        replace (bool):
+            Replace the col_a column with the new data
+        index (column index or None):
+            Column to insert new data at.
 
-    def divide(self, col_a, col_b, replace=False, header=None, index=None):
-        """Divide one column (col_a) by  another column, number or array (col_b).
+    Returns:
+        (:py:class:`Stoner.Data`):
+            The newly modified Data object.
 
-        Args:
-            col_a (index):
-                First column to work with
-            col_b (index, float or 1D array):
-                Second column to work with.
+    If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
+    the second element an uncertainty in the value. The uncertainties will then be propagated and an
+    additional column with the uncertainites will be added to the data.
+    """
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="diffsum")
+    err_header = None
+    if isinstance(header, tuple) and len(header) == 2:
+        header, err_header = header
+    if header is None:
+        header = f"({aname}-{bname})/({aname}+{bname})"
+    if err_calc is not None and err_header is None:
+        err_header = "Error in " + header
+    if err_calc is not None:
+        err_data = err_calc(adata, bdata)
+    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    datafile.add_column((adata - bdata) / (adata + bdata), header=header, index=index, replace=replace)
+    if err_calc is not None:
+        datafile.add_column(err_data, header=err_header, index=index + 1, replace=False)
+    return datafile
 
-        Keyword Arguments:
-            header (string or None):
-                new column header  (defaults to a-b
-            replace (bool):
-                Replace the col_a column with the new data
-            index (column index or None):
-                Column to insert new data at.
 
-        Returns:
-            (:py:class:`Stoner.Data`):
-                The newly modified Data object.
+def divide(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
+    """Divide one column (col_a) by  another column, number or array (col_b).
 
-        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data.
-        """
-        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="relative")
-        err_header = None
-        if isinstance(header, tuple) and len(header) == 2:
-            header, err_header = header
-        if header is None:
-            header = f"{aname}/{bname}"
-        if err_calc is not None and err_header is None:
-            err_header = "Error in " + header
-        index = self.shape[1] if index is None else self.find_col(index)
-        self.add_column((adata / bdata), header=header, index=index, replace=replace)
-        if err_calc is not None:
-            err_data = err_calc(adata, bdata) * np.abs(adata / bdata)
-            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
-        return self
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        col_a (index):
+            First column to work with
+        col_b (index, float or 1D array):
+            Second column to work with.
 
-    def max(self, column=None, bounds=None):
-        """Find maximum value and index in col_a column of data.
+    Keyword Arguments:
+        header (string or None):
+            new column header  (defaults to a-b
+        replace (bool):
+            Replace the col_a column with the new data
+        index (column index or None):
+            Column to insert new data at.
 
-        Args:
-            column (index):
-                Column to look for the maximum in
+    Returns:
+        (:py:class:`Stoner.Data`):
+            The newly modified Data object.
 
-        Keyword Arguments:
-            bounds (callable):
-                col_a callable function that takes col_a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
+    If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
+    the second element an uncertainty in the value. The uncertainties will then be propagated and an
+    additional column with the uncertainites will be added to the data.
+    """
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="relative")
+    err_header = None
+    if isinstance(header, tuple) and len(header) == 2:
+        header, err_header = header
+    if header is None:
+        header = f"{aname}/{bname}"
+    if err_calc is not None and err_header is None:
+        err_header = "Error in " + header
+    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    datafile.add_column((adata / bdata), header=header, index=index, replace=replace)
+    if err_calc is not None:
+        err_data = err_calc(adata, bdata) * np.abs(adata / bdata)
+        datafile.add_column(err_data, header=err_header, index=index + 1, replace=False)
+    return datafile
 
-        Returns:
-            (float,int):
-                (maximum value,row index of max value)
 
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
-        """
-        if column is None:
-            col = self.setas._get_cols("ycol")
-        else:
-            col = self.find_col(column)
-        if bounds is not None:
-            self._push_mask()
-            self._set_mask(bounds, True, col)
-        result = self.data[:, col].max(), self.data[:, col].argmax()
-        if bounds is not None:
-            self._pop_mask()
-        return result
+def max(  # pylint: disable=redefined-builtin
+    datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None
+) -> Tuple[float, int]:
+    """Find maximum value and index in col_a column of data.
 
-    def mean(self, column=None, sigma=None, bounds=None):
-        """Find mean value of col_a data column.
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        column (index):
+            Column to look for the maximum in
 
-        Args:
-            column (index):
-                Column to look for the maximum in
+    Keyword Arguments:
+        bounds (callable):
+            col_a callable function that takes col_a single argument list of
+            numbers representing one row, and returns True for all rows to search in.
 
-        Keyword Arguments:
-            sigma (column index or array):
-                The uncertainity noted for each value in the mean
-            bounds (callable):
-                col_a callable function that takes col_a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
+    Returns:
+        (float,int):
+            (maximum value,row index of max value)
 
-        Returns:
-            (float):
-                The mean of the data.
+    Note:
+        If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+        assignments are used.
+    """
+    if column is None:
+        col = datafile.setas._get_cols("ycol")
+    else:
+        col = datafile.find_col(column)
+    if bounds is not None:
+        datafile._push_mask()
+        datafile._set_mask(bounds, True, col)
+    result = datafile.data[:, col].max(), datafile.data[:, col].argmax()
+    if bounds is not None:
+        datafile._pop_mask()
+    return result
 
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
 
-        .. todo::
-            Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`
-        """
-        _ = self._col_args(scalar=True, ycol=column, yerr=sigma)
+def mean(
+    datafile: Data,
+    column: Optional[Index] = None,
+    sigma: Optional[Union[NDArray, Index]] = None,
+    bounds: Optional[Callable] = None,
+) -> float:
+    """Find mean value of col_a data column.
 
-        if bounds is not None:
-            self._push_mask()
-            self._set_mask(bounds, True, _.ycol)
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        column (index):
+            Column to look for the maximum in
 
-        if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
-            sigma = np.array(sigma)
-            _["has_yerr"] = True
-        elif _.has_yerr:
-            sigma = self.data[:, _.yerr]
+    Keyword Arguments:
+        sigma (column index or array):
+            The uncertainty noted for each value in the mean
+        bounds (callable):
+            col_a callable function that takes col_a single argument list of
+            numbers representing one row, and returns True for all rows to search in.
 
-        if not _.has_yerr:
-            result = self.data[:, _.ycol].mean()
-        else:
-            ydata = self.data[:, _.ycol]
-            w = 1 / (sigma ** 2 + 1e-8)
-            norm = w.sum(axis=0)
-            error = np.sqrt((sigma ** 2).sum(axis=0)) / len(sigma)
-            result = (ydata * w).mean(axis=0) / norm, error
-        if bounds is not None:
-            self._pop_mask()
-        return result
+    Returns:
+        (float):
+            The mean of the data.
 
-    def min(self, column=None, bounds=None):
-        """Find minimum value and index in col_a column of data.
+    Note:
+        If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+        assignments are used.
 
-        Args:
-            column (index):
-                Column to look for the maximum in
+    .. todo::
+        Fix the row index when the bounds function is used - see note of :py:meth:`Stoner.Data.max`
+    """
+    _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 
-        Keyword Arguments:
-            bounds (callable):
-                col_a callable function that takes col_a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
+    if bounds is not None:
+        datafile._push_mask()
+        datafile._set_mask(bounds, True, _.ycol)
 
-        Returns:
-            (float,int):
-                (minimum value,row index of min value)
+    if isiterable(sigma) and len(sigma) == len(datafile) and all_type(sigma, float):
+        sigma = np.array(sigma)
+        _["has_yerr"] = True
+    elif _.has_yerr:
+        sigma = datafile.data[:, _.yerr]
 
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
-        """
-        if column is None:
-            col = self.setas._get_cols("ycol")
-        else:
-            col = self.find_col(column)
-        if bounds is not None:
-            self._push_mask()
-            self._set_mask(bounds, True, col)
-        result = self.data[:, col].min(), self.data[:, col].argmin()
-        if bounds is not None:
-            self._pop_mask()
-        return result
+    if not _.has_yerr:
+        result = datafile.data[:, _.ycol].mean()
+    else:
+        ydata = datafile.data[:, _.ycol]
+        w = 1 / (sigma**2 + 1e-8)
+        norm = w.sum(axis=0)
+        error = np.sqrt((sigma**2).sum(axis=0)) / len(sigma)
+        result = (ydata * w).mean(axis=0) / norm, error
+    if bounds is not None:
+        datafile._pop_mask()
+    return result
 
-    def multiply(self, col_a, col_b, replace=False, header=None, index=None):
-        """Multiply one column (col_a) by  another column, number or array (col_b).
 
-        Args:
-            col_a (index):
-                First column to work with
-            col_b (index, float or 1D array):
-                Second column to work with.
+def min(  # pylint: disable=redefined-builtin
+    datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None
+) -> Tuple[float, int]:
+    """Find minimum value and index in col_a column of data.
 
-        Keyword Arguments:
-            header (string or None):
-                new column header  (defaults to a-b
-            replace (bool):
-                Replace the col_a column with the new data
-            index (column index or None):
-                Column to insert new data at.
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        column (index):
+            Column to look for the maximum in
 
-        Returns:
-            (:py:class:`Stoner.Data`):
-                The newly modified Data object.
+    Keyword Arguments:
+        bounds (callable):
+            col_a callable function that takes col_a single argument list of
+            numbers representing one row, and returns True for all rows to search in.
 
-        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data.
-        """
-        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="relative")
-        err_header = None
-        if isinstance(header, tuple) and len(header) == 2:
-            header, err_header = header
-        if header is None:
-            header = f"{aname}*{bname}"
-        if err_calc is not None and err_header is None:
-            err_header = "Error in " + header
-        index = self.shape[1] if index is None else self.find_col(index)
-        if err_calc is not None:
-            err_data = err_calc(adata, bdata) * np.abs(adata * bdata)
-        self.add_column((adata * bdata), header=header, index=index, replace=replace)
-        if err_calc is not None:
-            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
-        return self
+    Returns:
+        (float,int):
+            (minimum value,row index of min value)
 
-    def span(self, column=None, bounds=None):
-        """Return a tuple of the maximum and minumum values within the given column and bounds.
+    Note:
+        If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+        assignments are used.
+    """
+    if column is None:
+        col = datafile.setas._get_cols("ycol")
+    else:
+        col = datafile.find_col(column)
+    if bounds is not None:
+        datafile._push_mask()
+        datafile._set_mask(bounds, True, col)
+    result = datafile.data[:, col].min(), datafile.data[:, col].argmin()
+    if bounds is not None:
+        datafile._pop_mask()
+    return result
 
-        Args:
-            column (index):
-                Column to look for the maximum in
 
-        Keyword Arguments:
-            bounds (callable):
-                col_a callable function that takes col_a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
+def multiply(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
+    """Multiply one column (col_a) by  another column, number or array (col_b).
 
-        Returns:
-            (float,float):
-                col_a tuple of (min value, max value)
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        col_a (index):
+            First column to work with
+        col_b (index, float or 1D array):
+            Second column to work with.
 
-        Note:
-            This works by calling into :py:meth:`Data.max` and :py:meth:`Data.min`.
+    Keyword Arguments:
+        header (string or None):
+            new column header  (defaults to a-b
+        replace (bool):
+            Replace the col_a column with the new data
+        index (column index or None):
+            Column to insert new data at.
 
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
+    Returns:
+        (:py:class:`Stoner.Data`):
+            The newly modified Data object.
 
-        """
-        return (self.min(column, bounds)[0], self.max(column, bounds)[0])
+    If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
+    the second element an uncertainty in the value. The uncertainties will then be propagated and an
+    additional column with the uncertainites will be added to the data.
+    """
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="relative")
+    err_header = None
+    if isinstance(header, tuple) and len(header) == 2:
+        header, err_header = header
+    if header is None:
+        header = f"{aname}*{bname}"
+    if err_calc is not None and err_header is None:
+        err_header = "Error in " + header
+    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    if err_calc is not None:
+        err_data = err_calc(adata, bdata) * np.abs(adata * bdata)
+    datafile.add_column((adata * bdata), header=header, index=index, replace=replace)
+    if err_calc is not None:
+        datafile.add_column(err_data, header=err_header, index=index + 1, replace=False)
+    return datafile
 
-    def std(self, column=None, sigma=None, bounds=None):
-        """Find standard deviation value of col_a data column.
 
-        Args:
-            column (index):
-                Column to look for the maximum in
+def span(datafile: Data, column: Optional[Index] = None, bounds: Optional[Callable] = None) -> Tuple[float, float]:
+    """Return a tuple of the maximum and minimum values within the given column and bounds.
 
-        Keyword Arguments:
-            sigma (column index or array):
-                The uncertainity noted for each value in the mean
-            bounds (callable):
-                col_a callable function that takes col_a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        column (index):
+            Column to look for the maximum in
 
-        Returns:
-            (float):
-                The standard deviation of the data.
+    Keyword Arguments:
+        bounds (callable):
+            col_a callable function that takes col_a single argument list of
+            numbers representing one row, and returns True for all rows to search in.
 
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
+    Returns:
+        (float,float):
+            col_a tuple of (min value, max value)
 
-        .. todo::
-            Fix the row index when the bounds function is used - see note of :py:meth:`AnalysisMixin.max`
-        """
-        _ = self._col_args(scalar=True, ycol=column, yerr=sigma)
+    Note:
+        This works by calling into :py:meth:`Data.max` and :py:meth:`Data.min`.
 
-        if bounds is not None:
-            self._push_mask()
-            self._set_mask(bounds, True, _.ycol)
+        If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+        assignments are used.
 
-        if isiterable(sigma) and len(sigma) == len(self) and all_type(sigma, float):
-            sigma = np.array(sigma)
-        elif _.yerr:
-            sigma = self.data[:, _.yerr]
-        else:
-            sigma = np.ones(len(self))
+    """
+    return (datafile.min(column, bounds)[0], datafile.max(column, bounds)[0])
 
-        ydata = self.data[:, _.ycol]
 
-        sigma = np.abs(sigma) / np.nanmax(np.abs(sigma))
-        sigma = np.where(sigma < 1e-8, 1e-8, sigma)
-        weights = 1 / sigma ** 2
-        weights[np.isnan(weights)] = 0.0
+def std(
+    datafile: Data,
+    column: Optional[Index] = None,
+    sigma: Optional[Union[NDArray, Index]] = None,
+    bounds: Optional[Callable] = None,
+):
+    """Find standard deviation value of col_a data column.
 
-        result = np.sqrt(np.cov(ydata, aweights=weights))
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        column (index):
+            Column to look for the maximum in
 
-        if bounds is not None:
-            self._pop_mask()
-        return result
+    Keyword Arguments:
+        sigma (column index or array):
+            The uncertainty noted for each value in the mean
+        bounds (callable):
+            col_a callable function that takes col_a single argument list of
+            numbers representing one row, and returns True for all rows to search in.
 
-    def subtract(self, col_a, col_b, replace=False, header=None, index=None):
-        """Subtract one column, number or array (col_b) from another column (col_a).
+    Returns:
+        (float):
+            The standard deviation of the data.
 
-        Args:
-            col_a (index):
-                First column to work with
-            col_b (index, float or 1D array):
-                Second column to work with.
+    Note:
+        If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+        assignments are used.
 
-        Keyword Arguments:
-            header (string or None):
-                new column header  (defaults to a-b
-            replace (bool):
-                Replace the col_a column with the new data
-            index (column index or None):
-                Column to insert new data at.
+    .. todo::
+        Fix the row index when the bounds function is used - see note of :py:meth:`Stoner.Data.max`
+    """
+    _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 
-        Returns:
-            (:py:class:`Stoner.Data`):
-                The newly modified Data object.
+    if bounds is not None:
+        datafile._push_mask()
+        datafile._set_mask(bounds, True, _.ycol)
 
-        If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data.
-        """
-        adata, bdata, err_calc, aname, bname = self._do_error_calc(col_a, col_b, error_type="absolute")
-        err_header = None
-        if isinstance(header, tuple) and len(header) == 2:
-            header, err_header = header
-        if header is None:
-            header = f"{aname}-{bname}"
-        if err_calc is not None and err_header is None:
-            err_header = "Error in " + header
-        index = self.shape[1] if index is None else self.find_col(index)
-        if err_calc is not None:
-            err_data = err_calc(adata, bdata)
-        self.add_column((adata - bdata), header=header, index=index, replace=replace)
-        if err_calc is not None:
-            col_a = self.find_col(col_a)
-            self.add_column(err_data, header=err_header, index=index + 1, replace=False)
-        return self
+    if isiterable(sigma) and len(sigma) == len(datafile) and all_type(sigma, float):
+        sigma = np.array(sigma)
+    elif _.yerr:
+        sigma = datafile.data[:, _.yerr]
+    else:
+        sigma = np.ones(len(datafile))
+
+    ydata = datafile.data[:, _.ycol]
+
+    sigma = np.abs(sigma) / np.nanmax(np.abs(sigma))
+    sigma = np.where(sigma < 1e-8, 1e-8, sigma)
+    weights = 1 / sigma**2
+    weights[np.isnan(weights)] = 0.0
+
+    result = np.sqrt(np.cov(ydata, aweights=weights))
+
+    if bounds is not None:
+        datafile._pop_mask()
+    return result
+
+
+def subtract(
+    datafile: Data,
+    col_a: Index,
+    col_b: Index,
+    replace: bool = False,
+    header: Optional[str] = None,
+    index: Optional[Index] = None,
+) -> Data:
+    """Subtract one column, number or array (col_b) from another column (col_a).
+
+    Args:
+        datafile (Data):
+            If not being used as a bound menthod, specifies the instance of Data to work with.
+        col_a (index):
+            First column to work with
+        col_b (index, float or 1D array):
+            Second column to work with.
+
+    Keyword Arguments:
+        header (string or None):
+            new column header  (defaults to a-b
+        replace (bool):
+            Replace the col_a column with the new data
+        index (column index or None):
+            Column to insert new data at.
+
+    Returns:
+        (:py:class:`Stoner.Data`):
+            The newly modified Data object.
+
+    If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
+    the second element an uncertainty in the value. The uncertainties will then be propagated and an
+    additional column with the uncertainites will be added to the data.
+    """
+    adata, bdata, err_calc, aname, bname = _do_error_calc(datafile, col_a, col_b, error_type="absolute")
+    err_header = None
+    if isinstance(header, tuple) and len(header) == 2:
+        header, err_header = header
+    if header is None:
+        header = f"{aname}-{bname}"
+    if err_calc is not None and err_header is None:
+        err_header = "Error in " + header
+    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    if err_calc is not None:
+        err_data = err_calc(adata, bdata)
+    datafile.add_column((adata - bdata), header=header, index=index, replace=replace)
+    if err_calc is not None:
+        col_a = datafile.find_col(col_a)
+        datafile.add_column(err_data, header=err_header, index=index + 1, replace=False)
+    return datafile

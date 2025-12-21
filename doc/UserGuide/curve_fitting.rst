@@ -1,7 +1,7 @@
 .. _curve_fit_guide:
 
 ***********************************
-Curve Fitting in the Stoner Pacakge
+Curve Fitting in the Stoner Package
 ***********************************
 
 .. currentmodule:: Stoner
@@ -20,19 +20,19 @@ In order of increasing complexity, the Stoner package supports the following:
 
 -   `Simple polynomial fits`_
 
-    If the model is simply a polynomial function and there are no uncerainties in the data and no constraints on the parameters, then this
+    If the model is simply a polynomial function and there are no uncertainties in the data and no constraints on the parameters, then this
     is the simplest and easiest to use. This makes use of the :py:meth:`Data.polyfit` method.
 
 -   `Simple function fitting`_
 
-    If you need to fit to an arbitary function, have no contraints on the values of the fitting parameters, and have uncertainities in the *y*
-    co-ordinates but not in the *x*, then the simple function fitting is probably the best option. The Stoner package provides a wrapper around
+    If you need to fit to an arbitrary function, have no constraints on the values of the fitting parameters, and have uncertainties in the *y*
+    coordinates but not in the *x*, then the simple function fitting is probably the best option. The Stoner package provides a wrapper around
     the standard :py:func:`scipy.optimize.curve_fit` function in the form of the :py:meth:`Data.curve_vit` method.
 
 -   `Fitting with limits`_
 
-    If your problem has constrained parameters - that is there are physical reasons why the paramters in your model cannot take certain values,
-    the you probably want to use the :py:meth:`Data.lmfit` method. This works well when your data has uncertainities in the *y* values but
+    If your problem has constrained parameters - that is there are physical reasons why the parameters in your model cannot take certain values,
+    the you probably want to use the :py:meth:`Data.lmfit` method. This works well when your data has uncertainties in the *y* values but
     not in *x*.
 
 -   `Orthogonal distance regression`_
@@ -45,21 +45,21 @@ In order of increasing complexity, the Stoner package supports the following:
     Differential evolution algorithms attempt to find optimal fits by evaluating a population of possible solutions and then combining those that
     were scored by some costing function to be the best fits - thereby creating a new population of possible (hopefully better) solutions. In general
     some level of random fluctuation is permitted to stop the minimizer getting stuck in local minima. These algorithms can be effective when there are a
-    karge number of parametgers to search or the cost is not a smooth function of the parmaeters and thus cannot be differentiated. The algorithm here
+    karge number of parametgers to search or the cost is not a smooth function of the parameters and thus cannot be differentiated. The algorithm here
     uses a standard weighted variance as the cost function - like *lmfit* and *curve_fit* do.
 
 Why Use the Stoner Package Fitting Wrappers?
 --------------------------------------------
 
-There are a number of advantages to using the Stoner pakcage wrappers around the the vartious fitting algorithms rather than using them as
-standalone fitting functios:
+There are a number of advantages to using the Stoner package wrappers around the the vartious fitting algorithms rather than using them as
+standalone fitting functions:
 
-    #.  They provide a consisten way of defining the model to be fitted. All of the Stoner package functions accept a model function of the form:
+    #.  They provide a consistent way of defining the model to be fitted. All of the Stoner package functions accept a model function of the form:
         f(x,p1,p2,p3), constructing the necessary intrermediate model class as necessary - similatly they can all take an :py:class:`lmfit.model.Model`
         class or instance and adapt that as necessary.
-    #.  They provide a consisten parameter order and keyword argument names as far as possible within the limits of the underlying algorithms.
+    #.  They provide a consistent parameter order and keyword argument names as far as possible within the limits of the underlying algorithms.
         Gerneally these follow the :py:func:`scipy.optimize.curve_fit` conventions.
-    #.  They make use of the :py:attr:`Data.setas` attribute to identify data columns containing *x*, *y* and associated uncertainities. They
+    #.  They make use of the :py:attr:`Data.setas` attribute to identify data columns containing *x*, *y* and associated uncertainties. They
         also probvide a common way to select a subset of data to use for the fitting through the *bounds* keyword argument.
     #.  They provide a consistent way to add the best fit data as a column(s) to the :py:class:`Data` object and to stpore the best-fit
         parameters in the metadata for retrieval later. Since this is done in a consistent fashion, the package also can probide a
@@ -86,16 +86,16 @@ method returns a list of coefficients with the highest power first. If
 If *result* is specified then a new column with the header given by the *result* parameter will be
 created and the fitted polynomial evaluated at each point.
 
-Fitting Arbitary Functions
+Fitting Arbitrary Functions
 ==========================
 
 Common features of the Function Fitting Methods
 -----------------------------------------------
 
-he output of the three methods used to fit arbitary functions  depend on the keyword parameters *output*, *result* *replace* and *header* in the method call.
+he output of the three methods used to fit arbitrary functions  depend on the keyword parameters *output*, *result* *replace* and *header* in the method call.
 
     -   *output="fit"*
-        The optimal parameters and a variance-covariance matrix are retured
+        The optimal parameters and a variance-covariance matrix are returned
     -   *output="row"*
         A 1D numpy array of optimal values and standard errors interleaved (i.e. p_opt[0],p_error[0],p_opt[1],p_error[1]....)
         us returned. This is useful when analysing a large number of similar data sets in order to build a table of fitting results.
@@ -104,7 +104,7 @@ he output of the three methods used to fit arbitary functions  depend on the key
     -   *output="data"*
         A copy for the data file itself is returned - this is most useful when used in conjunction with :py:class:`Stoner.DataFolder`
     -   *oputput="full"*
-        As much infromation about the fit as can be extracted from the fitting algorithm is returned.
+        As much information about the fit as can be extracted from the fitting algorithm is returned.
 
 If *result* is not None, then the best fit data points are calculated and also the fitting parameters, errors and :math:`\chi^2` value
 is calculated and added to the metadata of the :py:class:`Data` object. To distinguish between multiple fits, a *prefix* keyword can be given, otherwise
@@ -127,7 +127,7 @@ for adding appropriately formatted details of the fit to the plot (in this case 
     :outname: curve_fit_line
 
 The *bounds* function can be used to restrict the fitting to only a subset of the rows
-of data. Any callable object which will take a float and an array of floats, representing the one x-value and one complete row and rturn
+of data. Any callable object which will take a float and an array of floats, representing the one x-value and one complete row and return
 True if the row is to be included in the fit and False if not. e.g.::
 
     def bounds_func(x,row):
@@ -150,7 +150,7 @@ the same name.::
 The first parameter is the fitting function. This should have prototype
 ``y=func(x,p[0],p[1],p[2]...)``: where *p* is a list of fitting parameters.
 
-Alternatively a subclass of, or instance of, a :py:class:`lmfit.model.Model` can also be passed and it's function will be used to provide infromation to
+Alternatively a subclass of, or instance of, a :py:class:`lmfit.model.Model` can also be passed and it's function will be used to provide information to
 :py:meth:`Data.curve_fit`.
 
 The *p0* parameter contains the initial guesses at the fitting
@@ -158,11 +158,11 @@ parameters, the default value is 1.
 *xcol* and *ycol* are the x and y columns to fit. If *xcol* and *ycol* are not given, then the :py:attr:`Data.setas` attrobite is used to determine
 which columns to fit.
 
-*sigma*, *absolute_sigma* and *scale_covar* determine how the fitting process takes account of uncertainities in the *y* data.
-*sigma*, if present, provides the weightings or stadnard deviations for each datapoint and so
+*sigma*, *absolute_sigma* and *scale_covar* determine how the fitting process takes account of uncertainties in the *y* data.
+*sigma*, if present, provides the weightings or standard deviations for each datapoint and so
 should also be an array of the same length as the x and y data. If *sigma* is not given and a column is
 identified int he :py:attr:`Data.setas` attribute as containing *e* values, then that is used instead.
-If *absolute_sigma* is given then if this is True, the *sigma* values are interpreted as absolute uncertainities in the data points,
+If *absolute_sigma* is given then if this is True, the *sigma* values are interpreted as absolute uncertainties in the data points,
 if it is False, then they are relative weightings. If *absolute_sigma* is not given, a *scale_covar* parameter will have the same effect,
 but inverted, so that True equates to relative weights and False to absolute uncertainties. Finally if neither is given then any *sigma* values
 are assumed to be absolute.
@@ -201,8 +201,8 @@ The operation of :py:meth:`Data.lmfit` is very similar to that of :py:meth:`Data
     print fit.fit_report()
     print a["Arrehenius:A"],a["Arrehenius:A err"],a["chi^2"],a["nfev"]
 
-In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
-fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`Data`.
+In this example we would be fitting an Arrehenius model to data contained in the 'Temp' and 'Cond' columns. The resulting
+fit would be added as an additional column called fit. In addition, details of the fit are added as metadata to the current :py:class:`Data`.
 
 The *model* argument to :py:meth:`Data.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be
 instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
@@ -211,7 +211,7 @@ a simple call to :py:meth:`Data.curve_fit`.
 The return value from :py:meth:`Data.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
 instance. This contains all the information about the fit and fitting process.
 
-You can pass the model as a subclass of model, if you don't pass initial values either via the *p0* parameter or as keyword arguements, then the model's
+You can pass the model as a subclass of model, if you don't pass initial values either via the *p0* parameter or as keyword arguments, then the model's
 *guess* method is called (e.g. :py:meth:`Stoner.analysis.fitting.models.thermal.Arrhenius.guess`) to determine parameters fromt he data. For example:
 
 .. plot:: samples/lmfit_example.py
@@ -222,8 +222,8 @@ Orthogonal distance regression
 ------------------------------
 
 :py:meth:`Data.curve_fit` and :py:meth:`Data.lmfit` are both essentially based on a Levenberg-Marquardt fitting algorithm which is a non-linear least squares
-routine. The essential point is that it seeks to minimize the **vertical** distance between the model and the data points, taking into account the uncertainity
-in the vertical poisition (ie. *y* co-ordinate) only. If your data has peaks that may change position and/or uncertanities in the horizontal (*x*) position of
+routine. The essential point is that it seeks to minimize the **vertical** distance between the model and the data points, taking into account the uncertainty
+in the vertical position (ie. *y* coordinate) only. If your data has peaks that may change position and/or uncertanities in the horizontal (*x*) position of
 the data points, you may be better off using an orthogonal distance regression.
 
 The :py:meth:`Data.odr` method wraps the :py:mod:`scipy.odr` module and tries to make it function as much like :py:mod:`lmfit` as possible. In fact, in most
@@ -233,8 +233,8 @@ cases it can be used as a drop-in replacement:
      :include-source:
      :outname: odrfit2
 
-The :py:meth:`Data.odr` method allows uncertainities in *x* and *y* to be specified via the *sigma_x* and *sigma_y*  parameters. If either are not specified, and
-a *sigma* parameter is given, then that is used instead. If they are either explictly set to **None** or not given, then the :py:attr:`Data.setas` attribute is
+The :py:meth:`Data.odr` method allows uncertainties in *x* and *y* to be specified via the *sigma_x* and *sigma_y*  parameters. If either are not specified, and
+a *sigma* parameter is given, then that is used instead. If they are either explicitly set to **None** or not given, then the :py:attr:`Data.setas` attribute is
 used instead.
 
 Differential Evolution Algorithm
@@ -242,17 +242,17 @@ Differential Evolution Algorithm
 
 When the number of parameters gets large it can get increasingly difficult to get fits using the techniques above. In these situations, the differential evolution
 approach may be valuable. The :py:meth:`Stoner.Data.differential_evolution` method provides a wrapper around the :py:func:`scipi.optimize.differential_evolution`
-minimizer with the advantage that the model sepcification, and calling signatures are essentially the same as for the other fitting functions and thus there is
+minimizer with the advantage that the model specification, and calling signatures are essentially the same as for the other fitting functions and thus there is
 little programmer overhead to switching to it:
 
 .. plot:: samples/differential_evolution_simple.py
     :include-source:
     :outname: diffev2
 
-Intrinsically, the differential evolution algorithm does not caculate a variance-covariance matrix since it never needs to find the gradient of the :math:`\chi^2`
+Intrinsically, the differential evolution algorithm does not calculate a variance-covariance matrix since it never needs to find the gradient of the :math:`\chi^2`
 of the fit with the parameters. In order to provide such an estimate, the :py:meth:`Stroner.Data.differential_evolution` method carries out a standard least-squares
 non-linear fit (using :py:func:`scipy.optimize.curve_fit`) as a second stage once :py:func:`scipy.optimize.differential_evolution` has foind a likely goot fitting
-set of parameters. This hybrid approach allows a good fit localtion to be identified, but also the physically useful fitting errors to be estimated.
+set of parameters. This hybrid approach allows a good fit location to be identified, but also the physically useful fitting errors to be estimated.
 
 
 Included Fitting Models
@@ -264,7 +264,7 @@ The :py:mod:`Stoner.analysis.fitting.models` module provides a number of standar
 Elementary Models
 -----------------
 
-Amongst the incluided models are very generic model functions (in :py:mod:`Stoner.analysis.fitting.models.generic`) including:
+Amongst the included models are very generic model functions (in :py:mod:`Stoner.analysis.fitting.models.generic`) including:
 .. currentmodule:: Stoner.analysis.fitting.models.generic
 
     -   :py:class:`Linear` - straight line fit :math:`y=mx+c`
@@ -299,7 +299,7 @@ We also have a number of models for electron tunnelling processes built into the
         is comparable to the junction bias.
     -   :py:class:`BDR` - this model introduces a trapezoidal barrier where the barrier height is different between the two electrondes - e.g. where the
         electrodes are composed of different materials.
-    -   :py:class:`FowlerNordheim` - this is another simplified model of electron tunneling that has a single barrier heigt and width parameters.
+    -   :py:class:`FowlerNordheim` - this is another simplified model of electron tunneling that has a single barrier height and width parameters.
     -   :py:class:`Stoner.Fit.TersoffHammann` - this model just treats tunneling as a linear I-V process and is applicable when the barrier height is large compared
         to the bias across the tunnel barrier.
 
@@ -309,11 +309,11 @@ Magnetism Related Models
 The :py:mod:`Stoner.analysis.fitting.models.magnetism` includes models related to magnetism and magnetic materials.
 .. currentmodule:: Stoner.analysis.fitting.models.magnetism
 
-    -   :py:class:`Langevin` model is used to describe the magnetic momement versus field of a paramagnet.
+    -   :py:class:`Langevin` model is used to describe the magnetic moment versus field of a paramagnet.
     -   :py:class:`KittelEquation` and :py:class:`Stoner.Fit.Inverse_Kittel` - the Kittel equation is used to described the magnetic field and frequency
-        reponse of the ferromagnetic resonance peak.
+        response of the ferromagnetic resonance peak.
     -   :py:class:`KittelEquation` and :py:class:`Inverse_Kittel` - the Kittel equation is used to described the magnetic field and frequency
-        reponse of the ferromagnetic resonance peak.
+        response of the ferromagnetic resonance peak.
 
 
 Peak Models
@@ -322,7 +322,7 @@ Peak Models
 The :py:mod:`lmfit` package comes with several common peak function models built in which can be used firectly. The Stoner package adds a coouple more to the
 selection - these are particularly useful for fitting ferromagnetic resonance data:
 
-    -   :py:class:`Lorentzian_diff` - the :py:mod:`lmfit` module incluides built in classes for Lorentzian peaks - but this model is the differential
+    -   :py:class:`Lorentzian_diff` - the :py:mod:`lmfit` module includes built in classes for Lorentzian peaks - but this model is the differential
         of a Lorentzian peak.
     -   :py:class:`FMR_Power` - although this model is usually used specifically for calculating the absorption spectrum for a Ferromagnetic Resonance
         process, it is in fact a generic combination of both Lorentzian peak and differential forms.
@@ -372,7 +372,7 @@ to guess parameter values::
     def model_guess(y_data,x=x_data):
         return [param1_guess,param2_guess]
 
-In the same vein, the class provides a decorator to use a function to generate hints about the parameter, such as bouding values::
+In the same vein, the class provides a decorator to use a function to generate hints about the parameter, such as bounding values::
 
     @model_func.hinter
     def model_parameter_hints():
@@ -397,7 +397,7 @@ points in x,y,z space are fitted to a plane.
     :include-source:
     :outname: curvefit_plane
 
-Finally, by you can sepcify the *y-data* to fit to as a numpy array. This can be used to fit functions that
+Finally, by you can specify the *y-data* to fit to as a numpy array. This can be used to fit functions that
 don't themseleves return values that can be matched up to existing data. An example of doing this is fitting a
 sphere to a set of :math:`(x,y,z)` data points. In this case the fitting parameters are :math:`(x_0,y_0,z_0)` for the centre of
 the sphere, :math:`r` for the radius and the fitting equation is :math:`(x-x_0)^2+(y-y_0)^2+(z-z_0)^2-r^2=0` and so we pass an array
@@ -413,7 +413,7 @@ See also :ref:`Fitting_tricks`
 Non-linear curve fitting with initialisation file
 -------------------------------------------------
 
-For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
+For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate initialisation file so that users do not have to
 edit the source code. :py:meth:`Data.lmfit` and :py:meth:`Data.odr` combined with :py:mod:`Stoner.Fit` provide some mechanisms to enable this.
 
 Firstly, the initialisation file should take the form like so.

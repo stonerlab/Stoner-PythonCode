@@ -1,10 +1,13 @@
 """Simple use of lmfit to fit data."""
+
 # pylint: disable=invalid-name
-from numpy import linspace, exp, random
+from numpy import exp, linspace, random
 from scipy.odr import Model as odrModel
 
 from Stoner import Data
 from Stoner.plot.utils import errorfill
+
+random.seed(12345)  # Ensure consistent random numbers!
 
 # Make some data
 x = linspace(0, 10.0, 101)
@@ -13,7 +16,6 @@ x += +random.normal(scale=0.1, size=101)
 
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
-d.plot(fmt="ro")  # plot our data
 
 model = odrModel(
     lambda beta, x: beta[0] + beta[1] * exp(-x / beta[2]),
@@ -58,4 +60,4 @@ d.annotate_fit(
 )
 text = r"$y=A+Be^{-x/C}$" + "\n\n"
 d.text(7.2, 3.9, text, fontdict={"size": "x-small"})
-d.title = u"Orthogonal Distance Regression  Fit"
+d.title = "Orthogonal Distance Regression  Fit"

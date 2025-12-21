@@ -1,19 +1,22 @@
+import io
 import os
-from setuptools import setup, find_packages
 import re
-import sys, io
+import sys
 from os import environ as env
+
+from setuptools import find_packages, setup
 
 
 def get_version():
-    with open("Stoner/__init__.py","r") as init:
+    init_name=os.path.join(os.path.dirname(__file__),"Stoner","__init__.py")
+    with open(init_name,"r") as init:
         for line in init:
             line=line.strip()
             if line.startswith("__version_info__"):
                 parts=line.split("=")
                 __version_info__=eval(parts[1].strip())
                 return '.'.join(__version_info__)
-    return None
+    raise ValueError(f"Failed to get version info from {init_name}")
 
 def yield_sphinx_only_markup(lines):
     """
@@ -89,6 +92,7 @@ else:
 
 setup(
     name = "Stoner",
+    python_requires='>3.7',
     version = str(get_version()),
     author = "Gavin Burnell",
     author_email = "g.burnell@leeds.ac.uk",
@@ -118,9 +122,10 @@ setup(
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
 )

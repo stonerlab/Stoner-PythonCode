@@ -1,27 +1,33 @@
 """Demonstrate STXM Image Processing - G.Burnell Nov. 2017"""
+
 # pylint: disable=invalid-name,no-member
-from os.path import join, dirname
+from os.path import dirname, join
 from types import MethodType
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from lmfit.models import LorentzianModel
 
+from Stoner import ImageFile
 from Stoner.Image import ImageFolder
-from Stoner.HDF5 import STXMImage
 
 # Load the images
 thisdir = dirname(__file__)
 
-imgs = ImageFolder(type=STXMImage)
+imgs = ImageFolder(type=ImageFile)
 for fname in [
     "Sample_Image_2017-10-15_100.hdf5",
     "Sample_Image_2017-10-15_101.hdf5",
 ]:
     # Load the image
-    img = STXMImage(join(thisdir, "..", "..", "..", "sample-data", fname))
-    img.gridimage().crop(5, -15, 5, -5, _=True)  # regularise grid and crop
+    img = ImageFile(join(thisdir, "..", "..", "..", "sample-data", fname))
+    a1 = id(img.metadata)
+    img.gridimage()
+    a2 = id(img.metadata)
+    img.crop(5, -15, 5, -5, _=True)  # regularise grid and crop
+    a3 = id(img.metadata)
     imgs += img
+    a4 = [id(i.metadata) for i in imgs]
 
 # Align the two images
 imgs.align(method="imreg_dft", scale=10)
@@ -48,7 +54,7 @@ xmcd.normalise()
 
 # Create a profile and plot it
 profile = xmcd.profile_line((0, 0), (100, 100))
-profile.figure(figsize=(7, 5))
+profile.figure(figsize=(7, 6), no_axes=True)
 profile.subplot(222)
 profile.plot()
 profile.title = "XMCD Cross Section"
@@ -60,7 +66,7 @@ strctural.imshow(figure=profile.fig, title="Structural Image")
 profile.subplot(223)
 xmcd.imshow(figure=profile.fig, title="XMCD Image")
 
-# Make a histogram of the intesity values
+# Make a histogram of the intensity values
 hist = xmcd.hist(bins=200)
 hist.column_headers = ["XMCD Signal", "Frequency"]
 hist.labels = None
@@ -115,6 +121,3 @@ hist.setas = "xyyy"
 profile.subplot(224)
 hist.plot(fmt=["b+", "b--", "r-"])
 hist.title = "Intensity histogram"
-
-# Tidy up
-plt.tight_layout()

@@ -8,9 +8,9 @@ import tempfile
 import numpy as np
 from skimage import exposure, io, transform
 
-from ..core.base import typeHintedDict
 from ..compat import which
-from ..core.exceptions import assertion, StonerAssertionError
+from ..core.base import TypeHintedDict
+from ..core.exceptions import StonerAssertionError, assertion
 
 GRAY_RANGE = (0, 65535)  # 2^16
 IM_SIZE = (512, 672)  # Standard Kerr image size
@@ -27,7 +27,7 @@ _useful_keys = [
     "Images to Average",
     "Lens",
     "Magnification",
-    "Substraction Std",
+    "Subtraction Std",
 ]
 _test_keys = ["X-B-2d", "field: units"]  # minimum keys in data to assert that it is a standard file output
 
@@ -62,7 +62,7 @@ def _parse_text(text, key=None):
             text = float(text)
         except ValueError:
             pass  # leave it as string
-    # print '{} after processsing: \'{}\''.format(key,data)
+    # print '{} after processing: \'{}\''.format(key,data)
 
     return text
 
@@ -91,24 +91,24 @@ def reduce_metadata(kerr_im):
     """Reduce the metadata down to a few useful pieces and do a bit of processing.
 
     Returns:
-        (:py:class:`typeHintedDict`): the new metadata
+        (:py:class:`TypeHintedDict`): the new metadata
     """
     newmet = {}
-    if not all([k in kerr_im.keys() for k in _test_keys]):
+    if not all((k in kerr_im.keys() for k in _test_keys)):
         return kerr_im.metadata  # we've not got a standard Labview output, not safe to reduce
     for key in _useful_keys:
         if key in kerr_im.keys():
             newmet[key] = kerr_im[key]
     newmet["field"] = newmet.pop("X-B-2d")  # rename
-    if "Substraction Std" in kerr_im.keys():
-        newmet["subtraction"] = newmet.pop("Substraction Std")
+    if "Subtraction Std" in kerr_im.keys():
+        newmet["subtraction"] = newmet.pop("Subtraction Std")
     if "Averaging" in kerr_im.keys():
         if kerr_im["Averaging"]:  # averaging was on
             newmet["Averaging"] = newmet.pop("Images to Average")
         else:
             newmet["Averaging"] = 1
             newmet.pop("Images to Average")
-    kerr_im.metadata = typeHintedDict(newmet)
+    kerr_im.metadata = TypeHintedDict(newmet)
     return kerr_im.metadata
 
 
@@ -124,7 +124,7 @@ def _tesseract_image(kerr_im, key):
     textfile = os.path.join(tmpdir, "tmpfile.txt")
     stdoutfile = os.path.join(tmpdir, "logfile.txt")
     imagefile = os.path.join(tmpdir, "tmpim.tif")
-    with open(textfile, "w") as tf:  # open a text file to export metadata to temporarily
+    with open(textfile, "w", encoding="utf-8") as tf:  # open a text file to export metadata to temporarily
         pass
 
     # process image to make it easier to read
@@ -133,18 +133,19 @@ def _tesseract_image(kerr_im, key):
     i = exposure.rescale_intensity(i)  # make sure they're black and white
     i = transform.rescale(i, 5.0, mode="constant")  # rescale to get more pixels on text
     io.imsave(
-        imagefile, (255.0 * i).astype("uint8"), plugin="pil"
+        imagefile,
+        (255.0 * i).astype("uint8"),
     )  # python imaging library will save according to file extension
 
     # call tesseract
     if kerr_im.tesseractable:
         tesseract = which("tesseract")
-        with open(stdoutfile, "w") as stdout:
+        with open(stdoutfile, "w", encoding="utf-8") as stdout:
             subprocess.call(  # nosec
                 [tesseract, imagefile, textfile[:-4]], stdout=stdout, stderr=subprocess.STDOUT
             )  # adds '.txt' extension itkerr_im
         os.unlink(stdoutfile)
-    with open(textfile, "r") as tf:
+    with open(textfile, "r", encoding="utf-8") as tf:
         data = tf.readline()
 
     # delete the temp files
@@ -167,7 +168,7 @@ def get_scalebar(kerr_im):
     im = exposure.rescale_intensity(im, in_range=(0.49, 0.5))  # saturate black and white pixels
     im = exposure.rescale_intensity(im)  # make sure they're black and white
     im = np.diff(im[0])  # 1d numpy array, differences
-    lim = [np.where(im > 0.9)[0][0], np.where(im < -0.9)[0][0]]  # first occurance of both cases
+    lim = [np.where(im > 0.9)[0][0], np.where(im < -0.9)[0][0]]  # first occurrence of both cases
     assertion(len(lim) == 2, "Couldn't find scalebar")
     return lim[1] - lim[0]
 
@@ -230,8 +231,8 @@ def ocr_metadata(kerr_im, field_only=False):
             )
 
         metadata = {}  # now go through and process all keys
-        for key in text_areas:
-            im = kerr_im.crop(box=text_areas[key], copy=True)
+        for key, val in text_areas.items():
+            im = kerr_im.crop(box=val, copy=True)
             metadata[key] = _tesseract_image(kerr_im, key)
         metadata["ocr_scalebar_length_pixels"] = sb_length
         if isinstance(metadata["ocr_scalebar_length_microns"], float):

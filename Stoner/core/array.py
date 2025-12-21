@@ -2,24 +2,22 @@
 # -*- coding: utf-8 -*-
 """Provides the DataArray class.
 
-A subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names."""
-
+A subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names.
+"""
 __all__ = ["DataArray"]
 
 import copy
 
-import numpy.ma as ma
 import numpy as np
+from numpy import ma
 
-from Stoner.compat import string_types, int_types
-from Stoner.tools import isiterable, all_type, isnone, AttributeStore, all_size
-
-from .setas import setas as _setas
+from ..compat import int_types
+from ..tools import AttributeStore, all_size, all_type, isiterable, isnone
 from .exceptions import StonerSetasError
+from .setas import Setas as _setas
 
 
 class DataArray(ma.MaskedArray):
-
     r"""A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
@@ -32,16 +30,16 @@ class DataArray(ma.MaskedArray):
             When a column is declared to contain *x*, *y*, or *z* data, then these attributes access the corresponding
             columns. When written to, the attributes overwrite the existing column's data.
         d,e,f (1D DataArray):
-            Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these attributes
+            Where a column is identified as containing uncertainties for *x*, *y* or *z* data, then these attributes
             provide a quick access to them. When written to, the attributes overwrite the existing column's data.
         u,v,w (1D DataArray):
             Columns may be identieid as containing vectgor field information. These attributes provide quick
-            access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes
+            access to them, assuming that they are defined as cartesian coordinates. When written to, the attributes
             overwrite the existing column's data.
         p,q,r (1D DataArray):
             These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`
-            into :math:`(\phi,\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar
-            co-ordinates are returned for *q* and *r*.
+            into :math:`(\phi,\theta,r)` polar coordinates. If on *x* and *y* columns are defined, then 2D polar
+            coordinates are returned for *q* and *r*.
         setas (list or string):
             Actually a proxy to a magic class that handles the assignment of columns to different axes and
             also tracks the names of columns (so that columns may be accessed as named items).
@@ -58,23 +56,23 @@ class DataArray(ma.MaskedArray):
     ############################           Object Construction                       ###############################
     # ==============================================================================================================
 
-    def __new__(cls, input_array, *args, **kargs):
+    def __new__(cls, input_array, *args, **kwargs):
         """Create the new instance of the DataArray."""
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
-        setas = kargs.pop("setas", _setas())
+        setas = kwargs.pop("setas", _setas())
         if isinstance(input_array, ma.MaskedArray):
             default_mask = input_array.mask
         else:
             default_mask = None
-        mask = np.copy(kargs.pop("mask", default_mask))
-        column_headers = kargs.pop("column_headers", [])
-        _row = kargs.pop("isrow", False)
+        mask = np.copy(kwargs.pop("mask", default_mask))
+        column_headers = kwargs.pop("column_headers", [])
+        _row = kwargs.pop("isrow", False)
         if isinstance(input_array, DataArray):
             i = input_array.i
         else:
             i = 0
-        obj = ma.asarray(input_array, *args, **kargs).view(cls)
+        obj = ma.asarray(input_array, *args, **kwargs).view(cls)
         # add the new attribute to the created instance
         setas.shape = obj.shape
         obj._setas = setas
@@ -119,10 +117,33 @@ class DataArray(ma.MaskedArray):
                     self.fill_value = np.nan
             self._setas.shape = getattr(self, "shape", (0,))
 
-    def __array_wrap__(self, out_arr, context=None):
+    def __array_wrap__(self, obj, context=None, return_scalar=None):
         """Make sure ufuncs do the right thing with DataArrays."""
-        ret = ma.MaskedArray.__array_wrap__(self, out_arr, context)
+        ret = ma.MaskedArray.__array_wrap__(self, obj, context=context, return_scalar=return_scalar)
         return ret
+
+    def _prepare_index(self, ix):
+        """Mangle an indexing argument into a standard tuple form."""
+        match ix:
+            case str():  # Index by string - look for columns
+                if self.ndim > 1:
+                    ix = (slice(None, None, None), self._setas.find_col(ix))
+                else:
+                    ix = (self._setas.find_col(ix),)
+            case int() | slice():  # index by integer or slice on rows
+                ix = (ix,)
+            case (*i, str()):  # index by something and then string
+                ix = (*i, self._setas.find_col(ix[-1]))
+            case (*i, np.ndarray()) if self.ndim == 1:
+                if len(ix) == 1:
+                    ix = ix[0]
+            case (*i, np.ndarray()) if len(ix[1]) == self.shape[1] and ix[1].dtype.kind == "b":
+                pass
+            case (*i, s) if isiterable(s):  # index by whatever and thena string
+                ix = (*i, [self._setas.find_col(c) for c in s])
+            case (str(), *i):
+                ix = (*i, self._setas.find_col(ix[0]))
+        return ix
 
     # ==============================================================================================================
     ############################          Property Accessor Functions                ###############################
@@ -145,28 +166,27 @@ class DataArray(ma.MaskedArray):
 
     @property
     def r(self):
-        r"""Calculate the radius :math:`\rho` co-ordinate if using spherical or polar co-ordinate systems."""
+        r"""Calculate the radius :math:`\rho` coordinate if using spherical or polar coordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [
             lambda d: None,
             lambda d: None,
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2),
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: np.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-            lambda d: np.sqrt(d.u ** 2 + d.v ** 2),
-            lambda d: np.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2),
+            lambda d: np.sqrt(d.x**2 + d.y**2),
+            lambda d: np.sqrt(d.x**2 + d.y**2 + d.z**2),
+            lambda d: np.sqrt(d.x**2 + d.y**2 + d.z**2),
+            lambda d: np.sqrt(d.u**2 + d.v**2),
+            lambda d: np.sqrt(d.u**2 + d.v**2 + d.w**2),
         ]
         ret = m[axes](self)
         if ret is None:
             raise StonerSetasError(
                 f"Insufficient axes defined in setas to calculate the r component. need 2 not {axes}"
             )
-        else:
-            return ret
+        return ret
 
     @property
     def q(self):
-        r"""Calculate the azimuthal :math:`\theta` co-ordinate if using spherical or polar co-ordinates."""
+        r"""Calculate the azimuthal :math:`\theta` coordinate if using spherical or polar coordinates."""
         axes = int(self._setas.cols["axes"])
         m = [
             lambda d: None,
@@ -182,12 +202,11 @@ class DataArray(ma.MaskedArray):
             raise StonerSetasError(
                 f"Insufficient axes defined in setas to calculate the theta component. need 2 not {axes}"
             )
-        else:
-            return ret
+        return ret
 
     @property
     def p(self):
-        r"""Calculate the inclination :math:`\phi` co-ordinate for spherical co-ordinate systems."""
+        r"""Calculate the inclination :math:`\phi` coordinate for spherical coordinate systems."""
         axes = int(self._setas.cols["axes"])
         m = [
             lambda d: None,
@@ -227,7 +246,7 @@ class DataArray(ma.MaskedArray):
                 self._ibase = np.array([value])
         elif self.ndim >= 1:
             r = self.shape[0]
-            if isiterable(value) and len(value) == r:  # Iterable and the correct length - assing straight
+            if isiterable(value) and len(value) == r:  # Iterable and the correct length - assign straight
                 self._ibase = np.array(value)
             elif isiterable(value) and len(value) > 0:  # Iterable but not the correct length - count from min of value
                 self._ibase = np.arange(min(value), min(value) + r)
@@ -266,7 +285,7 @@ class DataArray(ma.MaskedArray):
         setas(value)
 
     # ==============================================================================================================
-    ############################        Speical Methods         ####################################################
+    ############################        Special Methods         ####################################################
     # ==============================================================================================================
 
     def __reduce__(self):
@@ -342,106 +361,84 @@ class DataArray(ma.MaskedArray):
             plus the special operations where one columns are named.
 
         Warning:
-            Teh code almost certainly makes some assumptiuons that DataArray is one or 2D and
+            The code almost certainly makes some assumptiuons that DataArray is one or 2D and
             may blow up with 3D arrays ! On the other hand it has a special case exception for where
             you give a string as the first index element and assumes that you've forgotten that we're
             row major and tries to do the right thing.
         """
-        # Is this goign to be a single row ?
+        # Is this going to be a single row ?
         single_row = isinstance(ix, int_types) or (
             isinstance(ix, tuple) and len(ix) > 0 and isinstance(ix[0], int_types)
         )
-        # If the index is a single string type, then build a column accessing index
-        if isinstance(ix, string_types):
-            if self.ndim > 1:
-                ix = (slice(None, None, None), self._setas.find_col(ix))
-            else:
-                ix = (self._setas.find_col(ix),)
-        if isinstance(ix, (int_types, slice)):
-            ix = (ix,)
-        elif isinstance(ix, tuple) and ix and isinstance(ix[-1], string_types):  # index still has a string type in it
-            ix = list(ix)
-            ix[-1] = self._setas.find_col(ix[-1])
-            ix = tuple(ix)
-        elif (
-            isinstance(ix, tuple) and ix and isinstance(ix[-1], np.ndarray) and self.ndim == 1
-        ):  # Indexing with a numpy array
-            if len(ix) == 1:
-                ix = ix[0]
-        elif isinstance(ix, tuple) and ix and isiterable(ix[-1]):  # indexing with a list of columns
-            ix = list(ix)
-            if all_type(ix[-1], bool):
-                ix[-1] = np.arange(len(ix[-1]))[ix[-1]]
-            ix[-1] = [self._setas.find_col(c) for c in ix[-1]]
-            ix = tuple(ix)
-        elif isinstance(ix, tuple) and ix and isinstance(ix[0], string_types):  # oops! backwards indexing
-            c = ix[0]
-            ix = list(ix[1:])
-            ix.append(self._setas.find_col(c))
-            ix = tuple(ix)
-            # Now can index with our constructed multidimesnional indexer
-        ret = super().__getitem__(ix)
-        if ret.ndim == 0 or isinstance(ret, np.ndarray) and ret.size == 1:
-            if isinstance(ret, ma.core.MaskedConstant):
+        idx = self._prepare_index(ix)
+        ret = super().__getitem__(idx)
+        match ret:
+            case np.ndarray(size=1) if ret.ndim > 0:
+                return ret.ravel()[0]
+            case ma.core.MaskedConstant() | np.ndarray(ndim=0):
                 if ret.mask:
                     return self.fill_value
-            if isinstance(ret, ma.MaskedArray):
-                ret = ma.filled(ret)
-            return ret.dtype.type(ret)
-        if not isinstance(ret, np.ndarray):  # bugout for scalar resturns
-            return ret
-        if ret.ndim >= 2:  # Potentially 2D array here
-            if ix[-1] is None:  # Special case for increasing an array dimension
-                if self.ndim == 1:  # Going from 1 D to 2D
-                    ret.setas = self.setas.clone
-                    ret.i = self.i
-                    ret.name = getattr(self, "name", "Column")
+                return ret.dtype.type(ret)
+            case ma.MaskedArray() if ret.ndim == 0:
+                return ret.dtype.type(ma.filled(ret))
+            case np.ndarray() if (
+                isinstance(idx, tuple) and len(idx) == 0
+            ):  # special case for indexing with empty tuple.
                 return ret
-            ret.isrow = single_row
-            ret.setas = self.setas.clone
-            ret.column_headers = copy.copy(self.column_headers)
-            if len(ix) > 0 and isiterable(ix[-1]):  # pylint: disable=len-as-condition
-                ret.column_headers = list(np.array(ret.column_headers)[ix[-1]])
-            # Sort out whether we need an array of row labels
-            if isinstance(self.i, np.ndarray) and len(ix) > 0:  # pylint: disable=len-as-condition
-                if isiterable(ix[0]) or isinstance(ix[0], int_types):
-                    ret.i = self.i[ix[0]]
-                else:
-                    ret.i = 0
-            else:
-                ret.i = self.i
-        elif ret.ndim == 1:  # Potentially a single row or single column
-            ret.isrow = single_row
-            if len(ix) == len(self.setas):
-                tmp = np.array(self.setas)[ix[-1]]
-                ret.setas(tmp)
-                tmpcol = np.array(self.column_headers)[ix[-1]]
-                ret.column_headers = tmpcol
-            else:
+            case np.ndarray(ndim=1) if single_row:
+                ret.isrow = single_row
                 ret.setas = self.setas.clone
                 ret.column_headers = copy.copy(self.column_headers)
-            # Sort out whether we need an array of row labels
-            if single_row and isinstance(self.i, np.ndarray):
-                ret.i = self.i[ix[0]]
-            else:  # This is a single element?
-                ret.i = self.i
-            if not single_row:
+                if isinstance(self.i, np.ndarray):
+                    ret.i = self.i[idx[0]]
+                else:
+                    ret.i = self.i
+                return ret
+            case np.ndarray(ndim=1):
+                ret.isrow = single_row
+                if isinstance(idx, tuple) and len(idx) >= 2:
+                    tmp = np.array(self.setas)[idx[-1]].ravel()
+                    ret.setas(tmp)
+                    tmpcol = np.array(self.column_headers)[idx[-1]]
+                    ret.column_headers = tmpcol
                 ret.name = self.column_headers
-        return ret
+                return ret
+            case np.ndarray() if ret.ndim == 2:
+
+                if idx[-1] is None:  # Special case for increasing an array dimension
+                    if self.ndim == 1:  # Going from 1 D to 2D
+                        ret.setas = self.setas.clone
+                        ret.i = self.i
+                        ret.name = getattr(self, "name", "Column")
+                    return ret
+                ret.isrow = single_row
+                ret.setas = self.setas.clone
+                ret.column_headers = copy.copy(self.column_headers)
+                if len(idx) > 0 and isiterable(idx[-1]):  # pylint: disable=len-as-condition
+                    ret.column_headers = list(np.array(ret.column_headers)[idx[-1]])
+                # Sort out whether we need an array of row labels
+                if isinstance(self.i, np.ndarray) and len(idx) > 0:  # pylint: disable=len-as-condition
+                    if isiterable(idx[0]) or isinstance(idx[0], int_types):
+                        ret.i = self.i[idx[0]]
+                    else:
+                        ret.i = 0
+                else:
+                    ret.i = self.i
+                return ret
+            case _:
+                return ret
 
     def __setitem__(self, ix, val):
         """Override __setitem__ to handle string indexing."""
-        if isinstance(ix, string_types):
-            ix = self._setas.find_col(ix)
-        elif isinstance(ix, tuple) and isinstance(ix[-1], string_types):
-            ix = list(ix)
-            ix[-1] = self._setas.find_col(ix[-1])
-            ix = tuple(ix)
-        elif isinstance(ix, tuple) and isinstance(ix[0], string_types):
-            c = ix[0]
-            ix = list(ix[1:])
-            ix.append(self._setas.find_col(c))
-            ix = tuple(ix)
+        match ix:
+            case str():
+                ix = self._setas.find_col(ix)
+            case (*i, str()):
+                ix = (*i, self._setas.find_col(ix[-1]))
+            case (str(), *i):
+                ix = (*i, self._setas.find_col(ix[0]))
+            case _:
+                pass
 
         if self.sharedmask:  # We do not want to share a mask when we're about to change soimething here...
             self.unshare_mask()
@@ -464,7 +461,7 @@ class DataArray(ma.MaskedArray):
         xerr=None,
         yerr=None,
         zerr=None,
-        **kargs,
+        **kwargs,
     ):  # pylint: disable=unused-argument
         """Create an object which has keys  based either on arguments or setas attribute."""
         cols = {
@@ -478,14 +475,14 @@ class DataArray(ma.MaskedArray):
             "yerr": yerr,
             "zerr": zerr,
         }
-        no_guess = kargs.get("no_guess", True)
+        no_guess = kwargs.get("no_guess", True)
         for i in cols.values():
             if i is not None:  # User specification wins out
                 break
         else:  # User didn't set any values, setas will win
-            no_guess = kargs.get("no_guess", False)
+            no_guess = kwargs.get("no_guess", False)
         ret = AttributeStore(self.setas._get_cols(no_guess=no_guess))
-        force_list = kargs.get("force_list", not scalar)
+        force_list = kwargs.get("force_list", not scalar)
         for c in list(cols.keys()):
             if isnone(cols[c]):  # Not defined, fallback on setas
                 del cols[c]
@@ -530,7 +527,7 @@ class DataArray(ma.MaskedArray):
         """Return a list of column headers."""
         return self._setas.column_headers
 
-    def swap_column(self, *swp, **kargs):
+    def swap_column(self, *swp, **kwargs):
         """Swap pairs of columns in the data.
 
         Useful for reordering data for idiot programs that expect columns in a fixed order.
@@ -552,8 +549,8 @@ class DataArray(ma.MaskedArray):
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples
         """
-        headers_too = kargs.pop("headers_too", True)
-        setas_too = kargs.pop("setas_too", True)
+        headers_too = kwargs.pop("headers_too", True)
+        setas_too = kwargs.pop("setas_too", True)
 
         if len(swp) == 1:
             swp = swp[0]
@@ -576,3 +573,8 @@ class DataArray(ma.MaskedArray):
                 "Swap parameter must be either a tuple or a \
             list of tuples"
             )
+
+    def tofile(self, fid, sep="", format="%s"):  # pylint: disable=redefined-builtin
+        """Silly pass through."""
+        self.data.tofile(fid, sep=sep, format=format)
+        np.ma.getmaskarray(self).tofile(fid, sep=sep, format=format)

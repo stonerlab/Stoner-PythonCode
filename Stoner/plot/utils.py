@@ -41,16 +41,19 @@ __all__ = [
     "auto_fit_fontsize",
 ]
 import warnings
-from distutils.version import LooseVersion
-from colorsys import hls_to_rgb
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from looseversion import LooseVersion
 from matplotlib.transforms import Bbox
 
 from Stoner.compat import mpl_version
 
 __all__ = ["errorfill"]
+
+ONE_SIXTH = 1 / 6
+ONE_THIRD = 1 / 3
+TWO_THIRD = 2 / 3
 
 
 def errorfill(
@@ -66,7 +69,7 @@ def errorfill(
     label="",
     label_fill="",
     ax=None,
-    **kargs
+    **kwargs
 ):
     """Plot data with errors marked by a filled region.
 
@@ -107,13 +110,13 @@ def errorfill(
         ls = plt.rcParams["lines.linestyle"]
     if lw is None:
         lw = plt.rcParams["lines.linewidth"]
-    ax.plot(x, y, color, linestyle=ls, linewidth=lw, alpha=alpha, label=label, **kargs)
+    ax.plot(x, y, color, linestyle=ls, linewidth=lw, alpha=alpha, label=label, **kwargs)
 
     if yerr is not None and xerr is not None:
         msg = "Setting both `yerr` and `xerr` is not supported. Ignore `xerr`."
         warnings.warn(msg)
 
-    kwargs_fill = dict(color=color, alpha=alpha_fill, label=label_fill)
+    kwargs_fill = {"color": color, "alpha": alpha_fill, "label": label_fill}
     if yerr is not None:
         ymin, ymax = extrema_from_error_input(y, yerr)
         if x.size > 1:
@@ -125,6 +128,7 @@ def errorfill(
 
 def extrema_from_error_input(z, zerr):
     """Work out where to draw limits."""
+    zmin = zmax = None
     if np.isscalar(zerr) or len(zerr) == len(z):
         zmin = z - zerr
         zmax = z + zerr
@@ -149,11 +153,14 @@ def fill_between(x, y1, y2=0, ax=None, **kwargs):
     yd = yd[keep]
     alpha = kwargs["alpha"]
     a = np.linspace(0.1, 0.9, 15)
-    z = lambda x, s, y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
+
+    def _z_calc(s, y):
+        return s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
+
     for h in a:
         y = h / (np.sqrt(2 * np.pi) * yd)
-        y1 = ym - (z(y, yd, y))
-        y2 = ym + (z(y, yd, y))
+        y1 = ym - (_z_calc(yd, y))
+        y2 = ym + (_z_calc(yd, y))
         kwargs["alpha"] = alpha * h
         if x.size > 1:
             ax.fill_between(x, y1, y2, **kwargs)
@@ -167,25 +174,28 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     yd = (y1 - y2) / 3.0
     alpha = kwargs["alpha"]
     a = np.linspace(0.1, 0.9, 15)
-    z = lambda x, s, y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
+
+    def _z_calc(s, y):
+        return s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
+
     for h in a:
         y = h / (np.sqrt(2 * np.pi) * yd)
-        y1 = ym - (z(y, yd, y))
-        y2 = ym + (z(y, yd, y))
+        y1 = ym - (_z_calc(yd, y))
+        y2 = ym + (_z_calc(yd, y))
         kwargs["alpha"] = alpha * h
         ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
 
-def hsl2rgb(hue, sat, lum):
+def hsl2rgb(hue, sat, lum, alpha=False):
     """Convert from hsl colourspace to rgb colour space with numpy arrays for speed.
 
     Args:
-        h (array):
+        hue (array):
             Hue value
-        s (array):
+        sat (array):
             Saturation value
-        l (array):
+        lum (array):
             Luminence value
 
     Returns:
@@ -195,22 +205,32 @@ def hsl2rgb(hue, sat, lum):
     sat = np.atleast_1d(sat)
     lum = np.atleast_1d(lum)
 
-    if hue.shape != lum.shape or hue.shape != sat.shape:
-        raise RuntimeError("Must have equal shaped arrays for h, s and l")
+    Hp = hue * 6 % 6
+    C = (1 - np.abs(2 * lum - 1)) * sat
+    X = C * (1 - np.abs(Hp % 2 - 1))
+    output = np.ones((hue.size, 3))
+    zero = np.zeros_like(X)
+    select = np.column_stack([Hp, Hp, Hp])
+    m = np.column_stack([lum - C / 2, lum - C / 2, lum - C / 2])
+    output = np.where(select > 0, np.column_stack([C, X, zero]), output)
+    output = np.where(select > 1, np.column_stack([X, C, zero]), output)
+    output = np.where(select > 2, np.column_stack([zero, C, X]), output)
+    output = np.where(select > 3, np.column_stack([zero, X, C]), output)
+    output = np.where(select > 4, np.column_stack([X, zero, C]), output)
+    output = np.where(select > 5, np.column_stack([C, zero, X]), output)
+    output += m
+    output = (output * 255).astype("u8")
+    if alpha:
+        output = np.append(output, [1.0])
+    return output
 
-    rgb = np.zeros((hue.size, 3))
-    hls = np.column_stack([hue, lum, sat])
-    for i in range(hue.size):
-        rgb[i, :] = np.array(hls_to_rgb(*hls[i]))
-    return (255 * rgb).astype("u1")
 
-
-def joy_division(x, y, z, **kargs):
+def joy_division(x, y, z, **kwargs):
     """Produce a classic black and white water fall plot.
 
     Parameters:
         x,y,z (1D arrays):
-            x y and z co-ordinates. data should be arranged so that z(x,y=constant)
+            x y and z coordinates. data should be arranged so that z(x,y=constant)
 
     Keyword Parameters:
         ax (matplotlib.Axes):
@@ -231,15 +251,15 @@ def joy_division(x, y, z, **kargs):
     Returns:
         None
 
-    Constructurs a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
+    Constructors a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
     """
-    ax = kargs.pop("ax", plt.gca())
-    y_shift = kargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
-    bg_colour = kargs.pop("bg_color", "k")
-    color = kargs.pop("color", kargs.pop("colour", "w"))
-    axes_colour = kargs.pop("axes_color", color)
-    lw = kargs.pop("linewidth", 2)
-    legend_fmt = kargs.pop("legend_fmt", "{}")
+    ax = kwargs.pop("ax", plt.gca())
+    y_shift = kwargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
+    bg_colour = kwargs.pop("bg_color", "k")
+    color = kwargs.pop("color", kwargs.pop("colour", "w"))
+    axes_colour = kwargs.pop("axes_color", color)
+    lw = kwargs.pop("linewidth", 2)
+    legend_fmt = kwargs.pop("legend_fmt", "{}")
 
     ax.figure.set_facecolor(bg_colour)
     ax.set_facecolor(bg_colour)
@@ -254,7 +274,12 @@ def joy_division(x, y, z, **kargs):
         this_data = data[y == yval, :]
 
         ax.plot(
-            this_data[:, 0], this_data[:, 1] + offset, color, lw=lw, zorder=(ix + 1) * 2, label=legend_fmt.format(yval)
+            this_data[:, 0],
+            this_data[:, 1] + offset,
+            color,
+            lw=lw,
+            zorder=(ix + 1) * 2,
+            label=legend_fmt.format(yval),
         )
         ax.fill_between(
             this_data[:, 0], this_data[:, 1] + offset, offset, facecolor=bg_colour, lw=0, zorder=(ix + 1) * 2 - 1
@@ -301,8 +326,8 @@ def auto_fit_fontsize(text, width, height, scale_down=True, scale_up=False):
     bbox_text = Bbox(fig.transFigure.inverted().transform(bbox_text))
     text_width, text_height = bbox_text.width, bbox_text.height
 
-    scale_w = abs(width / text_width)
-    scale_h = abs(height / text_height)
+    scale_w = abs(width / text_width) if text_width != 0 else 1.0
+    scale_h = abs(height / text_height) if text_height != 0 else 1.0
 
     scale = 1.0
     if scale_down:

@@ -24,7 +24,7 @@ allowing a sequence of operations to be completed by chaining the method calls t
 
 The array of methods available to a :class:`ImageFile` is particularly rich as the class automatically wraps functions from the
 popular scikit-image package (:py:mod:`skimage`) as well as the :py:mod:`scipy.ndimage` module. In general such functions take an image as their first argument
-and :class:`ImageFile` passes its own image data as that argument to whatever funcion is being wrapped. If the function Returns
+and :class:`ImageFile` passes its own image data as that argument to whatever function is being wrapped. If the function Returns
 image data of the same size that the original image, then the wrapper replaces the :class:`ImageFile`'s image data with the new
 image data.
 
@@ -68,12 +68,12 @@ The key attributes and properties of the :class:`ImageFile` are:
     - :py:attr:`ImageFile.image`:
         This is the actual numpy array of data that is the image.
     - :attr:`ImageFile.metadata`:
-        This is the dictionary that contains the metadata assoicated with the image. This is normally parameters and
+        This is the dictionary that contains the metadata associated with the image. This is normally parameters and
         information about the measurement or data that is encoded within the the measurement file, but can be supplemented
         by information added by the user directly or by methods and functions. Each item of metadata is normally referred to by a string *key*.
     - :attr:`ImageFile.filename`:
         This is the name of the file from which the image was loaded (as a string). It is also used as a default title when
-        displaying the iamge.
+        displaying the image.
     - :attr:`ImageFile.mask`:
         This represents the mask data for an image file. By default it is entirely False, meaning all parts of the image
         are visible. It supports a variety of different ways of manipulating which parts of the image are masked - see the section
@@ -96,7 +96,7 @@ formats as required.
 There are a number of other attributes that can tell you information about the :class:`ImageFile` such as:
 
     - :attr:`ImageFile.centre`:
-        the co-ordinates of the centre of the image
+        the coordinates of the centre of the image
     - :attr:`ImageFile.aspect`:
         the image aspect ratio
     - :attr:`ImageFile.shape`:
@@ -108,7 +108,7 @@ copies of the :class:`ImageFile` that are rotate 90 degrees clockwise and counte
 In many cases the default behaviour of modifying the image data in place may not be desired - to get a copy of the
 :class:`ImageFile` you use the :attr:`ImageFile.clone` attribute::
 
-    new_im = im.clone.gaussian(4.0) # create a copy of im and then apply a guassian blur
+    new_im = im.clone.gaussian(4.0) # create a copy of im and then apply a gaussian blur
 
 .. image:: figures/kermit-blurred.png
 
@@ -125,7 +125,7 @@ of the original image data.::
 
 .. image:: figures/kermit_flipped.png
 
-Indexing an :class:`ImageFile` with a string will instead acces the metadata stored with the object.::
+Indexing an :class:`ImageFile` with a string will instead access the metadata stored with the object.::
 
     im["Loaded as"]
     >>> 'KermitPNGFile'
@@ -158,22 +158,22 @@ opencv2, but this section will cover some of the commonly used functionality.
 Specify a box
 ^^^^^^^^^^^^^
 
-Many of the functions can be used with a *_box* parameter to limit their operation to a sepcified region of the image.
-Additionally the :meth:`ImageFile.crop` method will discard the image outside a region specifed in a similar way. The
+Many of the functions can be used with a *_box* parameter to limit their operation to a specified region of the image.
+Additionally the :meth:`ImageFile.crop` method will discard the image outside a region specified in a similar way. The
 working box can be given as follows:
 
     - A single integer:
-        This is interpreted to exclude a regio of n pixels from all sides of the image.
+        This is interpreted to exclude a region of n pixels from all sides of the image.
     - A single floating point number between 0.0 and 0.5:
         This is interpreted to exclude this corresponding fraction of the width and height from each side of the image
     - A tuple of 4 numbers, or 4 arguments:
-        This is interpreeted as a sequence of pxiel co-ordinates for (left-x, right-x, top-y, bottom-y). If any of the
+        This is interpreeted as a sequence of pxiel coordinates for (left-x, right-x, top-y, bottom-y). If any of the
         numbers are None, then this is take as the minimum or maximum extents of the width or height (depending on whether
-        the None value substitutes for the left, right top or bottom co-ordinate).
+        the None value substitutes for the left, right top or bottom coordinate).
     - A single string:
         The argument is interpreted as the name of a metadata item that will define the box to be used.
     - A sigle value False:
-        This is equivalent to the whole iamge (i.e. to not specify a box)
+        This is equivalent to the whole image (i.e. to not specify a box)
     - A single None value:
         In this case a copy of the image is shown to the user and they are invited to draw the box with the mouse and
         then press the <Enter> key to confirm their selection.
@@ -184,10 +184,10 @@ Aligning Two Images
 ^^^^^^^^^^^^^^^^^^^
 
 The :meth:`Stoner.ImageFile.align` method can ve used to align an image to a reference image. It offers a variety of different
-algorthims which may be better or worse depending on the nature of the image. The options are:
+algorithms which may be better or worse depending on the nature of the image. The options are:
 
     - chi2_shift:
-        this uses the image-registration module to carry out a chi-squared analysis of shifting the two iamges
+        this uses the image-registration module to carry out a chi-squared analysis of shifting the two images
         relative to each other.
     - imreg_dft:
         this uses the imreg_dft module to carry out the image registration. In essence it takes a fourier transform
@@ -196,9 +196,9 @@ algorthims which may be better or worse depending on the nature of the image. Th
         this is the default method used. It first of all applies a Scharr edge detection filter and uses the
         imreg_dft method to find the translation vector.
     - cv2:
-        this method uses the opencv2 package's alignment algorthim.
+        this method uses the opencv2 package's alignment algorithm.
 
-Align also takes a *_box* keyword parameter to confine the section of the image used for the alignment to a sepcific region
+Align also takes a *_box* keyword parameter to confine the section of the image used for the alignment to a specific region
 (this can make the operation more efficient  if much of the images are featureless), and a *scale* parameter that will upscale
 the image before attempting to do the alignment. This may improve sub-pixel alignment corrections.
 
@@ -249,7 +249,7 @@ noise and speckle.::
 
     im.gaussian(1.0)
 
-For band-pass filt4ering the scikit-image.fitlers method *difference_of_gaussians* can be used. This filters the image with two
+For band-pass filt4ering the scikit-image.filters method *difference_of_gaussians* can be used. This filters the image with two
 different gaussian blurs and then takes the difference between them - the smaller gaussian blur removes high frequency noise
 whilst the large gaussian removes low spatial frequency variations.::
 
@@ -284,7 +284,7 @@ parameter, whilst the output is controlled by the *phase* parameter - False give
 and None returns the full complex FFT.
 
 To aid with analyhsing radial distributions in FFTs (or images), the :meth:`ImageFile.radial_profile` method can be used.
-This will compute a prfile from a given centre outwards - either integrating over all angles, or restricting to specific angles.
+This will compute a profile from a given centre outwards - either integrating over all angles, or restricting to specific angles.
 At its simpletst one can just do::
 
     profile=fft.radial_profile()

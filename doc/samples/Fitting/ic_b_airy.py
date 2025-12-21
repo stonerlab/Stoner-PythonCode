@@ -18,6 +18,6 @@ data.plot(fmt=["r+", "b-"])
 
 data.annotate_fit(Ic_B_Airy, mode="eng", x=0.6, y=0.5, fontsize="small")
 
-data.title = "Critical current vs Field for $4\mu m$ junction"
+data.title = r"Critical current vs Field for $4\mu m$ junction"
 data.xlabel = r"Magnetic Field $\mu_0H (\mathrm{T})$"
 data.ylabel = r"Critical Current $I_c (A)$"

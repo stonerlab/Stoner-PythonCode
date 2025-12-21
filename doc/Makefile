@@ -42,7 +42,7 @@ clean:
 	-rm -rf classes/* functions/*
 
 readme:
-	cp readme.rst ../README.rst
+	cp ../README.rst readme.rst
 
 html: readme
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

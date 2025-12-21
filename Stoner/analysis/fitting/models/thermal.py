@@ -18,14 +18,13 @@ __all__ = [
 
 import numpy as np
 import scipy.constants as consts
-from scipy.optimize import curve_fit
-
 from lmfit import Model
 from lmfit.models import update_param_vals
+from scipy.optimize import curve_fit
 
 
 def arrhenius(x, A, DE):
-    r"""Arrhenius Equation without T dependendent prefactor.
+    r"""Arrhenius Equation without T dependent prefactor.
 
     Args:
         x (array): temperatyre data in K
@@ -49,7 +48,7 @@ def arrhenius(x, A, DE):
 
 
 def nDimArrhenius(x, A, DE, n):
-    r"""Arrhenius Equation without T dependendent prefactor for various dimensions.
+    r"""Arrhenius Equation without T dependent prefactor for various dimensions.
 
     Args:
         x (array): temperatyre data in K
@@ -68,7 +67,7 @@ def nDimArrhenius(x, A, DE, n):
             :include-source:
             :outname: nDimarrehenius
     """
-    return arrhenius(x ** n, A, DE)
+    return arrhenius(x**n, A, DE)
 
 
 def modArrhenius(x, A, DE, n):
@@ -91,23 +90,23 @@ def modArrhenius(x, A, DE, n):
             :include-source:
             :outname: modarrhenius
     """
-    return (x ** n) * arrhenius(x, A, DE)
+    return (x**n) * arrhenius(x, A, DE)
 
 
 def vftEquation(x, A, DE, x_0):
-    r"""Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.
+    r"""Vogel-Flucher-Tammann (VFT) Equation without T dependent prefactor.
 
     Args:
         x (float): Temperature in K
         A (float): Prefactror (not temperature dependent)
         DE (float): Energy barrier in eV
-        x_0 (float): Offset temeprature in K
+        x_0 (float): Offset temperature in K
 
     Return:
         Rates according the VFT equation.
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
-    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+    a modified form of the Arrenhius distribution with a freezing point of :math:`x_0`.
 
     Example:
         .. plot:: samples/Fitting/vftEquation.py
@@ -117,14 +116,12 @@ def vftEquation(x, A, DE, x_0):
     _kb = consts.physical_constants["Boltzmann constant"][0] / consts.physical_constants["elementary charge"][0]
     X = np.where(np.isclose(x, x_0), 1e-8, x - x_0)
     y = A * np.exp(-DE / (_kb * X))
-    if np.any(np.isnan(y)):
-        breakpoint()
+
     return y
 
 
 class Arrhenius(Model):
-
-    r"""Arrhenius Equation without T dependendent prefactor.
+    r"""Arrhenius Equation without T dependent prefactor.
 
     Args:
         x (array): temperatyre data in K
@@ -159,10 +156,13 @@ class Arrhenius(Model):
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class NDimArrhenius(Model):
-
-    r"""Arrhenius Equation without T dependendent prefactor for various dimensions.
+    r"""Arrhenius Equation without T dependent prefactor for various dimensions.
 
     Args:
         x (array): temperatyre data in K
@@ -198,9 +198,12 @@ class NDimArrhenius(Model):
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class ModArrhenius(Model):
-
     r"""Arrhenius Equation with a variable T power dependent prefactor.
 
     Args:
@@ -237,22 +240,25 @@ class ModArrhenius(Model):
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class VFTEquation(Model):
-
-    r"""Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.
+    r"""Vogel-Flucher-Tammann (VFT) Equation without T dependent prefactor.
 
     Args:
         x (array): Temperature in K
         A (float): Prefactror (not temperature dependent)
         DE (float): Energy barrier in eV
-        x_0 (float): Offset temeprature in K
+        x_0 (float): Offset temperature in K
 
     Return:
         Rates according the VFT equation.
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
-    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+    a modified form of the Arrenhius distribution with a freezing point of :math:`x_0`.
 
     See :py:func:`vftEquation` for an example.
 
@@ -288,3 +294,7 @@ class VFTEquation(Model):
             d1, d2, x0 = popt
         pars = self.make_params(A=np.exp(d2), DE=_kb * d1, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

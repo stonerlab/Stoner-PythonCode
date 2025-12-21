@@ -1,11 +1,12 @@
 """Example of Quadratic Fit."""
+
 # pylint: disable=invalid-name
+import matplotlib.pyplot as plt
 from numpy import linspace
 from numpy.random import normal
-import matplotlib.pyplot as plt
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.generic import quadratic, Quadratic
+from Stoner.analysis.fitting.models.generic import Quadratic, quadratic
 
 # Make some data
 x = linspace(-10, 10, 101)
@@ -22,7 +23,7 @@ d.plot(fmt="m-", label="Polyfit")
 d.text(
     -9,
     450,
-    "Polynominal co-efficients\n{}".format(d["2nd-order polyfit coefficients"]),
+    "Polynominal co-efficients\n{d['2nd-order polyfit coefficients']}",
     fontdict={"size": "x-small", "color": "magenta"},
 )
 

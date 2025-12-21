@@ -7,23 +7,23 @@ __all__ = ["DrawProxy", "MaskProxy"]
 from functools import wraps
 from io import BytesIO as StreamIO
 
+import matplotlib.pyplot as plt
 import numpy as np
 from skimage import draw
-import matplotlib.pyplot as plt
 
 from ..tools import fix_signature
 from ..tools.decorators import class_modifier
-from .widgets import ShapeSelect
 from .imagefuncs import imshow
+from .widgets import ShapeSelect
 
 
 def _draw_apaptor(func):
     """Adapt methods for DrawProxy class to bind :py:mod:`skimage.draw` functions."""
 
     @wraps(func)
-    def _proxy(self, *args, **kargs):
-        value = kargs.pop("value", np.ones(1, dtype=self._img.dtype)[0])
-        coords = func(*args, **kargs)
+    def _proxy(self, *args, **kwargs):
+        value = kwargs.pop("value", np.ones(1, dtype=self._img.dtype)[0])
+        coords = func(*args, **kwargs)
         if len(coords) == 3:
             rr, cc, vv = coords
             if len(rr) == len(cc):
@@ -32,8 +32,8 @@ def _draw_apaptor(func):
         if len(coords) == 2 and isinstance(coords[0], np.ndarray) and coords[0].ndim == 3:
             im = type(self._img)(np.zeros(self._img.shape, dtype="uint32"))
             im += coords[0][:, :, 0]
-            im += coords[0][:, :, 1] * 256
-            im += coords[0][:, :, 2] * 256 ** 2
+            im += coords[0][:, :, 1].astype("uint32") * 256
+            im += coords[0][:, :, 2].astype("uint32") * 256**2
             im[im == 16777215] = 0
             im.convert(self._img.dtype)
             self._img[im != 0] = im[im != 0]
@@ -47,19 +47,18 @@ def _draw_apaptor(func):
 
 @class_modifier(draw, adaptor=_draw_apaptor, RTD_restrictions=False, no_long_names=True)
 class DrawProxy:
-
     """Provides a wrapper around :py:mod:`skimage.draw` to allow easy drawing of objects onto images.
 
     This class allows access the user to draw simply shapes on an image (or its mask) by specifying the desired shape
     and geometry (centre, length/width etc). Mostly this implemented by pass throughs to the :py:mod:`skimage.draw`
     module, but methods are provided for an annulus, rectangle (and square) and rectangle-perimeter meothdds- the
-    latter offering rotation about the centre pooint in contrast to the :py:mod:`skimage.draw` equivalents.
+    latter offering rotation about the centre point in contrast to the :py:mod:`skimage.draw` equivalents.
 
     No state data is stored with this class so the attribute does not need to be serialised when the parent ImageFile
     is saved.
     """
 
-    def __init__(self, *args, **kargs):  # pylint: disable=unused-argument
+    def __init__(self, *args, **kwargs):  # pylint: disable=unused-argument
         """Grab the parent image from the constructor."""
         self._img = args[0]
         self._parent = args[1]
@@ -68,11 +67,11 @@ class DrawProxy:
         """Use a combination of two circles to draw and annulus.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             radius1,radius2 (float): Inner and outer radius.
 
         Keyword Arguments:
-            shape (2-tuple, None): Confine the co-ordinates to staywith shape
+            shape (2-tuple, None): Confine the coordinates to staywith shape
             value (float): value to draw with
         Returns:
             A copy of the image with the annulus drawn on it.
@@ -93,23 +92,45 @@ class DrawProxy:
             fill = 1.0
             bg = 0.0
         radius1, radius2 = min(radius1, radius2), max(radius1, radius2)
-        rr, cc = draw.circle(r, c, radius2, shape=shape)
+        rr, cc = draw.disk((r, c), radius2, shape=shape)
         buf[rr, cc] = fill
-        rr, cc = draw.circle(r, c, radius1, shape=shape)
+        rr, cc = draw.disk((r, c), radius1, shape=shape)
         buf[rr, cc] = bg
         self._img[:, :] = (self._img * buf + value * (1.0 - buf)).astype(self._img.dtype)
         return self._parent
+
+    if "circle" not in dir(draw):
+
+        def circle(self, r, c, radius, shape=None, value=1.0):
+            """ "Generate coordinates of pixels within circle.
+
+            Args:
+                r,c (int): coordinates of the centre of the circle to be drawn.
+                radius (float): Radius of the circle
+
+            Keyword arguments:
+                shape (tuple): Image shape as a tuple of size 2. Determines the maximum extent of output
+                    pixel coordinates. This is useful for disks that exceed the image size. If None, the full
+                    extent of the disk is used. The shape might result in negative coordinates and wraparound
+                    behaviour.
+                value (float): pixel value to write with.
+
+
+            Notes:
+                This is actually just a proxy for disk
+            """
+            return self.disk((r, c), radius, shape=shape, value=value)  # pylint: disable=no-member
 
     def rectangle(self, r, c, w, h, angle=0.0, shape=None, value=1.0):
         """Draw a rectangle on an image.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             w,h (float): Lengths of the two sides of the rectangle
 
         Keyword Arguments:
             angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            shape (2-tuple or None): Confine the coordinates to this shape.
             value (float): The value to draw with.
 
         Returns:
@@ -136,12 +157,12 @@ class DrawProxy:
         """Draw the perimter of a rectangle on an image.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             w,h (float): Lengths of the two sides of the rectangle
 
         Keyword Arguments:
             angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            shape (2-tuple or None): Confine the coordinates to this shape.
             value (float): The value to draw with.
 
         Returns:
@@ -168,12 +189,12 @@ class DrawProxy:
         """Draw a square on an image.
 
         Args:
-            r,c (float): Centre co-ordinates
+            r,c (float): Centre coordinates
             w (float): Length of the side of the square
 
         Keyword Arguments:
             angle (float): Angle to rotate the rectangle about
-            shape (2-tuple or None): Confine the co-ordinates to this shape.
+            shape (2-tuple or None): Confine the coordinates to this shape.
             value (float): The value to draw with.
 
         Returns:
@@ -183,7 +204,6 @@ class DrawProxy:
 
 
 class MaskProxy:
-
     """Provides a wrapper to support manipulating the image mask easily.
 
     The actual mask of a :py:class:`Stonmer.ImageFile` is held by the mask attribute of the underlying
@@ -233,7 +253,7 @@ class MaskProxy:
     @property
     def colour(self):
         """Get the colour of the mask."""
-        return self._imagearray._mask_color
+        return getattr(self._imagearray, "_mask_color", None)
 
     @colour.setter
     def colour(self, value):
@@ -252,7 +272,7 @@ class MaskProxy:
 
     @property
     def draw(self):
-        """Access the draw proxy opbject."""
+        """Access the draw proxy object."""
         return DrawProxy(self._mask, self._imagefolder)
 
     def __init__(self, *args):
@@ -268,7 +288,7 @@ class MaskProxy:
         self._imagearray.mask.__setitem__(index, value)
 
     def __delitem__(self, index):
-        """Proxy through to underyling mask."""
+        """Proxy through to underlying mask."""
         self._imagearray.mask.__delitem__(index)
 
     def __getattr__(self, name):
@@ -280,8 +300,8 @@ class MaskProxy:
             raise AttributeError(f"{name} not a callable mask method.")
 
         @wraps(func)
-        def _proxy_call(*args, **kargs):
-            retval = func(self._mask.astype(float).view(type(self._imagearray)) * 1000, *args, **kargs)
+        def _proxy_call(*args, **kwargs):
+            retval = func(self._mask.astype(float).view(type(self._imagearray)) * 1000, *args, **kwargs)
             if isinstance(retval, np.ndarray) and retval.shape == self._imagearray.shape:
                 retval.normalise()
                 self._imagearray.mask = retval > 0
@@ -336,11 +356,11 @@ class MaskProxy:
         """Invert the mask."""
         self._imagearray.mask = ~self._imagearray.mask
 
-    def select(self, **kargs):
+    def select(self, **kwargs):
         """Interactive selection mode.
 
         This method allows the user to interactively choose a mask region on the image. It will require the
-        Matplotlib backen to be set to Qt or other non-inline backend that suppports a user vent loop.
+        Matplotlib backen to be set to Qt or other non-inline backend that supports a user vent loop.
 
         The image is displayed in the window and athe user can interact with it with the mouse and keyboard.
 
@@ -362,7 +382,7 @@ class MaskProxy:
 
         This method directly sets the mask and then returns a copy of the parent :py:class:`Stoner.ImageFile`.
         """
-        selection = kargs.get("_selection", [])
+        selection = kwargs.get("_selection", [])
         if len(selection) == 0:
             selector = ShapeSelect()
             self._imagearray.mask = selector(self._imagearray)

@@ -1,12 +1,13 @@
 """Decompose Into symmetric and antisymmetric parts example."""
+
 # pylint: disable=invalid-name
-from numpy import linspace, reshape, array
+from numpy import array, linspace, reshape
 
 from Stoner import Data
 from Stoner.tools import format_val
 
 x = linspace(-10, 10, 201)
-y = 0.3 * x ** 3 - 6 * x ** 2 + 11 * x - 20
+y = 0.3 * x**3 - 6 * x**2 + 11 * x - 20
 d = Data(x, y, setas="xy", column_headers=["X", "Y"])
 d.decompose()
 d.setas = "xyyy"
@@ -17,9 +18,8 @@ d.plot()
 d.text(
     -6,
     -800,
-    "Coefficients\n{}".format(str_coeffs),
+    f"Coefficients\n{str_coeffs}",
     fontdict={"size": "x-small"},
 )
 d.ylabel = "Data"
 d.title = "Decompose Example"
-d.tight_layout()

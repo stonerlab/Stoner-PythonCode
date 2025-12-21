@@ -1,4 +1,5 @@
 """Smoothing Data methods example."""
+
 # pylint: disable=invalid-name, no-member, not-callable
 import matplotlib.pyplot as plt
 

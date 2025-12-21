@@ -1,6 +1,8 @@
 """Example customising a plot using default style."""
+
 # pylint: disable=invalid-name
 import os.path as path
+
 from cycler import cycler
 
 from Stoner import Data, __home__
@@ -25,15 +27,15 @@ d.template.template_lines__linewidth = 2.0
 d.template["figure.figsize"] = (6, 8)
 d.template["figure.autolayout"] = True
 # Make figure (before using subplot method) and select first subplot
-d.figure()
-d.subplot(211)
+d.figure(no_axes=True)
+d.subplot(212)
 # Pkot with our customised defaults
 d.plot()
 d.grid(True, color="green", linestyle="-.")
 d.title = "Customised Plot settings"
 # Reset the template to defaults and switch to next subplot
 d.template.clear()
-d.subplot(212)
+d.subplot(211)
 # Plot with defaults
 d.plot()
 d.title = "Style Default settings"

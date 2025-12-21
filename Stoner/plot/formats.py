@@ -12,14 +12,14 @@ __all__ = [
     "SketchPlot",
     "SeabornPlotStyle",
 ]
-from os.path import join, dirname, realpath, exists
+from collections.abc import Mapping, MutableMapping
 from inspect import getfile
-from collections.abc import MutableMapping, Mapping
+from os.path import dirname, exists, join, realpath
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import EngFormatter, Formatter
-from matplotlib.ticker import AutoLocator
 import numpy as np
+from matplotlib.ticker import AutoLocator, EngFormatter, Formatter
+from mpl_toolkits.mplot3d import Axes3D
 from numpy.random import normal
 
 try:
@@ -49,11 +49,28 @@ def _remove_dots(key):
     return key.replace(".", "__")
 
 
-class TexFormatter(Formatter):
+def _rect_from_rc():
+    left, bottom, right, top = (plt.rcParams[f"figure.subplot.{i}"] for i in ("left", "bottom", "right", "top"))
+    return [left, bottom, right - left, top - bottom]
 
+
+def _add_axes_2d(fig, no_axes):
+    if no_axes:
+        return fig, None
+    # For clean, explicit axes when reusing a figure, use add_axes with rc-based rect
+    return fig, fig.add_axes(_rect_from_rc())
+
+
+def _add_axes_3d(fig, no_axes):
+    if no_axes:
+        return fig, None
+    return fig, fig.add_subplot(111, projection="3d")
+
+
+class TexFormatter(Formatter):
     r"""An axis tick label formatter that emits Tex formula mode code.
 
-    Formating is set so that large numbers are registered as :math`\times 10^{power}`
+    Formatting is set so that large numbers are registered as :math`\times 10^{power}`
     rather than using E notation."""
 
     def __call__(self, value, pos=None):
@@ -65,7 +82,7 @@ class TexFormatter(Formatter):
             if np.abs(power) < 4:
                 ret = f"${round(value)}$"
             else:
-                v = _round(value / (10 ** power))
+                v = _round(value / (10**power))
                 ret = f"${v}\\times 10^{{{power:.0f}}}$"
         else:
             ret = "$0.0$"
@@ -73,9 +90,9 @@ class TexFormatter(Formatter):
 
     def format_data(self, value):
         """Return the full string representation of the value with the position unspecified."""
-        return self.__call__(value)
+        return self(value)
 
-    def format_data_short(self, value):  # pylint: disable=r0201
+    def format_data_short(self, value):
         """Return a short string version of the tick value.
 
         Defaults to the position-independent long value."""
@@ -83,7 +100,6 @@ class TexFormatter(Formatter):
 
 
 class TexEngFormatter(EngFormatter):
-
     """An axis tick label formatter that emits Tex formula mode code.
 
     Formatting is set so that large numbers are registered as with SI prefixes
@@ -121,7 +137,7 @@ class TexEngFormatter(EngFormatter):
                 ret = f"${round(value, 4)}\\,\\mathrm{{{self.unit}}}$"
             else:
                 power = power % 3
-                v = _round(value / (10 ** pre), 4)
+                v = _round(value / (10**pre), 4)
                 if np.abs(v) < 0.1:
                     v *= 1000
                     pre -= 3
@@ -136,9 +152,9 @@ class TexEngFormatter(EngFormatter):
 
     def format_data(self, value):
         """Return the full string representation of the value with the position unspecified."""
-        return self.__call__(value)
+        return self(value)
 
-    def format_data_short(self, value):  # pylint: disable=r0201
+    def format_data_short(self, value):
         """Return a short string version of the tick value.
 
         Defaults to the position-independent long value."""
@@ -146,7 +162,6 @@ class TexEngFormatter(EngFormatter):
 
 
 class DefaultPlotStyle(MutableMapping):
-
     """Produces a default plot style.
 
     To produce alternative plot styles, create subclasses of this plot. Either override or
@@ -162,7 +177,7 @@ class DefaultPlotStyle(MutableMapping):
         show_title (bool): show the title
         show_legend (bool): show the legend
         stylename (string): Name of the matplotlib style to use
-        stylesheet (list): Calculated list of stylesheets found by traversing the class heirarchy
+        stylesheet (list): Calculated list of stylesheets found by traversing the class hierarchy
 
     Example
         .. plot:: samples/plotstyles/default.py
@@ -217,7 +232,7 @@ class DefaultPlotStyle(MutableMapping):
         },
     }
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *_, **kwargs):
         """Create a template instance of this template.
 
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
@@ -228,11 +243,11 @@ class DefaultPlotStyle(MutableMapping):
         # self.fig_width = None
         # self.fig_height = None
 
-        self.update(**kargs)
+        self.update(kwargs)
 
-    def __call__(self, **kargs):
+    def __call__(self, **kwargs):
         """Call the template object can manipulate the rcParams that will be set."""
-        for k, v in kargs.items():
+        for k, v in kwargs.items():
             if k.startswith("template_"):
                 nk = _add_dots(k[:9])
                 if nk in plt.rcParams:
@@ -242,7 +257,7 @@ class DefaultPlotStyle(MutableMapping):
                 self.update({_add_dots(k): v})
 
     def __delitem__(self, name):
-        """Clear any setting that overides the default for *name*."""
+        """Clear any setting that overrides the default for *name*."""
         if hasattr(self, name):
             default = getattr(type(self)(), name)
             setattr(self, name, default)
@@ -281,8 +296,7 @@ class DefaultPlotStyle(MutableMapping):
         attrs = [x for x in dir(self) if self._allowed_attr(x)]
         attrs += list(plt.rcParams.keys())
         attrs.sort()
-        for f in attrs:
-            yield f
+        yield from attrs
 
     def __len__(self):
         """Implement a length of stylesheet."""
@@ -294,6 +308,8 @@ class DefaultPlotStyle(MutableMapping):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
         if name.startswith("template_"):
             attrname = _add_dots(name[9:])
+            if attrname not in plt.rcParams.keys():
+                raise AttributeError(f"{attrname} is not an attribute of matplotlib.rcParams!")
             plt.rcParams[attrname] = value
             super().__setattr__(name, value)
         else:
@@ -322,7 +338,7 @@ class DefaultPlotStyle(MutableMapping):
 
     @property
     def stylesheet(self):
-        """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
+        """Horribly hacky method to traverse over the class hierarchy for style sheet names."""
         if (
             self._stylesheet is not None and self._stylesheet[0] == self.stylename
         ):  # Have we cached a copy of our stylesheets ?
@@ -361,9 +377,9 @@ class DefaultPlotStyle(MutableMapping):
         return sheets
 
     @stylesheet.setter
-    def stylesheet(self, value):  # pylint: disable=r0201
+    def stylesheet(self, value):
         """Just stop the stylesheet from being set."""
-        raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
+        raise AttributeError("Can't set the stylesheet value, this is derived from the stylename aatribute.")
 
     def clear(self):
         """Reset everything back o defaults."""
@@ -376,7 +392,7 @@ class DefaultPlotStyle(MutableMapping):
         for attr in attrs:
             delattr(self, attr)
 
-    def update(self, *args, **kargs):  # pylint: disable=signature-differs
+    def update(self, other=(), /, **_):
         """Update the template with new attributes from keyword arguments.
 
         Up to one positional argument may be supplied
@@ -384,72 +400,125 @@ class DefaultPlotStyle(MutableMapping):
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
-        if len(args) == 1 and isinstance(args[0], Mapping):
-            super().update(args[0])
-        elif len(args) > 0:
-            raise SyntaxError(
-                "Only one posotional argument which should be a Mapping subclass can be supplied toi update."
-            )
-        for k in kargs:
-            if k in dir(self) and not callable(self.__getattr__(k)):
-                self.__setattr__(k, kargs[k])
-            elif not k.startswith("_"):
-                self.__setattr__("template_" + k, kargs[k])
+        match other:
+            case Mapping():
+                for k, val in other.items():
+                    if k in dir(self) and not callable(getattr(self, k)):
+                        setattr(self, k, val)
+                    elif not k.startswith("_"):
+                        try:
+                            setattr(self, f"template_{k}", val)
+                        except AttributeError:
+                            pass
+            case _:
+                raise SyntaxError(
+                    "Only one posotional argument which should be a Mapping subclass can be supplied toi update."
+                )
 
-    def new_figure(self, figure=False, **kargs):
+    def _compute_figsize(self):
+        """Compute figure size from available attributes."""
+        if hasattr(self, "fig_width_pt"):
+            self.fig_width = self.fig_width_pt * self._inches_per_pt
+        if hasattr(self, "fig_height_pt"):
+            # default to golden ratio when only width is defined
+            base_w = getattr(self, "fig_width", None)
+            if base_w is not None:
+                self.fig_height = base_w * self._golden_mean
+        if hasattr(self, "fig_ratio") and hasattr(self, "fig_width"):
+            self.fig_height = self.fig_width / self.fig_ratio
+        if hasattr(self, "fig_width") and hasattr(self, "fig_height"):
+            self.template_figure__figsize = (self.fig_width, self.fig_height)
+
+    def _setup_figure(self, figure, projection, no_axes, figsize, **kwargs):
+        """---- Case 1: a specific figure identifier is provided ----."""
+        if figure in plt.get_fignums():
+            fig = plt.figure(figure)  # reuse
+            # If figure already has axes, pick suitable one or create as needed
+            if fig.axes:
+                if projection == "3d":
+                    for ax in fig.axes:
+                        if isinstance(ax, Axes3D):
+                            return fig, ax
+                    # No 3D axes present—create one if allowed
+                    return _add_axes_3d(fig, no_axes)
+                # 2D case: return current axes (unless no_axes)
+                if no_axes:
+                    return fig, None
+                return fig, fig.gca()
+            # No axes on the figure—create appropriately
+            return _add_axes_3d(fig, no_axes) if projection == "3d" else _add_axes_2d(fig, no_axes)
+        # Create the requested figure number
+        fig = plt.figure(figure, figsize=figsize, **kwargs)
+        return _add_axes_3d(fig, no_axes) if projection == "3d" else _add_axes_2d(fig, no_axes)
+
+    def new_figure(self, figure=False, projection="rectilinear", figsize=None, no_axes=False, ax=None, **kwargs):
         """Create a new figure.
 
-        This is called by PlotMixin to setup a new figure before we do anything."""
-        plt.rcdefaults()  # Start by resetting to our default settings
-        params = dict()
+        Keyword Args:
+            projection (str):
+                Projection to use - default is rectilinear
+            figsize (2-tuple, None):
+                Figure size to use, default None is to use template setting
+            no_axes (bool):
+                Dop not create axes - default is False, ie. to create axes
+            ax (Axes, 3DAxes, None):
+                Axes/3DAxes to use, default is to create new axes.
+            **kwargs:
+                Other keyword arguments passed to plt.figure()
+
+        This is called by PlotMixin to set up a new figure before we do anything.
+        """
+        # ---- Style and configuration ----
+        plt.style.use("default")
         self.apply()
-        if "fig_width_pt" in dir(self):
-            self.fig_width = self.fig_width_pt * self._inches_per_pt
-        if "fig_height_pt" in dir(self):
-            self.fig_height = self.fig_width * self._golden_mean  # height in inches
-        if "fig_ratio" in dir(self) and "fig_width" in dir(self):
-            self.fig_height = self.fig_width / self.fig_ratio
-        if "fig_width" and "fig_height" in self.__dict__:
-            self.template_figure__figsize = (self.fig_width, self.fig_height)
+
+        self._compute_figsize()
+
+        # Apply template_* rcParams (if provided on the instance)
+        params = {}
         for attr in dir(self):
             if attr.startswith("template_"):
                 attrname = _add_dots(attr[9:])
-                value = self.__getattribute__(attr)
-                if attrname in plt.rcParams.keys():
+                value = getattr(self, attr)
+                if attrname in plt.rcParams:
                     params[attrname] = value
-        plt.rcParams.update(params)  # Apply these parameters
-        projection = kargs.pop("projection", "rectilinear")
-        self.template_figure__figsize = kargs.pop("figsize", self.template_figure__figsize)  # pylint: disable=W0201
-        if "ax" in kargs:  # Giving an axis instance in kargs means we can use that as out figure
-            ax = kargs.get("ax")
-            plt.sca(ax)
-            figure = plt.gcf().number
-        if isinstance(figure, bool) and not figure:
-            ret = None
-        elif figure is not None:
-            fig = plt.figure(figure, figsize=self.template_figure__figsize)
-            if len(fig.axes) == 0:
-                rect = [plt.rcParams[f"figure.subplot.{i}"] for i in ["left", "bottom", "right", "top"]]
-                rect[2] = rect[2] - rect[0]
-                rect[3] = rect[3] - rect[1]
-                if projection == "3d":
-                    ax = fig.add_subplot(111, projection="3d")
-                else:
-                    ax = fig.add_axes(rect)
-            else:
-                if projection == "3d":
-                    ax = kargs.pop("ax", fig.gca(projection="3d"))
-                else:
-                    ax = kargs.pop("ax", fig.gca())
+        if params:
+            # In the original code params was built but unused; applying is typically desired.
+            plt.rcParams.update(params)
 
-            ret = fig
-        else:
-            if projection == "3d":
-                ret = plt.figure(figsize=self.template_figure__figsize, **kargs)
-                ax = ret.add_subplot(111, projection="3d")
-            else:
-                ret, ax = plt.subplots(figsize=self.template_figure__figsize, **kargs)
-        return ret, ax
+        # ---- Read options (pop to avoid passing into matplotlib unexpectedly) ----
+        figsize = figsize or getattr(self, "template_figure__figsize", None)
+
+        # Ensure a sensible default for layout unless the caller overrides it
+        kwargs.setdefault("layout", "constrained")
+
+        # ---- If an Axes is provided, just use it ----
+        if isinstance(ax, (Axes3D, plt.Axes)):
+            return ax.figure, ax
+
+        # ---- Explicit "do not make a figure" signal ----
+        if isinstance(figure, bool) and not figure:
+            return None, None
+
+        # ---- Case 1: a specific figure identifier is provided ----
+        if figure is not None:
+            return self._setup_figure(figure, projection, no_axes, figsize, **kwargs)
+
+        # ---- Case 2: no specific figure provided; build a fresh one ----
+        if projection == "3d":
+            fig = plt.figure(figsize=figsize, **kwargs)
+            return _add_axes_3d(fig, no_axes)
+
+        # 2D: the original used subplots when no existing figure was specified
+        if no_axes:
+            fig = plt.figure(figsize=figsize, **kwargs)
+            # Remove any auto-created axes if present (defensive)
+            for axis in list(fig.axes):
+                axis.remove()
+            return fig, None
+
+        # Standard 2D case: prefer subplots for users expecting a (fig, ax) pair
+        return plt.subplots(figsize=figsize, **kwargs)
 
     def apply(self):
         """Update matplotlib rc parameters from any attributes starting template_."""
@@ -468,10 +537,10 @@ class DefaultPlotStyle(MutableMapping):
         """Implement hook to customise plot.
 
         This method is supplied for sub classes to override to provide additional
-        plot customisation after the rc paramaters are updated from the class and
+        plot customisation after the rc parameters are updated from the class and
         instance attributes."""
 
-    def customise_axes(self, ax, plot):
+    def customise_axes(self, ax, _):
         """Implement hook for for when we have an axis to manipulate.
 
         Args:
@@ -482,10 +551,12 @@ class DefaultPlotStyle(MutableMapping):
             In the DefaultPlotStyle class this method is used to set SI units
             plotting mode for all axes.
         """
-        ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick__labelsize)
-        ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick__labelsize)
         ax.xaxis.set_major_locator(self.xlocater())
         ax.yaxis.set_major_locator(self.ylocater())
+        ax.set_xticks(ax.get_xticks())
+        ax.set_yticks(ax.get_yticks())
+        ax.set_xticklabels(ax.get_xticks(), size=self.template_xtick__labelsize)
+        ax.set_yticklabels(ax.get_yticks(), size=self.template_ytick__labelsize)
         if isinstance(self.xformatter, Formatter):
             xformatter = self.xformatter
         else:
@@ -502,7 +573,7 @@ class DefaultPlotStyle(MutableMapping):
             ax.set_zticklabels(ax.get_zticks(), size=self.template_ztick__labelsize)
             ax.zaxis.set_major_formatter(self.zformatter())
 
-    def annotate(self, ix, multiple, plot, **kargs):
+    def annotate(self, ix, multiple, plot, **kwargs):
         """Call all the routines necessary to annotate the axes etc.
 
         Args:
@@ -516,7 +587,7 @@ class DefaultPlotStyle(MutableMapping):
         if multiple in self.subplot_settings:
             if ix == 0:
                 i = 0
-            elif ix == len(plot.axes):
+            elif ix == len(plot.axes) - 1:
                 i = 2
             else:
                 i = 1
@@ -524,14 +595,14 @@ class DefaultPlotStyle(MutableMapping):
         else:
             settings = {"xlabel": True, "ylabel": True, "zlabel": True, "title": True}
         try:
-            if "xlabel" in kargs and self.show_xlabel and settings["xlabel"]:
-                plt.xlabel(str(kargs["xlabel"]), size=self.template_axes__labelsize)
-            if "ylabel" in kargs and self.show_ylabel and settings["ylabel"]:
-                plt.ylabel(str(kargs["ylabel"]), size=self.template_axes__labelsize)
-            if "zlabel" in kargs and self.show_zlabel and settings["zlabel"]:
-                plot.fig.axes[0].set_zlabel(kargs["zlabel"], size=self.template_axes__labelsize)
-            if "title" in kargs and self.show_title and settings["title"]:
-                plt.title(kargs["title"])
+            if "xlabel" in kwargs and self.show_xlabel and settings["xlabel"]:
+                plt.xlabel(str(kwargs["xlabel"]), size=self.template_axes__labelsize)
+            if "ylabel" in kwargs and self.show_ylabel and settings["ylabel"]:
+                plt.ylabel(str(kwargs["ylabel"]), size=self.template_axes__labelsize)
+            if "zlabel" in kwargs and self.show_zlabel and settings["zlabel"]:
+                plot.fig.axes[0].set_zlabel(kwargs["zlabel"], size=self.template_axes__labelsize)
+            if "title" in kwargs and self.show_title and settings["title"]:
+                plt.title(kwargs["title"])
             if self.showlegend:
                 plt.legend()
         except AttributeError:
@@ -539,7 +610,6 @@ class DefaultPlotStyle(MutableMapping):
 
 
 class GBPlotStyle(DefaultPlotStyle):
-
     """Template developed for Gavin's plotting.
 
     This is largely an experimental class for trying things out rather than
@@ -568,7 +638,6 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
 class JTBPlotStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings.
 
     Example:
@@ -585,7 +654,6 @@ class JTBPlotStyle(DefaultPlotStyle):
 
 
 class JTBinsetStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -596,7 +664,6 @@ class JTBinsetStyle(DefaultPlotStyle):
 
 
 class ThesisPlotStyle(DefaultPlotStyle):
-
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -604,7 +671,6 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 
 class PRBPlotStyle(DefaultPlotStyle):
-
     """A figure Style for making figures for Phys Rev * Jounrals.
 
     Example:
@@ -616,13 +682,12 @@ class PRBPlotStyle(DefaultPlotStyle):
     show_title = False
     stylename = "PRB"
 
-    def customise_axes(self, ax, plot):
+    def customise_axes(self, ax, _):
         """Override the default axis configuration."""
         ax.locator_params(tight=True, nbins=4)
 
 
 class SketchPlot(DefaultPlotStyle):
-
     """Turn on xkcd plot style.
 
     Implemented as a bit of a joke, but perhaps someone will use this in a real
@@ -665,12 +730,11 @@ class SketchPlot(DefaultPlotStyle):
 if SEABORN:  # extra classes if we have seaborn available
 
     class SeabornPlotStyle(DefaultPlotStyle):
-
         """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
 
         Attributes:
             stylename (str):
-                The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks
+                The seaborn plot style to use - darkgrid, whitegrid, dark, white, or ticks
             context (str):
                 The seaborn plot context for scaling elements - paper,notebook,talk, or poster
             palette (str):
@@ -730,7 +794,6 @@ if SEABORN:  # extra classes if we have seaborn available
             sns.set_context(context=self.context)
             sns.set_palette(sns.color_palette(self._palette))
             self.customise()
-
 
 else:
     SeabornPlotStyle = DefaultPlotStyle

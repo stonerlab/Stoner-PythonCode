@@ -1,4 +1,5 @@
 """Example plot using Joe Batley's plot style."""
+
 # pylint: disable=invalid-name
 import os.path as path
 

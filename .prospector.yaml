@@ -67,6 +67,22 @@ pep257:
     - D417
   run: true
 
+pydocstyle:
+  enable:
+    - D203
+    - D212
+    - D404
+    - D405
+  disable:
+    - D211
+    - D213
+    - D209
+    - D406
+    - D407
+    - D413
+    - D417
+  run: false
+
 pyroma:
   run: true
 

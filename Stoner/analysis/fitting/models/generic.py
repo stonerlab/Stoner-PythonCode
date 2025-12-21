@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """:py:class:`lmfit.Model` model classes and functions for various generic models."""
+
 # pylint: disable=invalid-name
 __all__ = [
     "Linear",
@@ -17,12 +18,13 @@ __all__ = [
 ]
 
 import numpy as np
-
 from lmfit import Model
-from lmfit.models import LinearModel as _Linear  # NOQA pylint: disable=unused-import
-from lmfit.models import PowerLawModel as _PowerLaw  # NOQA pylint: disable=unused-import
-from lmfit.models import QuadraticModel as _Quadratic  # NOQA pylint: disable=unused-import
-from lmfit.models import update_param_vals
+from lmfit.models import LinearModel as _Linear
+from lmfit.models import PowerLawModel as _PowerLaw
+from lmfit.models import QuadraticModel as _Quadratic
+from lmfit.models import (
+    update_param_vals,
+)
 
 
 def linear(x, intercept, slope):
@@ -34,7 +36,7 @@ def quadratic(x, a, b, c):
     r"""Calculate a simple quadratic fitting function.
 
     Args:
-        x (aray): Input data
+        x (array): Input data
         a (float): Quadratic term co-efficient
         b (float): Linear term co-efficient
         c (float): Constant offset term
@@ -49,7 +51,7 @@ def quadratic(x, a, b, c):
             :include-source:
             :outname: quadratic
     """
-    return a * x ** 2 + b * x + c
+    return a * x**2 + b * x + c
 
 
 def powerLaw(x, A, k):
@@ -58,7 +60,7 @@ def powerLaw(x, A, k):
     Args:
         x (array): Input data
         A (float): Prefactor
-        k (float): Pwoer
+        k (float): Power
 
     Return:
         Power law.
@@ -70,7 +72,7 @@ def powerLaw(x, A, k):
             :include-source:
             :outname: powerlaw
     """
-    return A * x ** k
+    return A * x**k
 
 
 def stretchedExp(x, A, beta, x_0):
@@ -95,11 +97,11 @@ def lorentzian_diff(x, A, sigma, mu):
 
     Args:
         x (array): x data
-        A (flaot): Peak amplitude
+        A (float): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
 
-    Returns
+    Returns:
         :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
                                                                       \left(- \mu + x\right)^{2}\right)^{2}}`
 
@@ -108,20 +110,22 @@ def lorentzian_diff(x, A, sigma, mu):
             :include-source:
             :outname: lorentzian_diff_func
     """
-    return A * sigma * (2 * mu - 2 * x) / (np.pi * (sigma ** 2 + (-mu + x) ** 2) ** 2)
+    return A * sigma * (2 * mu - 2 * x) / (np.pi * (sigma**2 + (-mu + x) ** 2) ** 2)
 
 
 class Linear(_Linear):
-
     """Simple linear fit class."""
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
 
 
 class Quadratic(_Quadratic):
-
     r"""A Simple quadratic fitting function.
 
     Args:
-        x (aray): Input data
+        x (array): Input data
         a (float): Quadratic term co-efficient
         b (float): Linear term co-efficient
         c (float): Constant offset term
@@ -137,15 +141,18 @@ class Quadratic(_Quadratic):
             :outname: quadratic-class
     """
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class PowerLaw(_PowerLaw):
-
     r"""Power Law Fitting Equation.
 
     Args:
         x (array): Input data
         A (float): Prefactor
-        k (float): Pwoer
+        k (float): Power
 
     Return:
         Power law.
@@ -158,9 +165,12 @@ class PowerLaw(_PowerLaw):
             :outname: powerlaw-class
     """
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class StretchedExp(Model):
-
     r"""A stretched exponential fuinction.
 
     Args:
@@ -197,18 +207,21 @@ class StretchedExp(Model):
         pars = self.make_params(A=A, beta=beta, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)
+
 
 class Lorentzian_diff(Model):
-
     r"""Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.
 
     Args:
         x (array): x data
-        A (flaot): Peak amplitude
+        A (float): Peak amplitude
         sigma (float): peak wideth
         mu (float): peak location in x
 
-    Returns
+    Returns:
         :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
                                                                       \left(- \mu + x\right)^{2}\right)^{2}}`
 
@@ -236,7 +249,7 @@ class Lorentzian_diff(Model):
         y1 = np.max(data)
         y2 = np.min(data)
         dy = y1 - y2
-        A = dy * (4 * np.pi * sigma ** 2) / (3 * np.sqrt(3))
+        A = dy * (4 * np.pi * sigma**2) / (3 * np.sqrt(3))
 
         pars = self.make_params(A=A, sigma=sigma, mu=mu)
         pars["A"].min = 0
@@ -244,3 +257,7 @@ class Lorentzian_diff(Model):
         pars["mu"].min = np.min(x)
         pars["mu"].max = np.max(x)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+    def copy(self, **kwargs):
+        """Make a new copy of the model."""
+        return self.__class__(**kwargs)

@@ -1,42 +1,41 @@
-# -*- coding: utf-8 -*-
 """Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
+
 __all__ = ["Item"]
 from collections.abc import MutableSequence
-from functools import wraps, partial
+from functools import partial, wraps
 from traceback import format_exc
 
 import numpy as np
 
-from ..tools import isiterable
 from ..compat import string_types
+from ..tools import isiterable
 from .utils import get_pool
 
 
 def _worker(d, **kwargs):
-    """Support function to run an arbitary function over a :py:class:`Stoner.Data` object."""
+    """Support function to run an arbitrary function over a :py:class:`Stoner.Data` object."""
     byname = kwargs.get("byname", False)
     func = kwargs.get("func", lambda x: x)
     if byname:
         func = getattr(d, func, lambda x: x)
     args = kwargs.get("args", tuple())
-    kargs = kwargs.get("kargs", dict)
+    kwargs = kwargs.get("kwargs", dict)
     if hasattr(d, "setas"):
         d["setas"] = list(d.setas)
     d["args"] = args
-    d["kargs"] = kargs
+    d["kwargs"] = kwargs
     d["func"] = func.__name__
     try:
         if byname:  # Ut's an instance bound moethod
-            ret = func(*args, **kargs)
-        else:  # It's an arbitary function
-            ret = func(d, *args, **kargs)
+            ret = func(*args, **kwargs)
+        else:  # It's an arbitrary function
+            ret = func(d, *args, **kwargs)
     except Exception as e:  # pylint: disable=W0703 # Ok to be broad as user func could do anything
         ret = e, format_exc()
     return (d, ret)
 
 
 class SetasWrapper(MutableSequence):
-
     """Manages wrapping each member of the folder's setas attribute."""
 
     def __init__(self, parent):
@@ -44,11 +43,11 @@ class SetasWrapper(MutableSequence):
         self._each = parent
         self._folder = parent._folder
 
-    def __call__(self, *args, **kargs):
+    def __call__(self, *args, **kwargs):
         """Pass through the calls the setas method of each item in our folder."""
         _ = self._folder._object_attrs.pop("setas", None)
-        for ix, obj in enumerate(self._folder):
-            obj.setas(*args, **kargs)
+        for obj in self._folder:
+            obj.setas(*args, **kwargs)
         self._folder._object_attrs["setas"] = self.collapse()
 
         return self._folder
@@ -77,6 +76,7 @@ class SetasWrapper(MutableSequence):
         """
         if len(value) < len(self._folder):
             value = value + value[-1] * (len(self._folder) - len(value))
+        v = "."
         for v, data in zip(value, self._folder):
             data.setas[index] = v
         setas = self._folder._object_attrs.get("setas", self.collapse())
@@ -108,11 +108,10 @@ class SetasWrapper(MutableSequence):
 
 
 class Item:
-
     """Provides a proxy object for accessing methods on the inividual members of a Folder.
 
     Notes:
-        The pupose of this class is to allow it to be explicit that we're calling methods
+        The purpose of this class is to allow it to be explicit that we're calling methods
         on the members of the folder rather than a collective method. This allows us to work
         around nameclashes.
     """
@@ -138,8 +137,8 @@ class Item:
         self._folder._object_attrs["setas"] = setas.collapse()
         return setas
 
-    def __call__(self, func, *args, **kargs):
-        """Iterate over the baseFolder, calling func on each item.
+    def __call__(self, func, *args, **kwargs):
+        """Iterate over the BaseFolder, calling func on each item.
 
         Args:
             func (callable, str):
@@ -153,19 +152,19 @@ class Item:
             A list of the results of evaluating *func* for each item in the folder.
 
         Notes:
-            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
-            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
-            :py:class:`baseFolder`. If *_result* is True the return value is added to the
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`BaseFolder` is
+            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
+            :py:class:`BaseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
         # Just call the iter generator but assemble into a list.
-        if isinstance(func, string_types) and "_byname" not in kargs:
+        if isinstance(func, string_types) and "_byname" not in kwargs:
             if func in globals() and callable(globals()[func]):
                 func = globals()[func]
             else:
                 func = getattr(self, func)
-        return list(self.iter(func, *args, **kargs))
+        return list(self.iter(func, *args, **kwargs))
 
     def __dir__(self):
         """Return a list of the common set of attributes of the instances in the folder."""
@@ -224,7 +223,11 @@ class Item:
                 elif len(self._folder):
                     ret = [(not hasattr(x, name), getattr(x, name, None)) for x in self._folder]
                     mask, values = zip(*ret)
-                    ret = np.ma.MaskedArray(values)
+                    lens = np.unique([len(v) if isiterable(v) else 0 for v in values])
+                    if lens.size == 1:
+                        ret = np.ma.MaskedArray(values)
+                    else:
+                        ret = np.ma.MaskedArray(values, dtype=object)
                     ret.mask = mask
                 else:
                     ret = getattr(instance, name, None)
@@ -246,7 +249,7 @@ class Item:
     def __setattr__(self, name, value):
         """Proxy call to set an attribute.
 
-        Setting the attrbute on .each sets it on all instantiated objects and in _object_attrs.
+        Setting the attribute on .each sets it on all instantiated objects and in _object_attrs.
 
         Args:
             name(str): Attribute to set
@@ -285,13 +288,13 @@ class Item:
             item (string): Name of method of metadataObject class to be called
 
         Returns:
-            Either a modifed copy of this objectFolder or a list of return values
+            Either a modified copy of this objectFolder or a list of return values
             from evaluating the method for each file in the Folder.
         """
         meth = getattr(self._folder.instance, item, None)
 
         @wraps(meth)
-        def _wrapper_(*args, **kargs):
+        def _wrapper_(*args, **kwargs):
             """Wrap a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
@@ -301,8 +304,8 @@ class Item:
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
-            kargs["_byname"] = True
-            return self(item, *args, **kargs)  # Develove to self.__call__ where we have multiprocess magic
+            kwargs["_byname"] = True
+            return self(item, *args, **kwargs)  # Develove to self.__call__ where we have multiprocess magic
 
         # Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
@@ -317,7 +320,7 @@ class Item:
             return NotImplemented
 
         @wraps(other)
-        def _wrapper_(*args, **kargs):
+        def _wrapper_(*args, **kwargs):
             """Wrap a call to the metadataObject type for magic method calling.
 
             Keyword Arguments:
@@ -327,14 +330,14 @@ class Item:
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
-            kargs["_byname"] = False  # Force the __call__ to use the callable function
-            return self(other, *args, **kargs)  # Delegate to self.__call__ which has multiprocess magic.
+            kwargs["_byname"] = False  # Force the __call__ to use the callable function
+            return self(other, *args, **kwargs)  # Delegate to self.__call__ which has multiprocess magic.
 
         # Ok that's the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
-    def iter(self, func, *args, **kargs):
-        """Iterate over the baseFolder, calling func on each item.
+    def iter(self, func, *args, **kwargs):
+        """Iterate over the BaseFolder, calling func on each item.
 
         Args:
             func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
@@ -346,28 +349,25 @@ class Item:
             A list of the results of evaluating *func* for each item in the folder.
 
         Notes:
-            If *_return* is None and the return type of *func* is the same type as the :py:class:`baseFolder` is
-            storing, then the return value replaces trhe original :py:class:`Stoner.Core.metadataobject` in the
-            :py:class:`baseFolder`. If *_result* is True the return value is added to the
+            If *_return* is None and the return type of *func* is the same type as the :py:class:`BaseFolder` is
+            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
+            :py:class:`BaseFolder`. If *_result* is True the return value is added to the
             :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
-        _return = kargs.pop("_return", None)
-        _byname = kargs.pop("_byname", False)
-        _serial = kargs.pop("_serial", False)
+        _return = kwargs.pop("_return", None)
+        _byname = kwargs.pop("_byname", False)
+        _serial = kwargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
-        self._folder.executor = get_pool(self._folder, _serial)
-        for ix, (f, ret) in enumerate(
-            self._folder.executor.map(
-                partial(_worker, func=func, args=args, kargs=kargs, byname=_byname), self._folder
-            )
+        p, imap = get_pool(_serial)
+        for ix, (new_d, ret) in enumerate(
+            imap(partial(_worker, func=func, args=args, kwargs=kwargs, byname=_byname), self._folder)
         ):
-            new_d = f
             if self._folder.debug:
                 print(ix, type(ret))
             if isinstance(ret, self._folder._type) and _return is None:
                 try:  # Check if ret has same data type, otherwise will not overwrite well
-                    if ret.data.dtype != f.data.dtype:
+                    if ret.data.dtype != new_d.data.dtype:
                         continue
                     new_d = ret
                 except AttributeError:
@@ -379,3 +379,6 @@ class Item:
             name = self._folder.__names__()[ix]
             self._folder.__setter__(name, new_d)
             yield ret
+        if p is not None:
+            p.close()
+            p.join()

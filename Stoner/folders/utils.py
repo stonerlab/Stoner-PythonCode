@@ -9,30 +9,18 @@ __all__ = [
     "get_pool",
     "removeDisallowedFilenameChars",
 ]
-import os.path as path
-from os import cpu_count
-import re
-import string
 import fnmatch
 import pathlib
-from concurrent import futures
+import re
+import string
+from multiprocessing.pool import ThreadPool
+from os import path
 
+import multiprocess as multiprocessing
 from numpy import array
 
-from Stoner.compat import string_types, _pattern_type
+from Stoner.compat import _pattern_type, string_types
 from Stoner.tools import get_option
-
-
-class _fake_executor:
-
-    """Minimal class to fake the bits of the executor protocol that we need."""
-
-    def __init__(self, *args, **kargs):
-        """Fake constructor."""
-        self.map = map  # set the map method
-
-    def shutdown(self):
-        """Fake shutdown method."""
 
 
 def pathsplit(pth):
@@ -49,6 +37,7 @@ def pathjoin(*args):
     if len(args) > 1:
         tmp = path.join(args[0], *args[1:])
         return tmp.replace(path.sep, "/")
+    return None
 
 
 def scan_dir(root):
@@ -67,7 +56,7 @@ def scan_dir(root):
 def discard_earlier(files):
     """Discard files where a similar named file with !#### exists."""
     search = re.compile(r"^(?P<basename>.*)\!(?P<rev>\d+)(?P<ext>\.[^\.]*)$")
-    dups = dict()
+    dups = {}
     ret = []
     for f in files:
         match = search.match(f)
@@ -117,27 +106,27 @@ def filter_files(files, patterns, keep=True):
     return files
 
 
-def get_pool(folder=None, _serial=False):
-    """Get a concurrent.futures compatible executor.
+def get_pool(_serial=False):
+    """Get a Pool and map implementation depending on options.
 
     Returns:
-        (futures.Executor):
-            Executor on which to run the distributed job.
+        Pool(),map: Pool object if possible and map implementation.
     """
     if get_option("multiprocessing") and not _serial:
         try:
             if get_option("threading"):
-                executor = futures.ThreadPoolExecutor(max_workers=cpu_count())
+                p = ThreadPool(processes=int(multiprocessing.cpu_count() - 1))
             else:
-                executor = futures.ProcessPoolExecutor(max_workers=cpu_count())
+                p = multiprocessing.Pool(int(multiprocessing.cpu_count() / 2))  # pylint: disable=not-callable
+            imap = p.imap
         except (ArithmeticError, AttributeError, LookupError, RuntimeError, NameError, OSError, TypeError, ValueError):
             # Fallback to non-multiprocessing if necessary
-            executor = None
+            p = None
+            imap = map
     else:
-        executor = _fake_executor()
-    if getattr(folder, "executor", False):
-        folder.executor.shutdown()
-    return executor
+        p = None
+        imap = map
+    return p, imap
 
 
 def removeDisallowedFilenameChars(filename):
@@ -149,5 +138,5 @@ def removeDisallowedFilenameChars(filename):
     Returns:
         A filename with non ASCII characters stripped out
     """
-    validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-    return "".join([c for c in filename if c in validFilenameChars])
+    valid_fname_chars = f"-_.() {string.ascii_letters}{string.digits}"
+    return "".join([c for c in filename if c in valid_fname_chars])

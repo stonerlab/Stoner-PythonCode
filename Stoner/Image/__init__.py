@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""The :mod:`Stoner.Image` package provides a means to carry out image processing functions in a smilar way that
+"""Supackage to provide image processing capabilities.
+
+The :mod:`Stoner.Image` package provides a means to carry out image processing functions in a smilar way that
 :mod:`Stoner.Core` and :class:`Stoner.Data` and :class:`Stoner.DataFolder` do. The :mod:`Stomner.Image.core` module
 contains the key classes for achieving this.
 """
@@ -19,9 +21,8 @@ __all__ = [
     "KerrStack",
     "MaskStack",
 ]
+from . import attrs, widgets
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder
-from .stack import ImageStack
 from .kerr import KerrArray, KerrStack, MaskStack
-from . import attrs
-from . import widgets
+from .stack import ImageStack

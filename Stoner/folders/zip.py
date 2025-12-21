@@ -1,0 +1,304 @@
+# -*- coding: utf-8 -*-
+"""Support reading DataFile like objects into and outof standard zip files.
+
+Classes Include
+
+* ZipFolder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single zip file
+"""
+__all__ = ["ZipFolder"]
+import fnmatch
+import zipfile as zf
+from os import path
+from pathlib import Path
+
+from ..compat import _pattern_type, get_filedialog
+from ..core.data import Data
+from ..formats.utils.zip import test_is_zip
+from .core import BaseFolder
+from .mixins import DiskBasedFolderMixin
+from .utils import pathjoin
+
+
+def _prune_list(p, files):
+    """Prune the files list of entries that match pattern p."""
+    if isinstance(p, str):
+        for f in list(fnmatch.filter(files, p)):
+            del files[files.index(f)]
+    if isinstance(p, _pattern_type):
+        matched = []
+        # For reg expts we iterate over all files, but we can't delete matched
+        # files as we go as we're iterating over them - so we store the
+        # indices and delete them later.
+        for f in files:
+            if p.search(f):
+                matched.append(files.index(f))
+        matched.sort(reverse=True)
+        for i in matched:  # reverse sort the matching indices to safely delete
+            del files[i]
+
+
+def _build_list(fldr, p, files):
+    """Add matching files from the list to folder if matching pattern p."""
+    if isinstance(p, str):
+        for f in fnmatch.filter(files, p):
+            del files[files.index(f)]
+            f.replace(path.sep, "/")
+            fldr.append(f)
+    elif isinstance(p, _pattern_type):
+        matched = []
+        # For reg expts we iterate over all files, but we can't delete matched
+        # files as we go as we're iterating over them - so we store the
+        # indices and delete them later.
+        for ix, f in enumerate(files):
+            if p.search(f):
+                f.replace(path.sep, "/")
+                fldr.append(f)
+            else:
+                matched.append(ix)
+        for i in reversed(matched):  # reverse sort the matching indices to safely delete
+            del files[i]
+
+
+class ZipFolder(DiskBasedFolderMixin, BaseFolder):
+    """A sub class of DataFile that sores itself in a zip file.
+
+    If the first non-keyword argument is not an :py:class:`zipfile:ZipFile` then
+    initialises with a blank parent constructor and then loads data, otherwise,
+    calls parent constructor.
+    """
+
+    _defaults = {
+        "pattern": ["*.*"],
+        "type": None,
+        "exclude": ["*.tdms_index"],
+        "read_means": False,
+        "recursive": True,
+        "flat": False,
+        "readlist": True,
+    }
+
+    def __init__(self, *args, **kwargs):
+        """Initialise the file attribute."""
+        self.File = None
+        self.exclude = []
+        self.flat = False
+        super().__init__(*args, **kwargs)
+
+    @property
+    def full_key(self):
+        """Generate a full canonical path through the zip archive to this file."""
+        filename = path.splitdrive(self.File.filepath)[1]
+        name = path.splitdrive(self.path)[1]
+        return path.relpath(name, filename).replace(path.sep, "/")
+
+    @property
+    def key(self):  # pylint: disable=invalid-overridden-method
+        """Return the immediate filename of the stored file."""
+        return path.basename(self.directory)
+
+    @key.setter
+    def key(self, value):  # pylint: disable=invalid-overridden-method
+        """Set the immediate filename that will be used when the file is saved."""
+        self.path = pathjoin(self.directory, value)
+
+    def _zip_file_dialog(self, mode="r"):
+        """Create a file dialog box for working with.
+
+        Args:
+            mode (string):
+                Where the dialog is for opening or saving the file.
+
+        Returns:
+            A directory to be used for the file operation.
+        """
+        file_wildcard = [("zip file", "*.zip"), ("All files", "*.*")]
+
+        if mode == "r":
+            what = "file"
+        else:
+            what = "save"
+
+        dlg = get_filedialog(what=what, filetypes=file_wildcard)
+        if dlg is not None:
+            self.directory = dlg
+            with zf.ZipFile(self.directory, mode) as f:
+                self.File = f
+            return self.directory
+        return None
+
+    def getlist(self, recursive=None, directory=None, flatten=None, **_):
+        """Read the Zip File to construct a list of ZipFile objects."""
+        if recursive is None:
+            recursive = getattr(self, "recursive", False)
+        self.files = []
+        self.groups = {}
+
+        if flatten is None:
+            flatten = self.flat
+
+        match directory:
+            case None if self.File is None:
+                self.File = zf.ZipFile(self._zip_file_dialog(), "r")  # pylint: disable=R1732
+                close_me = True
+            case zf.ZipFile() if directory.fp:
+                self.File = directory
+                close_me = False
+            case zf.ZipFile():
+                self.File = zf.ZipFile(directory, "r")  # pylint: disable=R1732
+                close_me = True
+            case str() | Path() if path.isdir(directory):
+                return super().getlist(recursive=recursive, directory=directory, flatten=flatten)
+            case str() | Path() if zf.is_zipfile(directory):
+                self.File = zf.ZipFile(directory, "r")  # pylint: disable=R1732
+                close_me = True
+            case _ if isinstance(self.File, zf.ZipFile) and self.File.fp:
+                close_me = False
+            case _ if isinstance(self.File, zf.ZipFile):
+                self.File = zf.ZipFile(self.File.filename, "r")  # pylint: disable=R1732
+                close_me = True
+            case _:
+                raise IOError(f"{directory} does not appear to be zip file!")
+        # At this point directory contains an open h5py.File object, or possibly a group
+        self.path = self.File.filename
+        files = [x.filename for x in self.File.filelist]
+        for p in self.exclude:  # Remove excluded files
+            _prune_list(p, files)
+        for p in self.pattern:  # pattern is a list of strings and regeps
+            _build_list(self, p, files)
+        self._zip_contents = files
+
+        if flatten is None or not flatten:
+            self.unflatten()  # pylint: disable=no-member
+        if close_me:
+            self.File.close()
+        return self
+
+    def __clone__(self, other=None, attrs_only=False):
+        """Do whatever is necessary to copy attributes from self to other."""
+        if other is None:
+            if attrs_only:
+                other = type(self)(readlist=False)
+            else:
+                other = type(self)()
+        for arg in self._defaults:
+            if hasattr(self, arg):
+                setattr(other, arg, getattr(self, arg))
+        return super().__clone__(other=other, attrs_only=attrs_only)
+
+    def __getter__(self, name, instantiate=True):
+        """Load the specified name from a compressed archive.
+
+        Parameters:
+            name (key type):
+                The canonical mapping key to construct the path from.
+
+        Keyword Arguments:
+            instantiate (bool):
+                IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
+                the __getter__ method may return a key that can be used by it later to actually get the
+                :py:class:`Stoner.Core.Data` object.
+
+        Returns:
+            (metadataObject):
+                The metadataObject
+        """
+        try:
+            return super().__getter__(name, instantiate=instantiate)
+        except (AttributeError, IndexError, KeyError, OSError, IOError) as err:
+            if self.debug:
+                print(err)
+
+        if instantiate:
+            try:
+                return self.type(Data(path.join(self.File.filename, name), filetype="ZippedFile"))
+            except AttributeError:  # closed zip file?
+                filename = test_is_zip(self.directory)[0]
+                with zf.ZipFile(filename, "a") as self.File:
+                    tmp = self.type(Data(path.join(self.File.filename, name)), filetype="ZippedFile")
+                return tmp
+        else:
+            return name
+
+    def __lookup__(self, name):
+        """Look for a given name in the ZipFolder namelist.
+
+        Parameters:
+            name(str):
+                Name of an object
+
+        Returns:
+            A canonical key name for that file
+
+        Note:
+            We try two things - first a direct lookup in the namelist if there is an exact match to the key and then
+            we prepend the ZipFolder's path to try for a match with just the final part of the filename.
+        """
+        try:  # try to go back to the base to see if it's already loaded
+            return self._storage_class.__lookup__(self, name)
+        except (AttributeError, IndexError, KeyError):  # Ok, that failed, so let's
+            pass
+
+        try:
+            if isinstance(name, str):
+                name = name.replace(path.sep, "/")
+                # First try the direct lookup - will work if we have a full name
+                if name in self.File.namelist():
+                    return name
+                pth = path.normpath(path.join(self.full_key, name)).replace(path.sep, "/")
+                if pth in self.File.namelist():
+                    return pth
+        except AttributeError:
+            pass
+        return super().__lookup__(name)
+
+    def save(self, root=None):
+        """Save a load of files to a single Zip file, creating members as it goes.
+
+        Keyword Arguments:
+            root (string):
+                The name of the Zip file to save to if set to None, will prompt for a filename.
+
+        Return:
+            A list of group paths in the Zip file
+        """
+        if root is None:
+            root = self._zip_file_dialog(mode="w")
+        elif isinstance(root, bool) and not root and isinstance(self.File, zf.ZipFile):
+            root = self.File.filename
+            self.File.close()
+        mode = "a" if path.exists(root) else "w"
+        with zf.ZipFile(root, mode) as self.File:
+            tmp = self.walk_groups(self._saver)  # pylint: disable=no-member
+        return tmp
+
+    def _saver(self, f, trail):
+        """Create a virtual path of groups in the Zip file and save data.
+
+        Args:
+            f(DataFile):
+                A DataFile instance to save
+            trail (list):
+                The trail of groups
+
+        Returns:
+            The new filename of the saved DataFile.
+
+        ZipFiles are really a flat hierarchy, so concatenate the trail and save the data using
+        :py:meth:`Stoner.Zip.ZipFile.save`
+
+        This routine is used by a walk_groups call - hence the prototype matches that required for
+        :py:meth:`Stoner.Folders.DataFolder.walk_groups`.
+
+        """
+        if not isinstance(f, Data):
+            f = Data(f)
+        filename = path.splitdrive(f.filename)[1]
+        bits = [self.File.filename] + trail + [filename]
+        pathsep = path.join("a", "b")[1]
+        for ix, b in enumerate(bits):
+            if ix == 0 or not b.startswith(pathsep):
+                continue
+            bits[ix] = b[1:]
+        member = path.join(*bits)
+        f.save(member, filetype="ZippedFile")
+        return f.filename

@@ -2,53 +2,46 @@
 # -*- coding: utf-8 -*-
 """Base classes for the Stoner package."""
 
-__all__ = ["_evaluatable", "regexpDict", "string_to_type", "typeHintedDict", "metadataObject"]
-from collections.abc import MutableMapping, Mapping
-import re
+__all__ = ["_evaluatable", "RegexpDict", "string_to_type", "TypeHintedDict", "metadataObject"]
 import copy
 import datetime
-from typing import (
-    Union,
-    Optional,
-    Any,
-    Dict,
-    Mapping as MappingType,
-    Tuple,
-    List,
-    Set,
-    Callable,
-    Sequence,
-    Iterable as IterableType,
-    Generator,
-)
+import re
+from collections.abc import Generator, Iterable, Mapping, MutableMapping, Sequence
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union
 
-from dateutil import parser
-import numpy as np
-from numpy import NaN
 import asteval
+import numpy as np
+from dateutil import parser
+from numpy import nan
 
 try:
     import pandas as pd
 except ImportError:
     pd = None
 
-from ..compat import string_types, int_types, _pattern_type
-from ..tools import isiterable, isComparable
+from ..compat import _pattern_type, int_types, string_types
+from ..tools import iscomparable, isiterable
+from ..tools.typing import Filename, RegExp
 from .exceptions import StonerAssertionError
-from .Typing import String_Types, RegExp, Filename
 
 try:
-    from blist import sorteddict
+    from blist import sorteddict as SortedDict
 except (StonerAssertionError, ImportError):  # Fail if blist not present or Python 3
     from collections import OrderedDict
 
-    sorteddict = OrderedDict
+    SortedDict = OrderedDict
 
 _asteval_interp = None
 
 
+def _parse_date(string: str) -> datetime.datetime:
+    """Run the dateutil parser with a UK sensible date order."""
+    parserinfo = parser.parserinfo(dayfirst=True)
+    return parser.parse(string, parserinfo)
+
+
 def literal_eval(string: str) -> Any:
-    """Use the asteval module to interpret arbitary strings slightly safely.
+    """Use the asteval module to interpret arbitrary strings slightly safely.
 
     Args:
         string (str):
@@ -64,7 +57,7 @@ def literal_eval(string: str) -> Any:
     global _asteval_interp  # pylint: disable=W0603
     if _asteval_interp is None:
         _asteval_interp = asteval.Interpreter(
-            usersyms={"np": np, "re": re, "NaN": NaN, "nan": NaN, "None": None, "datetime": datetime}
+            usersyms={"np": np, "re": re, "NaN": nan, "nan": nan, "None": None, "datetime": datetime}
         )
     try:
         return _asteval_interp(string, show_errors=False)
@@ -72,13 +65,13 @@ def literal_eval(string: str) -> Any:
         raise ValueError(f"Cannot interpret {string} as valid Python") from err
 
 
-def string_to_type(value: String_Types) -> Any:
+def string_to_type(value: str) -> Any:
     """Given a string value try to work out if there is a better python type dor the value.
 
     First of all the first character is checked to see if it is a [ or { which would
     suggest this is a list of dictionary. If the value looks like a common boolean
     value (i.e. Yes, No, True, Fale, On, Off) then it is assumed to be a boolean value.
-    Fianlly it interpretation as an int, float or string is tried.
+    Finally it interpretation as an int, float or string is tried.
 
     Args:
         value (string):
@@ -99,7 +92,7 @@ def string_to_type(value: String_Types) -> Any:
             if value.lower() in ["true", "yes", "on", "false", "no", "off"]:
                 ret = value.lower() in ["true", "yes", "on"]  # Boolean
             else:
-                for trial in [int, float, parser.parse, str]:
+                for trial in [int, float, _parse_date, str]:
                     try:
                         ret = trial(value)
                         break
@@ -113,12 +106,10 @@ def string_to_type(value: String_Types) -> Any:
 
 
 class _evaluatable:
-
     """Placeholder to indicate that special action needed to convert a string representation to valid Python type."""
 
 
-class regexpDict(sorteddict):
-
+class RegexpDict(SortedDict):
     """An ordered dictionary that permits looks up by regular expression."""
 
     allowed_keys: Tuple = (object,)
@@ -128,13 +119,13 @@ class regexpDict(sorteddict):
     ) -> Union[Any, List[Any]]:
         """Lookup name and find a matching key or raise KeyError.
 
-        Parameters:
+        Args:
             name (str, _pattern_type):
                 The name to be searched for
 
         Keyword Arguments:
             multiple (bool):
-                Return a singl entry ()default, False) or multiple entries
+                Return a single entry ()default, False) or multiple entries
             exact(bool):
                 Do not do a regular expression search, match the exact string only.
 
@@ -173,7 +164,7 @@ class regexpDict(sorteddict):
 
         if ret is None or isiterable(ret) and not ret:
             raise KeyError(f"{name} is not a match to any key.")
-        if multiple:  # sort out returing multiple entries or not
+        if multiple:  # sort out returning multiple entries or not
             if not isinstance(ret, list):
                 ret = [ret]
         else:
@@ -200,7 +191,7 @@ class regexpDict(sorteddict):
         super().__delitem__(self.__lookup__(name))
 
     def __contains__(self, name: Any) -> bool:
-        """Return True if name either is an exact key or matches when interpreted as a regular experssion."""
+        """Return True if name either is an exact key or matches when interpreted as a regular expression."""
         try:
             name = self.__lookup__(name)
             return True
@@ -213,7 +204,7 @@ class regexpDict(sorteddict):
             return NotImplemented
         return len(self ^ other) == 0 and len(other ^ self) == 0
 
-    def __sub__(self, other: MappingType) -> "regexpDict":
+    def __sub__(self, other: Mapping) -> "RegexpDict":
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -222,7 +213,7 @@ class regexpDict(sorteddict):
         ret = type(self)({k: self[k] for k in (mk - ok)})
         return ret
 
-    def __xor__(self, other: MappingType) -> Union["regexpDict", Set[Any]]:
+    def __xor__(self, other: Mapping) -> Union["RegexpDict", Set[Any]]:
         """Give the difference between two arrays."""
         if not isinstance(other, Mapping):
             return NotImplemented
@@ -233,7 +224,7 @@ class regexpDict(sorteddict):
         # Do values differ?
         ret = type(self)()
         for (mk, mv), (ok, ov) in zip(sorted(self.items()), sorted(other.items())):
-            if np.any(mv != ov) and isComparable(mv, ov):
+            if np.any(mv != ov) and iscomparable(mv, ov):
                 ret[mk] = (mv, ov)
         return ret
 
@@ -253,14 +244,13 @@ class regexpDict(sorteddict):
         return super().__contains__(name)
 
 
-class typeHintedDict(regexpDict):
-
+class TypeHintedDict(RegexpDict):
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
     the :py:class:`DataFile` data structure. However, it is convenient for this file format
     to be ASCII text for ease of use with other programs. In order to represent metadata which
-    can have arbitary types, the LabVIEW code that generates the data file from our measurements
+    can have arbitrary types, the LabVIEW code that generates the data file from our measurements
     adds a type hint string. The Stoner Python code can then make use of this type hinting to
     choose the correct representation for the metadata. The type hinting information is retained
     so that files output from Python will retain type hints to permit them to be loaded into
@@ -269,23 +259,23 @@ class typeHintedDict(regexpDict):
     Attributes:
         _typehints (dict):
             The backing store for the type hint information
-        __regexGetType (re):
+        _regex_get_type (re):
             Used to extract the type hint from a string
-        __regexSignedInt (re):
-            matches type hint strings for signed intergers
-        __regexUnsignedInt (re):
+        _regex_signed_int (re):
+            matches type hint strings for signed integers
+        _regex_unsigned_int (re):
             matches the type hint string for unsigned integers
-        __regexFloat (re):
+        _regex_float (re):
             matches the type hint strings for floats
-        __regexBoolean (re):
+        _regex_boolean (re):
             matches the type hint string for a boolean
-        __regexStrng (re):
+        _regex_strng (re):
             matches the type hint string for a string variable
-        __regexEvaluatable (re):
+        _regex_evaluatable (re):
             matches the type hint string for a compoind data type
-        __types (dict):
+        _types (dict):
             mapping of type hinted types to actual Python types
-        __tests (dict):
+        _tests (dict):
             mapping of the regex patterns to actual python types
 
     Notes:
@@ -297,20 +287,20 @@ class typeHintedDict(regexpDict):
     allowed_keys: Tuple = string_types
     # Force metadata keys to be strings
 
-    __regexGetType: RegExp = re.compile(r"([^\{]*)\{([^\}]*)\}")
+    _regex_get_type: RegExp = re.compile(r"([^\{]*)\{([^\}]*)\}")
     # Match the contents of the inner most{}
-    __regexSignedInt: RegExp = re.compile(r"^I\d+")
+    _regex_signed_int: RegExp = re.compile(r"^I\d+")
     # Matches all signed integers
-    __regexUnsignedInt: RegExp = re.compile(r"^U / d+")
+    _regex_unsigned_int: RegExp = re.compile(r"^U / d+")
     # Match unsigned integers
-    __regexFloat: RegExp = re.compile(r"^(Extended|Double|Single)\sFloat")
+    _regex_float: RegExp = re.compile(r"^(Extended|Double|Single)\sFloat")
     # Match floating point types
-    __regexBoolean: RegExp = re.compile(r"^Boolean")
-    __regexString = re.compile(r"^(String|Path|Enum)")
-    __regexTimestamp: RegExp = re.compile(r"Timestamp")
-    __regexEvaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
+    _regex_boolean: RegExp = re.compile(r"^Boolean")
+    _regex_string = re.compile(r"^(String|Path|Enum)")
+    _regex_timestamp: RegExp = re.compile(r"Timestamp")
+    _regex_evaluatable: RegExp = re.compile(r"^(Cluster||\d+D Array|List)")
 
-    __types: Dict[str, type] = dict(
+    _types: Dict[str, Type] = dict(
         [  # Key order does matter here!
             ("Boolean", bool),
             ("I32", int),
@@ -323,39 +313,41 @@ class typeHintedDict(regexpDict):
             ("String", str),
         ]
     )
-    # This is the inverse of the __tests below - this gives
+    # This is the inverse of the _tests below - this gives
     # the string type for standard Python classes
 
-    __tests: List[Tuple] = [
-        (__regexSignedInt, int),
-        (__regexUnsignedInt, int),
-        (__regexFloat, float),
-        (__regexBoolean, bool),
-        (__regexTimestamp, datetime.datetime),
-        (__regexString, str),
-        (__regexEvaluatable, _evaluatable()),
+    _tests: List[Tuple] = [
+        (_regex_signed_int, int),
+        (_regex_unsigned_int, int),
+        (_regex_float, float),
+        (_regex_boolean, bool),
+        (_regex_timestamp, datetime.datetime),
+        (_regex_string, str),
+        (_regex_evaluatable, _evaluatable()),
     ]
 
     # This is used to work out the correct python class for
     # some string types
 
-    def __init__(self, *args: Any, **kargs: Any) -> None:
-        """Construct the typeHintedDict.
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Construct the TypeHintedDict.
 
         Args:
-            *args, **kargs:
-                Pass any parameters through to the dict() constructor.
+            *args:
+                Pass any parameters through to the{} constructor.
+            **kwargs:
+                Pass any keyword parameters through to the{} constructor.
 
 
-        Calls the dict() constructor, then runs through the keys of the
+        Calls the{} constructor, then runs through the keys of the
         created dictionary and either uses the string type embedded in
         the keyname to generate the type hint (and remove the
         embedded string type from the keyname) or determines the likely
         type hint from the value of the dict element.
         """
-        self._typehints = sorteddict()
-        super().__init__(*args, **kargs)
-        for key in list(self.keys()):  # Chekc through all the keys and see if they contain
+        self._typehints = SortedDict()
+        super().__init__(*args, **kwargs)
+        for key in list(self.keys()):  # Check through all the keys and see if they contain
             # type hints. If they do, move them to the
             # _typehint dict
             value = super().__getitem__(key)
@@ -364,7 +356,7 @@ class typeHintedDict(regexpDict):
 
     @property
     def types(self) -> Dict:
-        """Return the dictrionary of value types."""
+        """Return the dictionary of value types."""
         return self._typehints
 
     def findtype(self, value: Any) -> str:
@@ -384,9 +376,9 @@ class typeHintedDict(regexpDict):
         typ = "Invalid Type"
         if value is None:
             return "Void"
-        for t in self.__types:
-            if isinstance(value, self.__types[t]):
-                if t == "Cluster" or t == "AnonCluster":
+        for t, val in self._types.items():
+            if isinstance(value, val):
+                if t in ["Cluster", "AnonCluster"]:
                     elements = []
                     if isinstance(value, dict):
                         for k in value:
@@ -423,40 +415,34 @@ class typeHintedDict(regexpDict):
             are tested in turn and if the type string matches the constructor of
             the associated python class is called with value as its argument.
         """
-        ret = None
         if typ == "Invalid Type":  # Short circuit here
             return repr(value)
-        for (regexp, valuetype) in self.__tests:
-            matched = regexp.search(typ)
-            if matched is not None:
-                if isinstance(valuetype, _evaluatable):
+        for regexp, valuetype in self._tests:
+            if regexp.search(typ) is None:
+                continue
+            if isinstance(valuetype, _evaluatable):
+                try:
+                    if isinstance(value, string_types):  # we've got a string already don't need repr
+                        return literal_eval(value)
+                    return literal_eval(repr(value))  # pylint: disable=eval-used
+                except ValueError:  # Oops just keep string format
+                    return str(value)
+                except SyntaxError:
+                    return ""
+            if issubclass(valuetype, datetime.datetime):
+                try:
+                    return parser.parse(value)
+                except ValueError:
                     try:
-                        if isinstance(value, string_types):  # we've got a string already don't need repr
-                            ret = literal_eval(value)
-                        else:
-                            ret = literal_eval(repr(value))  # pylint: disable=eval-used
-                    except ValueError:  # Oops just keep string format
-                        ret = str(value)
-                    except SyntaxError:
-                        ret = ""
-                    break
-                elif issubclass(valuetype, datetime.datetime):
-                    ret = literal_eval(value)
-                    if isinstance(ret, string_types):
-                        try:
-                            ret = parser.parse(ret)
-                        except (ValueError, OverflowError):
-                            pass
-                    break
-                else:
-                    ret = valuetype(value)
-                    break
-        else:
-            ret = str(value)
-            try:
-                ret = parser.parse(ret)
-            except (ValueError, OverflowError):
-                pass
+                        return literal_eval(value)
+                    except ValueError:
+                        return str(value)
+            return valuetype(value)
+        ret = str(value)
+        try:
+            return _parse_date(ret)
+        except (ValueError, OverflowError):
+            pass
         return ret
 
     def _get_name_(self, name: Union[str, RegExp]) -> Tuple[str, Optional[str]]:
@@ -471,7 +457,7 @@ class typeHintedDict(regexpDict):
                 the type hint string),
         """
         search = str(name)
-        m = self.__regexGetType.search(search)
+        m = self._regex_get_type.search(search)
         if m is not None:
             return m.group(1), m.group(2)
         if not isinstance(name, string_types + int_types):
@@ -491,14 +477,14 @@ class typeHintedDict(regexpDict):
         key = name
         (name, typehint) = self._get_name_(name)
         name = self.__lookup__(name, True)
-        value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
+        value = [super().__getitem__(nm) for nm in name]
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
         if len(value) == 0:  # pylint: disable=len-as-condition
             raise KeyError(f"{key} is not a valid key even when interpreted as a sregular expression!")
         if len(value) == 1:
             return value[0]
-        return {k: v for k, v in zip(name, value)}
+        return dict(zip(name, value))
 
     def __setitem__(self, name: Union[str, RegExp], value: Any) -> None:
         """Set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
@@ -522,10 +508,7 @@ class typeHintedDict(regexpDict):
                 super().__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
-                try:
-                    super().__setitem__(name, self.__mungevalue(typehint, value))
-                except ValueError:
-                    pass  # Silently fail
+                super().__setitem__(name, self.__mungevalue(typehint, value))
         else:
             if isinstance(value, string_types):
                 value = string_to_type(value)
@@ -549,20 +532,20 @@ class typeHintedDict(regexpDict):
         ret = [f"{repr(key)}:{self.type(key)}:{repr(self[key])}" for key in sorted(self)]
         return "\n".join(ret)
 
-    def copy(self) -> "typeHintedDict":
+    def copy(self) -> "TypeHintedDict":
         """Provide a copy method that is aware of the type hinting strings.
 
         This produces a flat dictionary with the type hint embedded in the key name.
 
         Returns:
-            A copy of the current typeHintedDict
+            A copy of the current TypeHintedDict
         """
         cls = type(self)
         ret = cls()
-        for k in self.keys():
+        for k, val in self.items():
             t = self._typehints[k]
             ret._typehints[k] = t
-            super(typeHintedDict, ret).__setitem__(k, copy.copy(self[k]))
+            super(TypeHintedDict, ret).__setitem__(k, copy.copy(val))
         return ret
 
     def filter(self, name: Union[str, RegExp, Callable]) -> None:
@@ -628,7 +611,7 @@ class typeHintedDict(regexpDict):
         return ret
 
     def export_all(self) -> List[str]:
-        """Return all the entries in the typeHintedDict as a list of exported lines.
+        """Return all the entries in the TypeHintedDict as a list of exported lines.
 
         Returns:
             (list of str): A list of exported strings
@@ -651,7 +634,7 @@ class typeHintedDict(regexpDict):
     def import_key(self, line: str) -> None:
         """Import a single key from a string like key{type hint} = value.
 
-        This is the inverse of the :py:meth:`typeHintedDict.export` method.
+        This is the inverse of the :py:meth:`TypeHintedDict.export` method.
 
         Args:
             line(str):
@@ -663,12 +646,11 @@ class typeHintedDict(regexpDict):
         self[k] = v
 
 
-class metadataObject(MutableMapping):
-
-    """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
+class metadataObject(MutableMapping):  # pylint: disable=invalid-name
+    """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.TypeHintedDict` object.
 
     Attributes:
-        metadata (typeHintedDict):
+        metadata (TypeHintedDict):
             Dictionary of key-value metadata pairs. The dictionary tries to retain information about the type of data
             so as to aid import and export from CM group LabVIEW code.
     """
@@ -676,28 +658,29 @@ class metadataObject(MutableMapping):
     def __new__(cls, *args):
         """Pre initialisation routines."""
         self = super().__new__(cls)
-        self._public_attrs_real = dict()
+        self._public_attrs_real = {}
+        self._metadata = TypeHintedDict()
         return self
 
-    def __init__(self, *args: Any, **kargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Initialise the current metadata attribute."""
-        metadata = kargs.pop("metadata", None)
-        if metadata is not None:
-            self.metadata.update(metadata)
+        metadata = kwargs.pop("metadata", {})
+        self._metadata = getattr(self, "_metadata", TypeHintedDict())
+        self.metadata.update(metadata)
         super().__init__()
 
     @property
     def _public_attrs(self):
-        """Return a dictionary of attributes setable by keyword argument with thier types."""
+        """Return a dictionary of attributes setable by keyword argument with their types."""
         try:
             return self._public_attrs_real  # pylint: disable=no-member
         except AttributeError:
-            self._public_attrs_real = dict()  # pylint: disable=attribute-defined-outside-init
+            self._public_attrs_real = {}  # pylint: disable=attribute-defined-outside-init
             return self._public_attrs_real
 
     @_public_attrs.setter
     def _public_attrs(self, value):
-        """Privaye property to update the list of public attributes."""
+        """Private property to update the list of public attributes."""
         self._public_attrs_real.update(dict(value))  # pylint: disable=no-member
 
     @property
@@ -706,15 +689,15 @@ class metadataObject(MutableMapping):
         try:
             return self._metadata
         except AttributeError:  # Oops no metadata yet
-            self._metadata = typeHintedDict()
+            self._metadata = TypeHintedDict()
             return self._metadata
 
     @metadata.setter
-    def metadata(self, value: IterableType) -> None:
+    def metadata(self, value: Iterable) -> None:
         """Update the metadata object with type checking."""
-        if not isinstance(value, typeHintedDict) and isiterable(value):
-            self._metadata = typeHintedDict(value)
-        elif isinstance(value, typeHintedDict):
+        if not isinstance(value, TypeHintedDict) and isiterable(value):
+            self._metadata = TypeHintedDict(value)
+        elif isinstance(value, TypeHintedDict):
             self._metadata = value
         else:
             raise TypeError(f"metadata must be something that can be turned into a dictionary, not a {value}")
@@ -750,33 +733,61 @@ class metadataObject(MutableMapping):
 
     def keys(self) -> str:
         """Return the keys of the metadata dictionary."""
-        for k in self.metadata.keys():
-            yield k
+        yield from self.metadata.keys()
 
     def items(self) -> Tuple[str, Any]:
         """Make sure we implement an items that doesn't just iterate over self."""
-        for k, v in self.metadata.items():
-            yield k, v
+        yield from self.metadata.items()
 
     def values(self) -> Any:
         """Return the values of the metadata dictionary."""
-        for v in self.metadata.values():
-            yield v
+        yield from self.metadata.values()
 
-    def save(self, filename: Filename = None, **kargs: Any):
+    def save(self, filename: Filename = None, **kwargs: Any):
         """Stub method for a save function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
-    def _load(self, filename: Filename, *args: Any, **kargs: Any) -> "metadataObject":
+    def _load(self, filename: Filename, *args: Any, **kwargs: Any) -> "metadataObject":
         """Stub method for a load function."""
         raise NotImplementedError("Save is not implemented in the base class.")
 
 
-if pd is not None:
+class SortedMultivalueDict(OrderedDict):
+    """Implement a simple multivalued dictionary where the values are always sorted lists of elements."""
+
+    @classmethod
+    def _matching(cls, val: Tuple[int, str] | List[Tuple[int, str]]) -> List[Tuple[int, str]]:
+        match val:
+            case (int(p), item):
+                return [(p, item)]
+            case [(int(p), item), *rest]:
+                return sorted([(p, item)] + cls._matching(rest))
+            case list():
+                return []
+            case _:
+                raise TypeError("Can only add items that are a typle of int,value")
+
+    def get_value_list(self, name):
+        """Get the values stored in the dictionary under name."""
+        return [item for _, item in self.get(name, [])]
+
+    def __setitem__(self, name: Any, val: Union[List[Tuple[int, Any]], Tuple[int, Any]]) -> None:
+        """Insert or replace a value and then sort the values."""
+        values = self._matching(val)
+        for p, value in values:  # pylint: disable=not-an-iterable
+            for ix, (_, old_value) in enumerate(self.get(name, [])):
+                if old_value == value:  # replacing existing value
+                    self[name][ix] = (p, value)
+                    break
+            else:
+                super().__setitem__(name, self.get(name, []) + [(p, value)])
+        super().__setitem__(name, sorted(self[name], key=lambda item: (item[0], str(item[1]))))
+
+
+if pd is not None and not hasattr(pd.DataFrame, "metadata"):  # Don;t double add metadata
 
     @pd.api.extensions.register_dataframe_accessor("metadata")
-    class PandasMetadata(typeHintedDict):
-
+    class PandasMetadata(TypeHintedDict):
         """Add a typehintedDict to PandasDataFrames."""
 
         def __init__(self, pandas_obj):

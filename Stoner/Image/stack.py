@@ -5,71 +5,70 @@ import warnings
 
 import numpy as np
 
-from ..compat import string_types, int_types
+from ..compat import int_types, string_types
+from ..core.base import RegexpDict, TypeHintedDict
 from ..core.exceptions import assertion
-
-from ..Core import regexpDict, typeHintedDict
-from ..Folders import DiskBasedFolderMixin, baseFolder
-
+from ..folders.core import BaseFolder
+from ..folders.mixins import DiskBasedFolderMixin
 from .core import ImageArray, ImageFile
 from .folders import ImageFolder, ImageFolderMixin
+from .imagefuncs import convert
 
 IM_SIZE = (512, 672)  # Standard Kerr image size
 AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 
 
-def _load_ImageArray(f, **kargs):
+def _load_ImageArray(f, **kwargs):
     """Create and image array."""
-    kargs.pop("Img_num", None)  # REemove img_num if it exists
-    return ImageArray(f, **kargs)
+    kwargs.pop("Img_num", None)  # REemove img_num if it exists
+    return ImageArray(f, **kwargs)
 
 
 class ImageStackMixin:
-
-    """Implement an interface for a baseFolder to store images in a 3D numpy array for faster access."""
+    """Implement an interface for a BaseFolder to store images in a 3D numpy array for faster access."""
 
     _defaults = {"type": ImageFile}
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Initialise an ImageStack's pricate data and provide a type argument."""
         self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
-        self._metadata = regexpDict()
-        self._public_attrs_store = regexpDict()
-        self._names = list()
+        self._metadata = RegexpDict()
+        self._public_attrs_store = RegexpDict()
+        self._names = []
         self._sizes = np.array([], dtype=int).reshape(0, 2)
 
-        if not len(args):
-            super().__init__(**kargs)
-            return None  # No further initialisation
+        if not args:
+            super().__init__(**kwargs)
+            return
         other = args[0]
         if isinstance(other, ImageStackMixin):
-            super().__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kwargs)
             self._stack = other._stack
             self._metadata = other._metadata
             self._names = other._names
             self._sizes = other._sizes
         elif isinstance(other, ImageFolder):  # ImageFolder can already init from itself
-            super().__init__(*args, **kargs)
+            super().__init__(*args, **kwargs)
         elif (
             isinstance(other, np.ndarray) and other.ndim == 3
         ):  # Initialise with 3D numpy array, first coordinate is number of images
-            super().__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kwargs)
             self.imarray = other
             self._sizes = np.ones((other.shape[0], 2), dtype=int) * other.shape[1:]
             self._names = [f"Untitled-{d}" for d in range(other.shape[0])]
             for n in self._names:
-                self._metadata[n] = typeHintedDict()
+                self._metadata[n] = TypeHintedDict()
         elif isinstance(other, list):
             try:
                 other = [ImageFile(i) for i in other]
             except (TypeError, ValueError, RuntimeError) as err:
                 raise ValueError("Failed to initialise ImageStack with list input") from err
-            super().__init__(*args[1:], **kargs)
+            super().__init__(*args[1:], **kwargs)
             for ot in other:
                 self.append(ot)
 
         else:
-            super().__init__(*args, **kargs)
+            super().__init__(*args, **kwargs)
 
     def __lookup__(self, name):
         """Stub for other classes to implement.
@@ -78,7 +77,7 @@ class ImageStackMixin:
             name(str): Name of an object
 
         Returns:
-            A key in whatever form the :py:meth:`baseFolder.__getter__` will accept.
+            A key in whatever form the :py:meth:`BaseFolder.__getter__` will accept.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -106,10 +105,10 @@ class ImageStackMixin:
 
         Parameters:
             name (key type): The canonical mapping key to get the dataObject. By default
-                the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+                the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool): If True (default) then always return a metadataObject. If False,
+            instantiate (bool): If True (default) then always return a metadataObject. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
                 metadataObject. If None, then will return whatever is helf in the object cache, either
                 instance or name.
@@ -185,6 +184,7 @@ class ImageStackMixin:
         self._stack[:row, :col, idx] = value
         self._stack.mask = np.ma.getmaskarray(self._stack)
         self._stack.mask[:row, :col, idx] = mask
+        return None
 
     def __inserter__(self, ix, name, value):
         """Provide an efficient insert into the stack.
@@ -198,7 +198,7 @@ class ImageStackMixin:
         self._sizes = np.insert(self._sizes, ix, value.shape, axis=0)  # pylint: disable=no-member
         new_size = self.max_size + (len(self._names),)
         if new_size[2] == 1:
-            dtype = value.dtype
+            dtype = value.image.dtype
         else:
             dtype = None
         self._resize_stack(new_size, dtype=dtype)
@@ -218,7 +218,7 @@ class ImageStackMixin:
         self._public_attrs_store[name] = _public_attrs
 
     def __deleter__(self, ix):
-        """Delete an object from the baseFolder.
+        """Delete an object from the BaseFolder.
 
         Parameters:
             ix(str): Index to delete, should be within +- the lengthe length of the folder.
@@ -241,7 +241,7 @@ class ImageStackMixin:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
         """
-        self._metadata = regexpDict()
+        self._metadata = RegexpDict()
         self._stack = np.ma.atleast_3d(ImageArray([])).reshape((0, 0, 0)).view(ImageArray)
 
     ###########################################################################
@@ -254,7 +254,7 @@ class ImageStackMixin:
         if self._stack.dtype != other._stack.dtype:
             raise ValueError(
                 "Only ImageFiles with the same type of underlying image data can be used to calculate an XMCD ratio."
-                + "Mimatch is {self._stack.dtype} vs {other._stack.dtype}"
+                + "Mismatch is {self._stack.dtype} vs {other._stack.dtype}"
             )
         if self._stack.dtype.kind != "f":
             ret = self.clone.convert(float)
@@ -295,12 +295,12 @@ class ImageStackMixin:
     def _resize_stack(self, new_size, dtype=None):
         """Create a new stack with a new size."""
         old_size = self._stack.shape
-        assertion(isinstance(self._stack, ImageArray), f"Trying to resize a non-image aray {type(self._stack)}")
+        assertion(isinstance(self._stack, ImageArray), f"Trying to resize a non-image array {type(self._stack)}")
         if old_size == new_size:
             return new_size
         if dtype is None:
             dtype = self._stack.dtype
-        row, col, pag = tuple([min(o, n) for o, n in zip(old_size, new_size)])
+        row, col, pag = tuple((min(o, n) for o, n in zip(old_size, new_size)))
 
         new = np.ma.zeros(new_size, dtype=dtype).view(ImageArray)
         new[:row, :col, :pag] = self._stack[:row, :col, :pag]
@@ -373,14 +373,13 @@ class ImageStackMixin:
                 http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx
             2,  Data Conversions.
                 In "OpenGL ES 2.0 Specification v2.0.25", pp 7-8. Khronos Group, 2010.
-            3,  Proper treatment of pixels as integers. A.W. Paeth.
+            3,  Proper treatment of pixels as integers. A.W. Path.
                 In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
             4,  Dirty Pixels. J. Blinn.
                 In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
         """
-        from .imagefuncs import convert
 
-        # Aactually this is just a pass through for the imagefuncs.convert routine
+        # Actually this is just a pass through for the imagefuncs.convert routine
         mask = self._stack.mask
         self._stack = convert(self._stack, dtype, force_copy=force_copy, uniform=uniform, normalise=normalise).view(
             type(self._stack)
@@ -388,7 +387,7 @@ class ImageStackMixin:
         self._stack.mask = mask
         return self
 
-    def asfloat(self, normalise=True, clip=False, clip_negative=False, **kargs):
+    def asfloat(self, normalise=True, clip=False, clip_negative=False, **kwargs):
         """Convert stack to floating point type.
 
         Keyword Arguments:
@@ -400,7 +399,7 @@ class ImageStackMixin:
                 clip range further to 0,1
 
         Notes:
-            Analagous behaviour to ImageFile.asfloat()
+            Analogous behaviour to ImageFile.asfloat()
 
             If currently an int type and normalise then floats will be normalised
             to the maximum allowed value of the int type.
@@ -412,12 +411,12 @@ class ImageStackMixin:
             pass
         else:
             self.convert(dtype=np.float64, normalise=normalise)
-        if "clip_neg" in kargs:
+        if "clip_neg" in kwargs:
             warnings.warn(
                 "clip_neg argument renamed to clip_negative in ImageStack. This will cause an error in future"
                 + "versions of the Stoner Package."
             )
-            clip_negative = kargs.pop("clip_neg")
+            clip_negative = kwargs.pop("clip_neg")
         if clip or clip_negative:
             self.each.clip_intensity(clip_negative=clip_negative)
         return self
@@ -440,7 +439,7 @@ class ImageStackMixin:
         return ret
 
     ###########################################################################
-    ################### Depricated Compaibility methods #######################
+    ################### Deprecated Compatibility methods #######################
 
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Align images to correct for image drift.
@@ -456,7 +455,7 @@ class ImageStackMixin:
             box: see ImageArray.correct_drift
 
         """
-        warnings.warn("correct_drift is a depricated method for an image stack - consider using align.")
+        warnings.warn("correct_drift is a deprecated method for an image stack - consider using align.")
         ref = self[refindex]
         self.apply_all("correct_drift", ref, threshold=threshold, upsample_factor=upsample_factor, box=box)
 
@@ -471,17 +470,16 @@ class ImageStackMixin:
             (ImageStack):
                 cropped images
         """
-        warnings.warn("crop_stack is depricated - sam effect can be achieved with crop(box)")
+        warnings.warn("crop_stack is deprecated - sam effect can be achieved with crop(box)")
         self.each.crop(box)
 
     def show(self):
         """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`."""
-        warnings.warn("show() is depricated in favour of ImageFolder.view()")
+        warnings.warn("show() is deprecated in favour of ImageFolder.view()")
         return self.view()
 
 
 class StackAnalysisMixin:
-
     """Add some analysis capability to ImageStack.
 
     These functions may override :py:class:`Stoner,Image.ImageFile` functions but do them efficiently for a numpy
@@ -500,7 +498,7 @@ class StackAnalysisMixin:
                 The modified image stack.
 
         Notes:
-            Method cahnged for v0.10 to not normalise or clip the data.
+            Method changed for v0.10 to not normalise or clip the data.
             The background image is scaled by the ratio of the mean pixel values of the unmasked
             region in the background image.
         """
@@ -519,6 +517,5 @@ class StackAnalysisMixin:
         return self
 
 
-class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
-
-    """An alternative implementation of an image stack based on baseFolder."""
+class ImageStack(StackAnalysisMixin, ImageStackMixin, ImageFolderMixin, DiskBasedFolderMixin, BaseFolder):
+    """An alternative implementation of an image stack based on BaseFolder."""

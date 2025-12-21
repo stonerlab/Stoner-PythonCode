@@ -1,12 +1,13 @@
 """Example of nDimArrhenius Fit."""
+
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like
 from numpy.random import normal
 
 from Stoner import Data
 from Stoner.analysis.fitting.models.tunnelling import (
-    fowlerNordheim,
     FowlerNordheim,
+    fowlerNordheim,
 )
 
 # Make some data
@@ -51,4 +52,3 @@ d.annotate_fit(
 
 d.ylabel = "Current"
 d.title = "Fowler-Nordheim Model test"
-d.tight_layout()

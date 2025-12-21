@@ -5,20 +5,32 @@ __all__ = [
     "all_size",
     "all_type",
     "isanynone",
-    "isComparable",
+    "iscomparable",
     "isiterable",
-    "isLikeList",
+    "islistlike",
     "isnone",
     "isproperty",
-    "isTuple",
+    "istuple",
 ]
-from typing import Optional, Iterable as IterableType, Tuple, Union, Any
-
 from collections.abc import Iterable
-from numpy import ndarray, dtype, isnan, logical_and  # pylint: disable=redefined-builtin
+from importlib import import_module
+from typing import Any
+from typing import Iterable as IterableType
+from typing import Optional, Tuple, Union
+
+from numpy import (  # pylint: disable=redefined-builtin
+    dtype,
+    isnan,
+    logical_and,
+    ndarray,
+)
 
 from ..compat import string_types
-from ..core.Typing import NumericArray
+
+
+def _get_shape(x):
+    """Just return x.shape."""
+    return x.shape
 
 
 def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -> bool:
@@ -34,7 +46,7 @@ def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -
         True if all objects are the size specified (or the same size if size is None).
     """
     if hasattr(iterator[0], "shape"):
-        sizer = lambda x: x.shape
+        sizer = _get_shape
     else:
         sizer = len
 
@@ -88,7 +100,7 @@ def isanynone(*args: Any) -> bool:
     return False
 
 
-def isComparable(v1: NumericArray, v2: NumericArray) -> bool:
+def iscomparable(v1, v2) -> bool:
     """Return true if v1 and v2 can be compared sensibly.
 
     Args:
@@ -114,7 +126,7 @@ def isiterable(value: Any) -> bool:
 
     Args:
         value :
-            Entitiy to check if it is iterable
+            Entity to check if it is iterable
 
     Returns:
         (bool):
@@ -123,7 +135,7 @@ def isiterable(value: Any) -> bool:
     return isinstance(value, Iterable)
 
 
-def isLikeList(value: Any) -> bool:
+def islistlike(value: Any) -> bool:
     """Return True if value is an iterable but not a string."""
     return isiterable(value) and not isinstance(value, string_types)
 
@@ -141,10 +153,10 @@ def isnone(iterator: Optional[IterableType]) -> bool:
         ret = True
     elif isiterable(iterator) and not isinstance(iterator, string_types):
         try:
-            l = len(iterator)
+            iterator_len = len(iterator)
         except TypeError:
-            l = 0
-        if l == 0:  # pylint: disable=len-as-condition
+            iterator_len = 0
+        if iterator_len == 0:  # pylint: disable=len-as-condition
             ret = True
         else:
             for i in iterator:
@@ -165,7 +177,7 @@ def isproperty(obj: Any, name: str) -> bool:
         obj (instance or class):
             Thing that has the attribute to check
         name (str):
-            Name of the attrbiute that might be a property
+            Name of the attribute that might be a property
 
     Returns:
         (bool):
@@ -178,14 +190,14 @@ def isproperty(obj: Any, name: str) -> bool:
     return hasattr(obj, name) and isinstance(getattr(obj, name), property)
 
 
-def isTuple(obj: Any, *args: type, strict: bool = True) -> bool:
+def istuple(obj: Any, *args: type, strict: bool = True) -> bool:
     """Determine if obj is a tuple of a certain signature.
 
     Args:
         obj(object):
             The object to check
         *args(type):
-            Each of the suceeding arguments are used to determine the expected type of each element.
+            Each of the succeeding arguments are used to determine the expected type of each element.
 
     Keywoprd Arguments:
         strict(bool):
@@ -213,3 +225,41 @@ def isTuple(obj: Any, *args: type, strict: bool = True) -> bool:
     else:
         bad = False
     return not bad
+
+
+class ClassTester:
+    """Dynamically load classes on attribute access for structural pattern matching."""
+
+    def __init__(self, **kwargs):
+        """Store a mapping of attribute name to a string of dot notation classes."""
+        self._kwargs = kwargs
+
+    def __call__(self, **kwargs):
+        """Update the mapping of attribute names and class mappings."""
+        self._kwargs |= kwargs
+
+    def __getattr__(self, name):
+        """Lookup an attribute name in the stored name-class name mapping and return it.
+
+        Args:
+            name (str):
+                Attribute name to lookup.
+
+        Returns:
+            (type):
+                Class type matchignt he attribute.
+
+        If the mapping contains a string then it is split into class and module. If the module exists in
+        sys.modules then just get the module from there, otherwise, load it with importlib machinery. Finally
+        get the class as an attribute in the module and return it. Also, set the type into the stored mapping.
+        """
+        if name not in self._kwargs:
+            return AttributeError(f"{name} is not an attrbute or mapped class alias.")
+        mod = self._kwargs[name]
+        if isinstance(mod, str):
+            parts = mod.split(".")
+            cls = parts.pop()
+            mod = ".".join(parts)
+            mod = import_module(mod)
+            self._kwargs[name] = getattr(mod, cls)
+        return self._kwargs[name]

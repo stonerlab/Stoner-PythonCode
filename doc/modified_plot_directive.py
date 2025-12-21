@@ -138,35 +138,31 @@ The plot directive has the following configuration options:
 """
 
 import contextlib
-from io import StringIO
-import itertools
-import os
 import glob
 import io
-from os.path import relpath
-from pathlib import Path
+import itertools
+import os
 import re
 import shutil
 import sys
 import textwrap
 import traceback
 import warnings
+from io import StringIO
+from os.path import relpath
+from pathlib import Path
 
-from docutils.parsers.rst import directives, Directive
-from docutils.parsers.rst.directives.images import Image
 import jinja2  # Sphinx dependency.
-
 import matplotlib
-from matplotlib.backend_bases import FigureManagerBase
 import matplotlib.pyplot as plt
+from docutils.parsers.rst import Directive, directives
+from docutils.parsers.rst.directives.images import Image
 from matplotlib import _pylab_helpers, cbook
+from matplotlib.backend_bases import FigureManagerBase
 
 outname_list = set()
 
 matplotlib.use("agg")
-align = cbook.deprecated(
-    "3.4", alternative="docutils.parsers.rst.directives.images.Image.align")(
-        Image.align)
 
 __version__ = 2
 

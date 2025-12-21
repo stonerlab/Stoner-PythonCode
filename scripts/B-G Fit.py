@@ -16,7 +16,7 @@ def select_col(data, message):
     """Select the column with the data."""
     print("Unable to guess column")
     for i, col in enumerate(data.column_headers):
-        print("{} : {}".format(i, col))
+        print(f"{i} : {col}")
     while True:
         try:
             return int(input(message))
@@ -56,7 +56,7 @@ d.setas(x=t_col, y=r_col)
 # Initialise the model, set the n parmeter to be fixed and show our guesses
 model = BlochGrueneisen()
 model.param_hints["n"] = {"vary": False, "value": 5}
-print("Initial guesses: {}".format(model.guess(d.y, x=d.x)))
+print(f"Initial guesses: {model.guess(d.y, x=d.x)}")
 
 # Do the fit
 popt, pcov = d.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
@@ -68,5 +68,5 @@ d.plot(
     fmt=["r.", "b-"], label=["Data", r"$Bloch-Gr\"ueisen Fit$"], markersize=1
 )
 d.xlabel = "Temperature (K)"
-d.ylabel = "Resistance ($\Omega$)"
+d.ylabel = r"Resistance ($\Omega$)"
 d.annotate_fit(model, x=0.05, y=0.35, mode="eng")

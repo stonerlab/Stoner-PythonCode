@@ -1,26 +1,54 @@
 # -*- coding: utf-8 -*-
-"""Implements a baseFolder type structure for working with collections of images."""
+"""Implements a BaseFolder type structure for working with collections of images."""
 __all__ = ["ImageFolderMixin", "ImageFolder"]
-from warnings import warn
+from copy import copy, deepcopy
 from importlib import import_module
+from json import dumps, loads
 from os import path
-from json import loads, dumps
-from copy import deepcopy, copy
+from warnings import warn
 
-from skimage.viewer import CollectionViewer
 import numpy as np
-from matplotlib.pyplot import figure, Figure, subplot, tight_layout
-from PIL.TiffImagePlugin import ImageFileDirectory_v2
+from matplotlib.pyplot import Figure, figure, get_fignums, subplot
 from PIL import Image
+from PIL.TiffImagePlugin import ImageFileDirectory_v2
 
-from .core import ImageArray
-from ..Folders import DiskBasedFolderMixin, baseFolder
-from ..compat import string_types, int_types
+from ..compat import int_types, string_types
+from ..folders.core import BaseFolder
+from ..folders.mixins import DiskBasedFolderMixin
 from . import ImageFile
+from .core import ImageArray
+
+
+def _prep_figure(self, kwargs):
+    plts = kwargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
+    self.plots_per_page = plts
+    plts = min(plts, len(self))
+
+    fig_num = kwargs.pop("figure", getattr(self, "_figure", None))
+    if isinstance(fig_num, Figure):
+        kwargs.setdefault("figsize", tuple(fig_num.get_size_inches()))
+        kwargs.setdefault("facecolor", fig_num.get_facecolor())
+        kwargs.setdefault("edgecolor", fig_num.get_edgecolor())
+        kwargs.setdefault("frameon", fig_num.get_frameon())
+        kwargs.setdefault("FigureClass", fig_num.__class__)
+        fig_num = fig_num.number
+
+    fig_args = getattr(self, "_fig_args", [])
+    fig_kwargs = getattr(self, "_fig_kwargs", {"layout": "constrained"})
+    for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
+        if arg in kwargs:
+            fig_kwargs[arg] = kwargs.pop(arg)
+    if fig_num is None:
+        fig = figure(*fig_args, **fig_kwargs)
+    elif fig_num in get_fignums():
+        fig = figure(fig_num)
+    else:
+        fig = figure(fig_num, **fig_kwargs)
+    kwargs["figure"] = fig_num
+    return fig, plts
 
 
 class ImageFolderMixin:
-
     """Mixin to provide a folder object for images.
 
     ImageFolderMixin is designed to behave pretty much like DataFolder but with
@@ -28,7 +56,7 @@ class ImageFolderMixin:
 
     Attributes:
         type (:py:class:`Stoner.Image.core.ImageArray`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -36,13 +64,13 @@ class ImageFolderMixin:
             provided then any named groups are used to construct additional metadata entryies from the filename.
             Default is *.* to match all files with an extension.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the
             experimental state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect and
             :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):
@@ -89,7 +117,7 @@ class ImageFolderMixin:
         Parameters:
            name (key type):
                The canonical mapping key to get the dataObject. By default
-               the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+               the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
 
         Keyword Arguments:
             instantiate (bool):
@@ -110,7 +138,7 @@ class ImageFolderMixin:
             ret._title = name
         return ret
 
-    def align(self, *args, **kargs):
+    def align(self, *args, **kwargs):
         """Align each image in the folder to the reference image.
 
         Args:
@@ -121,7 +149,7 @@ class ImageFolderMixin:
 
         Keyword Arguments:
             method (str):
-                The mthod is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
+                The method is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
                 alignment is done. By default the 'Scharr' method is used.
             box (int, float, tuple of ints or floats):
                 Specifies a subset of the images to be used to calculate the alignment with.
@@ -156,7 +184,7 @@ class ImageFolderMixin:
             except (TypeError, ValueError) as err:
                 raise TypeError(f"Cannot interpret {type(ref)} as reference image data.") from err
         # Call align on each object
-        self.each.align(ref_data, **kargs)
+        self.each.align(ref_data, **kwargs)
         limits = self.metadata.slice("translation_limits", output="array")
         stack_limits = np.zeros(4)
         stack_limits[::2] = limits.max(axis=0)[::2]
@@ -167,7 +195,7 @@ class ImageFolderMixin:
         self.metadata["align_box"] = tuple(stack_limits.astype(int))
         return self
 
-    def apply_all(self, func, *args, **kargs):
+    def apply_all(self, func, *args, **kwargs):
         """Apply function to all images in the stack.
 
         Args:
@@ -177,10 +205,10 @@ class ImageFolderMixin:
                 if False print '.' for every iteration
 
         Note:
-            Further args, kargs are passed through to the function
+            Further args, kwargs are passed through to the function
         """
-        warn("apply_all is depricated and will be removed in a future version. Use ImageFolder.each() instead")
-        return self.each(func, *args, **kargs)
+        warn("apply_all is deprecated and will be removed in a future version. Use ImageFolder.each() instead")
+        return self.each(func, *args, **kwargs)
 
     def average(self, weights=None, _box=False, _metadata="first"):
         """Get an array of average pixel values for the stack.
@@ -202,8 +230,13 @@ class ImageFolderMixin:
         """
         if not self.size:
             raise RuntimeError("Cannot average Imagefolder if images have different sizes")
-        stack = np.stack(list(self.images), axis=0)
-        average = np.average(stack, axis=0, weights=weights)
+        if hasattr(self, "_stack"):
+            stack = self._stack.view(np.ndarray)
+            axis = -1
+        else:
+            stack = np.stack(list(self.images), axis=0)
+            axis = 0
+        average = np.average(stack, axis=axis, weights=weights)
         ret = average.view(ImageArray)
         if _metadata == "common":
             ret.metadata = self.metadata.common_metadata
@@ -223,13 +256,12 @@ class ImageFolderMixin:
         return k
 
     @classmethod
-    def from_tiff(cls, filename, **kargs):
+    def from_tiff(cls, filename, **kwargs):
         """Create a new ImageArray from a tiff file."""
-        self = cls(**kargs)
+        self = cls(**kwargs)
         with Image.open(filename, "r") as img:
             tags = img.tag_v2
             if 270 in tags:
-
                 try:
                     userdata = loads(tags[270])
                     typ = userdata.get("type", cls.__name__)
@@ -246,14 +278,14 @@ class ImageFolderMixin:
                 except (TypeError, ValueError, IOError):
                     metadata = []
             else:
-                raise TypeError(f"Cannot load as an ImageFolder due to lack of description tag")
+                raise TypeError("Cannot load as an ImageFolder due to lack of description tag")
             imglist = []
             for ix, md in enumerate(metadata):
                 img.seek(ix)
                 image = np.asarray(img)
                 if image.ndim == 3:
                     if image.shape[2] < 4:  # Need to add a dummy alpha channel
-                        image = np.append(np.zeros_like(image[:, :, 0]), axis=2)
+                        image = np.append(image, np.zeros_like(image[:, :, 0]), axis=2)
                     image = image.view(dtype=np.uint32).reshape(image.shape[:-1])
 
                 if isinstance(self.type, np.ndarray):
@@ -268,9 +300,7 @@ class ImageFolderMixin:
         return self
 
     def mask_select(self):
-        """Run the ImageFile.mask.select() on each image.
-
-        """
+        """Run the ImageFile.mask.select() on each image."""
         sel = []
         for img in self:
             img.mask.select(_selection=sel)
@@ -291,15 +321,15 @@ class ImageFolderMixin:
         """
         return self.average(_box=_box, _metadata=_metadata)
 
-    def montage(self, *args, **kargs):
+    def montage(self, *args, **kwargs):
         """Call the plot method for each metadataObject, but switching to a subplot each time.
 
         Args:
             args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
-            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+            kwargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
 
         Keyword Arguments:
-            extra (callable(i,j,d)):
+            plot_extra (callable(i,j,d)):
                 A callable that can carry out additional processing per plot after the plot is done
             figsize(tuple(x,y)):
                 Size of the figure to create
@@ -313,8 +343,6 @@ class ImageFolderMixin:
                 Passed to matplotlib figure call.
             plots_per_page(int):
                 maximum number of plots per figure.
-            tight_layout(dict or False):
-                If not False, arguments to pass to a call of :py:func:`matplotlib.pyplot.tight_layout`. Defaults to {}
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
@@ -327,61 +355,37 @@ class ImageFolderMixin:
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
         """
-        plts = kargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
-        plts = min(plts, len(self))
+        fig, plts = _prep_figure(self, kwargs)
 
-        extra = kargs.pop("extra", lambda i, j, d: None)
-        tight = kargs.pop("tight_layout", {})
+        plot_extra = kwargs.pop("plot_extra", lambda i, j, d: None)
 
-        fig_num = kargs.pop("figure", getattr(self, "_figure", None))
-        if isinstance(fig_num, Figure):
-            kargs.setdefault("figsize", fig_num.get_size_inches())
-            kargs.setdefault("facecolor", fig_num.get_facecolor())
-            kargs.setdefault("edgecolor", fig_num.get_edgecolor())
-            kargs.setdefault("frameon", fig_num.get_frameon())
-            kargs.setdefault("FigureClass", fig_num.__class__)
-            fig_num = fig_num.number
-
-        fig_args = getattr(self, "_fig_args", [])
-        fig_kargs = getattr(self, "_fig_kargs", {})
-        for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
-            if arg in kargs:
-                fig_kargs[arg] = kargs.pop(arg)
-        if fig_num is None:
-            fig = figure(*fig_args, **fig_kargs)
-        else:
-            fig = figure(fig_num, **fig_kargs)
         w, h = fig.get_size_inches()
         plt_x = int(np.floor(np.sqrt(plts) * w / h))
         plt_y = int(np.ceil(plts / plt_x))
 
-        kargs["figure"] = fig
+        kwargs["figure"] = fig
         ret = []
         j = 0
         fignum = fig.number
         for i, d in enumerate(self):
-            plt_kargs = copy(kargs)
+            plt_kwargs = copy(kwargs)
             if i % plts == 0 and i != 0:
-                if isinstance(tight, dict):
-                    tight_layout(**tight)
-                fig = figure(*fig_args, **fig_kargs)
+                fig, _ = _prep_figure(self, kwargs)
                 fignum = fig.number
                 j = 1
             else:
                 j += 1
             fig = figure(fignum)
             ax = subplot(plt_y, plt_x, j)
-            plt_kargs["figure"] = fig
-            plt_kargs["ax"] = ax
-            if "title" in kargs:
-                if isinstance(kargs["title"], str):
-                    plt_kargs["title"] = kargs["title"].format(**d)
-                elif callable(kargs["title"]):
-                    plt_kargs["title"] = kargs["title"](d)
-            ret.append(d.imshow(*args, **plt_kargs))
-            extra(i, j, d)
-            if isinstance(tight, dict):
-                tight_layout(**tight)
+            plt_kwargs["figure"] = fig
+            plt_kwargs["ax"] = ax
+            if "title" in kwargs:
+                if isinstance(kwargs["title"], str):
+                    plt_kwargs["title"] = kwargs["title"].format(**d)
+                elif callable(kwargs["title"]):
+                    plt_kwargs["title"] = kwargs["title"](d)
+            ret.append(d.imshow(*args, **plt_kwargs))
+            plot_extra(i, j, d)
         return ret
 
     def stddev(self, weights=None, _box=False, _metadata="first"):
@@ -398,14 +402,19 @@ class ImageFolderMixin:
 
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
-        weights = np.ones(len(self)) if weights is None else weights
-        avs = self.average(weights=weights)
-        if not isinstance(avs, np.ndarray) and hasattr(avs, "image"):
-            avs = avs.image
-        sumsqdev = np.zeros_like(avs)
-        for ix, img in enumerate(self.images):
-            sumsqdev += weights[ix] * (img - avs) ** 2
-        sumsqdev = np.sqrt(sumsqdev) / np.sum(weights, axis=0)
+        if weights is None:  # shortcircuit
+            if hasattr(self, "_stack"):
+                sumsqdev = np.std(self._stack.view(np.ndarray), axis=-1)
+            else:
+                sumsqdev = np.stack(list(self.images), axis=0).std(axis=0)
+        else:
+            avs = self.average(weights=weights)
+            if not isinstance(avs, np.ndarray) and hasattr(avs, "image"):
+                avs = avs.image
+            sumsqdev = np.zeros_like(avs)
+            for ix, img in enumerate(self.images):
+                sumsqdev += weights[ix] * (img - avs) ** 2
+            sumsqdev = np.sqrt(sumsqdev) / np.sum(weights, axis=0)
         ret = sumsqdev.view(ImageArray)
         ret.metadata = self.metadata.common_metadata
         return self._type(ret[ret._box(_box)])
@@ -473,15 +482,8 @@ class ImageFolderMixin:
         imlist[0].save(tiffname, save_all=True, append_images=imlist[1:], tiffinfo=ifd)
         return self
 
-    def view(self):
-        """Create a matplotlib animated view of the contents."""
-        cv = CollectionViewer(list(self.images))
-        cv.show()
-        return cv
 
-
-class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
-
+class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, BaseFolder):
     """Folder object for images.
 
     ImageFolder is designed to behave pretty much like DataFolder but with
@@ -489,7 +491,7 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
 
     Attributes:
         type (:py:class:`Stoner.Image.core.ImageArray`):
-            the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
+            the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
         pattern (str or regexp):
@@ -497,13 +499,13 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, baseFolder):
             then any named groups are used to construct additional metadata entryies from the filename. Default is *.*
             to match all files with an extension.
         read_means (bool):
-            If true, additional metatdata keys are added that return the mean value of each column of the data.
+            If true, additional metadata keys are added that return the mean value of each column of the data.
             This can hep in grouping files where one column of data contains a constant value for the experimental
             state. Default is False
         recursive (bool):
-            Specifies whether to search recurisvely in a whole directory tree. Default is True.
+            Specifies whether to search recursively in a whole directory tree. Default is True.
         flatten (bool):
-            Specify where to present subdirectories as spearate groups in the folder (False) or as a single group
+            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
             (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
             and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         directory (str):

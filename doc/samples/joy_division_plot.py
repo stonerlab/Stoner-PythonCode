@@ -6,12 +6,10 @@ from pathlib import Path
 from numpy import log10
 
 from Stoner import Data, DataFolder
-from Stoner.formats.instruments import RigakuFile
 from Stoner.plot.utils import joy_division
 
 
 class RigakuFolder(DataFolder):
-
     """Quick subclass of DataFolder that knows how to extract multiple files from a single Rigaku file."""
 
     def load_files(self, filename):
@@ -22,8 +20,7 @@ class RigakuFolder(DataFolder):
             data = data.read()
             ix = 0
             while len(data) > 0:
-                d = RigakuFile()
-                d._load(data)
+                d = Data.load(data, filetype="RigakuFile")
                 d.filename = f"{filename.stem}-{ix}{filename.suffix}"
                 data = data[d.get("endpos", len(data)) :]
                 ix += 1

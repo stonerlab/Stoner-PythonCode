@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """setas module provides the setas class for DataFile and friends."""
-__all__ = ["setas"]
-import re
+__all__ = ["Setas"]
 import copy
-from collections.abc import MutableMapping, Mapping
+import re
+from collections.abc import Iterable, MutableMapping
 
 import numpy as np
 
-from ..compat import string_types, int_types, index_types, _pattern_type
-from ..tools import AttributeStore, isiterable, typedList, isLikeList
+from ..compat import _pattern_type, index_types, string_types
+from ..tools import AttributeStore, TypedList, isiterable, islistlike
 from .utils import decode_string
 
 
-class setas(MutableMapping):
-
+class Setas(MutableMapping):
     """A Class that provides a mechanism for managing the column assignments in a DataFile like object.
 
     Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).
@@ -51,8 +50,8 @@ class setas(MutableMapping):
         self._row = row
         self._cols = AttributeStore()
         self._shape = tuple()
-        self._setas = list()
-        self._column_headers = typedList(string_types)
+        self._setas = []
+        self._column_headers = TypedList(string_types)
         self._object = bless
         self._col_defaults = {
             2: {
@@ -117,9 +116,9 @@ class setas(MutableMapping):
             },
         }  # xyzuvw
 
-    def _prepare_call(self, args, kargs):
+    def _prepare_call(self, args, kwargs):
         """Extract a value to be used to evaluate the setas attribute during a call."""
-        reset = kargs.pop("reset", True)
+        reset = kwargs.pop("reset", True)
         if not isinstance(reset, bool):
             reset = True
 
@@ -130,7 +129,7 @@ class setas(MutableMapping):
                     self.setas = []
                 value = decode_string(value)
         else:
-            value = kargs
+            value = kwargs
             if reset:
                 self.setas = []
         return value
@@ -138,15 +137,15 @@ class setas(MutableMapping):
     @property
     def _size(self):
         """Calculate a size of the setas attribute."""
-        if len(self._shape) == 1 and self._row:
-            c = self._shape[0]
-        elif len(self._shape) == 1:
-            c = 1
-        elif len(self._shape) > 1:
-            c = self.shape[1]
-        else:
-            c = len(self._column_headers)
-        return c
+        match len(self.shape):
+            case 1 if self._row:
+                return self._shape[0]
+            case 1:
+                return 1
+            case 0:
+                return len(self._column_headers)
+            case _:
+                return self.shape[1]
 
     @property
     def _unique_headers(self):
@@ -164,9 +163,9 @@ class setas(MutableMapping):
         """Create an exact copy of the current object."""
         cls = type(self)
         new = cls()
-        for attr in self.__dict__:
-            if not callable(self.__dict__[attr]):
-                new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
+        for attr, val in self.__dict__.items():
+            if not callable(val):
+                new.__dict__[attr] = copy.deepcopy(val)
         return new
 
     @property
@@ -206,12 +205,12 @@ class setas(MutableMapping):
 
     @column_headers.setter
     def column_headers(self, value):
-        """Set the colum headers."""
+        """Set the column headers."""
         if isinstance(value, np.ndarray):  # Convert ndarray to list of strings
             value = value.astype(str).tolist()
         elif isinstance(value, string_types):  # Bare strings get turned into lists
             value = [value]
-        self._column_headers = typedList(string_types, value)
+        self._column_headers = TypedList(string_types, value)
 
     @property
     def empty(self):
@@ -262,7 +261,7 @@ class setas(MutableMapping):
         else:
             raise AttributeError(f"shape attribute should be a 2-tuple not a {value}-tuple")
 
-    def __call__(self, *args, **kargs):
+    def __call__(self, *args, **kwargs):
         """Treat the current instance as a callable object and assign columns accordingly.
 
         Variois forms of this method are accepted::
@@ -279,19 +278,19 @@ class setas(MutableMapping):
                 If False then preserve the existing set columns and simply add the new ones. Otherwise, clear
                 all column assignments before setting new ones (default).
         """
-        return_self = kargs.pop("_self", False)
-        if not (args or kargs):  # New - bare call to setas will return the current value.
+        return_self = kwargs.pop("_self", False)
+        if not (args or kwargs):  # New - bare call to setas will return the current value.
             return self.setas
-        if len(args) == 1 and isinstance(args[0], setas):
+        if len(args) == 1 and isinstance(args[0], Setas):
             args = list(args)
             args[0] = args[0].to_list()
-        if len(args) == 1 and not (isinstance(args[0], string_types + (setas,)) or isiterable(args[0])):
+        if len(args) == 1 and not (isinstance(args[0], string_types + (Setas,)) or isiterable(args[0])):
             raise SyntaxError(
                 f"setas should be called with eother a string, iterable object or setas object, not a {type(args[0])}"
             )
 
-        # If reset is neither in kargs nor a False boolean, then clear the existing setas assignments
-        value = self._prepare_call(args, kargs)
+        # If reset is neither in kwargs nor a False boolean, then clear the existing setas assignments
+        value = self._prepare_call(args, kwargs)
         _ = self.setas  # Forxce setas to be the right length
         if isinstance(value, dict):
             for k, v in value.items():
@@ -312,7 +311,7 @@ class setas(MutableMapping):
             if len(value) > self._size:
                 value = value[: self._size]
             elif len(value) < self._size:
-                value = [v for v in value]  # Ensure value is now a list
+                value = list(value)  # Ensure value is now a list
                 value.extend(list("." * (self._size - len(value))))
             value = value[: self._size]
             for i, v in enumerate(value):
@@ -340,15 +339,16 @@ class setas(MutableMapping):
     def __delitem__(self, name):
         """Unset either by column index or column assignment.
 
-        Equivalent to unsetting the same object."""
+        Equivalent to unsetting the same object.
+        """
         self.unset(name)
 
     def __eq__(self, other):
         """Check to see if this is the same object, or has the same headers and the same setas values."""
         ret = False
         if isinstance(other, string_types):  # Expand strings and convert to list
-            other = [c for c in decode_string(other)]
-        if not isinstance(other, setas):  # Ok, need to check whether items match
+            other = list(decode_string(other))
+        if not isinstance(other, Setas):  # Ok, need to check whether items match
             if isiterable(other) and len(other) <= self._size:
                 for m in self.setas[len(other) :]:  # Check that if other is short we don't have assignments there
                     if m != ".":
@@ -383,30 +383,32 @@ class setas(MutableMapping):
             Either a single letter x,y,z,u,v,w,d,e or f, or a list of letters if used in
             list mode, or a single coliumn name or list of names if used in dictionary mode.
         """
-        if isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":
-            ret = self.to_dict()[name]
-            if len(ret) == 1:
-                ret = ret[0]
-        elif isinstance(name, string_types) and len(name) == 2 and name[0] == "#" and name[1] in "xyzuvwdef.-":
-            ret = list()
-            name = name[1]
-            s = 0
-            while name in self._setas[s:]:
-                s = self._setas.index(name) + 1
-                ret.append(s - 1)
-            if len(ret) == 1:
-                ret = ret[0]
-        elif isinstance(name, index_types):
-            ret = self.setas[self.find_col(name)]
-        elif isinstance(name, slice):
-            indices = name.indices(len(self.setas))
-            name = range(*indices)
-            ret = [self[x] for x in name]
-        elif isiterable(name):
-            ret = [self[x] for x in name]
-        else:
-            raise IndexError(f"{name} was not found in the setas attribute.")
-        return ret
+        match name:
+            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f" | "." | "-":
+                ret = self.to_dict()[name]
+                if len(ret) == 1:
+                    ret = ret[0]
+                return ret
+            case "#x" | "y#" | "#z" | "#u" | "#v" | "#w" | "#d" | "#e" | "#f":
+                ret = []
+                name = name[1]
+                s = 0
+                while name in self._setas[s:]:
+                    s = self._setas.index(name) + 1
+                    ret.append(s - 1)
+                if len(ret) == 1:
+                    ret = ret[0]
+                return ret
+            case int() | str() | _pattern_type():
+                return self.setas[self.find_col(name)]
+            case slice():
+                indices = name.indices(len(self.setas))
+                name = range(*indices)
+                return [self[x] for x in name]
+            case _ if isiterable(name):
+                return [self[x] for x in name]
+            case _:
+                raise IndexError(f"{name} was not found in the setas attribute.")
 
     def __iter__(self):
         """Iterate over thew column assignments.
@@ -417,8 +419,7 @@ class setas(MutableMapping):
             the items.
         """
         _ = self.setas  # Force setas to fix size
-        for c in self._setas:
-            yield c
+        yield from self._setas
 
     def __ne__(self, other):
         """!= is the same as no ==."""
@@ -433,26 +434,22 @@ class setas(MutableMapping):
                 a single letter string in the set above.
             value (integer or column index): See above.
         """
-        if isLikeList(name):  # Sipport indexing with a list like object
-            if isLikeList(value) and len(value) == len(name):
-                for n, v in zip(name, value):
-                    self._setas[n] = v
-            else:
-                for n in name:
-                    self[n] = value
-        elif isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":  # indexing by single letter
-            for c in self.find_col(value, force_list=True):
-                self._setas[c] = name
-        elif (
-            isinstance(name, index_types)
-            and isinstance(value, string_types)
-            and len(value) == 1
-            and value in "xyzuvwdef.-"
-        ):
-            for c in self.find_col(name, force_list=True):
-                self.setas[c] = value
-        else:
-            raise IndexError(f"Failed to set setas as couldn't workout what todo with setas[{name}] = {value}")
+        match name:
+            case Iterable() if not isinstance(name, str):
+                if islistlike(value) and len(value) == len(name):
+                    for n, v in zip(name, value):
+                        self._setas[n] = v
+                else:
+                    for n in name:
+                        self[n] = value
+            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f" | "." | "-":
+                for c in self.find_col(value, force_list=True):
+                    self._setas[c] = name
+            case int() | str() | _pattern_type() if value in list("xyzuvwdef.-"):
+                for c in self.find_col(name, force_list=True):
+                    self.setas[c] = value
+            case _:
+                raise IndexError(f"Failed to set setas as couldn't workout what todo with setas[{name}] = {value}")
 
     def __len__(self):
         """Return our own length."""
@@ -463,7 +460,7 @@ class setas(MutableMapping):
         return self.setas.__repr__()
 
     def __str__(self):
-        """Our string representation is just fromed by joing the assingments together."""
+        """Our string representation is just formed by joing the assignments together."""
         # Quick string conversion routine
         return "".join(self.setas)
 
@@ -504,48 +501,54 @@ class setas(MutableMapping):
 
     def _sub_core_(self, new, other):
         """Implement subtracting either column indices or x,y,z,d,e,f,u,v,w for the current setas."""
-        if isinstance(other, string_types) and len(other) == 1 and other in "xyzuvwdef":
-            while True:
-                try:
-                    new._setas[new._setas.index(other)] = "."
-                except ValueError:
-                    break
-            return new
-        if isinstance(other, index_types):
+        if isinstance(other, str):
             try:
-                new._setas[new.find_col(other)] = "."
-                return new
+                other = self.find_col(other)
             except KeyError:
-                other = new.clone(other, _self=True)
-
-        if isinstance(other, Mapping):
-            me = new.to_dict()
-            other = new.clone(other, _self=True).to_dict()
-            for k, v in other.items():
-                v = [v] if not isinstance(v, list) else v
-                if k in me:
-                    for header in v:
-                        if header in me[k]:
-                            if isinstance(me[k], list):
-                                me[k].remove(header)
+                other = decode_string(other)
+        match other:
+            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f":
+                while other in new._setas:
+                    new._setas[new._setas.index(other)] = "."
+                return new
+            case dict():
+                me = new.to_dict()
+                other = new.clone(other, _self=True).to_dict()
+                for k, v in other.items():
+                    v = [v] if not isinstance(v, list) else v
+                    if k in me:
+                        for header in v:
+                            if header in me[k]:
+                                if isinstance(me[k], list):
+                                    me[k].remove(header)
+                                else:
+                                    me[k] = ""
+                                if len(me[k]) == 0:
+                                    del me[k]
                             else:
-                                me[k] = ""
-                        else:
-                            raise ValueError(f"{header} is not set as {k}")
-                        if len(me[k]) == 0:
-                            del me[k]
-                else:
-                    raise ValueError(f"No column is set as {k}")
-            new.clear()
-            new(me)
-            return new
-        if isiterable(other):
-            for o in other:
-                new = self._sub_core_(new, o)
-                if new is NotImplemented:
-                    return NotImplemented
-            return new
-        return NotImplemented
+                                raise ValueError(f"{header} is not set as {k}")
+                    else:
+                        raise ValueError(f"No column is set as {k}")
+                new.clear()
+                new(me)
+                return new
+            case Iterable() if all(isinstance(x, (str, int, slice, list, re.Pattern)) for x in other):
+                for o in other:
+                    if o == other:
+                        continue
+                    new = self._sub_core_(new, o)
+                    if new is NotImplemented:
+                        return NotImplemented
+                return new
+            case int() | slice() | [] | re.Pattern():
+                try:
+                    new._setas[new.find_col(other)] = "."
+                    return new
+                except KeyError:
+                    other = new.clone(other, _self=True)
+
+            case _:
+                return NotImplemented
 
     def __sub__(self, other):
         """Jump to the core."""
@@ -554,13 +557,12 @@ class setas(MutableMapping):
 
     def __isub__(self, other):
         """Jump to the core."""
-        new = self
-        return self._sub_core_(new, other)
+        return self._sub_core_(self, other)
 
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
 
-        Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
+        Indexing can be by supplying an integer, a string, a regular expression, a slice or a list of any of the above.
 
         -   Integer indices are simply checked to ensure that they are in range
         -   String indices are first checked for an exact match against a column header
@@ -582,95 +584,96 @@ class setas(MutableMapping):
         Returns:
             The matching column index as an integer or a KeyError
         """
-        if isinstance(col, int_types):  # col is an int so pass on
-            if col >= len(self.column_headers):
-                raise IndexError(f"Attempting to index a non - existant column {col}")
-            if col < 0:
-                col = col % len(self.column_headers)
-        elif isinstance(col, string_types):  # Ok we have a string
-            col = str(col)
-            if col in self.column_headers:  # and it is an exact string match
-                col = self.column_headers.index(col)
-            else:  # ok we'll try for a regular expression
-                test = re.compile(col)
+        match col:
+            case int():
+                if col >= len(self.column_headers):
+                    raise IndexError(f"Attempting to index a non - existent column {col}")
+                if col < 0:
+                    col = col % len(self.column_headers)
+            case str():
+                col = str(col)
+                if col in self.column_headers:  # and it is an exact string match
+                    col = self.column_headers.index(col)
+                else:  # ok we'll try for a regular expression
+                    test = re.compile(col)
+                    possible = [x for x in self.column_headers if test.search(x)]
+                    if not possible:
+                        try:
+                            col = int(col)
+                        except ValueError as err:
+                            raise KeyError(
+                                f'Unable to find any possible column matches for "{col} in {self.column_headers}"'
+                            ) from err
+                        if col < 0 or col >= self.data.shape[1]:
+                            raise KeyError("Column index out of range")
+                    else:
+                        col = self.column_headers.index(possible[0])
+            case _pattern_type():
+                test = col
                 possible = [x for x in self.column_headers if test.search(x)]
                 if not possible:
-                    try:
-                        col = int(col)
-                    except ValueError as err:
-                        raise KeyError(
-                            f'Unable to find any possible column matches for "{col} in {self.column_headers}"'
-                        ) from err
-                    if col < 0 or col >= self.data.shape[1]:
-                        raise KeyError("Column index out of range")
-                else:
-                    col = self.column_headers.index(possible[0])
-        elif isinstance(col, _pattern_type):
-            test = col
-            possible = [x for x in self.column_headers if test.search(x)]
-            if not possible:
-                raise KeyError(f"Unable to find any possible column matches for {col.pattern}")
-            col = self.find_col(possible)
-        elif isinstance(col, slice):
-            indices = col.indices(self.shape[1])
-            col = range(*indices)
-            col = self.find_col(col)
-        elif isiterable(col):
-            col = [self.find_col(x) for x in col]
-        else:
-            raise TypeError(f"Column index must be an integer, string, list or slice, not a {type(col)}")
+                    raise KeyError(f"Unable to find any possible column matches for {col.pattern}")
+                col = self.find_col(possible)
+            case slice():
+                indices = col.indices(self.shape[1])
+                col = range(*indices)
+                col = self.find_col(col)
+            case _ if isiterable(col):
+                col = [self.find_col(x) for x in col]
+            case _:
+                raise TypeError(f"Column index must be an integer, string, list or slice, not a {type(col)}")
         if force_list and not isinstance(col, list):
             col = [col]
         return col
 
     def clear(self):
-        """Clear the current setas attrbute.
+        """Clear the current setas attribute.
 
         Notes:
             Equivalent to doing :py:meth:`setas.unset` with no argument.
         """
         self.unset()
 
-    def get(self, name, default=None):  # pylint:  disable=arguments-differ
+    def get(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
-            return self[name]
+            return self[key]
         except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.") from err
+            raise KeyError(f"{key} is not in setas and no default was given.") from err
 
     def keys(self):
-        """Acess mapping keys.
+        """Access mapping keys.
 
-        Mapping keys are the same as iterating over the unique headers"""
-        for c in self._unique_headers:
-            yield c
+        Mapping keys are the same as iterating over the unique headers
+        """
+        yield from self._unique_headers
 
     def values(self):
         """Access mapping values.
 
-        Mapping values are the same as iterating over setas."""
-        for v in self.setas:
-            yield v
+        Mapping values are the same as iterating over setas.
+        """
+        yield from self.setas
 
     def items(self):
         """Access mapping items.
 
-        Mapping items iterates over keys and values."""
-        for k, v in zip(self._unique_headers, self.setas):
-            yield k, v
+        Mapping items iterates over keys and values.
+        """
+        yield from zip(self._unique_headers, self.setas)
 
-    def pop(self, name, default=None):  # pylint:  disable=arguments-differ
+    def pop(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a get method."""
         try:
-            ret = self[name]
-            self.unset(name)
+            ret = self[key]
+            self.unset(key)
             return ret
         except (IndexError, KeyError) as err:
             if default is not None:
                 return default
-            raise KeyError(f"{name} is not in setas and no default was given.") from err
+            raise KeyError(f"{key} is not in setas and no default was given.") from err
 
     def popitem(self):
         """Return and clear a column assignment."""
@@ -681,12 +684,12 @@ class setas(MutableMapping):
                 return (c, v)
         raise KeyError("No columns set in setas!")
 
-    def setdefault(self, name, default=None):  # pylint:  disable=arguments-differ
+    def setdefault(self, key, default=None):  # pylint:  disable=arguments-differ
         """Implement a setdefault method."""
         try:
-            return self[name]
+            return self[key]
         except (IndexError, KeyError):
-            self[name] = default
+            self[key] = default
             return default
 
     def unset(self, what=None):
@@ -711,7 +714,7 @@ class setas(MutableMapping):
 
     def update(self, other=(), **kwds):  # pylint:  disable=arguments-differ
         """Replace any assignments in self with assignments from other."""
-        if isinstance(other, setas):
+        if isinstance(other, Setas):
             other = other.to_dict()
         elif isinstance(other, tuple) and len(other) == 0:
             other = kwds
@@ -743,17 +746,18 @@ class setas(MutableMapping):
         """Return the setas attribute as a dictionary.
 
         If multiple columns are assigned to the same type, then the column names are
-        returned as a list. If column headers are duplicated"""
-        ret = dict()
-        for (k, ch) in zip(self._setas, self._unique_headers):
+        returned as a list. If column headers are duplicated.
+        """
+        ret = {}
+        for k, ch in zip(self._setas, self._unique_headers):
             if k != ".":
                 if k in ret:
                     ret[k].append(ch)
                 else:
                     ret[k] = [ch]
-        for k in ret:
-            if len(ret[k]) == 1:
-                ret[k] = ret[k][0]
+        for k, v in ret.items():
+            if len(v) == 1:
+                ret[k] = v[0]
         return ret
 
     def to_list(self):
@@ -763,7 +767,8 @@ class setas(MutableMapping):
     def to_string(self, encode=False):
         """Return the setas attribute encoded as a string.
 
-        Optionally replaces runs of 3 or more identical characters with a precediung digit."""
+        Optionally replaces runs of 3 or more identical characters with a precediung digit.
+        """
         expanded = "".join(self)
         if encode:
             pat = re.compile(r"((.)\2{2,9})")

@@ -3,21 +3,19 @@
 
 __all__ = ["DataFilePropertyMixin"]
 
-import os
 import copy
+import os
 import pathlib
 import urllib
 
 import numpy as np
 from numpy import ma
 
+from ..compat import path_types
 from ..tools import get_option
-from ..compat import classproperty, path_types
-
-from .array import DataArray
-from .utils import copy_into
-from ..tools.classes import subclasses
+from ..tools.classes import copy_into
 from ..tools.file import URL_SCHEMES
+from .array import DataArray
 
 try:
     from tabulate import tabulate
@@ -28,8 +26,7 @@ except ImportError:
 
 
 class DataFilePropertyMixin:
-
-    """Provide the proerties for DataFile Like Objects."""
+    """Provide the properties for DataFile Like Objects."""
 
     _subclasses = None
 
@@ -39,7 +36,7 @@ class DataFilePropertyMixin:
 
         Raises:
             AttributeError:
-                If short representation options are selcted, raise an AttributeError.
+                If short representation options are selected, raise an AttributeError.
 
         Returns:
             str:
@@ -88,7 +85,7 @@ class DataFilePropertyMixin:
             nv = ma.atleast_2d(nv)
         elif nv.ndim == 1:  # nv is a vector - make it a 2D array
             nv = ma.atleast_2d(nv).T
-        elif nv.ndim > 2:  # nv has more than 2D - raise an error # TODO 0.9? Support 3D arrays in DataFile?
+        elif nv.ndim > 2:
             raise ValueError(f"DataFile.data should be no more than 2 dimensional not shape {nv.shape}")
         if not isinstance(
             nv, DataArray
@@ -126,8 +123,7 @@ class DataFilePropertyMixin:
             self.filename = "Untitled"
         if isinstance(self._filename, path_types):
             return str(self._filename)
-        else:
-            return self._filename
+        return self._filename
 
     @filename.setter
     def filename(self, filename):
@@ -194,16 +190,6 @@ class DataFilePropertyMixin:
             self._set_mask(value, invert=False)
         else:
             self.data.mask = value
-
-    @classproperty
-    def patterns(cls):  # pylint: disable=no-self-argument
-        """Return the possible filename patterns for use in dialog boxes."""
-        patterns = cls._patterns
-        for cls_name, klass in subclasses().items():  # pylint: disable=not-an-iterable
-            if cls_name == "DataFile" or "patterns" not in klass.__dict__:
-                continue
-            patterns.extend([p for p in klass.patterns if p not in patterns])
-        return patterns
 
     @property
     def records(self):

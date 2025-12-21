@@ -4,17 +4,17 @@ Gavin Burnell 28/12/2010
 
 TODO: Implement an error bar on the uncertainity by understanding the significance of the covariance terms
 """
+
 # pylint: disable=invalid-name
-import sys
 from copy import copy
 
+from matplotlib import pyplot
 import numpy as np
-import matplotlib.pyplot as pyplot
 from lmfit.models import ExponentialModel
 
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import Linear
-from Stoner.Util import format_error
+from Stoner.analysis.utils import format_error
 
 filename = False
 sensitivity = 50
@@ -35,7 +35,6 @@ d = Data(filename, setas="xy")  # Load the low angle scan
 d.lmfit(ExponentialModel, result=True, replace=False, header="Envelope")
 d.subtract("Counts", "Envelope", replace=False, header="peaks")
 d.setas = "xy"
-sys.exit()
 t = Data(d.interpolate(d.peaks(significance=sensitivity, width=8, poly=4)))
 
 t.column_headers = copy(d.column_headers)
@@ -56,7 +55,7 @@ t.apply(
 )
 # Now create the m^2 order
 m = np.arange(len(t)) + fringe_offset
-m = m ** 2
+m = m**2
 # And add it to t
 t.add_column(m, column_header="$m^2$")
 # Now we can it a straight line
@@ -84,6 +83,6 @@ pyplot.sca(t.axes[0])
 pyplot.text(
     0.05,
     0.05,
-    "Thickness is: {} $\AA$".format(format_error(th, therr, latex=True)),
+    rf"Thickness is: {format_error(th, therr, latex=True)} $\AA$",
     transform=main_fig.axes[0].transAxes,
 )

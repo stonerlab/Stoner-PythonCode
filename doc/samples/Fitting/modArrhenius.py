@@ -1,10 +1,11 @@
 """Example of nDimArrhenius Fit."""
+
 # pylint: disable=invalid-name
 from numpy import linspace
 from numpy.random import normal
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.thermal import modArrhenius, ModArrhenius
+from Stoner.analysis.fitting.models.thermal import ModArrhenius, modArrhenius
 
 # Make some data
 T = linspace(200, 350, 101)
@@ -20,6 +21,7 @@ d.annotate_fit(modArrhenius, x=0.2, y=0.5, mode="eng")
 # lmfit using lmfit guesses
 fit = ModArrhenius()
 p0 = [1e6, 0.5, 1.5]
+d.setas = "xy"
 d.lmfit(fit, result=True, header="lmfit")
 d.setas = "x..y"
 d.plot()

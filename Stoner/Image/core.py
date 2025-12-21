@@ -1,78 +1,113 @@
 # -*- coding: utf-8 -*-
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
 __all__ = ["ImageArray", "ImageFile"]
-import os
-from copy import copy, deepcopy
 import inspect
+import os
+import urllib
+from collections.abc import Iterable
+from copy import copy, deepcopy
 from importlib import import_module
 from io import BytesIO as StreamIO
+from json import loads
+from pathlib import Path
 from warnings import warn
 
-from PIL import Image
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
 from scipy import ndimage as ndi
 from skimage import (
     color,
     exposure,
     feature,
-    io,
-    measure,
     filters,
     graph,
-    util,
-    restoration,
+    io,
+    measure,
     morphology,
+    restoration,
     segmentation,
     transform,
-    viewer,
+    util,
 )
 
-from ..core.base import typeHintedDict, metadataObject
-from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
-from ..Core import DataFile
-from ..tools import isTuple, isLikeList, make_Data
-from ..tools.file import file_dialog, get_file_name_type, auto_load_classes
-from ..tools.decorators import class_modifier, image_file_adaptor, class_wrapper, clones
-from ..compat import (
-    string_types,
+from ..compat import (  # Some things to help with Python2 and Python3 compatibility
     get_filedialog,
     int_types,
+    np_version,
     path_types,
-)  # Some things to help with Python2 and Python3 compatibility
+    string_types,
+)
+from ..core.base import TypeHintedDict, metadataObject
+from ..core.exceptions import StonerLoadError, StonerUnrecognisedFormat
+from ..tools import istuple, make_Data
+from ..tools.classes import Options
+from ..tools.decorators import (
+    class_modifier,
+    class_wrapper,
+    clones,
+    image_file_adaptor,
+    make_Image,
+)
+from ..tools.file import (
+    URL_SCHEMES,
+    auto_load_classes,
+    file_dialog,
+    get_file_name_type,
+    get_filename,
+    get_loader,
+)
+from . import imagefuncs
 from .attrs import DrawProxy, MaskProxy
 from .widgets import RegionSelect
-from . import imagefuncs
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
-dtype_range = {
-    np.bool_: (False, True),
-    np.bool8: (False, True),
-    np.uint8: (0, 255),
-    np.uint16: (0, 65535),
-    np.int8: (-128, 127),
-    np.int16: (-32768, 32767),
-    np.int64: (-(2 ** 63), 2 ** 63 - 1),
-    np.uint64: (0, 2 ** 64 - 1),
-    np.int32: (-(2 ** 31), 2 ** 31 - 1),
-    np.uint32: (0, 2 ** 32 - 1),
-    np.float16: (-1, 1),
-    np.float32: (-1, 1),
-    np.float64: (-1, 1),
-}
+if np_version.major == 1 and np_version.minor < 24:
+    dtype_range = {
+        np.bool_: (False, True),
+        np.bool8: (False, True),
+        np.uint8: (0, 255),
+        np.uint16: (0, 65535),
+        np.int8: (-128, 127),
+        np.int16: (-32768, 32767),
+        np.int64: (-(2**63), 2**63 - 1),
+        np.uint64: (0, 2**64 - 1),
+        np.int32: (-(2**31), 2**31 - 1),
+        np.uint32: (0, 2**32 - 1),
+        np.float16: (-1, 1),
+        np.float32: (-1, 1),
+        np.float64: (-1, 1),
+    }
+else:
+    dtype_range = {
+        np.bool_: (False, True),
+        np.uint8: (0, 255),
+        np.uint16: (0, 65535),
+        np.int8: (-128, 127),
+        np.int16: (-32768, 32767),
+        np.int64: (-(2**63), 2**63 - 1),
+        np.uint64: (0, 2**64 - 1),
+        np.int32: (-(2**31), 2**31 - 1),
+        np.uint32: (0, 2**32 - 1),
+        np.float16: (-1, 1),
+        np.float32: (-1, 1),
+        np.float64: (-1, 1),
+    }
 
 
 def _add_core_(result, other):
     """Actually do result=result-other."""
-    if isinstance(other, type(result)) and result.shape == other.shape:
-        result.image += other.image
-    elif isinstance(other, np.ndarray) and other.shape == result.shape:
-        result.image += other
-    elif isinstance(other, (int, float)):
-        result.image += other
-    else:
-        return NotImplemented
+    result_type = type(result)
+    match other:
+        case result_type() if result.shape == other.shape:
+            result.image += other.image
+        case np.ndarray() if result.shape == other.shape:
+            result.image += other
+        case int() | float():
+            result.image += other
+        case _:
+            return NotImplemented
     return result
 
 
@@ -100,14 +135,16 @@ def _div_core_(result, other):
 
 def _sub_core_(result, other):
     """Actually do result=result-other."""
-    if isinstance(other, type(result)) and result.shape == other.shape:
-        result.image -= other.image
-    elif isinstance(other, np.ndarray) and other.shape == result.shape:
-        result.image -= other
-    elif isinstance(other, (int, float)):
-        result.image -= other
-    else:
-        return NotImplemented
+    result_type = type(result)
+    match other:
+        case result_type() if result.shape == other.shape:
+            result.image -= other.image
+        case np.ndarray() if result.shape == other.shape:
+            result.image -= other
+        case int() | float():
+            result.image -= other
+        case _:
+            return NotImplemented
     return result
 
 
@@ -116,7 +153,7 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
 
     Args:
         source(ImageFile): The ImageFile object to be copied from
-        dest (ImageFile): The ImageFile objrct to be changed by recieving the copiued data.
+        dest (ImageFile): The ImageFile objrct to be changed by receiving the copiued data.
 
     Returns:
         The modified *dest* ImageFile.
@@ -146,13 +183,12 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
         morphology,
         segmentation,
         transform,
-        viewer,
-    ]
+    ],
+    alias=r"^skimage.",
 )
-@class_modifier([ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier], transpose=True)
+@class_modifier([ndi], transpose=True)
 @class_modifier(imagefuncs, overload=True)
 class ImageArray(np.ma.MaskedArray, metadataObject):
-
     """A numpy array like class with a metadata parameter and pass through to skimage methods.
 
     ImageArray is for manipulating images stored as a 2d numpy array.
@@ -168,17 +204,17 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     image argument required by skimage.
 
     Attributes:
-        metadata (:py:class:`Stoner.core.regexpDict`):
+        metadata (:py:class:`Stoner.core.RegexpDict`):
             A dictionary of metadata items associated with this image.
         filename (str):
-            The name of the file from which this image was laoded.
+            The name of the file from which this image was loaded.
         title (str):
             The title of the image (defaults to the filename).
         mask (:py:class:`numpy.ndarray of bool`):
             The underlying mask data of the image. Masked elements (i.e. where mask=True) are ignored for many
             image operations. Indexing them will return the mask fill value (typically NaN, ot -1 or -MAXINT)
             draw (:py:class:`Stoner.Image.attrs.DrawProxy`):
-            A sepcial object that allows the user to manipulate the image data by making use of
+            A special object that allows the user to manipulate the image data by making use of
             :py:mod:`skimage.draw` functions as well as some additional drawing functions.
         clone (:py:class:`Stoner.ImageArry`):
             Return a duplicate copy of the current image - this allows subsequent methods to
@@ -188,7 +224,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         aspect (float):
             The aspect ratio (width/height) of the image.
         max_box (tuple (0,x-size,0-y-size)):
-            The extent of the iamge size in a form suitable for use in defining a box.
+            The extent of the image size in a form suitable for use in defining a box.
         flip_h (:py:class:`ImageArray`):
             Clone the current image and then flip it horizontally (left-right).
         flip_v (:py:class:`ImageArray`):
@@ -230,110 +266,89 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
          I would call im=im.translate((4,10))
     """
 
-    # Proxy attributess for storing imported functions. Only do the import when needed
+    # Proxy attributes for storing imported functions. Only do the import when needed
     _func_proxy = None
 
     # extra attributes for class beyond standard numpy ones
-    _extra_attributes_default = {"metadata": typeHintedDict({}), "filename": ""}
 
     # Default values for when we can't find the attribute already
     _defaults = {"debug": False, "_hardmask": False}
 
     fmts = ["png", "npy", "tiff", "tif"]
 
-    # These will be overriden with isntance attributes, but setting here allows ImageFile properties to be defined.
-    filename = None
+    # These will be overridden with instance attributes, but setting here allows ImageFile properties to be defined.
     debug = False
     filename = ""
 
     # now initialise class
 
-    def __new__(cls, *args, **kargs):
+    def __new__(cls, *args, **kwargs):
         """Construct an ImageArray object.
 
         We're using __new__ rather than __init__ to imitate a numpy array as
         close as possible.
         """
-        if len(args) not in [0, 1]:
-            raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
-
-        # Deal with kwargs
         array_arg_keys = ["dtype", "copy", "order", "subok", "ndmin", "mask"]  # kwargs for array setup
-        array_args = {k: kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
-        user_metadata = kargs.pop("metadata", {})
-        asfloat = kargs.pop("asfloat", False) or kargs.pop(
-            "convert_float", False
-        )  # convert_float for back compatability
-        _debug = kargs.pop("debug", False)
-        _title = kargs.pop("title", None)
+        array_args = {k: kwargs.pop(k) for k in array_arg_keys if k in kwargs}
+        user_metadata = kwargs.get("metadata", {})
 
         # 0 args initialisation
-        if len(args) == 0:
-            ret = np.empty((0, 0), dtype=float).view(cls)
-            # merge the results of __new__ from emtadataObject
-            tmp = metadataObject.__new__(metadataObject, *args, **kargs)
-            for k, v in tmp.__dict__.items():
-                if k not in ret.__dict__:
-                    ret.__dict__[k] = v
-
-        else:
-
-            # 1 args initialisation
-            arg = args[0]
-            loadfromfile = False
-            if isinstance(arg, cls):
-                ret = arg
-            elif isinstance(arg, np.ndarray):
+        match args:
+            case tuple() if len(args) == 0:
+                ret = np.empty((0, 0), dtype=float).view(cls)
+                # merge the results of __new__ from emtadataObject
+            case (cls(),):
+                ret = args[0]
+            case (np.ndarray(),):
                 # numpy array or ImageArray)
-                if arg.ndim < 2:
-                    ret = np.atleast_2d(arg).view(ImageArray)
+                if args[0].ndim < 2:
+                    ret = np.atleast_2d(args[0]).view(ImageArray)
                 else:
-                    ret = arg.view(ImageArray)
-                ret.metadata = getattr(arg, "metadata", typeHintedDict())
-            elif isinstance(arg, bool) and not arg:
+                    ret = args[0].view(ImageArray)
+                kwargs["metadata"] = getattr(args[0], "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
+            case (bool(),) if not args[0]:
                 patterns = (("png", "*.png"), ("npy", "*.npy"))
                 arg = get_filedialog(what="r", filetypes=patterns)
                 if len(arg) == 0:
                     raise ValueError("No file given")
-                loadfromfile = True
-            elif isinstance(arg, path_types) or loadfromfile:
                 # Filename- load datafile
                 if not os.path.exists(arg):
                     raise ValueError(f"File path does not exist {arg}")
-                ret = ret = np.empty((0, 0), dtype=float).view(cls)
+                ret = np.empty((0, 0), dtype=float).view(cls)
                 ret = ret._load(arg, **array_args)  # pylint: disable=no-member
-            elif isinstance(arg, ImageFile):
+                kwargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
+            case (str(),) | (Path(),):
+                # Filename- load datafile
+                if not os.path.exists(args[0]):
+                    raise ValueError(f"File path does not exist {args[0]}")
+                ret = np.empty((0, 0), dtype=float).view(cls)
+                ret = ret._load(args[0], **array_args)  # pylint: disable=no-member
+                kwargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
+            case (ImageFile(),):
                 # extract the image
-                ret = arg.image
-            else:
+                ret = args[0].image
+                kwargs["metadata"] = getattr(ret, "metadata", TypeHintedDict())
+                kwargs["metadata"].update(user_metadata)
+            case (_,):
                 try:  # try converting to a numpy array (eg a list type)
-                    ret = np.asarray(arg, **array_args).view(cls)
+                    ret = np.asarray(args[0], **array_args).view(cls)
                     if ret.dtype == "O":  # object dtype - can't deal with this
                         raise ValueError
                 except ValueError as err:  # ok couldn't load from iterable, we're done
-                    raise ValueError(f"No constructor for {arg}") from err
+                    raise ValueError(f"No constructor for {args[0]}") from err
+            case _:
+                raise ValueError(f"ImageArray expects 0 or 1 arguments, {len(args)} given")
 
-            if asfloat and ret.dtype.kind != "f":  # convert to float type in place
-                meta = ret.metadata  # preserve any metadata we may already have
-                ret = ret.convert(np.float64)
-                ret.metadata.update(meta)
+        asfloat = kwargs.pop("asfloat", False) or kwargs.pop(
+            "convert_float", False
+        )  # convert_float for back compatibility
+        if asfloat and ret.dtype.kind != "f":  # convert to float type in place
+            ret = ret.convert(np.float64)
 
-            # merge the results of __new__ from emtadataObject
-            tmp = metadataObject.__new__(metadataObject, *args)
-            for k, v in tmp.__dict__.items():
-                if k not in ret.__dict__:
-                    ret.__dict__[k] = v
-
-        # all constructors call array_finalise so metadata is now initialised
-        if "Loaded from" not in ret.metadata.keys():
-            ret.metadata["Loaded from"] = ""
-        ret.filename = ret.metadata["Loaded from"]
-        ret.metadata.update(user_metadata)
-        ret.debug = _debug
-        ret._title = _title
-        ret._public_attrs = {"title": str, "filename": str}
-        ret._mask_color = "red"
-        ret._mask_alpha = 0.5
+        ret.__dict__["kwargs"] = kwargs
         return ret
 
     def __array_finalize__(self, obj):
@@ -346,40 +361,62 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         attributes are just copied over (plus any other attributes set in
         _optinfo).
         """
+        if not hasattr(self, "_optinfo"):
+            setattr(self, "_optinfo", {"metadata": TypeHintedDict({}), "filename": ""})
+
+        kwargs = self.__dict__.pop("kwargs", {})  # pylint: disable=access-member-before-definition
+        tmp = metadataObject.__new__(metadataObject)
+        tmp.__dict__.update(self.__dict__)  # pylint: disable=access-member-before-definition
+        self.__dict__ = tmp.__dict__
+
+        # Deal with kwargs
+        user_metadata = kwargs.pop("metadata", {})
+
+        _debug = kwargs.pop("debug", False)
+        _title = kwargs.pop("title", None)
+
+        self.metadata.update(user_metadata)
+
+        # all constructors call array_finalise so metadata is now initialised
+        self.filename = self.metadata.setdefault("Loaded from", "")
+        self.debug = _debug
+        self._title = _title
+        self._public_attrs = {"title": str, "filename": str}
+        self._mask_color = "red"
+        self._mask_alpha = 0.5
+
+        # merge the results of __new__ from emtadataObject
+
         if getattr(self, "debug", False):
             curframe = inspect.currentframe()
             calframe = inspect.getouterframes(curframe, 2)
             print(curframe, calframe)
-        _extra_attributes = getattr(obj, "_optinfo", ImageArray._extra_attributes_default)
-        setattr(self, "_optinfo", copy(_extra_attributes))
-        for k, v in list(_extra_attributes.items()):
-            try:
-                setattr(self, k, getattr(obj, k, v))
-            except AttributeError:  # Some versions of  python don't like this
-                pass
-        super().__array_finalize__(obj)
+        if obj is not None:
+            self._optinfo.update(getattr(obj, "_optinfo", {}))
 
-    def _load(self, filename, *args, **kargs):
+        super().__array_finalize__(obj=obj)
+
+    def _load(self, filename, *args, **kwargs):
         """Load an image from a file and return as a ImageArray."""
         cls = type(self)
-        fmt = kargs.pop("fmt", os.path.splitext(filename)[1][1:])
+        fmt = kwargs.pop("fmt", os.path.splitext(filename)[1][1:])
         handlers = {"npy": cls._load_npy, "png": cls._load_png, "tiff": cls._load_tiff, "tif": cls._load_tiff}
         if fmt not in handlers:
             raise StonerLoadError(f"{fmt} is not a recognised format for loading.")
-        ret = handlers[fmt](filename, **kargs)
+        ret = handlers[fmt](filename, **kwargs)
         return ret
 
     @classmethod
-    def _load_npy(cls, filename, **kargs):
+    def _load_npy(cls, filename, **kwargs):
         """Load image data from a numpy file."""
         image = np.load(filename)
-        image = np.array(image, **kargs).view(cls)
+        image = np.array(image, **kwargs).view(cls)
         image.metadata["Loaded from"] = os.path.realpath(filename)  # pylint: disable=no-member
         image.filename = os.path.realpath(filename)
         return image
 
     @classmethod
-    def _load_png(cls, filename, **kargs):  # pylint: disable=unused-argument
+    def _load_png(cls, filename, **kwargs):  # pylint: disable=unused-argument
         """Create a new ImageArray from a png file."""
         with Image.open(filename, "r") as img:
             image = np.asarray(img).view(cls)
@@ -398,6 +435,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
                 v = img.info[k]
                 if v.startswith("b'"):
                     v = v.strip(" b'")
+                    v = bytes(v)
                 k = k.split("{")[0]
                 image.metadata[k] = v
         image.metadata["Loaded from"] = os.path.realpath(filename)
@@ -405,19 +443,15 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         return image
 
     @classmethod
-    def _load_tiff(cls, filename, **kargs):  # pylint: disable=unused-argument
+    def _load_tiff(cls, filename, **kwargs):  # pylint: disable=unused-argument
         """Create a new ImageArray from a tiff file."""
-        metadict = typeHintedDict({})
+        metadict = TypeHintedDict({})
         with Image.open(filename, "r") as img:
             image = np.asarray(img)
             if image.ndim == 3:
-                if image.shape[2] < 4:  # Need to add a dummy alpha channel
-                    image = np.append(np.zeros_like(image[:, :, 0]), axis=2)
-                image = image.view(dtype=np.uint32).reshape(image.shape[:-1])
+                image = io.imread(filename).view(np.uint32)[:, :, 0]  # Workaround for issues with more recent pillow
             tags = img.tag_v2
             if 270 in tags:
-                from json import loads
-
                 try:
                     userdata = loads(tags[270])
                     typ = userdata.get("type", cls.__name__)
@@ -462,7 +496,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         image.filename = os.path.realpath(filename)
         return image
 
-    def _box(self, *args, **kargs):
+    def _box(self, *args, **kwargs):
         """Construct and indexing tuple for selecting areas for cropping and boxing.
 
         The box can be specified as:
@@ -473,49 +507,52 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             - False: The user can select a region of interest
             - (iterable of length 4) - assumed to give 4 integers to describe a specific box
         """
-        if len(args) == 0 and "box" in kargs.keys():
-            args = [kargs["box"]]  # back compatability
-        elif len(args) not in (0, 1, 4):
-            raise ValueError("box accepts 1 or 4 arguments, {len(args)} given.")
+        if len(args) == 0 and "box" in kwargs:
+            args = (kwargs["box"],)  # back compatibility
         if len(args) == 0 or (len(args) == 1 and args[0] is None):
-            args = RegionSelect()(self)
-        if len(args) == 1:
-            box = args[0]
-            if isinstance(box, bool) and not box:  # box=False is the same as all values
-                return slice(None, None, None), slice(None, None, None)
-            if isLikeList(box) and len(box) == 4:  # Full box as a list
-                box = [x for x in box]
-            elif isinstance(box, int):  # Take a border of n pixels out
-                box = [box, self.shape[1] - box, box, self.shape[0] - box]
-            elif isinstance(box, string_types):
-                box = self.metadata[box]
-                return self._box(*box)
-            elif isinstance(box, float):  # Keep the central fraction of the image
-                box = [
-                    round(self.shape[1] * box / 2),
-                    round(self.shape[1] * (1 - box / 2)),
-                    round(self.shape[1] * box / 2),
-                    round(self.shape[1] * (1 - box / 2)),
-                ]
-                box = list([int(x) for x in box])
-            else:
-                raise ValueError(f"crop accepts tuple of length 4, {len(box)} given.")
-        else:
-            box = list(args)
+            args = tuple(RegionSelect()(self))
+        match args:
+            case (box,):
+                match box:
+                    case bool() if not box:
+                        return slice(None, None, None), slice(None, None, None)
+                    case Iterable() if len(box) == 4 and not isinstance(box, str):
+                        box = list(box)
+                    case int() | np.int16() | np.int32() | np.int64():
+                        box = [box, self.shape[1] - box, box, self.shape[0] - box]
+                    case str():
+                        box = self.metadata[box]
+                        return self._box(*box)
+                    case float() | np.float16() | np.float32() | np.float64():
+                        box = [
+                            round(self.shape[1] * box / 2),
+                            round(self.shape[1] * (1 - box / 2)),
+                            round(self.shape[1] * box / 2),
+                            round(self.shape[1] * (1 - box / 2)),
+                        ]
+                        box = list((int(x) for x in box))
+                    case _:
+                        raise ValueError(f"crop accepts tuple of length 4, {len(args)} given.")
+            case tuple() if len(args) in [2, 4]:
+                box = list(args)
+            case _:
+                raise ValueError(f"crop accepts tuple of length 4, {len(args)} given.")
+
         for i, item in enumerate(box):  # replace None with max extent
-            if isinstance(item, float) and 0 <= item <= 1:
-                if i < 2:
-                    box[i] = int(round(self.shape[1] * item))
-                else:
-                    box[i] = int(round(self.shape[0] * item))
-            elif isinstance(item, float):
-                box[i] = int(round(item))
-            elif isinstance(item, int_types):
-                pass
-            elif item is None:
-                box[i] = self.max_box[i]
-            else:
-                raise TypeError(f"Arguments for box should be floats, integers or None, not {type(item)}")
+            match item:
+                case float() | np.float16() | np.float32() | np.float64() if 0 <= item <= 1:
+                    if i < 2:
+                        box[i] = int(round(self.shape[1] * item))
+                    else:
+                        box[i] = int(round(self.shape[0] * item))
+                case float() | np.float16() | np.float32() | np.float64():
+                    box[i] = int(round(item))
+                case int() | np.int16() | np.int32() | np.int64():
+                    pass
+                case None:
+                    box[i] = self.max_box[i]
+                case _:
+                    raise TypeError(f"Arguments for box should be floats, integers or None, not {type(item)}")
         return slice(box[2], box[3]), slice(box[0], box[1])
 
     #################################################################################################
@@ -539,11 +576,15 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """
         ret = self.copy().view(type(self))
         self._optinfo["mask"] = self.mask  # Make sure we've updated our mask record
+        self._optinfo["metadata"] = self.metadata  # Update metadata record
         for k, v in self._optinfo.items():
             try:
                 setattr(ret, k, deepcopy(v))
             except (TypeError, ValueError, RecursionError):
-                setattr(ret, k, copy(v))
+                if isinstance(v, np.ndarray):
+                    setattr(self, k, np.copy(v).view(v.__class__))
+                else:
+                    setattr(ret, k, copy(v))
         return ret
 
     @property
@@ -587,19 +628,19 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 
     @property
     @clones
-    def CW(self):
+    def CW(self):  # pylint: disable=invalid-name
         """Clone the image and then rotate the imaage 90 degrees clockwise."""
         return self.clone.T[:, ::-1]
 
     @property
     @clones
-    def CCW(self):
+    def CCW(self):  # pylint: disable=invalid-name
         """Clone the image and then rotate the imaage 90 degrees counter clockwise."""
         return self.clone.T[::-1, :]
 
     @property
     def draw(self):
-        """Access the DrawProxy opbject for accessing the skimage draw sub module."""
+        """Access the DrawProxy object for accessing the skimage draw sub module."""
         return DrawProxy(self, self)
 
     # ==============================================================================
@@ -630,8 +671,8 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         """Set an attribute on the object."""
         super().__setattr__(name, value)
         # add attribute to those for copying in array_finalize. use value as
-        # defualt.
-        circ = ["_optinfo", "mask"]  # circular references
+        # default.
+        circ = ["_optinfo", "mask", "__dict__"]  # circular references
         proxy = ["_funcs"]  # can be reloaded for cloned arrays
         if name in circ + proxy:
             # Ignore these in clone
@@ -667,6 +708,10 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         else:
             super().__delitem__(index)
 
+    def save(self, filename=None, **kwargs):
+        """Stub method for a save function."""
+        raise NotImplementedError(f"Save is not implemented in {self.__class__}")
+
 
 @class_modifier(
     [
@@ -683,20 +728,19 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         morphology,
         segmentation,
         transform,
-        viewer,
     ],
     adaptor=image_file_adaptor,
+    alias=r"^skimage\.",
 )
 @class_modifier(
-    [ndi.interpolation, ndi.filters, ndi.measurements, ndi.morphology, ndi.fourier],
+    [ndi],
     transpose=True,
     adaptor=image_file_adaptor,
 )
 @class_modifier(imagefuncs, overload=True, adaptor=image_file_adaptor)
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
 class ImageFile(metadataObject):
-
-    """An Image file type that is analagous to :py:class:`Stoner.Data`.
+    """An Image file type that is analogous to :py:class:`Stoner.Data`.
 
     This contains metadata and an image attribute which
     is an :py:class:`Stoner.Image.ImageArray` type which subclasses numpy ndarray and
@@ -705,17 +749,17 @@ class ImageFile(metadataObject):
     Attributes:
         image (:py:class:`Stoner.Image.ImageArray`):
             A :py:class:`numpy.ndarray` subclass that stores the actual image data.
-        metadata (:py:class:`Stoner.core.regexpDict`):
+        metadata (:py:class:`Stoner.core.RegexpDict`):
             A dictionary of metadata items associated with this image.
         filename (str):
-            The name of the file from which this image was laoded.
+            The name of the file from which this image was loaded.
         title (str):
             The title of the image (defaults to the filename).
         mask (:py:class:`Stoner.Image.attrs.MaskProxy`):
             A special object that allows manipulation of the image's mask - thius allows the
             user to selectively disable regions of the image from rpocessing functions.
         draw (:py:class:`Stoner.Image.attrs.DrawProxy`):
-            A sepcial object that allows the user to manipulate the image data by making use of
+            A special object that allows the user to manipulate the image data by making use of
             :py:mod:`skimage.draw` functions as well as some additional drawing functions.
         clone (:py:class:`Stoner.ImageFile`):
             Return a duplicate copy of the current image - this allows subsequent methods to
@@ -725,7 +769,7 @@ class ImageFile(metadataObject):
         aspect (float):
             The aspect ratio (width/height) of the image.
         max_box (tuple (0,x-size,0-y-size)):
-            The extent of the iamge size in a form suitable for use in defining a box.
+            The extent of the image size in a form suitable for use in defining a box.
         flip_h (ImageFile):
             Clone the current image and then flip it horizontally (left-right).
         flip_v (ImageFile):
@@ -767,20 +811,19 @@ class ImageFile(metadataObject):
 
     # pylint: disable=no-member
 
-    _image = None
     _protected_attrs = ["_fromstack"]  # these won't be passed through to self.image attrs
     _patterns = ["*.png", "*.tif", "*.jpeg", "*.jpg"]
     mime_type = ["image/png", "image/jpeg", "image/tiff", "application/octet-stream"]
     priority = 32
 
-    def __init__(self, *args, **kargs):
+    def __init__(self, *args, **kwargs):
         """Mostly a pass through to ImageArray constructor.
 
         Local attribute is image. All other attributes and calls are passed
         through to image attribute.
 
         There is one special case of creating an ImageFile from a :py:class:`Stoner.Core.DataFile`. In this case the
-        the DataFile is assummed to contain (x,y,z) data that should be converted to a map of
+        the DataFile is assumed to contain (x,y,z) data that should be converted to a map of
         z on a regular grid of x,y. The columns for the x,y,z data can be taken from the DataFile's
         :py:attr:`Stoner.Core.DataFile.setas` attribute or overridden by providing xcol, ycol and zcol keyword
         arguments. A further *shape* keyword can spewcify the shape as a tuple or "unique" to use the unique values of
@@ -788,33 +831,33 @@ class ImageFile(metadataObject):
 
         """
         self._image = ImageArray()  # Ensire we have the image data in place
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
         args = list(args)
         if len(args) == 0:
             pass
         elif len(args) > 0 and isinstance(args[0], path_types):
             try:
-                copy_into(self.__class__.load(args[0], **kargs), self)
+                copy_into(self.__class__.load(args[0], **kwargs), self)
                 self._public_attrs = {"title": str, "filename": str}
-                self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
+                self._fromstack = kwargs.pop("_fromstack", False)  # for use by ImageStack
                 return
             except StonerLoadError:
-                args[0] = ImageArray(*args, **kargs)
+                args[0] = ImageArray(*args, **kwargs)
         if len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
             self._image = args[0].image
             for k in args[0]._public_attrs:
                 setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(args[0], np.ndarray):  # Fixing type
-            self._image = ImageArray(*args, **kargs)
+            self._image = ImageArray(*args, **kwargs)
             if isinstance(args[0], ImageArray):
                 for k in args[0]._public_attrs:
                     setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(
-            args[0], DataFile
+            args[0], make_Data(None)
         ):  # Support initing from a DataFile that defines x,y,z coordinates
-            self._init_from_datafile(*args, **kargs)
+            self._init_from_datafile(*args, **kwargs)
         self._public_attrs = {"title": str, "filename": str}
-        self._fromstack = kargs.pop("_fromstack", False)  # for use by ImageStack
+        self._fromstack = kwargs.pop("_fromstack", False)  # for use by ImageStack
 
     ###################################################################################################################
     ############################# Properties #### #####################################################################
@@ -848,7 +891,7 @@ class ImageFile(metadataObject):
 
     @property
     def draw(self):
-        """Access the DrawProxy opbject for accessing the skimage draw sub module."""
+        """Access the DrawProxy object for accessing the skimage draw sub module."""
         return DrawProxy(self.image, self)
 
     @property
@@ -868,11 +911,14 @@ class ImageFile(metadataObject):
             and self._image.shape == v.shape
             and self._image.dtype == v.dtype
         ):
-            self._image[:] = v
+            self._image[:] = np.copy(v)
+        elif isinstance(v, np.ndarray):
+            self._image = np.copy(v).view(ImageArray)
         else:
             self._image = ImageArray(v)
         self.filename = filename
-        self.image.metadata.update(metadata)
+        self._image.metadata.update(metadata)
+        self._image.metadata.update(getattr(v, "metadata", {}))
 
     @property
     def mask(self):
@@ -939,7 +985,7 @@ class ImageFile(metadataObject):
 
     def __setattr__(self, n, v):
         """Handle setting attributes."""
-        obj, attr = self._where_attr(n)
+        obj, _ = self._where_attr(n)
         if obj is None:  # This is a new attribute so note it for preserving
             obj = self
             if self._where_attr("_public_attrs_real")[0] is self:
@@ -970,12 +1016,12 @@ class ImageFile(metadataObject):
                 and getattr(self, "polarization") == getattr(other, "polarization")
             ):
                 raise ValueError("Can only calculate and XMCD ratio from images of opposite polarization")
-            if not (hasattr(other, "polarization") and hasattr(self, "polarization")):
+            if not (hasattr(other, "polarization") and hasattr(self, "polarization")) and Options().warnings:
                 warn("Calculating XMCD ratio even though one or both image polarizations cannoty be determined.")
             if self.image.dtype != other.image.dtype:
                 raise ValueError(
                     "Only ImageFiles with the same type of underlying image data can be used to calculate an"
-                    + "XMCD ratio.Mimatch is {self.image.dtype} vs {other.image.dtype}"
+                    + "XMCD ratio.Mismatch is {self.image.dtype} vs {other.image.dtype}"
                 )
             if self.image.dtype.kind != "f":
                 ret = self.clone.convert(float)
@@ -1052,12 +1098,12 @@ class ImageFile(metadataObject):
     ###################################################################################################################
     ############################# Private methods #####################################################################
 
-    def _init_from_datafile(self, *args, **kargs):
-        """Initialise ImageFile from DataFile defining x,y,z co-ordinates.
+    def _init_from_datafile(self, *args, **kwargs):
+        """Initialise ImageFile from DataFile defining x,y,z coordinates.
 
         Args:
             args[0] (DataFile):
-                A :py:class:`Stoner.Core.DataFile` instance that defines x,y,z co-ordinates or has columns specified
+                A :py:class:`Stoner.Core.DataFile` instance that defines x,y,z coordinates or has columns specified
                 in keywords.
 
         Keyword Args:
@@ -1069,13 +1115,13 @@ class ImageFile(metadataObject):
                 Column in the datafile that defines the intensity
         """
         data = make_Data(args[0])
-        shape = kargs.pop("shape", "unique")
+        shape = kwargs.pop("shape", "unique")
 
-        _ = data._col_args(**kargs)
+        _ = data._col_args(**kwargs)
         data.setas(x=_.xcol, y=_.ycol, z=_.zcol)  # pylint: disable=not-callable
         if isinstance(shape, string_types) and shape == "unique":
             shape = (len(np.unique(data.x)), len(np.unique(data.y)))
-        elif isTuple(shape, int_types, int_types):
+        elif istuple(shape, int_types, int_types):
             pass
         else:
             shape = None
@@ -1085,9 +1131,9 @@ class ImageFile(metadataObject):
         self["x_vector"] = np.unique(X)
         self["y_vector"] = np.unique(Y)
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self, filename, *args, **kwargs):
         """Load an ImageFile by calling the ImageArray method instead."""
-        self._image = ImageArray(filename, *args, **kargs)
+        self._image = ImageArray(filename, *args, **kwargs)
         for k in self._image._public_attrs:
             setattr(self, k, getattr(self._image, k, None))
         return self
@@ -1133,11 +1179,11 @@ class ImageFile(metadataObject):
         Note:
             The filename attribute of the current instance is updated by this method as well.
         """
-        self.filename = file_dialog(mode, self.filename, type(self), ImageFile)
+        self.filename = file_dialog(mode, self.filename, type(self))
         return self.filename
 
     @classmethod
-    def load(cls, *args, **kargs):
+    def load(cls, *args, **kwargs):
         """Create a :py:class:`ImageFile` from file abnd guessing a better subclass if necessary.
 
         Args:
@@ -1150,6 +1196,8 @@ class ImageFile(metadataObject):
                 load the file
             filetype (:py:class:`ImageFile`, str):
                 If not none then tries using filetype as the loader.
+            debug (bool):
+                Turn on debugging when running autoload. Default *False*
 
         Returns:
             (ImageFile):
@@ -1163,43 +1211,49 @@ class ImageFile(metadataObject):
 
             Each subclass is scanned in turn for a class attribute :py:attr:`Stoner.ImnageFile.priority` which governs
             the order in which they are tried. Subclasses which can make an early positive determination that a
-            file has the correct format can have higher priority levels. Classes should return a suitable expcetion
+            file has the correct format can have higher priority levels. Classes should return a suitable exception
             if they fail to load the file.
 
             If no class can load a file successfully then a RunttimeError exception is raised.
         """
-        args = list(args)
-        filename = kargs.pop("filename", args.pop(0) if len(args) > 0 else None)
-        filetype = kargs.pop("filetype", None)
-        auto_load = kargs.pop("auto_load", filetype is None)
-
-        filename, filetype = get_file_name_type(filename, filetype, DataFile)
+        filename, args, kwargs = get_filename(args, kwargs)
+        filetype = kwargs.pop("filetype", None)
+        debug = kwargs.pop("debug", False)
+        auto_load = kwargs.pop("auto_load", filetype is None)
+        if isinstance(filename, path_types) and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES:
+            filename, filetype = get_file_name_type(filename, filetype, ImageFile)
+        if filename is None or not filename:
+            filename = file_dialog("r", filename, "ImageFile")
+        elif not auto_load and not filetype:
+            raise StonerLoadError("Cannot read data from non-path like filenames !")
         if auto_load:  # We're going to try every subclass we canA
             try:
-                ret = auto_load_classes(filename, ImageFile, debug=False, args=args, kargs=kargs)
+                ret = auto_load_classes(filename, "Image", debug=debug, args=args, kwargs=kwargs)
             except StonerUnrecognisedFormat:
                 ret = ImageFile()
-                ret = ret._load(filename, *args, **kargs)
+                ret = ret._load(filename, *args, **kwargs)
                 ret["Loaded as"] = filetype.__name__
         else:
-            if issubclass(filetype, ImageFile):
-                ret = filetype()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = filetype.__name__
-            elif filetype is None or isinstance(filetype, ImageFile):
-                ret = cls()
-                ret = ret._load(filename, *args, **kargs)
-                ret["Loaded as"] = cls.__name__
-            else:
-                raise ValueError(f"Unable to load {filename}")
+            if isinstance(filetype, type) and issubclass(filetype, ImageFile):
+                filetype = filetype.__name__
+            elif isinstance(filetype, ImageFile):
+                filetype = filetype.__class__.__name__
+            if not isinstance(filetype, str):
+                raise TypeError(f"Unable to work out how to load {filetype}")
+            loader = get_loader(filetype)
+            try:
+                ret = loader(make_Image(), filename, *args, **kwargs)
+                ret["Loaded as"] = filetype
+            except StonerLoadError as err:
+                raise ValueError(f"Unable to load {filename}") from err
 
-        for k, i in kargs.items():
+        for k, i in kwargs.items():
             if not callable(getattr(ret, k, lambda x: False)):
                 setattr(ret, k, i)
-        ret._kargs = kargs
+        ret._kwargs = kwargs
         return ret
 
-    def save(self, filename=None, **kargs):
+    def save(self, filename=None, **kwargs):
         """Save the image into the file 'filename'.
 
         Args:
@@ -1221,4 +1275,4 @@ class ImageFile(metadataObject):
             saved.
         """
         # catch before metadataObject tries to take over.
-        self.image.save(filename, **kargs)
+        self.image.save(filename, **kwargs)

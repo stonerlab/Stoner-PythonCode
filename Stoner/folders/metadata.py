@@ -5,13 +5,12 @@ __all__ = ["MetadataProxy"]
 import fnmatch
 from collections.abc import MutableMapping
 
-from lmfit import Model
 import numpy as np
+from lmfit import Model
 
-from ..core import typeHintedDict, metadataObject
 from ..compat import string_types
-from ..tools import isLikeList, isiterable, make_Data
-from ..Core import DataFile
+from ..core import TypeHintedDict, metadataObject
+from ..tools import isiterable, islistlike, make_Data
 
 
 def _fmt_as_list(results):
@@ -37,7 +36,7 @@ def _fmt_as_dict(results):
 
 def _fmt_as_dataframe(results):
     """Format the return results as a DataFrame."""
-    from pandas import DataFrame
+    from pandas import DataFrame  # pylint: disable=import-outside-toplevel
 
     frame = DataFrame(results)
     return frame
@@ -108,7 +107,6 @@ def _slice_keys(args, possible=None):
 
 
 class MetadataProxy(MutableMapping):
-
     """Provide methods to interact with a whole collection of metadataObjects' metadata."""
 
     def __init__(self, folder):
@@ -119,11 +117,9 @@ class MetadataProxy(MutableMapping):
     def all(self):
         """List all the metadata dictionaries in the Folder."""
         if hasattr(self._folder, "_metadata"):  # Extra logic for Folders like Stack
-            for item in self._folder._metadata.items():
-                yield item
+            yield from self._folder._metadata.items()
         else:
-            for item in self._folder:
-                yield item.metadata
+            yield from self._folder
 
     @all.setter
     def all(self, value):
@@ -144,7 +140,7 @@ class MetadataProxy(MutableMapping):
                 keys &= set(d.metadata.keys())
         else:
             keys = set()
-        ret = typeHintedDict()
+        ret = TypeHintedDict()
         for k in sorted(list(keys)):
             ret[k] = self[k].view(np.ndarray)
         return ret
@@ -163,7 +159,7 @@ class MetadataProxy(MutableMapping):
     @property
     def common_metadata(self):
         """Return a dictionary of the common_keys that have common values."""
-        output = typeHintedDict()
+        output = TypeHintedDict()
         for key in self.common_keys:
             vals = self.slice(key, output="list")
             if np.all(vals == vals[0]):
@@ -176,22 +172,21 @@ class MetadataProxy(MutableMapping):
 
     def __iter__(self):
         """Iterate over objects."""
-        for k in self.common_keys:
-            yield k
+        yield from self.common_keys
 
     def __len__(self):
         """Out length is our common_keys."""
         return len(self.common_keys)
 
     def __repr__(self):
-        """Give an informative dispaly of the metadata represenation."""
+        """Give an informative display of the metadata representation."""
         return (
             f"The {type(self._folder).__name__} {self._folder.key} has"
             + f" {len(self)} common keys of metadata in {len(self._folder)} {self._folder.type.__name__} objects"
         )
 
     def __delitem__(self, item):
-        """Attempt to delte item from all members of the folder."""
+        """Attempt to delete item from all members of the folder."""
         ok = False
         for entry in self._folder:
             try:
@@ -241,8 +236,7 @@ class MetadataProxy(MutableMapping):
                 keys |= set(d.metadata.keys())
         else:
             keys = set()
-        for k in sorted(keys):
-            yield k
+        yield from sorted(keys)
 
     def all_items(self):
         """Return the result of indexing the metadata with all_keys().
@@ -330,7 +324,7 @@ class MetadataProxy(MutableMapping):
             dict: _fmt_as_dict,
             "frame": _fmt_as_dataframe,
             "data": _fmt_as_Data,
-            DataFile: _fmt_as_Data,
+            make_Data(None): _fmt_as_Data,
             "array": _fmt_as_array,
             np.ndarray: _fmt_as_array,
             "smart": _fmt_as_smart,
@@ -346,7 +340,7 @@ class MetadataProxy(MutableMapping):
 
         for r in results:  # Expand the results where a result contains a list
             for k in keys:
-                if k in r and isLikeList(r[k]) and len(r[k]) > 0:
+                if k in r and islistlike(r[k]) and len(r[k]) > 0:
                     v = r[k]
                     del r[k]
                     r.update({f"{k}[{i}]": vi for i, vi in enumerate(v)})

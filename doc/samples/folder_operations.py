@@ -3,10 +3,11 @@
 import re
 from pathlib import Path
 
-from Stoner import __datapath__, DataFolder, Data
+from Stoner import Data, DataFolder, __datapath__
 from Stoner.compat import Hyperspy_ok
 
 fldr = DataFolder(__datapath__)
+del fldr["bad_data"]
 if not Hyperspy_ok:
     del fldr[".*emd$"]
 # .all() will recursely iterate all files and groups, depth first.
@@ -24,7 +25,7 @@ print(
     fldr2.count(re.compile(r"QD")),
     fldr2.count(fldr2[1]),
 )
-# baseFolders implement a mapping interface to thier contents
+# BaseFolders implement a mapping interface to their contents
 one_qd = fldr2.get("QD", Data())
 two_qd = fldr2.pop("QD", Data())
 # These should be the same

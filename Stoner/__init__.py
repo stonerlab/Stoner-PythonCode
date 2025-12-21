@@ -3,6 +3,7 @@
 It has been developed by members of the `Condensed Matter Group<http://www.stoner.leeds.ac.uk/>` at the
 `University  of Leeds<http://www.leeds.ac.uk>`.
 """
+
 # pylint: disable=import-error
 __all__ = [
     "core",
@@ -21,21 +22,22 @@ __all__ = [
     "Options",
 ]
 
-# These fake the old namespace if you do an import Stoner
-from os import path as _path_
 import pathlib
 
-from . import core, analysis, formats, plot, tools, Image
+from . import Image, analysis, core, formats, plot, tools
 from .core.data import Data
-from .Folders import DataFolder
+from .folders import DataFolder
 from .Image import ImageFile, ImageFolder, ImageStack
+from .tools import Options as _Options
+from .tools import get_option, set_option
 
-from .tools import set_option, get_option, Options as _Options
+# These fake the old namespace if you do an import Stoner
+
 
 Options = _Options()
 
 
-__version_info__ = ("0", "11", "0dev")
+__version_info__ = ("0", "11", "0")
 __version__ = ".".join(__version_info__)
 
 __homepath__ = pathlib.Path(__file__).parent.resolve()

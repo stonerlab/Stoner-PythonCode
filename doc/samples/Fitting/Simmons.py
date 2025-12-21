@@ -1,10 +1,11 @@
 """Example of nDimArrhenius Fit."""
+
 # pylint: disable=invalid-name
 from numpy import linspace, ones_like
 from numpy.random import normal
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.tunnelling import simmons, Simmons
+from Stoner.analysis.fitting.models.tunnelling import Simmons, simmons
 
 # Make some data
 V = linspace(-4, 4, 101)
@@ -42,5 +43,4 @@ d.annotate_fit(
 d.ylabel = "Current (A)"
 d.xlabel = "Bias (V)"
 d.title = "Simmons Model test"
-d.yscale("symlog", linthreshy=1e-5)
-d.tight_layout()
+d.yscale("symlog", linthresh=1e-5)

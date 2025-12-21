@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """Provide some decorators and associated functions for modifying package classes and functions."""
 
-from functools import wraps
 import inspect
-from importlib import import_module
+import re
 from collections.abc import Iterable
 from copy import copy
+from functools import wraps
+from importlib import import_module
 from os import environ
 
 import numpy as np
@@ -35,9 +36,9 @@ def image_file_adaptor(workingfunc):
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
-        box = kargs.pop("_box", False)
+        box = kwargs.pop("_box", False)
         transpose = getattr(workingfunc, "transpose", False)
         if isinstance(box, bool) and not box:
             im = self.image
@@ -50,27 +51,33 @@ def image_file_adaptor(workingfunc):
             if isinstance(a, type(self)):
                 args[ix] = a.image
 
-        if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
+        if getattr(workingfunc, "changes_size", False) and "_" not in kwargs:
             # special case for common function crop which will change the array shape
             force = True
         else:
-            force = kargs.pop("_", False)
-        r = workingfunc(im, *args, **kargs)
+            force = kwargs.pop("_", False)
+        r = workingfunc(im, *args, **kwargs)
         if getattr(workingfunc, "keep_class", False):
             return r
+        if isinstance(r, type(self.image)):
+            self.image = r
+            return self
         if isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
             ret = make_Data(r)
             ret.metadata = self.metadata.copy()
             ret.column_headers[0] = workingfunc.__name__
-        elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
+            return self
+        if isinstance(r, np.ndarray):  # make sure we return a ImageArray
             if transpose:
                 r = r.T
             if isinstance(r, type(im)) and np.shares_memory(r, im):  # Assume everything was inplace
                 self.image = r
+
                 return self
             r = r.view(type(im))
             if r.shape == self.shape:
-                self.image = self.image.clone.astype(r.dtype)  # Ensure we're replacing out own image
+                if im.metadata is not r.metadata:
+                    self.image = r.clone  # We're going to need to clone the return data because we can do fast copies.
                 self.image[...] = r[...]
                 self.metadata.update(r.metadata)
                 return self
@@ -80,8 +87,7 @@ def image_file_adaptor(workingfunc):
             metadata.update(r.metadata)
             ret.metadata = metadata
             return ret
-        else:
-            return r
+        return r
 
     return fix_signature(gen_func, workingfunc)
 
@@ -106,9 +112,9 @@ def image_file_raw_adaptor(workingfunc):
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
-        box = kargs.pop("_box", False)
+        box = kwargs.pop("_box", False)
         transpose = getattr(workingfunc, "transpose", False)
         clones = getattr(workingfunc, "clones", False)
         if isinstance(box, bool) and not box:
@@ -122,12 +128,12 @@ def image_file_raw_adaptor(workingfunc):
             if isinstance(a, type(self)):
                 args[ix] = a.image
 
-        if getattr(workingfunc, "changes_size", False) and "_" not in kargs:
+        if getattr(workingfunc, "changes_size", False) and "_" not in kwargs:
             # special case for common function crop which will change the array shape
             force = True
         else:
-            force = kargs.pop("_", False)
-        r = workingfunc(im, *args, **kargs)
+            force = kwargs.pop("_", False)
+        r = workingfunc(im, *args, **kwargs)
         if getattr(workingfunc, "keep_class", False):
             return r
         if isinstance(r, np.ndarray) and r.ndim != 2:  # 1D Array goes back straight
@@ -157,7 +163,7 @@ def image_file_raw_adaptor(workingfunc):
 
 
 def array_file_property(workingfunc):
-    """Wrap an arbitary callbable to make it a bound method of this class.
+    """Wrap an arbitrary callbable to make it a bound method of this class.
 
     Args:
         workingfunc (callable):
@@ -173,7 +179,7 @@ def array_file_property(workingfunc):
         return None
 
     @wraps(workingfunc)
-    def gen_func(self, *args, **kargs):
+    def gen_func(self, *args, **kwargs):
         """Wrap magic proxy function call."""
         transpose = getattr(workingfunc, "transpose", False)
         clones = getattr(workingfunc, "clones", False)
@@ -185,7 +191,7 @@ def array_file_property(workingfunc):
             if isinstance(a, type(self)):
                 args[ix] = a.image
 
-        ret = workingfunc(im, *args, **kargs)
+        ret = workingfunc(im, *args, **kwargs)
         # This shouldn't in fact be returning anything
         return ret
 
@@ -208,7 +214,7 @@ def array_file_attr(name):
 
 
 def image_array_adaptor(workingfunc):
-    """Wrap an arbitary callbable to make it a bound method of this class.
+    """Wrap an arbitrary callbable to make it a bound method of this class.
 
     Args:
         workingfunc (callable):
@@ -250,7 +256,7 @@ def image_array_adaptor(workingfunc):
             if isinstance(r, type(self)) and np.shares_memory(r, self):  # Assume everything was inplace
                 return r
             r = r.view(type(self))
-            sm = self.metadata.copy()  # Copy the currenty metadata
+            sm = self.metadata.copy()  # Copy the currently metadata
             sm.update(r.metadata)  # merge in any new metadata from the call
             r.metadata = sm  # and put the returned metadata as the merged data
         # NB we might not be returning an ndarray at all here !
@@ -260,14 +266,31 @@ def image_array_adaptor(workingfunc):
     return fix_signature(gen_func, workingfunc)
 
 
+def label(**kwargs):
+    """A decoratory that adds attributes to a callable.
+
+    Keywrod Arguments:
+        **kwargs:
+            All keyword arguments are added to the functions __dict__.
+    """
+
+    def _decorator(func):
+        """Actual decorator."""
+        func.__dict__.update(kwargs)
+        return func
+
+    return _decorator
+
+
 def class_modifier(
     module,
     adaptor=image_array_adaptor,
     transpose=False,
     overload=False,
     proxy_cls=None,
-    RTD_restrictions=True,
+    RTD_restrictions=True,  # pylint: disable=invalid-name
     no_long_names=False,
+    alias=None,
 ):
     """Decorate  a class by addiding member functions from module.
 
@@ -294,8 +317,8 @@ def class_modifier(
         RTD_Restrictions (bool):
             If True (default), do not add members from outside our own package when on ReadTheDocs.
         no_long_names (bool):
-            To avoid name collision the default is to create two entries in the class __dict__ - one for the standard name
-            and one to include the full module path. This disables the latter.
+            To avoid name collision the default is to create two entries in the class __dict__ - one for the
+            standard name and one to include the full module path. This disables the latter.
 
 
     Returns:
@@ -307,17 +330,28 @@ def class_modifier(
         proxy_class = cls if proxy_cls is None else proxy_cls
         mods = module if isinstance(module, Iterable) else [module]
         for mod in mods:
+            if alias is None:
+                mod_name = mod.__name__.replace(".", r"\.")
+                mod_name = "^" + mod_name
+            else:
+                mod_name = alias
             if (RTD_restrictions and _RTD) and not getattr(mod, "__package__", "Stoner").startswith("Stoner"):
                 continue  # Do not bind all the external functions if we're in ReadTheDocs
             for fname in dir(mod):
                 if not fname.startswith("_"):
-                    func = getattr(mod, fname)
+                    try:
+                        func = getattr(mod, fname)
+                    except AttributeError:  # This shouldn't happen, but it did for scipy.ndimage!
+                        continue
                     fmod = getattr(func, "__module__", getattr(getattr(func, "__class__", None), "__module__", ""))
-                    if callable(func) and isinstance(fmod, str) and fmod[:5] in ["Stone", "scipy", "skima"]:
+                    if callable(func) and isinstance(fmod, str) and re.search(mod_name, fmod):
                         if transpose:
                             func.transpose = transpose
                         name = f"{fmod}__{fname}".replace(".", "__")
-                        proxy = adaptor(func)
+                        if adaptor is not None:
+                            proxy = adaptor(func)
+                        else:
+                            proxy = func
                         setattr(proxy, "_src_mod", fmod)
                         if not no_long_names:
                             setattr(cls, name, proxy)
@@ -337,7 +371,7 @@ def class_wrapper(
     attr_pass=array_file_attr,
     exclude_below=None,
 ):
-    """Create entries in the current class for all attrbutes of klass that are not already defined.
+    """Create entries in the current class for all attributes of klass that are not already defined.
 
     Keyword Arguments:
         target (type):
@@ -345,7 +379,7 @@ def class_wrapper(
         adaptor (callable):
             A factory function to make methods to the the connection to the underlying attributes.
 
-    Reutrns:
+    Returns:
         class:
             Modified class definition.
 
@@ -391,7 +425,7 @@ def keep_return_type(func):
 
 
 def clones(func):
-    """Mark the mthod as one that expects it's input to be cloned."""
+    """Mark the method as one that expects it's input to be cloned."""
     func.clones = True
     return func
 
@@ -410,11 +444,35 @@ def fix_signature(proxy_func, wrapped_func):
     return proxy_func
 
 
-def make_Data(*args, **kargs):
+def make_Data(*args, **kwargs):
     """Return an instance of Stoner.Data passig through constructor arguments.
 
-    Calling make_Data(None) is a speical case to return the Data class ratther than an instance
+    Calling make_Data(None) is a special case to return the Data class ratther than an instance
     """
     if len(args) == 1 and args[0] is None:
         return import_module("Stoner.core.data").Data
-    return import_module("Stoner.core.data").Data(*args, **kargs)
+    return import_module("Stoner.core.data").Data(*args, **kwargs)
+
+
+def make_Image(*args, **kwargs):
+    """Return an instance of Stoner.Data passig through constructor arguments.
+
+    Calling make_Data(None) is a special case to return the Data class ratther than an instance
+    """
+    if len(args) == 1 and args[0] is None:
+        return import_module("Stoner.Image.core").ImageFile
+    return import_module("Stoner.Image.core").ImageFile(*args, **kwargs)
+
+
+def make_Class(cls, *args, **kwargs):
+    """Return an instance of Stoner.Data passig through constructor arguments.
+
+    Calling make_Data(None) is a special case to return the Data class ratther than an instance
+    """
+    parts = cls.split(".")
+    cls = parts.pop()
+    mod = ".".join(["Stoner"] + parts)
+
+    if len(args) == 1 and args[0] is None:
+        return getattr(import_module(mod), cls)
+    return getattr(import_module(mod), cls)(*args, **kwargs)
