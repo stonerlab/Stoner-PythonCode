@@ -36,3 +36,4 @@ dependencies:
   - looseversion >=1.0
   - rosettasciio
   - fabio
+  - chardet
