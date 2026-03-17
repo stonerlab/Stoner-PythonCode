@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Loader for zip files."""
+import fnmatch
 import json
 import pathlib
 import zipfile as zf
@@ -7,6 +8,7 @@ from os import path
 from traceback import format_exc
 
 import chardet
+import pandas as pd
 
 from ...compat import path_types, str2bytes
 from ...core.data import Data
@@ -66,15 +68,27 @@ def load_measure_linkfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data
         with seq.open("Model.json", "r") as model_json:
             model = model_json.read()
             model = model.decode(chardet.detect(model)["encoding"])
+        model = json.loads(model)
+        # new_data.metadata.update(flatten_json(model))
+        for ix, pth in enumerate(fnmatch.filter(seq.namelist(), "*.csv")):
+            with seq.open(pth) as dataframe:
+                df = pd.read_csv(dataframe)
+            if ix == 0:
+                data = df
+            else:
+                data = pd.concat([data, df])
+
+        data = data.select_dtypes(include="number")
+        new_data.data = data.values
+        new_data.column_headers = list(data.columns)
+
         has_data = find_paths(model, "HasData", True)
-        new_data.model = model
-        new_data.has_data = has_data
 
     new_data.filename = filename
     return new_data
 
 
-@register_loader(patterns=(".zip", 16), mime_types=("application/zip", 16), name="ZippedFile", what="Data")
+@register_loader(patterns=(".zip", 24), mime_types=("application/zip", 16), name="ZippedFile", what="Data")
 def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Load a file from the zip file, opening it as necessary.
 

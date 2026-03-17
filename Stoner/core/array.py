@@ -481,7 +481,7 @@ class DataArray(ma.MaskedArray):
                 break
         else:  # User didn't set any values, setas will win
             no_guess = kwargs.get("no_guess", False)
-        ret = AttributeStore(self.setas._get_cols(no_guess=no_guess))
+        ret = AttributeStore(self.setas._get_cols(no_guess=no_guess, startx=kwargs.get("startx", 0)))
         force_list = kwargs.get("force_list", not scalar)
         for c in list(cols.keys()):
             if isnone(cols[c]):  # Not defined, fallback on setas
