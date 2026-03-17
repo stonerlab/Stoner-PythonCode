@@ -57,6 +57,8 @@ def load_measure_linkfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data
         The subfolders contain json for the node operations and optionally (if the key HasData is True) a csv file.
     """
     filename, args, kwargs = get_filename(args, kwargs)
+    if not test_is_zip(filename):
+        raise StonerLoadError("Must be a zip file to load as a measurement sequence.")
     with zf.ZipFile(filename, "r") as seq:
         if "FileInfo.json" not in seq.namelist():
             raise StonerLoadError("Missing the Measurelink Sequence FileInfo.json entry")
