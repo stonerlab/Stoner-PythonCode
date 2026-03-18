@@ -15,21 +15,20 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Install Conda environment with Micromamba
-        uses: conda-incubator/setup-miniconda@v3
+      - name: Install Mamba environment
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-file: tests/test-env.yml
-          python: ${{ matrix.python-version }}
-          channels: conda-forge,phygbu
-          channel-priority: flexible
-          activate-environment: test-environment
-          auto-activate-base: false
-      - name: Conda information
+          environment-name: test-environment
+          create-args: >-
+            python=${{ matrix.python-version }}
+            --channel-priority flexible
+          init-shell: bash
+      - name: Mamba information
         run: |
-          conda info
-          conda list
-          conda config --show-sources
-          conda config --show
+          micromamba info
+          micromamba list
+          micromamba config --show-sources
       - name: install package
         run: pip install --no-deps .
       - name: Install headless server
@@ -39,7 +38,7 @@ jobs:
            sudo apt-get install qtbase5-dev
       - name: Test with xvfb
         run: |
-           xvfb-run --auto-servernum /usr/share/miniconda/envs/test-environment/bin/pytest  -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml
+           xvfb-run --auto-servernum pytest -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml
            coverage xml
         env:
             TZ: Europe/London
