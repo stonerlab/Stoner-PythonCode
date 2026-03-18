@@ -31,7 +31,6 @@ jobs:
         run: |
           micromamba info
           micromamba list
-          micromamba config --show-sources
       - name: install package
         run: pip install --no-deps .
       - name: Install headless server
