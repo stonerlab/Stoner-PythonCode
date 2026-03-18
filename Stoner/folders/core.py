@@ -220,6 +220,7 @@ class BaseFolder(MutableSequence):
         self._root = "."
         self._default_store = None
         self.directory = None
+        self.executor = None
         return self
 
     def __init__(self, *args, **kwargs):
@@ -653,6 +654,11 @@ class BaseFolder(MutableSequence):
     ###########################################################################
     ######## Methods to implement the MutableMapping abstract methods #########
     ######## And to provide a mapping interface that mainly access groups #####
+
+    def __del__(self):
+        """Clean up the exececutor if it is defined."""
+        if self.executor:
+            self.executor.shutdown()
 
     def __getitem__(self, name):
         """Try to get either a group or an object.
