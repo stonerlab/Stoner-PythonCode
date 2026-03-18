@@ -67,7 +67,13 @@ def test_is_zip(filename, member=""):
     """
     if not filename or str(filename) == "":
         return False
-    if zipfile.is_zipfile(filename):
+    if isinstance(filename, (bytes, bytearray)) and b"\x00" in filename:
+        return False
+    try:
+        is_zip = zipfile.is_zipfile(filename)
+    except (ValueError, TypeError, OSError):
+        return False
+    if is_zip:
         return filename, member
     part = os.path.basename(filename)
     newfile = os.path.dirname(filename)

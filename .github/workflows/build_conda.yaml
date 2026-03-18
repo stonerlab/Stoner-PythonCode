@@ -11,19 +11,19 @@ jobs:
   conda_deployment_with_new_tag:
     name: Conda deployment of package for platform ${{ matrix.os }} with Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Conda environment creation and activation
-        uses: conda-incubator/setup-miniconda@505e6394dae86d6a5c7fbb6e3fb8938e3e863830
+        uses: mamba-org/setup-micromamba@add3a49764cedee8ee24e82dfde87f5bc2914462 # v2.0.7
         with:
-          python-version: "3.12"
           environment-file: recipe/build-env.yml
-          activate-environment: build-environment
-          auto-update-conda: true
-          auto-activate-base: false
-          show-channel-urls: true
+          environment-name: build-environment
+          create-args: python=3.12
+          init-shell: bash
       - name: Build and upload the conda packages
         uses: uibcdf/action-build-and-upload-conda-packages@4940704d2be7906d3bda5b00e3c3e4472fd7808f
         with:
