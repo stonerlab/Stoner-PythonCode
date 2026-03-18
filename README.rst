@@ -199,7 +199,7 @@ making beta packages available.
 Development Version
 -------------------
 
-The current development version is currently on a stable branch and is version 0.11.x. The master branch contains work
+The current development version is currently on a stable branch and is version 0.11.x. The main branch contains work
 in progress to migrate to using Pandas dataframes as the underlying data store - this is however largely broken!
 
 Build Status

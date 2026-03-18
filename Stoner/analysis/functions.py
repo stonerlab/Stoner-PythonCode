@@ -175,7 +175,7 @@ def decompose(
         ycol = [ycol]
 
     if hysteretic:
-        from .Util import split_up_down  # pylint: disable=import-outside-toplevel
+        from .utils import split_up_down  # pylint: disable=import-outside-toplevel
 
         fldr = split_up_down(datafile, datafile.xcol)
         for grp in ["rising", "falling"]:

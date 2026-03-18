@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 """Loader for zip files."""
+import fnmatch
+import json
 import pathlib
 import zipfile as zf
 from os import path
 from traceback import format_exc
+
+import chardet
+import pandas as pd
 
 from ...compat import path_types, str2bytes
 from ...core.data import Data
@@ -13,6 +18,8 @@ from ...tools.file import get_filename
 from ...tools.typing import Args, Filename, Kwargs
 from ..decorators import register_loader, register_saver
 from ..utils.zip import test_is_zip
+
+from ...tools.json import flatten_json, find_paths, find_parent_dicts
 
 
 def _split_filename(filename: Filename, **kwargs: Kwargs) -> Filename:
@@ -27,7 +34,63 @@ def _split_filename(filename: Filename, **kwargs: Kwargs) -> Filename:
     return filename
 
 
-@register_loader(patterns=(".zip", 16), mime_types=("application/zip", 16), name="ZippedFile", what="Data")
+@register_loader(patterns=(".mlseq", 16), mime_types=("application/zip", 16), name="MeasureLinkFile", what="Data")
+def load_measure_linkfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
+    """Load a MeasureLink sequence file and assemble as a data object.
+
+    Args:
+        new_data (Data):
+            Data instance into whoch to load the new data.
+        *args:
+            Other positional arguments passed to get_filename.
+
+    Keyword Arguments:
+        **kwargs:
+            Other keyword arguments passed to get_filename.
+
+    Returns:
+        (Data):
+            Loaded Data instance.
+
+    Notes:
+        `.mlseq` files are actually zip archives containing a collection of json files and a flat list of sub-folders
+        The subfolders contain json for the node operations and optionally (if the key HasData is True) a csv file.
+    """
+    filename, args, kwargs = get_filename(args, kwargs)
+    if not test_is_zip(filename):
+        raise StonerLoadError("Must be a zip file to load as a measurement sequence.")
+    with zf.ZipFile(filename, "r") as seq:
+        if "FileInfo.json" not in seq.namelist():
+            raise StonerLoadError("Missing the Measurelink Sequence FileInfo.json entry")
+        with seq.open("FileInfo.json", "r") as fileinfo_json:
+            fileinfo = fileinfo_json.read()
+            fileinfo = fileinfo.decode(chardet.detect(fileinfo)["encoding"])
+        fileinfo = json.loads(fileinfo)
+        new_data.metadata.update(flatten_json(fileinfo))
+        with seq.open("Model.json", "r") as model_json:
+            model = model_json.read()
+            model = model.decode(chardet.detect(model)["encoding"])
+        model = json.loads(model)
+        # new_data.metadata.update(flatten_json(model))
+        for ix, pth in enumerate(fnmatch.filter(seq.namelist(), "*.csv")):
+            with seq.open(pth) as dataframe:
+                df = pd.read_csv(dataframe)
+            if ix == 0:
+                data = df
+            else:
+                data = pd.concat([data, df])
+
+        data = data.select_dtypes(include="number")
+        new_data.data = data.values
+        new_data.column_headers = list(data.columns)
+
+        has_data = find_paths(model, "HasData", True)
+
+    new_data.filename = filename
+    return new_data
+
+
+@register_loader(patterns=(".zip", 24), mime_types=("application/zip", 16), name="ZippedFile", what="Data")
 def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """Load a file from the zip file, opening it as necessary.
 
