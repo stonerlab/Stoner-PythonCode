@@ -97,6 +97,9 @@ def test_constructor():
     d = selfd.clone
     df = d.to_pandas()
     e = Data(df)
+    for bad_key in ["Loaded as","TDI Format"]: # These are non-vital keys that don't survice transfer
+        d.pop(bad_key,None)
+        e.pop(bad_key,None)
     assert d == e, "Roundtripping through Pandas DataFrame failed."
     d = selfd.clone
     e = Data(d.dict_records)
@@ -288,6 +291,8 @@ def test_dir():
             "__getstate__",
             "__static_attributes__",
             "__firstlineno__",
+            '__annotate_func__',
+            '__annotations_cache__',
         ]
     )
     attrs = set(dir(selfd)) - bad_keys
