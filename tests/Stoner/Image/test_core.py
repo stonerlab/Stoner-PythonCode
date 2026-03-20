@@ -511,5 +511,38 @@ def test_operators():
     assert i.sum() == 50 * 255, "Negate operators failed"
 
 
+def test_image_descriptor():
+    """Test that ImageArray acts as a descriptor on ImageFile.image."""
+    # Class-level: ImageFile.image should return the descriptor itself
+    assert isinstance(ImageFile.__dict__["image"], ImageArray), "ImageFile.image class attr is not an ImageArray descriptor"
+
+    # Setting a plain numpy array should produce an ImageArray
+    imf = ImageFile()
+    arr = np.ones((5, 6))
+    imf.image = arr
+    assert isinstance(imf.image, ImageArray), "image is not ImageArray after setting numpy array"
+    assert imf.image.shape == (5, 6), "shape mismatch after setting numpy array"
+
+    # Setting an ImageArray should keep it as an ImageArray
+    ima = ImageArray(np.zeros((3, 4)))
+    imf2 = ImageFile()
+    imf2.image = ima
+    assert isinstance(imf2.image, ImageArray), "image is not ImageArray after setting ImageArray"
+
+    # metadata should be preserved across assignment
+    imf3 = ImageFile()
+    imf3.image = ImageArray(np.ones((4, 4)))
+    imf3.image.metadata["test_key"] = "test_value"
+    imf3.image = np.zeros((4, 4))
+    assert imf3.image.metadata.get("test_key") == "test_value", "metadata not preserved across image assignment"
+
+    # filename should be preserved when image is replaced
+    imf4 = ImageFile()
+    imf4.image = ImageArray(np.ones((4, 4)))
+    imf4.filename = "test.png"
+    imf4.image = np.zeros((4, 4))
+    assert imf4.filename == "test.png", "filename not preserved across image assignment"
+
+
 if __name__ == "__main__":  # Run some tests manually to allow debugging
     pytest.main([__file__, "--pdb"])
