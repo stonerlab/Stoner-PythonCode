@@ -37,8 +37,8 @@ from .tools import get_option, set_option
 Options = _Options()
 
 
-__version_info__ = ("0", "11", "1")
-__version__ = ".".join(__version_info__)
+__version__ = "0.11.1"
+__version_info__ = tuple(__version__.split("."))
 
 __homepath__ = pathlib.Path(__file__).parent.resolve()
 __datapath__ = (__homepath__ / ".." / "sample-data").resolve()
