@@ -4,7 +4,7 @@
 
 import pytest
 
-from Stoner import Options
+from Stoner import Data, Options
 from Stoner.tools import classes
 
 
@@ -146,5 +146,72 @@ def test_Options():
     assert repr(Options) == opt_repr, "Representation of Options failed"
 
 
+def test_AttributeStore():
+    store = classes.AttributeStore({"x": 1, "y": 2})
+    assert store.x == 1, "AttributeStore getattr failed"
+    assert store["y"] == 2, "AttributeStore getitem failed"
+    store.z = 3
+    assert store["z"] == 3, "AttributeStore setattr failed"
+    try:
+        _ = store.missing
+    except AttributeError:
+        pass
+    else:
+        assert False, "AttributeStore getattr for missing key didn't raise AttributeError"
+
+
+def test_AttributeStore_init_no_dict():
+    store = classes.AttributeStore()
+    store["key"] = "value"
+    assert store.key == "value", "AttributeStore set via dict key and get via attr failed"
+
+
+def test_TypedList_missing_methods():
+    tl = classes.TypedList(int, (1, 2, 3))
+    # append
+    tl.append(4)
+    assert tl == [1, 2, 3, 4], "TypedList append failed"
+    try:
+        tl.append("bad")
+    except TypeError:
+        pass
+    else:
+        assert False, "TypedList append with bad type didn't raise TypeError"
+    # __len__
+    assert len(tl) == 4, "TypedList __len__ failed"
+    # __iter__
+    items = list(tl)
+    assert items == [1, 2, 3, 4], "TypedList __iter__ failed"
+    # count
+    tl.append(1)
+    assert tl.count(1) == 2, "TypedList count failed"
+    # remove
+    tl.remove(1)
+    assert tl.count(1) == 1, "TypedList remove failed"
+    # pop
+    val = tl.pop()
+    assert val == 1, "TypedList pop failed"
+    # reverse
+    tl2 = classes.TypedList(int, (1, 2, 3))
+    tl2.reverse()
+    assert tl2 == [3, 2, 1], "TypedList reverse failed"
+    # clear
+    tl2.clear()
+    assert len(tl2) == 0, "TypedList clear failed"
+
+
+def test_copy_into():
+    import numpy as np
+
+    src = Data(np.column_stack((np.arange(5), np.arange(5) * 2.0)), column_headers=["x", "y"])
+    src.setas = "xy"
+    dest = Data()
+    result = classes.copy_into(src, dest)
+    assert result is dest, "copy_into should return the destination object"
+    assert list(dest.column_headers) == ["x", "y"], "copy_into failed to copy column headers"
+    assert len(dest) == 5, "copy_into failed to copy data rows"
+
+
 if __name__ == "__main__":
     pytest.main(["--pdb", __file__])
+

@@ -76,5 +76,30 @@ def test_is_tuple():
     assert not tests.istuple((4, "Hi"), str, int), "istuple failed to match types as bad"
 
 
+def test_ClassTester():
+    ct = tests.ClassTester(Data="Stoner.Data")
+    # Accessing the attribute should trigger lazy import and return the class
+    DataClass = ct.Data
+    assert DataClass is not None, "ClassTester failed to return a class"
+    # After first access, the value should be cached as a type, not a string
+    assert isinstance(ct._kwargs["Data"], type), "ClassTester should cache resolved type"
+    # Second access should return cached type
+    DataClass2 = ct.Data
+    assert DataClass is DataClass2, "ClassTester should return cached type on second access"
+
+
+def test_ClassTester_update():
+    ct = tests.ClassTester()
+    ct(MyData="Stoner.Data")
+    assert "MyData" in ct._kwargs, "ClassTester __call__ should update kwargs"
+
+
+def test_ClassTester_missing_attr():
+    ct = tests.ClassTester()
+    result = ct.nonexistent
+    assert isinstance(result, AttributeError), "ClassTester should return AttributeError for missing attribute"
+
+
 if __name__ == "__main__":
     pytest.main()
+
