@@ -122,6 +122,75 @@ class DataArray(ma.MaskedArray):
         ret = ma.MaskedArray.__array_wrap__(self, obj, context=context, return_scalar=return_scalar)
         return ret
 
+    # ==============================================================================================================
+    ############################        Descriptor Protocol         ################################################
+    # ==============================================================================================================
+
+    def __set_name__(self, owner, name):
+        """Record the attribute name when the descriptor is assigned as a class attribute.
+
+        Args:
+            owner (type):
+                The class that owns this descriptor.
+            name (str):
+                The attribute name used for this descriptor on the owner class.
+        """
+        self._attr_name = name
+        self._private_name = f"_{name}"
+
+    def __get__(self, obj, objtype=None):
+        """Return the DataArray stored on the owner instance (descriptor getter).
+
+        Args:
+            obj: The owner instance, or ``None`` when accessed on the class itself.
+            objtype: The owner class.
+
+        Returns:
+            DataArray: The stored data array, guaranteed to be at least 2-dimensional,
+                or this descriptor instance when accessed on the class.
+        """
+        if obj is None:
+            return self
+        try:
+            return np.atleast_2d(object.__getattribute__(obj, self._private_name))
+        except AttributeError:
+            return np.atleast_2d(DataArray([]))
+
+    def __set__(self, obj, value):
+        """Store *value* as a :class:`DataArray` on the owner instance (descriptor setter).
+
+        The setter normalises the incoming value so that it is always a 2-D
+        :class:`DataArray`.  Column headers and ``setas`` assignments are
+        preserved from the existing data when the number of columns matches.
+
+        Args:
+            obj: The owner instance.
+            value (array-like): New data to store.
+
+        Raises:
+            ValueError: If *value* has more than 2 dimensions.
+        """
+        nv = value
+        if not nv.shape:  # nv is a scalar - make it a 2D array
+            nv = ma.atleast_2d(nv)
+        elif nv.ndim == 1:  # nv is a vector - make it a 2D array
+            nv = ma.atleast_2d(nv).T
+        elif nv.ndim > 2:
+            raise ValueError(f"DataFile.data should be no more than 2 dimensional not shape {nv.shape}")
+        try:
+            old_data = object.__getattribute__(obj, self._private_name)
+        except AttributeError:
+            old_data = DataArray([])
+        if not isinstance(nv, DataArray):  # nv isn't a DataArray, so preserve setas
+            nv = DataArray(nv)
+            nv._setas = old_data._setas.clone
+        elif old_data.ndim >= 2 and nv.shape[1] == old_data.shape[1]:  # same columns - preserve column_headers and setas
+            ch = old_data.column_headers
+            nv._setas = old_data._setas.clone
+            nv.column_headers = ch
+        nv._setas.shape = nv.shape
+        object.__setattr__(obj, self._private_name, nv)
+
     def _prepare_index(self, ix):
         """Mangle an indexing argument into a standard tuple form."""
         match ix:
