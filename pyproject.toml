@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Stoner"
+dynamic = ["version"]
+description = "Library to help write data analysis tools for experimental condensed matter physics."
+readme = {file = "README.rst", content-type = "text/x-rst"}
+requires-python = ">=3.11"
+license = {text = "GPLv3"}
+authors = [
+    {name = "Gavin Burnell", email = "g.burnell@leeds.ac.uk"},
+]
+keywords = ["Data-Analysis", "Physics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+]
+dependencies = [
+    "scipy>=1.14",
+    "numpy>=2.0",
+    "matplotlib>=3.8",
+    "scikit-image>=0.24",
+    "h5py",
+    "cycler>=0.10.0",
+    "filemagic>=1.6",
+    "image-registration>=0.2.1",
+    "lmfit>=1.3",
+    "memoization>=0.1.4",
+    "npTDMS>=1.9.0",
+    "python-dateutil>=2.8.0",
+    "statsmodels",
+    "tabulate>=0.9",
+    "imreg_dft>=2.0",
+    "multiprocess>=0.70",
+    "dill>=0.2.8",
+    "urllib3>=1.26",
+    "seaborn>=0.13",
+    "looseversion>=1.0",
+    "chardet>=5.2.0",
+]
+
+[project.optional-dependencies]
+PrettyPrint = ["tabulate>=0.7.5"]
+mimetype_detection = ["magic"]
+TDMS = ["nptdms"]
+numba = ["numba"]
+cv2 = ["opencv-python"]
+image_alignment = ["imreg_dft", "image_registration"]
+
+[project.urls]
+Homepage = "https://github.com/gb119/Stoner-PythonCode"
+Repository = "https://github.com/gb119/Stoner-PythonCode"
+
+[tool.setuptools.dynamic]
+version = {attr = "Stoner.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["Stoner*"]
+
+[tool.setuptools.package-data]
+Stoner = ["stylelib/*.mplstyle"]
+
+[tool.coverage.run]
+branch = true
+source = ["Stoner"]
+relative_files = true
+
+[tool.pydocstyle]
+ignore = ["D203"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
