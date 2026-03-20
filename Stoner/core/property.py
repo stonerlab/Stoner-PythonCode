@@ -72,34 +72,8 @@ class DataFilePropertyMixin:
         """Write the column_headers attribute (delagated to the setas object)."""
         self.data._setas.column_headers = value
 
-    @property
-    def data(self):
-        """Property Accessors for the main numerical data."""
-        return np.atleast_2d(self._data)
-
-    @data.setter
-    def data(self, value):
-        """Set the data attribute, but force it through numpy.ma.masked_array first."""
-        nv = value
-        if not nv.shape:  # nv is a scalar - make it a 2D array
-            nv = ma.atleast_2d(nv)
-        elif nv.ndim == 1:  # nv is a vector - make it a 2D array
-            nv = ma.atleast_2d(nv).T
-        elif nv.ndim > 2:
-            raise ValueError(f"DataFile.data should be no more than 2 dimensional not shape {nv.shape}")
-        if not isinstance(
-            nv, DataArray
-        ):  # nv isn't a DataArray, so preserve setas (does this preserve column_headers too?)
-            nv = DataArray(nv)
-            nv._setas = getattr(self, "_data")._setas.clone
-        elif (
-            nv.shape[1] == self.shape[1]
-        ):  # nv is a DataArray with the same number of columns - preserve column_headers and setas
-            ch = getattr(self, "_data").column_headers
-            nv._setas = getattr(self, "_data")._setas.clone
-            nv.column_headers = ch
-        nv._setas.shape = nv.shape
-        self._data = nv
+    data = DataArray([])
+    """DataArray descriptor that enforces the data attribute is always a :class:`DataArray` instance."""
 
     @property
     def dict_records(self):

@@ -10,7 +10,6 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-forked
-  - pytest-runner
   - pytest-xdist
   - python-dateutil
   - pip

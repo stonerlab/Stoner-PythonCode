@@ -1,11 +1,10 @@
-{% set data = load_setup_py_data() %}
+{% set version_match = load_file_regex(load_file="Stoner/__init__.py", regex_pattern='__version__\s*=\s*"([^"]+)"') %}
+{% set version = version_match[1] %}
 {% set name = "Stoner" %}
-{% set file_ext = "tar.gz" %}
-
 
 package:
   name: '{{ name|lower }}'
-  version: {{ data.get('version') }}
+  version: {{ version }}
 
 source:
   path: ..
@@ -13,13 +12,13 @@ source:
 build:
   noarch: python
   number: 1
-  script: {{ PYTHON }} setup.py install --single-version-externally-managed --record=record.txt
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   build:
     - python >=3.11
-    - pytest
-    - pytest-runner
+    - pip
+    - setuptools >=61.0
 
   run:
     - python >=3.11

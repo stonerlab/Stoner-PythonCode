@@ -269,7 +269,7 @@ def load_csvfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
                     raise StonerLoadError("Ran out of file before readching header")
                 header = line.strip()
                 column_headers = next(csv.reader(io.StringIO(header), delimiter=header_delim))
-                data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line - header_line)
+                data = np.genfromtxt(datafile, delimiter=data_delim, skip_header=data_line - header_line - 1)
             except (TypeError, ValueError, csv.Error, StopIteration, UnicodeDecodeError) as err:
                 raise StonerLoadError("Header and data on the same line") from err
         else:  # Generate

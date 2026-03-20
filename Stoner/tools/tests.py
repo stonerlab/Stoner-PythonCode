@@ -171,7 +171,7 @@ def isnone(iterator: Optional[IterableType]) -> bool:
 
 
 def isproperty(obj: Any, name: str) -> bool:
-    """Check whether an attribute of an object or class is a property.
+    """Check whether an attribute of an object or class is a property or data descriptor.
 
     Args:
         obj (instance or class):
@@ -181,13 +181,17 @@ def isproperty(obj: Any, name: str) -> bool:
 
     Returns:
         (bool):
-            Whether the name is a property or not.
+            Whether the name is a property or data descriptor or not.
     """
     if not isinstance(obj, type):
         obj = type(obj)
     elif not issubclass(obj, object):
         raise TypeError(f"Can only check for property status on attributes of an object or a class not a {type(obj)}")
-    return hasattr(obj, name) and isinstance(getattr(obj, name), property)
+    for klass in obj.__mro__:
+        if name in klass.__dict__:
+            attr = klass.__dict__[name]
+            return isinstance(attr, property) or (hasattr(attr, "__get__") and hasattr(attr, "__set__"))
+    return False
 
 
 def istuple(obj: Any, *args: type, strict: bool = True) -> bool:

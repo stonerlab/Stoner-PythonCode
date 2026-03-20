@@ -1,4 +1,0 @@
-[run]
- branch = True
- source = Stoner
- relative_files = True
