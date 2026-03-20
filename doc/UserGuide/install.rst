@@ -55,9 +55,9 @@ machine then::
 
 should install the current master branch. Otherwise download the zip file from the github site and do::
 
-    python setup.py install
+    pip install .
 
-to insatall it locally.
+to install it locally.
 
 Using the Development Version of the Stoner Package
 ===================================================
