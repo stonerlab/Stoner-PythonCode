@@ -477,7 +477,8 @@ class TypeHintedDict(RegexpDict):
         key = name
         (name, typehint) = self._get_name_(name)
         name = self.__lookup__(name, True)
-        value = [super().__getitem__(nm) for nm in name]
+        _super = super()
+        value = [_super.__getitem__(nm) for nm in name]
         if typehint is not None:
             value = [self.__mungevalue(typehint, v) for v in value]
         if len(value) == 0:  # pylint: disable=len-as-condition
