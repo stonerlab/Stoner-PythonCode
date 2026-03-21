@@ -26,7 +26,7 @@ Their are further variants that can work with compressed zip archives - :py:clas
 Finally, for the case of image files, there is a specialised :py:class:`Stoner.Image.ImageStack` class that is optimised for image files of the same dimension
 and stores the images in a single 3D numpy array to allow much faster operations (at the expense of taking more RAM).
 
-In the documentation below, expcet where noted explicitly, you can use a :py:class:`Stoner.Image.ImageFolder` in place of the :py:class:`DataFolder`, but working
+In the documentation below, except where noted explicitly, you can use a :py:class:`Stoner.Image.ImageFolder` in place of the :py:class:`DataFolder`, but working
 with :py:class:`Stoner.Image.ImageFile` instead of :py:class:`Stoner.Data`.
 
 Basic Operations
@@ -322,7 +322,7 @@ The various subfolder are stored in a dictionary in the :py:attr:`DataFolder.gro
 
 Both the files and groups in a :py:class:`DataFolder` can be accessed either by integer index or by name. If a string name is used
 and doesn't exactly match, then it is interpreted as a regular expression and that is matched instead. This only applies for retrieving
-tiems - for setting items an exact name or integer index is required.
+items - for setting items an exact name or integer index is required.
 
 
 Doing Something With Each File
@@ -462,7 +462,7 @@ of )oif *values_only* is True, just a list, but the *output* parameter can chang
         return a list of dictionary subsets of the metadata
     -   "list" or list (the default if *values_only* is True)
 
-        return a list of values of each item pf the metadata. If only item of metadata is requested, then just rturns a list.
+        return a list of values of each item pf the metadata. If only item of metadata is requested, then just returns a list.
     -   "array" or np.array
 
         return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys
@@ -672,7 +672,7 @@ the topmost group to the lowest (terminal) group.
 
 The *replace_terminal* parameter applies when *group* is **True** and the function returns a
 :py:class:`Stoner.Core,DataFile` object. This indicates that the group on which the function was
-called should be removed from the list fo groups and the returned :py:class:`Stoner.Data`
+called should be removed from the list of groups and the returned :py:class:`Stoner.Data`
 object should be added to the list of files in the folder. This operation is useful when one is
 processing a group of files to combined them into a single dataset. Combining a multi-level grouping
 operation and successive calls to :py:meth:`DataFolder.walk_groups` can rapidly reduce a large set of

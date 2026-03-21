@@ -280,7 +280,7 @@ def next_filer(
 
     Keyword Args:
         pattern (str, None):
-            (deault None) - if the file to load has an extension, use this.
+            (default None) - if the file to load has an extension, use this.
         mime-type (str,None):
             (default None) - if we have a mime-type for the file, use this.
         what (str, None):
@@ -294,9 +294,9 @@ def next_filer(
             The next loader function to try.
 
     Notes:
-        If avaialbe, iterate through all loaders that match that particular mime-type, but also match the pattern
+        If available, iterate through all loaders that match that particular mime-type, but also match the pattern
         if it is available (which is should be!). If mime-type is not specified, then just match by pattern and if
-        neither are specified, then yse the default no pattern "*".
+        neither are specified, then use the default no pattern "*".
     """
     if mode == "save":
         cache_by_type = {}
@@ -345,7 +345,7 @@ def dialog_patterns(pattern: str = "*", name: Optional[str] = None, what: str = 
 
 
 def best_saver(filename: str, name: Optional[str], what: Optional[str] = None) -> Callable:
-    """Figure out the best saving routine registerd with the package."""
+    """Figure out the best saving routine registered with the package."""
     if name and name in _savers_by_name:
         return _savers_by_name[name]
     match filename:
@@ -376,7 +376,7 @@ def get_loader(filetype, silent=False):
 
     Args:
         filetype (str): Filetype to get loader for.
-        silent (bool): If False (default) raise a StonerLoadError if filetype doesn't have a loade.
+        silent (bool): If False (default) raise a StonerLoadError if filetype doesn't have a loader.
 
     Returns:
         (callable): Matching loader.
@@ -409,7 +409,7 @@ def get_saver(filetype, silent=False):
 
     Args:
         filetype (str): Filetype to get saver for.
-        silent (bool): If False (default) raise a Stonersaverror if filetype doesn't have a loade.
+        silent (bool): If False (default) raise a Stonersaverror if filetype doesn't have a loader.
 
     Returns:
         (callable): Matching saver.
@@ -445,7 +445,7 @@ def clear_routine(name, loader=True, saver=True):
 
     Keyword Arguments:
         loader (bool):
-            Whether to remove tyhe loader (default True)
+            Whether to remove the loader (default True)
         saver (bool):
             Whether to remove the saver routne (default True)
 

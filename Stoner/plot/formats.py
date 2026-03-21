@@ -412,7 +412,7 @@ class DefaultPlotStyle(MutableMapping):
                             pass
             case _:
                 raise SyntaxError(
-                    "Only one posotional argument which should be a Mapping subclass can be supplied toi update."
+                    "Only one positional argument which should be a Mapping subclass can be supplied to update."
                 )
 
     def _compute_figsize(self):

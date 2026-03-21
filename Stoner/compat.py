@@ -193,5 +193,5 @@ class _dummy:
         return self.jit
 
     def __getitem__(self, *args, **kwargs):
-        """Hande jit calls to array types."""
+        """Handle jit calls to array types."""
         return self

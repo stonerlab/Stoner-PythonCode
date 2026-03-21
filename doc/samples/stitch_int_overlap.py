@@ -23,7 +23,7 @@ s2.stitch(s1, overlap=100)
 s2.plot(fmt="b:", label="Set 2 Stictched on Set 1", linewidth=1)
 s2.title = "Stictching Example"
 
-# Tidy up the plot by adding annotation fo the stirching co-efficients
+# Tidy up the plot by adding annotation for the stitching co-efficients
 labels = ["A", "B", "C"]
 
 txt = []

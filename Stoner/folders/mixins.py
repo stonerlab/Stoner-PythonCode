@@ -195,7 +195,7 @@ class DiskBasedFolderMixin:
         called from the public save() method. The trail of group keys is used to create a directory tree.
 
         Args:
-            grp (:py:class:`objectFolder` or :py:calss:`Stoner.metadataObject`):
+            grp (:py:class:`objectFolder` or :py:class:`Stoner.metadataObject`):
                 A group or file to save trail (list of strings): the trail of paths used to get here
             root (string or None):
                 a replacement root directory
@@ -402,7 +402,7 @@ class DiskBasedFolderMixin:
 
         The CM group LabVIEW software will avoid overwriting files when measuring by inserting !#### where #### is an
         integer revision number just before the filename extension. This method will look for instances of several
-        files which differ in name only by the presence of the revision number and will kepp only the highest revision
+        files which differ in name only by the presence of the revision number and will keep only the highest revision
         number. This is useful if several measurements of the same experiment have been carried out, but only the
         last file is the correct one.
 
@@ -476,7 +476,7 @@ class DiskBasedFolderMixin:
 class DataFolder(DiskBasedFolderMixin, BaseFolder):
     """Provide an interface to manipulating lots of data files stored within a directory structure on disc.
 
-    By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder emplys a lazy
+    By default, the members of the DataFolder are instances of :class:`Stoner.Data`. The DataFolder employs a lazy
     open strategy, so that files are only read in from disc when actually needed.
 
     .. inheritance-diagram:: DataFolder

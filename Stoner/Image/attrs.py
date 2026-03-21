@@ -230,7 +230,7 @@ class MaskProxy:
 
     The string representation of the mask is an ascii art version of the mask where . is unmasked and X is masked.
 
-    Conversion to a boolean is equaivalent to testing whether **any** elements of the mask are True.
+    Conversion to a boolean is equivalent to testing whether **any** elements of the mask are True.
 
     The mask also supports the invert and negate operators which both return the inverse of the mask (but do not
     change the mask itself - unlike :py:meth:`MaskProxy.invert`).
@@ -367,7 +367,7 @@ class MaskProxy:
             -   left-clicking the mouse sets a new vertex
             -   right-clicking the mouse removes the last set vertex
             -   pressing "i" inverts the mask (i.e. controls whether the shape the user is drawing is masked or clear)
-            -   pressing "p" sets polygon mode (the default) - each vertex is then the corener of a polygon. The
+            -   pressing "p" sets polygon mode (the default) - each vertex is then the corner of a polygon. The
                 polygon
                 vertices are defined in order going around the shape.
             -   pressing "r" sets rectangular mode. The first vertex defined is one corner. With only two vertices the

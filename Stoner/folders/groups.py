@@ -80,7 +80,7 @@ class GroupsDict(RegexpDict):
         """Remove any empty groups from the objectFolder (and subgroups).
 
         Returns:
-            A copy of thte pruned objectFolder.
+            A copy of the pruned objectFolder.
         """
         keys = list(self.keys())
         for grp in keys:

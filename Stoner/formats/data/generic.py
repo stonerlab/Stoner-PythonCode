@@ -106,7 +106,7 @@ def load_tdi_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
             Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
 
     Note:
-        The *_load* methods shouldbe overridden in each child class to handle the process of loading data from
+        The *_load* methods should be overridden in each child class to handle the process of loading data from
         disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
         the loading class can try a different sub-class instead.
     """

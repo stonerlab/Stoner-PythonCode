@@ -83,7 +83,7 @@ class DataArray(ma.MaskedArray):
         # Finally, we must return the newly created object:
         obj.i = i
         obj.setas._row = _row and obj.ndim == 1
-        # Set shared mask - stops some deprication warnings
+        # Set shared mask - stops some deprecation warnings
         obj.unshare_mask()
         if np.issubdtype(obj.dtype, np.floating):
             obj.fill_value = np.nan

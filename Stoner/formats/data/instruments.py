@@ -253,7 +253,7 @@ def load_qdfile(new_data, *args, **kwargs):
 
 
 def _to_Q(new_data, wavelength=1.540593):
-    """Add an additional function to covert an angualr scale to momentum transfer.
+    """Add an additional function to convert an angular scale to momentum transfer.
 
     Returns:
         a copy of itnew_data.

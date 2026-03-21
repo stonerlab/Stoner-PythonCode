@@ -308,7 +308,7 @@ def class_modifier(
             The factor function that takes the module function and produces a method that will call the function and
             take care of adapting the result.
         transpose (bool):
-            Whether ther functions in the module need to have their data transposed to work.
+            Whether there functions in the module need to have their data transposed to work.
         overload (bool):
             If False, don't overwrite the existing method.'
         proxy (class,None):

@@ -199,7 +199,7 @@ The data mask can be accessed via the :py:attr:`Data.mask` attribute of :py:clas
    print d.mask
    d.mask=False
    d.mask=ma.nomask
-   d.mask=numpy.array([[True, True, Fale,...False],...,[False,True,...True]])
+   d.mask=numpy.array([[True, True, False,...False],...,[False,True,...True]])
    d.mask=lambda x: x[0]<50
    d.mask=lambda x:[y<50 for y in x]
 
@@ -250,7 +250,7 @@ Setting Column Types
 To set which columns contain 'x','y' etc data use the :py:attr:`Data.setas` attribute. This attribute can take
 a list of single character strings from the set 'x','y','z','d','e', 'f', 'u', 'v', 'w' or '.' where each element of the list refers to
 the columns of data in order. To specify that a column has unmarked data use the '.' string. The string '-' can also be used - this
-indicats that the current assignment is to be left as is.
+indicates that the current assignment is to be left as is.
 
 Alternately, you can pass :py:attr:`Data.setas` a string. In the simplest case, the string is just read in the same way that
 the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next

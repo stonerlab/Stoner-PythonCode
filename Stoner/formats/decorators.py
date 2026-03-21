@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Decoiratoprs for manging loader and saver functions."""
+"""Decorators for managing loader and saver functions."""
 from inspect import _empty, signature
 from typing import Callable, List, Optional, Tuple
 
@@ -43,7 +43,7 @@ def register_loader(
     """
 
     def innner(func: Callable) -> Callable:
-        """Actual decorator for laoder functions.
+        """Actual decorator for loader functions.
 
         Args:
             func (callable):
@@ -86,10 +86,10 @@ def register_loader(
                 match pattern:  # Like mime-type, accept tuple or pattern, priority or just string pattern
                     case (str(pattern), int(p)):
                         _loaders_by_pattern[pattern] = (p, func)
-                    case str(pattern):  # Bare pattenr - use gloabl priority
+                    case str(pattern):  # Bare pattern - use global priority
                         _loaders_by_pattern[pattern] = (func.priority, func)
                     case _:  # Unrecognised
-                        raise TypeError("Pattern shpuld be either a str or (str, int)")
+                        raise TypeError("Pattern should be either a str or (str, int)")
         # All loaders register on the default
         _loaders_by_pattern["*"] = (func.priority, func)
         _loaders_by_name[inner_name] = func
@@ -121,7 +121,7 @@ def register_saver(
     """
 
     def innner(func: Callable) -> Callable:
-        """Actual decorator for laoder functions.
+        """Actual decorator for loader functions.
 
         Args:
             func (callable):
@@ -150,10 +150,10 @@ def register_saver(
                 match pattern:  # Like mime-type, accept tuple or pattern, priority or just string pattern
                     case (str(pattern), int(p)):
                         _savers_by_pattern[pattern] = (p, func)
-                    case str(pattern):  # Bare pattenr - use gloabl priority
+                    case str(pattern):  # Bare pattern - use global priority
                         _savers_by_pattern[pattern] = (func.priority, func)
                     case _:  # Unrecognised
-                        raise TypeError("Pattern shpuld be either a str or (str, int)")
+                        raise TypeError("Pattern should be either a str or (str, int)")
         # All savers register on the default
         _savers_by_pattern["*"] = (func.priority, func)
         _savers_by_name[inner_name] = func

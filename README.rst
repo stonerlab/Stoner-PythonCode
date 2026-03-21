@@ -38,7 +38,7 @@ Getting this Code
 
 .. image:: https://i.imgur.com/h4mWwM0.png
     :target: https://www.youtube.com/watch?v=uZ_yKs11W18
-    :alt: Introduction and Installation Guide to Stoner Pythin Package
+    :alt: Introduction and Installation Guide to Stoner Python Package
     :width: 320
 
 Anaconda Python is the recommended distribution of python and the conda packages are the preferred packaging system for
@@ -48,8 +48,8 @@ be obtained from the `phygbu` channel (although for full functionality, other pa
 Compatibility
 --------------
 
-Version 0.10.x is compatbile with Python 3.9-3.13. Version 0.11.x (currently in development) will be compatible with
-Python 3.11-3.13 and will add support for 3.14 when it is supported within the Anaconda distrubtion.
+Version 0.10.x is compatible with Python 3.9-3.13. Version 0.11.x (currently in development) will be compatible with
+Python 3.11-3.13 and will add support for 3.14 when it is supported within the Anaconda distribution.
 
 The last version that supported Python 2.7 was 0.9.x
 
@@ -124,7 +124,7 @@ ImageFile
 ---------
 
 **Stoner.ImageFile** is the top-level class for managing image data. It is the equivalent of **Stoner.Data** and maintains
-metadta and comes with a number of methods to manipulate image data. The image data is stored internally as a masked numpy
+metadata and comes with a number of methods to manipulate image data. The image data is stored internally as a masked numpy
 array and where possible the masking is taken into account when carrying out image analysis tasks. Through some abuse of
 the Python class system, functions in the scpy.ndimage and scikit-image modules are mapped into methods of the ImageFile
 class allowing a very rich set of operations on the data sets. The default IO methods handle tiff and png images and can
@@ -137,7 +137,7 @@ DataFolder
 structure. It provides methods to list. filter and group data according to filename patterns or metadata and then to execute
 a function on each file or group of files and then collect metadata from each file in turn. A key feature of DataFolder is
 its ability to work with the collated metadata from the individual files that are held in the DataFolder.
-In combination with its ability to walk through a complete heirarchy of groups of
+In combination with its ability to walk through a complete hierarchy of groups of
 **Data** objects, the handling of the common metadata provides powerful tools for quickly writing data reduction scripts.
 
 ImageFolder
@@ -159,8 +159,8 @@ Other Modules and Classes
 -------------------------
 
 The **Stoner.HDF5** module provides some additional classes to manipulate *Data* and *DataFolder* objects within HDF5
-format files. HDF5 is a common chouse for storing data from large scale facilties, although providing a way to handle
-arbitary HDF5 files is beyond the scope of this package at this time - the format is much too complex and flexible to make that
+format files. HDF5 is a common choice for storing data from large scale facilities, although providing a way to handle
+arbitrary HDF5 files is beyond the scope of this package at this time - the format is much too complex and flexible to make that
 an easy task. Rather it provides a way to work with large numbers of experimental sets using just a single file which may be less
 brutal to your computer's OS than having directory trees with millions of individual files.
 
@@ -227,7 +227,7 @@ Online documentation for all versions can be found on the ReadTheDocs pages `onl
 
 Version 0.11 is the current (in development) stable release (i.e. releases pass all unit tests.) New features include:
 
-    *   Move away from mixin classes and multiple inheritence to dynamically binding functions into the class from
+    *   Move away from mixin classes and multiple inheritance to dynamically binding functions into the class from
         modules.
     *   Continued restructuring of the class layout and rationalisation of the naming conventions.
 
@@ -242,7 +242,7 @@ Version 0.10 is the old stable release. New Features in 0.10 include:
         dictionary with methods to prune and filter in the virtual tree of sub-folders.
     *   Refactoring of the **ImageArray** and **ImageFile** so that binding of external functions as methods is done at
         class definition time rather than at runtime with overly complex __getattr__ methods. The longer term goal is to
-        depricate the use of ImageArray in favour of just using ImageFile.
+        deprecate the use of ImageArray in favour of just using ImageFile.
     *   Introduce interactive selection of boxes, lines and mask regions for interactive Matplotlib backends.
     *   Fix some long standing bugs which could lead to shared metadata dictionaries and race conditions
 
@@ -271,7 +271,7 @@ Version 0.8 is the ancient release. The main new features were:
 
 0.8.2 was the final release of the 0.8.0 branch
 
-No further relases will be made to 0.8.x - 0.10.x
+No further releases will be made to 0.8.x - 0.10.x
 
 Versions 0.7.x and earlier are now pre-historic!
 

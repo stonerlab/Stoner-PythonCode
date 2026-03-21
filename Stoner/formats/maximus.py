@@ -233,7 +233,7 @@ class MaximusStack(ImageStack):
                 names = []
             grps = list(f.keys())
             if "common_metadata" not in grps or "common_typehints" not in grps:
-                _raise_error(f, message="Couldn;t find common metadata groups, something is not right here!")
+                _raise_error(f, message="Couldn't find common metadata groups, something is not right here!")
             metadata = f["common_metadata"].attrs
             typehints = f["common_typehints"].attrs
             for i in sorted(metadata):

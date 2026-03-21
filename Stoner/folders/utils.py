@@ -81,7 +81,7 @@ def filter_files(files, patterns, keep=True):
 
     Args:
         files (list of str): Filename to filter
-        pattens (list of (str,regular expressions): List of patterns to consider
+        patterns (list of (str,regular expressions): List of patterns to consider
 
     Keyword Arguments:
         keep (bool): True (default) to keep matching files.

@@ -258,7 +258,7 @@ possible match to *scan1*. If *xcol* or *ycol* are not given then the default x 
 :py:attr:`Stoner.Core.DataFile.setas` attribute.
 
 The *mode* keyword can be used to specify the types of scaling operations that are
-to be allowed. The defaults are to shoft both x and y by an offset value and to rescale
+to be allowed. The defaults are to shift both x and y by an offset value and to rescale
 the y data by some factor. If even more control of the transformation is needed,
 the *func* keyword and *p0* keyword can be used to provide an alternative transformation
 function and initial guesses to its parameters. The profotype for the transformation
@@ -304,7 +304,7 @@ use some locally fitted spline function to interpolate with. The :py:meth:`Stone
     spline=d.spline("X-Data","Y-Data",order=2,smoothing=2.0,replace=None)
 
 The *order* keyword gives the polynomial order of the spline function being fitted. The *smoothing* factor determines how
-closely the spline follows the data points, with a *smoothing*=0.0 being a strict interpolation. The *repalce* argument
+closely the spline follows the data points, with a *smoothing*=0.0 being a strict interpolation. The *replace* argument
 controls what the return value from the :py:meth:`Stoner.Data.spline` method returns. IF *replace* is True or a column
 index, then the new data is added as a column of the Data, possibly replacing the current y-data. If *replace* is False, then
 the new y-data is returned, but the existing data is unmodified. Finally, if *replace* is None, then the
@@ -312,7 +312,7 @@ the new y-data is returned, but the existing data is unmodified. Finally, if *re
 evaluate the spline at arbitrary locations, including extrapolating outside the range of the original x data.
 
 Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially 'inventing' new data.
-Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`Stoner.Data.extrapolate`
+Extrapolating from the spline function, whilst possible, is a little tricky and in many cases the :py:meth:`Stoner.Data.extrapolate`
 method is likely to be more successful. :py:meth:`AbnalyseFile.extrapolate` works by fitting a function over a window in the
 data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
 a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As

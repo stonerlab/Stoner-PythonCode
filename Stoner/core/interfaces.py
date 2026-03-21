@@ -38,7 +38,7 @@ class DataFileInterfacesMixin:
             self.del_rows(item)
 
     def __getitem__(self, name):
-        """Return either a row or iterm of metadata.
+        """Return either a row or item of metadata.
 
         Args:
             name (string or slice or int):
@@ -127,7 +127,7 @@ class DataFileInterfacesMixin:
         Notes:
             If name is a string or already exists as key in metadata, this setitem will set metadata values,
             otherwise if name is a tuple then if the first elem,ent in a string it checks to see if that is an
-            existing metadata item that is iterable, and if so, sets the metadta. In all other circumstances,
+            existing metadata item that is iterable, and if so, sets the metadata. In all other circumstances,
             it attempts to set an item in the main data array.
         """
         match name:

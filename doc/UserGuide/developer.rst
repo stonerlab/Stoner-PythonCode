@@ -93,7 +93,7 @@ will match the expected filenames for this format::
 
     self.patterns=["*.txt","*/dat","*/qda"]
 
-Any custome data class **should** try to identify if the file is the correct format and if so it **must** raise a
+Any custom data class **should** try to identify if the file is the correct format and if so it **must** raise a
 :py:class:`StonerLoadError` exception in order that the autoloading code will known to try a different subclass of :py:class:`DataFile`.
 
 If you need to write any additional methods please make sure that they have Google code-style document 

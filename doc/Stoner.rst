@@ -108,7 +108,7 @@ Image Classes
 
 
 -------------------------------------
-Folders pacakge - Collections Classes
+Folders package - Collections Classes
 -------------------------------------
 
 Main Classes

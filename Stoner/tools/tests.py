@@ -62,7 +62,7 @@ def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -
 
 
 def all_type(iterator: IterableType, typ: type) -> bool:
-    """Determine if an interable omnly contains a common type.
+    """Determine if an iterable only contains a common type.
 
     Arguments:
         iterator (Iterable):
@@ -122,7 +122,7 @@ def iscomparable(v1, v2) -> bool:
 
 
 def isiterable(value: Any) -> bool:
-    """Chack to see if a value is iterable.
+    """Check to see if a value is iterable.
 
     Args:
         value :
@@ -254,7 +254,7 @@ class ClassTester:
         get the class as an attribute in the module and return it. Also, set the type into the stored mapping.
         """
         if name not in self._kwargs:
-            return AttributeError(f"{name} is not an attrbute or mapped class alias.")
+            return AttributeError(f"{name} is not an attribute or mapped class alias.")
         mod = self._kwargs[name]
         if isinstance(mod, str):
             parts = mod.split(".")

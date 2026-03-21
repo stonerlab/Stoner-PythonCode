@@ -544,7 +544,7 @@ class Data(
                 Name of attribute to set. Details of possible attributes below:
                 -   mask Passes through to the mask attribute of self.data (which is a numpy masked array).
                     Also handles the case where you pass a callable object to nask where we pass each row to the
-                    function and use the return reult as the mask
+                    function and use the return result as the mask
                 -   data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
         if hasattr(type(self), name) and isinstance(getattr(type(self), name), property):
@@ -640,7 +640,7 @@ class Data(
                 Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
 
         Note:
-            The *_load* methods shouldbe overridden in each child class to handle the process of loading data from
+            The *_load* methods should be overridden in each child class to handle the process of loading data from
             disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
             the loading class can try a different sub-class instead.
         """
@@ -699,7 +699,7 @@ class Data(
         return self
 
     def __repr_core__(self, shorten=1000):
-        """Actuall do the repr work, but allow for a shorten parameter to save printing big files out to disc."""
+        """Actually do the repr work, but allow for a shorten parameter to save printing big files out to disc."""
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers) + "\n"
         m = len(self.metadata)
         self.data = np.atleast_2d(self.data)
@@ -832,9 +832,9 @@ class Data(
             func (callable):
                 A Callable object of the form lambda x:True where x is a row of data (numpy
             invert (bool):
-                Optionally invert te reult of the func test so that it unmasks data instead
+                Optionally invert the result of the func test so that it unmasks data instead
             cumulative (bool):
-                if tru, then an unmask value doesn't unmask the data, it just leaves it as it is.
+                if true, then an unmask value doesn't unmask the data, it just leaves it as it is.
         """
         i = -1
         args = len(_inspect_.getargs(func.__code__)[0])

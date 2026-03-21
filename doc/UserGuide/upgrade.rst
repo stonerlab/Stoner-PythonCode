@@ -5,7 +5,7 @@ ConvertingScripts from Older Versions of the Stoner Package
 .. currentmodule:: Stoner
 
 THe Stoner package has gradually undergone several changes as additional functions have been added to keep the code base
-managable. This document summarizes the main changes from previous versions.
+manageable. This document summarizes the main changes from previous versions.
 
 Python Version Support
 ======================
@@ -126,7 +126,7 @@ Stoner.DataFolder/Stoner.ImageFolder changes
 :py:class:`Stoner.DataFolder` and :py:class:`Stoner.ImageFolder` are essentially similar objects for managing collections
 of :py:class:`Stoner.Data` ad :py:class:`Stoner.ImageFile` respectively.
 
-Earlier versions of the Stoner package exposed the ability to call methods of the sotred :py:class:`Stoner.Data`/
+Earlier versions of the Stoner package exposed the ability to call methods of the stored :py:class:`Stoner.Data`/
 :py:class:`Stoner.ImageFile` instances by calling a correspomnding method directly on the folder object. The problem with this
 is that if there is a name collision with a method intended to work directly on the Folder, it's not clear what method is being
 called. To remove this problem, and to make it a little more explicit when accessing a method of the stored instances, the
@@ -141,7 +141,7 @@ now becomes::
     fldr.each.curve_fit(Linear)
 
 One of the frequently required operations is to loop through all the files in a folder and extract some of their metadata
-nd build that into a new table. This used to be done something like::
+and build that into a new table. This used to be done something like::
 
     result=Data()
     for data in fldr:

@@ -55,7 +55,7 @@ def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=No
 
     Keyyword Arguments:
         metric (float):
-            Some measure of how sensitive the dection should be
+            Some measure of how sensitive the detection should be
         xcol (column index):
             Column of data to use for X values. Defaults to current setas value
         order (int):
@@ -441,7 +441,7 @@ def split_up_down(data, col=None, folder=None):
 
     Args:
         data (:py:class:`Stoner.Core.DataFile`):
-            object containign the data to be sorted
+            object containing the data to be sorted
         col (index):
             is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
         folder (:py:class:`Stoner.Folders.DataFolder` or None):

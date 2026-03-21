@@ -279,7 +279,7 @@ class KerrStackMixin:
                 the threshold value for the intensity switching. This will need to
                 be tuned for each stack
             correct_drift(bol):
-                whether to correct drift on the image stack before proceding
+                whether to correct drift on the image stack before proceeding
             baseimage(int or ImageArray):
                 we use drift correction from the baseimage.
             saturation_end(bool):
@@ -287,7 +287,7 @@ class KerrStackMixin:
             saturation_white(bool):
                 bright pixels are saturated dark pixels are not yet switched
             quiet: bool
-                choose wether to output status updates as print messages
+                choose whether to output status updates as print messages
             extra_info(bool):
                 choose whether to return intermediate calculation steps as an extra dictionary
         Returns:

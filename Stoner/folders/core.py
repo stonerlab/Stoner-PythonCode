@@ -171,7 +171,7 @@ class BaseFolder(MutableSequence):
             A data structure that indicates the structure of the objectFolder - tuple of number of files and
             dictionary of the shape of each group.
         type (subclass of metadtaObject):
-            The class of objects sotred in this folder
+            The class of objects stored in this folder
 
     Notes:
         A BaseFolder is a multable sequence object that should store a mapping of instances of some sort of data

@@ -9,7 +9,7 @@ functions for use with :py:meth:`Stoner.Data.curve_fit` and :py:class:`lmfit.Mod
 The latter also support the ability to determine an initial value of the parameters from the Data
 and so can simplify the fitting code considerably. Many of the models come with an example function.
 
-Generic Modles
+Generic Models
 ^^^^^^^^^^^^^^
 
 .. automodapi:: Stoner.analysis.fitting.models.generic

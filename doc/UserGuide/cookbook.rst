@@ -51,7 +51,7 @@ provides a handy way to correct some instrumental artifacts and measure properti
     print "Remanance = {}".format(e["Remenance"])
 
 The keyword arguments provide options to turn on or off corrections to remove diamagnetic background (and offset in M),
-and any offset in H (e.g. due to trapped flux in the magnetometer). The latter option is slightly dangerous aas it will
+and any offset in H (e.g. due to trapped flux in the magnetometer). The latter option is slightly dangerous as it will
 also remove the effect of any eexhange bias that moves the coercive field. As well as performing the corrections, the code
 will add metadata items for:
 

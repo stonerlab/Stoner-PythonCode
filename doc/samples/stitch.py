@@ -18,7 +18,7 @@ s2.stitch(s1)
 s2.plot(label="Stictched")
 s2.title = "Stictching Example"
 
-# Tidy up the plot by adding annotation fo the stirching co-efficients
+# Tidy up the plot by adding annotation for the stitching co-efficients
 labels = ["A", "B", "C"]
 txt = []
 lead = r"$x'\rightarrow x+A$" + "\n" + r"$y'=\rightarrow By+C$" + "\n"

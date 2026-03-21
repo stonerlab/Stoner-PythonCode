@@ -28,7 +28,7 @@ def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
 
     Keyword Arguments:
         y_errs (2D array (N,m) floats or None):
-            uncertainities in y values. Default value is None in which case all vbalues equally weighted.
+            uncertainties in y values. Default value is None in which case all vbalues equally weighted.
 
     Returns:
         tuple[1D array of x, 2D array of y, 2D array of y_errs, binned_counts]
@@ -72,7 +72,7 @@ def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
 
         binned_y[:, j] = sum_yw / sum_w
 
-        # Calculate the weighted uncertainity
+        # Calculate the weighted uncertainty
         variance = (y_vals[:, j] - binned_y[:, j][bin_indices]) ** 2
 
         variance_n = variance / binned_counts[:, j][bin_indices] * w / sum_w[bin_indices]
@@ -1056,7 +1056,7 @@ def spline(
         result (bool or column index):
             Whether to add the smoothed data to the dataset and if so where.
         replace (Boolean or column index or None):
-            If True then the y-column data is repalced, if a column index then the
+            If True then the y-column data is replaced, if a column index then the
             new data is added after the specified index, if False then the new y-data is returned and if None,
             then spline object is returned.
         header (string):
