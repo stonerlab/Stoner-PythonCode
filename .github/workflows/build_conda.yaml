@@ -30,7 +30,7 @@ jobs:
         with:
           meta_yaml_dir: recipe
           overwrite: true
-          conda_build_args: "-xc conda-forge -c phygbu"
+          conda_build_args: "-c conda-forge -c phygbu"
           user: phygbu
           label: main
           token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
