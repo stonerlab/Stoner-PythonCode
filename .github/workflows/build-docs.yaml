@@ -1,0 +1,59 @@
+name: Build Documentation
+
+on:
+  workflow_dispatch:
+  release:
+    types: ['released', 'prereleased']
+
+jobs:
+  build-docs:
+    name: Build Sphinx Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # For releases, check out the branch the release targets rather than the tag
+          ref: ${{ github.event_name == 'release' && github.event.release.target_commitish || github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up conda environment
+        uses: mamba-org/setup-micromamba@add3a49764cedee8ee24e82dfde87f5bc2914462 # v2.0.7
+        with:
+          environment-file: doc/docs-env.yml
+          environment-name: docs-build
+          create-args: >-
+            python=3.12
+            --channel-priority flexible
+          init-shell: bash
+          cache-downloads: true
+          cache-environment: true
+
+      - name: Install package and remaining requirements
+        run: pip install .
+
+      - name: Build documentation
+        env:
+          MPLBACKEND: Agg
+        run: |
+          cd doc
+          make html
+
+      - name: Commit and push updated plot cache
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add doc/plot_cache/
+          if ! git diff --staged --quiet; then
+            git commit -m "Update documentation plot cache [skip ci]"
+            git push || { echo "ERROR: git push failed. Ensure the workflow has 'contents: write' permission and branch protection rules allow this bot to push."; exit 1; }
+          else
+            echo "No changes to plot cache, skipping commit."
+          fi
