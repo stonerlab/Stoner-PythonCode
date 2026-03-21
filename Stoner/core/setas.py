@@ -991,4 +991,3 @@ class ColumnHeadersDescriptor:
             value (list or array-like): New column header strings.
         """
         obj.setas.column_headers = value
-

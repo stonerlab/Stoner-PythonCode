@@ -25,9 +25,10 @@ while True:
         break
     except IOError:
         print("Oops I couldn't find that file.")
-with open(filename, "r", encoding="utf-8") as main_fp, open(
-    "title.txt", "w", encoding="utf-8"
-) as write_fp:
+with (
+    open(filename, "r", encoding="utf-8") as main_fp,
+    open("title.txt", "w", encoding="utf-8") as write_fp,
+):
 
     if "BNLSplitFiles" not in os.listdir(directory):
         os.mkdir("BNLSplitFiles")

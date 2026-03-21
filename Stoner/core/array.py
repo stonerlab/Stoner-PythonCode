@@ -196,7 +196,9 @@ class DataArray(ma.MaskedArray):
         if not isinstance(nv, DataArray):  # nv isn't a DataArray, so preserve setas
             nv = DataArray(nv)
             nv._setas = old_data._setas.clone
-        elif old_data.ndim >= 2 and nv.shape[1] == old_data.shape[1]:  # same columns - preserve column_headers and setas
+        elif (
+            old_data.ndim >= 2 and nv.shape[1] == old_data.shape[1]
+        ):  # same columns - preserve column_headers and setas
             ch = old_data.column_headers
             nv._setas = old_data._setas.clone
             nv.column_headers = ch

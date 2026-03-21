@@ -69,7 +69,7 @@ def errorfill(
     label="",
     label_fill="",
     ax=None,
-    **kwargs
+    **kwargs,
 ):
     """Plot data with errors marked by a filled region.
 
