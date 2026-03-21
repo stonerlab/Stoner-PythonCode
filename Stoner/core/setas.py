@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """setas module provides the setas class for DataFile and friends."""
-__all__ = ["Setas"]
+__all__ = ["Setas", "ColumnHeadersDescriptor"]
 import copy
 import re
 from collections.abc import Iterable, MutableMapping
@@ -38,7 +38,7 @@ class Setas(MutableMapping):
             assignments before setting new ones (default).
     """
 
-    def __init__(self, row=False, bless=None):
+    def __init__(self, row=False, bless=None, source=None):
         """Construct the setas instance and sets an initial value.
 
         Args:
@@ -46,6 +46,10 @@ class Setas(MutableMapping):
 
         Keyword Arguments:
             initial_val (string or list or dict): Initial values to set
+            source (str, optional): When used as a descriptor, if set the descriptor will delegate to
+                ``getattr(obj, source).setas`` rather than looking up the private attribute directly.
+                This is used to make :py:class:`DataFilePropertyMixin` delegate to its internal
+                :py:class:`DataArray`.
         """
         self._row = row
         self._cols = AttributeStore()
@@ -53,6 +57,7 @@ class Setas(MutableMapping):
         self._setas = []
         self._column_headers = TypedList(string_types)
         self._object = bless
+        self._source = source
         self._col_defaults = {
             2: {
                 "axes": 2,
@@ -115,6 +120,78 @@ class Setas(MutableMapping):
                 "zerr": [],
             },
         }  # xyzuvw
+
+    # ==========================================================================
+    # Descriptor protocol methods
+    # ==========================================================================
+
+    def __set_name__(self, owner, name):
+        """Record the public and private attribute names when assigned to a class.
+
+        Args:
+            owner (type): The class that owns this descriptor.
+            name (str): The attribute name under which this descriptor is stored.
+
+        Note:
+            ``public_name`` is stored for introspection and debugging; the
+            actual dispatch logic uses ``private_name`` (and ``_source`` when
+            set).
+        """
+        self.public_name = name
+        self.private_name = f"_{name}"
+
+    def __get__(self, obj, objtype=None):
+        """Retrieve the per-instance :py:class:`Setas` object from the owner.
+
+        When used as a class-level descriptor this returns the :py:class:`Setas` instance
+        stored on *obj* under the private attribute name (e.g. ``_setas``).  If
+        *source* was supplied to the constructor the descriptor instead delegates to
+        ``getattr(obj, source).setas``, which is the pattern used by
+        :py:class:`DataFilePropertyMixin` to forward to the underlying
+        :py:class:`DataArray`.
+
+        Args:
+            obj: The owner instance (or ``None`` when accessed on the class itself).
+            objtype (type, optional): The owner class.
+
+        Returns:
+            :py:class:`Setas`: The per-instance setas object, or *self* when
+            accessed on the class.
+        """
+        if obj is None:
+            return self
+        if self._source is not None:
+            target = getattr(obj, self._source)
+            return target.setas
+        setas = getattr(obj, self.private_name, None)
+        if setas is None:
+            # _source is None here (the delegating path returned above), so a
+            # plain Setas() with no source is exactly what we want.
+            setas = type(self)()
+            setattr(obj, self.private_name, setas)
+        if hasattr(obj, "shape") and setas.shape != obj.shape:
+            setas.shape = obj.shape
+        return setas
+
+    def __set__(self, obj, value):
+        """Set the column assignments on the per-instance :py:class:`Setas` object.
+
+        Delegates the actual assignment to ``setas(value)``, preserving all of the
+        calling-convention logic already implemented in :py:meth:`Setas.__call__`.
+
+        Args:
+            obj: The owner instance.
+            value: Anything accepted by :py:meth:`Setas.__call__` (string, list,
+                dict, or another :py:class:`Setas`).
+        """
+        if self._source is not None:
+            target = getattr(obj, self._source)
+            target.setas = value
+            return
+        setas = self.__get__(obj, type(obj))
+        if isinstance(value, type(self)):
+            value = value.clone
+        setas(value)
 
     def _prepare_call(self, args, kwargs):
         """Extract a value to be used to evaluate the setas attribute during a call."""
@@ -862,3 +939,56 @@ class Setas(MutableMapping):
         elif what in ("ycols", "zcols", "ucols", "vcols", "wcols", "yerrs", "zerrs"):
             ret = ret[what[0:-1]]
         return ret
+
+
+class ColumnHeadersDescriptor:
+    """Descriptor that exposes the column headers managed by the :py:class:`Setas` object.
+
+    Both :py:class:`DataArray` and :py:class:`DataFilePropertyMixin` use this descriptor
+    for their ``column_headers`` attribute.  Because both classes expose a ``setas``
+    attribute (either as a :py:class:`Setas` descriptor or as a delegating property),
+    this descriptor can obtain the column headers uniformly via ``obj.setas.column_headers``.
+
+    Examples::
+
+        class DataArray(ma.MaskedArray):
+            setas = Setas()
+            column_headers = ColumnHeadersDescriptor()
+
+        class DataFilePropertyMixin:
+            setas = Setas(source="_data")
+            column_headers = ColumnHeadersDescriptor()
+    """
+
+    def __set_name__(self, owner, name):
+        """Record the attribute name when assigned to a class.
+
+        Args:
+            owner (type): The class that owns this descriptor.
+            name (str): The attribute name under which this descriptor is stored.
+        """
+        self.name = name
+
+    def __get__(self, obj, objtype=None):
+        """Return the column headers from the owning object's setas.
+
+        Args:
+            obj: The owner instance, or ``None`` when accessed on the class.
+            objtype (type, optional): The owner class.
+
+        Returns:
+            list: The current column header strings.
+        """
+        if obj is None:
+            return self
+        return obj.setas.column_headers
+
+    def __set__(self, obj, value):
+        """Set the column headers on the owning object's setas.
+
+        Args:
+            obj: The owner instance.
+            value (list or array-like): New column header strings.
+        """
+        obj.setas.column_headers = value
+
