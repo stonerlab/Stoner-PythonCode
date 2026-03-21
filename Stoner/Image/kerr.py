@@ -109,12 +109,12 @@ class KerrImageFile(ImageFile):
         super().__init__(*args, **kwargs)
         self._image = self.image.view(KerrArray)
 
-    @ImageFile.image.getter
+    @property
     def image(self: Self) -> ImageArray:  # pylint: disable=invalid-overridden-method
         """Access the image data."""
         return self._image.view(KerrArray)
 
-    @ImageFile.image.setter
+    @image.setter
     def image(self: Self, v) -> None:  # noqa: F811  # pylint: disable=redefined-outer-name, function-redefined
         """Ensure stored image is always an ImageArray."""
         filename = self.filename

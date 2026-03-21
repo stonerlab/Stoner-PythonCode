@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12","3.13"]
+        python-version: ["3.11", "3.12","3.13", "3.14"]
         os: ["ubuntu-latest"]
     steps:
       - name: Check out repository code
@@ -42,8 +42,9 @@ jobs:
            sudo apt-get install qtbase5-dev
       - name: Test with xvfb
         run: |
-           xvfb-run --auto-servernum pytest -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml
+           xvfb-run --auto-servernum pytest -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
            coverage xml
+           exit ${PYTEST_EXIT:-0}
         env:
             TZ: Europe/London
             LC_CTYPE: en_GB.UTF-8
