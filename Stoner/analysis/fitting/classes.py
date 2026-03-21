@@ -278,7 +278,7 @@ class _Curve_Fit_Result:
 
     @property
     def perr(self):
-        """Return standar error from covariance matrix."""
+        """Return standard error from covariance matrix."""
         if "perr" in self.results and self.results["perr"] is not None:
             return self.results["perr"]
         return np.sqrt(np.diag(self.pcov))

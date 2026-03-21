@@ -272,7 +272,7 @@ def rolling_window(datafile, window=7, wrap=True, exclude_centre=False):
             raise ValueError("If excluding the centre of the window, this must be an odd number of rows.")
         if window - exclude_centre < 2 or window < 3 or window % 2 == 0:
             raise ValueError(
-                """Window must be at least two bigger than the number of rows exluded from the centre, bigger than
+                """Window must be at least two bigger than the number of rows excluded from the centre, bigger than
                 3 and odd"""
             )
 
@@ -445,7 +445,7 @@ def select(datafile, *args, **kwargs):
         (DatFile): a copy the DataFile instance that contains just the matching rows.
 
     Note:
-        if the operator is preceeded by *__not__* then the sense of the test is negated.
+        if the operator is preceded by *__not__* then the sense of the test is negated.
 
         If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
         achieve a logical AND, you can chain two selects together::
@@ -517,7 +517,7 @@ def sort(datafile, *order, reverse=False):
             A copy of the :py:class:`DataFile` sorted object
 
     Notes:
-        Sorts in place and returns a copy of the sorted data object fo chaining methods.
+        Sorts in place and returns a copy of the sorted data object for chaining methods.
 
         If the argument is a callable function then it should take a two tuple arguments and
         return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise
@@ -973,7 +973,7 @@ def del_rows(datafile, col=None, val=None, invert=False):
         True, then the row will be deleted or kept depending on the value of *invert*.
 
         If *val* is a callable it should take two arguments - a float and a
-        list. The float is the value of the current row that corresponds to column col abd the second
+        list. The float is the value of the current row that corresponds to column col and the second
         argument is the current row.
 
     Todo:

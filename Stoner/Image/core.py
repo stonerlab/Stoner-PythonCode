@@ -212,7 +212,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
             The title of the image (defaults to the filename).
         mask (:py:class:`numpy.ndarray of bool`):
             The underlying mask data of the image. Masked elements (i.e. where mask=True) are ignored for many
-            image operations. Indexing them will return the mask fill value (typically NaN, ot -1 or -MAXINT)
+            image operations. Indexing them will return the mask fill value (typically NaN, or -1 or -MAXINT)
             draw (:py:class:`Stoner.Image.attrs.DrawProxy`):
             A special object that allows the user to manipulate the image data by making use of
             :py:mod:`skimage.draw` functions as well as some additional drawing functions.
@@ -1233,7 +1233,7 @@ class ImageFile(metadataObject):
 
     @classmethod
     def load(cls, *args, **kwargs):
-        """Create a :py:class:`ImageFile` from file abnd guessing a better subclass if necessary.
+        """Create a :py:class:`ImageFile` from file and guessing a better subclass if necessary.
 
         Args:
             filename (string or None):

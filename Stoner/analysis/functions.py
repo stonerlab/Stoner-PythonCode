@@ -24,7 +24,7 @@ def apply(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         func (callable):
             The function to apply to each row of the data.
         col (index):
@@ -48,7 +48,7 @@ def apply(
 
             def func(row,**kwargs):
 
-        and should return either a single float, in which case it will be used to repalce the specified column,
+        and should return either a single float, in which case it will be used to replace the specified column,
         or an array, in which case it is used to completely replace the row of data.
 
         If the function returns a complete row of data, then the *replace* parameter will cause the return
@@ -101,7 +101,7 @@ def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], colu
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
         clipper (tuple or array):
@@ -138,7 +138,7 @@ def decompose(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
 
     Keyword Arguments:
         xcol (index):
@@ -234,7 +234,7 @@ def integrate(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         xcol (index):
             The X data column index (or header)
         ycol (index):
@@ -318,7 +318,7 @@ def normalise(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
 
     Keyword Arguments:
         target (index):
@@ -399,7 +399,7 @@ def stitch(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         other (DataFile):
             Another data set that is used as the base to stitch this one on to
         xcol (index or None):
@@ -554,7 +554,7 @@ def threshold(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         threshold (float):
             Value to look for in column col
 

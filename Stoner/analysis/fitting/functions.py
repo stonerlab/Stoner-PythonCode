@@ -542,7 +542,7 @@ def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode=
     x = 0.75 if x is None else x
     y = 0.5 if y is None else y
 
-    try:  # if the model has an attribute display params then use these as the parameter anmes
+    try:  # if the model has an attribute display params then use these as the parameter names
         for k, display_name, unit in zip(param_names, display_names, units):
             if prefix:
                 datafile[f"{prefix}{k} label"] = display_name
@@ -755,10 +755,10 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
         model (lmfit_mod.Model):
             An instance of an lmfit_mod.Model that represents the model to be fitted to the data
         xcol (index or None):
-            Columns to be used for the x  data for the fitting. If not givem defaults to the
+            Columns to be used for the x  data for the fitting. If not given defaults to the
             :py:attr:`Stoner.Core.DataFile.setas` x column
         ycol (index or None):
-            Columns to be used for the  y data for the fitting. If not givem defaults to the
+            Columns to be used for the  y data for the fitting. If not given defaults to the
             :py:attr:`Stoner.Core.DataFile.setas` y column
 
     Keyword Arguments:
@@ -907,10 +907,10 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
         model (lmfit_mod.Model):
             An instance of an lmfit_mod.Model that represents the model to be fitted to the data
         xcol (index or None):
-            Columns to be used for the x  data for the fitting. If not givem defaults to the
+            Columns to be used for the x  data for the fitting. If not given defaults to the
             :py:attr:`Stoner.Core.DataFile.setas` x column
         ycol (index or None):
-            Columns to be used for the  y data for the fitting. If not givem defaults to the
+            Columns to be used for the  y data for the fitting. If not given defaults to the
             :py:attr:`Stoner.Core.DataFile.setas` y column
 
     Keyword Arguments:
@@ -1088,10 +1088,10 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
         model (scipy.odr.Model, lmfit_mod.Models.Model or callable):
             The model that describes the data. See below for more details.
         xcol (index or None):
-            Columns to be used for the x  data for the fitting. If not givem defaults to the
+            Columns to be used for the x  data for the fitting. If not given defaults to the
             :py:attr:`Stoner.Core.DataFile.setas` x column
         ycol (index or None):
-            Columns to be used for the  y data for the fitting. If not givem defaults to the
+            Columns to be used for the  y data for the fitting. If not given defaults to the
             :py:attr:`Stoner.Core.DataFile.setas` y column
 
     Keyword Arguments:

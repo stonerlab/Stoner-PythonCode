@@ -172,7 +172,7 @@ working box can be given as follows:
         the None value substitutes for the left, right top or bottom coordinate).
     - A single string:
         The argument is interpreted as the name of a metadata item that will define the box to be used.
-    - A sigle value False:
+    - A single value False:
         This is equivalent to the whole image (i.e. to not specify a box)
     - A single None value:
         In this case a copy of the image is shown to the user and they are invited to draw the box with the mouse and
@@ -273,7 +273,7 @@ can result.::
 
 .. image:: figures/kermit-fft.png
 
-In this example, a copy of the image is transformed to the mangitude of its fourier transform. THe fourier transform is shifted
+In this example, a copy of the image is transformed to the magnitude of its fourier transform. THe fourier transform is shifted
 so that the central pixels are the 0-ffrequency componennts. The optional keywrod *remove_dc* replaces the 0 frequency data with the
 mean value of the FFT to avoid a large spike int he FFT from the mean value of the image. The *window* parameter tells the method
 to multiply the image by the corresponding window function (from scikit-image.filters.window) before calculating the FFT. This

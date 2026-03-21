@@ -125,7 +125,7 @@ def compress(fldr, base=None, key=".", keep_terminal=False):
             default None
         key (str):
             default "."
-        keep_terminal (gool):
+        keep_terminal (bool):
             default False
 
     Returns:
@@ -556,7 +556,7 @@ def prune(fldr, name=None):
     """Remove any empty groups from the objectFolder (and subgroups).
 
     Returns:
-        A copy of thte pruned objectFolder.
+        A copy of the pruned objectFolder.
     """
     return fldr.groups.prune(name=name)
 
@@ -577,7 +577,7 @@ def select(fldr, *args, **kwargs):
 
     Keyword Arguments:
         recurse (bool):
-            Also recursively slect through the sub groups
+            Also recursively select through the sub groups
         kwargs (varuous):
             Arbitrary keyword arguments are interpreted as requestion matches against the corresponding
             metadata values. The keyword argument may have an additional **__operator** appended to it which is

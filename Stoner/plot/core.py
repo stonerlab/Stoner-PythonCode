@@ -69,7 +69,7 @@ class PlotMixin:
             Nothing (None)
         subplots (list of matplotlib.Axes):
             essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is
-            synchronised to the number fo Axes.
+            synchronised to the number of Axes.
         template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance):
             A plot style template subclass or object that determines the format and appearance of plots.
     """

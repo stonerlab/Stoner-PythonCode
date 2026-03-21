@@ -37,7 +37,7 @@ def _straight_ellipse(p, data):
 
 
 def _rotated_ellipse(p, data):
-    """Calcualte a rotated ellipse."""
+    """Calculate a rotated ellipse."""
     xc, yc, a, b, phi = p
     x, y = data.T
     t1 = ((x - xc) * np.cos(phi) + (y - yc) * np.sin(phi)) ** 2 / a**2
@@ -188,7 +188,7 @@ class RegionSelect:
         self.kwargs = {}
 
     def __call__(self, image, **kwargs):
-        """Actuall do the region selection.
+        """Actually do the region selection.
 
         Args:
             image (ImageArray, ImageFile):
@@ -198,7 +198,7 @@ class RegionSelect:
 
         Returns:
             list:
-                The x and y range coordinates, in te order left-x, right-x, top-y, bottom-y
+                The x and y range coordinates, in the order left-x, right-x, top-y, bottom-y
 
         """
         self.fig = image.imshow()
@@ -289,7 +289,7 @@ class ShapeSelect:
 
         Returns:
             mask_array:
-                A boolean array of te same shape as the image that can be used as a mask.
+                A boolean array of the same shape as the image that can be used as a mask.
 
         """
         self.fig = image.imshow()
@@ -379,7 +379,7 @@ class ShapeSelect:
                 self.vertices.append((event.xdata, event.ydata))
             else:
                 self.finished = True
-        elif event.button == 3 and len(self.vertices) > 0:  # Right click toi remove last vertex
+        elif event.button == 3 and len(self.vertices) > 0:  # Right click to remove last vertex
             del self.vertices[-1]
             if len(self.vertices) == 0:
                 self.ov_layer.set_array(np.zeros(self.shape + (4,)))

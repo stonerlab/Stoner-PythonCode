@@ -393,7 +393,7 @@ Handling More than One Column of Y Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 By default if :py:meth:`Data.plot_xy` is given more than one column of y data, it will plot all
-of the data on a single y-axis scale. If the y data to be plotted is not of a similar order of mangitude
+of the data on a single y-axis scale. If the y data to be plotted is not of a similar order of magnitude
 this can result in a less than helpful plot.
 
 .. plot:: samples/common_y_plot.py

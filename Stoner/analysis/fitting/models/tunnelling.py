@@ -247,7 +247,7 @@ class TersoffHammann(Model):
         super().__init__(tersoffHammann, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
-        """Set the parameter values from an apporximate line."""
+        """Set the parameter values from an approximate line."""
         pars = self.make_params(A=np.mean(data / x))
         return update_param_vals(pars, self.prefix, **kwargs)
 

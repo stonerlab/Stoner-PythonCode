@@ -100,7 +100,7 @@ he output of the three methods used to fit arbitrary functions  depend on the ke
         A 1D numpy array of optimal values and standard errors interleaved (i.e. p_opt[0],p_error[0],p_opt[1],p_error[1]....)
         us returned. This is useful when analysing a large number of similar data sets in order to build a table of fitting results.
     -   *output="report"*
-        A python object representing the fitting reult is returned.
+        A python object representing the fitting result is returned.
     -   *output="data"*
         A copy for the data file itself is returned - this is most useful when used in conjunction with :py:class:`Stoner.DataFolder`
     -   *oputput="full"*
@@ -212,7 +212,7 @@ The return value from :py:meth:`Data.lmfit` is controlled by the *output* keywor
 instance. This contains all the information about the fit and fitting process.
 
 You can pass the model as a subclass of model, if you don't pass initial values either via the *p0* parameter or as keyword arguments, then the model's
-*guess* method is called (e.g. :py:meth:`Stoner.analysis.fitting.models.thermal.Arrhenius.guess`) to determine parameters fromt he data. For example:
+*guess* method is called (e.g. :py:meth:`Stoner.analysis.fitting.models.thermal.Arrhenius.guess`) to determine parameters from the data. For example:
 
 .. plot:: samples/lmfit_example.py
     :include-source:
@@ -295,7 +295,7 @@ Tunnelling Electron Transport Models
 We also have a number of models for electron tunnelling processes built into the library in :py:mod:`Stoner.analysis.fitting.models.tunnelling`:
 .. currentmodule:: Stoner.analysis.fitting.models.tunnelling
 
-    -   :py:class:`Simmons` - the Simmons model describes tunneling through a square barrer potential for the limit where the barrier height
+    -   :py:class:`Simmons` - the Simmons model describes tunneling through a square barrier potential for the limit where the barrier height
         is comparable to the junction bias.
     -   :py:class:`BDR` - this model introduces a trapezoidal barrier where the barrier height is different between the two electrondes - e.g. where the
         electrodes are composed of different materials.

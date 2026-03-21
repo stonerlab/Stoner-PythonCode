@@ -70,7 +70,7 @@ def string_to_type(value: str) -> Any:
 
     First of all the first character is checked to see if it is a [ or { which would
     suggest this is a list of dictionary. If the value looks like a common boolean
-    value (i.e. Yes, No, True, Fale, On, Off) then it is assumed to be a boolean value.
+    value (i.e. Yes, No, True, False, On, Off) then it is assumed to be a boolean value.
     Finally it interpretation as an int, float or string is tried.
 
     Args:
@@ -766,7 +766,7 @@ class SortedMultivalueDict(OrderedDict):
             case list():
                 return []
             case _:
-                raise TypeError("Can only add items that are a typle of int,value")
+                raise TypeError("Can only add items that are a tuple of int,value")
 
     def get_value_list(self, name):
         """Get the values stored in the dictionary under name."""

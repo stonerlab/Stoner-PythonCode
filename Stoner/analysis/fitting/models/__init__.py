@@ -119,7 +119,7 @@ def make_model(model_func):
 
             Args:
                 func (callable):
-                    A fimction that rturns a dictionary of dictionaries
+                    A function that returns a dictionary of dictionaries
 
             Returns:
                 The wrapped hinter function.

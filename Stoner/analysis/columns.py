@@ -57,7 +57,7 @@ def __get_math_val(datafile: Data, col: Index) -> Tuple[Data, str]:
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         col (various):
             If col can be interpreted as col_a column index then return the first matching column.
             If col is col_a 1D array of the same length as the data then just return the data. If col is col_a
@@ -97,7 +97,7 @@ def add(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -148,7 +148,7 @@ def diffsum(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -199,7 +199,7 @@ def divide(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -244,7 +244,7 @@ def max(  # pylint: disable=redefined-builtin
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -284,7 +284,7 @@ def mean(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -338,7 +338,7 @@ def min(  # pylint: disable=redefined-builtin
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -380,7 +380,7 @@ def multiply(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):
@@ -424,7 +424,7 @@ def span(datafile: Data, column: Optional[Index] = None, bounds: Optional[Callab
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -457,7 +457,7 @@ def std(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         column (index):
             Column to look for the maximum in
 
@@ -518,7 +518,7 @@ def subtract(
 
     Args:
         datafile (Data):
-            If not being used as a bound menthod, specifies the instance of Data to work with.
+            If not being used as a bound method, specifies the instance of Data to work with.
         col_a (index):
             First column to work with
         col_b (index, float or 1D array):

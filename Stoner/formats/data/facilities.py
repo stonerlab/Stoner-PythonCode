@@ -45,7 +45,7 @@ def _bnl_find_lines(new_data):
 
 
 def _bnl_get_metadata(new_data):
-    """Load metadta from file.
+    """Load metadata from file.
 
     Metadata found is scan number 'Snumber', scan type and parameters 'Stype',
     scan date/time 'Sdatetime' and z motor position 'Smotor'.

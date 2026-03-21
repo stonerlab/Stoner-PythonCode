@@ -170,7 +170,7 @@ def save(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
             Other keyword arguments are passed to get_filename to work out the filename.
 
     Returns:
-        A copy of the isntance of Data that was saved.
+        A copy of the instance of Data that was saved.
     """
     filename, args, kwargs = get_filename(args, kwargs)
     compression = kwargs.pop("compression", zf.ZIP_DEFLATED)
