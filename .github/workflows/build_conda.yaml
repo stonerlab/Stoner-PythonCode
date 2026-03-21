@@ -2,6 +2,7 @@
 name: Conda
 
 on:
+  workflow_dispatch:
   release:
     types: ['released', 'prereleased']
 
