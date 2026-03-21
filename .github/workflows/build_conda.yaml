@@ -26,7 +26,7 @@ jobs:
           create-args: python=3.12
           init-shell: bash
       - name: Build and upload the conda packages
-        uses: uibcdf/action-build-and-upload-conda-packages@4940704d2be7906d3bda5b00e3c3e4472fd7808f
+        uses: uibcdf/action-build-and-upload-conda-packages@aac1ccb14aa0d4d43a0b10c18b17c5285a746544
         with:
           meta_yaml_dir: recipe
           overwrite: true
