@@ -9,5 +9,5 @@ dependencies:
    - anaconda-client
    - setuptools >=61.0
    - wheel
-   - build
+   - build >=1.4.0
    - twine
