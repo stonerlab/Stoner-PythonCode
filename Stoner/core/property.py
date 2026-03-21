@@ -16,6 +16,7 @@ from ..tools import get_option
 from ..tools.classes import copy_into
 from ..tools.file import URL_SCHEMES
 from .array import DataArray
+from .setas import ColumnHeadersDescriptor, Setas
 
 try:
     from tabulate import tabulate
@@ -29,6 +30,15 @@ class DataFilePropertyMixin:
     """Provide the properties for DataFile Like Objects."""
 
     _subclasses = None
+
+    #: setas (:py:class:`Setas`): Descriptor that delegates column-type assignments to the
+    #:   internal :py:class:`DataArray` (``_data``).  Getting or setting ``obj.setas`` is
+    #:   equivalent to ``obj._data.setas``.
+    setas = Setas(source="_data")
+
+    #: column_headers (list): Descriptor that forwards to ``setas.column_headers`` via the
+    #:   delegating :py:class:`Setas` descriptor above.
+    column_headers = ColumnHeadersDescriptor()
 
     @property
     def _repr_html_(self):
@@ -61,16 +71,6 @@ class DataFilePropertyMixin:
         if self.debug:
             print("Cloning in DataFile")
         return copy_into(self, c)
-
-    @property
-    def column_headers(self):
-        """Pass through to the setas attribute."""
-        return self.data._setas.column_headers
-
-    @column_headers.setter
-    def column_headers(self, value):
-        """Write the column_headers attribute (delagated to the setas object)."""
-        self.data._setas.column_headers = value
 
     @property
     def data(self):
@@ -221,17 +221,6 @@ class DataFilePropertyMixin:
     def shape(self):
         """Pass through the numpy shape attribute of the data."""
         return self.data.shape
-
-    @property
-    def setas(self):
-        """Get the list of column assignments."""
-        setas = self._data._setas
-        return setas
-
-    @setas.setter
-    def setas(self, value):
-        """Set a new setas assignment by calling the setas object."""
-        self._data._setas(value)
 
     @property
     def T(self):

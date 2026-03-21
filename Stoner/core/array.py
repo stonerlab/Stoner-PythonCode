@@ -14,7 +14,7 @@ from numpy import ma
 from ..compat import int_types
 from ..tools import AttributeStore, all_size, all_type, isiterable, isnone
 from .exceptions import StonerSetasError
-from .setas import Setas as _setas
+from .setas import ColumnHeadersDescriptor, Setas as _setas
 
 
 class DataArray(ma.MaskedArray):
@@ -51,6 +51,18 @@ class DataArray(ma.MaskedArray):
     attribute access to work. This makes writing functions to work with a single row of data
     more attractive.
     """
+
+    # ==============================================================================================================
+    ############################           Class-level descriptors                   ###############################
+    # ==============================================================================================================
+
+    #: setas (:py:class:`Setas`): Descriptor managing column-type assignments (x, y, z, …).
+    #:   The per-instance :py:class:`Setas` object is stored as ``_setas`` on each
+    #:   :py:class:`DataArray` instance and is retrieved / shape-synced by the descriptor.
+    setas = _setas()
+
+    #: column_headers (list): Descriptor that forwards to ``setas.column_headers``.
+    column_headers = ColumnHeadersDescriptor()
 
     # ==============================================================================================================
     ############################           Object Construction                       ###############################
@@ -256,33 +268,6 @@ class DataArray(ma.MaskedArray):
                 self._ibase = np.arange(0, r, r)
             else:  # No iterable
                 self._ibase = np.arange(value, value + r)
-
-    @property
-    def column_headers(self):
-        """Pass through to the setas attribute."""
-        return self._setas.column_headers
-
-    @column_headers.setter
-    def column_headers(self, value):
-        """Write the column_headers attribute (delagated to the setas object)."""
-        self._setas.column_headers = value
-
-    @property
-    def setas(self):
-        """Return an object for setting column assignments."""
-        if self._setas is None:
-            self._setas = _setas()
-        if self._setas.shape != self.shape:
-            self._setas.shape = self.shape
-        return self._setas
-
-    @setas.setter
-    def setas(self, value):
-        """Set the object for setting column assignments."""
-        if isinstance(value, _setas):
-            value = value.clone
-        setas = self.setas
-        setas(value)
 
     # ==============================================================================================================
     ############################        Special Methods         ####################################################
