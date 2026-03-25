@@ -202,8 +202,8 @@ def decompose(
     rising_vals = rising_func((datafile // xcol).view(np.ndarray))
     falling_vals = falling_func(-(datafile // xcol).view(np.ndarray))
 
-    symd = (rising_vals + falling_vals) / 2
-    asymd = (rising_vals - falling_vals) / 2
+    symd = np.squeeze((rising_vals + falling_vals) / 2)
+    asymd = np.squeeze((rising_vals - falling_vals) / 2)
 
     if sym is None:
         datafile &= symd
@@ -214,7 +214,7 @@ def decompose(
         datafile &= asymd
         datafile.column_headers[-1] = "Asymmetric Data"
     else:
-        datafile.add_column(asymd, header="Symmetric Data", index=asym, replace=replace)
+        datafile.add_column(asymd, header="Asymmetric Data", index=asym, replace=replace)
     return datafile
 
 
