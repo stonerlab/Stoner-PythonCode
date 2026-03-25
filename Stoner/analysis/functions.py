@@ -124,21 +124,8 @@ def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], colu
     return datafile.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
 
 
-def decompose(
-    datafile: Data,
-    xcol: Optional[Index] = None,
-    ycol: Optional[Index] = None,
-    sym: Optional[Index] = None,
-    asym: Optional[Index] = None,
-    replace: bool = True,
-    hysteretic: bool = False,
-    **kwargs: Kwargs,
-) -> Data:
+def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True, hysteretic=False, **kwords):
     """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
-
-    Args:
-        datafile (Data):
-            If not being used as a bound method, specifies the instance of Data to work with.
 
     Keyword Arguments:
         xcol (index):
@@ -151,10 +138,8 @@ def decompose(
             Index of column for asymmetric part of ata. Defaults to appending to end of data
         replace (bool):
             Overwrite data with output (true)
-        hysteretic (book):
+        hysteretic (book)L
             Look separately for outgoing and incoming data first.
-        **kwargs:
-            Other keyword arguments.
 
     Returns:
         datafile: The newly modified :py:class:`AnalysisMixin`.
@@ -165,7 +150,11 @@ def decompose(
             :outname: decompose
     """
     if xcol is None and ycol is None:
-        startx = kwargs.pop("_startx", 0)
+        if "_startx" in kwords:
+            startx = kwords["_startx"]
+            del kwords["_startx"]
+        else:
+            startx = 0
         cols = datafile.setas._get_cols(startx=startx)
         xcol = cols["xcol"]
         ycol = cols["ycol"]
@@ -175,7 +164,7 @@ def decompose(
         ycol = [ycol]
 
     if hysteretic:
-        from .utils import split_up_down  # pylint: disable=import-outside-toplevel
+        from .Util import split_up_down
 
         fldr = split_up_down(datafile, datafile.xcol)
         for grp in ["rising", "falling"]:
@@ -183,9 +172,11 @@ def decompose(
                 fldr[grp][0] += f
         rising = fldr["rising"][0].sort(xcol)
         falling = fldr["falling"][0].sort(xcol)
+        points = fldr["rising"][0].size
     else:
         rising = datafile.clone.sort(xcol)
         falling = rising.clone
+        points = rising.x.size
 
     rising_data = rising.deduplicate(xcol, clone=False)
     falling_data = falling.deduplicate(xcol, clone=False)

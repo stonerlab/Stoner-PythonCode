@@ -730,8 +730,6 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
     """Append a column of data or inserts a column to a datafile instance.
 
     Args:
-        datafile (Data):
-            Data object to work with if not being used as a bound method.
         column_data (:py:class:`numpy.array` or list or callable):
             Data to append or insert or a callable function that will generate new data
 
@@ -757,14 +755,51 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
         the original DataFile Instance as well as returning it.
     """
+    if index is None or isinstance(index, bool) and index:  # Enure index is set
+        index = datafile.shape[1]
+        replace = False
+    elif isinstance(index, int_types) and index == datafile.shape[1]:
+        replace = False
+    else:
+        index = datafile.find_col(index)
 
-    index, replace = _validate_index(datafile, index, replace)
-    np_data, header = _normalise_column_data(datafile, column_data, header, func_args)
+    # Sort out the data and get it into an array of values.
+    if isinstance(column_data, list):
+        column_data = np.array(column_data)
+
+    if isinstance(column_data, DataArray) and header is None:
+        header = column_data.column_headers
+
+    if isinstance(column_data, np.ndarray):
+        np_data = column_data
+    elif callable(column_data):
+        if isinstance(func_args, dict):
+            new_data = [column_data(x, **func_args) for x in datafile]
+        else:
+            new_data = [column_data(x) for x in datafile]
+        np_data = np.array(new_data)
+    else:
+        return NotImplemented
 
     # Sort out the sizes of the arrays
-    np_data = np.atleast_2d(np_data).T
+    if np_data.ndim == 1:
+        np_data = np.atleast_2d(np_data).T
     cl, cw = np_data.shape
-    setas = _data_make_setas(setas, cw)
+
+    # Make setas
+    setas = "." * cw if setas is None else setas
+
+    if isiterable(setas) and len(setas) == cw:
+        for s in setas:
+            if s not in ".-xyzuvwdefpqr":
+                raise TypeError(
+                    f"setas parameter should be a string or list of letter in the set xyzdefuvw.-, not {setas}"
+                )
+    else:
+        raise TypeError(
+            f"""setas parameter should be a string or list of letter the same length as the number of columns
+            being added in the set xyzdefuvw.-, not {setas}"""
+        )
 
     # Make sure our current data is at least 2D and get its size
     match datafile.data.shape:
@@ -830,12 +865,6 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
     for ix, (hdr, s) in enumerate(zip(header, setas)):
         datafile.column_headers[ix + index] = hdr
         datafile.setas[index + ix] = s
-
-    datafile.labels = (
-        datafile.labels[:index]
-        + datafile.column_headers[index : len(datafile.column_headers) - len(datafile.labels) + index]
-        + datafile.labels[index:]
-    )
 
     return datafile
 

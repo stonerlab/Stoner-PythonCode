@@ -12,29 +12,17 @@ from importlib import import_module
 import numpy as np
 from Stoner import Data
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
+from Stoner.analysis.fitting.models.generic import quadratic
 
 
 class working(Data):
     """Utility class to manipulate data and plot it."""
 
-    def __init__(self, *args, **kwargs):
-        """Define local attributes."""
-        super().__init__(*args, **kwargs)
-        self.vcol = None
-        self.gcol = None
-        self.config = None
-        self.show_plot = True
-        self.save_fit = True
-        self.report = True
-        self.fancyresults = True
-        self.method = "lmfit"
-        self.model = (
-            "Stoner.analysis.fitting.models.superconductivity.Strijkers"
-        )
-        self.p0 = None
+    def __init__(self, *args, **kargs):
+        """Initialise the fitting code."""
+        super().__init__(*args, **kargs)
 
     def load_config(self):
-        """Load the config file to set up the fitting."""
         my_file = inspect.getfile(self.__class__)
         inifile = my_file.replace(".py", ".ini")
         if not pathlib.Path(inifile).exists():
@@ -74,11 +62,11 @@ class working(Data):
     def Discard(self):
         """Optionally throw out some high bias data."""
         discard = self.config.has_option(
-            "Data", "discard"
+            "Data", "dicard"
         ) and self.config.getboolean("Data", "discard")
         if discard:
             v_limit = self.config.get("Data", "v_limit")
-            print(f"Discarding data beyond v_limit={v_limit}")
+            print("Discarding data beyond v_limit={}".format(v_limit))
             self.del_rows(self.vcol, lambda x, y: abs(x) > v_limit)
         return self
 
@@ -208,9 +196,7 @@ class working(Data):
             print("Doing decomposition to symmetrize data")
             self.decompose(xcol=self.vcol, ycol=self.gcol, sym=self.gcol)
             self.setas(x=self.vcol, y=self.gcol)
-            self.data = self.data[
-                ~np.any(np.isnan([self.data[:, self.gcol]]), axis=1)
-            ]
+            self.data = self.data[~np.any(np.isnan(self.data), axis=1)]
         return self
 
     def plot_results(self):
@@ -222,12 +208,7 @@ class working(Data):
             fmt=["ro", "b-"],
             label=["Data", "Fit"],
         )
-        bbox_props = {
-            "boxstyle": "square,pad=0.3",
-            "fc": "white",
-            "ec": "b",
-            "lw": 2,
-        }
+        bbox_props = dict(boxstyle="square,pad=0.3", fc="white", ec="b", lw=2)
         if self.fancyresults:
             self.annotate_fit(
                 self.model,
@@ -275,7 +256,6 @@ class working(Data):
         if self.save_fit:
             fit.filename = None
             fit.save(False)
-        return None
 
 
 def quadratic_abs(x, a, b, c):
