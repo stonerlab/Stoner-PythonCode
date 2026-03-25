@@ -850,53 +850,6 @@ class Woods_Ballistic(Model):
         return self.__class__(**kwargs)
 
 
-def rsj_noiseless(I, Ic_p, Ic_n, Rn, V_offset):
-    r"""Implement a simple noiseless RSJ model.
-
-    Args:
-        I (array-like): Current values
-        Ic_p (foat): Critical current on positive branch
-        Ic_n (foat): Critical current on negative branch
-        Rn (float): Normal state resistance
-        V_offset(float): Offset volage in measurement
-
-    Returns:
-        (array) Calculated voltages
-
-    Notes:
-        Impleemtns a simple form of the RSJ model for a Josephson Junction:
-
-            :math:`V(I)=R_N\frac{I}{|I|}\sqrt{I^2-I_c^2}-V_{offset}`
-
-    Example:
-        .. plot:: samples/Fitting/rsj_fit.py
-            :include-source:
-            :outname: rsj_noiseless_func
-    """
-
-    display_names = [r"\omega", r"\Delta", "P", "Z"]
-
-    def __init__(self, *args, **kwargs):
-        """Configure Initial fitting function."""
-        super().__init__(strijkers, *args, **kwargs)
-
-    def guess(self, data, x=None, **kwargs):  # pylint: disable=unused-argument
-        """Guess starting values for a good Nb contact to a ferromagnet at 4.2K."""
-        pars = self.make_params(omega=0.5, delta=1.50, P=0.42, Z=0.15)
-        pars["omega"].min = 0.36
-        pars["omega"].max = 5.0
-        pars["delta"].min = 0.5
-        pars["delta"].max = 2.0
-        pars["Z"].min = 0.1
-        pars["P"].min = 0.0
-        pars["P"].max = 1.0
-        return update_param_vals(pars, self.prefix, **kwargs)
-
-    def copy(self, **kwargs):
-        """Make a new copy of the model."""
-        return self.__class__(**kwargs)
-
-
 class RSJ_Noiseless(Model):
     r"""Implement a simple noiseless RSJ model.
 
