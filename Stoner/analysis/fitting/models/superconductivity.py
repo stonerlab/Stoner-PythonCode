@@ -430,48 +430,52 @@ def _reflect_pad(arr, half):
     return out
 
 
-# -----------------------------------------------------------
-# 3. Direct convolution (Numba)
-# -----------------------------------------------------------
+# ============================================================
+# Gaussian Conmvolution functions
+# ============================================================
+
+
 @njit
-def _convolve_numba(padded, kernel):
-    n = len(padded)
-    m = len(kernel)
-    half = m // 2
+def _gaussian_convolution_numba(V, I, dV):
+    """
+    Numba-optimized Gaussian convolution for irregular (V, I) data.
 
-    out = np.empty(n)
+    Parameters
+    ----------
+    V : 1D array
+        Voltage values (unsorted, duplicates allowed)
+    I : 1D array
+        Intensity values
+    dV : float
+        Gaussian sigma (width)
 
-    for i in range(n):
-        s = 0.0
-        for k in range(m):
-            s += padded[i + k] * kernel[k]
-        out[i] = s
+    Returns
+    -------
+    Iconv : 1D float array
+        Convolved intensities evaluated at each V[i]
+    """
 
-    return out
+    N = len(V)
+    Iconv = np.zeros(N)
 
+    two_sigma2 = 2.0 * dV * dV
+    if np.isclose(two_sigma2, 0.0):
+        two_sigma2 = (V.max() - V.min()) / 1e6
 
-# -----------------------------------------------------------
-# 4. Complete smoothing function (Numba + NumPy pre-step)
-# -----------------------------------------------------------
-def _gaussian_convolve_numba(V, I, dV):
-    if np.isclose(dV, 0):
-        return I
-    V = np.asarray(V)
-    I = np.asarray(I)
+    for i in range(N):
+        Vi = V[i]
+        num = 0.0
+        den = 0.0
 
-    dV_sampling = (V.max() - V.min()) / V.size
+        for j in range(N):
+            diff = Vi - V[j]
+            w = np.exp(-(diff * diff) / two_sigma2)
+            num += w * I[j]
+            den += w
 
-    # Build Gaussian kernel
-    kernel = _make_gaussian_kernel(dV, dV_sampling)
-    half = len(kernel) // 2
+        Iconv[i] = num / den
 
-    # Pad signal
-    padded = _reflect_pad(I, half)
-
-    # Convolve padded signal (note: still padded result)
-    conv_full = _convolve_numba(padded, kernel)
-    # Return only the original-length region
-    return conv_full[: -2 * half]
+    return Iconv
 
 
 # ============================================================
@@ -518,7 +522,7 @@ def woods(ballistic, V, omega, delta, P, Z):
 
     I = (1.0 - P) * I_nonmag + P * I_half
     I = _fill_nans_with_interpolation(V, I)
-    return _gaussian_convolve_numba(V, I, omega)
+    return _gaussian_convolution_numba(V, I, omega)
 
 
 woods_diffusive = partial(woods, False)
