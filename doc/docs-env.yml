@@ -4,8 +4,8 @@ channels:
   - phygbu
   - conda-forge
 dependencies:
-  - Sphinx >=5.3,<6
-  - sphinx_automodapi >=0.16,<0.17
+  - Sphinx >=5.3
+  - sphinx_automodapi >=0.16
   - asteval
   - pillow
   - sphinx-better-theme
