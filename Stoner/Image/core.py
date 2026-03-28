@@ -780,6 +780,14 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
         else:
             super().__delitem__(index)
 
+    def __str__(self):
+        return repr(self)
+
+    def __bool__(self):
+        if self.size > 0:
+            return np.all(self)
+        return False
+
     def save(self, filename=None, **kwargs):
         """Stub method for a save function."""
         raise NotImplementedError(f"Save is not implemented in {self.__class__}")
