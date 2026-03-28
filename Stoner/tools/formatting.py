@@ -108,7 +108,7 @@ def format_error(value, error=None, **kwargs):
     escape = kwargs.get("escape", False)
     escape_func = {"latex": tex_escape, "html": html_escape}.get(fmt, lambda x: x)
 
-    if error == 0.0 or isnan(error):  # special case for zero uncertainty
+    if error == 0.0 or error is None or isnan(error):  # special case for zero uncertainty
         return format_val(value, **kwargs)
 
     if escape:
@@ -286,6 +286,27 @@ def quantize(number, quantum):
         number rounded to qunatum
     """
     return round(number / quantum) * quantum
+
+
+def round_sig(x, sig=3):
+    """Round a float to a fixed number of significant figures.
+
+    Args:
+        x (float):
+            Value to round
+
+    Keyword Arguments:
+        sig (int, default 3):
+            Number of significant figures to round to.
+
+    Returns:
+        (float):
+            Rounded value.
+    """
+    if x == 0:
+        return 0
+    sig = int(sig)
+    return round(x, sig - int(floor(log10(abs(x)))) - 1)
 
 
 def tex_escape(text: str) -> str:

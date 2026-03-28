@@ -1315,8 +1315,10 @@ def format(  # pylint: disable=redefined-builtin
         raise KeyError(f"{key} should be a floating point value of the metadata not a {type(datafile[key])}.") from err
     try:
         error = float(datafile[f"{key} err"])
-    except (TypeError, KeyError):
+    except TypeError:
         error = float_info.epsilon
+    except KeyError:
+        error = None
     return format_error(value, error, fmt=fmt, mode=mode, units=units, prefix=prefix, scape=escape)
 
 

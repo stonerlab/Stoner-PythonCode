@@ -556,8 +556,8 @@ def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode=
 
     text = "\n".join([datafile.format(f"{prefix}{k}", fmt="latex", mode=mode) for k in model.param_names])
     try:
-        datafile[f"{prefix}chi^2 label"] = r"\chi^2"
-        text += "\n" + datafile.format(f"{prefix}chi^2", fmt="latex", mode=mode)
+        datafile[f"{prefix}chi^2 label"] = r"\chi^2_{red}"
+        text += "\n" + datafile.format(f"{prefix}chi^2", fmt="latex", mode="eng")
     except KeyError:
         pass
 

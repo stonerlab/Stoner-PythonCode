@@ -12,7 +12,7 @@ from lmfit.model import Model
 from scipy.odr import Model as odrModel
 
 from ...compat import get_func_params
-from ...tools import AttributeStore
+from ...tools import AttributeStore, round_sig
 
 _lmfit = True
 
@@ -397,6 +397,9 @@ class _Curve_Fit_Result:
             datafile[f"{f_name}:{name} unit"] = datafile.metadata.get(f"{f_name}:{name} unit", unit)
         if self.nfev is not None:
             datafile[f"{f_name}:nfev"] = self.nfev
+        if self.redchi is not None:
+            datafile[f"{f_name}:chi^2"] = round_sig(self.redchi, np.ceil(np.log10(len(datafile))))
+
         return datafile
 
 

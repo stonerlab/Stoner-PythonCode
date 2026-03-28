@@ -44,6 +44,7 @@ requirements:
     - looseversion >=1.0
     - rosettasciio
     - chardet
+    - configobj >=5.0.0
 
 
 

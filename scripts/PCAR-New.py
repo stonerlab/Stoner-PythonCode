@@ -55,6 +55,9 @@ class working(Data):
         self.fancyresults = config.has_option(
             "Options", "fancy_result"
         ) and config.getboolean("Options", "fancy_result")
+        self.diagnostics = config.has_option(
+            "Options", "diagnostics"
+        ) and config.getboolean("Options", "diagnostics")
         self.method = config.get("Options", "method")
         self.model = model
         self.p0 = p0
@@ -223,7 +226,21 @@ class working(Data):
     def Fit(self):
         """Run the fitting code."""
         # Run a pre-fitting data munge chain
-        self.Preprocess().RescaleV().Discard().offset_correct().Decompose().Normalise()
+        if self.diagnostics:
+            self.plot(label="Raw")
+        for step in [
+            "Preprocess",
+            "RescaleV",
+            "Discard",
+            "offset_correct",
+            "Decompose",
+            "Normalise",
+        ]:
+            step_method = getattr(self, step)
+            step_method()
+            if self.diagnostics:
+                self.plot(label=step)
+
         chi2 = self.p0.shape[0] > 1
 
         method = getattr(self, self.method)
