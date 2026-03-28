@@ -5,7 +5,7 @@ channels:
   - conda-forge
 dependencies:
   - Sphinx >=5.3
-  - sphinx_automodapi >=0.16
+  - sphinx-automodapi >=0.16
   - asteval
   - pillow
   - sphinx-better-theme
