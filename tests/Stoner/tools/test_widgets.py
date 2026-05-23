@@ -78,7 +78,7 @@ def test_loader():
     fldr = DataFolder(False)
     del fldr["bad_data"]
     assert fldr.shape == (
-        54,
+        55,
         {
             "attocube_scan": (15, {}),
             "maximus_scan": (2, {"MPI_210127021": (3, {})}),

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """mixin classes for :py:class:`Stoner.folders.core.baseFoler`."""
+
 from __future__ import division
 
 __all__ = ["DiskBasedFolderMixin", "DataFolder", "PlotFolder"]

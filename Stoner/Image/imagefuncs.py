@@ -20,6 +20,7 @@ If you want to add new functions that's great. There's a few important points:
     * After that you're free to treat im as a ImageArray
           or numpy array, it should all behave the same.
 """
+
 __all__ = [
     "adjust_contrast",
     "align",
@@ -203,7 +204,7 @@ def _align_cv2(im, ref, **kwargs):  # pylint: disable=unused-argument
     criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, iterations_limit, termination_eps)
 
     # Run the ECC algorithm. The results are stored in warp_matrix.
-    (_, warp_matrix) = cv2.findTransformECC(
+    _, warp_matrix = cv2.findTransformECC(
         im1_gray, im2_gray, warp_matrix, warp_mode, criteria, inputMask=None, gaussFiltSize=1
     )
 
@@ -775,7 +776,7 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None, mode="clip")
     if box is None:
         box = im.max_box
     cim = im.crop(box=box)
-    (vertl, horizl) = cim.shape
+    vertl, horizl = cim.shape
     p_horiz = 0
     p_vert = 0
     if poly_horiz > 0:

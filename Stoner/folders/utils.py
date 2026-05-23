@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Utility functions to support :py:class:`Stoner.folders.core.objectFolder` operations."""
+
 __all__ = [
     "pathsplit",
     "pathjoin",

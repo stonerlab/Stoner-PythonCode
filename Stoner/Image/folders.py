@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Implements a BaseFolder type structure for working with collections of images."""
+
 __all__ = ["ImageFolderMixin", "ImageFolder"]
 from copy import copy, deepcopy
 from importlib import import_module

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Common routines for reading maximus files."""
+
 __all__ = ["read_scan", "hdr_to_dict", "flatten_header", "process_key", "read_images", "read_pointscan"]
 import json
 import re

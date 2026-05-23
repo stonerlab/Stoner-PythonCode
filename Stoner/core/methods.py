@@ -31,7 +31,7 @@ def search_index(datafile, xcol=None, value=None, accuracy=0.0, invert=False):
         case int() | float():
             ix = np.isclose(datafile.data[:, x], value, atol=accuracy)
         case (_, _):
-            (low, u) = (min(value), max(value))
+            low, u = (min(value), max(value))
             low -= accuracy
             u += accuracy
             v = datafile.data[:, x]
@@ -806,10 +806,10 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         case (_,):
             datafile.data = np.atleast_2d(datafile.data).T
         case (_, _):
-            (dr, dc) = datafile.data.shape
+            dr, dc = datafile.data.shape
         case _ if not datafile.data.shape:
             datafile.data = np.array([[]])
-            (dr, dc) = (0, 0)
+            dr, dc = (0, 0)
         case _:
             raise ValueError("Data should be 1 or 2 dimensional")
 
@@ -1047,7 +1047,7 @@ def del_rows(datafile, col=None, val=None, invert=False):
             elif isinstance(val, float):
                 rows = np.nonzero([bool(x == val) != invert for x in d])[0]
             elif isiterable(val) and len(val) == 2:
-                (upper, lower) = (max(list(val)), min(list(val)))
+                upper, lower = (max(list(val)), min(list(val)))
                 rows = np.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
             else:
                 raise SyntaxError("If val is specified it must be a float,callable, or iterable object of length 2")

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Typing definitions."""
+
 from pathlib import Path
 from re import Pattern
 from typing import TYPE_CHECKING, Any, Mapping, Sequence, Tuple, Union

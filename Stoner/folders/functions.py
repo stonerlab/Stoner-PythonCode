@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Folder functions for binding as methods to BaseFolder."""
+
 from os import path
 
 from numpy import any as np_any

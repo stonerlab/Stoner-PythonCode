@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Additional methods for BaseFolder."""
+
 import fnmatch
 import re
 from collections.abc import Iterable, Mapping

@@ -285,7 +285,7 @@ class Data(
 
     def _init_double(self, *args, **kwargs):
         """Two argument constructors handled here. Called form __init__."""
-        (arg0, arg1) = args
+        arg0, arg1 = args
         match args:
             case (arg0, {} as arg1):
                 self._init_single(arg0, **kwargs)

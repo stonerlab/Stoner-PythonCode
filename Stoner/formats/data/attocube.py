@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module to work with scan files from an AttocubeSPM running Daisy."""
+
 import re
 
 from ...core.exceptions import StonerLoadError

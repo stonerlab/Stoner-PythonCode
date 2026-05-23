@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Provide variants of :class:`Stoner.Image.ImageFolder` that store images efficiently in 3D numpy arrays."""
+
 __all__ = ["ImageStackMixin", "ImageStack", "ImageStack"]
 import warnings
 

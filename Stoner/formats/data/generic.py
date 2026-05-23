@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Implement DataFile classes for some generic file formats."""
+
 import contextlib
 import copy
 import csv

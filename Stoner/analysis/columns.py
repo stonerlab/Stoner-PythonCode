@@ -16,8 +16,8 @@ def _do_error_calc(datafile: Data, col_a: Index, col_b: Index, error_type: str =
     if (
         isinstance(col_a, (list, tuple)) and isinstance(col_b, (list, tuple)) and len(col_a) == 2 and len(col_b) == 2
     ):  # Error columns on
-        (col_a, e1) = col_a
-        (col_b, e2) = col_b
+        col_a, e1 = col_a
+        col_b, e2 = col_b
         e1data = __get_math_val(datafile, e1)[0]
         e2data = __get_math_val(datafile, e2)[0]
         match error_type:

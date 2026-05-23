@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Implements core image handling classes for the :mod:`Stoner.Image` package."""
+
 __all__ = ["ImageArray", "ImageFile"]
 import inspect
 import os

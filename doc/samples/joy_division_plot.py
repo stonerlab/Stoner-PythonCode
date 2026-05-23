@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=invalid-name
 """Demonstrate a waterfall plot styled after the famous album cover from Joy Division."""
+
 from pathlib import Path
 
 from numpy import log10

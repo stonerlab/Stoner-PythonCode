@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Fit IV data to various RSJ models."""
+
 # pylint: disable=invalid-name
 import os
 

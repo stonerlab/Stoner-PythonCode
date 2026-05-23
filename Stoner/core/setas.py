@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """setas module provides the setas class for DataFile and friends."""
+
 __all__ = ["Setas", "ColumnHeadersDescriptor"]
 import copy
 import re

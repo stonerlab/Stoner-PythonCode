@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Fit Ic(B) to Airy function."""
+
 # pylint: disable=invalid-name
 import os
 

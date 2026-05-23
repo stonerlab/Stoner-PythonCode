@@ -475,7 +475,7 @@ class TypeHintedDict(RegexpDict):
             metadata value
         """
         key = name
-        (name, typehint) = self._get_name_(name)
+        name, typehint = self._get_name_(name)
         name = self.__lookup__(name, True)
         _super = super()
         value = [_super.__getitem__(nm) for nm in name]

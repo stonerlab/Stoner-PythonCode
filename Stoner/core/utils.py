@@ -387,7 +387,7 @@ def decode_string(value: str) -> str:
     """Expand a string of column assignments, replacing numbers with repeated characters."""
     pattern = re.compile(r"(([0-9]+)(x|y|z|d|e|f|u|v|w|\.|\-))")
     while res := pattern.search(value):
-        (total, count, code) = res.groups()
+        total, count, code = res.groups()
         count = int(count)
         value = value.replace(total, code * count, 1)
     return value

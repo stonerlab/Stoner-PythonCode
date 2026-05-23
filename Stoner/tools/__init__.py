@@ -4,6 +4,7 @@
 
 These functions depend only on Stoner.compat which is used to ensure a consistent namespace between python 2.7 and 3.x.
 """
+
 __all__ = [
     "AttributeStore",
     "all_size",

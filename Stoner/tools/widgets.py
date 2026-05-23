@@ -3,6 +3,7 @@
 
 Code based on the PyQt5 Tutorial code,
 """
+
 __all__ = ["file_dialog"]
 import pathlib
 from typing import Any, Dict, Optional, Type, Union

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Ensure a consistent namespace for the rest of the package irrespective of Python language version."""
+
 __all__ = [
     "str2bytes",
     "bytes2str",

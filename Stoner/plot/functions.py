@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Stoner plotting code as functions."""
+
 import copy
 import os
 import re
@@ -277,7 +278,7 @@ def _fix_kwargs(datafile, function=None, defaults=None, otherkwargs=None, **kwar
         if datafile._figure is not plt.gcf():
             plt.close(plt.gcf())
 
-    (_, kwargs) = _getargspec(function)[:2]
+    _, kwargs = _getargspec(function)[:2]
     # Manually override the list of arguments that the plotting function takes if it takes keyword dictionary
     if isinstance(otherkwargs, (list, tuple)):
         kwargs.extend(otherkwargs)
@@ -873,7 +874,7 @@ def plot_matrix(
     plotter(xdata, ydata, zdata, cmap=cmap, **kwords)
     labels = {"xlabel": (xlabel, "X Data"), "ylabel": (ylabel, "Y Data"), "zlabel": (zlabel, "Z Data")}
     for label, label_txt in labels.items():
-        (v, default) = label_txt
+        v, default = label_txt
         if v is None:
             if label in datafile.metadata:
                 labels[label] = datafile[label]
@@ -937,7 +938,7 @@ def plot_xy(datafile, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, **kw
         A matplotlib.figure instance
     """
     c = _fix_cols(datafile, xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False, **kwargs)
-    (kwargs["xerr"], kwargs["yerr"]) = (c.xerr, c.yerr)
+    kwargs["xerr"], kwargs["yerr"] = (c.xerr, c.yerr)
 
     datafile.template = kwargs.pop("template", datafile.template)
     title = kwargs.pop("title", datafile.basename)

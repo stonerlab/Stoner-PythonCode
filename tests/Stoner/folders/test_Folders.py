@@ -7,7 +7,6 @@ Created on Mon Jul 18 14:13:39 2016
 @author: phygbu
 """
 
-
 import fnmatch
 import os
 import os.path as path
@@ -135,7 +134,7 @@ def test_Operators():
     fldr2 = DataFolder(path.join(datadir, "NLIV"), pattern="*.txt")
     fldr2.group(lambda x: "zero" if x["iterator"] % 2 == 0 else "one")
     fldr3 = fldr + fldr2
-    assert fldr3.shape == (54, {"one": (9, {}), "zero": (7, {})}), "Adding two DataFolders with groups failed"
+    assert fldr3.shape == (55, {"one": (9, {}), "zero": (7, {})}), "Adding two DataFolders with groups failed"
     fldr4 = fldr3 - fldr2
     fldr4.prune()
     assert fldr4.shape == fldr.shape, "Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
@@ -186,7 +185,7 @@ def test_Base_Operators():
     fldr2 = DataFolder(path.join(datadir, "NLIV"), pattern="*.txt")
     fldr2.group(lambda x: "zero" if x["iterator"] % 2 == 0 else "one")
     fldr3 = fldr + fldr2
-    assert fldr3.shape == (54, {"one": (9, {}), "zero": (7, {})}), "Adding two DataFolders with groups failed"
+    assert fldr3.shape == (55, {"one": (9, {}), "zero": (7, {})}), "Adding two DataFolders with groups failed"
     fldr4 = fldr3 - fldr2
     fldr4.prune()
     assert fldr4.shape == fldr.shape, "Failed to subtract one DataFolder from another :{}".format(fldr4.shape)
@@ -217,7 +216,7 @@ def test_Properties():
     fldr /= "Loaded as"
     grps = list(fldr.lsgrp)
     skip = 0 if Hyperspy_ok else 1
-    assert len(grps) == 28 - skip, f"Length of lsgrp not as expected: {len(grps)} not {27-skip}"
+    assert len(grps) == 29 - skip, f"Length of lsgrp not as expected: {len(grps)} not {27-skip}"
     fldr.debug = True
     fldr = fldr
     assert fldr["XRDFile"][0].debug, "Setting debug on folder failed!"
@@ -259,15 +258,14 @@ def test_methods():
             "DataFile",
             "DataFile",
             "DataFile",
+            "TDI_2_0",
         ],
         dtype="<U12",
     )
     fldr = DataFolder(datadir, pattern="*.txt", recursive=False).sort()
 
     test_sliced = fldr.slice_metadata("Loaded as")
-    assert len(sliced) == len(test_sliced), "Test slice not equal length - sample-data changed? {}".format(
-        test_sliced
-    )
+    assert len(sliced) == len(test_sliced), "Test slice not equal length - sample-data changed? {}".format(test_sliced)
     assert np.all(test_sliced == sliced), "Slicing metadata failed to work."
     fldr.insert(5, Data())
     assert list(fldr.ls)[5] == "Untitled", "Insert failed"

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Loader for maximus scan image."""
+
 from pathlib import Path
 
 from ...core.exceptions import StonerLoadError

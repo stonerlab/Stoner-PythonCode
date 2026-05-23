@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Loader for maximus spectra files."""
+
 from pathlib import Path
 
 import numpy as np

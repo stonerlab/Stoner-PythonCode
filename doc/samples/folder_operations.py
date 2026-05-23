@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Example of Folder operations."""
+
 import re
 from pathlib import Path
 

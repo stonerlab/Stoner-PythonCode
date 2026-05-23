@@ -4,6 +4,7 @@
 
 A subclass of :py:class:`numpy.ma.MaskedArray` that knows that columns have  names.
 """
+
 __all__ = ["DataArray"]
 
 import copy
@@ -625,10 +626,8 @@ class DataArray(ma.MaskedArray):
             if setas_too:
                 self._setas[col1], self._setas[col2] = self._setas[col2], self._setas[col1]
         else:
-            raise TypeError(
-                "Swap parameter must be either a tuple or a \
-            list of tuples"
-            )
+            raise TypeError("Swap parameter must be either a tuple or a \
+            list of tuples")
 
     def tofile(self, fid, sep="", format="%s"):  # pylint: disable=redefined-builtin
         """Silly pass through."""

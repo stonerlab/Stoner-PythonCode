@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Demo of the make_model decorator."""
+
 # pylint: disable=invalid-name, redefined-outer-name
 from numpy import linspace
 from numpy.random import normal, seed
