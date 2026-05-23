@@ -20,3 +20,4 @@ dateutil>=2.8
 seaborn>=0.13
 looseversion>=1.0
 chardet>=5.2.0
+configobj>=5.0.0

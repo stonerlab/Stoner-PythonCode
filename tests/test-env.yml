@@ -36,3 +36,4 @@ dependencies:
   - rosettasciio
   - fabio
   - chardet
+  - configobj >=5.0.0

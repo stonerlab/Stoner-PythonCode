@@ -12,6 +12,7 @@ __all__ = [
     "fix_signature",
     "format_error",
     "format_val",
+    "round_sig",
     "html_escape",
     "isanynone",
     "iscomparable",
@@ -48,6 +49,7 @@ from .decorators import fix_signature, make_Class, make_Data
 from .formatting import (
     format_error,
     format_val,
+    round_sig,
     html_escape,
     ordinal,
     quantize,
