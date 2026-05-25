@@ -244,23 +244,7 @@ def test_Properties():
 
 def test_methods():
     sliced = np.array(
-        [
-            "DataFile",
-            "MDAASCIIFile",
-            "BNLFile",
-            "DataFile",
-            "DataFile",
-            "DataFile",
-            "DataFile",
-            "DataFile",
-            "MokeFile",
-            "EasyPlotFile",
-            "DataFile",
-            "DataFile",
-            "DataFile",
-            "TDI_2_0",
-        ],
-        dtype="<U12",
+['DataFile', 'MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile', 'DataFile', 'DataFile', 'DataFile', 'MokeFile', 'EasyPlotFile', 'DataFile', 'DataFile', 'TDI_2_0', 'DataFile'],        dtype="<U12",
     )
     fldr = DataFolder(datadir, pattern="*.txt", recursive=False).sort()
 
