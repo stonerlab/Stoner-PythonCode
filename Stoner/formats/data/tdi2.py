@@ -274,4 +274,5 @@ def save_tdi2_format(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     dest = Path(filename)
     content = "\n".join("\t".join(row) for row in _build_rows(metadata, columns)) + "\n"
     dest.write_text(content, encoding="utf-8")
+    save_data.filename = filename
     return save_data
