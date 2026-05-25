@@ -172,9 +172,9 @@ The **Stoner.Zip** module provides a similar set of classes to **Stoner.HDF5** b
 Resources
 ==========
 
-Included in the `github repository`_  are a (small) collection of sample scripts
+Included in the `github repository`_ are a (small) collection of sample scripts
 for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
-`User_Guide`_ as part of this documentation, along with a :doc:`complete API reference <Stoner>`
+`User_Guide`_ as part of this documentation, along with the `complete API reference`_
 
 Contact and Licensing
 =====================
@@ -279,3 +279,4 @@ Versions 0.7.x and earlier are now pre-historic!
 .. _github repository: http://www.github.com/stonerlab/Stoner-PythonCode/
 .. _Dr Gavin Burnell: http://www.stoner.leeds.ac.uk/people/gb
 .. _User_Guide: http://stoner-pythoncode.readthedocs.io/en/latest/UserGuide/ugindex.html
+.. _complete API reference: http://stoner-pythoncode.readthedocs.io/en/latest/Stoner.html
