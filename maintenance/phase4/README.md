@@ -4,15 +4,20 @@ Status: **In progress pending remote validation**.
 
 ## CI decisions
 
-- The established Linux matrix remains the compatibility gate for Python
-  3.11–3.14. Python 3.14 also runs on `windows-latest` and the supported Intel
-  `macos-15-intel` runner, giving every advertised operating-system family a
-  current execution check without multiplying the complete version matrix.
-- Micromamba crashed with access violation `3221225477` while linking the
-  solved Windows environment on both `windows-latest` and `windows-2022`.
-  The Windows matrix entry therefore passes `--always-copy`, avoiding hard
-  links between the package cache and environment while retaining the faster
-  micromamba solver. Linux and macOS retain the default hard-link behaviour.
+- The Linux matrix is the hosted compatibility gate for Python 3.11–3.14.
+  Python 3.14 also runs on the supported Intel `macos-15-intel` runner.
+- Windows is the primary development and local-test platform, so hosted CI is
+  used to exercise the non-development platforms: Linux and macOS. Phase 0
+  passed all 333 tests both serially and with two xdist workers on Windows 11
+  and Python 3.14.
+- A hosted Windows lane was tested on `windows-latest` and `windows-2022`.
+  Micromamba repeatedly crashed with access violation `3221225477` while
+  applying a successfully solved environment, including with `--always-copy`.
+  This rules out package-cache hard links as the direct cause. A separate
+  setup-miniconda/libmamba attempt spent more than seven minutes creating the
+  environment without reaching pytest. The large conda-forge dependency graph
+  makes this a slow, memory-intensive and unreliable hosted gate, so retaining
+  it would create known failures and unhelpful notification noise.
 - Test jobs use explicit Coveralls flags of
   `run-<python-version>-<runner>`. The finalisation job waits for the complete
   matrix and does not carry forward nonexistent or missing jobs.
@@ -70,4 +75,5 @@ without publishing.
 Both added OCR packages were found on the approved `phygbu`/`conda-forge`
 channels. Cross-platform dry-solves repeated the previously recorded slow
 solver behaviour and were stopped without a success or conflict result; the
-six GitHub Actions jobs are the authoritative platform validation.
+five GitHub Actions jobs are the authoritative hosted validation. Phase 0's
+Windows results provide the current Windows validation baseline.

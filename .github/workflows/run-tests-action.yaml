@@ -24,9 +24,6 @@ jobs:
         os: ["ubuntu-latest"]
         include:
           - python-version: "3.14"
-            os: windows-latest
-            micromamba-extra-args: --always-copy
-          - python-version: "3.14"
             os: macos-15-intel
     steps:
       - name: Check out repository code
@@ -39,7 +36,6 @@ jobs:
           create-args: >-
             python=${{ matrix.python-version }}
             --channel-priority flexible
-            ${{ matrix.micromamba-extra-args }}
           init-shell: bash
           cache-downloads: true
           cache-environment: true
@@ -63,7 +59,7 @@ jobs:
            xvfb-run --auto-servernum pytest -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
            coverage xml
            exit ${PYTEST_EXIT:-0}
-      - name: Test on Windows and macOS
+      - name: Test on macOS
         if: runner.os != 'Linux'
         run: |
            pytest -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?

@@ -32,8 +32,9 @@ def main() -> None:
     tests = workflows["run-tests-action.yaml"]
     for version in ("3.11", "3.12", "3.13", "3.14"):
         require(version in tests, f"Python {version} is missing from the test matrix.")
-    for runner in ("ubuntu-latest", "windows-latest", "macos-15-intel"):
+    for runner in ("ubuntu-latest", "macos-15-intel"):
         require(runner in tests, f"{runner} is missing from the test matrix.")
+    require("windows-latest" not in tests, "The unreliable hosted Windows lane has been restored.")
     require("pull_request:" in tests and "workflow_dispatch:" in tests, "The test workflow lacks required triggers.")
     require("contents: read" in tests, "The test workflow must default to read-only contents permission.")
     require("pull-requests: write" not in tests, "The test workflow has unnecessary pull-request write access.")
