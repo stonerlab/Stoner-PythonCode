@@ -5,10 +5,11 @@ Status: **In progress pending remote validation**.
 ## CI decisions
 
 - The Linux matrix is the hosted compatibility gate for Python 3.11–3.14.
-  Python 3.14 also runs on the supported Intel `macos-15-intel` runner.
-- The test environment declares PyQt6 explicitly because the file-dialog tests
-  exercise the Qt implementation. The package is available for Python 3.14 on
-  every hosted platform in the matrix.
+  Python 3.13 also runs on the supported Intel `macos-15-intel` runner.
+- The macOS matrix entry adds PyQt5 explicitly because the file-dialog tests
+  exercise the package's declared optional Qt implementation. Python 3.13 is
+  the latest interpreter with the PyQt5 Conda build on Intel macOS; the Linux
+  matrix supplies the Python 3.14 compatibility check.
 - Windows is the primary development and local-test platform, so hosted CI is
   used to exercise the non-development platforms: Linux and macOS. Phase 0
   passed all 333 tests both serially and with two xdist workers on Windows 11

@@ -14,7 +14,6 @@ dependencies:
   - pytest-cov
   - pytest-forked
   - pytest-xdist
-  - pyqt6
 
   # Required runtime dependencies (keep aligned with recipe/meta.yaml)
   - asteval
