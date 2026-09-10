@@ -150,7 +150,7 @@ class ImageFolderMixin:
 
         Keyword Arguments:
             method (str):
-                The method is passed to the :py:class:`Stone.Image.ImageArray.align` method to control how the image
+                The method is passed to :py:func:`Stoner.Image.imagefuncs.align` to control how the image
                 alignment is done. By default the 'Scharr' method is used.
             box (int, float, tuple of ints or floats):
                 Specifies a subset of the images to be used to calculate the alignment with.
@@ -349,9 +349,9 @@ class ImageFolderMixin:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
 
         Notes:
-            If the underlying type of the :py:class:`Stoner.Core.metadataObject` instances in the
+            If the underlying type of the :py:class:`Stoner.core.base.metadataObject` instances in the
             :py:class:`PlotFolder` lacks a **plot** method, then the instances are converted to
-            :py:class:`Stoner.Core.Data`.
+            :py:class:`Stoner.core.data.Data`.
 
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.

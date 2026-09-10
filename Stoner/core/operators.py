@@ -17,7 +17,7 @@ class DataFileOperatorsMixin:
         """Implement a + operator to concatenate rows of data.
 
         Args:
-            other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
+            other (NumPy array, :py:class:`Stoner.core.data.Data`, dictionary or list):
                 The object to be added to the DataFile
 
         Note:
@@ -43,7 +43,7 @@ class DataFileOperatorsMixin:
         """Implement a += operator to concatenate rows of data inplace.
 
         Args:
-            other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
+            other (NumPy array, :py:class:`Stoner.core.data.Data`, dictionary or list):
                 The object to be added to the DataFile
 
         Note:

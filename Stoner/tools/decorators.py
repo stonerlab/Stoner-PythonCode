@@ -226,7 +226,7 @@ def image_array_adaptor(workingfunc):
 
     The function returned from here will call workingfunc with the first argument being a clone of this
     ImageArray. If the meothd returns an ndarray, it is wrapped back to our own class and the metadata dictionary
-    is updated. If the function returns a :py:class:`Stoner.Data` object then this is also updated with our
+    is updated. If the function returns a :py:class:`~Stoner.core.data.Data` object then this is also updated with our
     metadata.
 
     This method also updates the name and documentation strings for the wrapper to match the wrapped function -

@@ -1,7 +1,7 @@
 """Stoner.plot sub-package - contains classes and functions for visuallising data.
 
 Most of the plotting functionality is provided by the :class:`.PlotMixin` mixin class which is available through the
-:py:class:`Stoner.Data` class.
+:py:class:`~Stoner.core.data.Data` class.
 
 The :mod:`.formats` module provides a set of template classes for producing different plot styles and formats. The
 :py:mod:`Stoner.plot.util` module provides

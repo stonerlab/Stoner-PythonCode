@@ -10,7 +10,16 @@ from scipy.stats import sem
 from ..tools import format_error, make_Class, make_Data
 from .fitting.models.generic import linear
 
-__all__ = ["outlier", "threshold", "_twoD_fit", "ApplyAffineTransform", "GetAffineTransform", "poly_outlier"]
+__all__ = [
+    "outlier",
+    "threshold",
+    "_twoD_fit",
+    "ApplyAffineTransform",
+    "GetAffineTransform",
+    "poly_outlier",
+    "split_up_down",
+    "hysteresis_correct",
+]
 
 
 def outlier(row, window, metric, ycol=None, shape="bopxcar"):
@@ -440,16 +449,16 @@ def split_up_down(data, col=None, folder=None):
     """Split the DataFile data into several files where the column *col* is either rising or falling.
 
     Args:
-        data (:py:class:`Stoner.Core.DataFile`):
+        data (:py:class:`Stoner.core.data.Data`):
             object containing the data to be sorted
         col (index):
-            is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
-        folder (:py:class:`Stoner.Folders.DataFolder` or None):
-            if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add
+            is something that :py:meth:`Stoner.core.data.Data.find_col` can use
+        folder (:py:class:`Stoner.folders.mixins.DataFolder` or None):
+            if this is an instance of :py:class:`Stoner.folders.mixins.DataFolder` then add
             rising and falling files to groups of this DataFolder, otherwise create a new one
 
     Returns:
-        (:py:class:`Sonter.Folder.DataFolder`):
+        (:py:class:`Stoner.folders.mixins.DataFolder`):
             with two groups, rising and falling
     """
     a = make_Data(data)
@@ -505,21 +514,22 @@ def hysteresis_correct(data, **kwargs):
 
     Args:
         data (Data):
-            The data containing the hysteresis loop. The :py:attr:`DataFile.setas` attribute
+            The data containing the hysteresis loop. The :py:attr:`Stoner.core.data.Data.setas` attribute
             should be set to give the H and M axes as x and y.
 
     Keyword Arguments:
         correct_background (bool):
-            Correct for a diamagnetic or paramagnetic background to the hystersis loop
+            Correct for a diamagnetic or paramagnetic background to the hysteresis loop;
             also recentres the loop about zero moment (default True).
         correct_H (bool):
-            Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
-            this will remove any offset in filed due to trapped flux (default True)
+            Finds the coercive fields and sets them to be equal and opposite. If the loop is symmetric,
+            this removes any field offset due to trapped flux (default True).
         saturated_fraction (float):
             The fraction of the horizontal (field) range where the moment can be assumed to be
             fully saturated. If an integer is given it will use that many data points at the end of the loop.
         h_sat_method (str):
-            The method used to determine thwe saturation field. Options are -
+            The method used to determine the saturation field. Options are:
+
             -   "linear_intercept" (default): Fit a straight line to the central region of each branch of the loop
                 and look at the
                 intercept with the relevant saturation moment.
@@ -537,9 +547,9 @@ def hysteresis_correct(data, **kwargs):
             Column assignments.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The original loop with the x and y columns replaced with corrected data and extra metadata added to give
-            the background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
+            the background susceptibility, offset in moment, coercive fields and saturation magnetisation.
     """
     cls = make_Data(None)
     if isinstance(data, cls):
@@ -562,7 +572,7 @@ def hysteresis_correct(data, **kwargs):
     if callable(h_sat_method) or h_sat_method in hsat_methods:
         h_sat_method = hsat_methods.get(h_sat_method, h_sat_method)
     else:
-        raise ValueError("Saturation field method not recognized!")
+        raise ValueError("Saturation field method not recognised!")
 
     for k, val in kwargs.items():
         try:

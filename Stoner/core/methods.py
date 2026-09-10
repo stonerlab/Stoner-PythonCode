@@ -81,10 +81,10 @@ def closest(datafile, value, xcol=None):
 
     Returns:
         ndarray:
-            A single row of data as a :py:class:`Stoner.Core.DataArray`.
+            A single row of data as a :py:class:`Stoner.core.array.DataArray`.
 
     Notes:
-        To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i`
+        To find which row it is that has been returned, use the :py:attr:`Stoner.core.array.DataArray.i`
         index attribute.
     """
     _ = datafile._col_args(xcol=xcol)
@@ -562,7 +562,7 @@ def sort(datafile, *order, reverse=False):
 
 
 def split(datafile, *args, final="files"):
-    """Recursively splits the current DataFile into a :py:class:`Stoner.Folders.DataFolder`.
+    """Recursively split the current Data object into a :py:class:`Stoner.folders.mixins.DataFolder`.
 
     Args:
         datafile (Data):
@@ -576,9 +576,9 @@ def split(datafile, *args, final="files"):
             groups ("groups")
 
     Returns:
-        Stoner.Folders.DataFolder:
-            A :py:class:`Stoner.Folders.DataFolder` object containing the individual
-            :py:class:`Stoner.Data` objects
+        Stoner.folders.mixins.DataFolder:
+            A :py:class:`Stoner.folders.mixins.DataFolder` object containing the individual
+            :py:class:`~Stoner.core.data.Data` objects
 
     Note:
         Creates a DataFolder of  DataFiles where each one contains the rows from the original object which
@@ -590,7 +590,7 @@ def split(datafile, *args, final="files"):
         called for each row, passing the row as a single 1D array and the return result is used to group lines
         together. The return value should be hashable.
 
-        Once this is done and the :py:class:`Stoner.Folders.DataFolder` exists, if there are remaining argument,
+        Once this is done and the :py:class:`Stoner.folders.mixins.DataFolder` exists, if there are remaining arguments,
         then the method is called recusivelyt for each file and the resulting DataFolder added into the root
         DataFolder and the file is removed.
 
@@ -745,7 +745,7 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         replace (bool):
             Replace the data or insert the data (default)
         setas (str):
-            Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
+            Set the type of column (x, y, z data etc. - see :py:attr:`Stoner.core.data.Data.setas`)
 
     Returns:
         datafile:
@@ -1240,17 +1240,17 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
 
 
 def to_pandas(datafile):
-    """Create a pandas DataFrame from a :py:class:`Stoner.Data` object.
+    """Create a pandas DataFrame from a :py:class:`~Stoner.core.data.Data` object.
 
     Notes:
         In addition to transferring the numerical data, the DataFrame's columns are set to
-        a multi-level index of the :py:attr:`Stoner.Data.column_headers` and :py:attr:`Stoner.Data.setas`
+        a multi-level index of the :py:attr:`~Stoner.core.data.Data.column_headers` and :py:attr:`~Stoner.core.data.Data.setas`
         values. A pandas DataFrame extension attribute, *metadata* is registered and is used to store
-        the metada from the :py:class:1Stoner.Data` object. This pandas extension attribute is in fact a trivial
+        the metada from the :py:class:`~Stoner.core.data.Data` object. This pandas extension attribute is in fact a trivial
         subclass of the :py:class:`Stoner.core.TypeHintedDict`.
 
         The inverse operation can be carried out simply by passing a DataFrame into the copnstructor of the
-        :py:class:`Stoner.Data` object.
+        :py:class:`~Stoner.core.data.Data` object.
 
     Raises:
         **NotImplementedError** if pandas didn't import correctly.

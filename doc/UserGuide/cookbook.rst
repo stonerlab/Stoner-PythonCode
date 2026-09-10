@@ -3,7 +3,7 @@ Cookbook
 *********
 
 This section gives some short examples to give an idea of things that can be
-done with the Stoner python module in just a few lines.
+done with the Stoner Python module in just a few lines.
 
 The Util module
 ===============
@@ -13,34 +13,34 @@ The Util module
 The **Stoner** package comes with an extra :py:mod:`Stoner.analysis.utils` module that includes some handy utility
 functions.
 
-The :py:class:`Data` Class
---------------------------
+The Data class
+--------------
 
-The :py:class:`Stoner.Data` class provides the core object for analysing data.
+The :py:class:`~Stoner.core.data.Data` class provides the core object for analysing data.
 
-    from Stoner.Core import Data
+    from Stoner import Data
     d=Data("File-of-data.txt")
 
 Splitting Data into rising and falling values
 ---------------------------------------------
 
-So far the module just contains one function that will take a single :py:class:`Stoner.Core.DataFile`
-object and split it into a series of :py:class:`Stoner.Core.DataFile` objects where one column is either
+The :py:func:`Stoner.analysis.utils.split_up_down` function takes a single :py:class:`Stoner.core.data.Data`
+object and splits it into a series of :py:class:`~Stoner.core.data.Data` objects where one column is either
 rising or falling. This is designed to help deal with analysis problems involving hysteretic data.::
 
     from Stoner.analysis.utils import split_up_down
     folder=split_up_down(data,column)
 
-In this example *folder* is a :py:class:`Stoner.DataFolder` instance with two groups, one for rising values of the column
-and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter
-which is an existing :py:class:`Stoner.Core.DataFolder` instance to which the new groups (if they
+In this example *folder* is a :py:class:`~Stoner.folders.mixins.DataFolder` instance with two groups, one for rising values of the column
+and one for falling values of the column. :py:func:`~Stoner.analysis.utils.split_up_down` takes an optional third parameter,
+an existing :py:class:`Stoner.folders.mixins.DataFolder` instance to which the new groups (if they
 don't already exist) and files will be added.
 
 Analysis of Hysteresis Loops
 ----------------------------
 
-Since much of our group's work is concerned with measuring magnetic hystersis loops, the :py:func:`hysteresis_correct` function
-provides a handy way to correct some instrumental artifacts and measure properties of hysteresis loops.::
+Since much of our group's work is concerned with measuring magnetic hysteresis loops, the :py:func:`Stoner.analysis.utils.hysteresis_correct` function
+provides a handy way to correct some instrumental artefacts and measure properties of hysteresis loops::
 
     from Stoner.analysis.utils import hysteresis_correct
     d=hysteresis_correct('QD-SQUID-VSM.dat',correct_background=False,correct_H=False)
@@ -52,13 +52,13 @@ provides a handy way to correct some instrumental artifacts and measure properti
 
 The keyword arguments provide options to turn on or off corrections to remove diamagnetic background (and offset in M),
 and any offset in H (e.g. due to trapped flux in the magnetometer). The latter option is slightly dangerous as it will
-also remove the effect of any eexhange bias that moves the coercive field. As well as performing the corrections, the code
+also remove the effect of any exchange bias that moves the coercive field. As well as performing the corrections, the code
 will add metadata items for:
 
     * Background susceptibility (from fitting straight lines to the out part of the data)
     * Saturation magnetisation and uncertainty (also from fitting lines to the out part of the data)
-    * Coervice Fields (H for zero M)
-    * Remenance (M for zero H)
+    * Coercive fields (H for zero M)
+    * Remanence (M for zero H)
     * Saturation Fields (H where M deviates by the standard error from saturation)
     * Maximum BH product (the point where -H * M is maximum)
     * Loop Area (from integrating the area inside the hysteresis loop - only valid for complete loops)
@@ -72,15 +72,15 @@ Formatting Error Values
 
 In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
 a measurement to one significant figure, and then quote the value to the same number of decimal places. Whilst doing this
-might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the :py:mod:`Stoner.analysis.utils` module
-provides the :py:func:`Stoner.analysis.utils.format_error` function.::
+might sound simple, actually doing it seems something that many students find difficult. To help with this task, the
+:py:func:`Stoner.tools.formatting.format_error` function is provided::
 
-    from Stoner.analysis.utils import format_error
+    from Stoner.tools import format_error
     from scipy.constants import hbar,m_e,m_u
-    print format_error(value,error)
-    print format_error(m_e,hbar,latex=True)
-    print format_error(hbar/m_e,hbar/m_u,latex=True,mode="eng")
-    print format_error(hbar/m_e,hbar/m_u,latex=True,mode="eng",units="Js rads^{-1}kg^{-1})
+    print(format_error(value, error))
+    print(format_error(m_e, hbar, latex=True))
+    print(format_error(hbar/m_e, hbar/m_u, latex=True, mode="eng"))
+    print(format_error(hbar/m_e, hbar/m_u, latex=True, mode="eng", units="Js rads^{-1}kg^{-1}"))
 
 The simplest form just outputs value+/- error with suitable rounding. Adding the *latex* keyword argument wraps the output in
 $...$ and replaces +/- with the equivalent latex math symbol. The *mode* argument can be *eng*,*sci* or *float*(default). The first
@@ -97,7 +97,7 @@ Fitting Tricks
 Fitting 3D Data
 ---------------
 
-:py:meth:`Stoner.Data.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+:py:meth:`~Stoner.core.data.Data.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
 variables. In order to do this, the *xcol* parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.
@@ -112,7 +112,7 @@ Fitting to Minimize a Function
 If *ycol* is a numpy array of the same length as the data then the values of ycol are
 assumed to be the points to fit rather than index of a column. This is useful if
 the function you want to fit can be written as :math:`f(x_1,x_2,\cdots ,x_n)=0`.
-In thus case pass *xcol* a list or tuple of columns that make up :math:`x_1,x_2,\cdots ,x_n`
+In this case, pass *xcol* a list or tuple of columns that make up :math:`x_1,x_2,\cdots ,x_n`
 and make your function take a tuple of 1D-arrays and pass *ycol* as an array of zeros.
 For example:
 
@@ -129,20 +129,20 @@ Extract X-Y(Z) from X-Y-Z data
 
 In a number of measurement systems the data is returned as 3 parameters X, Y and
 Z and one wishes to extract X-Y as a function of constant Z. For example, *I-V*
-sweeps as a function of gate voltage *V:sub:G*. Assuming we have a data file with
+sweeps as a function of gate voltage :math:`V_G`. Assuming we have a data file with
 columns *Current*, *Voltage*,*Gate*::
 
-   d=DataFile('data.txt')
+   d=Data('data.txt')
    t=d
    for gate in d.unique('Gate'):
        t.data=d.search('Gate',gate)
        t.save('Data Gate='+str(gate)+'.txt')
 
 The first line opens the data file containing the *I-V(V_G)* data. The second
-creates a temporary copy of the :py:class:`Stoner.Core.DataFile` object - ensuring that we get a copy of
+creates a temporary copy of the :py:class:`Stoner.core.data.Data` object, ensuring that we get a copy of
 all metadata and column headers. The **for** loop iterates over all unique
 values of the data in the gate column and then inside the for loop, searches for
-the corresponding *I-V* data, sets it as the data of the temporary DataFile and
+the corresponding *I-V* data, sets it as the data of the temporary :py:class:`~Stoner.core.data.Data` object and
 then saves it.
 
 Mapping X-Y-Z data to Z(X,Y) data
@@ -152,7 +152,7 @@ In a similar fashion to the previous section, where data has been recorded with
 fixed values of *X* and *Y* eg *I* measured for fixed *V* and *V_*, it can be
 useful to map the data to a matrix.::
 
-   d=DataFile('Data,.txt')
+   d=Data('Data.txt')
    t=d
    for gate in d.unique('Gate'):
       t=t+d.search('Gate',gate)[:,d.find_col('Current')]
@@ -161,8 +161,8 @@ useful to map the data to a matrix.::
 
 The start of the script follows the previous section, however this time in the
 for loop the addition operator is used to add a single row to the temporary
-:py:class:`Stoner.Core.DataFile` *t*. In this case we are using the utility method
-:py:meth:`Stoner.Core.DataFile.find_col` to find the index of the column with the current
+:py:class:`Stoner.core.data.Data` *t*. In this case we are using the utility method
+:py:meth:`Stoner.core.data.Data.find_col` to find the index of the column with the current
 data. After the **for** loop we set the column headers in *t* and then insert
 an additional column at the start with the gate voltage values.
 
@@ -176,7 +176,7 @@ Sampling a A 3D Surface function
 Suppose you have a function Z(x,y) that is defined over a range -X0..+X0 and
 -Y0..y0 and want to quickly get a view of the surface. This problem can be easily done
 by creating a random distribution of (x,y) points, evaluating the function and then
-using the :py:class:`PlotFile` methods to generate the surface.::
+using the :py:class:`Stoner.core.data.Data` plotting methods to generate the surface::
 
     from Stoner import Data
     from numpy import uniform
@@ -199,9 +199,8 @@ modelling codes, such OOMMF or MuMax. When modelling a 3D system, it is often us
 be able to examine a cross-section of the simulation. The Stoner package provides tools
 to quickly examine the output data::
 
-    from Stoner.FileFormats import OVFFile # reads OOMMF vector field files
-    import Stoner.plot
-    p=SP.PlotFile('my_simulation.ovf')
+    from Stoner import Data
+    p=Data('my_simulation.ovf')  # the OVF loader is selected automatically
     p.setas="xyzuvw"
     p=p.section(z=10.5) # Take a slice in the xy plane where z is 10.5 nm
     p.plot() # A 3D plot with cones

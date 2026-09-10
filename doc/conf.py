@@ -17,10 +17,13 @@ import shutil
 import sys
 
 my_path=path.dirname(__file__)
+on_read_the_docs = os.environ.get("READTHEDOCS", "").lower() == "true"
 
-sys.path.append(my_path)
+sys.path.insert(0, my_path)
 
-sys.path.append(path.realpath(path.join(my_path,"..")))
+# Document this checkout, even when another Stoner release is installed in the
+# documentation environment.
+sys.path.insert(0, path.realpath(path.join(my_path,"..")))
 
 from better import better_theme_path
 
@@ -313,6 +316,9 @@ plot_html_show_formats = True
 plot_include_source = True
 plot_html_show_source_link = False
 plot_preserve_dir = path.join(my_path,"plot_cache")
+# Read the committed plot cache on Read the Docs, where examples should not be
+# re-run. Other builds deliberately regenerate the plots and refresh the cache.
+plot_use_cache = on_read_the_docs
 
 
 [extensions]

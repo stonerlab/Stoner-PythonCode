@@ -521,7 +521,7 @@ class DefaultPlotStyle(MutableMapping):
         return plt.subplots(figsize=figsize, **kwargs)
 
     def apply(self):
-        """Update matplotlib rc parameters from any attributes starting template_."""
+        """Update Matplotlib rc parameters from attributes whose names start with ``template_``."""
         plt.style.use(self.stylesheet)
         for attr in dir(self):
             v = getattr(self, attr)

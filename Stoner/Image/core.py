@@ -821,7 +821,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
 @class_modifier(imagefuncs, overload=True, adaptor=image_file_adaptor)
 @class_wrapper(target=ImageArray, exclude_below=metadataObject)
 class ImageFile(metadataObject):
-    """An Image file type that is analogous to :py:class:`Stoner.Data`.
+    """An Image file type that is analogous to :py:class:`~Stoner.core.data.Data`.
 
     This contains metadata and an image attribute which
     is an :py:class:`Stoner.Image.ImageArray` type which subclasses numpy ndarray and
@@ -903,10 +903,10 @@ class ImageFile(metadataObject):
         Local attribute is image. All other attributes and calls are passed
         through to image attribute.
 
-        There is one special case of creating an ImageFile from a :py:class:`Stoner.Core.DataFile`. In this case the
+        There is one special case of creating an ImageFile from a :py:class:`Stoner.core.data.Data`. In this case the
         the DataFile is assumed to contain (x,y,z) data that should be converted to a map of
         z on a regular grid of x,y. The columns for the x,y,z data can be taken from the DataFile's
-        :py:attr:`Stoner.Core.DataFile.setas` attribute or overridden by providing xcol, ycol and zcol keyword
+        :py:attr:`Stoner.core.data.Data.setas` attribute or overridden by providing xcol, ycol and zcol keyword
         arguments. A further *shape* keyword can spewcify the shape as a tuple or "unique" to use the unique values of
         x and y or if omitted asquare grid will be interpolated.
 
@@ -1161,7 +1161,7 @@ class ImageFile(metadataObject):
 
         Args:
             args[0] (DataFile):
-                A :py:class:`Stoner.Core.DataFile` instance that defines x,y,z coordinates or has columns specified
+                A :py:class:`Stoner.core.data.Data` instance that defines x, y, z coordinates or has columns specified
                 in keywords.
 
         Keyword Args:
@@ -1267,7 +1267,7 @@ class ImageFile(metadataObject):
 
             Some subclasses can be found in the :py:mod:`Stoner.formats` package.
 
-            Each subclass is scanned in turn for a class attribute :py:attr:`Stoner.ImnageFile.priority` which governs
+            Each subclass is scanned in turn for a priority that governs
             the order in which they are tried. Subclasses which can make an early positive determination that a
             file has the correct format can have higher priority levels. Classes should return a suitable exception
             if they fail to load the file.

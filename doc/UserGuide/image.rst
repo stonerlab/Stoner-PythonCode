@@ -7,8 +7,8 @@ Working with Images
 Introduction
 ============
 
-The :mod:`Stoner.Image` package provides a means to carry out image processing functions in a smilar way that :mod:`Stoner.Core` and :class:`Stoner.Data` and
-:class:`Stoner.DataFolder` do.
+The :mod:`Stoner.Image` package provides image-processing functions in a similar way to the :class:`Stoner.core.data.Data` and
+:class:`Stoner.folders.mixins.DataFolder` classes used to manipulate numerical data.
 
 :class:`ImageFile`
 ------------------
@@ -18,7 +18,7 @@ The actual image data is stored in the :attr:`ImageFile.image` as a 2D numpy arr
 useful for ignoring certain portions of the image when carrying out operations. As well as the image data, a :class:`ImageFile` also
 has a :attr:`ImageFile.metadata` attribute that stores the associated image metadata as a set of key-value pairs in a dictionary.
 
-As with :class:`Stoner.Data`, :class:`ImageFile` has a rich array of methods that can carry out different image analysis tasks -
+As with :class:`Stoner.core.data.Data`, :class:`ImageFile` has a rich array of methods that can carry out different image analysis tasks -
 in common with the philosophy of the Stoner package, these methods operate *in place* and also return the modified :class:`ImageFile`
 allowing a sequence of operations to be completed by chaining the method calls together.
 
@@ -35,7 +35,7 @@ By default :class:`ImageFile` can load and save both .tiff and .png files and wi
 formats.
 
 Subclasses of the :class:`ImageFile` are provided for reading the .png files produced by the CM group's Evico Kerr Microscopes as well as
-a :class:`Stoner.HDF5.STXMImage` class that reads the SLS Pollux Beamline's STXM images.
+the :func:`Stoner.formats.image.hdf5.load_stxm_image` loader, which reads STXM images from the SLS Pollux beamline.
 
 Loading an Image
 ----------------
@@ -44,12 +44,12 @@ The :class:`ImageFile` constructor supports taking a string argument which is in
 image data is used to form the contents of the :attr:`ImageFile.image` which holds the image data.::
 
    from Stoner import ImageFile
-   im = Image.ImageFile("kermit.png")
+   im = ImageFile("kermit.png")
 
 .. image:: ../../sample-data/kermit.png
 
-Like :class:`Stoner.Data` :class:`ImageFile` supports image metadata. Where this can be stored in the file, e.g. in png and tiff images, this is read in
-automatically. This metadata is stored as a :class:`Stoner.Core.typeHintedDict` dictionary. This metadata can be set directly in the
+Like :class:`Stoner.core.data.Data`, :class:`ImageFile` supports image metadata. Where this can be stored in the file, e.g. in PNG and TIFF images, this is read in
+automatically. This metadata is stored as a :class:`Stoner.core.base.TypeHintedDict` dictionary. This metadata can be set directly in the
 construction of the :class:`ImageFile`::
 
    im = ImageFile(np.arange(10000).reshape(100,100), metadata={'myarray':1})
@@ -81,7 +81,7 @@ The key attributes and properties of the :class:`ImageFile` are:
     - :attr:`ImageFile.draw`:
         THis is a special attribute that lets you draw simple geometric shapes on the image.
 
-:class:`ImageFile`s use the appropriate data type for the underlying image format - integers for png and either integers or
+:class:`ImageFile` objects use the appropriate data type for the underlying image format - integers for PNG and either integers or
 floating point numbers for tiffs (STXM files are always floating point).
 
 The :meth:`ImageFile.convert` method can be used to convert the data to a more appropriate format::
@@ -140,7 +140,7 @@ metadata of the image.::
     if "Message" in im:
         orint(f"Message = {im['Message']}")
 
-Like the :class:`Stoner.Data` class, the metadata dictionary  will fall back to matching keys with regular expressions
+Like the :class:`Stoner.core.data.Data` class, the metadata dictionary will fall back to matching keys with regular expressions
 if not exact match is found. In this case, if multiple metadata items match then the result of indexing with a string
 may return a dictionary with all the matching keys.
 
@@ -183,7 +183,7 @@ working box can be given as follows:
 Aligning Two Images
 ^^^^^^^^^^^^^^^^^^^
 
-The :meth:`Stoner.ImageFile.align` method can ve used to align an image to a reference image. It offers a variety of different
+The :func:`Stoner.Image.imagefuncs.align` function, exposed as the ``ImageFile.align`` method, can be used to align an image to a reference image. It offers a variety of different
 algorithms which may be better or worse depending on the nature of the image. The options are:
 
     - chi2_shift:
@@ -289,9 +289,9 @@ At its simpletst one can just do::
 
     profile=fft.radial_profile()
 
-Which will return a :class:`Stoner.Data` object with columns for the radial distance, mean pixel value at the corresponding radius,
+This returns a :class:`Stoner.core.data.Data` object with columns for the radial distance, mean pixel value at the corresponding radius,
 standard deviation and number of pixels counted. The optional *angle* keyword parameter will select either one angle (float) or a
-rangle of angles (tuple of two floats). This can be easily plotted since the :class:`Stoner.Data` object is created with the
+range of angles (a tuple of two floats). This can be easily plotted since the :class:`Stoner.core.data.Data` object is created with the
 appropriate columns setup as x oand y data columns.::
 
     fft.radial_profile(angle=(-0.04,0.04)).plot(plotter=semilogy)
@@ -327,48 +327,49 @@ calls is handled a bit carefully:
         :attr:`ImageFile.image` is replaced with the returned result.
     #. If the return value is anything else then it is simply passed back to the calling program.
 
-In this way, many operations can be carried out 'in-place' on a :class:`ImageFile`. For example::
+In this way, many operations can be carried out 'in-place' on a :class:`ImageFile`.
 
 ImageFile Representation
 ------------------------
 
-By default, the representation of an ImageFile is just a short textual description, however if the *short_repr& and *short_img_repr* options
-are both set to False and a graphical console is in use with an ipython kernel, then th special _repr_png_ method will show a picture of the
+By default, the representation of an ImageFile is just a short textual description. However, if the *short_repr* and *short_img_repr* options
+are both set to False and a graphical console is in use with an IPython kernel, then the special ``_repr_png_`` method will show a picture of the
 contents of the ImageFile instead.::
 
-    i = Stopner.Image.ImageFile("kermit.png")
+    i = Stoner.Image.ImageFile("kermit.png")
     i
     >>> kermit.png(<class 'Stoner.Image.core.ImageFile'>) of shape (479, 359) (uint16) and 53 items of metadata
     from Stoner import Options
     Options.short_repr=False
-    Options.shoft_img_repr=False
+    Options.short_img_repr=False
     i
     >>>
 
 .. image:: ../../sample-data/kermit.png
 
-Alternatively the :meth:`ImageArray.imshow` method (accessible to :class:`ImagerFile`) will show the image data in a matplotlib window.
+Alternatively, the :meth:`ImageArray.imshow` method (also accessible to :class:`ImageFile`) will show the image data in a Matplotlib window.
 
 :class:`ImageArray`: A numpy array like class
 =============================================
 
-Somewhat analogous to :class:`Stoner.Core.DataArray`, the :class:`ImageArray` is a specialised subclass of :class:`numpy.ma.MaskedArray` used to
+Somewhat analogous to :class:`Stoner.core.array.DataArray`, the :class:`ImageArray` is a specialised subclass of :class:`numpy.ma.MaskedArray` used to
 store the image data in ImageFile. The numpy.ndarray like data can be accessed at any point via either :attr:`ImageFile.image` or :attr:`ImageFile.data`
 and will be accepted by functions that take an numpy.ndarray as an argument.
 
 Working with Lots of Images: :class:`ImageFolder` and :class:`ImageStack`
 ==========================================================================
 
-Just as :class:`Stoner.DataFolder` allows you to efficiently process lots of separate :class:`Stoner.Data` files, :class:`ImageFolder` does the same for lots
-of :class:`ImageFile` files. It is based on the same parent :class:`Stoner.Fodlers.baseFolder` class - so has similar abilities to iterate, form into
-sub-folders and so on. In addition, an :class:`Imagefolder` has additional attributes and methods for working with multiple images.
+Just as :class:`Stoner.folders.mixins.DataFolder` allows you to efficiently process lots of separate :class:`Stoner.core.data.Data` files, :class:`ImageFolder` does the same for lots
+of :class:`ImageFile` objects. It is based on the same parent :class:`Stoner.folders.core.BaseFolder` class, so has similar abilities to iterate, form
+subfolders and so on. In addition, an :class:`ImageFolder` has attributes and methods for working with multiple images.
 
 Due to the potentially large amount of data involved in processing images it is good to take advantage of native numpy's speed wherever possible. To this end
 :class:`Stoner.Image.ImageStack` is now available. This works very similarly to ImageFolder but internally represents the image stack as a 3d numpy array.
 For example::
-	imst = ImageStack('pathtomyfolder', pattern='*.tif') #directory is held in memory but images are not loaded yet
-	imst = imst['subfolder'] #take advantage of :class:`DiskBasedFolder` grouping abilities
-	imst.translate(5,3) #instantiate the stack and translate all images
+
+    imst = ImageStack('pathtomyfolder', pattern='*.tif')  # Images are not loaded yet
+    imst = imst['subfolder']  # Take advantage of folder grouping
+    imst.translate(5, 3)  # Instantiate the stack and translate all images
 
 You can request and manipulate this 3d array directly with the imarray property, alternatively you can ask for any function accepted by the underlying ImageFile
 (including the scikit-image and scipy library).

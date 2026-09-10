@@ -236,7 +236,7 @@ class ImageStackMixin:
         self._sizes = np.delete(self._sizes, ix, axis=0)
 
     def __clear__(self):
-        """Clear all stored :py:class:`Stoner.Core.metadataObject` instances stored.
+        """Clear all stored :py:class:`Stoner.core.base.metadataObject` instances.
 
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
@@ -345,7 +345,7 @@ class ImageStackMixin:
         Warnings are issued in case of precision loss, or when negative values
         are clipped during conversion to unsigned integer types (sign loss).
 
-        Floating point values are expected to be normalized and will be clipped
+        Floating-point values are expected to be normalised and will be clipped
         to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or
         signed integers respectively.
 

@@ -290,7 +290,7 @@ def bin(
             Other keyword arguments passed to make_bins
 
     Returns:
-        (:py:class:`Stoner.Data` or tuple of 4 array-like):
+        (:py:class:`~Stoner.core.data.Data` or tuple of 4 array-like):
             Either a clone of the current data set with the new binned data or
             tuple of (bin centres, bin values, bin errors, number points/bin),
             depending on the *clone* parameter.
@@ -371,7 +371,7 @@ def deduplicate(datafile, col, action="average", clone=True):
             or just the data (False).
 
     Returns:
-        (:py:class:`Stoner.Data` or tuple of 4 array-like):
+        (:py:class:`~Stoner.core.data.Data` or tuple of 4 array-like):
             Either a clone of the current data set with the depuplciated data, or just a data array.
     """
     cols = datafile.find_col(col, force_list=True)
@@ -446,7 +446,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
         of the data centred about the point and overlap points long will be used to interpolate a value.
 
         If *kind* is callable, it should take x values in the first parameter and free fitting parameters as
-        the other parameters (i.e. as with :py:meth:`Stoner.Data.curve_fit`).
+        the other parameters (i.e. as with :py:meth:`~Stoner.core.data.Data.curve_fit`).
     """
     _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
     kinds = {
@@ -531,7 +531,7 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
             Data object to work with if not being used as a bound method.
         newX (1D array or None):
             Row indices or X column values to interpolate with. If None, then the
-            :py:meth:`Stoner.Data.interpolate` returns an interpolation function. Unlike the raw interpolation
+            :py:meth:`~Stoner.core.data.Data.interpolate` returns an interpolation function. Unlike the raw interpolation
             function from scipy, this interpolation function will work with MaskedArrays by compressing them
             first.
 
@@ -735,7 +735,7 @@ def outlier_detection(
             Keywords used to determine column assignments.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     outlier_detection will add row numbers of detected outliers to the metadata
@@ -854,7 +854,7 @@ def scale(
 
     Returns:
         (various):
-            Either a copy of the :py:class:Stoner.Data` modified so that the x and y columns match *other*
+            Either a copy of the :py:class:`~Stoner.core.data.Data` modified so that the x and y columns match *other*
             if *replace* is True, or *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum
             affine transformation, *trans_err* is a matrix giving the standard error in the transformation
             matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.
@@ -962,7 +962,7 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
 
     Keyword Arguments:
         xcol(column index or None):
-            Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.Core.DataFile.setas`
+            Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.core.data.Data.setas`
         ycol (column index or None):
             Data to be smoothed
         size (int or float):

@@ -1,10 +1,15 @@
 include COPYING
+include LICENSE.md
 include README.rst
 include requirements.txt
 
 graft doc
+prune doc/_build
 graft sample-data
 graft scripts
 graft tests
 
 recursive-include Stoner *.*
+
+# Interpreter caches are not source distribution contents.
+global-exclude *.py[cod] *.py[cod].*

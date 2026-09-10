@@ -141,7 +141,7 @@ def count(fldr, value):  # pylint:  disable=arguments-differ
     Args:
         fldr (BaseFolder):
             DataFolder instance when not a bound method.
-        value(str, regexp, or :py:class:`Stoner.Core.metadataObject`): The thing to count matches for.
+        value(str, regexp, or :py:class:`Stoner.core.base.metadataObject`): The thing to count matches for.
 
     Returns:
         (int): The number of matching metadataObject instances.
@@ -423,7 +423,7 @@ def index(fldr, value, start=None, stop=None):
     Args:
         fldr (BaseFolder):
             DataFolder instance when not a bound method.
-        value(str, regexp, or :py:class:`Stoner.Core.metadataObject`):
+        value(str, regexp, or :py:class:`Stoner.core.base.metadataObject`):
             The thing to search for.
 
     Keyword Arguments:
@@ -703,7 +703,7 @@ def slice_metadata(fldr, key, output="smart"):
             -   dict: return an array of dictionaries
             -   list: return a list of lists
             -   array: return a numpy array
-            -   Data: return a :py:class:`Stoner.Data` object
+            -   Data: return a :py:class:`~Stoner.core.data.Data` object
             -   smart: (default) return either a list if only one key or a list of dictionaries
 
     Returns:
@@ -730,7 +730,7 @@ def sort(fldr, key=None, reverse=False, recurse=True):
         key (string, callable or None):
             Either a string or a callable function. If a string then this is interpreted as a
             metadata key, if callable then it is assumed that this is a a function of one parameter x
-            that is a :py:class:`Stoner.Core.metadataObject` object and that returns a key value.
+            that is a :py:class:`Stoner.core.base.metadataObject` object and that returns a key value.
             If key is not specified (default), then a sort is performed on the filename
         reverse (bool):
             Optionally sort in reverse order
@@ -875,7 +875,7 @@ def zip_groups(fldr, groups):
         fldr (BaseFolder):
             DataFolder instance when not a bound method.
         groups(list of strings):
-            A list of keys of groups in the Lpy:class:`objectFolder`
+            A list of group keys in the object folder.
 
     Returns:
         A list of tuples of groups of files:

@@ -82,7 +82,7 @@ class Data(
             The title of the measurement.
         filename (string):
             The current filename of the data if loaded from or already saved to disc. This is the default filename
-            used by the :py:meth:`Stoner.Core.Data.load` and :py:meth:`Stoner.Core.Data.save`.
+            used by :py:meth:`Stoner.core.data.Data.load` and :py:meth:`Stoner.core.data.Data.save`.
         header (string):
             A readonly property that returns a pretty formatted string giving the header of tabular representation.
         mask (array of booleans):
@@ -115,7 +115,7 @@ class Data(
             Transposed version of the data.
         subclasses (list):
             Returns a list of all the subclasses of Data currently in memory, sorted by
-            their py:attr:`Stoner.Core.Data.priority`. Each entry in the list consists of the
+            their priority. Each entry in the list consists of the
             string name of the subclass and the class object.
         xcol (int):
             If a column has been designated as containing *x* values, this will return the index of that column
@@ -908,11 +908,11 @@ class Data(
                 If not none then tries using filetype as the loader.
             loaded_class (bool):
                 If True, the return object is kept as the class that managed to load it, otherwise it is copied into a
-                :py:class:`Stoner.Data` object. (Default False)
+                :py:class:`~Stoner.core.data.Data` object. (Default False)
 
         Returns:
             (Data):
-                A new instance of :py:class:`Stoner.Data` or a s subclass of :py:class:`Stoner.Data` if
+                A new instance of :py:class:`~Stoner.core.data.Data` or a s subclass of :py:class:`~Stoner.core.data.Data` if
                 *loaded_class* is True.
         Note:
             If *filetype* is a string, then it is first tried as an exact match to a subclass name, otherwise it

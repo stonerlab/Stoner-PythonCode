@@ -46,7 +46,7 @@ class DataArray(ma.MaskedArray):
             also tracks the names of columns (so that columns may be accessed as named items).
 
     This array type is used to represent numeric data in the Stoner Package - primarily as a 2D
-    matrix in :py:class:`Stoner.Core.DataFile` but also when a 1D row is required. In con trast to
+    matrix in :py:class:`Stoner.core.data.Data` but also when a 1D row is required. In contrast to
     the parent class, DataArray understands that it came from a DataFile which has a setas attribute and column
     assignments. This allows the row to be indexed by column name, and also for quick
     attribute access to work. This makes writing functions to work with a single row of data

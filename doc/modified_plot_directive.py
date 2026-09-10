@@ -122,7 +122,7 @@ The plot directive has the following configuration options:
 
     plot_apply_rcparams
         By default, rcParams are applied when ``:context:`` option is not used
-        in a plot directive.  This configuration option overrides this behavior
+        in a plot directive.  This configuration option overrides this behaviour
         and applies rcParams before each plot.
 
     plot_working_directory
@@ -272,6 +272,7 @@ def setup(app):
     app.add_config_value('plot_working_directory', None, True)
     app.add_config_value('plot_template', None, True)
     app.add_config_value("plot_preserve_dir", "", True)
+    app.add_config_value("plot_use_cache", False, True)
 
     app.connect('doctree-read', mark_plot_labels)
 
@@ -788,7 +789,7 @@ def run(arguments, content, options, state_machine, state, lineno):
         build_dir_link = build_dir
     source_link = dest_dir_link + "/" + output_base + source_ext
 
-    if config.plot_preserve_dir and outname:
+    if config.plot_preserve_dir and config.plot_use_cache and outname:
         outfiles = glob.glob(os.path.join(config.plot_preserve_dir, outname) + "*")
         for of in outfiles:
             # print("Copying preserved copy of '{0}' into '{1}'".format(of, build_dir))

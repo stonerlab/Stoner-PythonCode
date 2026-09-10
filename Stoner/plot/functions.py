@@ -130,7 +130,7 @@ def _Plot(datafile, ix, iy, fmt, plotter, figure, **kwords):
 
 
 def _surface_plotter(datafile, x_coord, y_coord, z_coord, **kwargs):
-    """Plot a 3D color mapped surface.
+    """Plot a 3D colour-mapped surface.
 
     Args:
         x_coord, y_coord, z_coord (array):
@@ -330,7 +330,7 @@ def colormap_xyz(datafile, xcol=None, ycol=None, zcol=None, **kwargs):
         plotter (function):
             Function to use to plot data. Defaults to plt.contour
         colorbar (bool):
-            Draw the z-scale color bar beside the plot (True by default)
+            Draw the z-scale colour bar beside the plot (True by default)
         show_plot (bool):
             Turn on interfactive plotting and show plot when drawn
         save_filename (string or None):
@@ -675,7 +675,7 @@ def inset(_, parent=None, loc=None, width=0.35, height=0.30, **kwargs):
         case str() if re.match(r"[0-9]+\%", width):
             pass
         case _:
-            raise RuntimeError(f"didn't Recognize width specification {width=}")
+            raise RuntimeError(f"didn't recognise width specification {width=}")
     match height:
         case int():
             height = f"{height}%"
@@ -685,7 +685,7 @@ def inset(_, parent=None, loc=None, width=0.35, height=0.30, **kwargs):
             pass
 
         case _:
-            raise RuntimeError("didn't Recognize height specification {height=}")
+            raise RuntimeError(f"didn't recognise height specification {height=}")
     if parent is None:
         parent = plt.gca()
     return inset_locator.inset_axes(parent, width, height, loc, **kwargs)
@@ -746,11 +746,11 @@ def plot_matrix(
 
     Args:
         xvals (index, list or numpy.array):
-            Either a column index or name or a list or numpytarray of column values. The default (None) uses
-            the first column of data
+            Either a column index or name, or a list or NumPy array of column values. The default (None) uses
+            the first column of data.
         yvals (int or list):
-            Either a row index or a list or numpy array of row values. The default (None) uses the column_
-            headings interpreted as floats
+            Either a row index or a list or NumPy array of row values. The default (None) uses the column
+            headings interpreted as floats.
         rectang (tuple):
             a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin,
             number of rows, number of columns) of data to be used for the z0data matrix
@@ -1343,7 +1343,7 @@ def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None,
         colormap (string):
             Vector field colour map - defaults to the jet colour map
         colors (column index or numpy array):
-            Values used to map the colors of the resultant file.
+            Values used to map the colours of the resultant file.
         mode (string):
             glyph type, default is "cone"
         scale_factor(float):

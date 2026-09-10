@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Provides the classes and support functions for the :py:attr:`Stoner.DataFolder.groups` magic attribute."""
+"""Provides the classes and support functions for the :py:attr:`~Stoner.folders.core.BaseFolder.groups` magic attribute."""
 
 __all__ = ["GroupsDict"]
 
@@ -14,7 +14,7 @@ class GroupsDict(RegexpDict):
     """A typeHinted dictionary to manages collections of :py:class:`Stoner.folders.core.BaseFolder` objects."""
 
     def __init__(self, *args, **kwargs):
-        """Capture a *base* keyuword that sets the parent :py:class:`Stoner.DataFolder` instance."""
+        """Capture a *base* keyuword that sets the parent :py:class:`~Stoner.folders.mixins.DataFolder` instance."""
         self.base = kwargs.pop("base", None)
         super().__init__(*args, **kwargs)
 

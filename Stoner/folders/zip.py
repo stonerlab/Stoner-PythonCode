@@ -3,7 +3,7 @@
 
 Classes Include
 
-* ZipFolder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single zip file
+* ZipFolder - a :py:class:`Stoner.folders.mixins.DataFolder` subclass that can save and load data from a single ZIP file
 """
 
 __all__ = ["ZipFolder"]
@@ -195,9 +195,9 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
 
         Keyword Arguments:
             instantiate (bool):
-                IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
+                If True (default), always return a :py:class:`Stoner.core.data.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
-                :py:class:`Stoner.Core.Data` object.
+                :py:class:`Stoner.core.data.Data` object.
 
         Returns:
             (metadataObject):
@@ -288,7 +288,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
         :py:meth:`Stoner.Zip.ZipFile.save`
 
         This routine is used by a walk_groups call - hence the prototype matches that required for
-        :py:meth:`Stoner.Folders.DataFolder.walk_groups`.
+        :py:meth:`Stoner.folders.mixins.DataFolder.walk_groups`.
 
         """
         if not isinstance(f, Data):

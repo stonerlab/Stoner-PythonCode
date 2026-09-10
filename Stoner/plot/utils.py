@@ -80,8 +80,8 @@ def errorfill(
         yerr, xerr ([scalar | N, (N, 1), or (2, N) array]):
             Error for the input data:
                 -   If scalar, then filled region spans `y +/- yerr` or `x +/- xerr`.
-        color (Matplotlib color):
-            Color of line and fill region.
+        color (Matplotlib colour):
+            Colour of line and fill region.
         ls (Matplotlib line style):
             Style of the line
         lw (Matplotlib line width, float):

@@ -151,7 +151,7 @@ def _parse_line(line: str, setas: dict):
             return key, value
 
         # INFO with APPNAME special-case: swap -> key="Info.Appname", value=<appname>
-        # Original behavior: parts[1], parts[2] = parts[2], parts[1]
+        # Original behaviour: parts[1], parts[2] = parts[2], parts[1]
         # After swap: parts -> ["INFO", <appname>, "APPNAME", ...]
         case ["INFO", "APPNAME", appname, *rest]:
             key = "Info.Appname"
@@ -729,7 +729,7 @@ def load_xrd(new_data, *args, **kwargs):
     sh = re.compile(r"\[(.+)\]")  # Regexp to grab section name
     with FileManager(new_data.filename, errors="ignore", encoding="utf-8") as f:  # Read filename linewise
         if f.readline().strip() != ";RAW4.00":  # Check we have the correct fileformat
-            raise StonerLoadError("File Format Not Recognized !")
+            raise StonerLoadError("File format not recognised!")
         drive = 0
         for line in f:  # for each line
             m = sh.search(line)

@@ -103,7 +103,7 @@ def get_hdf_loader(f, default_loader=lambda *args, **kwargs: None):
     typ = bytes2str(f.attrs.get("type", ""))
     if (typ not in globals() or not isinstance(globals()[typ], type)) and "module" not in f.attrs:
         raise StonerLoadError(
-            "HDF5 Group does not specify a recognized type and does not specify a module to use to load."
+            "HDF5 Group does not specify a recognised type and does not specify a module to use to load."
         )
 
     if "module" in f.attrs:

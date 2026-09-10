@@ -41,7 +41,7 @@ def apply(
 
     Note:
         If any extra keyword arguments are supplied then these are passed to the function directly. If
-        you need to pass any arguments that overlap with the keyword arguments to :py:math:`AnalysisMixin.apply`
+        you need to pass any arguments that overlap with the keyword arguments to :py:meth:`AnalysisMixin.apply`
         then these can be supplied in a dictionary argument *_extra*.
 
         The callable *func* should have a signature::
@@ -56,7 +56,7 @@ def apply(
         column headers for the new data file.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
     """
     if col is None:
@@ -109,7 +109,7 @@ def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], colu
             in which case the max and min values in that array will be
             used as the clip limits
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     Note:
@@ -249,7 +249,7 @@ def integrate(
             Other keyword arguments are fed direct to the scipy.integrate.cumtrapz method
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     Note:
@@ -328,7 +328,7 @@ def normalise(
             (low,high) - Take the input range from the *high* and *low* fraction of the input when sorted.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     Notes:
@@ -415,7 +415,7 @@ def stitch(
             if func is not None then p0 should be the starting values for the stitching function parameters
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             A copy of the current :py:class:`AnalysisMixin` with the x and y data columns adjusted to stitch
 
     To stitch the data together, the x and y data in the current data file is transforms so that
@@ -435,7 +435,7 @@ def stitch(
         User Guide section :ref:`stitch_guide`
 
     Example:
-        .. plot:: samples/stitch-int-overlap.py
+        .. plot:: samples/stitch_int_overlap.py
             :include-source:
             :outname:  stitch_int_overlap
     """

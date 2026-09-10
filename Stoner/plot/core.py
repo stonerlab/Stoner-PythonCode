@@ -45,11 +45,11 @@ except ImportError:
 
 @class_modifier([functions], adaptor=None, no_long_names=True, overload=True)
 class PlotMixin:
-    r"""A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
+    r"""A mixin class that works with :py:class:`Stoner.core.data.Data` to add additional plotting functionality.
 
     Args:
         args(tuple):
-            Arguments to pass to :py:meth:`Stoner.Core.DataFile.__init__`
+            Arguments to pass to :py:meth:`Stoner.core.data.Data.__init__`
         kwargs (dict):
             keyword arguments to pass to \b DataFile.__init__
 
@@ -70,7 +70,7 @@ class PlotMixin:
         subplots (list of matplotlib.Axes):
             essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is
             synchronised to the number of Axes.
-        template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance):
+        template (:py:class:`Stoner.plot.formats.DefaultPlotStyle` or instance):
             A plot style template subclass or object that determines the format and appearance of plots.
     """
 

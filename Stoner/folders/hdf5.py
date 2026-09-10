@@ -3,10 +3,9 @@
 
 Classes include
 
-* HDF5Folder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single hdf5 file
+* HDF5Folder - a :py:class:`Stoner.folders.mixins.DataFolder` subclass that can save and load data from a single HDF5 file
 
-It is only necessary to import this module for the subclasses of :py:class:`Stoner.Core.DataFile` to become available
-to :py:class:`Stoner.Core.Data`.
+Importing this module makes the HDF5 handlers available to :py:class:`Stoner.core.data.Data`.
 """
 
 __all__ = ["HDF5Folder"]
@@ -38,9 +37,9 @@ class HDF5Folder(DataFolder):
 
         Keyword Arguments:
             instantiate (bool):
-                If True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
+                If True (default), always return a :py:class:`Stoner.core.data.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
-                :py:class:`Stoner.Core.Data` object.
+                :py:class:`Stoner.core.data.Data` object.
 
         Returns:
             (metadataObject):

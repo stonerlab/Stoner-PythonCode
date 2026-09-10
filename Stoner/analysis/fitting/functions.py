@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Fitting Functions and classes to mixin for :py:class:`Stoner.Data`."""
+"""Fitting Functions and classes to mixin for :py:class:`~Stoner.core.data.Data`."""
 
 from collections.abc import Mapping
 from inspect import getfullargspec, isclass
@@ -630,15 +630,15 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
                 * "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                             uncertainties
                 * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
-                * "data"   a copy of the :py:class:`Stoner.Core.DataFile` object with fit recorded in the
+                * "data"   a copy of the :py:class:`Stoner.core.data.Data` object with the fit recorded in the
                             metadata and optionally as a new column.
 
     Note:
         If the columns are not specified (or set to None) then the X and Y data are taken using the
-        :py:attr:`Stoner.Core.DataFile.setas` attribute.
+        :py:attr:`Stoner.core.data.Data.setas` attribute.
 
         The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
-        The x-column and y-column can be anything that :py:meth:`Stoner.Core.DataFile.find_col` can use as an index
+        The x-column and y-column can be anything that :py:meth:`Stoner.core.data.Data.find_col` can use as an index
         but typucally either strings to be matched against column headings or integers.
         The initial parameter values and weightings default to None which corresponds to all parameters starting
         at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
@@ -663,9 +663,9 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
 
 
     See Also:
-        *   :py:meth:`Stoner.Data.lmfit`
-        *   :py:meth:`Stoner.Data.odr`
-        *   :py:meth:`Stoner.Data.differential_evolution`
+        *   :py:meth:`~Stoner.core.data.Data.lmfit`
+        *   :py:meth:`~Stoner.core.data.Data.odr`
+        *   :py:meth:`~Stoner.core.data.Data.differential_evolution`
         *   User guide section :ref:`curve_fit_guide`
     """
     settings = _Curve_Fit_Output()
@@ -756,14 +756,14 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
             An instance of an lmfit_mod.Model that represents the model to be fitted to the data
         xcol (index or None):
             Columns to be used for the x  data for the fitting. If not given defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` x column
+            :py:attr:`Stoner.core.data.Data.setas` x column
         ycol (index or None):
             Columns to be used for the  y data for the fitting. If not given defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` y column
+            :py:attr:`Stoner.core.data.Data.setas` y column
 
     Keyword Arguments:
         p0 (list, tuple, array or callable):
-            A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for
+            A vector of initial parameter values to try. See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
             more details.
         sigma (index):
             The index of the column with the y-error bars
@@ -794,7 +794,7 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
                 - "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                             uncertainties
                 - "full"    a tuple of the fit instance and the row.
-                - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the
+                - "data"    a copy of the :py:class:`Stoner.core.data.Data` object with the fit recorded in the
                             emtadata and optionally as a column of data.
 
     This function is essentially a wrapper around the :py:func:`scipy.optimize.differential_evolution` function
@@ -804,9 +804,9 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     vector to a call to :py:func:`scipy.optimize.curve_fit` to calculate the covariance matrix.
 
     See Also:
-        -   :py:meth:`Stoner.Data.curve_fit`
-        -   :py:meth:`Stoner.Data.lmfit`
-        -   :py:meth:`Stoner.Data.odr`
+        -   :py:meth:`~Stoner.core.data.Data.curve_fit`
+        -   :py:meth:`~Stoner.core.data.Data.lmfit`
+        -   :py:meth:`~Stoner.core.data.Data.odr`
         -   User guide section :ref:`curve_fit_guide`
 
     Example:
@@ -908,14 +908,14 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
             An instance of an lmfit_mod.Model that represents the model to be fitted to the data
         xcol (index or None):
             Columns to be used for the x  data for the fitting. If not given defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` x column
+            :py:attr:`Stoner.core.data.Data.setas` x column
         ycol (index or None):
             Columns to be used for the  y data for the fitting. If not given defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` y column
+            :py:attr:`Stoner.core.data.Data.setas` y column
 
     Keyword Arguments:
         p0 (list, tuple, array or callable):
-            A vector of initial parameter values to try. See the notes in :py:meth:`Stoner.Data.curve_fit` for
+            A vector of initial parameter values to try. See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
             more details.
         sigma (index):
             The index of the column with the y-error bars
@@ -945,13 +945,13 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
                 - "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                             uncertainties
                 - "full"    a tuple of the fit instance and the row.
-                - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the
+                - "data"    a copy of the :py:class:`Stoner.core.data.Data` object with the fit recorded in the
                             emtadata and optionally as a column of data.
 
     See Also:
-        -   :py:meth:`Stoner.Data.curve_fit`
-        -   :py:meth:`Stoner.Data.odr`
-        -   :py:meth:`Stoner.Data.differential_evolution`
+        -   :py:meth:`~Stoner.core.data.Data.curve_fit`
+        -   :py:meth:`~Stoner.core.data.Data.odr`
+        -   :py:meth:`~Stoner.core.data.Data.differential_evolution`
         -   User guide section :ref:`fitting_with_limits`
 
     .. note::
@@ -1089,14 +1089,14 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
             The model that describes the data. See below for more details.
         xcol (index or None):
             Columns to be used for the x  data for the fitting. If not given defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` x column
+            :py:attr:`Stoner.core.data.Data.setas` x column
         ycol (index or None):
             Columns to be used for the  y data for the fitting. If not given defaults to the
-            :py:attr:`Stoner.Core.DataFile.setas` y column
+            :py:attr:`Stoner.core.data.Data.setas` y column
 
     Keyword Arguments:
         p0 (list, tuple, array or callable):
-            A vector of initial parameter values to try. See the notes to :py:meth:`Stoner.Data.curve_fit` for
+            A vector of initial parameter values to try. See the notes to :py:meth:`~Stoner.core.data.Data.curve_fit` for
             more details.
         sigma_x (index):
             The index of the column with the x-error bars
@@ -1125,7 +1125,7 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
                 - "row"     just a one dimensional numpy array of the fit parameters interleaved with their
                             uncertainties
                 - "full"    a tuple of the fit instance and the row.
-                - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the
+                - "data"    a copy of the :py:class:`Stoner.core.data.Data` object with the fit recorded in the
                             emtadata and optionally
                     as a column of data.
 
@@ -1139,13 +1139,13 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
             -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the
                 scip.odr standard f(beta,x)
 
-        This function is designed to be as compatible as possible with :py:meth:`Stoner.Data.curve_fit` and
-            :py:meth:`Stoner.Data.lmfit` to facilitate easy of switching between them.
+        This function is designed to be as compatible as possible with :py:meth:`~Stoner.core.data.Data.curve_fit` and
+            :py:meth:`~Stoner.core.data.Data.lmfit` to facilitate easy of switching between them.
 
     See Also:
-        -   :py:meth:`Stoner.Data.curve_fit`
-        -   :py:meth:`Stoner.Data.lmfit`
-        -   :py:meth:`Stoner.Data.differential_evolution`
+        -   :py:meth:`~Stoner.core.data.Data.curve_fit`
+        -   :py:meth:`~Stoner.core.data.Data.lmfit`
+        -   :py:meth:`~Stoner.core.data.Data.differential_evolution`
         -   User guide section :ref:`fitting_with_limits`
 
     Example:

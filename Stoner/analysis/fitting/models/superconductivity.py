@@ -400,7 +400,7 @@ def _make_gaussian_kernel(dV, dV_sampling):
         g[i] = val
         norm += val
 
-    # Normalize
+    # Normalise
     for i in range(size):
         g[i] /= norm
 
@@ -438,7 +438,7 @@ def _reflect_pad(arr, half):
 @njit
 def _gaussian_convolution_numba(V, I, dV):
     """
-    Numba-optimized Gaussian convolution for irregular (V, I) data.
+    Numba-optimised Gaussian convolution for irregular (V, I) data.
 
     Parameters
     ----------

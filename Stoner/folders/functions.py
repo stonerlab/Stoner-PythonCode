@@ -103,7 +103,7 @@ def extract(folder, *metadata, **kwargs):
 def gather(folder, xcol=None, ycol=None):
     """Collect xy and y columns from the subfiles in the final group in the tree.
 
-    Builds the collected data into a :py:class:`Stoner.Core.metadataObject`
+    Builds the collected data into a :py:class:`Stoner.core.base.metadataObject`
 
     Keyword Arguments:
         xcol (index or None):

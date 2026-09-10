@@ -112,7 +112,7 @@ def add(
             Column to insert new data at.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
@@ -163,7 +163,7 @@ def diffsum(
             Column to insert new data at.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
@@ -214,7 +214,7 @@ def divide(
             Column to insert new data at.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
@@ -304,7 +304,7 @@ def mean(
         assignments are used.
 
     .. todo::
-        Fix the row index when the bounds function is used - see note of :py:meth:`Stoner.Data.max`
+        Fix the row index when the bounds function is used - see note of :py:meth:`~Stoner.core.data.Data.max`
     """
     _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 
@@ -395,7 +395,7 @@ def multiply(
             Column to insert new data at.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and
@@ -477,7 +477,7 @@ def std(
         assignments are used.
 
     .. todo::
-        Fix the row index when the bounds function is used - see note of :py:meth:`Stoner.Data.max`
+        Fix the row index when the bounds function is used - see note of :py:meth:`~Stoner.core.data.Data.max`
     """
     _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 
@@ -533,7 +533,7 @@ def subtract(
             Column to insert new data at.
 
     Returns:
-        (:py:class:`Stoner.Data`):
+        (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
     If col_a and col_b are tuples of length two, then the firstelement is assumed to be the value and

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Provides classes and functions to support the :py:attr:`Stoner.DataFolder.metadata` magic attribute."""
+"""Provides classes and functions to support the :py:attr:`~Stoner.folders.core.BaseFolder.metadata` magic attribute."""
 
 __all__ = ["MetadataProxy"]
 import fnmatch
@@ -303,7 +303,7 @@ class MetadataProxy(MutableMapping):
                 None), If False, then an exception is raised if any entries are missing.
 
         Returns:
-            ret(list of dict, tuple of values or :py:class:`Stoner.Data`):
+            ret(list of dict, tuple of values or :py:class:`~Stoner.core.data.Data`):
                 depending on *values_only* or (output* returns the sliced dictionaries or tuples/
                 values of the items
 

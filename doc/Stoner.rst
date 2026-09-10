@@ -2,6 +2,8 @@
 :mod:`Stoner` Package
 ==========================
 
+.. py:module:: Stoner
+
 ----------------
 Primary Classes
 ----------------
@@ -10,21 +12,21 @@ Primary Classes
    :toctree: classes
    :template: classdocs.rst
 
-    Stoner.Data
-    Stoner.DataFolder
-    Stoner.Image.ImageFile
-    Stoner.Image.ImageFolder
+    Stoner.core.data.Data
+    Stoner.folders.mixins.DataFolder
+    Stoner.Image.core.ImageFile
+    Stoner.Image.folders.ImageFolder
 
 Inheritance Diagrams
 ^^^^^^^^^^^^^^^^^^^^
 
-.. inheritance-diagram:: Stoner.Data
+.. inheritance-diagram:: Stoner.core.data.Data
 
-.. inheritance-diagram:: Stoner.DataFolder
+.. inheritance-diagram:: Stoner.folders.mixins.DataFolder
 
-.. inheritance-diagram:: Stoner.ImageFile
+.. inheritance-diagram:: Stoner.Image.core.ImageFile
 
-.. inheritance-diagram:: Stoner.ImageFolder
+.. inheritance-diagram:: Stoner.Image.folders.ImageFolder
 
 
 -----------------------
@@ -33,6 +35,10 @@ Numerical Data Objects
 
 Core Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodapi:: Stoner.core.data
+    :no-inheritance-diagram:
+    :headings: -~
 
 .. automodapi:: Stoner.core.base
     :no-inheritance-diagram:
@@ -52,7 +58,7 @@ Core Package and Modules
 
 .. automodapi:: Stoner.core.utils
     :no-inheritance-diagram:
-   :no-main-docstr:
+    :no-main-docstr:
     :headings: -~
 
 
@@ -64,6 +70,18 @@ Analysis Package
     :headings: -~
 
 .. automodapi:: Stoner.analysis.fitting
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.utils
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.models
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.tools.formatting
     :no-inheritance-diagram:
     :headings: -~
 
@@ -79,6 +97,10 @@ Fitting Models
 Plot Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. automodapi:: Stoner.plot.core
+    :no-inheritance-diagram:
+    :headings: -~
+
 .. automodapi:: Stoner.plot
     :no-inheritance-diagram:
     :headings: -~
@@ -87,11 +109,19 @@ Plot Package and Modules
     :headings: -~
 
 .. automodapi:: Stoner.plot.utils
-   :no-main-docstr:
+    :headings: -~
+
+.. automodapi:: Stoner.plot.functions
+    :no-inheritance-diagram:
+    :no-main-docstr:
     :headings: -~
 
 File Formats Package Module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodapi:: Stoner.formats
+    :no-inheritance-diagram:
+    :headings: -~
 
 Data Classes
 ------------
@@ -105,6 +135,14 @@ Image Classes
 
 .. automodapi:: Stoner.formats.image
     :no-inheritance-diagram:
+
+.. automodapi:: Stoner.formats.image.hdf5
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.formats.decorators
+    :no-inheritance-diagram:
+    :headings: -~
 
 
 -------------------------------------
@@ -137,6 +175,17 @@ Folders Package and Submodules
     :headings: -~
 
 .. automodapi:: Stoner.folders.metadata
+    :headings: -~
+
+.. automodapi:: Stoner.folders.groups
+    :headings: -~
+
+.. automodapi:: Stoner.folders.zip
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.folders.hdf5
+    :no-inheritance-diagram:
     :headings: -~
 
 -----------------
@@ -182,7 +231,6 @@ Additional Image Functions
 
 .. automodapi:: Stoner.Image.imagefuncs
     :no-inheritance-diagram:
-    :no-main-docstr:
     :inherited-members:
     :headings: -~
 

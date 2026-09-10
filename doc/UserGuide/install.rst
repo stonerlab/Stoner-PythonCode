@@ -51,7 +51,7 @@ Canopy*. Installers for Windows, MacOS and Linux are kept in ``\\stonerlab\data\
 The canonical source of the latest version is the master branch of the github archive. If you have git installed on your
 machine then::
 
-    pip install git+https://github.com/gb119/Stoner-PythonCode.git
+    pip install git+https://github.com/stonerlab/Stoner-PythonCode.git
 
 should install the current master branch. Otherwise download the zip file from the github site and do::
 

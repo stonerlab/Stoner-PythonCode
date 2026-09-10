@@ -648,7 +648,7 @@ class TypeHintedDict(RegexpDict):
 
 
 class metadataObject(MutableMapping):  # pylint: disable=invalid-name
-    """Represent some sort of object that has metadata stored in a :py:class:`Stoner.Core.TypeHintedDict` object.
+    """Represent an object with metadata stored in a :py:class:`Stoner.core.base.TypeHintedDict` object.
 
     Attributes:
         metadata (TypeHintedDict):

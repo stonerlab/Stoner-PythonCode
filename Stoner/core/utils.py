@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Utility functions to support :py:mod:`Stoner.Core`."""
+"""Utility functions supporting :py:mod:`Stoner.core`."""
 
 __all__ = ["add_core", "and_core", "sub_core", "mod_core", "copy_into", "Tab_Delimited", "decode_string"]
 

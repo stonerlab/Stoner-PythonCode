@@ -68,7 +68,7 @@ def make_model(model_func):
     """A decorator that turns a function into an lmfit model.
 
     Args:
-        model_func (functrion):
+        model_func (function):
             The function to be wrapped in an lmfit.Model object
 
     Notes:
@@ -79,12 +79,12 @@ def make_model(model_func):
 
         (i.e. similar to what :py:func:`scipy.optimize.curve_fit` expects). The resulting
         class is a sub-class of :py:class:`lmfit.Model` but also adds a class method
-        :py:method:`_ModelDectorator.guesser` which can be used as a decorator to convert another function into
+        :py:meth:`_ModelDecorator.guesser` which can be used as a decorator to convert another function into
         a :py:meth:`lmfit.Model.guess` method. If using this decorator, the function that does the guessing should
         take the form::
 
-            def guesser_function(y_data,x=x_data,**kwargs):
-                return (param_1,param_2,....,pram_n)
+            def guesser_function(y_data, x=x_data, **kwargs):
+                return (param_1, param_2, ..., param_n)
 
         Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a
         function as something that can generate parameter hints for the model. In this case the function should
@@ -192,7 +192,7 @@ def cfg_data_from_ini(inifile, filename=None, **kwargs):
             All other keywords are passed to the Data constructor
 
     Returns:
-        An instance of :py:class:`Stoner.Core.Data` with data loaded and columns configured.
+        An instance of :py:class:`Stoner.core.data.Data` with data loaded and columns configured.
 
     The inifile should contain a [Data] section that contains the following keys:
         -  **type (str):** optional name of DataFile subclass to import.

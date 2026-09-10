@@ -4,8 +4,8 @@
 Additional Fitting models
 -------------------------
 
-The Stoner package contains several pre-build fitting models that are provided as individual
-functions for use with :py:meth:`Stoner.Data.curve_fit` and :py:class:`lmfit.Model` classes.Additional
+The Stoner package contains several pre-built fitting models that are provided as individual
+functions for use with :py:meth:`Stoner.core.data.Data.curve_fit` and :py:class:`lmfit.Model` classes.
 The latter also support the ability to determine an initial value of the parameters from the Data
 and so can simplify the fitting code considerably. Many of the models come with an example function.
 
@@ -30,7 +30,7 @@ Electron Tunnelling models
     :no-inheritance-diagram:
     :headings: -~
 
-Other Electron Transpoort models
+Other Electron Transport models
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodapi:: Stoner.analysis.fitting.models.e_transport
@@ -44,7 +44,7 @@ Magnetism and Magnetic Materials models
     :no-inheritance-diagram:
     :headings: -~
 
-superconductivity models
+Superconductivity models
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodapi:: Stoner.analysis.fitting.models.superconductivity

@@ -1,4 +1,4 @@
-"""Classes and support functions for the :py:attr:`Stoner.DataFolder.each`.magic attribute."""
+"""Classes and support functions for the :py:attr:`~Stoner.folders.core.BaseFolder.each`.magic attribute."""
 
 __all__ = ["Item"]
 from collections.abc import MutableSequence
@@ -13,7 +13,7 @@ from .utils import get_pool
 
 
 def _worker(d, **kwargs):
-    """Support function to run an arbitrary function over a :py:class:`Stoner.Data` object."""
+    """Support function to run an arbitrary function over a :py:class:`~Stoner.core.data.Data` object."""
     byname = kwargs.get("byname", False)
     func = kwargs.get("func", lambda x: x)
     if byname:
@@ -153,9 +153,9 @@ class Item:
 
         Notes:
             If *_return* is None and the return type of *func* is the same type as the :py:class:`BaseFolder` is
-            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
+            storing, then the return value replaces the original :py:class:`Stoner.core.base.metadataObject` in the
             :py:class:`BaseFolder`. If *_result* is True the return value is added to the
-            :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
+            :py:class:`Stoner.core.base.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
         # Just call the iter generator but assemble into a list.
@@ -206,8 +206,8 @@ class Item:
 
         Notes:
             If *name* is not present on the empty member instance, then the first member of the folder is checked as
-            well. This allows the attributes of a :py:class:`Stoner.Data` object that derive from the
-            Lpy:attr:`Stoner.Data.setas` attribute (such as *.x*, *.y* or *.e* etc) can be accessed.
+            well. This allows the attributes of a :py:class:`~Stoner.core.data.Data` object that derive from the
+            :py:attr:`Stoner.core.data.Data.setas` attribute (such as *.x*, *.y* or *.e* etc.) can be accessed.
         """
         try:
             return super().__getattr__(name)
@@ -257,8 +257,8 @@ class Item:
 
         Notes:
             If *name* is not present on the empty member instance, then the first member of the folder is checked as
-            well. This allows the attributes of a :py:class:`Stoner.Data` object that derive from the
-            Lpy:attr:`Stoner.Data.setas` attribute (such as *.x*, *.y* or *.e* etc) can be accessed.
+            well. This allows the attributes of a :py:class:`~Stoner.core.data.Data` object that derive from the
+            :py:attr:`Stoner.core.data.Data.setas` attribute (such as *.x*, *.y* or *.e* etc.) can be accessed.
 
             If *value* is iterable and the same length as the folder, then each element in the folder is loaded and
             the corresponding element of *value* is assigned to the attribute of the member.
@@ -350,9 +350,9 @@ class Item:
 
         Notes:
             If *_return* is None and the return type of *func* is the same type as the :py:class:`BaseFolder` is
-            storing, then the return value replaces the original :py:class:`Stoner.Core.metadataobject` in the
+            storing, then the return value replaces the original :py:class:`Stoner.core.base.metadataObject` in the
             :py:class:`BaseFolder`. If *_result* is True the return value is added to the
-            :py:class:`Stoner.Core.metadataObject`'s metadata under the name of the function. If *_result* is a
+            :py:class:`Stoner.core.base.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
         _return = kwargs.pop("_return", None)

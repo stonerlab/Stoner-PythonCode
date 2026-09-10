@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Provides core functionality for the :py:class:`Stoner.Data` class."""
+"""Provides core functionality for the :py:class:`~Stoner.core.data.Data` class."""
 
 __all__ = [
     "metadataObject",

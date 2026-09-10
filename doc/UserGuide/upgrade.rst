@@ -4,8 +4,8 @@ ConvertingScripts from Older Versions of the Stoner Package
 
 .. currentmodule:: Stoner
 
-THe Stoner package has gradually undergone several changes as additional functions have been added to keep the code base
-manageable. This document summarizes the main changes from previous versions.
+The Stoner package has gradually undergone several changes as additional functions have been added to keep the codebase
+manageable. This document summarises the main changes from previous versions.
 
 Python Version Support
 ======================
@@ -15,8 +15,8 @@ Python Version Support
     - Version 0.9 supports Python 2.7, 3.5, 3.6 and 3.7. The final release of 0.9 also supports Python 3.8
     - Version 0.10 does *not* support Python 2.7 or 3.5. The supported versions of Python are 3.6, 3.7 and 3.8
 
-:py:class:`Data` class versus DataFile, AnalysisFile, PlotFile
-==============================================================
+Data versus DataFile, AnalysisFile and PlotFile
+===============================================
 
 Originally the package provided several subclasses of a **DataFile** class and the user was encouraged to make a superclass
 of all of them. Thus code would have::
@@ -43,14 +43,14 @@ should now do::
 
     from Stoner.plot.formats import JTBPlotStyle, TexFormatter
 
-Most of the functionality of the  **Stoner.Plot** module was in the **PlotFile** subclass and is now accessed via the :py:class:`Stoner.Data`
+Most of the functionality of the  **Stoner.Plot** module was in the **PlotFile** subclass and is now accessed via the :py:class:`~Stoner.core.data.Data`
 class. A few additional functions that used to be in **Stoner.Plot** are now in :py:mod:`Stoner.plot.utils`.
 
 Stoner.Folders Module deprecated
 ================================
 
-The code around :py:class:`Stoner.DataFolder` has been exte nsively rewritten and cleaned up in versions 0.9 onwards. Firstly, theold
-**Stoner.Folders** module is replaced with the :py:mod:`Stoner.folders` package, and the :py:class:`Stoner.DataFolder` class is
+The code around :py:class:`~Stoner.folders.mixins.DataFolder` was extensively rewritten and cleaned up in versions 0.9 onwards. Firstly, the old
+**Stoner.Folders** module is replaced with the :py:mod:`Stoner.folders` package, and the :py:class:`~Stoner.folders.mixins.DataFolder` class is
 now directly importable from the root :py:mod:`Stoner` package. Thus::
 
     from Stoner.Folders import DataFolder
@@ -60,12 +60,12 @@ becomes::
     from Stoner import DataFolder
 
 The :py:mod:`Stoner.folders` package contains many modules and subpackages to implement generic folder-like objects, but for end
-users of the package, the :py:class:`Stoner.DataFolder` class is probably all that is required to be imported.
+users of the package, the :py:class:`~Stoner.folders.mixins.DataFolder` class is probably all that is required to be imported.
 
 Stoner.Fit Module deprecated
 ============================
 
-The **Stoner.Fit** module contained a mixed bad of assorted fitting functions and **lmfit.Model** classes. These have been
+The **Stoner.Fit** module contained a mixed bag of assorted fitting functions and **lmfit.Model** classes. These have been
 reorganised into a series of sub-modules of the :py:mod:`Stoner.analysis` package. Although this makes the import lines
 rather long, it groups the functions more logically by physics theme. Thus::
 
@@ -84,20 +84,20 @@ Stoner.FileFormats Module deprecated
 The **Stoner.FileFormats** module was getting a bit big and unwieldy with many different file formats being implemented. It has
 now been superseded by the :py:mod:`Stoner.formats` package which groups the fileformats into different sub-modules.
 
-Generally there is no particular reason to directly access the individual file format classes - the :py:class:`Stoner.Data` class
+Generally there is no particular reason to directly access the individual file format classes - the :py:class:`~Stoner.core.data.Data` class
 can access all the subclasses loaded in memory and so::
 
     import Stoner.FileFormats
 
-can simply be removed if the :py:class:`Stoner.Data` is used.
+can simply be removed if the :py:class:`~Stoner.core.data.Data` is used.
 
 Stoner.Image changes
 ====================
 
-The original write of the :py:mod:`Stoner.Image` package developed a subclass of numpy array wioth metadata - :py:class:`Stoner.Imnage.ImageArray`
-but for many purposes is is more useful to have a class thatr wraps the image data and provides additional attributes and methods
-in parallel to the image data rather than having name collisions with the numpy methods and attributes. For this reason, the
-preferred class to work with is :py:class:`Stoner.ImageFile` which is an analog of :py:class:`Stoner.Data`. Generally the code can be
+The original version of the :py:mod:`Stoner.Image` package provided a NumPy array subclass with metadata,
+:py:class:`Stoner.Image.core.ImageArray`. For many purposes it is more useful to have a class that wraps the image data and
+provides additional attributes and methods alongside it, avoiding name collisions with NumPy methods and attributes. For this reason, the
+preferred class is :py:class:`Stoner.Image.core.ImageFile`, which is an analogue of :py:class:`Stoner.core.data.Data`. Generally the code can be
 transferred directly so::
 
     from Stoner.Image import ImageArray
@@ -106,7 +106,7 @@ becomes::
 
     from Stoner import ImageFile
 
-Like :py:class:`Stoner.Image.ImageArray`, :py:class:`Stoner.ImageFile` can access key image processing functions from :py:mod:`skimage`,
+Like :py:class:`Stoner.Image.core.ImageArray`, :py:class:`Stoner.Image.core.ImageFile` can access key image-processing functions from :py:mod:`skimage`,
 :py:mod:`scipy.ndimage` and the :py:mod:`Stoner.Image.imagefuncs` modules.
 
 Deprecated Image functions
@@ -114,23 +114,23 @@ Deprecated Image functions
 
 The following ImageArray/ImageFile methods should be swapped:
 
--   .box() - use :py:meth:`Stoner.Image.ImageArray.crop` instead
--   .crop_image() - use :py:meth:`Stoner.Image.ImageArray.crop` instead
--   .convert_float() - use :py:meth:`Stoner.Image.ImageArray.asfloat` instead
--   .convert_int() - use :py:meth:`Stoner.Image.ImageArray.asint` instead
+-   ``.box()`` - use :py:meth:`Stoner.Image.core.ImageArray.crop` instead
+-   ``.crop_image()`` - use :py:meth:`Stoner.Image.core.ImageArray.crop` instead
+-   ``.convert_float()`` - use :py:meth:`Stoner.Image.core.ImageArray.asfloat` instead
+-   ``.convert_int()`` - use :py:meth:`Stoner.Image.core.ImageArray.asint` instead
 
 
 Stoner.DataFolder/Stoner.ImageFolder changes
 ============================================
 
-:py:class:`Stoner.DataFolder` and :py:class:`Stoner.ImageFolder` are essentially similar objects for managing collections
-of :py:class:`Stoner.Data` ad :py:class:`Stoner.ImageFile` respectively.
+:py:class:`~Stoner.folders.mixins.DataFolder` and :py:class:`~Stoner.Image.folders.ImageFolder` are essentially similar objects for managing collections
+of :py:class:`~Stoner.core.data.Data` and :py:class:`~Stoner.Image.core.ImageFile` respectively.
 
-Earlier versions of the Stoner package exposed the ability to call methods of the stored :py:class:`Stoner.Data`/
-:py:class:`Stoner.ImageFile` instances by calling a correspomnding method directly on the folder object. The problem with this
+Earlier versions of the Stoner package exposed the ability to call methods of the stored :py:class:`~Stoner.core.data.Data`/
+:py:class:`~Stoner.Image.core.ImageFile` instances by calling a corresponding method directly on the folder object. The problem with this
 is that if there is a name collision with a method intended to work directly on the Folder, it's not clear what method is being
 called. To remove this problem, and to make it a little more explicit when accessing a method of the stored instances, the
-:py:attr:`Stoner.DataFolder.each` attribute is now provided. Thus code like:
+:py:attr:`~Stoner.folders.core.BaseFolder.each` attribute is now provided. Thus code like::
 
     fldr=DataFolder(".", pattern="*.txt", setas="xy")
     fldr.curve_fit(Linear)
@@ -147,7 +147,7 @@ and build that into a new table. This used to be done something like::
     for data in fldr:
         result+=[data["thing_1"], data["thing_2"]]
 
-The new :py:attr:`Stoner.DataFolder.metadata` attribute and :py:meth:`Stoner.folders.metadata.MetadataProxy.slice` method
+The new :py:attr:`~Stoner.folders.core.BaseFolder.metadata` attribute and :py:meth:`Stoner.folders.metadata.MetadataProxy.slice` method
 allow this to be done directly::
 
     result=fldr.metadata.slice(["thing_1","thing_2"], output="Data")
