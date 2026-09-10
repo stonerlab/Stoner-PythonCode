@@ -1,6 +1,6 @@
 # Phase 2: package contents — 2026-09-10
 
-Status: **In progress**. Package discovery and source-manifest checks pass; CI-built distribution and clean-install validation remain outstanding.
+Status: **Complete**. GitHub Actions run 34519864056 passed wheel/sdist builds, archive checks and both clean-install probes for commit `7d84956c5ede5617697cc9a7ed454ff9328a42f5`.
 
 ## Changes
 
@@ -27,3 +27,8 @@ Setuptools also reports deprecations for the existing licence-table/classifier r
 `.github/workflows/check-packages.yaml` builds wheel and sdist on Python 3.14 without publishing them. `check-distribution-archives.py` inspects both archives for resources, licences, helper modules and unwanted caches. Each distribution is installed in its own new virtual environment; `check-installed-package.py` runs outside the checkout, rejects accidental source imports, and checks Data construction, a representative TDI loader, Matplotlib styles, OCR-resource readability and TIFF round-tripping.
 
 Python syntax and workflow YAML were checked locally. The probe's API/resource checks passed against the source checkout. These are preflight checks only: the workflow has not run, and clean installed-artifact results remain unverified until the maintenance branch is committed and pushed. No release/publishing workflow was triggered.
+## Completed CI validation
+
+[GitHub Actions run 34519864056](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34519864056) succeeded on 2026-09-10. Both `stoner-0.11.4.tar.gz` and `stoner-0.11.4-py3-none-any.whl` passed archive inspection. The installed probes loaded Stoner from separate virtual environments under `/home/runner/work/_temp/stoner-wheel/` and `/home/runner/work/_temp/stoner-sdist/`, confirming that neither was accidentally importing the checkout. All loader, style, OCR-resource and TIFF-roundtrip checks passed. This supersedes the earlier preflight limitations above. No package was published.
+
+The separate full pytest matrix remains in progress; this result covers Python 3.14/Linux distribution validation. See `ci-validation.json` for immutable source and run identifiers, and the locally retained `ci-package-validation.log` for detailed output.

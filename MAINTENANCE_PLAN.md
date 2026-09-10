@@ -29,7 +29,7 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 |---|---|---|---|
 | 0 | Reproducible baseline | Complete | maintenance/phase0: 333 passed serial and with two workers; identical 79% coverage; environment manifest and Sphinx warning baseline recorded |
 | 1 | Git and checkout hygiene | Complete | Approved Windows Git workflow; local fileMode=false/autocrlf=false; disposable clone clean and semantic diff unchanged |
-| 2 | Packaging and metadata | In progress | Resource discovery and fresh source manifest verified: 87 modules and 10 resources; bytecode/build output excluded; CI distribution and clean-install checks remain |
+| 2 | Packaging and metadata | Complete | GitHub run 34519864056: wheel/sdist builds, archive contents and separate clean-install probes passed on Python 3.14/Linux |
 | 3 | Repository content cleanup | In progress | Stale local distributions removed; generated plot cache retained intentionally |
 | 4 | CI and quality tooling | Not started | Green workflows and documented local equivalents |
 | 5 | Tests and compatibility | Not started | Stable suite across supported Python versions |
@@ -337,3 +337,10 @@ Corrected package-data ownership for all seven Matplotlib styles and three OCR r
 
 Phase 2 remains in progress: current wheel/sdist builds and clean-install checks require non-publishing GitHub Actions validation of the committed changes under the agreed distribution policy. Existing release workflows were not dispatched because they publish to PyPI/Conda. Do not begin phase 3 removals before these packaging checks are completed. Existing setuptools licence-syntax deprecations remain recorded; no licence change was made.
 Prepared `.github/workflows/check-packages.yaml` as a non-publishing phase 2 gate. It builds wheel/sdist, validates archive contents, and installs each into a separate new environment for loader, style, OCR-resource and image round-trip checks outside the source checkout. Workflow/Python syntax and the source-level probe passed locally. Remote execution awaits committing/pushing the accumulated maintenance changes; no CI or clean-installed-artifact success is claimed.
+### Phase 2 CI completion (2026-09-10)
+
+Committed the accumulated maintenance changes as `7d84956c5ede5617697cc9a7ed454ff9328a42f5` and pushed branch `codex/maintenance-baseline` with maintainer approval. [Package validation run 34519864056](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34519864056) completed successfully: built `stoner-0.11.4.tar.gz` and `stoner-0.11.4-py3-none-any.whl`, passed both archive-content checks, and passed both fresh installation probes outside the checkout on Python 3.14/Linux. No distribution was published. This supersedes the pending-CI boundary above and completes phase 2.
+
+The existing Python 3.11-3.14 pytest matrix is running separately in [run 34519863932](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34519863932); package-validation success does not imply that matrix has passed. Phase 3 can now begin with the tracked-file inventory and classification required by its task list, while preserving the intentional plot cache and scientific fixtures.
+
+The only pre-existing change excluded from the commit is the LF/CRLF-only difference in `Stoner/formats/utils/__init__.py`. SSH pushes on this machine required a per-command empty configuration because the user's existing SSH configuration requests unsupported `ssh-dss`; no global SSH configuration was changed.
