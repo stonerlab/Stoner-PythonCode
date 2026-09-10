@@ -5,11 +5,14 @@ Status: **In progress pending remote validation**.
 ## CI decisions
 
 - The Linux matrix is the hosted compatibility gate for Python 3.11–3.14.
-  Python 3.13 also runs on the supported Intel `macos-15-intel` runner.
-- The macOS matrix entry adds PyQt5 explicitly because the file-dialog tests
-  exercise the package's declared optional Qt implementation. Python 3.13 is
-  the latest interpreter with the PyQt5 Conda build on Intel macOS; the Linux
-  matrix supplies the Python 3.14 compatibility check.
+  Python 3.14 also runs on the supported Intel `macos-15-intel` runner.
+- The macOS matrix entry adds PyQt6 explicitly because the file-dialog tests
+  exercise the supported Qt implementation. The environment also requires
+  conda-forge's current `libmagic >=5.48`: an unconstrained mixed-channel solve
+  paired conda-forge `filemagic 1.6` with `libmagic 5.36` from `defaults`, whose
+  magic database produced invalid character-range errors after Qt changed the
+  process locale. Keeping the wrapper and native library on the current
+  conda-forge stack preserves Python 3.14 macOS coverage.
 - Windows is the primary development and local-test platform, so hosted CI is
   used to exercise the non-development platforms: Linux and macOS. Phase 0
   passed all 333 tests both serially and with two xdist workers on Windows 11

@@ -35,7 +35,7 @@ def main() -> None:
     for runner in ("ubuntu-latest", "macos-15-intel"):
         require(runner in tests, f"{runner} is missing from the test matrix.")
     require("windows-latest" not in tests, "The unreliable hosted Windows lane has been restored.")
-    require("micromamba-extra-args: pyqt" in tests, "The macOS widget-test dependency is missing.")
+    require("micromamba-extra-args: pyqt6" in tests, "The macOS widget-test dependency is missing.")
     require("pull_request:" in tests and "workflow_dispatch:" in tests, "The test workflow lacks required triggers.")
     require("contents: read" in tests, "The test workflow must default to read-only contents permission.")
     require("pull-requests: write" not in tests, "The test workflow has unnecessary pull-request write access.")
@@ -56,6 +56,7 @@ def main() -> None:
 
     test_environment = (ROOT / "tests" / "test-env.yml").read_text(encoding="utf-8").lower()
     require("pytesseract" in test_environment and "tesseract" in test_environment, "OCR test tools are incomplete.")
+    require("conda-forge::libmagic >=5.48" in test_environment, "The current conda-forge libmagic is not pinned.")
 
     print(f"Phase 4 CI policy passed ({sum(len(ANY_ACTION.findall(text)) for text in workflows.values())} pinned actions).")
 

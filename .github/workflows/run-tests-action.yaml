@@ -23,9 +23,9 @@ jobs:
         python-version: [ "3.11", "3.12","3.13", "3.14"]
         os: ["ubuntu-latest"]
         include:
-          - python-version: "3.13"
+          - python-version: "3.14"
             os: macos-15-intel
-            micromamba-extra-args: pyqt
+            micromamba-extra-args: pyqt6
     steps:
       - name: Check out repository code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1

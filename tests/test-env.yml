@@ -36,6 +36,7 @@ dependencies:
   - cycler >=0.10.0
   - fabio
   - filemagic >=1.6
+  - conda-forge::libmagic >=5.48
   - image-registration >=0.2.1
   - imreg_dft >=2.0
   - matplotlib-scalebar
