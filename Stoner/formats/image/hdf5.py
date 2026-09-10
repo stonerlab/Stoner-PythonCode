@@ -19,7 +19,7 @@ from ..decorators import register_loader
 def load_stxm_image(new_data, *args, **kwargs):
     """Initialise and load a STXM image produced by Pollux.
 
-    Keyword Args:
+    Keyword Arguments:
         regrid (bool):
             If set True, the gridimage() method is automatically called to re-grid the image to known coordinates.
     """

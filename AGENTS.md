@@ -85,6 +85,12 @@ Documentation is built with Sphinx from `doc`. Examples under `doc/samples` are 
 
 Read the Docs sets `READTHEDOCS=True`; that build must consume the retained files in `doc/plot_cache` rather than execute the plotting examples. Documentation builds without that environment flag deliberately execute the examples and refresh the cache.
 
+## Docstring standard
+
+Follow [DOCSTRING_STYLE.md](DOCSTRING_STYLE.md) when writing or revising docstrings. It defines the expected Google-style
+sections, Sphinx markup, argument and return descriptions, and scientific behaviour documentation. Use British English
+spellings for prose while preserving the exact spelling of API identifiers, keyword arguments and literal values.
+
 ## Maintenance plan
 
 `MAINTENANCE_PLAN.md` is the working source of truth for repository maintenance and cleanup. Follow its phase ordering, update its status/evidence as work is completed, and do not perform later cleanup phases before the baseline and required decisions are established.

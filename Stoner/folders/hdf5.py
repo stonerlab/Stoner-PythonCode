@@ -30,7 +30,7 @@ class HDF5Folder(DataFolder):
     def __getter__(self, name, instantiate=True):
         """Load the specified name from a file on disk.
 
-        Parameters:
+        Args:
             name (key type):
                 The canonical mapping key to get the dataObject. By default
                 the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
@@ -172,7 +172,7 @@ class HDF5Folder(DataFolder):
             root (string):
                 The name of the HDF5 file to save to if set to None, will prompt for a filename.
 
-        Return:
+        Returns:
             A list of group paths in the HDF5 file
         """
         closeme = False

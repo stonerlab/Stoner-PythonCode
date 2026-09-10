@@ -36,7 +36,7 @@ def _get_shape(x):
 def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -> bool:
     """Check whether each element of *iterator* is the same length/shape.
 
-    Arguments:
+    Args:
         iterator (Iterable): list or other iterable of things with a length or shape
 
     Keyword Arguments:
@@ -64,7 +64,7 @@ def all_size(iterator: IterableType, size: Optional[Union[int, Tuple]] = None) -
 def all_type(iterator: IterableType, typ: type) -> bool:
     """Determine if an iterable only contains a common type.
 
-    Arguments:
+    Args:
         iterator (Iterable):
             The object to check if it is all iterable
         typ (class):
@@ -203,7 +203,7 @@ def istuple(obj: Any, *args: type, strict: bool = True) -> bool:
         *args(type):
             Each of the succeeding arguments are used to determine the expected type of each element.
 
-    Keywoprd Arguments:
+    Keyword Arguments:
         strict(bool):
             Whether the elements of the tuple have to be exactly the type specified or just castable as the type
 

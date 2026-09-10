@@ -39,7 +39,7 @@ def apply(
             Other keyword arguments.
 
 
-    Note:
+    Notes:
         If any extra keyword arguments are supplied then these are passed to the function directly. If
         you need to pass any arguments that overlap with the keyword arguments to :py:meth:`AnalysisMixin.apply`
         then these can be supplied in a dictionary argument *_extra*.
@@ -112,7 +112,7 @@ def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], colu
         (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
-    Note:
+    Notes:
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
     """
@@ -252,7 +252,7 @@ def integrate(
         (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
 
-    Note:
+    Notes:
         This is a pass through to the :py:func:`scipy.integrate.cumulative_simpson` or
         :py:func:`scipy.integrate.cumulative_trapezoid` function depending on the value of *method* and whether the
         x-data is monotonically increasing. If it isnot and *simpson* has been requested, a warning is issued and it
@@ -570,11 +570,11 @@ def threshold(
         (float):
             Either a sing;le fractional row index, or an in terpolated x value
 
-    Note:
+    Notes:
         If you don't specify a col value or set it to None, then the assigned columns via the
         :py:attr:`DataFile.setas` attribute will be used.
 
-    Warning:
+    Notes:
         There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the
         positional argument list. In order to support the use of assigned columns, this has been swapped to the
         present order.

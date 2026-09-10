@@ -68,7 +68,7 @@ def langevin(H, M_s, m, T):
     Returns:
         Magnetic Momemnts (array).
 
-    Note:
+    Notes:
         The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
 
     Example:
@@ -287,7 +287,7 @@ class BlochLawThin(Model):
     def blochs_law_thinfilm(self, T, D, Bz, S, v_ws, a, nz):
         r"""Thin film version of Blopch's Law.
 
-        Parameters:
+        Args:
             T (array):
                 Temperature (K)
             D (float):
@@ -342,7 +342,7 @@ class Langevin(Model):
     Returns:
         Magnetic Momemnts (array).
 
-    Note:
+    Notes:
         The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
 
     Example:

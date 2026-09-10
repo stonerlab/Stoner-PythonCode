@@ -59,7 +59,7 @@ class DataFileInterfacesMixin:
             -   Otherwise itis assumed that it is a particular element within a column determined by the second
                 part of the tuple that is required.
 
-        Examples:
+        Example:
             DataFile['Temp',5] would return the 6th element of the
             list of elements in the metadata called 'Temp', while
 

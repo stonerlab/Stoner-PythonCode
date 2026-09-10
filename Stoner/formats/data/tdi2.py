@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""File loader routine for the TDI Format 2.0 files being developed as part of te stoner_measurement POython
-based measurement code.
+"""Load TDI Format 2.0 measurement files.
 
-TDI Format 2.0 is very similar to the earlier version except dictionaries and lists in the metadata are
-flattened before being placed in the first solumn as key0-valkue opairs and the type hints are Python
-types rather than LabVIEDW Type Descriptors.
+TDI Format 2.0 is being developed for the ``stoner_measurement`` Python
+measurement software. It differs from the earlier format because metadata
+dictionaries and lists are flattened into key-value pairs in the first column,
+and it uses Python type names rather than LabVIEW type descriptors.
 """
 
 import re
@@ -83,7 +83,7 @@ def _flatten_to_metadata(obj: Any, prefix: str = "") -> list[str]:
             plugin's :meth:`~stoner_measurement.plugins.base_plugin.BasePlugin.to_json`
             method, or a scalar produced by evaluating a ``_values`` expression.
 
-    Keyword Parameters:
+    Keyword Arguments:
         prefix (str):
             Dot-separated key path accumulated by recursive calls.  Pass an
             empty string (the default) to start from the root.
@@ -93,7 +93,7 @@ def _flatten_to_metadata(obj: Any, prefix: str = "") -> list[str]:
             Ordered list of ``"{key}{typename}={repr(value)}"`` strings, one
             per leaf value in *obj*.
 
-    Examples:
+    Example:
         >>> _flatten_to_metadata({"a": {"b": 1}, "c": [{"A": 2.0}, {"B": 4}]})
         ['a.b{int}=1', 'c[0].A{float}=2.0', 'c[1].B{int}=4']
         >>> _flatten_to_metadata(42, "x")
@@ -221,11 +221,11 @@ def load_tdi2_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         DataFile:
             A copy of the newly loaded :py:class`DataFile` object.
 
-    Exceptions:
+    Raises:
         StonerLoadError:
             Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
 
-    Note:
+    Notes:
         The *_load* methods should be overridden in each child class to handle the process of loading data from
         disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
         the loading class can try a different sub-class instead.

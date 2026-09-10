@@ -26,7 +26,7 @@ def flatten_json(data, parent_key=""):
     side effects. Each recursive call returns a new dictionary, and the caller
     merges results.
 
-    Examples:
+    Example:
         >>> flatten_json({"a": {"b": 1}, "c": [10, 20]})
         {'a.b': 1, 'c[0]': 10, 'c[1]': 20}
 
@@ -75,7 +75,7 @@ def find_paths(data, target_key, target_value, path=None):
     components, where dictionary keys are plain strings and list indices
     are represented as bracketed strings (e.g., "[0]").
 
-    Examples:
+    Example:
         >>> data = {"A": {"B": {"HasData": True}}}
         >>> list(find_paths(data, "HasData", True))
         [['A', 'B', 'HasData']]
@@ -122,7 +122,7 @@ def find_parent_dicts(data, target_key, target_value):
     dictionary object itself, allowing callers to inspect sibling keys or
     modify the parent structure.
 
-    Examples:
+    Example:
         >>> data = {"A": {"B": {"HasData": True, "Other": 5}}}
         >>> list(find_parent_dicts(data, "HasData", True))
         [{'HasData': True, 'Other': 5}]

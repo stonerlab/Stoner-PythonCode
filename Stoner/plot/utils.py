@@ -229,11 +229,11 @@ def hsl2rgb(hue, sat, lum, alpha=False):
 def joy_division(x, y, z, **kwargs):
     """Produce a classic black and white water fall plot.
 
-    Parameters:
+    Args:
         x,y,z (1D arrays):
             x y and z coordinates. data should be arranged so that z(x,y=constant)
 
-    Keyword Parameters:
+    Keyword Arguments:
         ax (matplotlib.Axes):
             Axes to use (defaults to current axes)
         y_shift (float):
@@ -303,7 +303,7 @@ def joy_division(x, y, z, **kwargs):
 def auto_fit_fontsize(text, width, height, scale_down=True, scale_up=False):
     """Resale the font size of a matplotlib text object to fit within a box.
 
-    Arguments:
+    Args:
         text (matplotlib.text.Text):
             Text object to be scaled in Figure units.
         width,height (float):

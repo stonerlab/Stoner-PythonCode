@@ -20,7 +20,7 @@ class DataFileOperatorsMixin:
             other (NumPy array, :py:class:`Stoner.core.data.Data`, dictionary or list):
                 The object to be added to the DataFile
 
-        Note:
+        Notes:
             -   if other is a dictionary then the keys of the dictionary are passed to
                 :py:meth:`find_col` to see if they match a column, in which case the
                 corresponding value will be used for theat column in the new row.
@@ -46,7 +46,7 @@ class DataFileOperatorsMixin:
             other (NumPy array, :py:class:`Stoner.core.data.Data`, dictionary or list):
                 The object to be added to the DataFile
 
-        Note:
+        Notes:
             -   if other is a dictionary then the keys of the dictionary are passed to
                 :py:meth:`find_col` to see if they match a column, in which case the
                 corresponding value will be used for theat column in the new row.
@@ -76,7 +76,7 @@ class DataFileOperatorsMixin:
             ():py:class:`DataFile`):
                 new Data object with the columns of other concatenated as new columns at the end of the self object.
 
-        Note:
+        Notes:
             Whether other is a numopy array of :py:class:`DataFile`, it must
             have the same or fewer rows than the self object.
             The size of @a other is increased with zeros for the extra rows.
@@ -100,7 +100,7 @@ class DataFileOperatorsMixin:
             ():py:class:`DataFile`):
                 new Data object with the columns of other concatenated as new columns at the end of the self object.
 
-        Note:
+        Notes:
             Whether other is a numopy array of :py:class:`DataFile`, it must
             have the same or fewer rows than the self object.
             The size of @a other is increased with zeros for the extra rows.
@@ -178,7 +178,7 @@ class DataFileOperatorsMixin:
             Other (column index):
                 column(s) to delete.
 
-        Return:
+        Returns:
             (self):
                 A copy of self with a column deleted.
         """
@@ -192,7 +192,7 @@ class DataFileOperatorsMixin:
             Other (column index):
                 column(s) to delete.
 
-        Return:
+        Returns:
             (self):
                 A copy of self with a column deleted.
         """

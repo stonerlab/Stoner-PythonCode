@@ -120,7 +120,7 @@ class MaximusStack(ImageStack):
     def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
 

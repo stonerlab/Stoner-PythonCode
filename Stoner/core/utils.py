@@ -135,7 +135,7 @@ def assemnle_data(datafile, **kwargs):
         bounds (callable):
             Used to select the data rows to fit
 
-    Keyword Args:
+    Keyword Arguments:
         sigma_x (index or array-like):
             column of x-errors or uncertainty values.
         kwargs:

@@ -328,7 +328,7 @@ def search(datafile, xcol=None, value=None, columns=None, accuracy=0.0):
     Returns:
         ndarray: numpy array of matching rows or column values depending on the arguments.
 
-    Note:
+    Notes:
         The value is interpreted as follows:
 
         - a float looks for an exact match
@@ -444,7 +444,7 @@ def select(datafile, *args, **kwargs):
     Returns:
         (DatFile): a copy the DataFile instance that contains just the matching rows.
 
-    Note:
+    Notes:
         if the operator is preceded by *__not__* then the sense of the test is negated.
 
         If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
@@ -580,7 +580,7 @@ def split(datafile, *args, final="files"):
             A :py:class:`Stoner.folders.mixins.DataFolder` object containing the individual
             :py:class:`~Stoner.core.data.Data` objects
 
-    Note:
+    Notes:
         Creates a DataFolder of  DataFiles where each one contains the rows from the original object which
         had the same value of a given column(s) or function.
 
@@ -751,7 +751,7 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         datafile:
             The :py:class:`DataFile` instance with the additional column inserted.
 
-    Note:
+    Notes:
         Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
         the original DataFile Instance as well as returning it.
     """
@@ -876,7 +876,7 @@ def columns(datafile, not_masked=False, reset=False):
         datafile (Data):
             Data object to work with if not being used as a bound method.
 
-    Keyword Args:
+    Keyword Arguments:
         not_masked (bool):
             Only iterate over columns that don't have masked elements
         reset (bool):
@@ -910,7 +910,7 @@ def del_column(datafile, col=None, duplicates=False):
         datafile:
             The :py:class:`DataFile` object with the column deleted.
 
-    Note:
+    Notes:
         - If duplicates is True and col is None then all duplicate columns are removed,
         - if col is not None and duplicates is True then all duplicates of the specified column are removed.
         - If duplicates is False and *col* is either None or False then all masked coplumns are deleeted. If
@@ -995,7 +995,7 @@ def del_rows(datafile, col=None, val=None, invert=False):
         datafile:
             The current :py:class:`DataFile` object
 
-    Note:
+    Notes:
         If col is None, then all rows with masked data are deleted
 
         if *col* is callable then it is passed each row as a :py:class:`DataArray` and if it returns
@@ -1097,7 +1097,7 @@ def get_filename(datafile, mode):
         str:
             The new filename
 
-    Note:
+    Notes:
         The filename attribute of the current instance is updated by this method as well.
     """
     datafile.filename = file_dialog(mode, datafile.filename, datafile.get("Loaded as", "DataFile"))
@@ -1230,7 +1230,7 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
         datafile:
             A copy of the modified :py:class:`DataFile` objects
 
-    Note:
+    Notes:
         If swp is a list, then the function is called recursively on each
         element of the list. Thus in principle the @swp could contain
         lists of lists of tuples

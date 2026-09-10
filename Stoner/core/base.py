@@ -369,7 +369,7 @@ class TypeHintedDict(RegexpDict):
         Returns:
             A type hint string
 
-        Note:
+        Notes:
             Understands booleans, strings, integers, floats and np
             arrays(as arrays), and dictionaries (as clusters).
         """
@@ -490,13 +490,13 @@ class TypeHintedDict(RegexpDict):
     def __setitem__(self, name: Union[str, RegExp], value: Any) -> None:
         """Set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
 
-        Arguments:
+        Args:
             name (string):
                 The metadata keyname
             value (any):
                 The value to store in the metadata string
 
-        Note:
+        Notes:
             If you provide an embedded type string it is your responsibility
             to make sure that it correctly describes the actual data
             typehintDict does not verify that your data and type string are

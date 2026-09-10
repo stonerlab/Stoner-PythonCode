@@ -312,7 +312,7 @@ def round_sig(x, sig=3):
 def tex_escape(text: str) -> str:
     """Escapes spacecial text characters in a string.
 
-    Parameters:
+    Args:
         text (str):
             a plain text message
 
@@ -347,7 +347,7 @@ def ordinal(value: int) -> str:
         value (int):
             Number to be written as an ordinal string
 
-    Return:
+    Returns:
         (str):
             Ordinal String such as '1st','2nd' etc.
     """

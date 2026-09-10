@@ -178,7 +178,7 @@ class KerrStackMixin:
     def hysteresis(self: Self, mask=None) -> Data:
         """Make a hysteresis loop of the average intensity in the given images.
 
-        Keyword Argument:
+        Keyword Arguments:
             mask(ndarray or list):
                 boolean array of same size as an image or imarray or list of
                 masks for each image. If True then don't include that area in
@@ -214,7 +214,7 @@ class KerrStackMixin:
     ) -> "MaskStack":
         """Apply denoise then threshold images.
 
-        Return:
+        Returns:
             (ndarray) MaskStack:
                 True for values greater than thresh, False otherwise
                 else return True for values between thresh and 1

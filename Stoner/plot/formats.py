@@ -454,7 +454,7 @@ class DefaultPlotStyle(MutableMapping):
     def new_figure(self, figure=False, projection="rectilinear", figsize=None, no_axes=False, ax=None, **kwargs):
         """Create a new figure.
 
-        Keyword Args:
+        Keyword Arguments:
             projection (str):
                 Projection to use - default is rectilinear
             figsize (2-tuple, None):
@@ -547,7 +547,7 @@ class DefaultPlotStyle(MutableMapping):
             ax (matplotlib axes):
                 The axes to be modified by this function.
 
-        Note:
+        Notes:
             In the DefaultPlotStyle class this method is used to set SI units
             plotting mode for all axes.
         """

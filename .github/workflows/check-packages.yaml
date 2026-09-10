@@ -18,7 +18,7 @@ jobs:
           python-version: '3.14'
       - name: Build wheel and source archive
         run: |
-          python -m pip install build
+          python -m pip install build==1.2.2
           python -m build
       - name: Check archive contents
         run: python maintenance/check-distribution-archives.py dist

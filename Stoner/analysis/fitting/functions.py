@@ -472,7 +472,7 @@ def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode=
         model (callable or lmfit_mod.Model):
             The function/model used to describe the fit to be annotated.
 
-    Keyword Parameters:
+    Keyword Arguments:
         x (float):
             x coordinate of the label
         y (float):
@@ -633,7 +633,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
                 * "data"   a copy of the :py:class:`Stoner.core.data.Data` object with the fit recorded in the
                             metadata and optionally as a new column.
 
-    Note:
+    Notes:
         If the columns are not specified (or set to None) then the X and Y data are taken using the
         :py:attr:`Stoner.core.data.Data.setas` attribute.
 
@@ -1046,7 +1046,7 @@ def polyfit(
         (numpy.poly):
             The best fit polynomial as a numpy.poly object.
 
-    Note:
+    Notes:
         If the x or y columns are not specified (or are None) the the setas attribute is used instead.
 
         This method is deprecated and may be removed in a future version in favour of the more general

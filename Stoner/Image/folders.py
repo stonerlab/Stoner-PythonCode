@@ -115,7 +115,7 @@ class ImageFolderMixin:
     def __getter__(self, name, instantiate=True):
         """Ensure we set the title on the image.
 
-        Parameters:
+        Args:
            name (key type):
                The canonical mapping key to get the dataObject. By default
                the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
@@ -131,7 +131,7 @@ class ImageFolderMixin:
             (metadataObject):
                 The metadataObject
 
-        Note:
+        Notes:
             Mainly we call the parent method and then set the title if it's not already set.'
         """
         ret = super().__getter__(name, instantiate)
@@ -205,7 +205,7 @@ class ImageFolderMixin:
             quiet(bool):
                 if False print '.' for every iteration
 
-        Note:
+        Notes:
             Further args, kwargs are passed through to the function
         """
         warn("apply_all is deprecated and will be removed in a future version. Use ImageFolder.each() instead")
@@ -442,7 +442,7 @@ class ImageFolderMixin:
             filename (str):
                 Filename to save file as.
 
-        Note:
+        Notes:
             PIL can save in modes "L" (8bit unsigned int), "I" (32bit signed int),
             or "F" (32bit signed float). In general max info is preserved for "F"
             type so if forcetype is not specified then this is the default. For

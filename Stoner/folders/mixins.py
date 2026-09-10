@@ -227,7 +227,7 @@ class DiskBasedFolderMixin:
     def __getter__(self, name, instantiate=True):
         """Load the specified name from a file on disk.
 
-        Parameters:
+        Args:
             name (key type):
                 The canonical mapping key to get the dataObject. By default
                 the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.

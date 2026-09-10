@@ -389,7 +389,7 @@ class ShapeSelect:
     def draw(self, event=None):
         """Handle the drawing of the selection shape.
 
-        Keyword Args:
+        Keyword Arguments:
             event (matplotlib event):
                 The matplotlib event object
 

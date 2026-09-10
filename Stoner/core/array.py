@@ -417,7 +417,7 @@ class DataArray(ma.MaskedArray):
             This tries to support all of the indexing operations of a regular numpy array,
             plus the special operations where one columns are named.
 
-        Warning:
+        Notes:
             The code almost certainly makes some assumptiuons that DataArray is one or 2D and
             may blow up with 3D arrays ! On the other hand it has a special case exception for where
             you give a string as the first index element and assumes that you've forgotten that we're
@@ -601,7 +601,7 @@ class DataArray(ma.MaskedArray):
             self:
                 A copy of the modified :py:class:`DataFile` objects
 
-        Note:
+        Notes:
             If swp is a list, then the function is called recursively on each
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples

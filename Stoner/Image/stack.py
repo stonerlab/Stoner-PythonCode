@@ -74,13 +74,13 @@ class ImageStackMixin:
     def __lookup__(self, name):
         """Stub for other classes to implement.
 
-        Parameters:
+        Args:
             name(str): Name of an object
 
         Returns:
             A key in whatever form the :py:meth:`BaseFolder.__getter__` will accept.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if isinstance(name, int_types):
@@ -96,7 +96,7 @@ class ImageStackMixin:
     def __names__(self):
         """Stub method to return a list of names of all objects that can be indexed for __getter__.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         return list(self._metadata.keys())
@@ -104,7 +104,7 @@ class ImageStackMixin:
     def __getter__(self, name, instantiate=True):
         """Stub method to do whatever is needed to transform a key to a metadataObject.
 
-        Parameters:
+        Args:
             name (key type): The canonical mapping key to get the dataObject. By default
                 the BaseFolder class uses a :py:class:`RegexpDict` to store objects in.
 
@@ -117,7 +117,7 @@ class ImageStackMixin:
         Returns:
             (metadataObject): The metadataObject
 
-            Note:
+            Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
 
@@ -136,13 +136,13 @@ class ImageStackMixin:
     def __setter__(self, name, value, force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
-        Parameters:
+        Args:
             name (string):
                 the named object to write - may be an existing or new name
             value (metadataObject):
                 the value to store.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if isinstance(name, int_types):
@@ -221,10 +221,10 @@ class ImageStackMixin:
     def __deleter__(self, ix):
         """Delete an object from the BaseFolder.
 
-        Parameters:
+        Args:
             ix(str): Index to delete, should be within +- the lengthe length of the folder.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
         """
@@ -238,7 +238,7 @@ class ImageStackMixin:
     def __clear__(self):
         """Clear all stored :py:class:`Stoner.core.base.metadataObject` instances.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
         """
@@ -353,7 +353,7 @@ class ImageStackMixin:
         unsigned to signed integer types. Negative values will be clipped when
         converting to unsigned integers.
 
-        Parameters:
+        Args:
             image (ndarray):
                     Input image.
             dtype (dtype)
@@ -490,7 +490,7 @@ class StackAnalysisMixin:
     def subtract(self, background):
         """Subtract a background image (or index) from all images in the stack.
 
-        Arguments:
+        Args:
             background (int, str or 2D array):
                 Background image to index
 

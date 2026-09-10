@@ -67,7 +67,7 @@ def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs):
         w_comp (array):
             w data vector field component
 
-    Return:
+    Returns:
         matpltolib.pyplot.figure with a quiver plot.
     """
     if not _3D:

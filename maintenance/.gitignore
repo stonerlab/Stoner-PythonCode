@@ -8,3 +8,5 @@ phase0/*.patch
 phase0/*-path.txt
 phase1/*.patch
 phase2/*.log
+phase3-*/
+phase4-*/

@@ -257,7 +257,7 @@ def max(  # pylint: disable=redefined-builtin
         (float,int):
             (maximum value,row index of max value)
 
-    Note:
+    Notes:
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
     """
@@ -299,7 +299,7 @@ def mean(
         (float):
             The mean of the data.
 
-    Note:
+    Notes:
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
 
@@ -351,7 +351,7 @@ def min(  # pylint: disable=redefined-builtin
         (float,int):
             (minimum value,row index of min value)
 
-    Note:
+    Notes:
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
     """
@@ -437,7 +437,7 @@ def span(datafile: Data, column: Optional[Index] = None, bounds: Optional[Callab
         (float,float):
             col_a tuple of (min value, max value)
 
-    Note:
+    Notes:
         This works by calling into :py:meth:`Data.max` and :py:meth:`Data.min`.
 
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -472,7 +472,7 @@ def std(
         (float):
             The standard deviation of the data.
 
-    Note:
+    Notes:
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
 

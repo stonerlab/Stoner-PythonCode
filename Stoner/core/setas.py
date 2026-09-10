@@ -19,7 +19,7 @@ class Setas(MutableMapping):
 
     Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).
 
-    Note:
+    Notes:
         Iterating over setas will return the column assignments rather than the standard mapping behaviour of
         iterating over the keys. Otherwise
         the interface is essentially as a Mapping class.
@@ -133,7 +133,7 @@ class Setas(MutableMapping):
             owner (type): The class that owns this descriptor.
             name (str): The attribute name under which this descriptor is stored.
 
-        Note:
+        Notes:
             ``public_name`` is stored for introspection and debugging; the
             actual dispatch logic uses ``private_name`` (and ``_source`` when
             set).
@@ -773,7 +773,7 @@ class Setas(MutableMapping):
     def unset(self, what=None):
         """Remove column settings from the setas attribute in  method call.
 
-        Parameters:
+        Args:
             what (str,iterable,dict or None): What to unset.
 
         Notes:

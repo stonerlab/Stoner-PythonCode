@@ -145,7 +145,7 @@ class Item:
                 Either a callable object, or the name of a callable object (either method or global) that must take
                 a metadataObject type instance as it's first argument.
 
-        Keyword Args:
+        Keyword Arguments:
             _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder
 
         Returns:
@@ -300,7 +300,7 @@ class Item:
             Keyword Arguments:
                 _return (index types or None): specify to store the return value in the individual object's metadata
 
-            Note:
+            Notes:
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
@@ -326,7 +326,7 @@ class Item:
             Keyword Arguments:
                 _return (index types or None): specify to store the return value in the individual object's metadata
 
-            Note:
+            Notes:
                 This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item
             """
@@ -342,7 +342,7 @@ class Item:
         Args:
             func (callable): A Callable object that must take a metadataObject type instance as it's first argument.
 
-        Keyword Args:
+        Keyword Arguments:
             _return (None, bool or str): Controls how the return value from *func* is added to the DataFolder
 
         Returns:

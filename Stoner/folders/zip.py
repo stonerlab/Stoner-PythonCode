@@ -189,7 +189,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
     def __getter__(self, name, instantiate=True):
         """Load the specified name from a compressed archive.
 
-        Parameters:
+        Args:
             name (key type):
                 The canonical mapping key to construct the path from.
 
@@ -223,14 +223,14 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
     def __lookup__(self, name):
         """Look for a given name in the ZipFolder namelist.
 
-        Parameters:
+        Args:
             name(str):
                 Name of an object
 
         Returns:
             A canonical key name for that file
 
-        Note:
+        Notes:
             We try two things - first a direct lookup in the namelist if there is an exact match to the key and then
             we prepend the ZipFolder's path to try for a match with just the final part of the filename.
         """
@@ -259,7 +259,7 @@ class ZipFolder(DiskBasedFolderMixin, BaseFolder):
             root (string):
                 The name of the Zip file to save to if set to None, will prompt for a filename.
 
-        Return:
+        Returns:
             A list of group paths in the Zip file
         """
         if root is None:

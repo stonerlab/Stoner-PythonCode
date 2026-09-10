@@ -246,7 +246,7 @@ class ImageArray(np.ma.MaskedArray, metadataObject):
     instance, it will clone it first then return the clone after performing the
     function on it.
 
-    Note:
+    Notes:
          For arrays the indexing is (row, column). However the normal way to index
          an image would be to do (horizontal, vert), which is the opposite.
          In ImageArray the coordinate system is chosen similar to skimage. y points
@@ -1164,7 +1164,7 @@ class ImageFile(metadataObject):
                 A :py:class:`Stoner.core.data.Data` instance that defines x, y, z coordinates or has columns specified
                 in keywords.
 
-        Keyword Args:
+        Keyword Arguments:
             xcol (column index):
                 Column in the DataFile that has the x-co-ordinate
             ycol (column index):
@@ -1234,7 +1234,7 @@ class ImageFile(metadataObject):
             str:
                 The new filename
 
-        Note:
+        Notes:
             The filename attribute of the current instance is updated by this method as well.
         """
         self.filename = file_dialog(mode, self.filename, type(self))
@@ -1261,7 +1261,7 @@ class ImageFile(metadataObject):
             (ImageFile):
                 A a new :py:data:`ImageFile` (or subclass thereof) instance
 
-        Note:
+        Notes:
             If *filetupe* is a string, then it is first tried as an exact match to a subclass name, otherwise it
             is used as a partial match and the first class in priority order is that matches is used.
 
@@ -1319,7 +1319,7 @@ class ImageFile(metadataObject):
                 Filename to save data as, if this is None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
 
-        Keyword Args:
+        Keyword Arguments:
             fmt (string or list):
                 format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
                 filename.

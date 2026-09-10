@@ -131,7 +131,7 @@ def del_nan(datafile, col=None, clone=False):
         clone (boolean):
             if True clone the current object before running and then return the clone not datafile.
 
-    Return:
+    Returns:
         datafile (DataFile):
             Returns a copy of the current object (or clone if *clone*=True)
     """
@@ -295,7 +295,7 @@ def bin(
             tuple of (bin centres, bin values, bin errors, number points/bin),
             depending on the *clone* parameter.
 
-    Note:
+    Notes:
         Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
         Michael Lindholm Nielsen
 
@@ -440,7 +440,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
         (array):
             Extrapolated values.
 
-    Note:
+    Notes:
         If the new_x values lie outside the span of the x-data, then the nearest *overlap* portion of the data
         is used to estimate the values. If the new_x values are within the span of the x-data then the portion
         of the data centred about the point and overlap points long will be used to interpolate a value.
@@ -550,7 +550,7 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
             Section of the current object's data if replace is False(default) or the modofied Stoner.Data if
             replace is true.
 
-    Note:
+    Notes:
         Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is
         interpreted as (fractional) row indices. Otherwise, the column specified in xcol is thresholded with the
         values given in newX and the resultant row indices used to return the data.

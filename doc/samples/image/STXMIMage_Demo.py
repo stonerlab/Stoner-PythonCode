@@ -1,4 +1,4 @@
-"""Demonstrate STXM Image Processing - G.Burnell Nov. 2017"""
+"""Demonstrate STXM image processing."""
 
 # pylint: disable=invalid-name,no-member
 from os.path import dirname, join

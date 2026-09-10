@@ -137,7 +137,7 @@ def adjust_contrast(im, lims=(0.1, 0.9), percent=True):
         im (ImageArray, ImageFile):
             Image data to be worked with.
 
-    Keyword Args:
+    Keyword Arguments:
         lims (2-tuple):
             limits of rescaling the intensity
         percent (bool):
@@ -220,7 +220,7 @@ def align(im, ref, method="scharr", **kwargs):
         ref (ndarray):
             reference array
 
-    Keyword Args:
+    Keyword Arguments:
         method (str or None):
             If given specifies which module to try and use.
             Options: 'scharr', 'chi2_shift', 'imreg_dft', 'cv2'
@@ -325,7 +325,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
         dtype (dtype):
             Target data-type.
 
-    Keyword Args:
+    Keyword Arguments:
         force_copy (bool):
             Force a copy of the data, irrespective of its current dtype.
         uniform (bool):
@@ -524,7 +524,7 @@ def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None, window=None
         im (ImargeArray,ImageFile):
             Image data to be worked with.
 
-    Keyword Args:
+    Keyword Arguments:
         shift (bool):
             Shift the fft so that zero order is in the centre of the image. Default True
         phase (bool, None):
@@ -539,7 +539,7 @@ def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None, window=None
             If not None (default) the image is multiplied by the given window function before the fft is calculated.
             This avpoids leaking some signal into the higher frequency bands due to discontinuities at the image edges.
 
-    Return:
+    Returns:
         fft of the image, preserving metadata.
     """
     if window:
@@ -883,11 +883,11 @@ def clip_neg(im):
 def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant", cval=0.0, constrain=True, **kwargs):
     """Wrap sckit-image method of the same name to get a line_profile.
 
-    Parameters:
+    Args:
         img(ImageArray):
             Image data to take line section of
 
-    Keyword Parameters:
+    Keyword Arguments:
         src, dst (2-tuple of int or float):
             start and end of line profile. If the coordinates
             are given as integers then they are assumed to be pxiel coordinates, floats are
@@ -1011,7 +1011,7 @@ def radial_coordinates(im, centre=(None, None), pixel_size=(1, 1), angle=False):
 def radial_profile(im, angle=None, r=None, centre=(None, None), pixel_size=(1, 1)):
     """Extract a radial  profile line from an image.
 
-    Keyword Parameters:
+    Keyword Arguments:
         angle (float, tuple, None):
             Select the radial angle to include:
                 - float selects a single angle
@@ -1113,7 +1113,7 @@ def quantize(im, output, levels=None):
 def remove_outliers(im, percentiles=(0.01, 0.99), replace=None):
     """Find values of the data that are beyond a percentile of the overall distribution and replace them.
 
-    Keyword Parameters:
+    Keyword Arguments:
         percentile (2 tuple):
             Fraction percentiles to consider to be outliers (default is (0.01,0.99) for 1% limits)
         replace (2 tuple or None):
@@ -1137,20 +1137,20 @@ def remove_outliers(im, percentiles=(0.01, 0.99), replace=None):
 
 
 def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=0, clip=True, preserve_range=False):
-    """Rotate image by a certain angle around its center.
+    """Rotate an image about its centre.
 
-    Parameters:
+    Args:
         angle  (float):
             Rotation angle in **radians** in clockwise direction.
 
-    Keyword Parameters:
+    Keyword Arguments:
         resize (bool):
             Determine whether the shape of the output image will be automatically
             calculated, so the complete rotated image exactly fits. Default is
             False.
         center (iterable of length 2):
-            The rotation center. If ``center=None``, the image is rotated around
-            its center, i.e. ``center=(cols / 2 - 0.5, rows / 2 - 0.5)``.  Please
+            The rotation centre. If ``center=None``, the image is rotated about
+            its centre, i.e. ``center=(cols / 2 - 0.5, rows / 2 - 0.5)``. Please
             note that this parameter is (cols, rows), contrary to normal skimage
             ordering.
         order (int):
@@ -1202,7 +1202,7 @@ def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=
 def sgolay2d(img, points=15, poly=1, derivative=None):
     """Implements a 2D Savitsky Golay Filter for a 2D array (e.g. image).
 
-    Arguments:
+    Args:
         img (ImageArray or ImageFile):
             image to be filtered
 
@@ -1324,7 +1324,7 @@ def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=No
         translation (2-tuple):
             translation (x,y)
 
-    Keyword Args:
+    Keyword Arguments:
         add_metadata (bool):
             Record the shift in the image metadata order (int): Interpolation order (default, 3, bi-cubic)
         mode (str):
@@ -1363,7 +1363,7 @@ def translate_limits(im, translation, reverse=False):
         translation: 2-tuple
             the (x,y) translation applied to the image
 
-    Keyword Args:
+    Keyword Arguments:
         reverse (bool):
             whether to reverse the translation vector (default False, no)
 
@@ -1582,7 +1582,7 @@ def save(image, filename=None, **kwargs):
             Filename to save data as, if this is None then the current filename for the object is used
             If this is not set, then then a file dialog is used. If filename is False then a file dialog is forced.
 
-    Keyword Args:
+    Keyword Arguments:
         fmt (string or list):
             format to save data as. 'tif', 'png' or 'npy' or a list of them. If not included will guess from
             filename.
@@ -1673,12 +1673,12 @@ def save_tiff(image, filename, forcetype=False):
         filename (str):
             Filename to save file as.
 
-    Keyword Args:
+    Keyword Arguments:
         forcetype(bool):
             (deprecated) if forcetype then preserve data type as best as possible on save.
             Otherwise we let the underlying pillow library choose the best data type.
 
-    Note:
+    Notes:
         PIL can save in modes "L" (8bit unsigned int), "I" (32bit signed int),
         or "F" (32bit signed float). In general max info is preserved for "F"
         type so if forcetype is not specified then this is the default. For

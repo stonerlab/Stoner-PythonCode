@@ -214,7 +214,7 @@ class AttocubeScan(ImageStack):
     def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
 
@@ -351,7 +351,7 @@ class AttocubeScan(ImageStack):
     def regrid(self, **kwargs):
         """Regrid the data sets based on PosX and PosY channels.
 
-        Keyword Parameters:
+        Keyword Arguments:
             x_range, y_range (tuple of start, stop, points):
                 Range of x-y co-rdinates to regrid the data to. Used as an argument to :py:func:`np.linspace` to
                 generate the coordinate

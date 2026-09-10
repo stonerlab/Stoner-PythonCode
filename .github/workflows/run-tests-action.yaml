@@ -1,12 +1,19 @@
 name: pytest
-on: push
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   run_pytest:
-    name: run-tests (${{ matrix.python-version }}, ${{ matrix.os }})
+    name: Tests (Python ${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      checks: write
+    env:
+      GH_ACTION: True
+      TZ: Europe/London
     defaults:
       run:
         shell: bash -l {0}
@@ -15,6 +22,11 @@ jobs:
       matrix:
         python-version: [ "3.11", "3.12","3.13", "3.14"]
         os: ["ubuntu-latest"]
+        include:
+          - python-version: "3.14"
+            os: windows-latest
+          - python-version: "3.14"
+            os: macos-15-intel
     steps:
       - name: Check out repository code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -36,46 +48,59 @@ jobs:
       - name: install package
         run: pip install --no-deps .
       - name: Install headless server
+        if: runner.os == 'Linux'
         run: |
            sudo apt-get update
            sudo apt-get install xvfb
            sudo apt-get install qtbase5-dev
-      - name: Test with xvfb
+      - name: Test with xvfb on Linux
+        if: runner.os == 'Linux'
+        env:
+          LC_CTYPE: en_GB.UTF-8
         run: |
            xvfb-run --auto-servernum pytest -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
            coverage xml
            exit ${PYTEST_EXIT:-0}
+      - name: Test on Windows and macOS
+        if: runner.os != 'Linux'
+        run: |
+           pytest -n 2 --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
+           coverage xml
+           exit ${PYTEST_EXIT:-0}
         env:
-            TZ: Europe/London
-            LC_CTYPE: en_GB.UTF-8
-            GH_ACTION: True
+          QT_QPA_PLATFORM: offscreen
       - name: Cleanup X11 server
+        if: runner.os == 'Linux'
         uses: bcomnes/cleanup-xvfb@9e016c43bb8d73fe7d5933d2ef00fd770c1a7c50 # v1.0.9
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
         with:
-          flag-name: run-${{ join(matrix.*, '-') }}
+          flag-name: run-${{ matrix.python-version }}-${{ matrix.os }}
           format: cobertura
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Unit Test Results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: Unit Test Results (Python ${{ matrix.python-version }})
+          name: Unit Test Results (Python ${{ matrix.python-version }}, ${{ matrix.os }})
           path: pytest.xml
-      - name: Post Coveraage result to Codacy
-        run: |
-          export CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }}
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage.xml
+      - name: Post coverage result to Codacy
+        if: github.event_name != 'pull_request'
+        uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage.xml
 
   publish-test-results:
     name: "Publish Unit Tests Results"
     needs: run_pytest
     runs-on: ubuntu-latest
-    if: always()
+    if: >-
+      ${{ always() &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository) }}
     permissions:
       checks: write
-      pull-requests: write
 
     steps:
       - name: Download Artifacts
@@ -89,13 +114,11 @@ jobs:
           files: artifacts/**/*.xml
 
   coverage-finish:
+    name: Finish Coveralls parallel build
     needs: run_pytest
     runs-on: ubuntu-latest
-    permissions:
-      checks: write
     steps:
     - name: Coveralls Finished
       uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
       with:
         parallel-finished: true
-        carryforward: "run-1,run-2"

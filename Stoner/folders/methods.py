@@ -69,7 +69,7 @@ def add_group(fldr, key):
     Returns:
         A copy of the objectFolder
 
-    Note:
+    Notes:
         If key already exists in the groups dictionary then no action is taken.
 
     Todo:
@@ -121,7 +121,7 @@ def compress(fldr, base=None, key=".", keep_terminal=False):
         fldr (BaseFolder):
             DataFolder instance when not a bound method.
 
-    Keyword Args:
+    Keyword Arguments:
         base (str,None):
             default None
         key (str):
@@ -184,7 +184,7 @@ def file(fldr, name, value, create=True, pathsplit=None):
         value(metadataObject):
             The object to be filed - it should be an instance of :py:attr:`BaseFolder.type`.
 
-    Keyword Aprameters:
+    Keyword Arguments:
         create(bool):
             Whether to create missing groups or to raise an error (default True to create groups).
         pathsplit(str or None):
@@ -312,7 +312,7 @@ def flatten(fldr, depth=None):
         fldr (BaseFolder):
             DataFolder instance when not a bound method.
 
-    Keyword Args:
+    Keyword Arguments:
         depth (int or None):
             Only flatten ub-=groups that are within (*depth* of the deepest level.
 
@@ -357,7 +357,7 @@ def get(fldr, name, default=None):
         name (str):
             Name of subgroup or object to fetch.
 
-    Keyword Args:
+    Keyword Arguments:
         default (Any):
             What to return if no matching name. Defaults to None
 
@@ -513,7 +513,7 @@ def make_name(fldr, value=None):
         fldr (BaseFolder):
             DataFolder instance when not a bound method.
 
-    Keyword Args:
+    Keyword Arguments:
         value (metadataObject, None):
             Object to be named.
 
@@ -606,7 +606,7 @@ def select(fldr, *args, **kwargs):
         (baseFGolder):
             A new BaseFolder instance that contains just the matching metadataObjects.
 
-    Note:
+    Notes:
         If any of the tests is True, then the metadataObject will be selected, so the effect is a logical OR. To
         achieve a logical AND, you can chain two selects together::
 
@@ -697,7 +697,7 @@ def slice_metadata(fldr, key, output="smart"):
             DataFolder instance when not a bound method.
         key(str, regexp or list of str): the meta data key(s) to return
 
-    Keyword Parameters:
+    Keyword Arguments:
         output (str):
             Output format - values are
             -   dict: return an array of dictionaries

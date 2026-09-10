@@ -53,3 +53,10 @@ Backup_of_*.cdr
 prof
 
 .spyproject
+# Phase 3 generated local output.
+.idea
+doc/pypi-docs
+doc/PythonCode_API.chm
+doc/UserGuide/*.dvi
+doc/UserGuide/*.pdf
+prospector-report.txt

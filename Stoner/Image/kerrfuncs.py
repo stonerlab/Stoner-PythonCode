@@ -70,7 +70,7 @@ def _parse_text(text, key=None):
 def crop_text(kerr_im, copy=False):
     """Crop the bottom text area from a standard Kermit image.
 
-    KeywordArguments:
+    Keyword Arguments:
         copy(bool):
             Whether to return a copy of the data or the original data
 
@@ -192,7 +192,7 @@ def ocr_metadata(kerr_im, field_only=False):
         Install tesseract from
         https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
 
-    KeywordArguments:
+    Keyword Arguments:
         field_only(bool):
             only try to return a field value
 
@@ -253,7 +253,7 @@ def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=
     Looks for big bright things by thresholding and small and dark defects using
     skimage's corner_fast algorithm
 
-    Parameters:
+    Args:
     thresh (float):
         brighter stuff than this gets removed (after image levelling)
     corner_thresh (float):

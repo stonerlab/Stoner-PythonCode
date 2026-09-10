@@ -168,25 +168,17 @@ class MimizerAdaptor:
 
 
 class _Curve_Fit_Result:
-    """Represent a result from fitting using :py:func:`scipy.optimize.curve_fit`
-    as a class to make handling easier.
+    """Store a result returned by :py:func:`scipy.optimize.curve_fit`.
+
+    Attributes:
+        func (callable): Function used to calculate the fit.
+        args (list): Names of the fitted parameters.
+        kwargs (dict): Keyword arguments supplied for the fit.
+        data (Data or None): Data associated with the fit, when available.
     """
 
     def __init__(self):
-        """Store the results of the curve fit full_output fit.
-
-        Args:
-            popt (1D array):
-                Optimal parameters for fit.
-            pcov (2D array):
-                Variance-co-variance matrix.
-            infodict (dict):
-                Additional information from curve_fit.
-            mesg (str):
-                Descriptive information from curve_fit.
-            ier (int):
-                Numerical error message.
-        """
+        """Initialise empty storage for a curve-fit result."""
         self._mapping = {}
         self.func = lambda *args: None
         self.f_name = None
@@ -422,7 +414,7 @@ class _Curve_Fit_Output:
 def _prep_lmfit_model(model, kwargs):
     """Prepare an lmfit model instance.
 
-    Arguments:
+    Args:
         model (lmfit Model class or instance, or callable): the model to be fitted to the data.
         p0 (iterable or floats): The initial values of the fitting parameters.
         kwargs (dict):Other keyword arguments passed to the fitting function
@@ -457,7 +449,7 @@ def _prep_lmfit_model(model, kwargs):
 def _prep_lmfit_p0(model, ydata, xdata, p0, kwargs):
     """Prepare the initial start vector for an lmfit.
 
-    Arguments:
+    Args:
         model (lmfit_mod.Model instance): model to fit with
         ydata,xdata (array): y and x data ppoints for fitting
         p0 (iterable of float): Existing p0 vector if defined

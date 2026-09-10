@@ -269,7 +269,7 @@ def image_array_adaptor(workingfunc):
 def label(**kwargs):
     """A decoratory that adds attributes to a callable.
 
-    Keywrod Arguments:
+    Keyword Arguments:
         **kwargs:
             All keyword arguments are added to the functions __dict__.
     """
@@ -383,7 +383,7 @@ def class_wrapper(
         class:
             Modified class definition.
 
-    Note:
+    Notes:
         We exclude attributes with which have the attribute _src_mod as these are being patched already.
     """
 

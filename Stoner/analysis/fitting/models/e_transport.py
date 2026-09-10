@@ -82,10 +82,10 @@ def fluchsSondheimer(t, l, p, sigma_0):
         p (float): reflection co-efficient
         sigma_0 (float): intrinsic conductivity
 
-    Return:
+    Returns:
         Reduced Resistivity
 
-    Note:
+    Notes:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
 
     Example:
@@ -116,7 +116,7 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
         A (float): scattering scaling factor
         n (float): Exponent term
 
-    Return:
+    Returns:
         Evaluation of the BlochGrueneisen function for R(T)
 
     Example:
@@ -187,10 +187,10 @@ class FluchsSondheimer(Model):
         p (float): reflection co-efficient
         sigma_0 (float): intrinsic conductivity
 
-    Return:
+    Returns:
         Reduced Resistivity
 
-    Note:
+    Notes:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
 
     Example:
@@ -226,7 +226,7 @@ class BlochGrueneisen(Model):
         A (float): scattering scaling factor
         n (float): Exponent term
 
-    Return:
+    Returns:
         Evaluation of the BlochGrueneisen function for R(T)
 
     Example:

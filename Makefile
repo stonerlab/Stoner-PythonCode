@@ -19,9 +19,6 @@ test:
 test-single:
 	pytest --pdb
 
-check:
-	prospector -E -0 --profile-path=. -P .landscape.yml Stoner > prospector-report.txt
-
 black:
 	find Stoner -name '*.py' | xargs -d "\n" black -l 119
 	find doc/samples -name '*.py' | xargs  -d "\n" black -l 80

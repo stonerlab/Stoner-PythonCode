@@ -32,7 +32,7 @@ def arrhenius(x, A, DE):
         A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.
         DE (float): Energy barrier in *eV*.
 
-    Return:
+    Returns:
         Typically a rate corresponding to the given temperature values.
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
@@ -57,7 +57,7 @@ def nDimArrhenius(x, A, DE, n):
         DE (float): Energy barrier in *eV*.
         n (float): The dimensionalirty of the model
 
-    Return:
+    Returns:
         Typically a rate corresponding to the given temperature values.
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
@@ -80,7 +80,7 @@ def modArrhenius(x, A, DE, n):
         DE (float): Energy barrier in *eV*.
         n (float): The exponent of the temperature pre-factor of the model
 
-    Return:
+    Returns:
         Typically a rate corresponding to the given temperature values.
 
     The modified Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
@@ -103,7 +103,7 @@ def vftEquation(x, A, DE, x_0):
         DE (float): Energy barrier in eV
         x_0 (float): Offset temperature in K
 
-    Return:
+    Returns:
         Rates according the VFT equation.
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
@@ -129,7 +129,7 @@ class Arrhenius(Model):
         A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.
         DE (float): Energy barrier in *eV*.
 
-    Return:
+    Returns:
         Typically a rate corresponding to the given temperature values.
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
@@ -171,7 +171,7 @@ class NDimArrhenius(Model):
         DE (float): Energy barrier in *eV*.
         n (float): The dimensionalirty of the model
 
-    Return:
+    Returns:
         Typically a rate corresponding to the given temperature values.
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
@@ -213,7 +213,7 @@ class ModArrhenius(Model):
         DE (float): Energy barrier in *eV*.
         n (float): The exponent of the temperature pre-factor of the model
 
-    Return:
+    Returns:
         Typically a rate corresponding to the given temperature values.
 
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
@@ -255,7 +255,7 @@ class VFTEquation(Model):
         DE (float): Energy barrier in eV
         x_0 (float): Offset temperature in K
 
-    Return:
+    Returns:
         Rates according the VFT equation.
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents

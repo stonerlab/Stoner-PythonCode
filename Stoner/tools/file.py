@@ -278,7 +278,7 @@ def next_filer(
 ) -> Callable:
     """Find possible loaders and yield them in turn.
 
-    Keyword Args:
+    Keyword Arguments:
         pattern (str, None):
             (default None) - if the file to load has an extension, use this.
         mime-type (str,None):

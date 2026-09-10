@@ -40,6 +40,8 @@ dependencies:
   - imreg_dft >=2.0
   - matplotlib-scalebar
   - nptdms >=1.9.0
+  - pytesseract
   - rosettasciio
   - seaborn >=0.13
   - tabulate >=0.9
+  - tesseract

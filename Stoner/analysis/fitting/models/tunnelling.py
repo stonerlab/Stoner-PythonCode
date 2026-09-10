@@ -29,7 +29,7 @@ def simmons(V, A, phi, d):
         phi (float): barrier height in eV
         d (float): barrier width in angstroms
 
-    Return:
+    Returns:
         Data for tunneling rate according to the Sommons model.
 
     .. note::
@@ -64,7 +64,7 @@ def bdr(V, A, phi, dphi, d, mass):
         d (float): barrier width in angstrom
         mass (float): effective electron mass as a fraction of electron rest mass
 
-    Return:
+    Returns:
         Data for tunneling rate  according to the BDR model.
     .. note::
 
@@ -98,7 +98,7 @@ def fowlerNordheim(V, A, phi, d):
         phi (float): barrier height in eV
         d (float): barrier width in angstroms
 
-    Return:
+    Returns:
         Tunneling rate according to Fowler Nordheim model.
 
     Example:
@@ -117,7 +117,7 @@ def tersoffHammann(V, A):
         V (array): bias voltage
         A (float): Tip conductance
 
-    Return:
+    Returns:
         A linear fit.
     """
     current = A * V
@@ -133,7 +133,7 @@ class Simmons(Model):
         phi (float): barrier height in eV
         d (float): barrier width in angstroms
 
-    Return:
+    Returns:
         Data for tunneling rate according to the Sommons model.
 
     .. note::
@@ -173,7 +173,7 @@ class BDR(Model):
         d (float): barrier width in angstrom
         mass (float): effective electron mass as a fraction of electron rest mass
 
-    Return:
+    Returns:
         Data for tunneling rate  according to the BDR model.
 
     .. note::
@@ -209,7 +209,7 @@ class FowlerNordheim(Model):
         phi (float): barrier height in eV
         d (float): barrier width in angstroms
 
-    Return:
+    Returns:
         Tunneling rate according to Fowler Nordheim model.
 
     Example:
@@ -239,7 +239,7 @@ class TersoffHammann(Model):
         V (array): bias voltage
         A (float): Tip conductance
 
-    Return:
+    Returns:
         A linear fit.
     """
 

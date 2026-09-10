@@ -62,7 +62,7 @@ def poly_outlier(row, window, metric=3.0, ycol=None, xcol=None, order=1, yerr=No
         window (2D array):
             Local window of data
 
-    Keyyword Arguments:
+    Keyword Arguments:
         metric (float):
             Some measure of how sensitive the detection should be
         xcol (column index):
@@ -149,7 +149,7 @@ def threshold(threshold, data, rising=True, falling=False):
 def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     r"""Calculae an optimal transformation of points :math:`(x_1,y_1)\rightarrow(x_2,y_2)`.
 
-    Arguments:
+    Args:
         xy1 ( n by 2 array of float):
             Set of points to be mapped from.
         xy2 ( n by 2 array of floats):
@@ -172,7 +172,7 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     which allows a full affine transformation. The returned values are the affine transformation matrix, the
     uncertainties in this and a function to map coordinates with the optimal affine transformation.
 
-    Note:
+    Notes:
         *m0* combines both giving an initial value and fixed values for the transformation. If *m0* is set, then it
         is used to provide initial balues of the free parameters. Which elelemnts of *m0* that are free parameters
         and which are fixed is determined by the *xmode* and *ymode* parameters. IF *xmode* and *ymode* are both

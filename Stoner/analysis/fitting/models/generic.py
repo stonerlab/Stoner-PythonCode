@@ -62,7 +62,7 @@ def powerLaw(x, A, k):
         A (float): Prefactor
         k (float): Power
 
-    Return:
+    Returns:
         Power law.
 
     :math:`p=Ax^k`
@@ -84,7 +84,7 @@ def stretchedExp(x, A, beta, x_0):
         beta (float): Stretch factor
         x_0 (float): Scaling factor for x data
 
-    Return:
+    Returns:
         Data for a stretched exponentional function.
 
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
@@ -154,7 +154,7 @@ class PowerLaw(_PowerLaw):
         A (float): Prefactor
         k (float): Power
 
-    Return:
+    Returns:
         Power law.
 
     :math:`p=Ax^k`
@@ -179,7 +179,7 @@ class StretchedExp(Model):
         beta (float): Stretch factor
         x_0 (float): Scaling factor for x data
 
-    Return:
+    Returns:
         Data for a stretched exponentional function.
 
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.

@@ -635,11 +635,11 @@ class Data(
             Data:
                 A copy of the newly loaded :py:class`Data` object.
 
-        Exceptions:
+        Raises:
             StonerLoadError:
                 Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
 
-        Note:
+        Notes:
             The *_load* methods should be overridden in each child class to handle the process of loading data from
             disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
             the loading class can try a different sub-class instead.
@@ -914,7 +914,7 @@ class Data(
             (Data):
                 A new instance of :py:class:`~Stoner.core.data.Data` or a s subclass of :py:class:`~Stoner.core.data.Data` if
                 *loaded_class* is True.
-        Note:
+        Notes:
             If *filetype* is a string, then it is first tried as an exact match to a subclass name, otherwise it
             is used as a partial match and the first class in priority order is that matches is used.
 

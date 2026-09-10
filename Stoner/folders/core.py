@@ -26,7 +26,7 @@ regexp_type = (_pattern_type,)
 def _add_core_(result, other):
     """Implement the core logic of the addition operator.
 
-    Note:
+    Notes:
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
     """
     resultype = result.type
@@ -72,7 +72,7 @@ def _div_core_(result, other):
 def _sub_core_(result, other):
     """Implement the core logic of the subtraction operator.
 
-    Note:
+    Notes:
         We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
     """
     calls = [
@@ -419,7 +419,7 @@ class BaseFolder(MutableSequence):
 
         Returns the next non-empty DatFile member of the objectFolder.
 
-        Note:
+        Notes:
             not_empty will also silently skip over any cases where loading the metadataObject object will raise
             and exception.
         """
@@ -495,14 +495,14 @@ class BaseFolder(MutableSequence):
     def __lookup__(self, name):
         """Stub for other classes to implement.
 
-        Parameters:
+        Args:
             name(str):
                 Name of an object
 
         Returns:
             A key in whatever form the :py:meth:`BaseFolder.__getter__` will accept.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if isinstance(name, int_types):
@@ -514,7 +514,7 @@ class BaseFolder(MutableSequence):
     def __names__(self):
         """Stub method to return a list of names of all objects that can be indexed for __getter__.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         return list(self.objects.keys())
@@ -538,7 +538,7 @@ class BaseFolder(MutableSequence):
             (metadataObject):
                 The metadataObject
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         name = self.__lookup__(name)
@@ -554,17 +554,17 @@ class BaseFolder(MutableSequence):
     def __setter__(self, name, value, force_insert=False):
         """Stub to setting routine to store a metadataObject.
 
-        Parameters:
+        Args:
             name (string)
             the named object to write - may be an existing or new name
             value (metadataObject):
                 the value to store.
 
-        Keyword Parameters:
+        Keyword Arguments:
             force_insert (bool):
                 Ensures the new item is always inserted as a new item and does not replace and existing one.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if name is None:
@@ -577,7 +577,7 @@ class BaseFolder(MutableSequence):
     def __inserter__(self, ix, name, value):
         """Insert the element into a specific place in our data folder.
 
-        Parameters:
+        Args:
             ix (int):
                 the index value to insert at, must be 0 to len(self)-1
             name (str):
@@ -585,7 +585,7 @@ class BaseFolder(MutableSequence):
             value (self.type):
                 the value to be inserted.
 
-        Note:
+        Notes:
             This is written in a way to be generic, but might be better implemented if storage is customised.
         """
         names = list(self.__names__())
@@ -599,11 +599,11 @@ class BaseFolder(MutableSequence):
     def __deleter__(self, ix):
         """Delete an object from the BaseFolder.
 
-        Parameters:
+        Args:
             ix(str):
                 Index to delete, should be within +- the lengthe length of the folder.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
         """
@@ -612,7 +612,7 @@ class BaseFolder(MutableSequence):
     def __clear__(self):
         """Clear all stored :py:class:`Stoner.core.base.metadataObject` instances.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
         """
@@ -622,7 +622,7 @@ class BaseFolder(MutableSequence):
     def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other.
 
-        Note:
+        Notes:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
 
@@ -663,7 +663,7 @@ class BaseFolder(MutableSequence):
     def __getitem__(self, name):
         """Try to get either a group or an object.
 
-        Parameters:
+        Args:
             name(str, int,slice):
                 Which objects to return from the folder.
 
@@ -715,7 +715,7 @@ class BaseFolder(MutableSequence):
     def __setitem__(self, name, value):
         """Attempt to store a value in either the groups or objects.
 
-        Parameters:
+        Args:
             name(str or int):
                 If the name is a string and the value is a BaseFolder, then assumes we're accessing
                 a group. if name is an integer, then it must be a metadataObject.
@@ -738,7 +738,7 @@ class BaseFolder(MutableSequence):
     def __delitem__(self, name):
         """Attempt to delete an item from either a group or list of files.
 
-        Parameters:
+        Args:
             name(str,int):
                 IF name is a string, then it is checked first against the groups and then
                 against the objects. If name is an int then it s checked against the _index.

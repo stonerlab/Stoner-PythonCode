@@ -53,10 +53,10 @@ def _strijkers_core(V, omega, delta, P, Z):
         P (float): Interface parameter
         Z (float): Current spin polarization through contact
 
-    Return:
+    Returns:
         Conductance vs bias data.
 
-    Note:
+    Notes:
            PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
 
     This version only uses 1 delta, not modified for proximity
@@ -121,7 +121,7 @@ def strijkers(V, omega, delta, P, Z):
         Z (float):
             Current spin polarization through contact
 
-    Return:
+    Returns:
         Conductance vs bias data.
 
     .. note::
@@ -387,6 +387,7 @@ def _diffusive_halfmetal(Delta, V, Z):
 # -----------------------------------------------------------
 @njit
 def _make_gaussian_kernel(dV, dV_sampling):
+    """Build a normalised Gaussian convolution kernel."""
     half = int(4 * dV / dV_sampling)
     size = 2 * half + 1
 
@@ -412,6 +413,7 @@ def _make_gaussian_kernel(dV, dV_sampling):
 # -----------------------------------------------------------
 @njit
 def _reflect_pad(arr, half):
+    """Pad an array symmetrically by reflecting its edges."""
     n = len(arr)
     out = np.empty(n + 2 * half)
 
@@ -437,22 +439,15 @@ def _reflect_pad(arr, half):
 
 @njit
 def _gaussian_convolution_numba(V, I, dV):
-    """
-    Numba-optimised Gaussian convolution for irregular (V, I) data.
+    """Apply Gaussian convolution to irregular voltage/current data.
 
-    Parameters
-    ----------
-    V : 1D array
-        Voltage values (unsorted, duplicates allowed)
-    I : 1D array
-        Intensity values
-    dV : float
-        Gaussian sigma (width)
+    Args:
+        V (1D array): Voltage values. Values need not be ordered and may repeat.
+        I (1D array): Intensity values corresponding to ``V``.
+        dV (float): Gaussian standard deviation.
 
-    Returns
-    -------
-    Iconv : 1D float array
-        Convolved intensities evaluated at each V[i]
+    Returns:
+        1D float array: Convolved intensity evaluated at each value in ``V``.
     """
 
     N = len(V)
@@ -484,8 +479,7 @@ def _gaussian_convolution_numba(V, I, dV):
 
 
 def woods(ballistic, V, omega, delta, P, Z):
-    """Compute the interface current with spin polarisation and optional
-    Gaussian broadening.
+    """Compute interface current with spin polarisation and Gaussian broadening.
 
     This function mixes non-magnetic and half-metallic channels using:
         I = (1 - P) * I_nonmag + P * I_half
@@ -712,7 +706,7 @@ class Strijkers(Model):
         P (float): Interface parameter
         Z (float): Current spin polarization through contact
 
-    Return:
+    Returns:
         Conductance vs bias data.
 
     .. note::
@@ -751,8 +745,7 @@ class Strijkers(Model):
 
 
 class Woods_Diffusive(Model):
-    """Compute the interface current with spin polarisation and optional
-    Gaussian broadening.
+    """Model diffusive interface current with spin polarisation and Gaussian broadening.
 
     Args:
         V (array-like):
@@ -803,8 +796,7 @@ class Woods_Diffusive(Model):
 
 
 class Woods_Ballistic(Model):
-    """Compute the interface current with spin polarisation and optional
-    Gaussian broadening.
+    """Model ballistic interface current with spin polarisation and Gaussian broadening.
 
     Args:
         V (array-like):

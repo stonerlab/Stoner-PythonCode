@@ -30,8 +30,8 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 | 0 | Reproducible baseline | Complete | maintenance/phase0: 333 passed serial and with two workers; identical 79% coverage; environment manifest and Sphinx warning baseline recorded |
 | 1 | Git and checkout hygiene | Complete | Approved Windows Git workflow; local fileMode=false/autocrlf=false; disposable clone clean and semantic diff unchanged |
 | 2 | Packaging and metadata | Complete | GitHub run 34519864056: wheel/sdist builds, archive contents and separate clean-install probes passed on Python 3.14/Linux |
-| 3 | Repository content cleanup | In progress | Stale local distributions removed; generated plot cache retained intentionally |
-| 4 | CI and quality tooling | Not started | Green workflows and documented local equivalents |
+| 3 | Repository content cleanup | Complete | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained |
+| 4 | CI and quality tooling | In progress | CI policy and local equivalents recorded in `maintenance/phase4`; remote validation pending |
 | 5 | Tests and compatibility | Not started | Stable suite across supported Python versions |
 | 6 | Documentation and examples | In progress | RTD-mode build succeeds; narrative pages have no unresolved rendered links; all 73 examples pass; autosummary noise remains |
 | 7 | Focused source maintenance | Not started | Small reviewed batches with regression tests |
@@ -344,3 +344,13 @@ Committed the accumulated maintenance changes as `7d84956c5ede5617697cc9a7ed454f
 The existing Python 3.11-3.14 pytest matrix is running separately in [run 34519863932](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34519863932); package-validation success does not imply that matrix has passed. Phase 3 can now begin with the tracked-file inventory and classification required by its task list, while preserving the intentional plot cache and scientific fixtures.
 
 The only pre-existing change excluded from the commit is the LF/CRLF-only difference in `Stoner/formats/utils/__init__.py`. SSH pushes on this machine required a per-command empty configuration because the user's existing SSH configuration requests unsupported `ssh-dss`; no global SSH configuration was changed.
+
+- 2026-09-10 (Phase 6): Recorded the derived docstring conventions as the expected standard in DOCSTRING_STYLE.md and linked it from AGENTS.md. Standardised previously usual formatting and section choices, and required British English prose while preserving exact API names and literals. Updated the existing Stoner and doc/samples docstrings to use canonical headings, corrected malformed or inaccurate documentation, and made no runtime changes.
+
+### Phase 3 completion (2026-09-10)
+
+Created `maintenance/phase3/inventory.json` and `README.md` to classify every cleanup candidate and record the provenance, reproducibility and consumers of all retained scientific and image fixtures of at least 500 kB. The tracked checkout was 94,307,875 bytes before cleanup. Removed 1,110,307 bytes of reviewed local or reproducible output: legacy eggs, notebook and IDE metadata, an obsolete documentation redirect, an empty Prospector report, Dask worker locks, and compiled CHM/DVI/PDF documentation. The retained checkout is 93,197,568 bytes before adding the Phase 3 audit files.
+
+Added root `.gitignore` entries only for local build/test/editor output and reproducible documentation products. `doc/plot_cache` remains tracked as the intentional 18.28 MB deterministic documentation cache. `.travis.yml` remains until Phase 4 makes its explicit CI retirement decision. `maintenance/check-repository-content.py` verifies these policies without modifying the checkout.
+
+The Phase 3 policy check passed with all 243 cached plot files retained, and the Phase 2 package-content check continued to retain all scientific fixtures. The representative format/folder/image selection collected 72 cases after cleanup, matching its pre-cleanup collection; this checkout's pytest runner again exited without a final result summary after beginning execution, an existing Phase 5 test-runner investigation rather than evidence of a cleanup regression. Phase 0's full 333-test baseline remains the completed runtime baseline.
