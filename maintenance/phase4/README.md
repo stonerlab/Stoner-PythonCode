@@ -1,6 +1,6 @@
 # Phase 4: CI and quality tooling — 2026-09-10
 
-Status: **In progress pending remote validation**.
+Status: **Complete**.
 
 ## CI decisions
 
@@ -35,7 +35,7 @@ Status: **In progress pending remote validation**.
 - Coveralls uploads run on the four Linux jobs. Its macOS action currently
   installs through a Homebrew tap rejected as untrusted by the hosted runner;
   the redundant macOS upload is skipped so this reporting transport cannot
-  overturn a successful 333-test platform result.
+  overturn a successful 334-test platform result.
 - Codacy coverage uses the official action pinned to the commit behind v1.3.0.
   Pull requests skip this upload because repository secrets are unavailable to
   untrusted forks. Codacy's hosted static analysis remains the repository's
@@ -92,3 +92,17 @@ channels. Cross-platform dry-solves repeated the previously recorded slow
 solver behaviour and were stopped without a success or conflict result; the
 five GitHub Actions jobs are the authoritative hosted validation. Phase 0's
 Windows results provide the current Windows validation baseline.
+
+## Remote validation
+
+Implementation commit `99843b7a5dedcd82740ced076138383ab8fec0a3`
+passed all required hosted checks:
+
+- [pytest run 34536293951](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34536293951): Linux on Python 3.11, 3.12, 3.13 and 3.14; Intel macOS on Python 3.14; test-result publication; and Coveralls finalisation.
+- [Package validation run 34536293816](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34536293816): source and wheel builds, content checks and clean-install probes.
+- [Documentation run 34536324371](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34536324371): complete documentation build using the retained plot cache.
+
+The required workflows are green, local equivalents are documented above,
+workflow permissions are least privilege, and retired Travis/Prospector files
+no longer represent inactive or duplicate gates. These results satisfy the
+Phase 4 completion criteria.

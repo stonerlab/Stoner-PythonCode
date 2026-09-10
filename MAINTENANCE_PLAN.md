@@ -31,7 +31,7 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 | 1 | Git and checkout hygiene | Complete | Approved Windows Git workflow; local fileMode=false/autocrlf=false; disposable clone clean and semantic diff unchanged |
 | 2 | Packaging and metadata | Complete | GitHub run 34519864056: wheel/sdist builds, archive contents and separate clean-install probes passed on Python 3.14/Linux |
 | 3 | Repository content cleanup | Complete | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained |
-| 4 | CI and quality tooling | In progress | CI policy and local equivalents recorded in `maintenance/phase4`; remote validation pending |
+| 4 | CI and quality tooling | Complete | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline |
 | 5 | Tests and compatibility | Not started | Stable suite across supported Python versions |
 | 6 | Documentation and examples | In progress | RTD-mode build succeeds; narrative pages have no unresolved rendered links; all 73 examples pass; autosummary noise remains |
 | 7 | Focused source maintenance | Not started | Small reviewed batches with regression tests |
@@ -354,3 +354,11 @@ Created `maintenance/phase3/inventory.json` and `README.md` to classify every cl
 Added root `.gitignore` entries only for local build/test/editor output and reproducible documentation products. `doc/plot_cache` remains tracked as the intentional 18.28 MB deterministic documentation cache. `.travis.yml` remains until Phase 4 makes its explicit CI retirement decision. `maintenance/check-repository-content.py` verifies these policies without modifying the checkout.
 
 The Phase 3 policy check passed with all 243 cached plot files retained, and the Phase 2 package-content check continued to retain all scientific fixtures. The representative format/folder/image selection collected 72 cases after cleanup, matching its pre-cleanup collection; this checkout's pytest runner again exited without a final result summary after beginning execution, an existing Phase 5 test-runner investigation rather than evidence of a cleanup regression. Phase 0's full 333-test baseline remains the completed runtime baseline.
+
+### Phase 4 completion (2026-09-10)
+
+Validated implementation commit `99843b7a5dedcd82740ced076138383ab8fec0a3`. [pytest run 34536293951](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34536293951) passed the required Linux Python 3.11–3.14 matrix, Intel macOS Python 3.14, test-result publication, and Coveralls finalisation. [Package validation run 34536293816](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34536293816) and [documentation run 34536324371](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34536324371) also passed at the same commit.
+
+Windows remains the primary development and local-test platform, with Phase 0's serial and parallel 333-test Python 3.14 results as its current evidence. Hosted Windows environment creation was removed after repeatable micromamba access violations on two runner versions, including with `--always-copy`, and an impractically slow setup-miniconda/libmamba attempt. Hosted CI therefore checks the non-development Linux and macOS platforms without retaining a known-red notification source.
+
+The macOS environment now uses PyQt6 and a current conda-forge `libmagic >=5.48`. This replaced a mixed-channel pairing of conda-forge `filemagic 1.6` with `defaults` `libmagic 5.36` whose magic database failed after Qt initialisation. The current stack passed the complete macOS suite. Runtime `MagicError` failures now degrade to filename-pattern loader selection, matching the existing behaviour when filemagic is unavailable. Coveralls uploads run on Linux because its macOS Homebrew tap is rejected by the hosted runner; macOS pytest remains required and passed independently.
