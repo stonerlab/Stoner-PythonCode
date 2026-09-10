@@ -55,6 +55,7 @@ def main() -> None:
 
     test_environment = (ROOT / "tests" / "test-env.yml").read_text(encoding="utf-8").lower()
     require("pytesseract" in test_environment and "tesseract" in test_environment, "OCR test tools are incomplete.")
+    require("pyqt6" in test_environment, "The test environment lacks the Qt binding used by widget tests.")
 
     print(f"Phase 4 CI policy passed ({sum(len(ANY_ACTION.findall(text)) for text in workflows.values())} pinned actions).")
 
