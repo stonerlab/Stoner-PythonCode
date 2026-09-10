@@ -10,8 +10,8 @@ Status: **Complete**.
   exercise the supported Qt implementation. The environment also requires
   conda-forge's current `libmagic >=5.48`: an unconstrained mixed-channel solve
   paired conda-forge `filemagic 1.6` with `libmagic 5.36` from `defaults`, whose
-  magic database produced invalid character-range errors after Qt changed the
-  process locale. Keeping the wrapper and native library on the current
+  magic database produced invalid character-range errors once PyQt6 was
+  present. Keeping the wrapper and native library on the current
   conda-forge stack preserves Python 3.14 macOS coverage.
 - MIME detection is optional at runtime. `get_mime_type()` now treats a native
   `MagicError` as unavailable MIME detection and returns `None`, allowing the
