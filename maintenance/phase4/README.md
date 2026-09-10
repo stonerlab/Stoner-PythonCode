@@ -5,9 +5,12 @@ Status: **In progress pending remote validation**.
 ## CI decisions
 
 - The established Linux matrix remains the compatibility gate for Python
-  3.11–3.14. Python 3.14 also runs on `windows-latest` and the supported Intel
+  3.11–3.14. Python 3.14 also runs on `windows-2022` and the supported Intel
   `macos-15-intel` runner, giving every advertised operating-system family a
   current execution check without multiplying the complete version matrix.
+- The Windows lane is pinned to windows-2022: two runs on the current
+  windows-latest Windows Server 2025 image crashed micromamba with access
+  violation 3221225477 while linking the solved environment, before pytest.
 - Test jobs use explicit Coveralls flags of
   `run-<python-version>-<runner>`. The finalisation job waits for the complete
   matrix and does not carry forward nonexistent or missing jobs.

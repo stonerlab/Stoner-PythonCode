@@ -24,7 +24,7 @@ jobs:
         os: ["ubuntu-latest"]
         include:
           - python-version: "3.14"
-            os: windows-latest
+            os: windows-2022
           - python-version: "3.14"
             os: macos-15-intel
     steps:
