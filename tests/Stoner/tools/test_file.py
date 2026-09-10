@@ -7,6 +7,7 @@ import zipfile
 
 import pytest
 
+from Stoner.tools import file as file_tools
 from Stoner.tools.file import test_is_zip as is_zip_file
 
 
@@ -59,6 +60,30 @@ def test_is_zip_with_path_inside_zip():
         assert result[0] == tmp_name, "test_is_zip should find the zip file path"
     finally:
         os.unlink(tmp_name)
+
+
+def test_mime_failure_falls_back_to_filename_matching(monkeypatch, tmp_path):
+    """Return no MIME type when the native magic database cannot be loaded."""
+
+    class BrokenMagic:
+        """Model a native libmagic failure while identifying a file."""
+
+        def __init__(self, **_kwargs):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def id_filename(self, _filename):
+            raise RuntimeError("invalid character range in magic database")
+
+    monkeypatch.setattr(file_tools, "filemagic", BrokenMagic)
+    monkeypatch.setattr(file_tools, "magic_errors", (RuntimeError,))
+
+    assert file_tools.get_mime_type(tmp_path / "example.dat") is None
 
 
 if __name__ == "__main__":

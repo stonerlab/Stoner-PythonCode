@@ -13,6 +13,10 @@ Status: **In progress pending remote validation**.
   magic database produced invalid character-range errors after Qt changed the
   process locale. Keeping the wrapper and native library on the current
   conda-forge stack preserves Python 3.14 macOS coverage.
+- MIME detection is optional at runtime. `get_mime_type()` now treats a native
+  `MagicError` as unavailable MIME detection and returns `None`, allowing the
+  existing filename-pattern loader search to continue just as it does when
+  filemagic is not installed. A focused regression test covers this fallback.
 - Windows is the primary development and local-test platform, so hosted CI is
   used to exercise the non-development platforms: Linux and macOS. Phase 0
   passed all 333 tests both serially and with two xdist workers on Windows 11
@@ -28,6 +32,10 @@ Status: **In progress pending remote validation**.
 - Test jobs use explicit Coveralls flags of
   `run-<python-version>-<runner>`. The finalisation job waits for the complete
   matrix and does not carry forward nonexistent or missing jobs.
+- Coveralls uploads run on the four Linux jobs. Its macOS action currently
+  installs through a Homebrew tap rejected as untrusted by the hosted runner;
+  the redundant macOS upload is skipped so this reporting transport cannot
+  overturn a successful 333-test platform result.
 - Codacy coverage uses the official action pinned to the commit behind v1.3.0.
   Pull requests skip this upload because repository secrets are unavailable to
   untrusted forks. Codacy's hosted static analysis remains the repository's

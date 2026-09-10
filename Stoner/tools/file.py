@@ -40,10 +40,13 @@ _savers_by_name = {}
 
 
 try:
-    from magic import MAGIC_MIME_TYPE
+    from magic import MAGIC_MIME_TYPE, MagicError
     from magic import Magic as filemagic
 except ImportError:
     filemagic = None
+    magic_errors = ()
+else:
+    magic_errors = (MagicError,)
 
 URL_SCHEMES = ["http", "https"]
 
@@ -260,8 +263,13 @@ def get_mime_type(filename: Union[pathlib.Path, str], debug: bool = False) -> Op
         and isinstance(filename, path_types)
         and urllib.parse.urlparse(str(filename)).scheme not in URL_SCHEMES
     ):
-        with filemagic(flags=MAGIC_MIME_TYPE) as m:
-            mimetype = m.id_filename(str(filename))
+        try:
+            with filemagic(flags=MAGIC_MIME_TYPE) as m:
+                mimetype = m.id_filename(str(filename))
+        except magic_errors as error:
+            if debug:
+                print(f"Mimetype detection unavailable: {error}")
+            mimetype = None
         if debug:
             print(f"Mimetype:{mimetype}")
     else:

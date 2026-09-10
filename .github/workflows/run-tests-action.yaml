@@ -73,6 +73,7 @@ jobs:
         if: runner.os == 'Linux'
         uses: bcomnes/cleanup-xvfb@9e016c43bb8d73fe7d5933d2ef00fd770c1a7c50 # v1.0.9
       - name: Coveralls Parallel
+        if: runner.os == 'Linux'
         uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
         with:
           flag-name: run-${{ matrix.python-version }}-${{ matrix.os }}

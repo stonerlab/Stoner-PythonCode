@@ -44,6 +44,10 @@ def main() -> None:
         "flag-name: run-${{ matrix.python-version }}-${{ matrix.os }}" in tests,
         "Coveralls flags do not match the test matrix.",
     )
+    require(
+        "- name: Coveralls Parallel\n        if: runner.os == 'Linux'" in tests,
+        "Coveralls should run only on Linux, where its reporter installation is reliable.",
+    )
     require("codacy/codacy-coverage-reporter-action@" in tests, "The pinned Codacy action is missing.")
 
     docs = workflows["build-docs.yaml"]
