@@ -25,13 +25,13 @@ jobs:
         include:
           - python-version: "3.14"
             os: windows-latest
+            micromamba-extra-args: --always-copy
           - python-version: "3.14"
             os: macos-15-intel
     steps:
       - name: Check out repository code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Install Mamba environment
-        if: runner.os != 'Windows'
         uses: mamba-org/setup-micromamba@f457c30a868e4760d3a6fcea5f25dc655b8edf39 # v3.2.1
         with:
           environment-file: tests/test-env.yml
@@ -39,29 +39,14 @@ jobs:
           create-args: >-
             python=${{ matrix.python-version }}
             --channel-priority flexible
+            ${{ matrix.micromamba-extra-args }}
           init-shell: bash
           cache-downloads: true
           cache-environment: true
-      - name: Install Conda environment on Windows
-        if: runner.os == 'Windows'
-        uses: conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5 # v4.0.1
-        with:
-          activate-environment: test-environment
-          environment-file: tests/test-env.yml
-          python-version: ${{ matrix.python-version }}
-          auto-update-conda: true
-          channel-priority: flexible
-          conda-solver: libmamba
       - name: Mamba information
-        if: runner.os != 'Windows'
         run: |
           micromamba info
           micromamba list
-      - name: Conda information
-        if: runner.os == 'Windows'
-        run: |
-          conda info
-          conda list
       - name: install package
         run: pip install --no-deps .
       - name: Install headless server

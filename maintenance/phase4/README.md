@@ -10,9 +10,9 @@ Status: **In progress pending remote validation**.
   current execution check without multiplying the complete version matrix.
 - Micromamba crashed with access violation `3221225477` while linking the
   solved Windows environment on both `windows-latest` and `windows-2022`.
-  Windows therefore uses the pinned `setup-miniconda` v4.0.1 action with
-  an updated Conda and its libmamba solver; Linux and macOS retain
-  setup-micromamba v3.2.1.
+  The Windows matrix entry therefore passes `--always-copy`, avoiding hard
+  links between the package cache and environment while retaining the faster
+  micromamba solver. Linux and macOS retain the default hard-link behaviour.
 - Test jobs use explicit Coveralls flags of
   `run-<python-version>-<runner>`. The finalisation job waits for the complete
   matrix and does not carry forward nonexistent or missing jobs.
