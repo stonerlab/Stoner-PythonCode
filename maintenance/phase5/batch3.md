@@ -83,3 +83,25 @@ Sphinx warnings by cause, checking documentation coverage of public and
 dynamically attached APIs, and fixing a small evidenced group of documentation
 defects. Use the retained plot cache for RTD-mode validation. Preserve scientific
 meaning and avoid refreshing generated assets as incidental cleanup.
+
+## macOS CI follow-up (2026-09-11)
+
+At implementation commit `d143d6f21`, macOS job `103432649895` in run
+`34650928065` resolved Pyparsing 3.0.4 and pytest-cov 3.0.0. It ran 337 cases
+successfully but reported one collection error and a coverage-combine internal
+error. The five plotting cases could not import the newer
+`PyparsingDeprecationWarning` class. The warning filters now check that the class
+exists; older Pyparsing needs no filter for warnings it does not emit.
+
+The older pytest-cov subprocess hook rediscovered configuration from the child
+working directory when its default `.coveragerc` path was absent. The new OCR
+import subprocess runs in a temporary directory, so it selected statement-only
+coverage while its parent used branch coverage from `pyproject.toml`. Both CI
+test commands and the local full-suite runner now pass the absolute TOML path.
+
+An isolated Windows environment with those two test-tool versions reproduced
+the collection ImportError. After the fixes, the five plotting cases and OCR
+subprocess case pass together with two workers and coverage (6 passed). A direct
+probe of pytest-cov 3.0's child startup confirmed branch=False with automatic
+discovery outside the checkout and branch=True with the explicit config. Hosted
+validation of this follow-up is still required.

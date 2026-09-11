@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from matplotlib.figure import Figure
-from pyparsing import PyparsingDeprecationWarning
+import pyparsing
 
 
 pth = path.dirname(__file__)
@@ -49,19 +49,21 @@ def plot_state(monkeypatch, request):
     with plt.rc_context(), warnings.catch_warnings():
         # Matplotlib 3.8 uses legacy Pyparsing aliases; newer Pyparsing warns.
         # Limit this exception to Matplotlib's parser modules and alias warnings.
-        warnings.filterwarnings(
-            "ignore",
-            message="'.*' (?:deprecated - use|argument is deprecated, use) '.*'",
-            category=PyparsingDeprecationWarning,
-            module=r"matplotlib\.(?:_fontconfig_pattern|_mathtext)",
-        )
-        # parseString's compatibility wrapper reports this one inside Pyparsing.
-        warnings.filterwarnings(
-            "ignore",
-            message="'parseAll' argument is deprecated, use 'parse_all'",
-            category=PyparsingDeprecationWarning,
-            module=r"pyparsing\.util",
-        )
+        parser_warning = getattr(pyparsing, "PyparsingDeprecationWarning", None)
+        if parser_warning is not None:
+            warnings.filterwarnings(
+                "ignore",
+                message="'.*' (?:deprecated - use|argument is deprecated, use) '.*'",
+                category=parser_warning,
+                module=r"matplotlib\.(?:_fontconfig_pattern|_mathtext)",
+            )
+            # parseString's compatibility wrapper reports this one inside Pyparsing.
+            warnings.filterwarnings(
+                "ignore",
+                message="'parseAll' argument is deprecated, use 'parse_all'",
+                category=parser_warning,
+                module=r"pyparsing\.util",
+            )
         if request.node.name in {"test_plot_magic", "test_misc_funcs"}:
             # These tests deliberately construct axes outside a GridSpec.
             warnings.filterwarnings("ignore", message="There are no gridspecs with layoutgrids", category=UserWarning)

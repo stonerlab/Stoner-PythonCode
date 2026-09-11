@@ -49,6 +49,10 @@ def main() -> None:
         "Coveralls should run only on Linux, where its reporter installation is reliable.",
     )
     require("codacy/codacy-coverage-reporter-action@" in tests, "The pinned Codacy action is missing.")
+    require(
+        tests.count('--cov-config="$GITHUB_WORKSPACE/pyproject.toml"') == 2,
+        "Both test commands must pass an absolute coverage config for subprocesses.",
+    )
 
     docs = workflows["build-docs.yaml"]
     require("contents: read" in docs and "contents: write" not in docs, "Documentation CI is not read-only.")

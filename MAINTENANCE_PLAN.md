@@ -411,3 +411,15 @@ in progress solely for hosted validation of the accumulated changes: the ordinar
 supported-Python matrix, lower-dependency job and installed-distribution jobs.
 After that gate, the next proposed batch is Phase 6 Sphinx warning triage and
 public/dynamically attached API documentation coverage.
+
+### Phase 5 macOS CI follow-up (2026-09-11)
+
+The first hosted macOS run of `d143d6f21` exposed two test-tool compatibility
+defects: Pyparsing 3.0.4 lacks the imported deprecation-warning class, excluding
+five plotting cases, and pytest-cov 3.0's subprocess configuration discovery
+mixed statement and branch coverage. Guarded the optional warning class and
+passed an absolute coverage configuration in CI and the full-suite runner.
+An isolated environment reproduced the import error; the affected six cases
+then passed with two workers and coverage. A child-startup probe confirmed the
+coverage configuration fix. See `maintenance/phase5/batch3.md`; hosted validation
+remains pending for this follow-up.

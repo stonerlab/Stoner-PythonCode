@@ -49,7 +49,8 @@ try {
         }
     }
     if ($Check -in @('serial', 'parallel')) {
-        $arguments += @('--cov=Stoner', '--cov-report=term', ('--cov-report=xml:' + (Join-Path $output 'coverage.xml')))
+        $arguments += @('--cov=Stoner', ('--cov-config=' + (Join-Path $repo 'pyproject.toml')),
+            '--cov-report=term', ('--cov-report=xml:' + (Join-Path $output 'coverage.xml')))
     }
     if ($Check -ne 'docs') { $arguments += '--junitxml=' + (Join-Path $output 'pytest.xml') }
     $started = Get-Date
