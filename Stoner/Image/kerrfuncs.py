@@ -70,13 +70,23 @@ def _parse_text(text, key=None):
 def crop_text(kerr_im, copy=False):
     """Crop the bottom text area from a standard Kermit image.
 
+    Args:
+        kerr_im (KerrArray):
+            Image to crop, supplied by the instance when called as a bound method.
+
     Keyword Arguments:
-        copy(bool):
-            Whether to return a copy of the data or the original data
+        copy (bool):
+            Copy the cropped pixels when True; otherwise return a view. Defaults to False.
+            An already cropped image is returned unchanged even when True.
 
     Returns:
-    (ImageArray):
-        cropped image
+        ImageArray:
+            Image with shape (512, 672). An input of this shape is returned directly;
+            an annotated image of shape (554, 672) has its bottom 42 rows removed.
+
+    Raises:
+        ValueError:
+            If the input has neither the cropped nor the annotated image shape.
     """
     if kerr_im.shape == IM_SIZE:
         return kerr_im
@@ -251,29 +261,37 @@ def ocr_metadata(kerr_im, field_only=False):
 
 
 def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
-    """Try to create a boolean array which is a mask for typical defects found in Image images.
-
-    Best for unprocessed raw images. (for subtract images
-    see defect_mask_subtract_image)
-    Looks for big bright things by thresholding and small and dark defects using
-    skimage's corner_fast algorithm
+    """Create a boolean defect mask for an unprocessed Kerr image.
 
     Args:
-    thresh (float):
-        brighter stuff than this gets removed (after image levelling)
-    corner_thresh (float):
-        see corner_fast (skimage):
-    radius (float):
-        radius of pixels around corners that are added to mask
-    return_extra (bool):
-        this returns a dictionary with some of the intermediate steps of the
-        calculation
+        kerr_im (KerrArray):
+            Image to analyse, supplied by the instance when called as a bound method.
+
+    Keyword Arguments:
+        thresh (float):
+            Upper threshold after conversion to floating point and cubic image levelling.
+            Pixels strictly between zero and this value are marked. Defaults to 0.6.
+        corner_thresh (float):
+            Threshold passed to the FAST corner detector. Defaults to 0.05.
+        radius (float):
+            Half-width in pixels of square regions marked around detected corner blobs.
+            Slice bounds are rounded to integer pixels. Defaults to 1.
+        return_extra (bool):
+            Return intermediate results alongside the mask when True. Defaults to False.
 
     Returns:
-        totmask (ndarray of bool):
-            mask
-    info (*optional* dict):
-        dictionary of intermediate calculation steps
+        ndarray or tuple:
+            Boolean mask with the image shape, where True marks a selected pixel.
+            With return_extra=True, return (mask, info), where info contains
+            flattened_image, corner_fast, corner_points, corner_mask and thresh_mask.
+
+    Notes:
+        The mask combines intensity thresholding with square regions around blobs
+        detected in the FAST corner response. It does not remove pixels from the image.
+
+    See Also:
+        :py:meth:`Stoner.Image.kerr.KerrArray.defect_mask_subtract_image`:
+            Mask an image formed by subtraction.
     """
     im = kerr_im.asfloat()
     im = im.level_image(poly_vert=3, poly_horiz=3)
@@ -295,15 +313,32 @@ def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=
 
 
 def defect_mask_subtract_image(kerr_im, threshmin=0.25, threshmax=0.9, denoise_weight=0.1, return_extra=False):
-    """Create a mask array for a typical subtract Image image.
+    """Create a boolean defect mask for a Kerr subtraction image.
 
-    Uses a denoise algorithm followed by simple thresholding.
+    Args:
+        kerr_im (KerrArray):
+            Subtraction image to analyse, supplied by the instance when called as a bound method.
+
+    Keyword Arguments:
+        threshmin (float):
+            Exclusive lower threshold for the denoised image. Defaults to 0.25.
+        threshmax (float):
+            Exclusive upper threshold for the denoised image. Defaults to 0.9.
+        denoise_weight (float):
+            Weight passed to total-variation denoising with the Chambolle algorithm.
+            Defaults to 0.1.
+        return_extra (bool):
+            Return the intermediate denoised image alongside the mask when True.
+            Defaults to False.
 
     Returns:
-        totmask (ndarray of bool):
-            the created mask
-        info (*optional* dict):
-            the intermediate denoised image
+        ndarray or tuple:
+            Boolean mask with the image shape. True selects denoised values strictly
+            between threshmin and threshmax. With return_extra=True, return (mask, info),
+            where info is a dictionary containing the denoised_image entry.
+
+    Notes:
+        The helper computes and returns a mask; it does not remove the selected pixels.
     """
     p = kerr_im.denoise_tv_chambolle(weight=denoise_weight)
     submask = p.threshold_minmax(threshmin, threshmax)

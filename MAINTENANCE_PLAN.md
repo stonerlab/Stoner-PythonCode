@@ -33,7 +33,7 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 | 3     | Repository content cleanup | Complete    | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained              |
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
 | 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
-| 6     | Documentation and examples | In progress | Fresh RTD build: warnings 1658 to 506; five primary classes and 85 dynamic Data methods audited; plot cache unchanged                         |
+| 6     | Documentation and examples | In progress | Fresh RTD build: warnings 1658 to 490; five primary classes and 85 dynamic Data methods audited; plot cache unchanged                         |
 | 7     | Focused source maintenance | Not started | Small reviewed batches with regression tests                                                                                                  |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
@@ -466,3 +466,16 @@ Phase 6 remains in progress. The proposed next batch fixes malformed Kerr helper
 docstrings that produce repeated indentation warnings, starting with crop_text,
 defect_mask and defect_mask_subtract_image. Imported-symbol stubs and duplicate
 attribute documentation remain separate, recorded warning categories.
+
+### Phase 6 Kerr helper docstrings complete (2026-09-11)
+
+Corrected crop_text, defect_mask and defect_mask_subtract_image documentation to
+match the implemented shapes, thresholds, copy behaviour and optional returns.
+Only docstrings changed, verified by AST comparison. RTD-mode Sphinx warnings
+fall from 506 to 490; all 16 diagnostics from these helpers disappear. API
+inventory coverage and all 243 plot-cache hashes remain unchanged. Evidence:
+`maintenance/phase6/batch2.md` and its JSON reports.
+
+The next proposed batch covers KerrStackMixin.crop_text, ImageStackMixin.convert
+and ImageStackMixin.correct_drifts, retaining source-behaviour and inventory
+checks. Phase 6 remains in progress.

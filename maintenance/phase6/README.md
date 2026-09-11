@@ -71,3 +71,9 @@ Separately investigate the 57 missing autosummary stubs, which largely concern
 imported names, and the duplicate attribute descriptions. These remain visible
 in this batch; a successful Sphinx exit is not a zero-warning documentation gate.
 Phase 6 remains in progress.
+
+## Second batch
+
+The three Kerr helper docstrings above are now corrected. See `batch2.md` for
+the warning comparison, source-only documentation check and next stack-docstring
+proposal.
