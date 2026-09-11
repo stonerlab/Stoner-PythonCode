@@ -1,0 +1,6 @@
+{
+  "case": "ImageStack.convert(existing dtype, force_copy=True)",
+  "exception": "AttributeError",
+  "message": "'numpy.ndarray' object has no attribute 'clone'",
+  "status": "confirmed existing defect; no runtime change in this batch"
+}

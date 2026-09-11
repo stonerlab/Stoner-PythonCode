@@ -340,43 +340,52 @@ class ImageStackMixin:
     ###################         Public  methods         #######################
 
     def convert(self, dtype, force_copy=False, uniform=False, normalise=True):
-        """Convert an image to the requested data-type.
-
-        Warnings are issued in case of precision loss, or when negative values
-        are clipped during conversion to unsigned integer types (sign loss).
-
-        Floating-point values are expected to be normalised and will be clipped
-        to the range [0.0, 1.0] or [-1.0, 1.0] when converting to unsigned or
-        signed integers respectively.
-
-        Numbers are not shifted to the negative side when converting from
-        unsigned to signed integer types. Negative values will be clipped when
-        converting to unsigned integers.
+        """Convert the stack pixels to the requested data type in place.
 
         Args:
-            image (ndarray):
-                    Input image.
-            dtype (dtype)
-                Target data-type.
+            dtype (numpy.dtype, type or str):
+                Target pixel data type, accepted by numpy.dtype.
+
+        Keyword Arguments:
             force_copy (bool):
-                Force a copy of the data, irrespective of its current dtype.
+                Request new pixel storage even when the data type is unchanged. Defaults to False.
+                See the current same-type limitation below; this never requests a new stack object.
             uniform (bool):
-                Uniformly quantize the floating point range to the integer range.
-                By default (uniform=False) floating point values are scaled and
-                rounded to the nearest integers, which minimizes back and forth
-                conversion errors.
+                Use uniform quantisation for floating-point to integer conversion when True.
+                Defaults to False, selecting the converter's scaled rounding path.
             normalise (bool):
-                When converting from int types to float normalise the resulting array
-                by the maximum allowed value of the int type.
+                Scale integer values into the floating-point intensity range when True.
+                Defaults to True. Unsigned values are divided by the integer maximum;
+                signed values are mapped using both integer limits. False retains their values.
+
+        Returns:
+            ImageStack:
+                This stack, with converted pixel storage and the original pixel mask restored.
+
+        Raises:
+            ValueError:
+                If the converter does not support the requested conversion, or floating-point
+                input lies outside [-1, 1] on a conversion path that checks this range.
+            AttributeError:
+                If force_copy=True is requested with the existing data type. The current
+                shared converter attempts to access an unavailable ndarray clone attribute.
+
+        Notes:
+            The stack object and image dimensions are retained. The shared converter may
+            warn about precision or sign loss. The same-type force_copy failure is a known
+            implementation limitation, not an intended copy contract.
 
         References:
             1.  DirectX data conversion rules.
                 http://msdn.microsoft.com/en-us/library/windows/desktop/dd607323%28v=vs.85%29.aspx
-            2,  Data Conversions.
+
+            2.  Data Conversions.
                 In "OpenGL ES 2.0 Specification v2.0.25", pp 7-8. Khronos Group, 2010.
-            3,  Proper treatment of pixels as integers. A.W. Path.
+
+            3.  Proper treatment of pixels as integers. A.W. Path.
                 In "Graphics Gems I", pp 249-256. Morgan Kaufmann, 1990.
-            4,  Dirty Pixels. J. Blinn.
+
+            4.  Dirty Pixels. J. Blinn.
                 In "Jim Blinn's corner: Dirty Pixels", pp 47-57. Morgan Kaufmann, 1998.
         """
 
@@ -443,17 +452,29 @@ class ImageStackMixin:
     ################### Deprecated Compatibility methods #######################
 
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
-        """Align images to correct for image drift.
+        """Dispatch legacy drift correction across the stack.
 
-        Pass through to ImageArray.corret_drift.
+        Args:
+            refindex (int or str):
+                Index or name of the image used as the zero-drift reference.
 
-        Arg:
-            refindex: int or str
-                index or name of the reference image to use for zero drift
         Keyword Arguments:
-            threshold(float): see ImageArray.correct_drift
-            upsample_factor(int): see ImageArray.correct_drift
-            box: see ImageArray.correct_drift
+            threshold (float):
+                Legacy feature-detection threshold forwarded to correct_drift. Defaults to 0.005.
+            upsample_factor (int):
+                Legacy registration upsampling factor forwarded to correct_drift. Defaults to 50.
+            box (tuple or None):
+                Region forwarded to correct_drift as (xmin, xmax, ymin, ymax).
+                Defaults to None. Interpretation is delegated to the alignment implementation.
+
+        Returns:
+            None:
+                The result of applying the correction is not returned for chaining.
+
+        Notes:
+            This compatibility method emits a deprecation warning and calls the deprecated
+            apply_all dispatcher with the selected reference image and the supplied keywords.
+            It retains legacy argument forwarding; prefer the stack's align method for new code.
 
         """
         warnings.warn("correct_drift is a deprecated method for an image stack - consider using align.")

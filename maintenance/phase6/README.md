@@ -77,3 +77,9 @@ Phase 6 remains in progress.
 The three Kerr helper docstrings above are now corrected. See `batch2.md` for
 the warning comparison, source-only documentation check and next stack-docstring
 proposal.
+
+## Third batch
+
+The stack cropping, conversion and legacy drift-correction docstrings are
+corrected in `batch3.md`. That report also records a reproduced same-dtype
+`force_copy=True` converter defect for a later runtime fix.

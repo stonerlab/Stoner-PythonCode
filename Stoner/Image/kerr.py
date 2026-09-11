@@ -159,8 +159,17 @@ class KerrStackMixin:
         """Crop the bottom text area from a standard Kermit image across the complete stack.
 
         Returns:
-        (ImageArray):
-            cropped image
+            ImageStack:
+                This stack, with each image cropped from (554, 672) to (512, 672)
+                by removing the bottom 42 rows. An already cropped stack is returned unchanged.
+
+        Raises:
+            ValueError:
+                If the image dimensions match neither the annotated nor the cropped shape.
+
+        Notes:
+            Cropping updates the stack storage and recorded image sizes in place.
+            Pixel masks are retained over the cropped region, and the number of images is unchanged.
         """
         images = self.shape[0]
         if self.shape[1:3] == IM_SIZE:
