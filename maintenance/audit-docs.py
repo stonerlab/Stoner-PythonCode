@@ -71,11 +71,20 @@ if __name__ == "__main__":
     parser.add_argument("warnings", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--compare", type=Path, help="Baseline HTML build to check for lost API entries")
+    parser.add_argument("--allow-removed", type=Path,
+                        help="JSON file listing explicitly reviewed obsolete inventory names under objects")
     args = parser.parse_args()
     result = audit(args.build, args.warnings, args.compare)
+    allowed = set()
+    if args.allow_removed:
+        if not args.compare:
+            parser.error("--allow-removed requires --compare")
+        allowed = set(json.loads(args.allow_removed.read_text(encoding="utf-8"))["objects"])
+    result["reviewed_obsolete_api_objects"] = sorted(allowed.intersection(result["removed_api_objects"]))
+    result["unexpected_removed_api_objects"] = sorted(set(result["removed_api_objects"]) - allowed)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result, indent=2))
-    if (result["missing_dynamic_data_methods"] or result["removed_api_objects"]
+    if (result["missing_dynamic_data_methods"] or result["unexpected_removed_api_objects"]
             or not all(item["documented"] for item in result["primary_classes"].values())):
         sys.exit(1)

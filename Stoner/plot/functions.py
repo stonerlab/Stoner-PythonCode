@@ -1263,40 +1263,54 @@ def plot_xyz(datafile, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, y
 
 
 def plot_xyuv(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kwargs):
-    """Make an overlaid image and quiver plot.
+    """Overlay vector arrows on an image coloured by vector direction and magnitude.
 
-      Args:
-    !c      xcol (index):
-              Xcolumn index or label
-          ycol (index):
-              Y column index or label
-          zcol (index):
-              Z column index or label
-          ucol (index):
-              U column index or label
-          vcol (index):
-              V column index or label
-          wcol (index):
-              W column index or label
+    Args:
+        datafile (Data):
+            Data object to work with if not used as a bound method.
+        xcol (int, str or None):
+            Horizontal position column; None uses the assigned column role.
+        ycol (int, str or None):
+            Vertical position column; None uses the assigned column role.
+        ucol (int, str or None):
+            Horizontal vector-component column; None uses the assigned column role.
+        vcol (int, str or None):
+            Vertical vector-component column; None uses the assigned column role.
+        wcol (int, str or None):
+            Optional third vector component used in the image colours. None uses the
+            assigned role if present; otherwise the colour calculation uses zero for this component.
 
-      Keyword Arguments:
-          show_plot (bool):
-              True Turns on interactive plot control
-          title (string):
-              Optional parameter that specifies the plot title - otherwise the current DataFile filename is used
-          save_filename (string):
-              Filename used to save the plot
-          figure (matplotlib figure):
-              Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False
-              then a new figure is always used, otherwise it will default to using the last figure used by this
-              DataFile object.
-          no_quiver (bool):
-              Do not overlay quiver plot (in cases of dense meshes of points)
-          plotter (callable):
-              Optional argument that passes a plotting function into the routine. Default is a 3d surface plotter,
-              but contour plot and pcolormesh also work.
-          **kwargs (dict):
-              A dictionary of other keyword arguments to pass into the plot function.
+    Keyword Arguments:
+        no_quiver (bool):
+            Omit the arrow overlay when True. Defaults to False.
+        alpha (float):
+            Opacity forwarded to the image and arrow plotters. Defaults to 0.75.
+        template (plot style):
+            Replace the data object's plotting template before drawing.
+        figure (int, matplotlib.figure.Figure, bool or None):
+            Figure selection forwarded to the plotting helpers. False requests a new figure;
+            otherwise the helpers can reuse the data object's current figure.
+        title (str):
+            Title forwarded to the plotting helpers; their defaults use the filename.
+        show_plot (bool):
+            Interactive-display control forwarded to the plotting helpers.
+        save_filename (str or None):
+            Save through the arrow-overlay stage. The image stage does not receive this
+            option, so it has no effect when no_quiver=True.
+        **kwargs (dict):
+            Further arguments shared by image_plot and quiver_plot. A custom plotter must
+            accept both stages' calling conventions if the arrow overlay is enabled.
+
+    Returns:
+        matplotlib.artist.Artist or object:
+            Result from quiver_plot when arrows are enabled, otherwise from image_plot.
+            With default plotters this is a Quiver or AxesImage artist, not a Figure.
+            A custom plotter determines its own return type.
+
+    Notes:
+        Drawing updates the data object's plotting state. The image colours are computed
+        from the vector components; there is no separate zcol parameter. Only the u and v
+        components are drawn as arrows. Numerical data and column roles are not reassigned.
     """
     c = _fix_cols(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kwargs)
     Z = _vector_color(datafile, xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol)

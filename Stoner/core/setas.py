@@ -340,21 +340,51 @@ class Setas(MutableMapping):
             raise AttributeError(f"shape attribute should be a 2-tuple not a {value}-tuple")
 
     def __call__(self, *args, **kwargs):
-        """Treat the current instance as a callable object and assign columns accordingly.
+        """Read or update the column-role assignments.
 
-        Variois forms of this method are accepted::
-
-        setas("xyzuvw")
-        setas(["x"],["y"],["z"],["u"],["v"],["w"])
-        setas(x="column_1",y=3,column4="z")
+        Args:
+            *args (str, iterable, dict or Setas):
+                Supply one positional assignment: a role string, a sequence of role
+                characters, a mapping of roles to columns or columns to roles, or another
+                Setas object. Without a positional assignment, use keyword assignments.
 
         Keyword Arguments:
-            _self (bool):
-                If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
-                return None. Default - **False**
+            _self (bool or None):
+                After an assignment, True returns this Setas object, False returns its
+                owning object and None returns None. Defaults to False. No copy is made.
             reset (bool):
-                If False then preserve the existing set columns and simply add the new ones. Otherwise, clear
-                all column assignments before setting new ones (default).
+                Clear existing roles before applying a string or keyword assignment when
+                True (the default). False preserves roles not explicitly changed.
+                Positional sequences and mappings are handled without this preliminary reset.
+            **kwargs (column selectors or str):
+                Assign roles using keywords such as ``x="column_1"`` or ``column_4="z"``.
+                Column selectors are resolved by find_col.
+
+        Returns:
+            list, Setas, object or None:
+                With no assignments or reset keyword, return the current role list, even
+                if _self was supplied. After an assignment, return the object selected by _self.
+
+        Raises:
+            SyntaxError:
+                If a single positional argument has an unsupported type.
+            IndexError:
+                If a mapping entry cannot be interpreted or a column cannot be resolved.
+            ValueError:
+                If a role character or encoded role string is invalid.
+
+        Notes:
+            Role sequences are truncated or padded to the number of columns. A period
+            clears a role; a hyphen leaves that position unchanged after any preliminary
+            reset. Assignments update this object in place.
+
+        Example:
+            Assign a role string, or use named columns and numerical indices::
+
+                data.setas("xyzuvw")
+                data.setas(["x", "y", "z", "u", "v", "w"])
+                data.setas(x="column_1", y=3, column_4="z")
+                data.setas(y=2, reset=False)
         """
         return_self = kwargs.pop("_self", False)
         if not (args or kwargs):  # New - bare call to setas will return the current value.

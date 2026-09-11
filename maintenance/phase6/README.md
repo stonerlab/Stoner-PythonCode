@@ -83,3 +83,9 @@ proposal.
 The stack cropping, conversion and legacy drift-correction docstrings are
 corrected in `batch3.md`. That report also records a reproduced same-dtype
 `force_copy=True` converter defect for a later runtime fix.
+
+## Fourth batch
+
+The Data overview, Setas call semantics and vector-plotting docstrings are
+corrected in `batch4.md`. Two obsolete Data attribute entries are explicitly
+reviewed rather than retained as misleading API inventory targets.

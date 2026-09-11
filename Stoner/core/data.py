@@ -70,71 +70,72 @@ class Data(
     MutableSequence,
     PlotMixin,
 ):
-    """Base class object that represents a matrix of data, associated metadata and column headers.
+    """Store tabular numerical data with metadata, column headers and column roles.
 
     Attributes:
+        data (DataArray):
+            Two-dimensional masked numerical array, indexed by row and column.
+        metadata (TypeHintedDict):
+            Metadata values and their associated type information.
         column_headers (list):
-            list of strings of the column names of the data.
-        data (2D numpy masked array):
-            The attribute that stores the nuermical data for each Data. This is a :py:class:`DataArray` instance -
-            which is itself a subclass of :py:class:`numpy.ma.MaskedArray`.
-        title (string):
-            The title of the measurement.
-        filename (string):
-            The current filename of the data if loaded from or already saved to disc. This is the default filename
-            used by :py:meth:`Stoner.core.data.Data.load` and :py:meth:`Stoner.core.data.Data.save`.
-        header (string):
-            A readonly property that returns a pretty formatted string giving the header of tabular representation.
-        mask (array of booleans):
-            Returns the current mask applied to the numerical data equivalent to self.data.mask.
-        mime_type (list of str):
-            The possible mime-types of data files represented by each matching filename pattern in
-            :py:attr:`Datafile.pattern`.
-        patterns (list):
-            A list of filename extension glob patterns that matrches the expected filename patterns for a Data
-            (*.txt and *.dat")
-        priority (int):
-            Used to indicathe order in which subclasses of :py:class:`Data` are tried when loading data. A higher
-            number means a lower priority (!)
-        setas (:py:class:`_stas`):
-            Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
-        shape (tuple of integers):
-            Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
-        records (numpy record array):
-            Returns the data in the form of a list of yuples where each tuple maps to the columns names.
+            Labels for the numerical columns.
+        setas (Setas):
+            Column-role assignments for coordinates, uncertainties and vector components.
+        shape (tuple of int):
+            Shape of the numerical data as (rows, columns).
+        dtype (numpy.dtype):
+            Data type of the numerical array.
+        mask (ndarray of bool):
+            Per-value mask of the tabular data; True marks an excluded value.
+        filename (str):
+            Current filename, also used as the default by load and save operations.
+        title (str):
+            Title used when plotting the data.
+        header (str):
+            Read-only formatted header for the tabular representation.
+        records (ndarray):
+            Structured view of the rows with field names derived from column headers.
+            Duplicate field names are made unique without changing the column headers.
+        dict_records (ndarray):
+            Array of dictionaries, one per row, keyed by column headers.
         clone (Data):
-            Creates a deep copy of the :py:class`Data` object.
-        dict_records (array of dictionaries):
-            View the data as an array or dictionaries where each dictionary represents one row with keys derived
-            from column headers.
+            Deep copy of this object.
         dims (int):
-            When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set
-        dtype (numpoy dtype):
-            Returns the datatype stored in the :py:attr:`Data.data` attribute.
-        T (:py:class:`DataArray`):
-            Transposed version of the data.
-        subclasses (list):
-            Returns a list of all the subclasses of Data currently in memory, sorted by
-            their priority. Each entry in the list consists of the
-            string name of the subclass and the class object.
+            Number of coordinate dimensions inferred from column roles.
+        T (DataArray):
+            Transposed numerical data.
+        mime_type (list of str):
+            Class-level MIME-type declaration retained for compatibility.
+        priority (int):
+            Class-level loading priority retained for compatibility.
         xcol (int):
-            If a column has been designated as containing *x* values, this will return the index of that column
+            Column index for the assigned x coordinate.
         xerr (int):
-            Similarly to :py:attr:`Data.xcol` but for the x-error value column.
+            Column index for the assigned x uncertainty.
         ycol (list of int):
-            Similarly to :py:attr:`Data.xcol` but for the y value columns.
+            Column indices for assigned y coordinates.
         yerr (list of int):
-            Similarly to :py:attr:`Data.xcol` but for the y error value columns.
+            Column indices for assigned y uncertainties.
         zcol (list of int):
-            Similarly to :py:attr:`Data.xcol` but for the z value columns.
+            Column indices for assigned z coordinates.
         zerr (list of int):
-            Similarly to :py:attr:`Data.xcol` but for the z error value columns.
+            Column indices for assigned z uncertainties.
         ucol (list of int):
-            Similarly to :py:attr:`Data.xcol` but for the u (x-axis direction cosine) columns.
+            Column indices for assigned u vector components.
         vcol (list of int):
-            Similarly to :py:attr:`Data.xcol` but for the v (y-axis direction cosine) columns.
+            Column indices for assigned v vector components.
         wcol (list of int):
-            Similarly to :py:attr:`Data.xcol` but for the w (z-axis direction cosine) columns.
+            Column indices for assigned w vector components.
+
+    Notes:
+        Analysis, fitting and plotting methods are composed into this class from
+        specialised modules. Many operations modify the instance and return it for
+        chaining; consult individual method descriptions for copy and return behaviour.
+
+        Coordinate values can be accessed through role-based attributes such as
+        ``x`` and ``y`` when the corresponding roles are assigned. Column indices
+        are available through ``setas.cols`` and attributes such as ``xcol`` when
+        those assignments exist. File detection uses the registered loader functions.
     """
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.

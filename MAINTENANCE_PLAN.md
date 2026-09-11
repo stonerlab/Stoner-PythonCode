@@ -33,7 +33,7 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 | 3     | Repository content cleanup | Complete    | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained              |
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
 | 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
-| 6     | Documentation and examples | In progress | Fresh RTD build: warnings 1658 to 470; five primary classes and 85 dynamic Data methods audited; plot cache unchanged                         |
+| 6     | Documentation and examples | In progress | Fresh RTD build: warnings 1658 to 443; five primary classes and 85 dynamic Data methods audited; plot cache unchanged                         |
 | 7     | Focused source maintenance | Not started | Small reviewed batches with regression tests                                                                                                  |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
@@ -494,3 +494,17 @@ the shared converter accesses ndarray.clone and raises AttributeError. Record a
 focused runtime fix with copy/mask regression coverage for Phase 7; no algorithm
 was changed here. The next documentation batch targets Data overview markup,
 Setas.__call__ and plot_xyuv. Phase 6 remains in progress.
+
+### Phase 6 Data and plotting docstrings complete (2026-09-12)
+
+Corrected the Data overview, Setas.__call__ and plot_xyuv documentation. Only
+docstrings changed in package source (AST verified); focused probes confirm
+Setas identity, role-list and reset behaviour. Clean RTD-mode warnings fall from
+470 to 443. All five primary classes and 85 dynamic Data methods remain documented.
+Only the obsolete Data.patterns and Data.subclasses inventory entries were removed,
+with explicit review and runtime absence evidence; no unexpected entries were lost.
+All 243 plot-cache hashes are unchanged. Evidence: `maintenance/phase6/batch4.md`.
+
+The next proposed batch covers fitting-model markup in Lorentzian_diff, BlochLaw
+and Ic_B_Airy, preserving equations and checking descriptions against code.
+Phase 6 remains in progress.
