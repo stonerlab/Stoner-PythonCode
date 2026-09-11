@@ -4,6 +4,8 @@
 
 .. py:module:: Stoner
 
+.. currentmodule:: Stoner
+
 ----------------
 Primary Classes
 ----------------
@@ -12,10 +14,13 @@ Primary Classes
    :toctree: classes
    :template: classdocs.rst
 
-    Stoner.core.data.Data
-    Stoner.folders.mixins.DataFolder
-    Stoner.Image.core.ImageFile
-    Stoner.Image.folders.ImageFolder
+    core.data.Data
+    folders.mixins.DataFolder
+    Image.core.ImageFile
+    Image.folders.ImageFolder
+
+For collections stored as an image stack, use
+:py:class:`~Stoner.Image.stack.ImageStack`.
 
 Inheritance Diagrams
 ^^^^^^^^^^^^^^^^^^^^
@@ -27,6 +32,8 @@ Inheritance Diagrams
 .. inheritance-diagram:: Stoner.Image.core.ImageFile
 
 .. inheritance-diagram:: Stoner.Image.folders.ImageFolder
+
+.. inheritance-diagram:: Stoner.Image.stack.ImageStack
 
 
 -----------------------

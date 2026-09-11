@@ -14,10 +14,10 @@ User Guide
 
    User Guide <UserGuide/ugindex>
 
-Package Documentatuion
-======================
+Package Documentation
+=====================
 .. toctree::
    :maxdepth: 2
 
-   Module Api Documentation <Stoner>
+   Module API Documentation <Stoner>
 

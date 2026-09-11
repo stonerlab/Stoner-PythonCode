@@ -5,6 +5,42 @@ Developer's Guide
 This section gives an overview of the internal data classes and explains how to
 add file-format support to the Stoner package.
 
+Contributor workflow
+====================
+
+Start with the repository's `AGENTS.md
+<https://github.com/stonerlab/Stoner-PythonCode/blob/stable/AGENTS.md>`_,
+`maintenance plan
+<https://github.com/stonerlab/Stoner-PythonCode/blob/stable/MAINTENANCE_PLAN.md>`_
+and `docstring standard
+<https://github.com/stonerlab/Stoner-PythonCode/blob/stable/DOCSTRING_STYLE.md>`_.
+They describe the checkout conventions, current work and expected Google-style
+docstrings. Preserve the scientific fixtures and the committed ``doc/plot_cache``.
+
+From the repository root, create the test environment and run a focused test::
+
+    conda env create -f tests/test-env.yml
+    conda run -n test-environment python -m pip install --no-deps -e .
+    conda run -n test-environment python -m pytest tests/Stoner/test_Core.py
+
+Run the full suite before completing changes that affect shared behaviour.
+``mamba`` can be used instead of ``conda`` to create the environment. Use a
+supported Python version; the separate Python 3.6 LabVIEW environment is not a
+development environment for this package.
+
+The documentation environment is defined in ``doc/docs-env.yml``. For a cached
+HTML build in PowerShell, use::
+
+    conda env create -f doc/docs-env.yml
+    $env:READTHEDOCS = 'True'
+    conda run -n rtd-build python -m sphinx -b html doc doc/_build/html
+    Remove-Item Env:READTHEDOCS
+
+``READTHEDOCS=True`` consumes the retained plot cache. Leaving it unset executes
+the plotting examples and deliberately refreshes that cache. Documentation
+examples are also exercised by ``tests/Stoner/test_doc_samples.py``; use that
+test module to check changes to example behaviour.
+
 Understanding the class structure
 =================================
 
