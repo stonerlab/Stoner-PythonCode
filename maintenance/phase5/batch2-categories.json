@@ -1,0 +1,17 @@
+{
+  "total": 342,
+  "markers": {
+    "analysis": 28,
+    "core": 43,
+    "documentation": 73,
+    "folders": 19,
+    "formats": 67,
+    "gui": 3,
+    "image": 53,
+    "network": 2,
+    "ocr": 1,
+    "plotting": 86,
+    "tools": 54
+  },
+  "unmarked": []
+}

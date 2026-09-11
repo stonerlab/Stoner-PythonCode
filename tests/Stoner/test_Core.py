@@ -426,9 +426,9 @@ def test_methods():
     assert shp1 == shp2
 
 
-def test_metadata_save():
+def test_metadata_save(tmp_path):
     global selfd, selfd1, selfd2, selfd3, selfd4
-    local = path.dirname(__file__)
+    local = str(tmp_path)
     t = np.arange(12).reshape(3, 4)  # set up a test data file with mixed metadata
     t = Data(t)
     t.column_headers = ["1", "2", "3", "4"]
@@ -451,9 +451,7 @@ def test_metadata_save():
     for k, v in zip(metnames, metitems):
         t[k] = v
     t.save(path.join(local, "mixedmetatest.dat"))
-    tl = Data(
-        path.join(local, "mixedmetatest.txt")
-    )  # will change extension to txt if not txt or tdi, is this what we want?
+    tl = Data(t.filename)
     t2 = selfd4.clone  # check that python tdi save is the same as labview tdi save
     t2.save(path.join(local, "mixedmetatest2.txt"))
     t2l = Data(path.join(local, "mixedmetatest2.txt"))
@@ -464,7 +462,6 @@ def test_metadata_save():
         assert orig.column_headers == load.column_headers
         _ = load.metadata ^ orig.metadata
         assert load.metadata == orig.metadata, "Metadata not the same on round tripping to disc"
-    # os.remove(path.join(local, "mixedmetatest.txt")) #clear up
     # os.remove(path.join(local, "mixedmetatest2.txt"))
 
 

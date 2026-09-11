@@ -5,7 +5,6 @@ Created on Sun Dec  9 19:56:38 2018
 
 @author: phygbu
 """
-import os
 import os.path as path
 import sys
 
@@ -22,8 +21,8 @@ sys.path.insert(0, pth)
 datadir = path.join(pth, "sample-data")
 
 
-def test_metadata_basic():
-    os.chdir(datadir)
+def test_metadata_basic(monkeypatch):
+    monkeypatch.chdir(datadir)
     fldr6 = DataFolder(".", pattern="QD*.dat", pruned=True)
     fldr6.sort()
     assert (
@@ -45,8 +44,8 @@ def test_metadata_basic():
     assert len(list(fldr6.metadata.all_keys())) == 49, "metadata.all_keys() the wrong length."
 
 
-def test_metadata_slice():
-    os.chdir(datadir)
+def test_metadata_slice(monkeypatch):
+    monkeypatch.chdir(datadir)
     fldr6 = DataFolder(".", pattern="QD*.dat", pruned=True)
     fldr6.sort()
     assert isinstance(fldr6.metadata.slice("Loaded from")[0], dict), "metadata.slice not returtning a dictionary."

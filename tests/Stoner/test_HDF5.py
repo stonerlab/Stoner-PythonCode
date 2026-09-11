@@ -3,7 +3,6 @@
 
 
 import os.path as path
-import tempfile
 
 import pytest
 
@@ -16,16 +15,15 @@ testdata = path.realpath(path.join(pth, "test-data"))
 
 root = path.realpath(path.join(Stoner.__home__, ".."))
 sample_data = path.realpath(path.join(root, "sample-data", "NLIV"))
-tmpdir = tempfile.mkdtemp()
 
 
-def test_HDF5folder():
+def test_HDF5folder(tmp_path):
     # Test constructor from DataFolder
     self_fldr = Stoner.DataFolder(sample_data, pattern="*.txt")
     self_HDF5fldr = Stoner.folders.hdf5.HDF5Folder(self_fldr)
     assert self_fldr.shape == self_HDF5fldr.shape, "HDF5Folder created from DataFolder didn't keep the same shape"
     assert self_fldr[0] == self_HDF5fldr[0], "First element of HDF5Folder created from DataFolder changed!"
-    HDF5name = path.join(tmpdir, "test-HDF5folder.HDF5")
+    HDF5name = str(tmp_path / "test-HDF5folder.HDF5")
     self_HDF5fldr.save(HDF5name)
     assert self_fldr.shape == self_HDF5fldr.shape, "HDF5Folder Changed shape when saving!"
     self_HDF5fldr_2 = Stoner.folders.hdf5.HDF5Folder(HDF5name)

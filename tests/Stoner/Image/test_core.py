@@ -6,9 +6,7 @@ Created on Fri May 27 17:09:04 2016
 """
 
 import os
-import shutil
 import sys
-import tempfile
 from os import path
 
 import numpy as np
@@ -70,25 +68,23 @@ def test_load_from_ImageArray():
     assert shares_memory(selfimarr, t), "no overlap on creating ImageArray from ImageArray"
 
 
-def test_load_from_png():
+def test_load_from_png(monkeypatch):
     subpath = os.path.join("coretestdata", "im1_annotated.png")
     fpath = os.path.join(thisdir, subpath)
     anim = ImageArray(fpath)
     assert (
         os.path.normpath(anim.metadata["Loaded from"]).lower() == os.path.normpath(fpath).lower()
     ), "Failed with {os.path.normpath(anim.metadata['Loaded from'])} and {os.path.normpath(fpath)}"
-    cwd = os.getcwd()
-    os.chdir(thisdir)
+    monkeypatch.chdir(thisdir)
     anim = ImageArray(subpath)
     # check full path is in loaded from metadata
     assert (
         os.path.normpath(anim.metadata["Loaded from"]).lower() == os.path.normpath(fpath).lower()
     ), "Full path not in metadata: {}".format(anim["Loaded from"])
-    os.chdir(cwd)
 
 
-def test_load_save_all():
-    tmpdir = tempfile.mkdtemp()
+def test_load_save_all(tmp_path):
+    tmpdir = str(tmp_path)
     pth = path.join(__home__, "..")
     datadir = path.join(pth, "sample-data")
     image = ImageFile(path.join(datadir, "kermit.png"))
@@ -114,7 +110,6 @@ def test_load_save_all():
         if fmt != "uint16":
             im = ImageFile(path.join(tmpdir, f"kermit-nometadata-{fmt}.tiff"))
             assert np.all(im.data == ims[fmt].data), f"Loading from tif without metadata failed for {fmt}"
-    shutil.rmtree(tmpdir)
     _ = image.convert("uint8")
 
 
@@ -251,8 +246,8 @@ def test_user_attributes():
 
 
 #####  test functionality  ##
-def test_save():
-    testfile = path.join(thisdir, "coretestdata", "testsave")
+def test_save(tmp_path):
+    testfile = str(tmp_path / "testsave")
     ext = [".png", ".npy"]
     keys = selfimarr.keys()
     for e in ext:
@@ -265,8 +260,8 @@ def test_save():
         os.remove(testfile + e)  # tidy up
 
 
-def test_savetiff():
-    testfile = path.join(thisdir, "coretestdata", "testsave.tiff")
+def test_savetiff(tmp_path):
+    testfile = str(tmp_path / "testsave.tiff")
     # create a few different data types
     testb = ImageArray(np.zeros((4, 5), dtype=bool))  # bool
     testb[0, :] = True

@@ -11,6 +11,26 @@ from Stoner.tools import file as file_tools
 from Stoner.tools.file import test_is_zip as is_zip_file
 
 
+@pytest.mark.parametrize("kind", ["loader", "saver"])
+def test_clear_routine_removes_all_indexes(monkeypatch, kind):
+    """Remove a routine from every index while retaining unrelated entries."""
+    routine = lambda: None
+    other = lambda: None
+    names = {"temporary": routine, "other": other}
+    patterns = {".dat": [(1, routine), (2, other), (3, routine)]}
+    mime_types = {"text/plain": [(1, routine), (2, other)]}
+    monkeypatch.setattr(file_tools, f"_{kind}s_by_name", names)
+    monkeypatch.setattr(file_tools, f"_{kind}s_by_pattern", patterns)
+    if kind == "loader":
+        monkeypatch.setattr(file_tools, "_loaders_by_type", mime_types)
+    removed = file_tools.clear_routine("temporary", loader=kind == "loader", saver=kind == "saver")
+    assert removed == {kind: routine}
+    assert names == {"other": other}
+    assert patterns == {".dat": [(2, other)]}
+    if kind == "loader":
+        assert mime_types == {"text/plain": [(2, other)]}
+
+
 def test_is_zip_with_empty_string():
     assert is_zip_file("") is False, "test_is_zip should return False for empty string"
 

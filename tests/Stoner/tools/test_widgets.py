@@ -23,7 +23,9 @@ import Stoner.tools.widgets as widgets
 from Stoner import Data, DataFolder
 
 
-def test_filedialog():
+@pytest.fixture
+def mocked_dialog(monkeypatch):
+    """Install predictable dialog responses for one test."""
     def dummy(mode="getOpenFileName"):
         modes = {
             "getOpenFileName": ret_pth,
@@ -56,10 +58,10 @@ def test_filedialog():
         },
     }
 
-    widgets = sys.modules["Stoner.tools.widgets"]
-    app = getattr(widgets, "App")
-    setattr(app, "modes", modes)
+    monkeypatch.setattr(widgets.App, "modes", modes)
 
+
+def test_filedialog(mocked_dialog):
     assert widgets.file_dialog.open_dialog() == ret_pth
     assert widgets.file_dialog.open_dialog(title="Test", start=".") == ret_pth
     assert widgets.file_dialog.open_dialog(patterns={"*.bad": "Very bad files"}) == ret_pth
@@ -70,7 +72,7 @@ def test_filedialog():
         widgets.file_dialog.open_dialog(mode="Whateve")
 
 
-def test_loader():
+def test_loader(mocked_dialog):
     d = Data(False)
     assert d.shape == (1676, 3), "Failed to load data with dialog box"
     with pytest.raises(RuntimeError):

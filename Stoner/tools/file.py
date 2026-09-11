@@ -479,7 +479,7 @@ def clear_routine(name, loader=True, saver=True):
         for lookup_dict in [pattern_lookup, type_lookup]:
             if not isinstance(lookup_dict, dict):
                 continue
-            for _, values in _loaders_by_pattern.items():
+            for values in lookup_dict.values():
                 remove = []
                 for ix, (_, loade_f) in enumerate(values):
                     if loade_f is func:

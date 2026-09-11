@@ -65,6 +65,7 @@ def test_extra():
     assert np.sqrt(img.image**2).mean() < 0.2
 
 
+@pytest.mark.plotting
 def test_imagefile_ops():
     img_a2 = ImageFile(join(__datapath__, "Sample_Image_2017-10-15_100.hdf5"))
     img_a3 = ImageFile(join(__datapath__, "Sample_Image_2017-10-15_101.hdf5"))
@@ -133,6 +134,7 @@ def test_funcs():
 #        print(all([k in a.metadata.keys() for k in img_a1.metadata.keys()]))
 
 
+@pytest.mark.plotting
 def test_imagefuncs():
     img_a2 = ImageFile(join(__datapath__, "Sample_Image_2017-10-15_100.hdf5"))
     img_a2.subtract_image(img_a2.image, offset=0)

@@ -62,6 +62,14 @@ def main() -> None:
     require("pytesseract" in test_environment and "tesseract" in test_environment, "OCR test tools are incomplete.")
     require("conda-forge::libmagic >=5.48" in test_environment, "The current conda-forge libmagic is not pinned.")
 
+    lower = workflows["check-minimum-dependencies.yaml"]
+    require("environment-file: tests/minimum-env.yml" in lower, "The lower dependency environment is not exercised.")
+    require("python -m pytest -n 2" in lower, "The lower dependency job must run the full parallel suite.")
+    require("contents: read" in lower, "The lower dependency job must be read-only.")
+    packages = workflows["check-packages.yaml"]
+    require("python-version: ['3.11', '3.14']" in packages, "Installed-package checks must cover Python endpoints.")
+    require("python-version: ${{ matrix.python-version }}" in packages, "Installed-package checks ignore the matrix.")
+
     print(f"Phase 4 CI policy passed ({sum(len(ANY_ACTION.findall(text)) for text in workflows.values())} pinned actions).")
 
 

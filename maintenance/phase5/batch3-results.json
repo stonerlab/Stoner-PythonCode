@@ -1,0 +1,42 @@
+{
+  "serial": {
+    "tests": 342,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 6856,
+    "exitCode": 0,
+    "pytestDurationSeconds": 867.365,
+    "runDirectory": "maintenance/runs/20260911-222317-serial-4b841433",
+    "coverage": {
+      "linesValid": 16540,
+      "linesCovered": 13651,
+      "branchesValid": 6638,
+      "branchesCovered": 4691
+    }
+  },
+  "parallel": {
+    "tests": 342,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 6977,
+    "exitCode": 0,
+    "pytestDurationSeconds": 509.802,
+    "runDirectory": "maintenance/runs/20260911-222754-parallel-b49a2d5c",
+    "coverage": {
+      "linesValid": 16540,
+      "linesCovered": 13651,
+      "branchesValid": 6638,
+      "branchesCovered": 4691
+    }
+  },
+  "sameTestIdentities": true,
+  "sameCoverageCounts": true,
+  "runsOverlap": true,
+  "fixtures": {
+    "checked": 369,
+    "changed": []
+  },
+  "hostedValidation": "Pending for this batch"
+}

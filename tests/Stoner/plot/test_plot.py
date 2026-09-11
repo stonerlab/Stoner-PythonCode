@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from matplotlib.figure import Figure
+from pyparsing import PyparsingDeprecationWarning
 
-warnings.filterwarnings("ignore")
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../../"))
@@ -31,7 +31,44 @@ datadir = path.join(pth, "sample-data")
 selfd = Data(path.join(__home__, "..", "sample-data", "New-XRay-Data.dql"))
 
 
-warnings.filterwarnings("error")
+pytestmark = [
+    pytest.mark.filterwarnings("error"),
+    pytest.mark.filterwarnings(
+        "ignore:FigureCanvasAgg is non-interactive, and thus cannot be shown:UserWarning"
+    ),
+]
+
+
+@pytest.fixture(autouse=True)
+def plot_state(monkeypatch, request):
+    """Restore plotting options and close figures even after a failed assertion."""
+    global selfd
+    monkeypatch.setattr(Options, "no_figs", True)
+    selfd = Data(path.join(__home__, "..", "sample-data", "New-XRay-Data.dql"))
+    plt.close("all")
+    with plt.rc_context(), warnings.catch_warnings():
+        # Matplotlib 3.8 uses legacy Pyparsing aliases; newer Pyparsing warns.
+        # Limit this exception to Matplotlib's parser modules and alias warnings.
+        warnings.filterwarnings(
+            "ignore",
+            message="'.*' (?:deprecated - use|argument is deprecated, use) '.*'",
+            category=PyparsingDeprecationWarning,
+            module=r"matplotlib\.(?:_fontconfig_pattern|_mathtext)",
+        )
+        # parseString's compatibility wrapper reports this one inside Pyparsing.
+        warnings.filterwarnings(
+            "ignore",
+            message="'parseAll' argument is deprecated, use 'parse_all'",
+            category=PyparsingDeprecationWarning,
+            module=r"pyparsing\.util",
+        )
+        if request.node.name in {"test_plot_magic", "test_misc_funcs"}:
+            # These tests deliberately construct axes outside a GridSpec.
+            warnings.filterwarnings("ignore", message="There are no gridspecs with layoutgrids", category=UserWarning)
+        try:
+            yield
+        finally:
+            plt.close("all")
 
 def test_set_no_figs():
     global selfd
@@ -66,7 +103,6 @@ def test_set_no_figs():
     plt.close("all")
 
 
-@pytest.mark.filterwarnings("ignore:.*:matplotlib.MatplotlibDeprecationWarning")
 def test_template_settings():
     template = DefaultPlotStyle(font__weight="bold")
     assert template["font.weight"] == "bold", "Setting ytemplate parameter in init failed."

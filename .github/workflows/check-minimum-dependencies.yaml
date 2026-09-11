@@ -1,0 +1,44 @@
+name: Supported lower dependency lines
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  minimum-dependencies:
+    name: Python 3.11 lower dependency lines
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    env:
+      MPLBACKEND: Agg
+      QT_QPA_PLATFORM: offscreen
+      PYTHONFAULTHANDLER: '1'
+      TZ: Europe/London
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Install lower dependency environment
+        uses: mamba-org/setup-micromamba@f457c30a868e4760d3a6fcea5f25dc655b8edf39 # v3.2.1
+        with:
+          environment-file: tests/minimum-env.yml
+          environment-name: stoner-py311-minimum
+          init-shell: bash
+          cache-downloads: true
+          cache-environment: true
+      - name: Record resolved dependencies
+        run: micromamba list
+      - name: Install package
+        run: python -m pip install --no-deps .
+      - name: Run full suite
+        run: python -m pytest -n 2 -o faulthandler_timeout=120 --junitxml=pytest.xml
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: Lower dependency test results
+          path: pytest.xml

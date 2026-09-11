@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """Test for Stoner.analysis.filtering"""
 
-import warnings
 
 import numpy as np
 import pytest
 
 from Stoner import Data
 
-warnings.filterwarnings("error")
+pytestmark = pytest.mark.filterwarnings("error")
 
 testd = None
 np.random.seed(12345)

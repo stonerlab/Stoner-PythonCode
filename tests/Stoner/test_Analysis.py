@@ -131,6 +131,7 @@ def test_clip():
     assert (d.y.min() >= -0.5) and (d.y.max() <= 0.7), "Clip with no column specified failed."
 
 
+@pytest.mark.plotting
 def test_integrate():
     d = Data(path.join(slfdatadir, "SLD_200919.dat"))
     d.setas = "x..y"

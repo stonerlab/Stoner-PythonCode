@@ -6,6 +6,10 @@ Created on Fri May 27 17:09:04 2016
 """
 
 import os
+import subprocess
+import sys
+from pathlib import Path
+from shutil import which
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,6 +18,7 @@ import pytest
 import Stoner
 from Stoner import Data, __home__
 from Stoner.Image.kerr import KerrArray, KerrImageFile, KerrStack
+from Stoner.Image import kerr, kerrfuncs
 
 Stoner.Options.multiprocessing = False
 
@@ -31,12 +36,12 @@ def shares_memory(arr1, arr2):
     return ret
 
 
-selfimage = KerrArray(os.path.join(testdir, "kermit3.png"), ocr_metadata=True)
 selfimage2 = KerrArray(os.path.join(testdir, "kermit3.png"))
 selfimage3 = KerrImageFile(os.path.join(sample_data_dir, "testnormalsave.png"))
 selfks = KerrStack(testdir2)
 
 
+@pytest.mark.plotting
 def test_kerr_ops():
     im = selfimage3.clone
     assert isinstance(im.image, KerrArray), "KerrImageFile not blessing the image property correctly"
@@ -65,27 +70,66 @@ def test_kerr_ops():
     plt.close("all")
 
 
+@pytest.mark.ocr
 def test_tesseract_ocr():
-    # this incidentally tests get_metadata too
-    if not selfimage.tesseractable:
-        print("#" * 80)
-        print("Skipping test that uses tesseract.")
-        return None
-    _ = selfimage.metadata
+    if not kerr._tesseractable or which("tesseract") is None:
+        pytest.skip("Optional pytesseract wrapper and Tesseract executable are required")
+    image = KerrArray(os.path.join(testdir, "kermit3.png"), ocr_metadata=True)
+    metadata = image.metadata
+    assert metadata["ocr_scalebar_length_microns"] == pytest.approx(50.0)
+    assert metadata["ocr_field"] == pytest.approx(-0.13, abs=0.01)
+    assert metadata["ocr_scalebar_length_pixels"] == 189
+    assert metadata["ocr_microns_per_pixel"] == pytest.approx(50.0 / 189)
+    assert metadata["ocr_pixels_per_micron"] == pytest.approx(189 / 50.0)
+    assert "ocr_field" not in selfimage2.metadata
 
-    # assert all((m['ocr_scalebar_length_microns']==50.0,
-    #                     m['ocr_date']=='11/30/15',
-    #                     m['ocr_field'] == -0.13)), 'Misread metadata {}'.format(m))
-    _ = (
-        "ocr_scalebar_length_pixels",
-        "ocr_field_of_view_microns",
-        "Loaded from",
-        "ocr_microns_per_pixel",
-        "ocr_pixels_per_micron",
+
+@pytest.mark.parametrize("field_only", [False, True])
+def test_ocr_uses_text_crops(monkeypatch, field_only):
+    """Recognise each text region rather than the complete annotated image."""
+    image = KerrArray(os.path.join(testdir, "kermit3.png"), asfloat=False, crop_text=False)
+    calls = []
+
+    def recognise(crop, key):
+        assert crop.shape[0] in (13, 15)
+        assert crop.shape[1] < 100
+        calls.append(key)
+        return {"ocr_field": -0.13, "ocr_scalebar_length_microns": 50.0}.get(key, "text")
+
+    monkeypatch.setattr(KerrArray, "tesseractable", property(lambda self: True))
+    monkeypatch.setattr(kerrfuncs, "_tesseract_image", recognise)
+    image.ocr_metadata(field_only=field_only)
+    assert image.metadata["ocr_field"] == -0.13
+    assert len(calls) == (1 if field_only else 8)
+
+
+@pytest.mark.parametrize("wrapper_available", [False, True])
+def test_no_ocr_without_dependencies(monkeypatch, wrapper_available):
+    """Keep ordinary image operations usable when either OCR dependency is absent."""
+    monkeypatch.setattr(kerr, "_tesseractable", wrapper_available)
+    monkeypatch.setattr(kerr, "which", lambda name: None, raising=False)
+    image = KerrArray(os.path.join(testdir, "kermit3.png"))
+    assert not image.tesseractable
+    image.normalise()
+    assert image.shape == (554, 672)
+    image.ocr_metadata()
+    assert np.isfinite(image).all()
+    assert not any(key.startswith("ocr_") for key in image.metadata)
+
+
+def test_import_without_ocr_wrapper(tmp_path):
+    """Import and use Kerr images in a fresh process without the optional wrapper."""
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = str(Path(__home__).parent)
+    filename = str(Path(testdir, "kermit3.png").resolve())
+    code = (
+        "import sys; sys.modules['pytesseract'] = None; from Stoner.Image.kerr import KerrArray; "
+        f"import numpy as np; image = KerrArray({filename!r}); "
+        "assert not image.tesseractable; image.normalise(); assert np.isfinite(image).all()"
     )
-    # assert all([k in m.keys() for k in keys]), 'some part of the metadata didn\'t load {}'.format(m))
-    m_un = selfimage2.metadata
-    assert "ocr_field" not in m_un.keys(), "Unannotated image has wrong metadata"
+    result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path, env=environment,
+                            capture_output=True, text=True, timeout=60, check=False)
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_kerrstack():

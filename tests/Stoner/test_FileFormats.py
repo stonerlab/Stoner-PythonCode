@@ -73,6 +73,25 @@ def test_csvfile():
     assert csv.shape == (167, 3), "Failed to load CSVFile from text"
 
 
+def test_zip_load_is_read_only(monkeypatch):
+    """Load the real ZIP fixture without requesting write access."""
+    from Stoner.formats.data import zip as zip_format
+
+    archive_class = zip_format.zf.ZipFile
+
+    class ReadOnlyArchive(archive_class):
+        """Reject modes that would need permission to modify the fixture."""
+
+        def __init__(self, filename, mode="r", *args, **kwargs):
+            assert mode == "r", "Loading an archive must not require write access"
+            super().__init__(filename, mode, *args, **kwargs)
+
+    monkeypatch.setattr(zip_format.zf, "ZipFile", ReadOnlyArchive)
+    loaded = zip_format.load_zipfile(Data(), datadir / "ZipFile_Example.zip")
+    assert loaded.shape[0] > 0 and loaded.shape[1] >= 2
+
+
+@pytest.mark.slow
 def test_attocube_scan(tmpdir):
     tmpdir = pathlib.Path(tmpdir)
     scandir = datadir / "attocube_scan"
@@ -140,11 +159,18 @@ def test_fail_to_load():
         _ = Data(datadir /"bad_data" / "Origin_Project.opju")
 
 
-def test_arb_class_load():
-    _ = Data(datadir / "TDI_Format_RT.txt", filetype="dummy.ArbClass")
-    clear_routine("dummy.ArbClass")
+def test_arb_class_load(monkeypatch):
+    monkeypatch.syspath_prepend(str(pathlib.Path(__file__).parent))
+    monkeypatch.delitem(sys.modules, "dummy", raising=False)
+    try:
+        loaded = Data(datadir / "TDI_Format_RT.txt", filetype="dummy.ArbClass")
+        assert loaded.shape[0] > 0 and loaded.shape[1] >= 2
+    finally:
+        clear_routine("dummy.ArbClass")
+        sys.modules.pop("dummy", None)
 
 
+@pytest.mark.network
 def test_url_load():
     """Test URL scheme openers."""
     t1 = Data("https://github.com/stonerlab/Stoner-PythonCode/raw/main/sample-data/hairboRaman.spc")

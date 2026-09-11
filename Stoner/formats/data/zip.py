@@ -127,7 +127,7 @@ def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         elif isinstance(new_data.filename, path_types) and zf.is_zipfile(
             new_data.filename
         ):  # filename is a string that is a zip file
-            other = zf.ZipFile(new_data.filename, "a")  # pylint: disable=consider-using-with
+            other = zf.ZipFile(new_data.filename, "r")  # pylint: disable=consider-using-with
             member = kwargs.get("member", other.namelist()[0])
             close_me = True
             solo_file = len(other.namelist()) == 1

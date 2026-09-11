@@ -10,12 +10,17 @@ permissions:
 
 jobs:
   installed-distributions:
+    name: Installed distributions (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.14']
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
-          python-version: '3.14'
+          python-version: ${{ matrix.python-version }}
       - name: Build wheel and source archive
         run: |
           python -m pip install build==1.2.2

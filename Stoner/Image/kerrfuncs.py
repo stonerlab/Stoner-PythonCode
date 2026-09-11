@@ -142,7 +142,7 @@ def _tesseract_image(kerr_im, key):
         tesseract = which("tesseract")
         with open(stdoutfile, "w", encoding="utf-8") as stdout:
             subprocess.call(  # nosec
-                [tesseract, imagefile, textfile[:-4]], stdout=stdout, stderr=subprocess.STDOUT
+                [tesseract, imagefile, textfile[:-4], "--psm", "7"], stdout=stdout, stderr=subprocess.STDOUT
             )  # adds '.txt' extension itkerr_im
         os.unlink(stdoutfile)
     with open(textfile, "r", encoding="utf-8") as tf:
@@ -184,22 +184,27 @@ def float_and_croptext(kerr_im):
 
 
 def ocr_metadata(kerr_im, field_only=False):
-    """Use image recognition to try to pull the metadata numbers off the image.
+    """Recognise metadata from the text regions of an annotated Kerr image.
 
-    Requirements:
-        This function uses tesseract to recognise the image, therefore
-        tesseract file1 file2 must be valid on your command line.
-        Install tesseract from
-        https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
+    Args:
+        kerr_im (KerrArray):
+            Image containing the standard Kermit annotation strip.
 
     Keyword Arguments:
-        field_only(bool):
-            only try to return a field value
+        field_only (bool):
+            Recognise only the magnetic field when True; default False.
 
     Returns:
-        metadata: dict
-            updated metadata dictionary
+        dict:
+            Updated metadata, or the unchanged metadata when OCR dependencies
+            are unavailable or the image has no standard annotation strip.
+
+    Notes:
+        Requires the optional pytesseract wrapper and a Tesseract executable on
+        PATH. Each text crop is recognised using single-line segmentation.
     """
+    if not kerr_im.tesseractable:
+        return kerr_im.metadata
     if kerr_im.shape != AN_IM_SIZE:
         pass  # can't do anything without an annotated image
 
@@ -207,7 +212,7 @@ def ocr_metadata(kerr_im, field_only=False):
     elif field_only:
         fbox = (110, 165, 527, 540)  # (This is just the number area not the unit)
         im = kerr_im.crop(box=fbox, copy=True)
-        field = kerr_im._tesseract_image(im, "ocr_field")
+        field = _tesseract_image(im, "ocr_field")
         kerr_im.metadata["ocr_field"] = field
     else:
         text_areas = {
@@ -233,7 +238,7 @@ def ocr_metadata(kerr_im, field_only=False):
         metadata = {}  # now go through and process all keys
         for key, val in text_areas.items():
             im = kerr_im.crop(box=val, copy=True)
-            metadata[key] = _tesseract_image(kerr_im, key)
+            metadata[key] = _tesseract_image(im, key)
         metadata["ocr_scalebar_length_pixels"] = sb_length
         if isinstance(metadata["ocr_scalebar_length_microns"], float):
             metadata["ocr_microns_per_pixel"] = metadata["ocr_scalebar_length_microns"] / sb_length

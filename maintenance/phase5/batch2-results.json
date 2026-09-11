@@ -1,0 +1,53 @@
+{
+  "serial": {
+    "tests": 342,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 593,
+    "exitCode": 0,
+    "pytestDurationSeconds": 432.66,
+    "runDirectory": "maintenance\\runs\\20260911-214810-serial-f25f2a72",
+    "coverage": {
+      "linesValid": 16540,
+      "linesCovered": 13651,
+      "branchesValid": 6638,
+      "branchesCovered": 4691
+    }
+  },
+  "parallel": {
+    "tests": 342,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 594,
+    "exitCode": 0,
+    "pytestDurationSeconds": 262.292,
+    "runDirectory": "maintenance\\runs\\20260911-215616-parallel-abf41bc9",
+    "coverage": {
+      "linesValid": 16540,
+      "linesCovered": 13651,
+      "branchesValid": 6638,
+      "branchesCovered": 4691
+    }
+  },
+  "sameTestIdentities": true,
+  "sameCoverageCounts": true,
+  "missingBatch1Tests": [],
+  "addedTests": [
+    "tests.stoner.image.test_kerr::test_import_without_ocr_wrapper",
+    "tests.stoner.image.test_kerr::test_no_ocr_without_dependencies[False]",
+    "tests.stoner.image.test_kerr::test_no_ocr_without_dependencies[True]",
+    "tests.stoner.image.test_kerr::test_ocr_uses_text_crops[False]",
+    "tests.stoner.image.test_kerr::test_ocr_uses_text_crops[True]"
+  ],
+  "ocrWrapperAbsent": {
+    "tests": 1,
+    "failures": 0,
+    "skipped": 1
+  },
+  "fixtures": {
+    "checked": 369,
+    "changed": []
+  }
+}

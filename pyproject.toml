@@ -88,3 +88,17 @@ ignore = ["D203"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "core: data containers, metadata and column roles",
+    "analysis: numerical analysis and fitting",
+    "formats: file loading and saving",
+    "folders: data collections and bulk operations",
+    "image: image processing and collections",
+    "plotting: figure creation and plotting behaviour",
+    "gui: widget and dialog interaction",
+    "documentation: runnable documentation examples",
+    "tools: shared utilities",
+    "network: requires a remote resource",
+    "ocr: requires the optional OCR integration",
+    "slow: expensive real-data calculations (duration depends on dependencies)",
+]

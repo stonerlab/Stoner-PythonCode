@@ -66,7 +66,6 @@ def test_ImageStack_align():
     ], "slice metadata column headers wrong at {}".format(data.column_headers)
 
 
-@pytest.mark.filterwarnings("ignore:.*:UserWarning")
 def test_ImageStack_methods():
     istack2 = selfistack2.clone
     m1 = selfistack2.mean().crop(10)

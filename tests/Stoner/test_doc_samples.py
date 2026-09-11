@@ -1,15 +1,11 @@
-import os
 import os.path as path
 import runpy
-import warnings
-from traceback import format_exc
 
 import matplotlib.pyplot as plt
 import pytest
 
 from Stoner.compat import listdir_recursive
 
-warnings.filterwarnings("ignore")
 
 pth = path.dirname(__file__)
 pth = path.realpath(path.join(pth, "../../"))
@@ -29,21 +25,18 @@ def get_scripts():
 
 
 @pytest.mark.parametrize("script", get_scripts())
-@pytest.mark.filterwarnings("ignore:.*:RuntimeWarning")
 def test_scripts(script, monkeypatch):
-    """Import each of the sample scripts in turn and see if they ran without error"""
+    """Run each example with an isolated working directory and figure lifecycle."""
     print(f"Trying script {script}")
+    monkeypatch.chdir(datadir)
+    plt.close("all")
     try:
-        os.chdir(datadir)
         runpy.run_path(script)
         fignum = len(plt.get_fignums())
         assert fignum >= 1, f"{script} Did not produce any figures !"
         print("Done")
+    finally:
         plt.close("all")
-    except Exception:
-        error = format_exc()
-        print(f"Failed with\n{error}")
-        assert False, f"Script {script} failed with {error}"
 
 
 if __name__ == "__main__":  # Run some tests manually to allow debugging

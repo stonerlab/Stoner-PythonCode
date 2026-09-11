@@ -12,7 +12,6 @@ import os
 import os.path as path
 import re
 import sys
-import tempfile
 from copy import copy
 
 import matplotlib.pyplot as plt
@@ -267,6 +266,7 @@ def test_clone():
     assert isinstance(t["recursivefoldertest"], DataFolder), "groups didn't copy over"
 
 
+@pytest.mark.plotting
 def test_grouping():
     fldr4 = DataFolder()
     x = np.linspace(-np.pi, np.pi, 181)
@@ -370,7 +370,7 @@ def test_grouping():
     plt.close("all")
 
 
-def test_saving():
+def test_saving(tmp_path):
     fldr4 = DataFolder()
     x = np.linspace(-np.pi, np.pi, 181)
     for phase in np.linspace(0, 1.0, 5):
@@ -385,7 +385,7 @@ def test_saving():
                 d.filename = "test/{amplitude}/{phase}/{frequency}.dat".format(**d)
                 fldr4 += d
     fldr4.unflatten()
-    newdir = tempfile.mkdtemp()
+    newdir = str(tmp_path)
     fldr4.save(newdir)
     fldr5 = DataFolder(newdir)
     assert fldr4.shape == fldr5.shape, "Saved DataFolder and loaded DataFolder have different shapes"

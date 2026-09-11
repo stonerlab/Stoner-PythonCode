@@ -25,17 +25,17 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 
 ## Status
 
-| Phase | Workstream | Status | Completion evidence |
-|---|---|---|---|
-| 0 | Reproducible baseline | Complete | maintenance/phase0: 333 passed serial and with two workers; identical 79% coverage; environment manifest and Sphinx warning baseline recorded |
-| 1 | Git and checkout hygiene | Complete | Approved Windows Git workflow; local fileMode=false/autocrlf=false; disposable clone clean and semantic diff unchanged |
-| 2 | Packaging and metadata | Complete | GitHub run 34519864056: wheel/sdist builds, archive contents and separate clean-install probes passed on Python 3.14/Linux |
-| 3 | Repository content cleanup | Complete | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained |
-| 4 | CI and quality tooling | Complete | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline |
-| 5 | Tests and compatibility | Not started | Stable suite across supported Python versions |
-| 6 | Documentation and examples | In progress | RTD-mode build succeeds; narrative pages have no unresolved rendered links; all 73 examples pass; autosummary noise remains |
-| 7 | Focused source maintenance | Not started | Small reviewed batches with regression tests |
-| 8 | Release readiness | Not started | Clean-room package and release checklist |
+| Phase | Workstream                 | Status      | Completion evidence                                                                                                                           |
+| ----- | -------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0     | Reproducible baseline      | Complete    | maintenance/phase0: 333 passed serial and with two workers; identical 79% coverage; environment manifest and Sphinx warning baseline recorded |
+| 1     | Git and checkout hygiene   | Complete    | Approved Windows Git workflow; local fileMode=false/autocrlf=false; disposable clone clean and semantic diff unchanged                        |
+| 2     | Packaging and metadata     | Complete    | GitHub run 34519864056: wheel/sdist builds, archive contents and separate clean-install probes passed on Python 3.14/Linux                    |
+| 3     | Repository content cleanup | Complete    | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained              |
+| 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
+| 5     | Tests and compatibility    | In progress | 342 passed serial/parallel on Python 3.11 lower dependencies and 3.14; fixtures unchanged; hosted validation pending                          |
+| 6     | Documentation and examples | In progress | RTD-mode build succeeds; narrative pages have no unresolved rendered links; all 73 examples pass; autosummary noise remains                   |
+| 7     | Focused source maintenance | Not started | Small reviewed batches with regression tests                                                                                                  |
+| 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
 Statuses should be one of `Not started`, `In progress`, `Blocked`, or `Complete`. Add dated notes and commands beneath a phase when work begins.
 
@@ -362,3 +362,52 @@ Validated implementation commit `99843b7a5dedcd82740ced076138383ab8fec0a3`. [pyt
 Windows remains the primary development and local-test platform, with Phase 0's serial and parallel 333-test Python 3.14 results as its current evidence. Hosted Windows environment creation was removed after repeatable micromamba access violations on two runner versions, including with `--always-copy`, and an impractically slow setup-miniconda/libmamba attempt. Hosted CI therefore checks the non-development Linux and macOS platforms without retaining a known-red notification source.
 
 The macOS environment now uses PyQt6 and a current conda-forge `libmagic >=5.48`. This replaced a mixed-channel pairing of conda-forge `filemagic 1.6` with `defaults` `libmagic 5.36` whose magic database failed after Qt initialisation. The current stack passed the complete macOS suite. Runtime `MagicError` failures now degrade to filename-pattern loader selection, matching the existing behaviour when filemagic is unavailable. Coveralls uploads run on Linux because its macOS Homebrew tap is rejected by the hosted runner; macOS pytest remains required and passed independently.
+
+### Phase 5 first batch complete (2026-09-11)
+
+Isolated working-directory changes and figure cleanup, moved image/HDF5/core metadata round-trips into pytest temporary directories, and made arbitrary-loader import and registry cleanup independent of preceding tests. Fixed two reproduced package defects: `clear_routine` removed entries from the wrong registry index, and ZIP loading requested append access to input fixtures. Added three regression cases using isolated registry entries and the real ZIP fixture.
+
+Corrected `maintenance/run-baseline.ps1` to remove `READTHEDOCS` for ordinary tests: its presence, even with the value `False`, disabled external image methods. Added focused selections, Python fault reporting and isolated pytest caches. The historical unexplained runner exit did not recur; its original cause remains unproven.
+
+Validated all 36 test-manifest requirements in Miniforge `py314` on Windows. Restored the optional OCR packages in that test environment without changing dependency declarations; Tesseract remains optional at runtime. Focused checks passed, including the isolated STXM example and example-harness failure cleanup. Full serial: 337 passed, 612 warnings, 440.95 s. Two workers: the same 337 passed, 613 warnings, 303.17 s. No skips; identical coverage counts and 79% combined coverage. All 73 documentation examples passed and all 369 audited fixture/cache files retained their original hashes. These are local results, not new CI or cross-platform validation.
+
+Evidence and the next-batch proposal are in `maintenance/phase5/README.md`, `results.json`, `environment.json` and `fixture-check.json`. Phase 5 remains in progress. The proposed next batch covers test categories, scoped warning policy, explicit optional-OCR coverage and remaining directory/dialog/temporary-file isolation. Dependency-version boundaries follow separately.
+
+### Phase 5 second batch complete (2026-09-11)
+
+Added registered test categories, including explicit network/OCR selections, and documented commands in `tests/README.md`. Removed import-time warning filters and broad warning-category suppression; plotting/filtering tests retain scoped strict checks with narrowly documented headless/manual-axes exceptions. Folder metadata, folder-save, dialog and plotting tests now restore their local state and use managed output directories.
+
+Replaced the OCR test's silent pass when unavailable with an explicit skip and real recognised-value assertions. New regressions exposed discarded OCR text crops and an invalid field-only helper call; both are fixed, using Tesseract single-line segmentation. Availability checks both the optional wrapper and executable. Missing dependencies preserve ordinary image operations and metadata. No dependency declarations changed.
+
+Windows/Miniforge `py314`: 342 passed serially (593 warnings, 432.67 s) and with two workers (594 warnings, 262.29 s), no skips, identical test identities and coverage counts, 79% combined coverage. All 337 first-batch cases remain with five added OCR regressions. A separate unavailable-wrapper integration run reports one explicit skip. All 369 audited fixture/cache files are unchanged. See `maintenance/phase5/batch2.md` and its JSON evidence files.
+
+Phase 5 remains in progress for supported dependency-version boundary environments and any demonstrated installed-distribution coverage gaps. Current local results do not replace cross-platform CI evidence.
+
+### Phase 5 third batch complete locally (2026-09-11)
+
+Created and verified a complete Python 3.11 test environment using NumPy 2.0.2,
+SciPy 1.14.1, Matplotlib 3.8.4, scikit-image 0.24.0, lmfit 1.3.4 and pandas 2.3.3.
+The representative lower-minor-line specification is `tests/minimum-env.yml`;
+it is not an exhaustive dependency matrix or a test of every earliest patch.
+No runtime dependency declarations changed, and Tesseract remains optional.
+
+Resolved strict plotting-test failures with scoped Pyparsing alias-warning
+exceptions for Matplotlib's legacy parser calls. All five plotting tests pass
+on Python 3.11 and 3.14. Marked the real-data Attocube interpolation test `slow`
+after observing its successful calculation exceed the two-minute diagnostic
+threshold; it remains included in full runs. Strict marker collection passes.
+
+Full Python 3.11 serial: 342 passed, 6856 warnings, 867.38 s. Two workers:
+342 passed, 6977 warnings, 509.81 s. No skips; identical test identities and
+coverage counts, matching Python 3.14's 79% combined coverage. All 73 examples
+pass and all 369 audited fixture/cache hashes are unchanged. Runs overlapped,
+so durations are not a performance comparison. See `maintenance/phase5/batch3.md`
+and its JSON evidence files.
+
+Prepared a micromamba CI job for this dependency combination and extended the
+existing clean wheel/sdist resource probes to Python 3.11 and 3.14. YAML parsing,
+dependency-name alignment and CI policy checks pass locally. Phase 5 remains
+in progress solely for hosted validation of the accumulated changes: the ordinary
+supported-Python matrix, lower-dependency job and installed-distribution jobs.
+After that gate, the next proposed batch is Phase 6 Sphinx warning triage and
+public/dynamically attached API documentation coverage.

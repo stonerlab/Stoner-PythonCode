@@ -10,6 +10,7 @@ Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 __all__ = ["KerrArray", "KerrStack", "MaskStack"]
 
 import os
+from shutil import which
 from typing import Optional, Self, Tuple, Union
 
 import numpy as np
@@ -88,8 +89,8 @@ class KerrArray(ImageArray):
 
     @property
     def tesseractable(self: Self) -> bool:
-        """Do a test call to tesseract to see if it is there and cache the result."""
-        return _tesseractable
+        """Return whether the optional OCR wrapper and executable are available."""
+        return _tesseractable and which("tesseract") is not None
 
     def save(self: Self, filename: Optional[Filename] = None, **kwargs: Kwargs) -> None:
         """Stub method for a save function."""

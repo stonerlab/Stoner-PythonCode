@@ -5,7 +5,6 @@ Created on Sat Dec  8 20:59:16 2018
 @author: phygbu
 """
 
-import os
 import os.path as path
 import sys
 
@@ -20,8 +19,8 @@ sys.path.insert(0, pth)
 datadir = path.join(pth, "sample-data")
 
 
-def test_each_call():
-    os.chdir(datadir)
+def test_each_call(monkeypatch):
+    monkeypatch.chdir(datadir)
     fldr6 = DataFolder(".", pattern="QD*.dat", pruned=True)
     shaper = lambda f: f.shape
     fldr6.sort()
@@ -37,8 +36,8 @@ def test_each_call():
     assert len(meths) == 133, "Dir of folders.each failed ({}).".format(len(meths))
 
 
-def test_each_call_or_operator():
-    os.chdir(datadir)
+def test_each_call_or_operator(monkeypatch):
+    monkeypatch.chdir(datadir)
     fldr4 = DataFolder(datadir, pattern="QD-SQUID-VSM.dat")
     fldr5 = fldr4.clone
     (hysteresis_correct @ fldr4)(setas="3.xy", saturated_fraction=0.25)
@@ -47,8 +46,8 @@ def test_each_call_or_operator():
     assert "Hc" in fldr5[0], "Call on DataFolder.each() failed to apply function to folder"
 
 
-def test_each_setas():
-    os.chdir(datadir)
+def test_each_setas(monkeypatch):
+    monkeypatch.chdir(datadir)
     fldr7 = DataFolder("NLIV", pattern="*.txt", pruned=True, setas="yx.")
     assert len(fldr7.each.setas) == 3, "Length of DataFolder.each.setas wrong"
     assert fldr7.each.setas.collapse() == ["y", "x", "."], "DataFolder collapsed each.setas wrong"
@@ -60,8 +59,8 @@ def test_each_setas():
     assert fldr7.each.setas.collapse() == ["y", "x", "."], "DataFolder.each.setas assignment failed"
 
 
-def test_each_attr():
-    os.chdir(datadir)
+def test_each_attr(monkeypatch):
+    monkeypatch.chdir(datadir)
     fldr6 = DataFolder(".", pattern="QD*.dat", pruned=True)
     with pytest.raises(AttributeError):
         _ = fldr6.each.bad_item
