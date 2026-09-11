@@ -103,5 +103,11 @@ An isolated Windows environment with those two test-tool versions reproduced
 the collection ImportError. After the fixes, the five plotting cases and OCR
 subprocess case pass together with two workers and coverage (6 passed). A direct
 probe of pytest-cov 3.0's child startup confirmed branch=False with automatic
-discovery outside the checkout and branch=True with the explicit config. Hosted
-validation of this follow-up is still required.
+discovery outside the checkout and branch=True with the explicit config.
+
+Hosted validation of fix commit `6f9c039f4601eacef5e080590dc570d102c4dffa`:
+[macOS job 103436035446](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34651990565/job/103436035446)
+passed all 342 tests with 157 warnings in 358.28 seconds, and completed coverage
+aggregation successfully. The lower-dependency and installed-package workflows
+also passed at this commit. Linux Python 3.11, 3.13 and 3.14 passed; Python 3.12
+and final matrix reporting were still running when this evidence was recorded.

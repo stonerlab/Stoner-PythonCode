@@ -421,5 +421,8 @@ mixed statement and branch coverage. Guarded the optional warning class and
 passed an absolute coverage configuration in CI and the full-suite runner.
 An isolated environment reproduced the import error; the affected six cases
 then passed with two workers and coverage. A child-startup probe confirmed the
-coverage configuration fix. See `maintenance/phase5/batch3.md`; hosted validation
-remains pending for this follow-up.
+coverage configuration fix. Hosted macOS job `103436035446` at fix commit
+`6f9c039f4` then passed all 342 tests and coverage aggregation (157 warnings,
+358.28 s). The lower-dependency and package-validation workflows also passed.
+Linux Python 3.11, 3.13 and 3.14 passed; Python 3.12 and final matrix reporting
+were still running when recorded. See `maintenance/phase5/batch3.md`.
