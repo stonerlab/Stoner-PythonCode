@@ -32,7 +32,7 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 | 2     | Packaging and metadata     | Complete    | GitHub run 34519864056: wheel/sdist builds, archive contents and separate clean-install probes passed on Python 3.14/Linux                    |
 | 3     | Repository content cleanup | Complete    | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained              |
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
-| 5     | Tests and compatibility    | In progress | 342 passed serial/parallel on Python 3.11 lower dependencies and 3.14; fixtures unchanged; hosted validation pending                          |
+| 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
 | 6     | Documentation and examples | In progress | RTD-mode build succeeds; narrative pages have no unresolved rendered links; all 73 examples pass; autosummary noise remains                   |
 | 7     | Focused source maintenance | Not started | Small reviewed batches with regression tests                                                                                                  |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
@@ -433,3 +433,22 @@ fails unexpected file-dialog requests, while retaining explicit dialog mocks in
 widget tests; its regression and focused loader/widget checks pass (6 tests).
 CI now reports test names, slowest durations and two-minute stack dumps. Phase 5
 remains open pending a completed, diagnostic Python 3.12 run.
+
+### Phase 5 hosted validation complete (2026-09-11)
+
+At commit `db79eaade`, run `34653015465` passed all 343 tests on Linux Python
+3.11-3.14 and macOS Python 3.14, including the new unexpected-dialog regression.
+Lower-dependency run `34653015413` and installed-distribution run `34653015414`
+also passed, along with coverage aggregation and test-result publishing.
+Phase 5 is complete. Final timings and run links are in `maintenance/phase5/batch3.md`.
+
+Python 3.12 remains disproportionately slow in folder operations: base operators
+took 176.07 seconds versus 22.64 on 3.13, while image functions took 21.30 versus
+22.03 seconds. NumPy, coverage and pytest-cov version numbers match between those
+jobs. The cause remains unresolved; controlled coverage/worker comparisons are
+a separate performance follow-up. The observed stacks do not implicate HDF5 locks.
+
+The next Phase 6 batch will classify Sphinx warnings, audit public and dynamically
+attached API documentation, and fix a small evidenced group of references or
+directives. Validate in RTD mode using the retained plot cache and record remaining
+warning categories explicitly.

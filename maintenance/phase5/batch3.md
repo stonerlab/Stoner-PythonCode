@@ -127,3 +127,46 @@ deterministic replies. A regression checks that the guard rejects a dialog.
 The focused widget and loader checks pass (6 tests). CI now logs individual
 test names, the 20 slowest durations and stack dumps after two minutes, allowing
 future waits to be distinguished from slow computation or blocked interaction.
+
+## Hosted gate completed (2026-09-11)
+
+Implementation commit `db79eaadeb043b52d1f4ff274fd3197ca6dce8c2` passed the
+[full matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34653015465),
+[lower-dependency job](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34653015413)
+and [installed-distribution checks](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34653015414).
+Coverage aggregation and test-result publishing also succeeded.
+
+| Platform | Python | Passed | Warnings | Pytest seconds |
+| -------- | ------ | ------ | -------- | -------------- |
+| Linux    | 3.11   | 343    | 34       | 204.14         |
+| Linux    | 3.12   | 343    | 134      | 837.76         |
+| Linux    | 3.13   | 343    | 131      | 299.19         |
+| Linux    | 3.14   | 343    | 131      | 185.30         |
+| macOS    | 3.14   | 343    | 157      | 571.13         |
+
+The Python 3.12 slowdown is selective, not a uniform multiplier:
+
+| Test                   | Linux 3.11 seconds | Linux 3.12 seconds | Linux 3.13 seconds |
+| ---------------------- | ------------------ | ------------------ | ------------------ |
+| test_Base_Operators    | 18.03              | 176.07             | 22.64              |
+| test_Properties        | 14.67              | 169.78             | 18.65              |
+| test_groups_methods    | 7.29               | 85.09              | 9.67               |
+| folder_operations.py   | 16.35              | 228.10             | 80.13              |
+| test_attocube_scan     | 45.54              | 133.86             | 52.02              |
+| test_outlier_detect    | 37.25              | 46.06              | 44.44              |
+| image test_funcs       | 20.91              | 21.30              | 22.03              |
+
+The sampled base-operator test was in the OVF loader's NumPy `genfromtxt` call;
+another sample showed Attocube image/metadata reconstruction. Neither establishes
+how long the sampled operation took. The `execnet` receiver frames are worker
+communications, not evidence of a communication deadlock. Set aside the HDF5
+locking hypothesis for this investigation; no observed trace implicates it.
+No unexpected dialog failed the suite. All sampled tests eventually passed.
+
+Both Linux 3.12 and 3.13 resolved NumPy 2.5.2, coverage 7.14.1 and pytest-cov
+7.1.0, with interpreter-specific Conda builds. Those version numbers alone do
+not explain the difference. The remaining performance follow-up is a controlled
+comparison of the affected tests with and without coverage, then serial versus
+two workers, retaining environment and runner details. No folder implementation
+change is justified by these samples alone. Phase 5's compatibility gate is
+complete; this performance anomaly remains unresolved.

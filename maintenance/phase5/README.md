@@ -87,10 +87,10 @@ See `batch3.md`, `batch3-environment.json` and `batch3-results.json`. The Python
 with two workers, with identical coverage counts and unchanged fixture hashes.
 The scoped plotting warning fix also passes the Python 3.14 plotting tests.
 
-## Remaining Phase 5 gate
+## Hosted gate completed (2026-09-11)
 
-Run the prepared hosted workflows against these changes: the ordinary Python
-3.11-3.14/Linux and Python 3.14/macOS matrix, the new lower-dependency Linux job,
-and clean wheel/sdist installation probes on Python 3.11 and 3.14. Record their
-results before marking Phase 5 complete. Current local results do not establish
-new CI or cross-platform success.
+At commit `db79eaade`, all five hosted matrix jobs passed 343 tests each, including
+the unexpected-dialog regression. The lower-dependency job, installed wheel/sdist
+probes on Python 3.11 and 3.14, coverage aggregation and result publishing passed.
+Phase 5 is complete. See `batch3.md` for run links, final timings and the unresolved
+Python 3.12 performance anomaly; successful validation does not explain that slowdown.
