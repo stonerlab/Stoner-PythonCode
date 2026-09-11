@@ -5,6 +5,18 @@ from pathlib import Path
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def no_interactive_file_dialogs(monkeypatch, request):
+    """Fail unexpected file dialogs instead of waiting for input on CI."""
+    from Stoner.tools import widgets
+
+    def unexpected_dialog(*args, **kwargs):
+        pytest.fail(f"Unexpected file dialog in {request.node.nodeid}: {kwargs!r}")
+
+    for mode in widgets.App.modes.values():
+        monkeypatch.setitem(mode, "method", unexpected_dialog)
+
+
 def pytest_collection_modifyitems(items):
     """Assign categories from the existing test layout and example names."""
     categories = {

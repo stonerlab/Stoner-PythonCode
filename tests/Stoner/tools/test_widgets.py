@@ -24,7 +24,7 @@ from Stoner import Data, DataFolder
 
 
 @pytest.fixture
-def mocked_dialog(monkeypatch):
+def mocked_dialog(monkeypatch, no_interactive_file_dialogs):
     """Install predictable dialog responses for one test."""
     def dummy(mode="getOpenFileName"):
         modes = {
@@ -59,6 +59,14 @@ def mocked_dialog(monkeypatch):
     }
 
     monkeypatch.setattr(widgets.App, "modes", modes)
+
+
+def test_unexpected_dialog_is_rejected():
+    """Unexpected interaction must fail before reaching a native modal dialog."""
+    if widgets.QT_VERSION is None:
+        pytest.skip("Qt is unavailable; native file dialogs cannot open")
+    with pytest.raises(pytest.fail.Exception, match="Unexpected file dialog"):
+        widgets.file_dialog.open_dialog()
 
 
 def test_filedialog(mocked_dialog):

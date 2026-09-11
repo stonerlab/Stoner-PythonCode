@@ -111,3 +111,19 @@ passed all 342 tests with 157 warnings in 358.28 seconds, and completed coverage
 aggregation successfully. The lower-dependency and installed-package workflows
 also passed at this commit. Linux Python 3.11, 3.13 and 3.14 passed; Python 3.12
 and final matrix reporting were still running when this evidence was recorded.
+
+## Unexpected-dialog guard and CI diagnostics
+
+The replacement Python 3.12 job remained in pytest after the other jobs finished;
+its live log showed 144 completed tests (42%), but the terse output did not
+identify active cases. The preceding Python 3.12 run passed all 342 cases in
+371.35 seconds. An unexpected modal dialog is a hypothesis, not an established
+cause of this wait.
+
+Every test now guards the shared file-dialog mode callbacks: unexpected native
+dialog requests raise a pytest failure with the test identity and arguments.
+The intentional widget tests explicitly override the guard with their existing
+deterministic replies. A regression checks that the guard rejects a dialog.
+The focused widget and loader checks pass (6 tests). CI now logs individual
+test names, the 20 slowest durations and stack dumps after two minutes, allowing
+future waits to be distinguished from slow computation or blocked interaction.

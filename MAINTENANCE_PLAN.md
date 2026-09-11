@@ -426,3 +426,10 @@ coverage configuration fix. Hosted macOS job `103436035446` at fix commit
 358.28 s). The lower-dependency and package-validation workflows also passed.
 Linux Python 3.11, 3.13 and 3.14 passed; Python 3.12 and final matrix reporting
 were still running when recorded. See `maintenance/phase5/batch3.md`.
+
+The replacement Python 3.12 job stalled at 42% in its terse live log. An invisible
+file dialog remains an unconfirmed hypothesis. Added a suite-wide guard that
+fails unexpected file-dialog requests, while retaining explicit dialog mocks in
+widget tests; its regression and focused loader/widget checks pass (6 tests).
+CI now reports test names, slowest durations and two-minute stack dumps. Phase 5
+remains open pending a completed, diagnostic Python 3.12 run.

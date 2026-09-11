@@ -47,6 +47,9 @@ presence-based documentation restrictions.
 
 ## Isolation and warning policy
 
+- Unexpected native file dialogs fail immediately through an autouse fixture.
+  Dialog tests explicitly replace the guarded methods with deterministic replies.
+  CI logs test names, the slowest durations and stack dumps after two minutes.
 - Use `tmp_path` for outputs and `monkeypatch.chdir` for temporary directory
   changes. Treat scientific input fixtures and `doc/plot_cache` as read-only.
 - Use fixtures to restore dialog mocks, options and plotting state. A test must

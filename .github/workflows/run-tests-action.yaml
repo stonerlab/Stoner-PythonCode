@@ -58,13 +58,13 @@ jobs:
         env:
           LC_CTYPE: en_GB.UTF-8
         run: |
-           xvfb-run --auto-servernum pytest -n 2 --cov-config="$GITHUB_WORKSPACE/pyproject.toml" --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
+           xvfb-run --auto-servernum pytest -vv -n 2 -o faulthandler_timeout=120 --durations=20 --cov-config="$GITHUB_WORKSPACE/pyproject.toml" --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
            coverage xml
            exit ${PYTEST_EXIT:-0}
       - name: Test on macOS
         if: runner.os != 'Linux'
         run: |
-           pytest -n 2 --cov-config="$GITHUB_WORKSPACE/pyproject.toml" --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
+           pytest -vv -n 2 -o faulthandler_timeout=120 --durations=20 --cov-config="$GITHUB_WORKSPACE/pyproject.toml" --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
            coverage xml
            exit ${PYTEST_EXIT:-0}
         env:
