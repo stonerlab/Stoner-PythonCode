@@ -40,7 +40,7 @@ remain evidence for the environment in which they were recorded.
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
 | 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
 | 6     | Documentation and examples | Complete    | maintenance/phase6/closure.md: 73 examples pass; Linux build passes; public API retained; reviewed warning ceilings and unchanged plot cache  |
-| 7     | Focused source maintenance | Not started | Small reviewed batches with regression tests                                                                                                  |
+| 7     | Focused source maintenance | In progress | MAXIMUS reviewed: multi-region support deferred pending authoritative format guidance and real multi-region fixtures                          |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
 Statuses should be one of `Not started`, `In progress`, `Blocked`, or `Complete`. Add dated notes and commands beneath a phase when work begins.
@@ -237,7 +237,8 @@ This phase is deliberately after the baseline and repository cleanup. Avoid broa
 
 ### Candidate workstreams
 
-- Resolve documented `TODO`/`FIXME` cases, including MAXIMUS single-region assumptions, the metadata-copy workaround, and incomplete column-indexing behaviour.
+- MAXIMUS single-region assumptions: reviewed as known unimplemented multi-region features. Defer implementation until authoritative facility format guidance and representative actual multi-region exports with expected results are available; see `maintenance/phase7/maximus-limitations.md`.
+- Review the remaining `TODO`/`FIXME` cases, including the metadata-copy workaround and incomplete column-indexing behaviour, with regression evidence before changing behaviour.
 - Review dynamic method binding for discoverability, typing, and API documentation while preserving the public chained-operation contract.
 - Improve type annotations module by module, beginning at stable public boundaries rather than internal implementation details.
 - Reduce duplicated loader/saver logic without changing positive-identification or priority semantics.

@@ -373,7 +373,9 @@ def _read_images(files, header):
     """
     xims = list(files)
     scandef = header["ScanDefinition"]
-    region = scandef["Regions"][0]  # FIXME assumes a single region in the data
+    # Known unimplemented feature: multi-region scans need facility format guidance and real fixtures.
+    # See maintenance/phase7/maximus-limitations.md before changing region/file/axis mapping.
+    region = scandef["Regions"][0]
     if len(xims) > 1:
         data = np.stack([np.genfromtxt(x)[::-1] for x in xims]).T
     elif len(xims) == 1:
@@ -403,7 +405,9 @@ def _read_pointscan(files, header):
     """
     xsps = list(files)
     scandef = header["ScanDefinition"]
-    region = scandef["Regions"][0]  # FIXME assumes a single region in the data
+    # Known unimplemented feature: multi-region scans need facility format guidance and real fixtures.
+    # See maintenance/phase7/maximus-limitations.md before changing region/file/axis mapping.
+    region = scandef["Regions"][0]
     if len(xsps) > 1:
         data = np.stack([np.genfromtxt(x)[:, 1] for x in xsps]).T
     elif len(xsps) == 1:
