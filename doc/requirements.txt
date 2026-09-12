@@ -1,3 +1,4 @@
+# The Graphviz executable (dot) is also required; install it through the OS or Conda.
 asteval
 chardet>=5.2.0
 cycler>=0.10.0

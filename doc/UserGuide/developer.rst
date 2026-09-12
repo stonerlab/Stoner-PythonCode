@@ -36,6 +36,10 @@ HTML build in PowerShell, use::
     conda run -n rtd-build python -m sphinx -b html doc doc/_build/html
     Remove-Item Env:READTHEDOCS
 
+The Conda specification includes the Graphviz executable used for inheritance
+diagrams. If using ``doc/requirements.txt`` with pip instead, install Graphviz
+separately and ensure its ``dot`` command is on PATH.
+
 ``READTHEDOCS=True`` consumes the retained plot cache. Leaving it unset executes
 the plotting examples and deliberately refreshes that cache. Documentation
 examples are also exercised by ``tests/Stoner/test_doc_samples.py``; use that

@@ -29,3 +29,15 @@ Compiled CHM, DVI and PDF manuals remain reproducible, ignored build outputs as
 decided in Phase 3. The definitive documentation is the RST/source docstrings;
 doc/plot_cache remains the intentional versioned graphics cache. HTML is the
 normal documentation deliverable; no compiled manual is required for release.
+
+The first Linux check, workflow run 34705113529 at commit 1cedeb2c9, succeeded
+with 81 warnings and no missing stubs. It exposed malformed maths in the public
+lorentzian_diff function and a missing Graphviz executable in the documentation
+environment. Both are corrected for the repeat build: the function docstring
+now agrees with its model class, and doc/docs-env.yml supplies graphviz. The pip
+requirements and contributor guide explain the separate executable dependency.
+
+The audit now supports an explicit reviewed warning-count ceiling. New or
+increased diagnostics fail; existing warnings remain visible. The Windows
+manifest accepts only duplicate descriptions, the intentional case collisions
+and unreferenced imported bibliography entries, not arbitrary warning categories.

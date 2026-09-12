@@ -93,17 +93,25 @@ def stretchedExp(x, A, beta, x_0):
 
 
 def lorentzian_diff(x, A, sigma, mu):
-    r"""Implement a differential form of a Lorentzian peak.
+    r"""Evaluate the derivative of a Lorentzian peak with respect to x.
 
     Args:
-        x (array): x data
-        A (float): Peak amplitude
-        sigma (float): peak wideth
-        mu (float): peak location in x
+        x (array-like):
+            Positions at which to evaluate the derivative.
+        A (float):
+            Integrated area of the underlying Lorentzian peak.
+        sigma (float):
+            Half-width at half-maximum of the underlying peak.
+        mu (float):
+            Centre of the underlying peak.
 
     Returns:
-        :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
-                                                                      \left(- \mu + x\right)^{2}\right)^{2}}`
+        array-like:
+            Derivative values with the shape of x.
+
+    Notes:
+        The derivative is
+        :math:`2 A \sigma (\mu-x) / [\pi (\sigma^2 + (x-\mu)^2)^2]`.
 
     Example:
         .. plot:: samples/Fitting/lorentzian.py

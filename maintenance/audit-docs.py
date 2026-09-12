@@ -24,6 +24,23 @@ def inventory_objects(build):
     return {line.split()[0] for line in entries if " py:" in line}
 
 
+def warning_counts(warnings):
+    """Count diagnostics without machine paths, line numbers or duplicate-target ordering."""
+    counts = Counter()
+    for line in warnings.read_text(encoding="utf-8").splitlines():
+        match = re.search(r"\b(WARNING|ERROR|CRITICAL): (.*)", line)
+        if match is None:
+            continue
+        message = match[2]
+        if message.startswith("duplicate object description of "):
+            message = message.split(", other instance", 1)[0]
+        origin = re.search(r"docstring of ([^:]+):", line)
+        if origin:
+            message = f"{origin[1]}: {message}"
+        counts[f"{match[1]}: {message}"] += 1
+    return counts
+
+
 def audit(build, warnings, baseline=None):
     """Compare the built inventory with the runtime API and classify warnings."""
     objects = inventory_objects(build)
@@ -83,10 +100,16 @@ if __name__ == "__main__":
     parser.add_argument("--compare", type=Path, help="Baseline HTML build to check for lost API entries")
     parser.add_argument("--require-fitting-functions", action="store_true",
                         help="Require all exported fitting functions (use a case-sensitive filesystem)")
+    parser.add_argument("--expected-warnings", type=Path,
+                        help="Reviewed JSON warning_counts ceilings; new or increased diagnostics fail")
     parser.add_argument("--allow-removed", type=Path,
                         help="JSON file listing explicitly reviewed obsolete inventory names under objects")
     args = parser.parse_args()
     result = audit(args.build, args.warnings, args.compare)
+    result["unexpected_warnings"] = {}
+    if args.expected_warnings:
+        expected = json.loads(args.expected_warnings.read_text(encoding="utf-8"))["warning_counts"]
+        result["unexpected_warnings"] = dict(warning_counts(args.warnings) - Counter(expected))
     allowed = set()
     if args.allow_removed:
         if not args.compare:
@@ -98,6 +121,7 @@ if __name__ == "__main__":
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result, indent=2))
     if (result["missing_dynamic_data_methods"] or result["unexpected_removed_api_objects"]
+            or result["unexpected_warnings"]
             or (args.require_fitting_functions and result["missing_fitting_functions"])
             or not all(item["documented"] for item in result["primary_classes"].values())):
         sys.exit(1)
