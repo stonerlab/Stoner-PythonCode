@@ -114,46 +114,46 @@ def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         filename = _split_filename(filename, **kwargs)
 
     new_data.filename = filename
+    other = None
+    close_me = False
     try:
-        if isinstance(new_data.filename, zf.ZipFile):  # Loading from an ZipFile
-            if not new_data.filename.fp:  # Open zipfile if necessary
-                other = zf.ZipFile(new_data.filename.filename, "r")
-                close_me = True
-            else:  # Zip file is already open
-                other = new_data.filename
-                close_me = False
-            member = kwargs.get("member", other.namelist()[0])
-            solo_file = len(other.namelist()) == 1
-        elif isinstance(new_data.filename, path_types) and zf.is_zipfile(
-            new_data.filename
-        ):  # filename is a string that is a zip file
-            other = zf.ZipFile(new_data.filename, "r")  # pylint: disable=consider-using-with
-            member = kwargs.get("member", other.namelist()[0])
-            close_me = True
-            solo_file = len(other.namelist()) == 1
-        else:
-            raise StonerLoadError(f"{new_data.filename} does  not appear to be a real zip file")
-    except StonerLoadError:
-        raise
-    except Exception as err:  # pylint: disable=W0703 # Catching everything else here
         try:
-            exc = format_exc()
+            if isinstance(filename, zf.ZipFile):
+                if filename.fp:
+                    other = filename
+                else:
+                    other = zf.ZipFile(filename.filename, "r")
+                    close_me = True
+            elif isinstance(filename, path_types) and zf.is_zipfile(filename):
+                other = zf.ZipFile(filename, "r")
+                close_me = True
+            else:
+                raise StonerLoadError(f"{filename} does not appear to be a real zip file")
+            names = other.namelist()
+            if not names:
+                raise StonerLoadError("ZIP archive contains no members")
+            member = kwargs.get("member", names[0])
+            solo_file = len(names) == 1
+            data = other.read(other.getinfo(member))
+        except (OSError, KeyError, zf.BadZipFile, zf.LargeZipFile, RuntimeError) as err:
+            raise StonerLoadError(f"Unable to read ZIP member: {err}") from err
+
+        try:
+            text = data.decode("utf-8")
+            header = text.split("\n", 1)[0].split("\t", 1)[0].strip()
+            if header not in {"TDI Format 1.5", "TDI Format=Text 1.0", "TDI Format 2.0"}:
+                raise StonerLoadError("ZIP member is not supported TDI text")
+            tmp = Data() << text
+        except (UnicodeDecodeError, ValueError, IndexError, StopIteration) as err:
+            raise StonerLoadError(f"Invalid TDI data in ZIP member: {err}") from err
+        copy_into(tmp, new_data)
+        new_data.filename = path.join(other.filename, member)
+        if solo_file:
+            new_data.filename = str(filename)
+        return new_data
+    finally:
+        if close_me and other is not None:
             other.close()
-        except (AttributeError, NameError, ValueError, TypeError, zf.BadZipFile, zf.LargeZipFile):
-            pass
-        raise StonerLoadError(f"{new_data.filename} threw an error when opening\n{exc}") from err
-    # Ok we can try reading now
-    info = other.getinfo(member)
-    data = other.read(info)  # In Python 3 this would be a bytes
-    tmp = Data() << data.decode("utf-8")
-    copy_into(tmp, new_data)
-    # new_data.__init__(tmp << data)
-    new_data.filename = path.join(other.filename, member)
-    if close_me:
-        other.close()
-    if solo_file:
-        new_data.filename = str(filename)
-    return new_data
 
 
 @register_saver(patterns=(".zip", 16), name="ZippedFile", what="Data")

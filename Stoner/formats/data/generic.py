@@ -43,10 +43,13 @@ def catch_sysout() -> None:
     out = io.StringIO()
     sys.stdout, sys.stderr = out, out
     logger = logging.getLogger("hyperspy.io")
-    logger.addFilter(_refuse_log)
-    yield None
-    logger.removeFilter(_refuse_log)
-    sys.stdout, sys.stderr = stdout, stderr
+    log_filter = _refuse_log()
+    logger.addFilter(log_filter)
+    try:
+        yield None
+    finally:
+        logger.removeFilter(log_filter)
+        sys.stdout, sys.stderr = stdout, stderr
 
 
 def _delim_detect(line: str) -> str:

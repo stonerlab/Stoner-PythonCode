@@ -5,6 +5,7 @@
 import re
 import struct
 from ast import literal_eval
+from contextlib import contextmanager
 
 # Standard Library imports
 from datetime import datetime
@@ -471,6 +472,15 @@ def _read_spc_loginfo(new_data, f):
             new_data._header[key] = value
 
 
+@contextmanager
+def _spc_read_errors():
+    """Translate malformed binary fields into a candidate-loader rejection."""
+    try:
+        yield
+    except struct.error as err:
+        raise StonerLoadError(f"Invalid or truncated SPC data: {err}") from err
+
+
 @register_loader(patterns=(".spc", 16), mime_types=("application/octet-stream", 16), name="SPCFile", what="Data")
 def load_spc(new_data, *args, **kwargs):
     """Read a .scf file produced by the Renishaw Raman system (among others).
@@ -494,7 +504,7 @@ def load_spc(new_data, *args, **kwargs):
     else:
         new_data.filename = filename
     # Open the file and read the main file header and unpack into a dict
-    with SizedFileManager(filename, "rb") as (f, length):
+    with _spc_read_errors(), SizedFileManager(filename, "rb") as (f, length):
         new_data._filesize = length
         spchdr = struct.unpack(b"BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s", f.read(512))
         keys = (
