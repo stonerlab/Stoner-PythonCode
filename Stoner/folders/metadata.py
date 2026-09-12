@@ -282,12 +282,12 @@ class MetadataProxy(MutableMapping):
         """Return a list of the metadata dictionaries for each item/file in the top level group.
 
         Keyword Arguments:
-            *args (string, lmfit.Model class or instance  or iterable of string, lmfit Models):
+            *args (str, lmfit.Model, class or iterable):
                 if given then only return the item(s) requested from the metadata
             values_only(bool):
                 if given and *output* not set only return tuples of the dictionary values. Mostly useful
                 when given a single key string
-            output (str or type):
+            output (str or class):
                 Controls the output format from slice_metadata. Possible values are
 
                 - "dict" or dict - return a list of dictionary subsets of the metadata from each image

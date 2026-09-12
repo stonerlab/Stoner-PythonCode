@@ -224,7 +224,7 @@ def align(im, ref, method="scharr", **kwargs):
         method (str or None):
             If given specifies which module to try and use.
             Options: 'scharr', 'chi2_shift', 'imreg_dft', 'cv2'
-        _box (integer, float, tuple of images or floats):
+        _box (int, float or tuple):
             Used with ImageArray.crop to select a subset of the image to use for the aligning process.
         scale (int):
             Rescale the image and reference image by constant factor before finding the translation vector.
@@ -661,8 +661,8 @@ def imshow(
         figure (int, str or matplotlib.figure):
             if int then use figure number given, if figure is 'new' then create a new figure, if None then use
             whatever default figure is available
-        ax (axes,None):
-            Matplotlib axes to user, defaults to None.
+        ax (matplotlib.axes.Axes or None):
+            Matplotlib axes to use, defaults to None.
         show_axis (bool):
             If True, show the axis otherwise don't (default)'
         title (str,None,False):

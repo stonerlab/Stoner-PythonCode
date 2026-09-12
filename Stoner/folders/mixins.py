@@ -64,40 +64,42 @@ def _loader(name, loader=None, typ=None, directory=None):
 
 
 class DiskBasedFolderMixin:
-    """A Mixin class that implements reading metadataObjects from disc.
+    """Load collections of measurement objects from disc.
 
     Attributes:
-        type (:py:class:`Stoner.core.base.metadataObject`):
-            the type of object to store in the folder (defaults to :py:class:`Stoner.core.data.Data`)
+        type (class):
+            Class of objects stored in the folder. Defaults to :py:class:`Stoner.core.data.Data`
+            unless a subclass supplies another measurement type.
         extra_args (dict):
-            Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
-        pattern (str or regexp):
+            Extra keyword arguments used when loading each file. Defaults to an empty dictionary.
+        pattern (str, compiled regular expression or list):
             A filename globbing pattern that matches the contents of the folder. If a regular expression is provided
-            then any named groups are used to construct additional metadata entryies from the filename. Default
-            is *.* to match all files with an extension.
-        exclude (str or regexp):
-            A filename globbing pattern that matches files to exclude from the folder.  Default is *.tdms_index to
+            then any named groups are used to construct additional metadata entries from the filename.
+            Defaults to ``["*.*"]`` to match filenames containing a dot.
+        exclude (str, compiled regular expression or list):
+            Patterns matching files to exclude. Defaults to ``["*.tdms_index"]`` to
             exclude all tdms index files.
         read_means (bool):
             If true, additional metadata keys are added that return the mean value of each column of the data.
-            This can hep in grouping files where one column of data contains a constant value for the experimental
+            This can help in grouping files where one column of data contains a constant value for the experimental
             state. Default is False
         recursive (bool):
             Specifies whether to search recursively in a whole directory tree. Default is True.
-        flatten (bool):
-            Specify where to present subdirectories as separate groups in the folder (False) or as a single group
-            (True). Default is False. The :py:meth:`DiskBasedFolderMixin.flatten` method has the equivalent effect
-            and :py:meth:`DiskBasedFolderMixin.unflatten` reverses it.
         discard_earlier (bool):
             If there are several files with the same filename apart from !#### being appended just before the
             extension, then discard all except the one with the largest value of #### when collecting the list of
-            files.
+            files. Defaults to False.
         directory (str):
             The root directory on disc for the folder - by default this is the current working directory.
-        multifile (boo):
-            Whether to select individual files manually that are not (necessarily) in  a common directory structure.
+        multifile (bool):
+            Whether to select individual files manually, potentially from different directories. Defaults to False.
         readlist (bool):
             Whether to read the directory immediately on creation. Default is True
+
+    Keyword Arguments:
+        flat (bool):
+            Present subdirectories as one group when True, or retain separate groups when False (the default).
+            The ``flatten`` and ``unflatten`` methods change the grouping after construction.
     """
 
     _defaults = {

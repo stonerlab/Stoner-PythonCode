@@ -15,6 +15,28 @@ import os
 import os.path as path
 import shutil
 import sys
+import re
+
+from docutils import nodes
+from docutils.parsers.rst import roles
+
+
+def scope_draw_references(app, what, name, obj, options, lines):
+    """Give imported drawing-method references unique labels within their shared page."""
+    if not (getattr(obj, "__module__", "") or "").startswith("skimage.draw"):
+        return
+    prefix = name.replace(".", "-").replace("_", "-")
+    for index, line in enumerate(lines):
+        lines[index] = re.sub(
+            r"(?<=\.\. )\[(\d+)\]|\[(\d+)\](?=_)",
+            lambda match: f"[#{prefix}-{match[1] or match[2]}]", line,
+        )
+
+
+def setup(app):
+    """Support markup used by inherited third-party docstrings."""
+    roles.register_generic_role("rc", nodes.literal)
+    app.connect("autodoc-process-docstring", scope_draw_references, priority=400)
 
 my_path=path.dirname(__file__)
 on_read_the_docs = os.environ.get("READTHEDOCS", "").lower() == "true"
@@ -298,7 +320,9 @@ texinfo_documents = [
 
 # Napoleon settings
 napoleon_google_docstring = True
-napoleon_numpy_docstring = False
+# Imported NumPy-style docstrings (for example lmfit.Model) need parsing too.
+# Stoner's own authoring convention remains Google style.
+napoleon_numpy_docstring = True
 napoleon_include_private_with_doc = True
 napoleon_include_special_with_doc = True
 napoleon_use_admonition_for_examples = False

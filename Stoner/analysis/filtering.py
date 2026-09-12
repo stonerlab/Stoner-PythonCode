@@ -132,8 +132,8 @@ def del_nan(datafile, col=None, clone=False):
             if True clone the current object before running and then return the clone not datafile.
 
     Returns:
-        datafile (DataFile):
-            Returns a copy of the current object (or clone if *clone*=True)
+        Data:
+            The current object, or an independent clone when ``clone=True``.
     """
     if clone:  # Set ret to be our clone
         ret = datafile.clone
@@ -1051,14 +1051,13 @@ def spline(
             Column with x data or if None, use setas attribute.
         ycol (column index):
             Column with y data or if None, use the setas attribute
-        sigma (column index, or array of data):
+        sigma (int, str, array-like or None):
             Column with weights, or if None use the 1/yerr column.
-        result (bool or column index):
-            Whether to add the smoothed data to the dataset and if so where.
-        replace (Boolean or column index or None):
-            If True then the y-column data is replaced, if a column index then the
-            new data is added after the specified index, if False then the new y-data is returned and if None,
-            then spline object is returned.
+        result (bool, column index or None):
+            Destination for the fitted values, passed to ``add_column``. Defaults to True.
+            None returns the fitted values; False returns the spline object.
+        replace (bool):
+            Whether to replace the destination column when storing fitted values. Defaults to True.
         header (string):
             If *replace* is True or a column index then use this string as the new column header.
         order (int):
@@ -1072,9 +1071,9 @@ def spline(
             How to extrapolate, default is "extrapolate", but can also be "raise","zeros" or "const".
 
     Returns:
-        (various):
-            Depending on the value of *replace*, returns a copy of the Stoner.Data, a 1D numpy array of
-            data or an :[y:class:`scipy.interpolate.UniverateSpline` object.
+        Data, numpy.ndarray or scipy.interpolate.UnivariateSpline:
+            The current object when fitted values are stored, a one-dimensional array when ``result=None``,
+            or the spline object when ``result=False``.
 
     This is really just a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the
     extrapolate function.

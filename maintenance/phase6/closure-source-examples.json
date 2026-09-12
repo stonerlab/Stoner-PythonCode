@@ -1,0 +1,35 @@
+{
+  "package_changes_docstrings_only": {
+    "Stoner/Image/imagefuncs.py": true,
+    "Stoner/Image/util.py": true,
+    "Stoner/analysis/filtering.py": true,
+    "Stoner/analysis/fitting/functions.py": true,
+    "Stoner/folders/metadata.py": true,
+    "Stoner/folders/mixins.py": true
+  },
+  "sample_python_files": 78,
+  "automated_examples": 73,
+  "duplicate_basenames": {},
+  "excluded": [
+    {
+      "path": "doc\\samples\\plot_folder_demo.py",
+      "reason": "Main-guarded multiprocessing PlotFolder demonstration; runpy harness does not enter __main__ and requires a figure. Retained for manual execution."
+    },
+    {
+      "path": "doc\\samples\\__init__.py",
+      "reason": "Package marker; no standalone example."
+    },
+    {
+      "path": "doc\\samples\\Fitting\\__init__.py",
+      "reason": "Package marker; no standalone example."
+    },
+    {
+      "path": "doc\\samples\\image\\__init__.py",
+      "reason": "Package marker; no standalone example."
+    },
+    {
+      "path": "doc\\samples\\plotstyles\\__init__.py",
+      "reason": "Package marker; no standalone example."
+    }
+  ]
+}

@@ -583,3 +583,9 @@ generated Sphinx HTML directory. The installation link worked; no browser
 policy change was needed. Record this localhost workflow in AGENTS.md and the
 contributor guide for future visual build verification, alongside warning and
 API-inventory checks.
+
+Phase 6 closure validation started (2026-09-12): all 73 automated examples pass;
+all 78 sample Python files are accounted for. Remaining local docstring markup
+and inherited third-party parsing are being verified, with package changes
+restricted to docstrings. Linux documentation validation remains pending;
+see `maintenance/phase6/closure.md`.

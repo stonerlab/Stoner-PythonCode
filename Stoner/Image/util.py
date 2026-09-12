@@ -64,7 +64,7 @@ def prec_loss(dtypeobj_in, dtypeobj):
 
 
 def _dtype(itemsize, *dtypes):
-    """Return first of `dtypes` with itemsize greater than `itemsize."""
+    """Return the first candidate dtype wider than ``itemsize``, or the first candidate if none is wider."""
     try:
         ret = next(dt for dt in dtypes if itemsize < np.dtype(dt).itemsize)
     except StopIteration:

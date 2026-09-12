@@ -16,9 +16,9 @@ docstring into line when editing it, while preserving its technical meaning and 
 
 ## Overall format
 
-Use Google-style sections with reStructuredText/Sphinx markup. The Sphinx configuration enables Google-style parsing
-and disables NumPy-style parsing; do not use underlined NumPy sections or Sphinx `:param:`/`:type:` field lists as an
-alternative parameter format.
+Use Google-style sections with reStructuredText/Sphinx markup. Sphinx also parses NumPy-style sections in imported
+third-party docstrings, but Stoner's authoring convention remains Google style. Do not use underlined NumPy sections
+or Sphinx `:param:`/`:type:` field lists as an alternative parameter format.
 
 - Use triple double quotes, with the summary on the same line as the opening quotes.
 - Use a one-line docstring for a short helper or property when the summary fully describes its contract.

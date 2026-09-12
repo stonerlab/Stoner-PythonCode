@@ -652,7 +652,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         covariance in `pcov` is based on these values.
 
         The starting vector *p0* can be either a list, tuple or array, or a callable that will produce a list,
-        tuple or array. IF callable, it should take the form:
+        tuple or array. If callable, it should take the form::
 
             def p0_func(ydata,x=xdata):
                 ....
@@ -1126,8 +1126,7 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
                             uncertainties
                 - "full"    a tuple of the fit instance and the row.
                 - "data"    a copy of the :py:class:`Stoner.core.data.Data` object with the fit recorded in the
-                            emtadata and optionally
-                    as a column of data.
+                            metadata and optionally as a column of data.
 
     Notes:
         The function tries to make use of whatever model you give it. Specifically, it accepts:
@@ -1140,7 +1139,7 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
                 scip.odr standard f(beta,x)
 
         This function is designed to be as compatible as possible with :py:meth:`~Stoner.core.data.Data.curve_fit` and
-            :py:meth:`~Stoner.core.data.Data.lmfit` to facilitate easy of switching between them.
+        :py:meth:`~Stoner.core.data.Data.lmfit` to facilitate switching between them.
 
     See Also:
         -   :py:meth:`~Stoner.core.data.Data.curve_fit`
