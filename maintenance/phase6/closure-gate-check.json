@@ -1,0 +1,6 @@
+{
+  "known_warnings_pass": true,
+  "new_warning_detected": true,
+  "increased_warning_detected": true,
+  "all_seven_package_changes_docstrings_only": true
+}

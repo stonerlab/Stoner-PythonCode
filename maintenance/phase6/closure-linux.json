@@ -1,0 +1,13 @@
+{
+  "run_url": "https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34705333120",
+  "commit": "fb21b974f",
+  "conclusion": "success",
+  "platform": "Linux (ubuntu-latest), Python 3.13",
+  "warning_count": 79,
+  "duplicate_descriptions": 74,
+  "unreferenced_imported_bibliography_entries": 5,
+  "missing_autosummary_stubs": 0,
+  "unexpected_warnings": {},
+  "graphviz_executable_missing": false,
+  "inventory_note": "Existing workflow produces no downloadable inventory; complete primary/dynamic inventory audit performed locally. Linux generated and rendered fitting pages without missing-stub diagnostics."
+}

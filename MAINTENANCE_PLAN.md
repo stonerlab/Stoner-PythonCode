@@ -39,7 +39,7 @@ remain evidence for the environment in which they were recorded.
 | 3     | Repository content cleanup | Complete    | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained              |
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
 | 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
-| 6     | Documentation and examples | In progress | Fresh RTD build: warnings 1658 to 405; five primary classes and 85 dynamic Data methods audited; plot cache unchanged                         |
+| 6     | Documentation and examples | Complete    | maintenance/phase6/closure.md: 73 examples pass; Linux build passes; public API retained; reviewed warning ceilings and unchanged plot cache  |
 | 7     | Focused source maintenance | Not started | Small reviewed batches with regression tests                                                                                                  |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
@@ -589,3 +589,24 @@ all 78 sample Python files are accounted for. Remaining local docstring markup
 and inherited third-party parsing are being verified, with package changes
 restricted to docstrings. Linux documentation validation remains pending;
 see `maintenance/phase6/closure.md`.
+
+### Phase 6 complete (2026-09-12)
+
+All 73 automated documentation examples pass; all 78 sample Python files are
+accounted for (four package markers and one retained manual multiprocessing
+demo are excluded). README, installation guidance and the documentation front
+page are current, and the contributor workflow includes cached builds and
+localhost browser previews. Generated manuals and plot-cache policy are recorded.
+
+The final Windows build has 106 reviewed warnings, down from 1,658; the Linux
+documentation workflow at fb21b974f passes with 79 reviewed warnings and no
+missing stubs, markup errors or Graphviz failures. Five primary classes and 85
+dynamic Data methods remain documented, with only the explicitly reviewed
+obsolete DiskBasedFolderMixin.flatten attribute target removed during closure.
+All 243 plot-cache hashes are unchanged. No executable package changes occurred
+in the closure batch. New or increased warnings fail the explicit audit gate;
+known duplicate descriptions and imported bibliography entries remain visible.
+
+Evidence and reproduction commands: `maintenance/phase6/closure.md`. Phase 7
+may now begin with the reproduced same-dtype image conversion force_copy defect
+and the plan's focused source maintenance workstreams.

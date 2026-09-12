@@ -5,7 +5,8 @@
     "Stoner/analysis/filtering.py": true,
     "Stoner/analysis/fitting/functions.py": true,
     "Stoner/folders/metadata.py": true,
-    "Stoner/folders/mixins.py": true
+    "Stoner/folders/mixins.py": true,
+    "Stoner/analysis/fitting/models/generic.py": true
   },
   "sample_python_files": 78,
   "automated_examples": 73,

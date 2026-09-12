@@ -109,3 +109,10 @@ The README, front page and installation guidance are refreshed in `batch7.md`.
 The Makefile's README copy workflow is retained and documented. The new example
 executes successfully; documentation builds with no additional warnings or lost
 API entries. The next batch returns to local image and folder docstring markup.
+
+## Phase closure
+
+Phase 6 is complete; see `closure.md` for the final local and Linux builds,
+73 passing examples, API inventory checks, source equivalence and visual review.
+Residual warnings remain visible and have explicit per-platform ceilings;
+`maintenance/audit-docs.py --expected-warnings` rejects new or increased warnings.
