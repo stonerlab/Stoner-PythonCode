@@ -40,7 +40,7 @@ remain evidence for the environment in which they were recorded.
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
 | 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
 | 6     | Documentation and examples | Complete    | maintenance/phase6/closure.md: 73 examples pass; Linux build passes; public API retained; reviewed warning ceilings and unchanged plot cache  |
-| 7     | Focused source maintenance | In progress | MAXIMUS reviewed: multi-region support deferred pending authoritative format guidance and real multi-region fixtures                          |
+| 7     | Focused source maintenance | In progress | Local batches and final review complete; 477 tests pass; cohesive commit review and hosted CI pending; see maintenance/phase7/final-review.md |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
 Statuses should be one of `Not started`, `In progress`, `Blocked`, or `Complete`. Add dated notes and commands beneath a phase when work begins.
@@ -237,20 +237,66 @@ This phase is deliberately after the baseline and repository cleanup. Avoid broa
 
 ### Candidate workstreams
 
+- Investigate the Phase 6 CI test failure reported by the maintainer on 2026-09-12: [run 34705333723](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34705333723). Capture the affected job's failure evidence before selecting a fix. Local validation does not resolve this outstanding remote failure.
+  Initial triage: Ubuntu Python 3.12 worker `gw1` crashed during `test_attocube_scan` (347 passed, one failed); the other four matrix jobs passed. Failure log: `maintenance/runs/phase6-ci-34705333723-failed.log`. Investigate the worker crash before attributing it to loader assertions or the current mask fix.
+  Investigation: three subsequent CI runs passed. Local Python 3.12 two-worker tests passed both with and without coverage, taking 285.36 versus 45.70 seconds. Coverage overhead reproduces the slowdown; worker loss remains unexplained. No loader/CI change made; see `maintenance/phase7/ci-worker-crash.md`.
+  Approved follow-up: collect and upload coverage only on Ubuntu Python 3.14 while retaining the complete five-job test matrix. YAML/matrix and six Bash success/failure checks pass locally; hosted validation awaits commit/push. This is a performance change, not a claimed worker-crash fix.
 - MAXIMUS single-region assumptions: reviewed as known unimplemented multi-region features. Defer implementation until authoritative facility format guidance and representative actual multi-region exports with expected results are available; see `maintenance/phase7/maximus-limitations.md`.
 - Review the remaining `TODO`/`FIXME` cases, including the metadata-copy workaround and incomplete column-indexing behaviour, with regression evidence before changing behaviour.
-- Review dynamic method binding for discoverability, typing, and API documentation while preserving the public chained-operation contract.
+  Metadata-copy investigation identified re-inference during deep copy. The legacy TDI 1.5 workaround remains deliberately unchanged; the subsequently authorised `copy_into` fix preserves existing values and hints (see the TDI 2.0 batch below). See `maintenance/phase7/metadata-copy-review.md`.
+  Column-bounds review confirmed original extrema indices and identified temporary-mask restoration defects; see `maintenance/phase7/column-bounds.md` for the focused fix and validation.
+- Fixed the recorded same-dtype `ImageStack.convert(force_copy=True)` failure with a direct NumPy copy, preserving masks and independent pixel storage. Evidence: `maintenance/phase7/image-convert-copy.md`.
+- Fixed inverted scalar `Data.del_rows` selection, including negative-index resolution and rejection of invalid indices before mutation. Verified existing tuple ranges and removed their stale TODO. Evidence: `maintenance/phase7/row-deletion.md`.
+- Removed the stale Attocube multipage TIFF TODO after verifying inherited support and existing real-scan round-trip coverage. Executable AST unchanged; see `maintenance/phase7/attocube-tiff-doc.md`.
+- Connected folder attribute assignment/deletion tracking to group cloning, preserving current values and excluding deleted attributes. Added inheritance and lifecycle regressions; see `maintenance/phase7/group-attributes.md` for validation.
+  Full Python 3.14 suite: 385 passed, 592 warnings. Shared Python 3.11 minimal environment: seven focused cases passed. Changes remain pending commit/push and hosted validation.
+- Fixed `walk_groups(only_terminal=False)` to honour its documented all-level traversal, then added opt-in recursive metadata slicing through that walker. Existing defaults are preserved; traversal and slicing regression evidence is recorded in `maintenance/phase7/metadata-slicing.md`.
+  Validation: 396 full-suite tests pass on Python 3.14; 13 focused checks pass on Python 3.11. Sphinx and its API/warning audit pass with the existing 106 reviewed Windows warnings and no lost API objects.
+- Audited dynamic Data method binding: all 85 methods preserve signatures, documentation and annotations, appear in dir/help, and match the Sphinx inventory on normal/RTD Python 3.14 and normal Python 3.11. No binding fix is indicated. Source annotation gaps, the threshold return annotation, runtime typing placeholders and decorator documentation need a separate decision; see `maintenance/phase7/dynamic-binding-audit.md`.
+  Approved follow-up completed: corrected threshold annotations, replaced placeholder typing classes with resolvable deferred references, fixed the Image import case and class_modifier documentation. Focused checks pass on Python 3.11/3.14; all 458 tests collect and the 85-method audit remains clean. Evidence: `maintenance/phase7/typing-fixes.md`.
+- Verified legacy text-stream input and added TDI 2.0 support to `Data << source`, using the real sample export and a supplementary fixture generated by the read-only measurement writer. Evidence: `maintenance/phase7/stream-input.md`.
+  Full run: 417 passed and one attribute-inventory regression, corrected by moving the parser to module scope. Final checks: all 76 core tests pass on Python 3.14 and 23 focused checks pass on Python 3.11. Sphinx audit retains the existing 106 reviewed warnings.
+- Retained the existing dedicated TDI 2.0 filename loader and shared its parser with stream input, preserving nested metadata while fixing unequal metadata/data lengths and masking short columns. The maintainer authorised correcting type re-inference in `copy_into`; focused copy and length regressions pass. Evidence: `maintenance/phase7/tdi2-loading.md`.
+  Final validation: 456 full-suite tests pass on Python 3.14 (592 warnings); 60 focused checks pass on Python 3.11. Fresh Sphinx build/audit passes with the same 106 reviewed Windows warnings and no lost API entries. Changes remain uncommitted and hosted CI is pending.
 - Improve type annotations module by module, beginning at stable public boundaries rather than internal implementation details.
+  Small column follow-up: added std's missing return annotation and corrected nearby docstring errors; all 22 column tests pass on Python 3.11 and 3.14. Keep further annotation work selective, following the maintainer's preference for limited practical value over blanket coverage. Evidence: `maintenance/phase7/typing-fixes.md`.
 - Reduce duplicated loader/saver logic without changing positive-identification or priority semantics.
 - Audit exception handling around optional dependencies and malformed scientific files.
+  First audit reproduced missing exception-safe output cleanup, ZIP ownership/fallback defects and SPC truncation escaping as struct.error. Simulated missing optional packages still permit package import. Preserve StonerLoadError as the intentional next-candidate signal; the selected fixes are completed below. Evidence: `maintenance/phase7/loader-exception-audit.md`.
+  Authorised fixes implemented: finally-based output/ZIP cleanup, caller-owned archive preservation and SPC struct.error translation. All 19 final regressions pass on Python 3.11/3.14; broader file-format checks pass. Full-suite results: `maintenance/phase7/loader-cleanup.md`.
+  Full validation: 477 tests pass on Python 3.14, with 592 warnings. Changes remain uncommitted; hosted CI remains pending.
 - Review legacy compatibility shims only after tests establish which are still exercised.
 - Break unusually large modules or functions into cohesive helpers only where this materially improves comprehension and testability.
+
+### Final bounded review (2026-09-13)
+
+Selected source-maintenance batches and final triage are complete locally;
+Phase 7 remains `In progress` pending cohesive commit review and hosted CI.
+See `maintenance/phase7/final-review.md` for the source review and next-session
+handoff. Retain the legacy metadata workaround and defer SPC alternative-layout
+and MAXIMUS multi-region implementation pending format evidence and real fixtures.
+Compatibility helpers and deprecated APIs still have callers; removing obsolete
+branches or consolidating duplicated helpers requires a separately justified,
+tested batch. Blanket annotation coverage and large-module splitting are not
+closure requirements. No further runtime change was selected by this review.
+
+Latest full-suite evidence remains 477 passed on Python 3.14; final loader
+regressions also pass on shared `py311-minimal`. Today's review changes only
+maintenance documentation. Commit/push and remote validation remain outstanding;
+the intermittent worker-loss root cause remains unresolved.
+
+Commit handoff (2026-09-13): the maintainer authorised committing and pushing
+the reviewed batches to `stable`. The batches are grouped by core fixes, image
+copying, folder behaviour, TDI/metadata loading, typing, loader cleanup and CI,
+with audit evidence retained. Hosted validation is still pending; Phase 7 is
+not marked complete on the strength of local tests alone.
 
 ### Batch rules
 
 - One behavioural concern per batch.
 - Add or identify regression coverage first.
 - Preserve metadata, masks, column roles, filenames, loader selection, and return/chaining behaviour.
+- Correcting code to match its documented contract is bug fixing. Document runtime corrections carefully; backward-compatible API additions are acceptable in minor point releases, while API-breaking changes require a larger release.
 - Use real sample formats where a defect is format-specific.
 - Record the focused and full-suite results in the commit or pull-request description.
 

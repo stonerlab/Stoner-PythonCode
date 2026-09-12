@@ -162,8 +162,8 @@ class AttocubeScan(ImageStack):
 
     The class provides other methods to regrid and flatten images and may gain other capabilities in the future.
 
-    Todo:
-        Implement load and save to/from multipage TIFF files.
+    Multipage TIFF saving and loading are available through the inherited
+    ``to_tiff`` and ``from_tiff`` methods, which store and restore the scan layout.
 
     Attrs:
         scan_no (int):
