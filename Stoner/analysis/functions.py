@@ -2,7 +2,7 @@
 """Generic analysis functions for DataFiles."""
 
 from inspect import getfullargspec
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Optional, Sequence, Tuple, Union
 from warnings import warn
 
 import numpy as np
@@ -533,21 +533,21 @@ def stitch(
 
 def threshold(
     datafile: Data,
-    threshold: float,
+    threshold: Union[float, Sequence[float]],
     col: Optional[Index] = None,
     rising: bool = True,
     falling: bool = False,
     xcol: Optional[Index] = None,
     transpose: bool = False,
     all_vals: bool = False,
-) -> Data:
+) -> Union[float, np.floating, np.ndarray, list]:
     """Find partial indices where the data in column passes the threshold, rising or falling.
 
     Args:
         datafile (Data):
             If not being used as a bound method, specifies the instance of Data to work with.
-        threshold (float):
-            Value to look for in column col
+        threshold (float or sequence of float):
+            Threshold value or values to find in column col.
 
     Keyword Arguments:
         col (index):
@@ -567,8 +567,10 @@ def threshold(
             Return all values that match the criteria, or just the first in the file.
 
     Returns:
-        (float):
-            Either a sing;le fractional row index, or an in terpolated x value
+        float, numpy.floating, numpy.ndarray or list:
+            Crossing indices or interpolated values, depending on xcol. Multiple
+            crossings or thresholds return arrays; xcol=False returns complete
+            rows as an array. With all_vals=False, no crossing returns an empty list.
 
     Notes:
         If you don't specify a col value or set it to None, then the assigned columns via the

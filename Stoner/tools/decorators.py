@@ -292,38 +292,38 @@ def class_modifier(
     no_long_names=False,
     alias=None,
 ):
-    """Decorate  a class by addiding member functions from module.
+    """Create a decorator that attaches functions from modules to a class.
 
     The purpose of this is to incorporate the functions within a module into being methods of the class being
     defined here.
 
     Args:
-        cls (class):
-            The class being defined
-        module (imported module):
-            The module whose functions members should be added to the class.
+        module (module or iterable of modules):
+            Source modules whose public functions should be attached.
 
     Keyword Arguments:
-        adaptor (callable):
-            The factor function that takes the module function and produces a method that will call the function and
-            take care of adapting the result.
+        adaptor (callable or None):
+            Factory that wraps each source function, defaulting to image_array_adaptor.
+            None attaches the original function without adapting inputs or results.
         transpose (bool):
             Whether there functions in the module need to have their data transposed to work.
         overload (bool):
             If False, don't overwrite the existing method.'
-        proxy (class,None):
+        proxy_cls (class or None):
             If not None, the class whose attributes we are being augmented with these functions - need to check for
             clashing names.
-        RTD_Restrictions (bool):
+        RTD_restrictions (bool):
             If True (default), do not add members from outside our own package when on ReadTheDocs.
         no_long_names (bool):
             To avoid name collision the default is to create two entries in the class __dict__ - one for the
             standard name and one to include the full module path. This disables the latter.
-
+        alias (str or None):
+            Regular expression used to select defining module names. None uses
+            the source module's name as the prefix pattern.
 
     Returns:
-        (class):
-            The class with the additional methods added to it.
+        callable:
+            A decorator that attaches the selected methods and returns the class.
     """
 
     def actual_decorator(cls):
