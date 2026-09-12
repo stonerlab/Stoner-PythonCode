@@ -99,7 +99,23 @@ that the left shift operator calls the method in :py:class:`~Stoner.core.data.Da
 determines the type of the object ``data``. This also provides an alternative syntax for reading a file
 from disk::
 
-   data=Stoner.Data()<<open("File on Disk.txt")
+   with open("File on Disk.txt", encoding="utf-8") as stream:
+       data = Stoner.Data() << stream
+
+The operator accepts decoded TDI 1.0, 1.5 and 2.0 text, including text files,
+``StringIO`` objects and generators of lines. It consumes streams from their
+current position without closing them and returns a new object, leaving the
+receiver unchanged. Binary streams must be decoded first.
+
+TDI 2.0 input preserves Python literal metadata types from the measurement
+writer, including explicit strings that resemble numbers or booleans. Missing
+numerical cells are masked; rows containing only metadata do not add data rows.
+The ``<<`` operator and the dedicated ``TDI_2_0`` filename loader share the
+parser. Dotted metadata paths and list indices are reconstructed as nested
+dictionaries and lists, preserving the existing filename-loader convention.
+Metadata may be shorter or longer than the numerical data. Columns may also
+have different lengths: shorter columns are padded with masked cells up to
+the longest data column, including when one column is entirely empty.
 
 Constructing Data objects from scratch
 --------------------------------------

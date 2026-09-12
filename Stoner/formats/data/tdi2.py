@@ -12,11 +12,9 @@ import ast
 from typing import Any, Union
 from pathlib import Path
 
-import pandas as pd
 import numpy as np
 
 from ..decorators import register_loader, register_saver
-from ...core.array import DataArray
 from ...core.data import Data
 from ...core.exceptions import StonerLoadError
 from ...tools.file import FileManager, get_filename
@@ -198,6 +196,34 @@ def _inverse_flatten_metadata(entries: list[str]) -> Any:
     return root
 
 
+def _read_tdi2(data, reader, headers):
+    """Read Python-writer TDI 2.0 rows, retaining typed metadata and missing cells."""
+    entries = []
+    rows = []
+    masks = []
+    for line in reader:
+        cells = line.rstrip("\r\n").split("\t")
+        if cells[0].strip():
+            entries.append(cells[0])
+        values = cells[1:]
+        if not any(value.strip() for value in values):
+            continue
+        if len(values) > len(headers):
+            raise ValueError("TDI 2.0 row has more values than column headers")
+        values += [""] * (len(headers) - len(values))
+        masks.append([not value.strip() for value in values])
+        rows.append([float(value) if value.strip() else np.nan for value in values])
+    shape = (len(rows), len(headers))
+    data.data = np.ma.array(np.asarray(rows).reshape(shape), mask=np.asarray(masks, dtype=bool).reshape(shape))
+    data.column_headers = headers
+    data["TDI Format"] = 2.0
+    for name, value in _inverse_flatten_metadata(entries).items():
+        if isinstance(value, str):
+            data.metadata[f"{name}{{String}}"] = value
+        else:
+            data.metadata[name] = value
+
+
 @register_loader(
     patterns=[(".dat", 8), (".txt", 8), ("*", 8)],
     mime_types=[("application/tsv", 8), ("text/plain", 8), ("text/tab-separated-values", 8)],
@@ -205,7 +231,7 @@ def _inverse_flatten_metadata(entries: list[str]) -> Any:
     what="Data",
 )
 def load_tdi2_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
-    """Actually load the data from disc assuming a .tdi file format.
+    """Load TDI 2.0 data and reconstruct nested Python metadata.
 
     Args:
         new_data (Data):
@@ -218,17 +244,18 @@ def load_tdi2_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
             Other keyword arguments are passed to get_filename.
 
     Returns:
-        DataFile:
-            A copy of the newly loaded :py:class`DataFile` object.
+        Data:
+            The supplied object containing the loaded data and metadata.
 
     Raises:
         StonerLoadError:
-            Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
+            Raised if the header is not TDI 2.0 or its rows are malformed.
 
     Notes:
-        The *_load* methods should be overridden in each child class to handle the process of loading data from
-        disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
-        the loading class can try a different sub-class instead.
+        Metadata and numerical columns may have different lengths. Missing numeric
+        cells are masked; metadata-only rows do not add data rows. Dotted paths
+        and list indices are reconstructed as dictionaries and lists. Parsing is
+        shared with the Data left-shift operator.
     """
     filename, args, kwargs = get_filename(args, kwargs)
     if filename is None or not filename:
@@ -237,15 +264,12 @@ def load_tdi2_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         new_data.filename = filename
     with FileManager(new_data.filename, "r", encoding="utf-8", errors="ignore") as datafile:
         line = datafile.readline()
-        if not line.startswith("TDI Format 2.0"):
+        if line.split("\t", 1)[0].strip() != "TDI Format 2.0":
             raise StonerLoadError("Not a TDI 2.0 File")
-    df = pd.read_csv(filename, delimiter="\t")
-    metadata = _inverse_flatten_metadata(df["TDI Format 2.0"])
-    column_headers = df.columns[1:].tolist()
-    data = DataArray(df.iloc[:, 1:].values)
-    new_data.data = data
-    new_data.column_headers = column_headers
-    new_data.metadata = metadata
+        try:
+            _read_tdi2(new_data, datafile, [value.strip() for value in line.split("\t")[1:]])
+        except (ValueError, SyntaxError) as error:
+            raise StonerLoadError(f"Invalid TDI 2.0 file: {error}") from error
     return new_data
 
 

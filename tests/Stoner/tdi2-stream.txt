@@ -1,0 +1,7 @@
+TDI Format 2.0	Voltage (V)	Current (A)
+count{int}=3	1.0	4.0
+enabled{bool}=False	2.0	5.0
+label{str}='001'	3.0	
+nested.gain{float}=1.25		
+note{str}='a=b\tline\nnext'		
+unset{NoneType}=None		

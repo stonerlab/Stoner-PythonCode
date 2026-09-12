@@ -145,21 +145,22 @@ class DataFileOperatorsMixin:
         return self.column(other)
 
     def __lshift__(self, other):
-        """Convert a string or iterable to a new DataFile like object.
+        """Read TDI text into a new object of the same class.
 
         Args:
-            other (string or iterable object):
-                Used to source the DataFile object
+            other (str or iterable of str):
+                TDI 1.0, 1.5 or 2.0 text, or an iterable yielding text lines.
+                Open text files, StringIO objects and line generators are supported.
 
         Returns:
-            (DataFile):
-                A new :py:class:`DataFile` object
+            Data:
+                A new object containing the imported data and metadata.
 
-        Todo:
-            Make code work better with streams
-
-        Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__
-        read_iterable` function.
+        Notes:
+            The receiver is unchanged. Streams are consumed from their current
+            position and remain open, including when parsing fails. Input must
+            be decoded text. TDI 2.0 Python literal metadata retains its native
+            types; empty numerical cells are masked and metadata-only rows are omitted.
         """
         newdata = type(self)()
         if isinstance(other, string_types):
@@ -169,6 +170,8 @@ class DataFileOperatorsMixin:
             newdata.__read_iterable(other)
         else:
             return NotImplemented
+        if newdata.get("TDI Format") == 2.0:
+            return newdata
         return type(self)(newdata)
 
     def __mod__(self, other):
@@ -259,6 +262,11 @@ class DataFileOperatorsMixin:
         else:
             raise NotImplementedError
         row = readline().split("\t")
+        if row[0].strip() == "TDI Format 2.0":
+            from ..formats.data.tdi2 import _read_tdi2
+
+            _read_tdi2(self, reader, [x.strip() for x in row[1:]])
+            return
         if row[0].strip() == "TDI Format 1.5":
             fmt = 1.5
         elif row[0].strip() == "TDI Format=Text 1.0":

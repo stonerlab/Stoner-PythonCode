@@ -236,7 +236,12 @@ def copy_into(source: Data, dest: Data) -> Data:
 
     Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
     overwrites the attributes that represent the data in the DataFile.
+
+    Metadata values and existing type hints are preserved without re-inferring
+    types. Nested metadata values are deep-copied so the destination is independent.
     """
+    from ..core.base import TypeHintedDict
+
     dest.data = source.data.copy()
     dest.setas = source.setas
     dest.fig = getattr(source, "fig", None)
@@ -244,7 +249,16 @@ def copy_into(source: Data, dest: Data) -> Data:
         if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "fig"]:
             continue
         try:
-            setattr(dest, attr, copy.deepcopy(getattr(source, attr)))
+            value = getattr(source, attr)
+            if attr == "metadata" and isinstance(value, TypeHintedDict):
+                metadata = value.copy()
+                memo = {id(value): metadata}
+                for key, item in value.items():
+                    # Preserve existing types without re-running metadata inference.
+                    super(TypeHintedDict, metadata).__setitem__(key, copy.deepcopy(item, memo))
+                setattr(dest, attr, metadata)
+            else:
+                setattr(dest, attr, copy.deepcopy(value))
         except (NotImplementedError, TypeError, ValueError):  # Deepcopying failed, so just copy a reference instead
             try:
                 setattr(dest, attr, getattr(source, attr))
