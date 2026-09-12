@@ -59,3 +59,13 @@ documented types and defaults against implementation. Preserve runtime behaviour
 and validate with an AST comparison and another documentation inventory audit.
 The intentional fitting-model capitalisation remains unchanged; Linux is the
 appropriate validation platform for those pages. Phase 6 remains in progress.
+
+## Localhost visual verification follow-up
+
+On 2026-09-12, served `maintenance/runs/phase6-batch7-final` with Python's
+HTTP server bound to `127.0.0.1:8765`. The browser successfully opened
+`http://127.0.0.1:8765/index.html`. Inspected the rendered front-page layout
+and followed Install Stoner, confirming the Anaconda or Miniforge guidance.
+No browser policy change was needed. This completes the front-page visual
+check previously blocked by direct file navigation. AGENTS.md and the
+contributor guide now record localhost HTTP as the preview workflow.

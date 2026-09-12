@@ -576,3 +576,10 @@ Evidence: `maintenance/phase6/batch7.md` and its JSON reports.
 Next proposed batch: malformed markup in Stoner.Image.util._dtype and the
 DiskBasedFolderMixin overview, checking documented defaults and types while
 preserving runtime behaviour. Phase 6 remains in progress.
+
+Documentation preview follow-up (2026-09-12): verified the batch 7 front page
+visually through a Python HTTP server bound to 127.0.0.1:8765, serving only the
+generated Sphinx HTML directory. The installation link worked; no browser
+policy change was needed. Record this localhost workflow in AGENTS.md and the
+contributor guide for future visual build verification, alongside warning and
+API-inventory checks.

@@ -47,6 +47,21 @@ and ``make -C doc html`` run that copy step. When building directly with Sphinx,
 refresh the copy yourself if the README changed. The installation guide includes
 the marked installation section from the root README to keep its commands aligned.
 
+To inspect the built pages in a browser, serve the HTML output over localhost::
+
+    conda run --no-capture-output -n rtd-build python -m http.server 8765 --bind 127.0.0.1 --directory doc/_build/html
+
+Open ``http://127.0.0.1:8765/index.html`` and check the page layout and relevant
+navigation links. Substitute the actual HTML output directory if using a
+maintenance build, and another high-numbered port if 8765 is occupied. Serve
+only the generated HTML directory. Binding to ``127.0.0.1`` keeps the preview
+local to your computer. This approach works with browser tools that reject
+direct ``file://`` navigation, without changing their URL policy.
+
+Reload the browser after rebuilding. Keep the server running while reviewing
+the pages and stop it with Ctrl+C when finished. Browser inspection complements
+the build's warning report and API inventory checks.
+
 Understanding the class structure
 =================================
 
