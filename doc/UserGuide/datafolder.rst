@@ -442,6 +442,7 @@ The :py:meth:`Stoner.folders.metadata.MetadataProxy.slice` method provides more 
     >>> [2, 2, 2, 2]
 
     f.metadata.slice("Startupaxis-X",output="Data")
+
     >>>
     ==========================  ===============
     TDI Format 1.5                Startupaxis-X
@@ -452,6 +453,18 @@ The :py:meth:`Stoner.folders.metadata.MetadataProxy.slice` method provides more 
                                           2
                                           2
     ==========================  ===============
+
+Slicing includes only direct members by default. To include members at every
+level of a grouped folder, pass ``recurse=True``::
+
+    f.metadata.slice("Startupaxis-X", recurse=True, output="Data")
+    f.slice_metadata("Startupaxis-X", recurse=True)
+
+Recursive slicing uses ``walk_groups(..., only_terminal=False)``: subgroups
+are visited depth-first in stored order, then the parent's direct members.
+Member order is preserved. Output formats remain the same and no group-path
+columns are added. Common-key selection and ``mask_missing`` apply across all
+visited members; the folder hierarchy is unchanged.
 
 As can be seen from these examples, :py:meth:`~Stoner.folders.metadata.MetadataProxy.slice` defaults to returning either a list of dictionaries
 or, if *values_only* is True, a list of values. The *output* parameter can change this. The options for *output* are:
@@ -668,6 +681,11 @@ The first parameter should expect and instance of :py:class:`~Stoner.core.data.D
 *group* is **False** or an instance of :py:class:`~Stoner.folders.mixins.DataFolder` if *group* is **True**.
 The second parameter will be given a list of of strings representing the group key values from
 the topmost group to the lowest (terminal) group.
+
+By default, ``only_terminal=True`` visits terminal groups only. Set
+``only_terminal=False`` to visit non-terminal groups too, after their subgroups
+(or each group's direct members when ``group=False``). The option is honoured
+at every depth. The starting folder receives an empty breadcrumb list.
 
 The *replace_terminal* parameter applies when *group* is **True** and the function returns a
 :py:class:`Stoner.core.data.Data` object. This indicates that the group on which the function was

@@ -279,7 +279,7 @@ class MetadataProxy(MutableMapping):
         return self
 
     def slice(self, *args, **kwargs):  # pylint: disable=arguments-differ
-        """Return a list of the metadata dictionaries for each item/file in the top level group.
+        """Slice metadata from direct members, optionally including nested groups.
 
         Keyword Arguments:
             *args (str, lmfit.Model, class or iterable):
@@ -301,16 +301,26 @@ class MetadataProxy(MutableMapping):
             mask_missing (bool):
                 If true, then metadata entries missing in members of the folder are returned as masked values (or
                 None), If False, then an exception is raised if any entries are missing.
+            recurse (bool):
+                Include members at every level when True. Defaults to False, selecting
+                direct members only. Uses walk_groups with only_terminal=False: subgroups
+                in stored order before their parent's members, retaining member order.
 
         Returns:
             ret(list of dict, tuple of values or :py:class:`~Stoner.core.data.Data`):
                 depending on *values_only* or (output* returns the sliced dictionaries or tuples/
                 values of the items
 
+        Notes:
+            Recursive results use the same output formats, without adding group-path
+            fields. Key matching and missing-key rules apply across all visited members.
+            The folder hierarchy is not modified.
+
         """
         values_only = kwargs.pop("values_only", False)
         output = kwargs.pop("output", None)
         mask_missing = kwargs.pop("mask_missing", False)
+        recurse = kwargs.pop("recurse", False)
         if kwargs:
             raise SyntaxError(f"Unused keyword arguments : {kwargs}")
         if output is None:  # Sort out a definitive value of output
@@ -332,10 +342,25 @@ class MetadataProxy(MutableMapping):
         if output not in outputs:  # Check for good output value
             raise TypeError(f"output of slice metadata must be either dict, list, or array not {output}")
         formatter = outputs[output]
-        possible = list(self.all_keys()) if mask_missing else self.common_keys
+        if recurse:
+            members = []
+
+            def collect_metadata(data, _breadcrumb):
+                """Snapshot metadata in the folder walk's member order."""
+                members.append(dict(data.metadata))
+
+            self._folder.walk_groups(collect_metadata, only_terminal=False)
+            key_sets = [set(metadata) for metadata in members]
+            if mask_missing:
+                possible = sorted(set().union(*key_sets))
+            else:
+                possible = sorted(set.intersection(*key_sets)) if key_sets else []
+        else:
+            possible = list(self.all_keys()) if mask_missing else self.common_keys
+            members = self._folder
         keys = _slice_keys(args, possible)
         results = []
-        for d in self._folder:
+        for d in members:
             results.append({k: d[k] for k in keys if k in d})
 
         for r in results:  # Expand the results where a result contains a list

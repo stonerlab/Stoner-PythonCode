@@ -65,15 +65,20 @@ def add_group(fldr, key):
     Args:
         fldr (BaseFolder):
             DataFolder instance when not a bound method.
-        key(string): A hashable value to be used as the dictionary key in the groups dictionary
+        key (hashable):
+            Key to use in the groups dictionary.
+
     Returns:
-        A copy of the objectFolder
+        BaseFolder:
+            The original folder, with the group added if it did not already exist.
 
     Notes:
         If key already exists in the groups dictionary then no action is taken.
 
-    Todo:
-        Propagate any extra attributes into the groups.
+        New groups inherit declared defaults, current constructor attributes and
+        user-added public attributes through the attribute-only clone operation.
+        Deleted attributes are not inherited. Private attributes and runtime
+        bookkeeping are not automatically propagated.
     """
     if key in fldr.groups:  # do nothing here
         pass
@@ -689,8 +694,8 @@ def setdefault(fldr, k, d=None):
     return fldr[k]
 
 
-def slice_metadata(fldr, key, output="smart"):
-    """Return an array of the metadata values for each item/file in the top level group.
+def slice_metadata(fldr, key, output="smart", recurse=False):
+    """Return selected metadata from direct members or the full group hierarchy.
 
     Args:
         fldr (BaseFolder):
@@ -705,6 +710,9 @@ def slice_metadata(fldr, key, output="smart"):
             -   array: return a numpy array
             -   Data: return a :py:class:`~Stoner.core.data.Data` object
             -   smart: (default) return either a list if only one key or a list of dictionaries
+        recurse (bool):
+            Include nested groups when True. Defaults to False. Uses walk_groups
+            with only_terminal=False, visiting subgroups before their parent's members.
 
     Returns:
         (array of metadata):
@@ -713,10 +721,15 @@ def slice_metadata(fldr, key, output="smart"):
             matching keys. If key is a list ir other iterable, then return a 2D array where each column
             corresponds to one of the keys.
 
-    Todo:
-        Add options to recurse through all groups? Put back RCT's values only functionality?
+    Notes:
+        Only direct members are included by default. Recursive slicing retains
+        existing output formats and does not change the folder hierarchy.
+
+        Values-only output is available with output="list", or through
+        ``folder.metadata.slice(key, values_only=True)``. The latter chooses
+        the smart output format when no explicit output format is supplied.
     """
-    return fldr.metadata.slice(key, output=output)
+    return fldr.metadata.slice(key, output=output, recurse=recurse)
 
 
 def sort(fldr, key=None, reverse=False, recurse=True):
@@ -838,9 +851,10 @@ def walk_groups(fldr, walker, **kwargs):
             If group is True and the walker function returns an instance of metadataObject then the return value
             is appended to the files and the group is removed from the current objectFolder. This will unwind
             the group hierarchy by one level.
-        obly_terminal(bool):
-            Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal
-            groups)
+        only_terminal (bool):
+            Visit only terminal groups when True (the default). False also visits
+            non-terminal groups, after their subgroups, or their direct members
+            when group=False. The setting applies at every depth.
         walker_args (dict):
             A dictionary of static arguments for the walker function.
         **kwargs:
@@ -852,6 +866,11 @@ def walk_groups(fldr, walker, **kwargs):
             walker(f,list_of_group_names,**walker_args)
 
         where f is either a objectFolder or metadataObject.
+
+        Subgroups are visited depth-first in stored order; members retain their
+        order within each visited folder. With only_terminal=False, each parent
+        is visited after its subgroups. Breadcrumbs contain the group keys from
+        the starting folder to the visited group; the starting folder has an empty trail.
     """
     group = kwargs.pop("group", False)
     replace_terminal = kwargs.pop("replace_terminal", False)

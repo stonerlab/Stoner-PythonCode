@@ -191,7 +191,7 @@ class Item:
                 except AttributeError:
                     pass
         elif name in self._folder._instance_attrs:
-            del self._folder._instance_attrs[name]
+            delattr(self._folder, name)
         else:
             raise AttributeError(f"Unrecognised attribute {name}")
 

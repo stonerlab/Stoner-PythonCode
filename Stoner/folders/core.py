@@ -257,6 +257,19 @@ class BaseFolder(MutableSequence):
     ###########################################################################
     ################### Properties of BaseFolder ##############################
 
+    def __setattr__(self, name, value):
+        """Assign an attribute and record user-added public attributes for groups."""
+        super().__setattr__(name, value)
+        tracked = self.__dict__.get("_instance_attrs")
+        if (
+            tracked is not None
+            and not name.startswith("_")
+            and name not in {"args", "kwargs", "executor", "directory"}
+            and not hasattr(type(self), name)
+            and name not in self.defaults
+        ):
+            tracked.add(name)
+
     @property
     def clone(self):
         """Clone by deep copy for compatibility with :py:class:`Stoner.core.data.Data`."""
@@ -640,8 +653,8 @@ class BaseFolder(MutableSequence):
         other.type = self.type
         other.debug = self.debug
         for k in self.kwargs:
-            if not hasattr(other, k):
-                setattr(other, k, self.kwargs[k])
+            if not hasattr(other, k) and hasattr(self, k):
+                setattr(other, k, getattr(self, k))
         for k in self._instance_attrs:
             setattr(other, k, getattr(self, k))
         if not attrs_only:
@@ -915,6 +928,7 @@ class BaseFolder(MutableSequence):
         ]:  # pass ddirectly through for private attributes
             raise AttributeError(f"{name} is a protected attribute and may not be deleted!")
         super().__delattr__(name)
+        self._instance_attrs.discard(name)
 
     ###########################################################################
     ###################### Private Methods ####################################
@@ -1054,7 +1068,8 @@ class BaseFolder(MutableSequence):
         """
         walker_args = walker_args or {}
         breadcrumb = breadcrumb or []
-        if len(self.groups) > 0:
+        has_groups = len(self.groups) > 0
+        if has_groups:
             ret = []
             removeGroups = []
             if replace_terminal:
@@ -1063,7 +1078,8 @@ class BaseFolder(MutableSequence):
                 bcumb = copy(breadcrumb)
                 bcumb.append(g)
                 tmp = val._walk_groups(
-                    walker, group=group, replace_terminal=replace_terminal, walker_args=walker_args, breadcrumb=bcumb
+                    walker, group=group, replace_terminal=replace_terminal, only_terminal=only_terminal,
+                    walker_args=walker_args, breadcrumb=bcumb
                 )
                 if group and replace_terminal and isinstance(tmp, metadataObject):
                     removeGroups.append(g)
@@ -1072,7 +1088,7 @@ class BaseFolder(MutableSequence):
                     ret.append(tmp)
             for g in removeGroups:
                 del self.groups[g]
-        elif len(self.groups) == 0 or not only_terminal:
+        if not has_groups or not only_terminal:
             if group:
                 ret = walker(self, breadcrumb, **walker_args)
             else:
