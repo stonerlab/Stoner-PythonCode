@@ -1,119 +1,42 @@
-*******************************
-Installation of Stoner Package
-*******************************
+=================
+Installing Stoner
+=================
 
-Introduction
-============
+Stoner provides classes and functions for reading, manipulating, fitting and
+plotting experimental data. This guide describes the maintained source;
+requirements for older published releases may differ.
 
-This manual provides a user guide and reference for the Stoner python package.
-The Stoner python package provides a set of python classes and functions for
-reading, manipulating and plotting data acquired with the lab equipment in the
-Condensed Matter Physics Group at the University of Leeds.
+Requirements and packages
+=========================
 
-Getting the Stoner Package
---------------------------
+.. include:: ../../README.rst
+   :start-after: .. installation-start
+   :end-before: .. installation-end
 
-We recommend the use of Ananconda Python for use with the Stoner package and provide
-conda packages for Stoner and its non-standard dependencies. To install the Stoner package
-in an Anaconda Python environment, simply do::
+Installing from source
+======================
 
-    conda install -c phygbu Stoner
+The maintained source is on the ``stable`` branch. To install it directly::
 
-If you are not using Ananconda python, then we also make Python wheels available that may be installed
-using pip::
+    python -m pip install git+https://github.com/stonerlab/Stoner-PythonCode.git@stable
 
-    pip install Stoner
+For an editable checkout with test dependencies, follow the
+:doc:`developer guide <developer>`.
 
-The advantage of getting the package this way is that it is installed into your Python path properly.
-The disadvantage is that you don't get this user guide and the version may not be the most
-up to date (although given the fragile and continuously being broken state of the code that may be
-a good thing !).
+Next steps
+==========
 
-Getting the Latest Development Code
------------------------------------
+Continue with :doc:`loading and examining data <datafile>`,
+:doc:`plotting <plotfile>` or :doc:`curve fitting <curve_fitting>`.
+The :doc:`API reference </Stoner>` describes individual methods and parameters.
 
-
-.. note::
-
-   These instructions are for members of the University of Leeds Condensed Matter Physics Group. External users are recommended to
-   download the source from GitHub
-
-
-The source code for the Stoner python module is kept on github using the git
-revision control tool. A nightly development release of the code is available for copying and
-use in ``\\stonerlab\data\software\python\PythonCode\``.
-
-The Stoner Package currently depends on a number of other modules. These are installed on the lab
-machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib.  The easiest way to get a Python
-installation with all the necessary dependencies for the Stoner Package is to install the *Enthought Python Distribution*,
-Canopy*. Installers for Windows, MacOS and Linux are kept in ``\\stonerlab\data\software\Python``
-
-The canonical source of the latest version is the master branch of the github archive. If you have git installed on your
-machine then::
-
-    pip install git+https://github.com/stonerlab/Stoner-PythonCode.git
-
-should install the current master branch. Otherwise download the zip file from the github site and do::
-
-    pip install .
-
-to install it locally.
-
-Using the Development Version of the Stoner Package
-===================================================
-
-.. note::
-   You only need to follow this section if you are working with the
-   version installed from the github repository. If you have installed
-   the Stoner Package with the easy_install command given above, then you
-   can disregard this section.
-
-The easiest way to use the development version of the Stoner Package is to add the
-path to the directory containing the files from github to your PYTHONPATH environment
-variable. This can be done on Macs and Linux by doing.
-
-.. code-block:: sh
-
-  cd <path to PythonCode directory>
-  export PYTHONPATH=`pwd`:$PYTHONPATH
-
-On a windows machine the easiest way is to create a permanent entry to the
-folder in the system environment variables. Go to Control Panel -> System ->
-Advanced Tab -> click on Environment button and then add or edit an entry to the
-system variable PYTHONPATH.
-
-One this has been done, the Stoner module may be loaded from python command
-line::
-
-   import Stoner
-
-or::
-
-   from Stoner import *
-
-Documentation
-=============
-
-These pages provide a user guide to the Stoner package and its various modules and classes.
-It is not a reference to the library but instead aims to explain the various operations that
-are possible and provide short examples of use. For the API reference for the library, please
-see the `Module Api Documentation <Stoner>`. There is also a single sided cheat sheet that
-summarises the examples in this user guide in the github repository.
-
-.. warning::
-   The code is still under active development to fix bugs and add features. Generally things don't
-   get deliberately broken, but accidents happen, so if something stops working, please either fix and
-   commit the code or tell Gavin.
-
-Package Options
+Package options
 ===============
 
-The Stoner package supports a set of package level options to control preferences such as whether to show objects using 'rich'
-representations such as png or html output formats.::
+Package options control preferences such as rich HTML and image representations::
 
     from Stoner import Options
-    Options.short_repr=True
+    Options.short_repr = True
 
-The **options** object supports reading and setting options through attribute assignment. Deleting an Option attribute
-resets the Option back to the corresponding default value. **dir(Options)** will give a list of all possible package options.
-
+Read and set options through attributes. Deleting an option attribute resets
+it to its default; ``dir(Options)`` lists the available options.

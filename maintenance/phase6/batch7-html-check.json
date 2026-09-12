@@ -1,0 +1,36 @@
+{
+  "pages": [
+    {
+      "page": "index.html",
+      "checked_local_links": 52,
+      "broken_local_links": [],
+      "problematic_markup": 0,
+      "existing_theme_placeholder_links": [
+        "# "
+      ]
+    },
+    {
+      "page": "readme.html",
+      "checked_local_links": 23,
+      "broken_local_links": [],
+      "problematic_markup": 0,
+      "existing_theme_placeholder_links": []
+    },
+    {
+      "page": "UserGuide/install.html",
+      "checked_local_links": 31,
+      "broken_local_links": [],
+      "problematic_markup": 0,
+      "existing_theme_placeholder_links": []
+    },
+    {
+      "page": "UserGuide/developer.html",
+      "checked_local_links": 37,
+      "broken_local_links": [],
+      "problematic_markup": 0,
+      "existing_theme_placeholder_links": []
+    }
+  ],
+  "readme_copies_identical": true,
+  "visual_browser_review": "Blocked by browser local-file URL policy; generated HTML structure checked instead."
+}

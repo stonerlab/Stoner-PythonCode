@@ -41,6 +41,12 @@ the plotting examples and deliberately refreshes that cache. Documentation
 examples are also exercised by ``tests/Stoner/test_doc_samples.py``; use that
 test module to check changes to example behaviour.
 
+Edit the repository-root ``README.rst`` as the definitive project overview.
+``make -C doc readme`` copies it to ``doc/readme.rst``; both ``make commit``
+and ``make -C doc html`` run that copy step. When building directly with Sphinx,
+refresh the copy yourself if the README changed. The installation guide includes
+the marked installation section from the root README to keep its commands aligned.
+
 Understanding the class structure
 =================================
 

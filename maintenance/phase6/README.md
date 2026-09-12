@@ -102,3 +102,10 @@ The module indexes now exclude 32 incidental imports, with no lost API entries;
 see `batch6.md`. The remaining 25 missing stubs arise from intentional function
 and class capitalisation on Windows and require Linux validation, not API
 renaming. The next proposed batch refreshes the README and documentation front page.
+
+## Seventh batch
+
+The README, front page and installation guidance are refreshed in `batch7.md`.
+The Makefile's README copy workflow is retained and documented. The new example
+executes successfully; documentation builds with no additional warnings or lost
+API entries. The next batch returns to local image and folder docstring markup.

@@ -555,3 +555,24 @@ Next proposed batch: refresh `README.rst` and `doc/index.rst`, checking the
 introduction, features, installation, optional dependencies, supported versions
 and navigation against current package metadata and the user guide.
 Phase 6 remains in progress.
+
+### Phase 6 README and front page complete (2026-09-12)
+
+Refreshed README.rst and its identical doc/readme.rst copy, and replaced the
+front-page README dump with guide and API navigation. Corrected compatibility,
+five-class coverage, chaining behaviour, installation and optional-feature
+guidance. Recommend Conda-based distributions such as Anaconda or Miniforge;
+Tesseract remains optional. The installation guide shares the README's marked
+installation section, and the contributor guide records the existing Makefile
+copy direction (root README.rst to doc/readme.rst).
+
+Standalone README rendering and its exact Python example pass. The clean RTD
+build retains 405 warnings, all five primary classes and 85 dynamic Data methods,
+with no lost inventory entries or changed plot-cache files. HTML structure and
+143 local links were checked; an existing theme header placeholder is recorded
+separately. Browser visual review was blocked by the local-file URL policy.
+Evidence: `maintenance/phase6/batch7.md` and its JSON reports.
+
+Next proposed batch: malformed markup in Stoner.Image.util._dtype and the
+DiskBasedFolderMixin overview, checking documented defaults and types while
+preserving runtime behaviour. Phase 6 remains in progress.
