@@ -971,7 +971,7 @@ def del_column(datafile, col=None, duplicates=False):
 
 
 def del_rows(datafile, col=None, val=None, invert=False):
-    """Search in the numerica data for the lines that match and deletes the corresponding rows.
+    """Delete rows matching the supplied indices or column values.
 
     Args:
         datafile (Data):
@@ -1005,8 +1005,10 @@ def del_rows(datafile, col=None, val=None, invert=False):
         list. The float is the value of the current row that corresponds to column col and the second
         argument is the current row.
 
-    Todo:
-        Implement val is a tuple for deletinging in a range of values.
+        When keeping a single row with invert=True and val=None, negative indices
+        count from the end. An out-of-range index raises IndexError before any rows
+        are deleted.
+
     """
     if col is None:
         datafile.data = ma.compress_rows(datafile.data)
@@ -1036,7 +1038,8 @@ def del_rows(datafile, col=None, val=None, invert=False):
             datafile.data.mask = np.delete(tmp_mask, col, 0)
             datafile.data._setas = tmp_setas
         elif isinstance(col, int_types) and val is None and invert:
-            datafile.del_rows([c], invert=invert)
+            col = range(len(datafile))[col]
+            datafile.del_rows([col], invert=invert)
         else:
             col = datafile.find_col(col)
             d = datafile.column(col)
