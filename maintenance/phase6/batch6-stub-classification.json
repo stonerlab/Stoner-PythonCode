@@ -1,0 +1,451 @@
+[
+  {
+    "name": "Stoner.core.data.ClassTester",
+    "canonical": "Stoner.tools.tests.ClassTester",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.DataArray",
+    "canonical": "Stoner.core.array.DataArray",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.DataFileInterfacesMixin",
+    "canonical": "Stoner.core.interfaces.DataFileInterfacesMixin",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.DataFileOperatorsMixin",
+    "canonical": "Stoner.core.operators.DataFileOperatorsMixin",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.DataFilePropertyMixin",
+    "canonical": "Stoner.core.property.DataFilePropertyMixin",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.FileManager",
+    "canonical": "Stoner.tools.file.FileManager",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.Iterable",
+    "canonical": "collections.abc.Iterable",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.Mapping",
+    "canonical": "collections.abc.Mapping",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.MutableSequence",
+    "canonical": "collections.abc.MutableSequence",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.PlotMixin",
+    "canonical": "Stoner.plot.core.PlotMixin",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.StonerLoadError",
+    "canonical": "Stoner.core.exceptions.StonerLoadError",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.StonerSetasError",
+    "canonical": "Stoner.core.exceptions.StonerSetasError",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.Tab_Delimited",
+    "canonical": "Stoner.core.utils.Tab_Delimited",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.TextWrapper",
+    "canonical": "textwrap.TextWrapper",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.TypeHintedDict",
+    "canonical": "Stoner.core.base.TypeHintedDict",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.core.data.metadataObject",
+    "canonical": "Stoner.core.base.metadataObject",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.plot.functions.getfullargspec",
+    "canonical": "inspect.getfullargspec",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.plot.functions.host_subplot",
+    "canonical": "mpl_toolkits.axes_grid1.parasite_axes.host_axes",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.plot.functions.hsl2rgb",
+    "canonical": "Stoner.plot.utils.hsl2rgb",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.plot.functions.isanynone",
+    "canonical": "Stoner.tools.tests.isanynone",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.plot.functions.isiterable",
+    "canonical": "Stoner.tools.tests.isiterable",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.plot.functions.isnone",
+    "canonical": "Stoner.tools.tests.isnone",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.plot.functions.sp_griddata",
+    "canonical": "scipy.interpolate._ndgriddata.griddata",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.formats.image.hdf5.deepcopy",
+    "canonical": "copy.deepcopy",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.formats.image.hdf5.get_filename",
+    "canonical": "Stoner.tools.file.get_filename",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.formats.image.hdf5.make_Data",
+    "canonical": "Stoner.tools.decorators.make_Data",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.formats.image.hdf5.register_loader",
+    "canonical": "Stoner.formats.decorators.register_loader",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.formats.decorators.signature",
+    "canonical": "inspect.signature",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.folders.functions.append",
+    "canonical": "numpy.append",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.folders.functions.array",
+    "canonical": "numpy.array",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.folders.functions.isiterable",
+    "canonical": "Stoner.tools.tests.isiterable",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.folders.functions.np_any",
+    "canonical": "numpy.any",
+    "explicitly_exported": false,
+    "category": "incidental_import",
+    "colliding_pages": []
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.generic.linear",
+    "canonical": "Stoner.analysis.fitting.models.generic.linear",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.generic.Linear.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.generic.lorentzian_diff",
+    "canonical": "Stoner.analysis.fitting.models.generic.lorentzian_diff",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.generic.Lorentzian_diff.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.generic.powerLaw",
+    "canonical": "Stoner.analysis.fitting.models.generic.powerLaw",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.generic.PowerLaw.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.generic.quadratic",
+    "canonical": "Stoner.analysis.fitting.models.generic.quadratic",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.generic.Quadratic.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.generic.stretchedExp",
+    "canonical": "Stoner.analysis.fitting.models.generic.stretchedExp",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.generic.StretchedExp.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.thermal.arrhenius",
+    "canonical": "Stoner.analysis.fitting.models.thermal.arrhenius",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.thermal.Arrhenius.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.thermal.modArrhenius",
+    "canonical": "Stoner.analysis.fitting.models.thermal.modArrhenius",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.thermal.ModArrhenius.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.thermal.nDimArrhenius",
+    "canonical": "Stoner.analysis.fitting.models.thermal.nDimArrhenius",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.thermal.NDimArrhenius.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.thermal.vftEquation",
+    "canonical": "Stoner.analysis.fitting.models.thermal.vftEquation",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.thermal.VFTEquation.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.tunnelling.bdr",
+    "canonical": "Stoner.analysis.fitting.models.tunnelling.bdr",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.tunnelling.BDR.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.tunnelling.fowlerNordheim",
+    "canonical": "Stoner.analysis.fitting.models.tunnelling.fowlerNordheim",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.tunnelling.FowlerNordheim.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.tunnelling.simmons",
+    "canonical": "Stoner.analysis.fitting.models.tunnelling.simmons",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.tunnelling.Simmons.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.tunnelling.tersoffHammann",
+    "canonical": "Stoner.analysis.fitting.models.tunnelling.tersoffHammann",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.tunnelling.TersoffHammann.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.e_transport.blochGrueneisen",
+    "canonical": "Stoner.analysis.fitting.models.e_transport.blochGrueneisen",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.e_transport.BlochGrueneisen.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.e_transport.fluchsSondheimer",
+    "canonical": "Stoner.analysis.fitting.models.e_transport.fluchsSondheimer",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.e_transport.FluchsSondheimer.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.e_transport.wlfit",
+    "canonical": "Stoner.analysis.fitting.models.e_transport.wlfit",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.e_transport.WLfit.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.magnetism.blochLaw",
+    "canonical": "Stoner.analysis.fitting.models.magnetism.blochLaw",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.magnetism.BlochLaw.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.magnetism.fmr_power",
+    "canonical": "Stoner.analysis.fitting.models.magnetism.fmr_power",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.magnetism.FMR_Power.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.magnetism.inverse_kittel",
+    "canonical": "Stoner.analysis.fitting.models.magnetism.inverse_kittel",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.magnetism.Inverse_Kittel.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.magnetism.kittelEquation",
+    "canonical": "Stoner.analysis.fitting.models.magnetism.kittelEquation",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.magnetism.KittelEquation.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.magnetism.langevin",
+    "canonical": "Stoner.analysis.fitting.models.magnetism.langevin",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.magnetism.Langevin.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.superconductivity.rsj_noiseless",
+    "canonical": "Stoner.analysis.fitting.models.superconductivity.rsj_noiseless",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.superconductivity.RSJ_Noiseless.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.superconductivity.rsj_simple",
+    "canonical": "Stoner.analysis.fitting.models.superconductivity.rsj_simple",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.superconductivity.RSJ_Simple.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.superconductivity.strijkers",
+    "canonical": "Stoner.analysis.fitting.models.superconductivity.strijkers",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.superconductivity.Strijkers.rst"
+    ]
+  },
+  {
+    "name": "Stoner.analysis.fitting.models.superconductivity.ic_B_airy",
+    "canonical": "Stoner.analysis.fitting.models.superconductivity.ic_B_airy",
+    "explicitly_exported": true,
+    "category": "public_function_case_collision",
+    "colliding_pages": [
+      "Stoner.analysis.fitting.models.superconductivity.Ic_B_Airy.rst"
+    ]
+  }
+]

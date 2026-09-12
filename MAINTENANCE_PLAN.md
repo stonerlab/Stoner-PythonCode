@@ -25,6 +25,12 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 
 ## Status
 
+Local environment update (2026-09-12): use the shared Miniforge environment
+`py311-minimal` for future lower-dependency checks, replacing the repository-local
+`maintenance/runs/envs/py311-minimum` environment. Verify its installed versions
+against `tests/minimum-env.yml` before running those checks; existing results
+remain evidence for the environment in which they were recorded.
+
 | Phase | Workstream                 | Status      | Completion evidence                                                                                                                           |
 | ----- | -------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | 0     | Reproducible baseline      | Complete    | maintenance/phase0: 333 passed serial and with two workers; identical 79% coverage; environment manifest and Sphinx warning baseline recorded |
@@ -33,7 +39,7 @@ Recorded from the `stable` branch at `08ad42f09` on 2026-09-09:
 | 3     | Repository content cleanup | Complete    | `maintenance/phase3` inventory and policy check; 1.11 MB of reviewed output removed; plot cache and scientific fixtures retained              |
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
 | 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
-| 6     | Documentation and examples | In progress | Fresh RTD build: warnings 1658 to 438; five primary classes and 85 dynamic Data methods audited; plot cache unchanged                         |
+| 6     | Documentation and examples | In progress | Fresh RTD build: warnings 1658 to 405; five primary classes and 85 dynamic Data methods audited; plot cache unchanged                         |
 | 7     | Focused source maintenance | Not started | Small reviewed batches with regression tests                                                                                                  |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
@@ -211,6 +217,7 @@ Do this only after Phase 0 supplies a regression baseline and Phase 2 identifies
 ### Tasks
 
 - Correct stale version, branch, repository, installation, and compatibility statements.
+- Review and update `README.rst` and the documentation front page (`doc/index.rst`): refresh the project introduction, feature overview, installation guidance and navigation, and keep supported versions and links consistent with the maintained package and user guide.
 - Fix obvious spelling and cross-reference errors without rewriting established technical meaning.
 - Verify that all public top-level classes and dynamically attached `Data` methods appear in the API documentation.
 - Run every example covered by `tests/test_doc_samples.py` and identify any examples excluded from automated execution.
@@ -527,4 +534,24 @@ remains separate from these focused local results.
 
 Next proposed batch: investigate the 57 missing autosummary stubs, distinguishing
 incidental imports from intentional public re-exports before changing indexes.
+Phase 6 remains in progress.
+
+### Phase 6 module index imports complete (2026-09-12)
+
+Classified all 57 missing autosummary stubs and excluded 32 incidental imports
+from five module tables. Fresh generated API sources and an RTD-mode build
+reduce warnings from 438 to 405, with no lost inventory entries and all five
+primary classes and 85 dynamic Data methods retained. All 243 plot-cache hashes
+are unchanged; package code is unchanged. Evidence: `maintenance/phase6/batch6.md`.
+
+The maintainer confirmed that the remaining 25 function/class names differing
+only in capitalisation are intentional API design. Their missing stubs are a
+Windows filesystem limitation; normal Linux documentation builds are the
+appropriate validation target. Do not rename these APIs or restructure their
+pages solely to remove Windows diagnostics. Fresh Linux validation remains
+outstanding.
+
+Next proposed batch: refresh `README.rst` and `doc/index.rst`, checking the
+introduction, features, installation, optional dependencies, supported versions
+and navigation against current package metadata and the user guide.
 Phase 6 remains in progress.

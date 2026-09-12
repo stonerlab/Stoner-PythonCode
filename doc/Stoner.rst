@@ -43,7 +43,12 @@ Numerical Data Objects
 Core Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. The skip lists below exclude implementation imports from module tables.
+   Automodsumm's rendering and stub generation use different import filters;
+   keep these lists explicit so intentional public re-exports remain visible.
+
 .. automodapi:: Stoner.core.data
+    :skip: ClassTester, DataArray, DataFileInterfacesMixin, DataFileOperatorsMixin, DataFilePropertyMixin, FileManager, Iterable, Mapping, MutableSequence, PlotMixin, StonerLoadError, StonerSetasError, Tab_Delimited, TextWrapper, TypeHintedDict, metadataObject
     :no-inheritance-diagram:
     :headings: -~
 
@@ -119,6 +124,7 @@ Plot Package and Modules
     :headings: -~
 
 .. automodapi:: Stoner.plot.functions
+    :skip: getfullargspec, host_subplot, hsl2rgb, isanynone, isiterable, isnone, sp_griddata
     :no-inheritance-diagram:
     :no-main-docstr:
     :headings: -~
@@ -144,10 +150,12 @@ Image Classes
     :no-inheritance-diagram:
 
 .. automodapi:: Stoner.formats.image.hdf5
+    :skip: deepcopy, get_filename, make_Data, register_loader
     :no-inheritance-diagram:
     :headings: -~
 
 .. automodapi:: Stoner.formats.decorators
+    :skip: signature
     :no-inheritance-diagram:
     :headings: -~
 
@@ -175,6 +183,7 @@ Folders Package and Submodules
     :headings: -~
 
 .. automodapi:: Stoner.folders.functions
+    :skip: append, array, isiterable, np_any
     :no-inheritance-diagram:
     :headings: -~
 

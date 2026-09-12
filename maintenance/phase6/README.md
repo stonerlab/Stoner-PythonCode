@@ -95,3 +95,10 @@ reviewed rather than retained as misleading API inventory targets.
 The Lorentzian derivative, bulk Bloch and Airy model descriptions are corrected
 in `batch5.md`. The user also authorised fixing the reproduced Airy small-argument
 factor-of-two defect; the fix has regression coverage on Python 3.11 and 3.14.
+
+## Sixth batch
+
+The module indexes now exclude 32 incidental imports, with no lost API entries;
+see `batch6.md`. The remaining 25 missing stubs arise from intentional function
+and class capitalisation on Windows and require Linux validation, not API
+renaming. The next proposed batch refreshes the README and documentation front page.
