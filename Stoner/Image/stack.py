@@ -349,7 +349,7 @@ class ImageStackMixin:
         Keyword Arguments:
             force_copy (bool):
                 Request new pixel storage even when the data type is unchanged. Defaults to False.
-                See the current same-type limitation below; this never requests a new stack object.
+                This never requests a new stack object.
             uniform (bool):
                 Use uniform quantisation for floating-point to integer conversion when True.
                 Defaults to False, selecting the converter's scaled rounding path.
@@ -366,14 +366,11 @@ class ImageStackMixin:
             ValueError:
                 If the converter does not support the requested conversion, or floating-point
                 input lies outside [-1, 1] on a conversion path that checks this range.
-            AttributeError:
-                If force_copy=True is requested with the existing data type. The current
-                shared converter attempts to access an unavailable ndarray clone attribute.
 
         Notes:
             The stack object and image dimensions are retained. The shared converter may
-            warn about precision or sign loss. The same-type force_copy failure is a known
-            implementation limitation, not an intended copy contract.
+            warn about precision or sign loss. With force_copy=True, the resulting pixel
+            storage is independent even when the requested data type is unchanged.
 
         References:
             1.  DirectX data conversion rules.

@@ -355,7 +355,7 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
 
     if dtype_in == dtype:
         if force_copy:
-            image = image.clone
+            image = np.copy(image)
         return image
 
     if not (dtype_in in _supported_types and dtype in _supported_types):
