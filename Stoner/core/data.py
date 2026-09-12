@@ -868,7 +868,7 @@ class Data(
         Returns:
             Nothing
         """
-        self._masks.append(self.mask)
+        self._masks.append(copy.deepcopy(self.mask))
         if mask is None:
             self.data.mask = False
         else:

@@ -267,10 +267,13 @@ def max(  # pylint: disable=redefined-builtin
         col = datafile.find_col(column)
     if bounds is not None:
         datafile._push_mask()
-        datafile._set_mask(bounds, True, col)
-    result = datafile.data[:, col].max(), datafile.data[:, col].argmax()
-    if bounds is not None:
-        datafile._pop_mask()
+    try:
+        if bounds is not None:
+            datafile._set_mask(bounds, True, col)
+        result = datafile.data[:, col].max(), datafile.data[:, col].argmax()
+    finally:
+        if bounds is not None:
+            datafile._pop_mask()
     return result
 
 
@@ -302,32 +305,32 @@ def mean(
     Notes:
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
-
-    .. todo::
-        Fix the row index when the bounds function is used - see note of :py:meth:`~Stoner.core.data.Data.max`
     """
     _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 
     if bounds is not None:
         datafile._push_mask()
-        datafile._set_mask(bounds, True, _.ycol)
+    try:
+        if bounds is not None:
+            datafile._set_mask(bounds, True, _.ycol)
 
-    if isiterable(sigma) and len(sigma) == len(datafile) and all_type(sigma, float):
-        sigma = np.array(sigma)
-        _["has_yerr"] = True
-    elif _.has_yerr:
-        sigma = datafile.data[:, _.yerr]
+        if isiterable(sigma) and len(sigma) == len(datafile) and all_type(sigma, float):
+            sigma = np.array(sigma)
+            _["has_yerr"] = True
+        elif _.has_yerr:
+            sigma = datafile.data[:, _.yerr]
 
-    if not _.has_yerr:
-        result = datafile.data[:, _.ycol].mean()
-    else:
-        ydata = datafile.data[:, _.ycol]
-        w = 1 / (sigma**2 + 1e-8)
-        norm = w.sum(axis=0)
-        error = np.sqrt((sigma**2).sum(axis=0)) / len(sigma)
-        result = (ydata * w).mean(axis=0) / norm, error
-    if bounds is not None:
-        datafile._pop_mask()
+        if not _.has_yerr:
+            result = datafile.data[:, _.ycol].mean()
+        else:
+            ydata = datafile.data[:, _.ycol]
+            w = 1 / (sigma**2 + 1e-8)
+            norm = w.sum(axis=0)
+            error = np.sqrt((sigma**2).sum(axis=0)) / len(sigma)
+            result = (ydata * w).mean(axis=0) / norm, error
+    finally:
+        if bounds is not None:
+            datafile._pop_mask()
     return result
 
 
@@ -361,10 +364,13 @@ def min(  # pylint: disable=redefined-builtin
         col = datafile.find_col(column)
     if bounds is not None:
         datafile._push_mask()
-        datafile._set_mask(bounds, True, col)
-    result = datafile.data[:, col].min(), datafile.data[:, col].argmin()
-    if bounds is not None:
-        datafile._pop_mask()
+    try:
+        if bounds is not None:
+            datafile._set_mask(bounds, True, col)
+        result = datafile.data[:, col].min(), datafile.data[:, col].argmin()
+    finally:
+        if bounds is not None:
+            datafile._pop_mask()
     return result
 
 
@@ -452,57 +458,57 @@ def std(
     column: Optional[Index] = None,
     sigma: Optional[Union[NDArray, Index]] = None,
     bounds: Optional[Callable] = None,
-):
-    """Find standard deviation value of col_a data column.
+) -> np.floating:
+    """Find the standard deviation of a data column.
 
     Args:
         datafile (Data):
             If not being used as a bound method, specifies the instance of Data to work with.
         column (index):
-            Column to look for the maximum in
+            Column whose standard deviation is calculated.
 
     Keyword Arguments:
         sigma (column index or array):
-            The uncertainty noted for each value in the mean
+            The uncertainty associated with each value in the selected column.
         bounds (callable):
             col_a callable function that takes col_a single argument list of
             numbers representing one row, and returns True for all rows to search in.
 
     Returns:
-        (float):
+        numpy.floating:
             The standard deviation of the data.
 
     Notes:
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
-
-    .. todo::
-        Fix the row index when the bounds function is used - see note of :py:meth:`~Stoner.core.data.Data.max`
     """
     _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
 
     if bounds is not None:
         datafile._push_mask()
-        datafile._set_mask(bounds, True, _.ycol)
+    try:
+        if bounds is not None:
+            datafile._set_mask(bounds, True, _.ycol)
 
-    if isiterable(sigma) and len(sigma) == len(datafile) and all_type(sigma, float):
-        sigma = np.array(sigma)
-    elif _.yerr:
-        sigma = datafile.data[:, _.yerr]
-    else:
-        sigma = np.ones(len(datafile))
+        if isiterable(sigma) and len(sigma) == len(datafile) and all_type(sigma, float):
+            sigma = np.array(sigma)
+        elif _.yerr:
+            sigma = datafile.data[:, _.yerr]
+        else:
+            sigma = np.ones(len(datafile))
 
-    ydata = datafile.data[:, _.ycol]
+        ydata = datafile.data[:, _.ycol]
 
-    sigma = np.abs(sigma) / np.nanmax(np.abs(sigma))
-    sigma = np.where(sigma < 1e-8, 1e-8, sigma)
-    weights = 1 / sigma**2
-    weights[np.isnan(weights)] = 0.0
+        sigma = np.abs(sigma) / np.nanmax(np.abs(sigma))
+        sigma = np.where(sigma < 1e-8, 1e-8, sigma)
+        weights = 1 / sigma**2
+        weights[np.isnan(weights)] = 0.0
 
-    result = np.sqrt(np.cov(ydata, aweights=weights))
+        result = np.sqrt(np.cov(ydata, aweights=weights))
 
-    if bounds is not None:
-        datafile._pop_mask()
+    finally:
+        if bounds is not None:
+            datafile._pop_mask()
     return result
 
 

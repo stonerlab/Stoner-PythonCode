@@ -111,5 +111,73 @@ def test_stats():
     assert np.allclose(selfd.std(1, 2), 2.7067331877422456), "Simple Standard Deviation failed"
 
 
+@pytest.mark.parametrize("method", ["min", "max", "mean", "std"])
+def test_bounds_exception_restores_state(method):
+    """A failing bounds callback must not leave a partial mask on the data."""
+    data = Data(np.column_stack((np.arange(6), [8, 3, 9, 2, 7, 4])), setas="xy")
+    data.data.mask = np.zeros(data.shape, dtype=bool)
+    data.data.mask[2, 1] = True
+    original_mask = data.data.mask.copy()
+    original_values = data.data.data.copy()
+    original_roles = str(data.setas)
+    original_stack = len(data._masks)
+
+    def broken_bounds(row):
+        if row.i == 3:
+            raise ValueError("bounds failed")
+        return row.i % 2 == 0
+
+    with pytest.raises(ValueError, match="bounds failed"):
+        getattr(data, method)(1, bounds=broken_bounds)
+    np.testing.assert_array_equal(data.data.mask, original_mask)
+    np.testing.assert_array_equal(data.data.data, original_values)
+    assert str(data.setas) == original_roles
+    assert len(data._masks) == original_stack
+
+
+def test_nested_mask_snapshots_are_independent():
+    """Nested temporary masks restore each saved mask without aliasing."""
+    data = selfd_master.clone
+    data.data.mask = np.zeros(data.shape, dtype=bool)
+    data.data.mask[1, 1] = True
+    original = data.data.mask.copy()
+    data._push_mask()
+    data.data.mask[3, 2] = True
+    temporary = data.data.mask.copy()
+    data._push_mask()
+    data.data.mask[5, 3] = True
+    data._pop_mask()
+    np.testing.assert_array_equal(data.data.mask, temporary)
+    data._pop_mask()
+    np.testing.assert_array_equal(data.data.mask, original)
+
+
+def test_std_bounds_restores_mask():
+    """A successful bounded standard deviation restores the original mask."""
+    data = selfd_master.clone
+    data.data.mask = np.zeros(data.shape, dtype=bool)
+    data.data.mask[2, 1] = True
+    original = data.data.mask.copy()
+    data.std(1, bounds=lambda row: row.i in (1, 3, 5))
+    np.testing.assert_array_equal(data.data.mask, original)
+
+
+@pytest.mark.parametrize("column", [None, 1, "Signal"])
+@pytest.mark.parametrize("method,expected", [("min", (2, 3)), ("max", (4, 5)), ("mean", 3)])
+def test_bounds_original_indices_and_mask_restoration(column, method, expected):
+    """Non-contiguous bounds retain original indices and restore the input mask."""
+    data = Data(
+        np.column_stack((np.arange(6), [8, 3, 9, 2, 7, 4])),
+        column_headers=["Position", "Signal"], setas="xy",
+    )
+    data.data.mask = np.zeros(data.shape, dtype=bool)
+    data.data.mask[2, 1] = True
+    original_mask = data.data.mask.copy()
+    result = getattr(data, method)(column, bounds=lambda row: row.i in (1, 3, 5))
+    assert result == expected
+    np.testing.assert_array_equal(data.data.mask, original_mask)
+    assert str(data.setas) == "xy"
+
+
 if __name__ == "__main__":  # Run some tests manually to allow debugging
     pytest.main(["--pdb", __file__])
