@@ -24,6 +24,9 @@ jobs:
         os: ["ubuntu-latest"]
         include:
           - python-version: "3.14"
+            os: ubuntu-latest
+            coverage: true
+          - python-version: "3.14"
             os: macos-15-intel
             micromamba-extra-args: pyqt6
     steps:
@@ -57,23 +60,29 @@ jobs:
         if: runner.os == 'Linux'
         env:
           LC_CTYPE: en_GB.UTF-8
+          COLLECT_COVERAGE: ${{ matrix.coverage == true }}
         run: |
-           xvfb-run --auto-servernum pytest -vv -n 2 -o faulthandler_timeout=120 --durations=20 --cov-config="$GITHUB_WORKSPACE/pyproject.toml" --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
-           coverage xml
+           coverage_args=()
+           if [[ "$COLLECT_COVERAGE" == "true" ]]; then
+             coverage_args=(--cov-config="$GITHUB_WORKSPACE/pyproject.toml" --cov-report= --cov=Stoner)
+           fi
+           xvfb-run --auto-servernum pytest -vv -n 2 -o faulthandler_timeout=120 --durations=20 "${coverage_args[@]}" --junitxml pytest.xml || PYTEST_EXIT=$?
+           if [[ "$COLLECT_COVERAGE" == "true" ]]; then
+             coverage xml
+           fi
            exit ${PYTEST_EXIT:-0}
       - name: Test on macOS
         if: runner.os != 'Linux'
         run: |
-           pytest -vv -n 2 -o faulthandler_timeout=120 --durations=20 --cov-config="$GITHUB_WORKSPACE/pyproject.toml" --cov-report= --cov=Stoner --junitxml pytest.xml || PYTEST_EXIT=$?
-           coverage xml
+           pytest -vv -n 2 -o faulthandler_timeout=120 --durations=20 --junitxml pytest.xml || PYTEST_EXIT=$?
            exit ${PYTEST_EXIT:-0}
         env:
           QT_QPA_PLATFORM: offscreen
       - name: Cleanup X11 server
         if: runner.os == 'Linux'
         uses: bcomnes/cleanup-xvfb@9e016c43bb8d73fe7d5933d2ef00fd770c1a7c50 # v1.0.9
-      - name: Coveralls Parallel
-        if: runner.os == 'Linux'
+      - name: Upload coverage to Coveralls
+        if: matrix.coverage == true
         uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
         with:
           flag-name: run-${{ matrix.python-version }}-${{ matrix.os }}
@@ -86,7 +95,7 @@ jobs:
           name: Unit Test Results (Python ${{ matrix.python-version }}, ${{ matrix.os }})
           path: pytest.xml
       - name: Post coverage result to Codacy
-        if: github.event_name != 'pull_request'
+        if: matrix.coverage == true && github.event_name != 'pull_request'
         uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1.3.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -113,13 +122,3 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
           files: artifacts/**/*.xml
-
-  coverage-finish:
-    name: Finish Coveralls parallel build
-    needs: run_pytest
-    runs-on: ubuntu-latest
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
-      with:
-        parallel-finished: true
