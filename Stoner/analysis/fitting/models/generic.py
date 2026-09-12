@@ -213,17 +213,25 @@ class StretchedExp(Model):
 
 
 class Lorentzian_diff(Model):
-    r"""Provides a lmfit Model rerprenting the differential form of a Lorentzian Peak.
+    r"""Fit the derivative of a Lorentzian profile with an lmfit model.
 
-    Args:
-        x (array): x data
-        A (float): Peak amplitude
-        sigma (float): peak wideth
-        mu (float): peak location in x
+    Notes:
+        The independent variable is ``x``. Model parameters are ``A``, the area of
+        the underlying Lorentzian; ``sigma``, its half-width at half-maximum; and
+        ``mu``, its centre. The width and centre use the same units as ``x``.
+        ``A`` is not the peak height of the derivative.
 
-    Returns:
-        :math:`\frac{A \sigma \left(2 \mu - 2 x\right)}{\pi \left(\sigma^{2} +
-                                                                      \left(- \mu + x\right)^{2}\right)^{2}}`
+        The model evaluates:
+
+        .. math::
+
+            f(x) = \frac{2 A \sigma (\mu-x)}
+                        {\pi [\sigma^2+(x-\mu)^2]^2}.
+
+        This is the derivative of
+        :math:`A\sigma / \{\pi[\sigma^2+(x-\mu)^2]\}`.
+        Evaluation returns values with the shape of the supplied independent variable.
+        The model wraps the ``lorentzian_diff`` function; it does not alter the input data.
 
     Example:
         .. plot:: samples/Fitting/lorentzian.py

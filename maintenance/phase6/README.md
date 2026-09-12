@@ -89,3 +89,9 @@ corrected in `batch3.md`. That report also records a reproduced same-dtype
 The Data overview, Setas call semantics and vector-plotting docstrings are
 corrected in `batch4.md`. Two obsolete Data attribute entries are explicitly
 reviewed rather than retained as misleading API inventory targets.
+
+## Fifth batch
+
+The Lorentzian derivative, bulk Bloch and Airy model descriptions are corrected
+in `batch5.md`. The user also authorised fixing the reproduced Airy small-argument
+factor-of-two defect; the fix has regression coverage on Python 3.11 and 3.14.

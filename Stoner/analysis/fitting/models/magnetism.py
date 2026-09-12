@@ -161,29 +161,30 @@ def fmr_power(H, H_res, Delta_H, K_1, K_2):
 
 
 class BlochLaw(Model):
-    r"""Bloch's law for spontaneous magnetism at low temperatures.
-
-    Args:
-        T (array like):
-            Temperature (K)
-        g (float):
-            Lande g-factor
-        A(float):
-            The echange stiffness (Jm^{-1})
-        Ms(float):
-            Saturation moment (Am^{-1})
-
-
-    Returns:
-        (array like):
-            Magnetisation values corresponding to the given temperatures.
+    r"""Fit bulk low-temperature magnetisation using Bloch's law.
 
     Notes:
-        Calculates :math:`1 - \frac{\left((\Gamma(3/2) \zeta(3/2)\right)}
-                                          {(4\pi^2)}  (v_{ws} / S) (k_B T / D)^{3/2}`
+        The independent variable ``T`` is temperature in kelvin. Model parameters
+        are the dimensionless Lande factor ``g``, exchange stiffness ``A`` in
+        :math:`\mathrm{J\,m^{-1}}`, and zero-temperature saturation magnetisation
+        ``Ms`` in :math:`\mathrm{A\,m^{-1}}`.
 
-        This is the bulk version of Bloch's law which is not fully correct for thin films. Model adapted from code
-        by Dr Joseph Barker <j.barker@leeds.ac.uk>
+        The implemented bulk expression is:
+
+        .. math::
+
+            M(T) = M_s - C g\mu_B
+                \left(\frac{k_B M_s T}{2g\mu_B A}\right)^{3/2},
+            \qquad C = \frac{\Gamma(3/2)\zeta(3/2)}{4\pi^2}.
+
+        Here :math:`k_B` is Boltzmann's constant and :math:`\mu_B` is the Bohr magneton.
+        Evaluation returns magnetisation, not magnetisation normalised to ``Ms``.
+        The expression assumes the bulk low-temperature regime and is not a thin-film correction.
+
+        On construction, ``g`` is fixed at 2.0; ``A`` and ``Ms`` vary with lower
+        bounds of zero. Evaluation requires nonzero ``g`` and ``A`` because they
+        appear in the denominator; the parameter bounds do not exclude ``A=0``.
+        Model adapted from code by Dr Joseph Barker.
     """
 
     display_names = ["g", "A", "M_s"]
@@ -198,25 +199,33 @@ class BlochLaw(Model):
         self.prefactor = gamma(1.5) * zeta(1.5) / (4 * np.pi**2)
 
     def blochs_law_bulk(self, T, g, A, Ms):
-        r"""Bloch's Law in bulk systems.
+        r"""Evaluate the bulk Bloch-law magnetisation.
 
         Args:
-            T (array like):
-                Temperature (K)
+            T (ndarray or float):
+                Temperature in kelvin.
             g (float):
-                Lande g-factor
-            A(float):
-                The echange stiffness (Jm^{-1})
-            Ms(float):
-                Saturation moment (Am^{-1})
+                Dimensionless Lande factor.
+            A (float):
+                Exchange stiffness in :math:`\mathrm{J\,m^{-1}}`.
+            Ms (float):
+                Zero-temperature saturation magnetisation in :math:`\mathrm{A\,m^{-1}}`.
 
         Returns:
-            (array like):
-                Magnetisation values corresponding to the given temperatures.
+            ndarray or float:
+                Magnetisation in the same units as ``Ms``, with the shape of ``T``.
 
         Notes:
-            Calculates :math:`1 - \frac{\left((\Gamma(3/2) \zeta(3/2)\right)}
-                                              {(4\pi^2)}  (v_{ws} / S) (k_B T / D)^{3/2}`
+            The calculation is:
+
+            .. math::
+
+                M(T) = M_s - \frac{\Gamma(3/2)\zeta(3/2)}{4\pi^2}
+                    g\mu_B\left(\frac{k_B M_s T}{2g\mu_B A}\right)^{3/2}.
+
+            This is a bulk low-temperature expression. Inputs are not validated;
+            zero denominators or a negative fractional-power argument can produce
+            invalid numerical results. The input temperatures are not modified.
         """
         Tp = (k * Ms * T / (2 * g * mu_B * A)) ** 1.5
         prefactor = self.prefactor * g * mu_B

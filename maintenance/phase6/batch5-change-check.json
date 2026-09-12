@@ -1,0 +1,11 @@
+{
+  "Stoner/analysis/fitting/models/generic.py": {
+    "runtime_change": null
+  },
+  "Stoner/analysis/fitting/models/magnetism.py": {
+    "runtime_change": null
+  },
+  "Stoner/analysis/fitting/models/superconductivity.py": {
+    "runtime_change": "ic_B_airy body only"
+  }
+}

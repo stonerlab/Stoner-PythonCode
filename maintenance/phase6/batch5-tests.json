@@ -1,0 +1,47 @@
+{
+  "pre_fix_expected_failure": {
+    "run": "20260912-093217-focused-afa21c83",
+    "environment": "py314",
+    "exit_code": 1,
+    "cases": 4,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0
+  },
+  "py314_regressions": {
+    "run": "20260912-093338-focused-67d63ef8",
+    "environment": "py314",
+    "exit_code": 0,
+    "cases": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "py311_lower_regressions": {
+    "run": "20260912-093423-focused-f38bf3df",
+    "environment": "D:/PythonCode/maintenance/runs/envs/py311-minimum",
+    "exit_code": 0,
+    "cases": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "py314_fitting": {
+    "run": "20260912-093423-focused-8c1776fa",
+    "environment": "py314",
+    "exit_code": 0,
+    "cases": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "py314_related_examples": {
+    "run": "20260912-093521-focused-e826d88c",
+    "environment": "py314",
+    "exit_code": 0,
+    "cases": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

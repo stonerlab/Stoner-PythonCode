@@ -588,30 +588,34 @@ def rsj_simple(I, Ic, Rn, V_offset):
 
 
 def ic_B_airy(B, Ic0, B_offset, A):
-    r"""Calculate Critical Current for a round Josepshon Junction wrt to Field.
+    r"""Calculate the critical current of a circular Josephson junction in a magnetic field.
 
     Args:
         B (array-like):
-            Magnetic Field (structly flux density in T)
+            Magnetic flux density in tesla.
         Ic0 (float):
-            Maximum critical current
+            Maximum critical current, in the desired output current units.
         B_offset (float):
-            Field offset/trapped flux in coils/remanent M in junction
-        A(fl,oat):
-            Area of junction in $m^2$
+            Field offset in tesla, accounting for trapped flux or remanence.
+        A (float):
+            Junction area in :math:`\mathrm{m^2}`.
 
     Returns:
-        (array):
-            Values of critical current
+        ndarray or float:
+            Critical current with the shape of ``B`` and the units of ``Ic0``.
 
     Notes:
-        Represents the critical current as:
-            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}{\Phi_0}}
-                    {\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
-        where :math:`J_1` is a first order Bessel function.
+        The calculation uses:
 
-        For small ($<1^{-5}$)values of the Bessel function argument, this will return Ic0 to
-        ensure correct evaluation for 0 flux.
+        .. math::
+
+            I_c(B) = I_{c0}\left|\frac{2J_1(u)}{u}\right|,
+            \qquad u = \frac{\pi(B-B_{\mathrm{offset}})A}{\Phi_0}.
+
+        Here :math:`J_1` is the first-order Bessel function and :math:`\Phi_0` is
+        the superconducting flux quantum. For :math:`|u| \leq 10^{-5}`, the Bessel
+        factor is replaced by its limiting value of one, giving ``Ic0`` without
+        dividing by zero. The input field values are not modified.
 
     Example:
         .. plot:: samples/Fitting/ic_b_airy.py
@@ -620,7 +624,9 @@ def ic_B_airy(B, Ic0, B_offset, A):
     """
     arg = (B - B_offset) * A * np.pi / Phi_0
 
-    return Ic0 * np.abs(2 * np.where(np.abs(arg) < 1e-5, np.ones_like(arg), J1(arg) / arg))
+    near_zero = np.isclose(arg, 0.0, atol=1e-5, rtol=0.0)
+    denominator = np.where(near_zero, 1.0, arg)
+    return Ic0 * np.abs(np.where(near_zero, 1.0, 2 * J1(arg) / denominator))
 
 
 def icRN_Clean(d_f, IcRn0, E_x, v_f, d_0):
@@ -958,33 +964,33 @@ class RSJ_Simple(Model):
 
 
 class Ic_B_Airy(Model):
-    r"""Critical Current for a round Josepshon Junction wrt to Field.
-
-    Args:
-        B (array-like):
-            Magnetic Field (structly flux density in T)
-        Ic0 (float):
-            Maximum critical current
-        B_offset (float):
-            Field offset/trapped flux in coils/remanent M in junction
-        A(fl,oat):
-            Area of junction in $m^2$
-
-    Returns:
-        (array):
-            Values of critical current
+    r"""Fit the magnetic-field dependence of a circular Josephson junction's critical current.
 
     Notes:
-        Represents the critical current as:
-            :math:`I_{c0}\times\left|\frac{2 J_1\left(\frac{\pi\(B-B_{offset}) A}\right)}
-                        {\Phi_0}}{\frac{\pi\(B-B_{offset}) A}){\Phi_0}}\right|`
-        where `J_1` is a first order Bessel function.
+        The independent variable ``B`` is magnetic flux density in tesla. Model
+        parameters are the critical-current scale ``Ic0``, field offset ``B_offset``
+        in tesla, and junction area ``A`` in :math:`\mathrm{m^2}`.
+        Currents use the same units as ``Ic0``.
+
+        The model evaluates:
+
+        .. math::
+
+            I_c(B) = I_{c0}\left|\frac{2J_1(u)}{u}\right|,
+            \qquad u = \frac{\pi(B-B_{\mathrm{offset}})A}{\Phi_0}.
+
+        Here :math:`J_1` is the first-order Bessel function and :math:`\Phi_0` is
+        the superconducting flux quantum. The analytic limit at zero argument is ``Ic0``.
+
+        For :math:`|u| \leq 10^{-5}`, the Bessel factor is replaced by its limiting
+        value of one. A safe denominator prevents division by zero even though
+        NumPy evaluates both selection branches.
+        The model wraps ``ic_B_airy`` without changing the input field values.
 
     Example:
         .. plot:: samples/Fitting/ic_b_airy.py
             :include-source:
             :outname: ic_b_airy_class
-
     """
 
     display_names = ["I_{c0}", "B_{offset}"]
