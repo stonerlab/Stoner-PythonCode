@@ -913,7 +913,8 @@ class Data(
 
         Returns:
             (Data):
-                A new instance of :py:class:`~Stoner.core.data.Data` or a s subclass of :py:class:`~Stoner.core.data.Data` if
+                A new instance of :py:class:`~Stoner.core.data.Data` or a subclass of
+                :py:class:`~Stoner.core.data.Data` if
                 *loaded_class* is True.
         Notes:
             If *filetype* is a string, then it is first tried as an exact match to a subclass name, otherwise it

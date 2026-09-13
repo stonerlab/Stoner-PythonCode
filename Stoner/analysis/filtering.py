@@ -531,7 +531,8 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
             Data object to work with if not being used as a bound method.
         newX (1D array or None):
             Row indices or X column values to interpolate with. If None, then the
-            :py:meth:`~Stoner.core.data.Data.interpolate` returns an interpolation function. Unlike the raw interpolation
+            :py:meth:`~Stoner.core.data.Data.interpolate` returns an interpolation function.
+            Unlike the raw interpolation
             function from scipy, this interpolation function will work with MaskedArrays by compressing them
             first.
 

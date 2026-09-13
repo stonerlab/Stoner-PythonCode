@@ -23,7 +23,6 @@ from lmfit.models import update_param_vals
 from scipy.constants import physical_constants
 from scipy.integrate import quad
 from scipy.special import jv
-from scipy.signal import fftconvolve
 
 hbar = physical_constants["Planck constant over 2 pi"]
 kb = physical_constants["Boltzmann constant"]
@@ -33,16 +32,11 @@ J1 = partial(jv, 1)
 
 
 try:  # numba is an optional dependency
-    from numba import float64, jit, njit
+    from numba import njit
 except ImportError:
-    from ....compat import _dummy
-    from ....compat import _jit as jit
-
-    njit = jit
-    float64 = _dummy()
+    from ....compat import _jit as njit
 
 
-# @jit(float64[:](float64[:], float64, float64, float64, float64), nopython=True, parallel=True, nogil=True)
 def _strijkers_core(V, omega, delta, P, Z):
     """Implement strijkers Model for point-contact Andreev Reflection Spectroscopy.
 

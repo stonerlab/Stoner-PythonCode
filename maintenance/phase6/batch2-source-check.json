@@ -1,8 +1,0 @@
-{
-  "runtime_ast_unchanged": true,
-  "changed_docstrings": [
-    "crop_text",
-    "defect_mask",
-    "defect_mask_subtract_image"
-  ]
-}

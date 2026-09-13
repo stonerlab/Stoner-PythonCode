@@ -25,6 +25,12 @@ jobs:
           environment-name: build-environment
           create-args: python=3.12
           init-shell: bash
+      - name: Check release version
+        if: github.event_name == 'release'
+        shell: bash -l {0}
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
       - name: Build and upload the conda packages
         uses: uibcdf/action-build-and-upload-conda-packages@aac1ccb14aa0d4d43a0b10c18b17c5285a746544 # v1.5.0
         with:
@@ -48,6 +54,11 @@ jobs:
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.12"
+      - name: Check release version
+        if: github.event_name == 'release'
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
       - name: Install build tools
         run: pip install build==1.2.2
       - name: Build package

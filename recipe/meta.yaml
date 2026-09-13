@@ -39,6 +39,12 @@ requirements:
     - scipy >=1.14
     - statsmodels
 
+test:
+  imports:
+    - Stoner
+  commands:
+    - python -c "import Stoner; from importlib.metadata import version; assert Stoner.__version__ == version('Stoner') == '{{ version }}'"
+
 about:
   home: https://github.com/stonerlab/Stoner-PythonCode/
   license: GPL-3.0-only

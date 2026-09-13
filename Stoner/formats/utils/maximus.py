@@ -124,7 +124,7 @@ def read_images(files, header):
     xims = list(files)
     scandef = header["ScanDefinition"]
     # Known unimplemented feature: multi-region scans need facility format guidance and real fixtures.
-    # See maintenance/phase7/maximus-limitations.md before changing region/file/axis mapping.
+    # See MAINTENANCE_PLAN.md, Known limitations and follow-ups, before changing region/file/axis mapping.
     region = scandef["Regions"][0]
     if len(xims) > 1:
         data = np.stack([np.genfromtxt(x)[::-1] for x in xims]).T
@@ -156,7 +156,7 @@ def read_pointscan(files, header):
     xsps = list(files)
     scandef = header["ScanDefinition"]
     # Known unimplemented feature: multi-region scans need facility format guidance and real fixtures.
-    # See maintenance/phase7/maximus-limitations.md before changing region/file/axis mapping.
+    # See MAINTENANCE_PLAN.md, Known limitations and follow-ups, before changing region/file/axis mapping.
     region = scandef["Regions"][0]
     if len(xsps) > 1:
         data = np.stack([np.genfromtxt(x)[:, 1] for x in xsps]).T

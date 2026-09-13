@@ -21,8 +21,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          # For releases, check out the branch the release targets rather than the tag
-          ref: ${{ github.event_name == 'release' && github.event.release.target_commitish || github.ref }}
+          # Build the same immutable release tag as the package workflows.
+          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - name: Set up conda environment
@@ -36,6 +36,12 @@ jobs:
           init-shell: bash
           cache-downloads: true
           cache-environment: true
+
+      - name: Check release version
+        if: github.event_name == 'release'
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
 
       - name: Install package and remaining requirements
         run: pip install .

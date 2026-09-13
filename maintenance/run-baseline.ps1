@@ -37,9 +37,9 @@ try {
             $arguments += $TestPaths
         }
         'smoke' {
-            $arguments += @('tests/stoner/test_Core.py', 'tests/stoner/test_FileFormats.py',
-                'tests/stoner/plot/test_plot.py', 'tests/stoner/folders/test_Folders.py',
-                'tests/stoner/image/test_core.py')
+            $arguments += @('tests/Stoner/test_Core.py', 'tests/Stoner/test_FileFormats.py',
+                'tests/Stoner/plot/test_plot.py', 'tests/Stoner/folders/test_Folders.py',
+                'tests/Stoner/Image/test_core.py')
         }
         'parallel' { $arguments += @('-n', '2') }
         'docs' {

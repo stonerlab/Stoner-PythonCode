@@ -1,8 +1,0 @@
-{
-  "reason": "Obsolete Data overview entries; no corresponding public attributes on current Data with assigned column roles. Conditional column-index attributes were verified with assigned roles and retained in the overview.",
-  "objects": [
-    "Stoner.core.data.Data.patterns",
-    "Stoner.core.data.Data.subclasses"
-  ],
-  "runtime_attribute_absence_verified": true
-}

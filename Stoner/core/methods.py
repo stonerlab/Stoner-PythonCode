@@ -1247,9 +1247,11 @@ def to_pandas(datafile):
 
     Notes:
         In addition to transferring the numerical data, the DataFrame's columns are set to
-        a multi-level index of the :py:attr:`~Stoner.core.data.Data.column_headers` and :py:attr:`~Stoner.core.data.Data.setas`
+        a multi-level index of the :py:attr:`~Stoner.core.data.Data.column_headers` and
+        :py:attr:`~Stoner.core.data.Data.setas`
         values. A pandas DataFrame extension attribute, *metadata* is registered and is used to store
-        the metada from the :py:class:`~Stoner.core.data.Data` object. This pandas extension attribute is in fact a trivial
+        the metadata from the :py:class:`~Stoner.core.data.Data` object. This pandas extension attribute
+        is in fact a trivial
         subclass of the :py:class:`Stoner.core.TypeHintedDict`.
 
         The inverse operation can be carried out simply by passing a DataFrame into the copnstructor of the

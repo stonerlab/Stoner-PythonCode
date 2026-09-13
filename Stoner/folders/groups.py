@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Provides the classes and support functions for the :py:attr:`~Stoner.folders.core.BaseFolder.groups` magic attribute."""
+"""Provides classes and support functions for the folder groups magic attribute.
+
+See :py:attr:`~Stoner.folders.core.BaseFolder.groups`.
+"""
 
 __all__ = ["GroupsDict"]
 

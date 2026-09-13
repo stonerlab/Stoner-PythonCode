@@ -20,7 +20,7 @@ from ...tools.typing import Args, Filename, Kwargs
 from ..decorators import register_loader, register_saver
 from ..utils.zip import test_is_zip
 
-from ...tools.json import flatten_json, find_paths, find_parent_dicts
+from ...tools.json import flatten_json
 
 
 def _split_filename(filename: Filename, **kwargs: Kwargs) -> Filename:
@@ -71,8 +71,7 @@ def load_measure_linkfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data
         with seq.open("Model.json", "r") as model_json:
             model = model_json.read()
             model = model.decode(chardet.detect(model)["encoding"])
-        model = json.loads(model)
-        # new_data.metadata.update(flatten_json(model))
+        json.loads(model)  # Validate Model.json even though its metadata is not imported.
         for ix, pth in enumerate(fnmatch.filter(seq.namelist(), "*.csv")):
             with seq.open(pth) as dataframe:
                 df = pd.read_csv(dataframe)
@@ -84,8 +83,6 @@ def load_measure_linkfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data
         data = data.select_dtypes(include="number")
         new_data.data = data.values
         new_data.column_headers = list(data.columns)
-
-        has_data = find_paths(model, "HasData", True)
 
     new_data.filename = filename
     return new_data

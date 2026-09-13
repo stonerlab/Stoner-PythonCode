@@ -15,6 +15,7 @@ from ..core.exceptions import assertion
 from ..tools import isiterable, istuple
 from ..tools.typing import Data, Index, Kwargs, NumericArray
 from .utils import threshold as _threshold
+from .utils import split_up_down
 
 
 def apply(
@@ -164,19 +165,15 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
         ycol = [ycol]
 
     if hysteretic:
-        from .Util import split_up_down
-
         fldr = split_up_down(datafile, datafile.xcol)
         for grp in ["rising", "falling"]:
             for f in fldr[grp][1:]:
                 fldr[grp][0] += f
         rising = fldr["rising"][0].sort(xcol)
         falling = fldr["falling"][0].sort(xcol)
-        points = fldr["rising"][0].size
     else:
         rising = datafile.clone.sort(xcol)
         falling = rising.clone
-        points = rising.x.size
 
     rising_data = rising.deduplicate(xcol, clone=False)
     falling_data = falling.deduplicate(xcol, clone=False)

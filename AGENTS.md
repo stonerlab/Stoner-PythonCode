@@ -37,8 +37,7 @@ Prefer focused tests while developing, followed by the full suite when practical
 
 Use the exact fixture path capitalisation recorded by `git ls-files`: the tracked
 test directory is `tests/Stoner`, even if Windows displays it as `tests/stoner`.
-Windows test passes do not detect case mismatches that fail on Linux. See
-`maintenance/phase7/ci-fixture-paths.md` for the 2026-09-13 CI correction.
+Windows test passes do not detect case mismatches that fail on Linux.
 
 ## Git and checkout caveat
 
@@ -56,7 +55,7 @@ Before editing or committing:
 
 Use Windows Git for this checkout with repository-local `core.fileMode=false` and `core.autocrlf=false`. These settings were approved by the maintainer and tested on a disposable clone. They preserve the existing mixed line endings and indexed executable bits; do not run repository-wide normalization or `git add --renormalize` as routine maintenance. Review `git diff --ignore-space-at-eol` to distinguish semantic changes from the pre-existing one-line CRLF/LF difference in `Stoner/formats/utils/__init__.py`. Stage only intended changes.
 
-Cygwin contributors should use a separate checkout rather than alternate clients in this working directory. Cygwin is not installed here and was not live-tested. See `maintenance/phase1/README.md` for evidence and rollback commands.
+Cygwin contributors should use a separate checkout rather than alternate clients in this working directory. Cygwin is not installed here and was not live-tested. Historical checkout validation is retained in Git history; current maintenance guidance is in `MAINTENANCE_PLAN.md`.
 
 ## Behaviour and compatibility expectations
 
@@ -92,8 +91,6 @@ Read the Docs sets `READTHEDOCS=True`; that build must consume the retained file
 
 For visual verification, serve the generated Sphinx HTML directory over localhost rather than opening `file://` URLs in the browser. From the repository root, run `python -m http.server 8765 --bind 127.0.0.1 --directory doc/_build/html` with a supported Python interpreter, substituting the actual build output directory and an available high-numbered port. Serve only the generated HTML directory, not the repository root. Open `http://127.0.0.1:8765/index.html` in the browser, inspect the rendered pages and follow relevant navigation links. Reload after rebuilding. Keep the server available while the user is reviewing the preview, then stop it when no longer needed. This workflow was verified on 2026-09-12 after direct local-file navigation was rejected by the browser URL policy; localhost HTTP worked without a policy change. Visual inspection complements Sphinx warning and API-inventory checks.
 
-For visual verification, serve the generated Sphinx HTML directory over localhost rather than opening `file://` URLs in the browser. From the repository root, run `python -m http.server 8765 --bind 127.0.0.1 --directory doc/_build/html` with a supported Python interpreter, substituting the actual build output directory and an available high-numbered port. Serve only the generated HTML directory, not the repository root. Open `http://127.0.0.1:8765/index.html` in the browser, inspect the rendered pages and follow relevant navigation links. Reload after rebuilding. Keep the server available while the user is reviewing the preview, then stop it when no longer needed. This workflow was verified on 2026-09-12 after direct local-file navigation was rejected by the browser URL policy; localhost HTTP worked without a policy change. Visual inspection complements Sphinx warning and API-inventory checks.
-
 ## Docstring standard
 
 Follow [DOCSTRING_STYLE.md](DOCSTRING_STYLE.md) when writing or revising docstrings. It defines the expected Google-style
@@ -102,4 +99,4 @@ spellings for prose while preserving the exact spelling of API identifiers, keyw
 
 ## Maintenance plan
 
-`MAINTENANCE_PLAN.md` is the working source of truth for repository maintenance and cleanup. Follow its phase ordering, update its status/evidence as work is completed, and do not perform later cleanup phases before the baseline and required decisions are established.
+`MAINTENANCE_PLAN.md` describes recurring maintenance, release preparation and current follow-ups. Keep its active checklist current; record completed work in commits, pull requests, release notes and CI runs. The initial Phase 0-7 records are historical and remain available in Git history. Retain reusable maintenance tools and reviewed documentation warning baselines, but do not accumulate completed phase reports in the live tree. See `maintenance/README.md` for tool usage.

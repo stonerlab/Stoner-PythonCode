@@ -13,7 +13,6 @@
 
 import os
 import os.path as path
-import shutil
 import sys
 import re
 
@@ -96,11 +95,7 @@ copyright = u'2013-15, Gavin Burnell et al'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-try:
-    from importlib.metadata import PackageNotFoundError, version as _pkg_version
-    release = _pkg_version("Stoner")
-except PackageNotFoundError:
-    release = "unknown"
+from Stoner import __version__ as release
 # The short X.Y version.
 version = ".".join(release.split(".")[:2])
 

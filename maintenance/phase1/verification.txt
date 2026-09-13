@@ -1,4 +1,0 @@
-Semantic diff SHA256: EFBB10F672A9DAD024CC168CD5FF8595D344DBC414E27ED931701F410368A4D4
-file:C:/Program Files/Git/etc/gitconfig	core.autocrlf true
-file:.git/config	core.filemode false
-file:.git/config	core.autocrlf false

@@ -6,6 +6,7 @@ __all__ = ["_evaluatable", "RegexpDict", "string_to_type", "TypeHintedDict", "me
 import copy
 import datetime
 import re
+from collections import OrderedDict
 from collections.abc import Generator, Iterable, Mapping, MutableMapping, Sequence
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type, Union
 
@@ -27,8 +28,6 @@ from .exceptions import StonerAssertionError
 try:
     from blist import sorteddict as SortedDict
 except (StonerAssertionError, ImportError):  # Fail if blist not present or Python 3
-    from collections import OrderedDict
-
     SortedDict = OrderedDict
 
 _asteval_interp = None

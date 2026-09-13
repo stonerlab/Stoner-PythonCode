@@ -66,6 +66,30 @@ Reload the browser after rebuilding. Keep the server running while reviewing
 the pages and stop it with Ctrl+C when finished. Browser inspection complements
 the build's warning report and API inventory checks.
 
+Package versions and releases
+=============================
+
+Set the package version only in ``Stoner/__init__.py``, in the literal
+``__version__`` assignment. Setuptools reads this attribute for wheel and sdist
+metadata; the Conda recipe reads the same assignment. Runtime
+``Stoner.__version_info__`` and the Sphinx full and short versions are derived
+from it. The Conda build number is a separate recipe revision, not another
+package version.
+
+For a release, commit the version change and create the matching ``v<version>``
+Git tag on that commit, then publish the GitHub release. The release jobs reject
+a tag that disagrees with the source before building/uploading packages or
+building documentation. They build the tagged checkout, including the docs.
+The check also accepts an unprefixed version tag. Manual workflow dispatches
+use the selected ref and do not require a release tag.
+
+Package builds belong in GitHub Actions. ``Package validation`` builds wheel
+and sdist archives on pushes and pull requests, checks their contents, and
+installs each into a separate fresh environment for resource and sample-data
+probes. The release workflow builds and uploads the PyPI and Conda packages;
+the Conda recipe checks its installed import and version metadata. Record the
+actual CI run results for the release commit in the maintenance plan.
+
 Understanding the class structure
 =================================
 

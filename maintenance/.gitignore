@@ -1,12 +1,4 @@
-# Local execution output; retain reports and environment manifests.
+# Current local execution output.
 runs/
-phase0/tmp-*/
-phase0/.coverage*
-phase0/*.log
-phase0/*.xml
-phase0/*.patch
-phase0/*-path.txt
-phase1/*.patch
-phase2/*.log
-phase3-*/
-phase4-*/
+# Ignored local output from the completed repair programme; not versioned records.
+phase[0-7]*/

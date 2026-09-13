@@ -3,7 +3,8 @@
 
 Classes include
 
-* HDF5Folder - a :py:class:`Stoner.folders.mixins.DataFolder` subclass that can save and load data from a single HDF5 file
+* HDF5Folder - a :py:class:`Stoner.folders.mixins.DataFolder` subclass that can save and load data
+  from a single HDF5 file
 
 Importing this module makes the HDF5 handlers available to :py:class:`Stoner.core.data.Data`.
 """

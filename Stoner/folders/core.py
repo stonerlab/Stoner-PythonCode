@@ -175,7 +175,8 @@ class BaseFolder(MutableSequence):
 
     Notes:
         A BaseFolder is a multable sequence object that should store a mapping of instances of some sort of data
-        object (typically a :py:class:`Stoner.core.base.metadataObject`) which can be iterated over in a reproducible and
+        object (typically a :py:class:`Stoner.core.base.metadataObject`) which can be iterated over
+        in a reproducible and
         predicatable way as well as being accessed by a key. The other requirement is that it stores a mapping to
         objects of its own type to allow an in-memory tree object to be constructed.
 

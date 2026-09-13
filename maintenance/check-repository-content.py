@@ -1,4 +1,4 @@
-"""Check Phase 3's repository-content policy without changing the checkout."""
+"""Check the repository-content policy without changing the checkout."""
 
 from __future__ import annotations
 
@@ -50,7 +50,7 @@ def main() -> None:
     if not plot_cache:
         raise SystemExit("The intentional documentation plot cache is not tracked.")
 
-    print(f"Phase 3 repository-content policy passed ({len(plot_cache)} cached plot files retained).")
+    print(f"Repository-content policy passed ({len(plot_cache)} cached plot files retained).")
 
 
 def is_prohibited(path: str) -> bool:

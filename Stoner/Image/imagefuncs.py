@@ -953,8 +953,8 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
             points = np.vstack((np.arange(img.shape[1]), np.ones(img.shape[1]) * src[0]))
     else:
         result = measure.profile_line(img, src, dst, linewidth, order, mode, cval)
-        _line_profile_coordinates = sys.modules["skimage.measure.profile"]._line_profile_coordinates
-        points = _line_profile_coordinates(src, dst, linewidth)[:, :, 0]
+        profile_coordinates = sys.modules["skimage.measure.profile"]._line_profile_coordinates
+        points = profile_coordinates(src, dst, linewidth)[:, :, 0]
     ret = make_Data()
     ret.data = points.T
     ret.setas = "xy"
@@ -1028,7 +1028,8 @@ def radial_profile(im, angle=None, r=None, centre=(None, None), pixel_size=(1, 1
 
     Returns:
         (Data):
-            A py:class:`~Stoner.core.data.Data` object with a column for r and columns for mean, std, and number of pixels.
+            A :py:class:`~Stoner.core.data.Data` object with a column for r and columns for mean, std,
+            and number of pixels.
     """
     coords = im.radial_coordinates(centre=centre, pixel_size=pixel_size, angle=None)
     if r is None:  # Identify the minimum edge value

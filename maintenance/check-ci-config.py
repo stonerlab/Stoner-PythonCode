@@ -1,4 +1,4 @@
-"""Validate the repository's Phase 4 CI policy without contacting GitHub."""
+"""Validate the repository's CI policy without contacting GitHub."""
 
 from __future__ import annotations
 
@@ -45,13 +45,21 @@ def main() -> None:
         "Coveralls flags do not match the test matrix.",
     )
     require(
-        "- name: Coveralls Parallel\n        if: runner.os == 'Linux'" in tests,
-        "Coveralls should run only on Linux, where its reporter installation is reliable.",
+        tests.count("coverage: true") == 1
+        and re.search(r'python-version: "3\.14"\s+os: ubuntu-latest\s+coverage: true', tests),
+        "Only Ubuntu Python 3.14 should collect coverage.",
+    )
+    require(
+        "- name: Upload coverage to Coveralls\n        if: matrix.coverage == true" in tests
+        and "if: matrix.coverage == true && github.event_name != 'pull_request'" in tests,
+        "Coverage uploads must use the coverage matrix marker, excluding Codacy on pull requests.",
     )
     require("codacy/codacy-coverage-reporter-action@" in tests, "The pinned Codacy action is missing.")
     require(
-        tests.count('--cov-config="$GITHUB_WORKSPACE/pyproject.toml"') == 2,
-        "Both test commands must pass an absolute coverage config for subprocesses.",
+        tests.count('--cov-config="$GITHUB_WORKSPACE/pyproject.toml"') == 1
+        and 'COLLECT_COVERAGE: ${{ matrix.coverage == true }}' in tests
+        and 'if [[ "$COLLECT_COVERAGE" == "true" ]]; then' in tests,
+        "The coverage job must conditionally pass the absolute coverage config.",
     )
 
     docs = workflows["build-docs.yaml"]
@@ -74,7 +82,7 @@ def main() -> None:
     require("python-version: ['3.11', '3.14']" in packages, "Installed-package checks must cover Python endpoints.")
     require("python-version: ${{ matrix.python-version }}" in packages, "Installed-package checks ignore the matrix.")
 
-    print(f"Phase 4 CI policy passed ({sum(len(ANY_ACTION.findall(text)) for text in workflows.values())} pinned actions).")
+    print(f"CI policy passed ({sum(len(ANY_ACTION.findall(text)) for text in workflows.values())} pinned actions).")
 
 
 if __name__ == "__main__":

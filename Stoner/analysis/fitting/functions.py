@@ -763,7 +763,8 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
 
     Keyword Arguments:
         p0 (list, tuple, array or callable):
-            A vector of initial parameter values to try. See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
+            A vector of initial parameter values to try.
+            See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
             more details.
         sigma (index):
             The index of the column with the y-error bars
@@ -915,7 +916,8 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
 
     Keyword Arguments:
         p0 (list, tuple, array or callable):
-            A vector of initial parameter values to try. See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
+            A vector of initial parameter values to try.
+            See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
             more details.
         sigma (index):
             The index of the column with the y-error bars
@@ -1096,7 +1098,8 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
 
     Keyword Arguments:
         p0 (list, tuple, array or callable):
-            A vector of initial parameter values to try. See the notes to :py:meth:`~Stoner.core.data.Data.curve_fit` for
+            A vector of initial parameter values to try.
+            See the notes to :py:meth:`~Stoner.core.data.Data.curve_fit` for
             more details.
         sigma_x (index):
             The index of the column with the x-error bars

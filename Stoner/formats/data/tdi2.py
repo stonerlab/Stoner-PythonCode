@@ -18,7 +18,7 @@ from ..decorators import register_loader, register_saver
 from ...core.data import Data
 from ...core.exceptions import StonerLoadError
 from ...tools.file import FileManager, get_filename
-from ...tools.typing import Args, Filename, Kwargs
+from ...tools.typing import Args, Kwargs
 
 _PATH_TOKEN_RE = re.compile(
     r"""
@@ -44,7 +44,7 @@ def _parse_entry(entry: str):
     match = _ENTRY_RE.match(entry)
     if not match:
         raise ValueError(f"Invalid entry format: {entry}")
-    path, typename, value_str = match.groups()
+    path, _typename, value_str = match.groups()
 
     # Convert string to Python value safely
     value = ast.literal_eval(value_str)

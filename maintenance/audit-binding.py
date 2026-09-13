@@ -9,7 +9,7 @@ import pydoc
 import sys
 import typing
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from Stoner import Data
 
 MODULES = [
@@ -59,6 +59,7 @@ for name, source in sorted(selected.items()):
 result = {'python': sys.version, 'readthedocs': os.getenv('READTHEDOCS'),
           'count': len(records), 'collisions': collisions, 'methods': records}
 output = Path(sys.argv[1])
+output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(json.dumps(result, indent=2), encoding='utf-8')
 checks = ['same_function', 'correct_bound_signature', 'docstring_preserved', 'annotations_preserved',
           'in_class_dir', 'in_instance_dir', 'help_includes_doc']

@@ -1,6 +1,0 @@
-{
-  "objects": [
-    "Stoner.folders.mixins.DiskBasedFolderMixin.flatten"
-  ],
-  "reason": "Obsolete overview attribute: constructor option is flat; DiskBasedFolderMixin has no flatten attribute. DataFolder.flatten remains callable and documented."
-}

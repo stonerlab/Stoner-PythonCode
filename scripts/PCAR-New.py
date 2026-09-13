@@ -12,17 +12,13 @@ from importlib import import_module
 import numpy as np
 from Stoner import Data
 from Stoner.analysis.fitting.models import cfg_data_from_ini, cfg_model_from_ini
-from Stoner.analysis.fitting.models.generic import quadratic
 
 
 class working(Data):
     """Utility class to manipulate data and plot it."""
 
-    def __init__(self, *args, **kargs):
-        """Initialise the fitting code."""
-        super().__init__(*args, **kargs)
-
     def load_config(self):
+        """Load data and fitting options from the accompanying INI file."""
         my_file = inspect.getfile(self.__class__)
         inifile = my_file.replace(".py", ".ini")
         if not pathlib.Path(inifile).exists():
@@ -69,7 +65,7 @@ class working(Data):
         ) and self.config.getboolean("Data", "discard")
         if discard:
             v_limit = self.config.get("Data", "v_limit")
-            print("Discarding data beyond v_limit={}".format(v_limit))
+            print(f"Discarding data beyond v_limit={v_limit}")
             self.del_rows(self.vcol, lambda x, y: abs(x) > v_limit)
         return self
 
@@ -273,6 +269,7 @@ class working(Data):
         if self.save_fit:
             fit.filename = None
             fit.save(False)
+        return None
 
 
 def quadratic_abs(x, a, b, c):

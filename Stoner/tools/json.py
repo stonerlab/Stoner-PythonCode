@@ -152,5 +152,5 @@ if __name__ == "__main__":
         "key2": ["value2.1", {"subkey3": "value2.2.1", "subkey4": "value2.2.2", "HasData": True}],
     }
     output = flatten_json(data)
-    output2 = [pth for pth in find_paths(data, "HasData", True)]
-    output3 = [pth for pth in find_parent_dicts(data, "HasData", True)]
+    output2 = list(find_paths(data, "HasData", True))
+    output3 = list(find_parent_dicts(data, "HasData", True))
