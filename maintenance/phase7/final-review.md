@@ -1,5 +1,11 @@
 # Phase 7 bounded final review
 
+Closure update (2026-09-13): Phase 7 is complete. All five hosted test-matrix
+jobs, final result publishing, lower-dependency CI and package validation passed
+at `d5c43882c`. See [the closure evidence](ci-fixture-paths.md#hosted-closure-2026-09-13).
+This supersedes the commit/push and validation handoff below, which records the
+earlier review state. Deferred work remains outside the completed phase's scope.
+
 Reviewed 2026-09-13 on `stable`. This is a source and evidence review, with no
 runtime changes. The selected maintenance batches and final triage are complete
 locally. Phase 7 remains in progress until the accumulated changes have been

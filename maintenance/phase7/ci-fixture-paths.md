@@ -38,4 +38,18 @@ Reproduce with `maintenance/run-baseline.ps1 -Environment py314 -Check focused
 then repeat with `-Environment py311-minimal`.
 
 The full suite was not repeated locally for these path-only test corrections.
-Hosted validation of the correction remains pending the push.
+
+## Hosted closure (2026-09-13)
+
+The correction was committed and pushed as `d5c43882c`. All Linux Python
+3.11-3.14 and macOS Python 3.14 jobs, plus final test-result publishing, passed
+in [run 34748453258](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34748453258).
+The [lower-dependency run](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34748453281)
+and [package-validation run](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/34748453303)
+also passed at the same commit. Phase 7 is complete.
+
+This supersedes the earlier commit/push/hosted-validation boundaries in the
+Phase 7 batch notes. The historical intermittent Python 3.12 worker loss remains
+an unresolved, documented follow-up; the successful runs do not establish its
+root cause. Deferred facility-format extensions and optional structural cleanup
+remain outside the completed phase's scope.
