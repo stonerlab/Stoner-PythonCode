@@ -37,7 +37,7 @@ def test_tdi2_independent_lengths(tmp_path, metadata_count, lengths):
                                           np.arange(max(lengths)) >= len(column))
 
 
-@pytest.mark.parametrize("fixture", ["sample-data/TDI_2.0_Format.txt", "tests/stoner/tdi2-stream.txt"])
+@pytest.mark.parametrize("fixture", ["sample-data/TDI_2.0_Format.txt", "tests/Stoner/tdi2-stream.txt"])
 def test_tdi2_real_and_writer_fixtures(fixture):
     source = Path(__file__).resolve().parents[3] / fixture
     loaded = Data(source)

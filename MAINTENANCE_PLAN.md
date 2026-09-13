@@ -40,7 +40,7 @@ remain evidence for the environment in which they were recorded.
 | 4     | CI and quality tooling     | Complete    | Linux Python 3.11–3.14 and macOS Python 3.14 green; Windows covered by the Phase 0 local baseline                                             |
 | 5     | Tests and compatibility    | Complete    | 343 passed in all five hosted matrix jobs; lower dependencies and installed distributions passed; 3.12 slowdown recorded separately           |
 | 6     | Documentation and examples | Complete    | maintenance/phase6/closure.md: 73 examples pass; Linux build passes; public API retained; reviewed warning ceilings and unchanged plot cache  |
-| 7     | Focused source maintenance | In progress | Local batches and final review complete; 477 tests pass; cohesive commit review and hosted CI pending; see maintenance/phase7/final-review.md |
+| 7     | Focused source maintenance | In progress | Batches committed; Linux CI fixture case mismatches corrected; 55 affected tests pass on Python 3.11/3.14; hosted revalidation pending; see maintenance/phase7/ci-fixture-paths.md |
 | 8     | Release readiness          | Not started | Clean-room package and release checklist                                                                                                      |
 
 Statuses should be one of `Not started`, `In progress`, `Blocked`, or `Complete`. Add dated notes and commands beneath a phase when work begins.

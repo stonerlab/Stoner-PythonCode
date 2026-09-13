@@ -35,6 +35,11 @@ C:\ProgramData\miniforge3\Scripts\conda.exe run -n test-environment python -m py
 
 Prefer focused tests while developing, followed by the full suite when practical. Tests involving plotting or widgets may require an appropriate headless Qt/Matplotlib configuration. Do not turn local results into claims about GitHub Actions, Coveralls, Codacy, or physical instrument/data compatibility.
 
+Use the exact fixture path capitalisation recorded by `git ls-files`: the tracked
+test directory is `tests/Stoner`, even if Windows displays it as `tests/stoner`.
+Windows test passes do not detect case mismatches that fail on Linux. See
+`maintenance/phase7/ci-fixture-paths.md` for the 2026-09-13 CI correction.
+
 ## Git and checkout caveat
 
 This checkout is created with Cygwin Git. Cygwin may record tracked files as executable (`100755`), while Windows Git reports them as ordinary files (`100644`). This can make essentially the entire repository appear modified with zero inserted or deleted lines.

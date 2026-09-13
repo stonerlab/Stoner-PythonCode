@@ -10,7 +10,7 @@ import pytest
 from Stoner import Data
 
 
-@pytest.mark.parametrize("fixture", ["tests/stoner/CoreTest.dat", "sample-data/TDI_Format_RT.txt"])
+@pytest.mark.parametrize("fixture", ["tests/Stoner/CoreTest.dat", "sample-data/TDI_Format_RT.txt"])
 @pytest.mark.parametrize("kind", ["string", "lines", "generator", "stringio", "file"])
 def test_text_input(fixture, kind):
     source = Path(__file__).resolve().parents[3] / fixture
@@ -45,7 +45,7 @@ def test_text_input(fixture, kind):
 
 
 def test_text_stream_starts_at_current_position():
-    source = Path(__file__).resolve().parents[3] / "tests/stoner/CoreTest.dat"
+    source = Path(__file__).resolve().parents[3] / "tests/Stoner/CoreTest.dat"
     with StringIO("prefix\n" + source.read_text()) as stream:
         stream.readline()
         result = Data() << stream
