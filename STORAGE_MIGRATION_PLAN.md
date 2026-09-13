@@ -3,6 +3,9 @@
 Agreed direction: 2026-09-13. Target branch: `devel`.
 Status: architecture agreed; implementation has not started.
 Target release: undecided (`0.12` or `1.0`).
+Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
+new version. Python 3.15 support is conditional on its public release and support
+from the required dependencies, followed by successful project validation.
 
 This is the working specification for a migration across several separate
 sessions. Read this file and [AGENTS.md](AGENTS.md) before starting a batch.
@@ -23,6 +26,47 @@ and return conventions. Do not combine this later API expansion with the initial
 storage replacement.
 
 ## Agreed architecture
+
+### Python support policy
+
+The migration targets Python 3.12+; Python 3.11 compatibility is not a requirement
+for the new version. Use Python 3.12 as the minimum-version validation target.
+Add Python 3.15 to supported-version validation once it is publicly released and
+the required dependencies support it. Do not claim Python 3.15 support solely
+because the package metadata permits installation on that interpreter.
+
+Apply this policy during migration implementation across package metadata,
+Conda recipes, test/documentation environments, CI matrices and contributor/user
+documentation. Keep the existing release's interpreter requirements unchanged in
+this planning-only update. Recheck dependency availability when expanding support;
+the plan does not assert that Python 3.15 or its dependency stack is ready today.
+
+Treat the CI transition as a concrete migration sub-batch, alongside the first
+production change that raises the Python minimum, rather than leaving CI on 3.11
+until final release validation. Update these verified starting points together:
+
+- `.github/workflows/run-tests-action.yaml`: remove 3.11 from the test matrix;
+  retain supported-version/platform coverage and review explicit coverage jobs.
+- `.github/workflows/check-minimum-dependencies.yaml` and
+  `tests/minimum-env.yml`: move the lower-bound environment, job labels and
+  environment names to Python 3.12; resolve compatible lower dependency bounds.
+- `.github/workflows/check-packages.yaml`: move installed-distribution endpoint
+  checks from 3.11 to 3.12 and keep the upper endpoint aligned with support policy.
+- `.github/workflows/build-docs.yaml` and `build_conda.yaml`: review documentation
+  and release/build interpreters and referenced environments for consistency;
+  an already suitable interpreter need not change.
+- `maintenance/check-ci-config.py`: update its hard-coded matrix and endpoint
+  expectations together with the workflows, including any intentional coverage
+  interpreter changes. Update contributor guidance and maintenance instructions
+  describing the old matrix.
+
+When Python 3.15 becomes eligible, review the test matrix, installed-package upper
+endpoint, platform/dependency availability and coverage configuration together.
+Gate completion on the CI consistency checker and successful hosted jobs; a local
+pass alone does not establish the new matrix works. Final batch 7 verifies this
+transition and any remaining Python 3.15 readiness work.
+
+### Storage and interfaces
 
 - Use composition: `Data` owns a pandas `DataFrame`; image objects own an xarray
   `Dataset` containing intensity and an explicit exclusion mask. Individual
@@ -166,7 +210,11 @@ necessary. Complete its evidence before moving to dependent work.
 - [ ] **7. Validate migration and prepare compatibility release.** Run appropriate
   full-suite, platform, dependency, documentation and installed-package checks;
   repeat representative benchmarks. Reconcile dependency specifications, including
-  xarray and tested pandas bounds. Document changed APIs and the replacement of
+  xarray and tested pandas bounds. Set Python 3.12 as the minimum throughout
+  packaging, environments, CI and documentation, removing Python 3.11 from the new
+  version's support matrix. Validate Python 3.15 when publicly released and supported
+  by the required dependencies; record readiness separately if it remains pending.
+  Document changed APIs and the replacement of
   custom array classes. Decide `0.12` versus `1.0` from actual compatibility impact.
   Gate: all retained contracts pass or have reviewed, documented changes; hosted
   validation is distinguished from local evidence. Publishing is a separate action.
@@ -263,3 +311,5 @@ matches the selected environment.
   alignment and metadata conflict policies; performance tolerances; release number.
 - **Constraints:** retain scientific fixtures and documentation plot cache; keep
   unrelated release preparation separate; do not introduce blanket delegation.
+  The new version targets Python 3.12+, with Python 3.15 support gated on public
+  release, dependency readiness and project validation. Python 3.11 is out of scope.
