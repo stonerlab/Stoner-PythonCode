@@ -23,7 +23,7 @@ template.yformatter = TexEngFormatter
 
 def field_sign(r):
     """Return string key for sign of field.."""
-    pos = r["Field"] >= 0
+    pos = r[r.setas.find_col("Field")] >= 0
     return where(pos, "pos", "neg")
 
 
@@ -111,9 +111,9 @@ if __name__ == "__main__":
     # Merge the two field signs into a single file, taking care of the error columns too
     result = resfldr[0].clone
     for c in [0, 2, 4, 6, 8]:
-        result.data[:, c] = (resfldr[1][:, c] + resfldr[0][:, c]) / 2.0
+        result[:, c] = (resfldr[1][:, c] + resfldr[0][:, c]) / 2.0
     for c in [1, 3, 5, 7]:
-        result.data[:, c] = gmean((resfldr[0][:, c], resfldr[1][:, c]), axis=0)
+        result[:, c] = gmean((resfldr[0][:, c], resfldr[1][:, c]), axis=0)
 
     # Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors
     p0 = [2, 200e3, 10e3]  # Some sensible guesses
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     # Get alpha
     result.subplot(212)
     result.setas(y="Delta_H", e="Delta_H err", x="Freq")
-    result.y /= mu_0
+    result.y = result.y / mu_0
     result.e /= mu_0
     result.lmfit(Linear, result=True, header="Width", output="report")
     result.setas[-1] = "y"

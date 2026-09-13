@@ -17,7 +17,7 @@ from ..tools.decorators import label
 def send_event(image, names, **kwargs):
     """Make a fake event."""
     time.sleep(0.05)
-    select = image._image._select
+    select = image._select if "_image_owner" in image.__dict__ else image._image._select
     event = Event("fake", select.fig.canvas)
     if not isinstance(names, list):
         names = [names]
@@ -66,7 +66,7 @@ class LineSelect:
         """Do the actual line selection.
 
         Args:
-            image (ImageArray, ImageFile):
+            image (ImageFile, ImageFile):
                 The image to shopw to the user for the selection
             **kwargs (mixed):
                 Other keywords to pass to the line drawing.
@@ -191,7 +191,7 @@ class RegionSelect:
         """Actually do the region selection.
 
         Args:
-            image (ImageArray, ImageFile):
+            image (ImageFile, ImageFile):
                 The image to shopw to the user for the selection
             **kwargs (mixed):
                 Other keywords to pass to the line drawing.
@@ -282,7 +282,7 @@ class ShapeSelect:
         """Do the work of the polygon selection.
 
         Args:
-            image (ImageArray, ImageFile):
+            image (ImageFile, ImageFile):
                 The image to shopw to the user for the selection
             **kwargs (mixed):
                 Other keywords to pass to the drawing.

@@ -128,7 +128,8 @@ def test_Operators():
     assert len(fldr) == fl, "Failed += operator with string on DataFolder"
     fldr /= "Loaded as"
     assert len(fldr["QDFile"]) == 4, "Failoed to group folder by Loaded As metadata with /= operator."
-    assert isinstance(fldr["QDFile", "Byapp"], Data), "Indexing group and then common metadata failed"
+    from pandas import DataFrame
+    assert isinstance(fldr["QDFile", "Byapp"], DataFrame), "Text metadata should remain in a DataFrame"
     fldr = DataFolder(datadir, debug=False, recursive=False)
     fldr2 = DataFolder(path.join(datadir, "NLIV"), pattern="*.txt")
     fldr2.group(lambda x: "zero" if x["iterator"] % 2 == 0 else "one")

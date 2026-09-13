@@ -70,18 +70,19 @@ def test_metadata_precedence_and_column_assignment(measurement):
     assert measurement.metadata["Moment"] == "metadata value"
 
 
-def test_row_iteration_and_slice_writeback(measurement):
-    """Record row iteration and basic-view versus advanced-copy mutation."""
+def test_row_iteration_and_readonly_snapshots(measurement):
+    """Return detached read-only basic and advanced selections."""
     np.testing.assert_array_equal(np.array(list(measurement)), measurement.data)
     column = measurement.column("Moment")
-    column[1] = 100
-    assert measurement[1, 1] == 100
+    with pytest.raises(ValueError):
+        column[1] = 100
     rows = measurement[1:3]
-    rows[0, 0] = 200
-    assert measurement[1, 0] == 200
+    with pytest.raises(ValueError):
+        rows[0, 0] = 200
     selected = measurement[[1, 2]]
-    selected[0, 0] = 300
-    assert measurement[1, 0] == 200
+    with pytest.raises(ValueError):
+        selected[0, 0] = 300
+    assert measurement[1, 0] == 6
 
 
 def test_mask_unmask_and_nan_are_distinct():
@@ -146,26 +147,27 @@ def test_legacy_pandas_metadata_loss(measurement):
     assert "Run" not in restored.metadata
 
 
-def test_legacy_duplicate_regex_and_negative_overflow(measurement):
-    """Record duplicate-name collapse and modulo indexing for later API review."""
-    assert measurement.find_col(re.compile("Moment")) == [1, 2, 1]
-    assert measurement.find_col(-7) == 5
+def test_duplicate_regex_and_negative_overflow(measurement):
+    """Retain distinct matching positions and reject negative overflow."""
+    assert measurement.find_col(re.compile("Moment")) == [1, 2, 3]
+    with pytest.raises(IndexError):
+        measurement.find_col(-7)
 
 
-def test_legacy_numeric_string_fallback(measurement):
-    """Expose the broken non-negative numeric fallback rather than promise it works."""
-    with pytest.raises(AttributeError):
+def test_numeric_strings_are_names(measurement):
+    """Do not reinterpret an unmatched numeric string as a position."""
+    with pytest.raises(KeyError):
         measurement.find_col("3")
     with pytest.raises(KeyError):
         measurement.find_col("-1")
 
 
-def test_legacy_column_slice_roles(measurement):
-    """Record headers following selection while roles retain their old prefix."""
+def test_column_slice_roles(measurement):
+    """Move headers and roles with selected columns."""
     selected = measurement[:, [3, 0, 2]]
     assert selected.column_headers == ["Moment", "Field", "Moment error"]
     np.testing.assert_array_equal(selected, np.asarray(measurement.data)[:, [3, 0, 2]])
-    assert selected.setas.to_string() == "xye"  # Correct selected roles would be yxe.
+    assert selected.setas.to_string() == "yxe"
 
 
 def test_legacy_masked_pandas_export(measurement):
@@ -192,8 +194,8 @@ def test_sort_preserves_mask_roles_and_returns_self():
     assert data.setas.to_string() == "xy"
 
 
-def test_legacy_structural_edits_drop_state():
-    """Record mask loss on reorder/add and role loss on column deletion."""
+def test_structural_edits_retain_state():
+    """Retain masks, roles and caller-owned selectors through structural edits."""
     data = Data(np.arange(9).reshape(3, 3), column_headers=["Field", "Moment", "Error"], setas="xye")
     data.mask = np.zeros(data.shape, dtype=bool)
     data.mask[0, 1] = True
@@ -201,30 +203,31 @@ def test_legacy_structural_edits_drop_state():
     order = [2, 0, 1]
     assert reordered.reorder_columns(order) is reordered
     assert reordered.setas.to_string() == "exy"
-    assert not np.ma.getmaskarray(reordered.data).any()
-    assert order == [0, 1]  # The caller's list is also consumed in part.
+    assert reordered.mask[0, 2]
+    assert order == [2, 0, 1]
     assert extended.add_column([10, 11, 12], header="Extra", setas="y") is extended
     assert extended.setas.to_string() == "xyey"
-    assert not np.ma.getmaskarray(extended.data).any()
+    assert extended.mask[0, 1]
     assert deleted.del_column(0) is deleted
     assert deleted.mask[0, 0]
-    assert deleted.setas.to_string() == ".."
+    assert deleted.setas.to_string() == "ye"
 
 
-def test_legacy_second_x_group_error_index():
-    """Record the relative x-error index in the second group for later correction."""
+def test_second_x_group_error_index():
+    """Use absolute positions for uncertainty columns in later x groups."""
     data = Data(np.zeros((2, 8)), setas="xdyexdye")
     group = data.setas._get_cols(startx=4)
     assert group.xcol == 4
     assert group.ycol == [6]
     assert group.yerr == [7]
-    assert group.xerr == 1  # The corresponding absolute column would be 5.
+    assert group.xerr == 5
 
 
-def test_legacy_masked_scalar_returns_fill_value(measurement):
-    """Record scalar extraction losing the exclusion flag."""
+def test_masked_scalar_retains_exclusion(measurement):
+    """Return the masked scalar, independently of the fill sentinel."""
     measurement.mask = np.zeros(measurement.shape, dtype=bool)
     measurement.mask[0, 1] = True
-    measurement.data.fill_value = -999
-    assert measurement[0, 1] == -999
+    with measurement.edit_numpy() as draft:
+        draft.fill_value = -999
+    assert measurement[0, 1] is np.ma.masked
     assert measurement.data.data[0, 1] == 1

@@ -35,7 +35,8 @@ def _draw_apaptor(func):
             im += coords[0][:, :, 1].astype("uint32") * 256
             im += coords[0][:, :, 2].astype("uint32") * 256**2
             im[im == 16777215] = 0
-            im.convert(self._img.dtype)
+            from .imagefuncs import convert
+            im = convert(im, self._img.dtype)
             self._img[im != 0] = im[im != 0]
             return self._parent
 
@@ -247,6 +248,8 @@ class MaskProxy:
     @property
     def _mask(self):
         """Get the mask for the underlying image."""
+        if "_image_owner" in self._imagefolder.__dict__:
+            return np.asarray(self._imagefolder.__dict__["_image_owner"].mask)
         self._imagearray.mask = np.ma.getmaskarray(self._imagearray)
         return self._imagearray.mask
 
@@ -258,7 +261,10 @@ class MaskProxy:
     @colour.setter
     def colour(self, value):
         """Set the colour of the mask."""
-        self._imagearray._mask_color = value
+        if "_image_owner" in self._imagefolder.__dict__:
+            self._imagefolder.__dict__["_image_attrs"]["_mask_color"] = value
+        else:
+            self._imagearray._mask_color = value
 
     @property
     def data(self):
@@ -273,6 +279,9 @@ class MaskProxy:
     @property
     def draw(self):
         """Access the draw proxy object."""
+        if "_image_owner" in self._imagefolder.__dict__:
+            from .storage_bridge import OwnerDraw
+            return OwnerDraw(self._imagefolder, mask=True)
         return DrawProxy(self._mask, self._imagefolder)
 
     def __init__(self, *args):
@@ -281,11 +290,17 @@ class MaskProxy:
 
     def __getitem__(self, index):
         """Proxy through to mask index."""
-        return self._mask.__getitem__(index)
+        result = self._mask.__getitem__(index)
+        if "_image_owner" in self._imagefolder.__dict__ and isinstance(result, np.ndarray):
+            result.setflags(write=False)
+        return result
 
     def __setitem__(self, index, value):
         """Proxy through to underlying mask."""
-        self._imagearray.mask.__setitem__(index, value)
+        if "_image_owner" in self._imagefolder.__dict__:
+            self._imagefolder.__dict__["_image_owner"].mask[index] = value
+        else:
+            self._imagearray.mask.__setitem__(index, value)
 
     def __delitem__(self, index):
         """Proxy through to underlying mask."""
@@ -293,18 +308,25 @@ class MaskProxy:
 
     def __getattr__(self, name):
         """Check name against self._imagearray._funcs and constructs a method to edit the mask as an image."""
+        if "_image_owner" in self._imagefolder.__dict__ and name in {"fill", "put", "sort"}:
+            def mutate(*args, **kwargs):
+                with self._imagefolder.__dict__["_image_owner"].edit_numpy() as draft:
+                    return getattr(draft.mask, name)(*args, **kwargs)
+            return mutate
         if hasattr(self._imagearray.mask, name):
             return getattr(self._imagearray.mask, name)
-        func = getattr(type(self._imagearray), name, None)
+        from .numerical import numerical_image
+        working = numerical_image(self._mask.astype(float) * 1000)
+        func = getattr(working, name, None)
         if func is None:
             raise AttributeError(f"{name} not a callable mask method.")
 
         @wraps(func)
         def _proxy_call(*args, **kwargs):
-            retval = func(self._mask.astype(float).view(type(self._imagearray)) * 1000, *args, **kwargs)
+            retval = func(*args, **kwargs)
             if isinstance(retval, np.ndarray) and retval.shape == self._imagearray.shape:
-                retval.normalise()
-                self._imagearray.mask = retval > 0
+                retval = numerical_image(retval).normalise()
+                self._imagefolder.mask = retval > 0
             return retval
 
         _proxy_call.__doc__ = func.__doc__
@@ -339,7 +361,8 @@ class MaskProxy:
 
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
-        fig = imshow(self._mask.astype(int))
+        from .numerical import numerical_image
+        fig = imshow(numerical_image(self._mask.astype(int)))
         data = StreamIO()
         fig.savefig(data, format="png")
         plt.close(fig)
@@ -350,11 +373,11 @@ class MaskProxy:
 
     def clear(self):
         """Clear a mask."""
-        self._imagearray.mask = np.zeros_like(self._imagearray)
+        self._imagefolder.mask = np.zeros_like(self._imagearray)
 
     def invert(self):
         """Invert the mask."""
-        self._imagearray.mask = ~self._imagearray.mask
+        self._imagefolder.mask = ~self._imagearray.mask
 
     def select(self, **kwargs):
         """Interactive selection mode.
@@ -385,10 +408,11 @@ class MaskProxy:
         selection = kwargs.get("_selection", [])
         if len(selection) == 0:
             selector = ShapeSelect()
-            self._imagearray.mask = selector(self._imagearray)
+            target = self._imagefolder if "_image_owner" in self._imagefolder.__dict__ else self._imagearray
+            self._imagefolder.mask = selector(target)
             selection.append(self._imagearray.mask)
         elif len(selection) == 1 and isinstance(selection[0], np.ndarray) and selection[0].dtype.kind == "b":
-            self._imagearray.mask = selection[0]
+            self._imagefolder.mask = selection[0]
         else:
             raise ValueError("Unknown value for private keyword _selection")
         return self._imagefolder
@@ -402,4 +426,4 @@ class MaskProxy:
         """
         if thresh is None:
             thresh = self._imagearray.threshold_otsu()
-        self._imagearray.mask = self._imagearray > thresh
+        self._imagefolder.mask = self._imagearray > thresh

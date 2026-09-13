@@ -14,7 +14,7 @@ The :mod:`Stoner.Image` package provides image-processing functions in a similar
 ------------------
 
 In the Stoner package, a :class:`ImageFile` represent a single image along with associated metadata from when the image was taken.
-The actual image data is stored in the :attr:`ImageFile.image` as a 2D numpy array. This is actually a masked array - the mask is
+The :attr:`ImageFile.image` property exports a detached, read-only 2D NumPy array. This is actually a masked array - the mask is
 useful for ignoring certain portions of the image when carrying out operations. As well as the image data, a :class:`ImageFile` also
 has a :attr:`ImageFile.metadata` attribute that stores the associated image metadata as a set of key-value pairs in a dictionary.
 
@@ -66,7 +66,7 @@ ImageFile Attributes and Properties
 The key attributes and properties of the :class:`ImageFile` are:
 
     - :py:attr:`ImageFile.image`:
-        This is the actual numpy array of data that is the image.
+        This is a detached, read-only numerical snapshot of the image.
     - :attr:`ImageFile.metadata`:
         This is the dictionary that contains the metadata associated with the image. This is normally parameters and
         information about the measurement or data that is encoded within the the measurement file, but can be supplemented
@@ -347,14 +347,23 @@ contents of the ImageFile instead.::
 
 .. image:: ../../sample-data/kermit.png
 
-Alternatively, the :meth:`ImageArray.imshow` method (also accessible to :class:`ImageFile`) will show the image data in a Matplotlib window.
+Alternatively, :meth:`ImageFile.imshow` displays the image in Matplotlib.
 
-:class:`ImageArray`: A numpy array like class
-=============================================
+NumPy image exports
+===================
 
-Somewhat analogous to :class:`Stoner.core.array.DataArray`, the :class:`ImageArray` is a specialised subclass of :class:`numpy.ma.MaskedArray` used to
-store the image data in ImageFile. The numpy.ndarray like data can be accessed at any point via either :attr:`ImageFile.image` or :attr:`ImageFile.data`
-and will be accepted by functions that take an numpy.ndarray as an argument.
+``ImageFile`` owns an xarray Dataset containing intensities, exclusions and
+coordinates. ``image`` and ``data`` return detached, read-only NumPy masked
+arrays; ``to_numpy()`` returns a writable detached export. Use NumPy routines
+directly with an image when only its values are needed. Use ``to_numpy()`` when
+the exclusion mask is needed, and ``export_storage()`` to preserve calibration
+and typed metadata as well.
+
+The old ``ImageArray`` and ``KerrArray`` subclasses have been removed. Construct
+``ImageFile`` or ``KerrImageFile`` and call scientific methods on those objects.
+NumPy operations on exports do not propagate Stoner metadata or update the owner.
+Write through image indexing, replace ``image`` as a whole, or use an editing
+context to commit numerical results.
 
 Working with Lots of Images: :class:`ImageFolder` and :class:`ImageStack`
 ==========================================================================
@@ -364,14 +373,14 @@ of :class:`ImageFile` objects. It is based on the same parent :class:`Stoner.fol
 subfolders and so on. In addition, an :class:`ImageFolder` has attributes and methods for working with multiple images.
 
 Due to the potentially large amount of data involved in processing images it is good to take advantage of native numpy's speed wherever possible. To this end
-:class:`Stoner.Image.ImageStack` is now available. This works very similarly to ImageFolder but internally represents the image stack as a 3d numpy array.
+:class:`Stoner.Image.ImageStack` is now available. This works very similarly to ImageFolder but owns an xarray Dataset with frame, y and x dimensions and valid image extents.
 For example::
 
-    imst = ImageStack('pathtomyfolder', pattern='*.tif')  # Images are not loaded yet
+    imst = ImageStack('pathtomyfolder', pattern='*.tif')  # Images are loaded into the stack owner
     imst = imst['subfolder']  # Take advantage of folder grouping
-    imst.translate(5, 3)  # Instantiate the stack and translate all images
+    imst.each.translate((5, 3))  # Translate all images
 
-You can request and manipulate this 3d array directly with the imarray property, alternatively you can ask for any function accepted by the underlying ImageFile
+The imarray property returns a detached read-only frame/y/x array. Use edit_numpy() for committed edits, or call functions on each ImageFile
 (including the scikit-image and scipy library).
 
 

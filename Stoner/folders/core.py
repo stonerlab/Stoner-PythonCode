@@ -959,7 +959,12 @@ class BaseFolder(MutableSequence):
                 return item[name]
             except KeyError:
                 if name in item.metadata.common_keys:
-                    return item.metadata.slice(name, output="Data")
+                    from pandas.api.types import is_numeric_dtype
+
+                    frame = item.metadata.slice(name, output="frame")
+                    if all(is_numeric_dtype(dtype) for dtype in frame.dtypes):
+                        return item.metadata.slice(name, output="Data")
+                    return frame
                 if self.debug:
                     print(name)
                 raise

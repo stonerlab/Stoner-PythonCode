@@ -834,23 +834,23 @@ def plot_matrix(
         rectang = (
             rectang[0],
             rectang[1],
-            np.shape(datafile.data)[0] - rectang[0],
-            np.shape(datafile.data)[1] - rectang[1],
+            datafile.shape[0] - rectang[0],
+            datafile.shape[1] - rectang[1],
         )
     elif rectang is None:
-        rectang = (0, 0, np.shape(datafile.data)[0], np.shape(datafile.data)[1])
+        rectang = (0, 0, datafile.shape[0], datafile.shape[1])
     elif isinstance(rectang, tuple) and len(rectang) == 4:  # Ok, just make sure we have enough data points left.
         rectang = (
             rectang[0],
             rectang[1],
-            min(rectang[2], np.shape(datafile.data)[0] - rectang[0]),
-            min(rectang[3], np.shape(datafile.data)[1] - rectang[1]),
+            min(rectang[2], datafile.shape[0] - rectang[0]),
+            min(rectang[3], datafile.shape[1] - rectang[1]),
         )
     else:
         raise RuntimeError("rectang should either be a 2 or 4 tuple or None")
 
     # Now we can create X,Y and Z 2D arrays
-    zdata = datafile.data[rectang[0] : rectang[0] + rectang[2], rectang[1] : rectang[1] + rectang[3]]
+    zdata = datafile[rectang[0] : rectang[0] + rectang[2], rectang[1] : rectang[1] + rectang[3]]
     xvals = xvals[0 : rectang[2]]
     yvals = yvals[0 : rectang[3]]
     xdata, ydata = np.meshgrid(xvals, yvals)

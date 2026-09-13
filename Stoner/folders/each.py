@@ -360,14 +360,15 @@ class Item:
         _serial = kwargs.pop("_serial", False)
         self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
         p, imap = get_pool(_serial)
+        items = (item.clone for item in self._folder) if "_stack_owner" in self._folder.__dict__ else self._folder
         for ix, (new_d, ret) in enumerate(
-            imap(partial(_worker, func=func, args=args, kwargs=kwargs, byname=_byname), self._folder)
+            imap(partial(_worker, func=func, args=args, kwargs=kwargs, byname=_byname), items)
         ):
             if self._folder.debug:
                 print(ix, type(ret))
             if isinstance(ret, self._folder._type) and _return is None:
                 try:  # Check if ret has same data type, otherwise will not overwrite well
-                    if ret.data.dtype != new_d.data.dtype:
+                    if ret.dtype != new_d.dtype:
                         continue
                     new_d = ret
                 except AttributeError:

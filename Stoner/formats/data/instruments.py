@@ -50,7 +50,7 @@ def load_340(new_data, *args, **kwargs):
         for k, v in zip(keys, vals):
             v = v.split()[0]
             new_data.metadata[k] = string_to_type(v)
-        headers = bytes2str(next(data)).strip().split()
+        headers = re.split(r"\s{2,}|\t", bytes2str(next(data)).strip())
         column_headers = headers[1:]
         dat = np.genfromtxt(data)
         new_data.data = dat[:, 1:]
@@ -116,10 +116,9 @@ def save_340(save_data, filename=None, **_):
         for i in cols:
             f.write(f"{save_data.column_headers[i]:11s}")
         f.write("\n\n")
-        for i in range(
-            len(save_data.data)
-        ):  # This is a slow way to write the data, but there should only ever be 200 lines
-            line = "\t".join([f"{n:<10.8f}" for n in save_data.data[i, cols]])
+        values = save_data.to_numpy()
+        for i in range(len(save_data)):
+            line = "\t".join([f"{n:<10.8f}" for n in values[i, cols]])
             f.write(f"{i}\t")
             f.write(f"{line}\n")
     save_data.filename = filename
@@ -369,7 +368,7 @@ def load_rigaku(new_data, *args, **kwargs):
             new_data.data = np.genfromtxt(
                 f, dtype="float", delimiter=" ", invalid_raise=False, comments="*", max_rows=max_rows
             )
-            column_headers = ["Column" + str(i) for i in range(new_data.data.shape[1])]
+            column_headers = ["Column" + str(i) for i in range(new_data.shape[1])]
             column_headers[0:2] = [new_data.metadata["meas.scan.unit.x"], new_data.metadata["meas.scan.unit.y"]]
             for key in new_data.metadata:
                 if isinstance(new_data[key], list):
@@ -703,9 +702,9 @@ def load_vsm(new_data, *args, header_line=3, data_line=3, header_delim=",", **kw
         invalid_raise=False,
     )
 
-    new_data.data = np.ma.mask_rows(new_data.data)
-    cols = new_data.data.shape[1]
-    new_data.data = np.reshape(new_data.data.compressed(), (-1, cols))
+    new_data.data = np.ma.mask_rows(new_data.to_numpy())
+    cols = new_data.shape[1]
+    new_data.data = np.reshape(new_data.to_numpy().compressed(), (-1, cols))
     new_data.column_headers = column_headers
     new_data.setas(x="H_vsm (T)", y="m (emu)")  # pylint: disable=not-callable
     return new_data
@@ -760,7 +759,7 @@ def load_xrd(new_data, *args, **kwargs):
                         angle = parts[0].strip()
                         counts = parts[1].strip()
                         dataline = np.array([float(angle), float(counts)])
-                        new_data.data = np.append(new_data.data, dataline)
+                        new_data.data = np.append(new_data.to_numpy(), dataline)
                     else:  # Other sections contain metadata
                         parts = line.split("=")
                         key = parts[0].strip()
@@ -770,7 +769,7 @@ def load_xrd(new_data, *args, **kwargs):
                         new_data[section + ":" + key] = string_to_type(data)
         column_headers = ["Angle", "Counts"]  # Assume the columns were Angles and Counts
 
-    new_data.data = np.reshape(new_data.data, (-1, 2))
+    new_data.data = np.reshape(new_data.to_numpy(), (-1, 2))
     new_data.setas = "xy"
     new_data._public_attrs = {"four_bounce": bool}
     new_data.four_bounce = new_data["HardwareConfiguration:Monochromator"] == 1

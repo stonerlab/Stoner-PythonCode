@@ -30,7 +30,8 @@ slfd4 = Data(np.column_stack([np.ones(100), np.ones(100) * 2]), setas="xy")
 def test_functions():
     # Test section:
     _ = slfd1.section(z=(12, 13))
-    f = slfd2.split(lambda r: r["Temp"] < 150)
+    temperature = slfd2.find_col("Temp")
+    f = slfd2.split(lambda r: r[temperature] < 150)
     assert len(f[0]) == 838, "Split failed to work."
     assert len(slfd3.threshold(2000, rising=True, falling=True, all_vals=True)) == 5, "Threshold failure."
 
@@ -70,7 +71,7 @@ def test_threshold():
 
 def test_apply():
     slfapp = Data(np.zeros((100, 1)), setas="y")
-    slfapp.apply(lambda r: r.i[0], header="Counter")
+    slfapp.apply(lambda r: r.i, header="Counter")
 
     def calc(r, omega=1.0, k=1.0):
         return np.sin(r.y * omega)

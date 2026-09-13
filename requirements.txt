@@ -13,3 +13,4 @@ python-dateutil>=2.8.0
 scikit-image>=0.24
 scipy>=1.14
 statsmodels
+xarray

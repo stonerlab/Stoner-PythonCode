@@ -242,10 +242,22 @@ def copy_into(source: Data, dest: Data) -> Data:
     """
     from ..core.base import TypeHintedDict
 
-    dest.data = source.data.copy()
-    dest.setas = source.setas
+    copied_storage = "_storage_owner" in source.__dict__ and hasattr(dest, "export_storage")
+    if copied_storage:
+        if "_storage_owner" in dest.__dict__:
+            dest.__dict__["_storage_owner"]._check_writable()
+        owner = copy.deepcopy(source.__dict__["_storage_owner"], {id(source): dest})
+        owner._editing = False
+        dest.__dict__["_storage_owner"] = owner
+        dest.__dict__.pop("_data", None)
+        dest.__dict__.pop("_metadata", None)
+    else:
+        dest.data = source.data.copy()
+        dest.setas = source.setas
     dest.fig = getattr(source, "fig", None)
     for attr in source._public_attrs:
+        if copied_storage and attr in {"data", "metadata", "column_headers", "setas", "mask"}:
+            continue
         if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "fig"]:
             continue
         try:

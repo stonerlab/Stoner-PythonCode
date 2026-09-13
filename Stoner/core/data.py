@@ -15,10 +15,9 @@ from textwrap import TextWrapper
 import h5py
 import numpy as np
 from numpy import nan  # NOQA pylint: disable=unused-import
-from numpy import ma
 
 from ..compat import index_types, string_types
-from ..tools import all_type, get_option, isiterable, make_Data
+from ..tools import all_type, get_option, make_Data
 from ..tools.file import (
     URL_SCHEMES,
     FileManager,
@@ -29,12 +28,15 @@ from ..tools.file import (
     get_loader,
 )
 from ..tools.tests import ClassTester
-from .array import DataArray
+from .numerical import numerical_result
 from .base import TypeHintedDict, metadataObject
 from .exceptions import StonerLoadError, StonerSetasError
 from .interfaces import DataFileInterfacesMixin
 from .operators import DataFileOperatorsMixin
 from .property import DataFilePropertyMixin
+from .storage_bridge import StorageBridgeMixin
+from .storage_owner import DataOwner
+from .storage import DataStorage
 from .utils import Tab_Delimited, copy_into
 
 try:
@@ -63,6 +65,7 @@ from . import methods
     [methods, fitting, columns, functions, features, filtering], adaptor=None, no_long_names=True, overload=True
 )
 class Data(
+    StorageBridgeMixin,
     DataFileInterfacesMixin,
     DataFileOperatorsMixin,
     DataFilePropertyMixin,
@@ -73,7 +76,7 @@ class Data(
     """Store tabular numerical data with metadata, column headers and column roles.
 
     Attributes:
-        data (DataArray):
+        data (NumPy masked array):
             Two-dimensional masked numerical array, indexed by row and column.
         metadata (TypeHintedDict):
             Metadata values and their associated type information.
@@ -102,7 +105,7 @@ class Data(
             Deep copy of this object.
         dims (int):
             Number of coordinate dimensions inferred from column roles.
-        T (DataArray):
+        T (NumPy masked array):
             Transposed numerical data.
         mime_type (list of str):
             Class-level MIME-type declaration retained for compatibility.
@@ -128,6 +131,11 @@ class Data(
             Column indices for assigned w vector components.
 
     Notes:
+        Data owns a pandas frame with separate exclusions and a stable column schema.
+        Array reads are detached snapshots; use direct assignment or editing contexts
+        to commit changes. ``from_storage`` imports lossless packages and
+        ``from_pandas`` applies explicit numeric dtype and row-index policies.
+
         Analysis, fitting and plotting methods are composed into this class from
         specialised modules. Many operations modify the instance and return it for
         chaining; consult individual method descriptions for copy and return behaviour.
@@ -165,7 +173,8 @@ class Data(
         object.__setattr__(self, "debug", kwargs.pop("debug", False))
         self._masks = [False]
         self._filename = None
-        object.__setattr__(self, "_data", DataArray([]))
+        self.__dict__["_storage_owner"] = DataOwner(DataStorage.from_numpy(np.empty((0, 0))))
+        self.__dict__.pop("_metadata", None)
         self._baseclass = Data
         self._kwargs = kwargs
         return self
@@ -232,7 +241,6 @@ class Data(
             min(len(args), 3)
         ]
         self.mask = False
-        self.data._setas._get_cols()
         handler(*args, **kwargs)
         try:
             kwargs = self._kwargs
@@ -245,6 +253,9 @@ class Data(
             for k, val in kwargs.items():
                 if k in self._public_attrs:
                     if isinstance(val, self._public_attrs[k]):
+                        if k == "column_headers" and self.shape != (0, 0):
+                            headers = list(val)
+                            val = (headers + list(self.column_headers)[len(headers):])[:self.shape[1]]
                         self.__setattr__(k, val)
                     else:
                         self._raise_type_error(k)
@@ -282,7 +293,6 @@ class Data(
                 self._init_list(args[0], **kwargs)
             case _:
                 raise TypeError(f"No constructor for {type(args[0])}")
-        self.data._setas.cols.update(self.setas._get_cols())
 
     def _init_double(self, *args, **kwargs):
         """Two argument constructors handled here. Called form __init__."""
@@ -307,25 +317,28 @@ class Data(
                 break
         else:
             self.data = np.column_stack(args)
+            self.column_headers = [f"Column {i}" for i in range(self.shape[1])]
 
     def _init_array(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from a single numpy array."""
         # numpy.array - set data
-        if np.issubdtype(arg.dtype, np.number):
-            self.data = DataArray(np.atleast_2d(arg), setas=self.data._setas)
-            self.column_headers = [f"Column_{x}" for x in range(np.shape(arg)[1])]
+        if arg.dtype.kind in "biufc":
+            self.data = np.ma.atleast_2d(arg)
+            self.column_headers = [f"Column_{x}" for x in range(self.shape[1])]
         elif isinstance(arg[0], dict):
             for row in arg:
                 self += row
 
     def _init_datafile(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from datafile."""
-        for a in arg.__dict__:
-            if not callable(a) and a != "_baseclass":
-                super().__setattr__(a, copy.copy(getattr(arg, a)))
-        self.metadata = arg.metadata.copy()
-        self.data = DataArray(arg.data, setas=arg.setas.clone)
-        self.data.setas = arg.setas.clone
+        memo = {id(arg): self}
+        for key, value in arg.__dict__.items():
+            if key != "_baseclass":
+                self.__dict__[key] = copy.deepcopy(value, memo)
+        self.__dict__.pop("_data", None)
+        self.__dict__.pop("_metadata", None)
+        self.__dict__["_storage_owner"]._editing = False
+        return
 
     def _init_dict(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from dictionary."""
@@ -347,34 +360,14 @@ class Data(
         z = arg.image
 
         self.data = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
-        self.metadata = copy.deepcopy(arg.metadata)
+        self.metadata = arg.metadata.copy()
         self.column_headers = ["X", "Y", "Image Intensity"]
         self.setas = "xyz"
 
     def _init_pandas(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from a pandas dataframe."""
-        self.data = arg.values
-        ch = []
-        for ix, col in enumerate(arg):
-            if isinstance(col, string_types):
-                ch.append(col)
-            elif isiterable(col):
-                for ch_i in col:
-                    if isinstance(ch_i, string_types):
-                        ch.append(ch_i)
-                        break
-                else:
-                    ch.append(f"Column {ix}")
-            else:
-                ch.append(f"Column {ix}:{col}")
-        self.column_headers = ch
-        self.metadata.update(arg.metadata)
-        if isinstance(arg.columns, pd.MultiIndex) and len(arg.columns.levels) > 1:
-            for label in arg.columns.get_level_values(1):
-                if label not in list("xyzdefuvw."):
-                    break
-            else:
-                self.setas = list(arg.columns.get_level_values(1))
+        package = DataStorage.from_pandas(arg)
+        self.__dict__["_storage_owner"] = DataOwner(package)
 
     def _init_load(self, arg, **kwargs):
         """Load data from a file-like source.
@@ -393,6 +386,8 @@ class Data(
     def _init_list(self, arg, **kwargs):
         """Initialise from a list or other ioterable."""
         if all_type(arg, string_types):
+            if self.shape[1] == 0:
+                self.data = np.empty((0, len(arg)))
             self.column_headers = list(arg)
         elif all_type(arg, np.ndarray):
             self._init_many(*arg, **kwargs)
@@ -442,13 +437,13 @@ class Data(
     def __deepcopy__(self, memo):
         """Provide support for copy.deepcopy to work."""
         cls = type(self)
-        result = cls.__new__(cls)
+        result = cls()
         memo[id(self)] = result
-        for k, v in self.__dict__.items():
-            try:
-                setattr(result, k, copy.deepcopy(v, memo))
-            except (TypeError, ValueError, RecursionError):
-                setattr(result, k, copy.copy(v))
+        for key, value in self.__dict__.items():
+            object.__setattr__(result, key, copy.deepcopy(value, memo))
+        result.__dict__.pop("_data", None)
+        result.__dict__.pop("_metadata", None)
+        result.__dict__["_storage_owner"]._editing = False
         return result
 
     def __dir__(self):
@@ -460,10 +455,10 @@ class Data(
         if not self.setas.empty:
             for k, val in col_check.items():
                 if k.startswith("x"):
-                    if k in self._data._setas.cols and self._data._setas.cols[k] is not None:
+                    if k in self.setas.cols and self.setas.cols[k] is not None:
                         attr.append(val)
                 else:
-                    if k in self._data._setas.cols and self._data._setas.cols[k]:
+                    if k in self.setas.cols and self.setas.cols[k]:
                         attr.append(val)
         return sorted(set(attr))
 
@@ -506,7 +501,7 @@ class Data(
             if ret is not None and ret != []:
                 return ret
         try:
-            col = self._data._setas.find_col(name)
+            col = self.setas.find_col(name)
             return self.column(col)
         except (KeyError, IndexError):
             pass
@@ -548,6 +543,8 @@ class Data(
                     function and use the return result as the mask
                 -   data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
+        if name in {"_data", "_metadata"} and "_storage_owner" in self.__dict__:
+            raise RuntimeError("Private legacy storage replacement is unsupported for frame-backed Data")
         if hasattr(type(self), name) and isinstance(getattr(type(self), name), property):
             super().__setattr__(name, value)
         elif len(name) == 1 and name in "xyzuvwdef" and self.setas[name]:
@@ -565,12 +562,27 @@ class Data(
 
     def _col_args(self, *args, **kwargs):
         """Create an object which has keys  based either on arguments or setas attribute."""
-        return self.data._col_args(*args, **kwargs)  # Now just pass through to DataArray
+        from .numerical import column_arguments
+        return column_arguments(self, *args, **kwargs)
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
         try:
-            return getattr(self._data, name)
+            if name in "rqp":
+                axes = int(self.setas.cols["axes"])
+                first, second, third = ("x", "y", "z") if axes < 5 else ("u", "v", "w")
+                if name == "r":
+                    square = getattr(self, first)**2 + getattr(self, second)**2
+                    return np.sqrt(square + getattr(self, third)**2) if axes in (3, 4, 6) else np.sqrt(square)
+                if name == "q":
+                    return np.arctan2(getattr(self, first), getattr(self, second))
+                return np.arcsin(getattr(self, third))
+            field = dict(zip("xyzdefuvw", ("xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "ucol", "vcol", "wcol")))[name]
+            positions = self.setas.cols[field]
+            if positions is None or isinstance(positions, list) and not positions:
+                return None
+            position = positions[0] if isinstance(positions, list) else positions
+            return self._storage_slice((slice(None), position))
         except StonerSetasError:
             return None
 
@@ -693,7 +705,7 @@ class Data(
         if data.ndim < 2:
             data = np.ma.atleast_2d(data)
         retain = np.all(np.isnan(data), axis=1)
-        self.data = DataArray(data[~retain])
+        self.data = numerical_result(data[~retain])
         self["TDI Format"] = fmt
         if self.data.ndim == 2 and self.data.shape[1] > 0:
             self.column_headers = col_headers_tmp
@@ -822,7 +834,7 @@ class Data(
             else:
                 raise RuntimeError("Value to be assigned to data columns is the wrong shape!")
             for i, ix in enumerate(self.find_col(self.setas[name], force_list=True)):
-                self.data[:, ix] = value[:, i]
+                self[:, ix] = value[:, i]
         elif isinstance(value, index_types):
             self._set_setas({name: value})
 
@@ -837,26 +849,21 @@ class Data(
             cumulative (bool):
                 if true, then an unmask value doesn't unmask the data, it just leaves it as it is.
         """
-        i = -1
-        args = len(_inspect_.getargs(func.__code__)[0])
-        for r in self.rows():
-            i += 1
-            r.mask = False
-            if args == 2:
-                t = func(r[col], r)
+        owner = self._require_storage_owner()
+        owner._check_writable()
+        mask = np.asarray(self.mask) if cumulative else np.zeros(self.shape, dtype=bool)
+        count = len(_inspect_.signature(func).parameters)
+        for i, row in enumerate(self.rows()):
+            row = numerical_result(row, setas=self.setas.clone, isrow=True)
+            row.i = i
+            row.mask = False
+            selected = np.asarray(func(row[col], row) if count == 2 else func(row), dtype=bool) ^ invert
+            if cumulative:
+                mask[i] |= selected
             else:
-                t = func(r)
-            if isinstance(t, (bool, np.bool_)):
-                if t ^ invert:
-                    self.data[i] = ma.masked
-                elif not cumulative:
-                    self.data[i] = self._data.data[i]
-            else:
-                for j in range(min(len(t), np.shape(self.data)[1])):
-                    if t[j] ^ invert:
-                        self.data[i, j] = ma.masked
-                    elif not cumulative:
-                        self.data[i, j] = self.data.data[i, j]
+                mask[i] = selected
+        self.mask = mask
+        return
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
@@ -868,9 +875,9 @@ class Data(
         Returns:
             Nothing
         """
-        self._masks.append(copy.deepcopy(self.mask))
+        self._masks.append(np.array(self.mask, copy=True))
         if mask is None:
-            self.data.mask = False
+            self.mask = False
         else:
             self.mask = mask
 

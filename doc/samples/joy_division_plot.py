@@ -43,7 +43,7 @@ for ix, d in enumerate(fldr):
         dels.append(ix)
         continue
     d.setas = "xzy"
-    d.y *= d["axis.position"][0]
+    d.y = d.y * d["axis.position"][0]
 
 for ix in sorted(dels, reverse=True):
     del fldr[ix]

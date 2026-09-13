@@ -115,8 +115,8 @@ def test_stats():
 def test_bounds_exception_restores_state(method):
     """A failing bounds callback must not leave a partial mask on the data."""
     data = Data(np.column_stack((np.arange(6), [8, 3, 9, 2, 7, 4])), setas="xy")
-    data.data.mask = np.zeros(data.shape, dtype=bool)
-    data.data.mask[2, 1] = True
+    data.mask = np.zeros(data.shape, dtype=bool)
+    data.mask[2, 1] = True
     original_mask = data.data.mask.copy()
     original_values = data.data.data.copy()
     original_roles = str(data.setas)
@@ -138,14 +138,14 @@ def test_bounds_exception_restores_state(method):
 def test_nested_mask_snapshots_are_independent():
     """Nested temporary masks restore each saved mask without aliasing."""
     data = selfd_master.clone
-    data.data.mask = np.zeros(data.shape, dtype=bool)
-    data.data.mask[1, 1] = True
+    data.mask = np.zeros(data.shape, dtype=bool)
+    data.mask[1, 1] = True
     original = data.data.mask.copy()
     data._push_mask()
-    data.data.mask[3, 2] = True
+    data.mask[3, 2] = True
     temporary = data.data.mask.copy()
     data._push_mask()
-    data.data.mask[5, 3] = True
+    data.mask[5, 3] = True
     data._pop_mask()
     np.testing.assert_array_equal(data.data.mask, temporary)
     data._pop_mask()
@@ -155,8 +155,8 @@ def test_nested_mask_snapshots_are_independent():
 def test_std_bounds_restores_mask():
     """A successful bounded standard deviation restores the original mask."""
     data = selfd_master.clone
-    data.data.mask = np.zeros(data.shape, dtype=bool)
-    data.data.mask[2, 1] = True
+    data.mask = np.zeros(data.shape, dtype=bool)
+    data.mask[2, 1] = True
     original = data.data.mask.copy()
     data.std(1, bounds=lambda row: row.i in (1, 3, 5))
     np.testing.assert_array_equal(data.data.mask, original)
@@ -170,8 +170,8 @@ def test_bounds_original_indices_and_mask_restoration(column, method, expected):
         np.column_stack((np.arange(6), [8, 3, 9, 2, 7, 4])),
         column_headers=["Position", "Signal"], setas="xy",
     )
-    data.data.mask = np.zeros(data.shape, dtype=bool)
-    data.data.mask[2, 1] = True
+    data.mask = np.zeros(data.shape, dtype=bool)
+    data.mask[2, 1] = True
     original_mask = data.data.mask.copy()
     result = getattr(data, method)(column, bounds=lambda row: row.i in (1, 3, 5))
     assert result == expected

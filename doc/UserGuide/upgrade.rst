@@ -94,30 +94,26 @@ can simply be removed if the :py:class:`~Stoner.core.data.Data` is used.
 Stoner.Image changes
 ====================
 
-The original version of the :py:mod:`Stoner.Image` package provided a NumPy array subclass with metadata,
-:py:class:`Stoner.Image.core.ImageArray`. For many purposes it is more useful to have a class that wraps the image data and
-provides additional attributes and methods alongside it, avoiding name collisions with NumPy methods and attributes. For this reason, the
-preferred class is :py:class:`Stoner.Image.core.ImageFile`, which is an analogue of :py:class:`Stoner.core.data.Data`. Generally the code can be
-transferred directly so::
-
-    from Stoner.Image import ImageArray
-
-becomes::
+The former ``ImageArray`` and ``KerrArray`` NumPy subclasses have been removed.
+Use the owner classes instead::
 
     from Stoner import ImageFile
+    from Stoner.Image.kerr import KerrImageFile
 
-Like :py:class:`Stoner.Image.core.ImageArray`, :py:class:`Stoner.Image.core.ImageFile` can access key image-processing functions from :py:mod:`skimage`,
-:py:mod:`scipy.ndimage` and the :py:mod:`Stoner.Image.imagefuncs` modules.
+Call image-processing methods on those objects. Their ``image`` property exports
+a detached read-only NumPy masked array. NumPy arithmetic returns ordinary arrays;
+assign the result to ``image`` or use an editing context to publish changes.
+Metadata and coordinate-aware operations belong to the owner.
 
 Deprecated Image functions
 --------------------------
 
-The following ImageArray/ImageFile methods should be swapped:
+The following ImageFile methods should be swapped:
 
--   ``.box()`` - use :py:meth:`Stoner.Image.core.ImageArray.crop` instead
--   ``.crop_image()`` - use :py:meth:`Stoner.Image.core.ImageArray.crop` instead
--   ``.convert_float()`` - use :py:meth:`Stoner.Image.core.ImageArray.asfloat` instead
--   ``.convert_int()`` - use :py:meth:`Stoner.Image.core.ImageArray.asint` instead
+-   ``.box()`` - use :py:meth:`Stoner.Image.core.ImageFile.crop` instead
+-   ``.crop_image()`` - use :py:meth:`Stoner.Image.core.ImageFile.crop` instead
+-   ``.convert_float()`` - use :py:meth:`Stoner.Image.core.ImageFile.asfloat` instead
+-   ``.convert_int()`` - use :py:meth:`Stoner.Image.core.ImageFile.asint` instead
 
 
 Stoner.DataFolder/Stoner.ImageFolder changes

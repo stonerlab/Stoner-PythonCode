@@ -43,26 +43,23 @@ def _fmt_as_dataframe(results):
 
 
 def _fmt_as_Data(results):
-    """Format the results as a Data() object."""
-    ret = make_Data(_fmt_as_dataframe(results))
-    mask = np.zeros(ret.shape, dtype=bool)
-    for ix, col in enumerate(ret.data.T):
-        try:
-            mask[:, ix] = np.isnan(col)
-        except TypeError:
-            pass
-    ret.mask = mask
-    return ret
+    """Convert numeric metadata to Data; keep general metadata in frame/array output."""
+    from pandas.api.types import is_numeric_dtype
+
+    frame = _fmt_as_dataframe(results)
+    if not all(is_numeric_dtype(dtype) for dtype in frame.dtypes):
+        raise TypeError("Data output requires numeric metadata; use output='frame' or output='array'")
+    values = frame.to_numpy()
+    if values.dtype.kind not in "biufc":
+        values = frame.to_numpy(dtype=float, na_value=np.nan)
+    return make_Data(np.ma.array(values, mask=frame.isna().to_numpy()), column_headers=list(frame.columns))
 
 
 def _fmt_as_array(results):
     """Format the results as an array."""
-    ret = _fmt_as_Data(results)
-    if ret.data.shape[1] != 1:
-        ret = ret.data
-    else:
-        ret = ret.data[:, 0]
-    return ret
+    frame = _fmt_as_dataframe(results)
+    result = np.ma.array(frame.to_numpy(), mask=frame.isna().to_numpy())
+    return result if result.shape[1] != 1 else result[:, 0]
 
 
 def _fmt_as_smart(results):
@@ -315,6 +312,8 @@ class MetadataProxy(MutableMapping):
             Recursive results use the same output formats, without adding group-path
             fields. Key matching and missing-key rules apply across all visited members.
             The folder hierarchy is not modified.
+            Data output requires numeric metadata. Use frame or array output for
+            text or other non-numeric values.
 
         """
         values_only = kwargs.pop("values_only", False)

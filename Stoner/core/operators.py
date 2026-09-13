@@ -6,7 +6,6 @@ import numpy as np
 
 from ..compat import index_types, string_types
 from ..tools import isiterable, make_Data
-from . import DataArray, _setas
 from .utils import add_core, and_core, mod_core, sub_core
 
 
@@ -275,8 +274,8 @@ class DataFileOperatorsMixin:
             raise RuntimeError("Not a TDI File")
         col_headers_tmp = [x.strip() for x in row[1:]]
         cols = len(col_headers_tmp)
-        self._data._setas = _setas("." * cols)
-        self.data = DataArray([], setas=self._data._setas)
+        self.data = np.empty((0, cols))
+        self.setas = "." * cols
         for r in reader:
             if r.strip() == "":  # Blank line
                 continue

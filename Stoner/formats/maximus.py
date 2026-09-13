@@ -6,6 +6,7 @@ import re
 from copy import deepcopy
 from os import path
 from pathlib import Path
+from warnings import warn
 
 import h5py
 import numpy as np
@@ -15,7 +16,10 @@ from ..core.base import TypeHintedDict
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
-from ..Image import ImageArray, ImageFile, ImageStack
+from ..Image import ImageFile
+from ..Image.numerical import numerical_image
+from ..Image.stack import ImageStack
+from ..Image.scan_metadata import ScanMetadataMixin, read_exclusions, write_exclusions
 from ..tools.file import FileManager, HDFFileManager, file_dialog, get_filename
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
@@ -32,7 +36,7 @@ def _raise_error(openfile, message=""):
             pass
 
 
-class MaximusStack(ImageStack):
+class MaximusStack(ScanMetadataMixin, ImageStack):
     """Process an image scan stack from the Bessy Maximus beamline as an ImageStack subclass."""
 
     _defaults = {"type": ImageFile, "pattern": "*.hdr"}
@@ -63,11 +67,11 @@ class MaximusStack(ImageStack):
         self._common_metadata = TypeHintedDict()
 
         self.scan_no = scan
+        self._common_metadata["Scan #"] = scan
 
         if root_name:
             self._load(root_name)
 
-        self._common_metadata["Scan #"] = scan
 
         self.compression = "gzip"
         self.compression_opts = 6
@@ -93,29 +97,45 @@ class MaximusStack(ImageStack):
 
         metadata, stack, _ = read_scan(stem)
         self._common_metadata.update(_flatten_header(metadata))
-        self._stack = stack
-        self._names = [f"{stem}_a{ix:03d}" for ix in range(stack.shape[2])]
-        self._sizes = np.ones((stack.shape[2], 2), dtype=int) * stack.shape[:2]
-        for name, point in zip(self._names, self._common_metadata["ScanDefinition.StackAxis.Points"]):
-            self._metadata.setdefault(name, {})
-            self._metadata[name].update({self._common_metadata["ScanDefinition.StackAxis.Name"]: point})
+        for ix, point in enumerate(self._common_metadata["ScanDefinition.StackAxis.Points"]):
+            image = ImageFile(stack[:, :, ix])
+            image.filename = f"{stem}_a{ix:03d}"
+            image.metadata[self._common_metadata["ScanDefinition.StackAxis.Name"]] = point
+            self.append(image)
         return self
 
     def _instantiate(self, idx):
-        """Reconstructs the data type."""
-        r, c = self._sizes[idx]
-        if issubclass(
-            self.type, ImageArray
-        ):  # IF the underlying type is an ImageArray, then return as a view with extra metadata
-            tmp = self._stack[:r, :c, idx].view(type=self.type)
-        else:  # Otherwise it must be something with a data attribute
-            tmp = self.type()  # pylint: disable=E1102
-            tmp.data = self._stack[:r, :c, idx]
-        tmp.metadata = deepcopy(self._common_metadata)
-        tmp.metadata.update(self._metadata[self.__names__()[idx]])
-        tmp.metadata["Scan #"] = self.scan_no
-        tmp._fromstack = True
-        return tmp
+        """Return a stable frame with live common-header defaults."""
+        return super()._instantiate(idx)
+
+    def to_xarray(self, *, format="stack"):
+        """Export storage or the detector channel on the recorded scan grid and energy axis."""
+        if format == "stack":
+            return super().to_xarray()
+        if format != "channels":
+            raise ValueError("format must be 'stack' or 'channels'")
+        headers = self._common_metadata
+        name = headers.get("ScanDefinition.Channels.Name")
+        if not isinstance(name, str):
+            raise ValueError("Channel export requires a single explicitly identified detector")
+        dataset = self.export_storage().dataset
+        for axis, header in (("y", "PAxis"), ("x", "QAxis")):
+            key = f"ScanDefinition.Regions.{header}"
+            points = headers[f"{key}.Points"]
+            if len(points) != dataset.sizes[axis]:
+                raise ValueError("The current grid differs from the scan header; use canonical storage coordinates")
+            dataset = dataset.assign_coords({axis: points})
+            dataset[axis].attrs = {"units": headers[f"{key}.Unit"], "long_name": headers[f"{key}.Name"]}
+        energy_name = headers["ScanDefinition.StackAxis.Name"]
+        values = [image.metadata[energy_name] for image in self]
+        dataset = dataset.assign_coords({energy_name: ("frame", values)})
+        dataset[energy_name].attrs["units"] = headers["ScanDefinition.StackAxis.Unit"]
+        dataset = dataset.rename({"intensity": name, "excluded": f"{name}__excluded"})
+        dataset[name].attrs = {"units": headers.get("ScanDefinition.Channels.Unit", ""),
+                               "excluded": f"{name}__excluded"}
+        warn("The native channel Dataset omits typed metadata; use export_storage for lossless interchange",
+             UserWarning, stacklevel=2)
+        return dataset
 
     def __clone__(self, other=None, attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other.
@@ -126,7 +146,7 @@ class MaximusStack(ImageStack):
 
         """
         other = super().__clone__(other, attrs_only)
-        other._common_metadata = deepcopy(self._common_metadata)
+        other._common_metadata = self._common_metadata.copy()
         return other
 
     def _read_image(self, g):
@@ -153,7 +173,7 @@ class MaximusStack(ImageStack):
             else:
                 tmp[i] = metadata.attrs[i]
         tmp.filename = path.basename(g.name)
-        return tmp
+        return read_exclusions(g, tmp)
 
     def to_hdf5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
@@ -172,7 +192,7 @@ class MaximusStack(ImageStack):
             f.attrs["module"] = type(self).__module__
             f.attrs["scan_no"] = self.scan_no
             f.attrs["groups"] = list(self.groups.keys())
-            f.attrs["names"] = self._names
+            f.attrs["names"] = self.__names__()
             if "common_metadata" in f.parent and "common_metadata" not in f:
                 f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
                 f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)
@@ -192,7 +212,7 @@ class MaximusStack(ImageStack):
                 grp = f.require_group(g)
                 group.to_hdf5(grp)
 
-            for ch in self._names:
+            for ch in self.__names__():
                 signal = f.require_group(ch)
                 data = self[ch]
                 signal.require_dataset(
@@ -205,7 +225,9 @@ class MaximusStack(ImageStack):
                 )
                 metadata = signal.require_group("metadata")
                 typehints = signal.require_group("typehints")
-                for k in self._metadata[ch]:
+                signal["image"][...] = data.to_numpy(masked=False)
+                write_exclusions(signal, data)
+                for k in data.metadata:
                     try:
                         typehints.attrs[k] = data.metadata._typehints[k]
                         metadata.attrs[k] = data.metadata[k]

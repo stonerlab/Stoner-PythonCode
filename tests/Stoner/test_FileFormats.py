@@ -11,6 +11,7 @@ import pathlib
 import sys
 import urllib
 
+import numpy as np
 import pytest
 
 from Stoner import Data, ImageFile, __datapath__, __homepath__
@@ -152,6 +153,17 @@ def test_maximus_stack(tmpdir):
     stack.to_hdf5(tmpdir / "MPI_210127021.hdf5")
     stack2 = MaximusStack.read_hdf5(tmpdir / "MPI_210127021.hdf5")
     assert stack2.shape == stack.shape, "Round trip through MaximusStack"
+    with pytest.warns(UserWarning):
+        native = stack.to_xarray(format="channels")
+    assert native.APD.dims == ("frame", "y", "x")
+    assert native.APD.attrs["units"] == "counts"
+    assert native.y.attrs["long_name"] == "Sample X"
+    assert native.x.attrs["long_name"] == "Sample Y"
+    np.testing.assert_array_equal(native.Energy, [-2., -1.])
+    with pytest.warns(UserWarning):
+        restored_native = stack2.to_xarray(format="channels")
+    np.testing.assert_array_equal(restored_native.APD, native.APD)
+    np.testing.assert_array_equal(restored_native.y, native.y)
 
 
 def test_fail_to_load():

@@ -143,17 +143,17 @@ def test_range_select():
     thread = threading.Thread(target=_trigger0, args=(data,))
     thread.start()
     result = data.search()
-    xmin, xmax = result.x.min(), result.x.max()
+    xmin, xmax = result[:, data.setas.cols.xcol].min(), result[:, data.setas.cols.xcol].max()
     assert xmin < 4.4 and xmax > 291, "Failed to select and clear"
     thread = threading.Thread(target=_trigger1, args=(data,))
     thread.start()
     result = data.search()
-    xmin1, xmax1 = result.x.min(), result.x.max()
+    xmin1, xmax1 = result[:, data.setas.cols.xcol].min(), result[:, data.setas.cols.xcol].max()
     assert np.isclose(xmin1, 50, atol=1) and np.isclose(xmax1, 100, 1), "Single selection failed."
     thread = threading.Thread(target=_trigger2, args=(data,))
     thread.start()
     result = data.search()
-    xmin2, xmax2 = result.x.min(), result.x.max()
+    xmin2, xmax2 = result[:, data.setas.cols.xcol].min(), result[:, data.setas.cols.xcol].max()
     assert np.isclose(xmin, xmin2) and np.isclose(xmax, xmax2), "Selection with keypresses failed"
 
 

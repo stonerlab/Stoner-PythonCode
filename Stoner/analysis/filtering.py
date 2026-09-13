@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 """Filtering and smoothing functions for analysis code."""
 
-from copy import deepcopy as copy
-
 import numpy as np
 from numpy import ma
 from scipy.interpolate import UnivariateSpline, interp1d
 from scipy.signal import convolve, get_window, savgol_filter
 
 from ..compat import get_func_params, int_types, string_types
+from ..core.numerical import numerical_result
 from ..tools import isiterable, islistlike, isnone, ordinal
 from .utils import GetAffineTransform, _twoD_fit
 from .utils import outlier as _outlier
@@ -109,7 +108,7 @@ def filter(datafile, func=None, cols=None, reset=True):  # pylint: disable=redef
     if cols is not None:
         cols = [datafile.find_col(c) for c in cols]
     if reset:
-        datafile.data.mask = False
+        datafile.mask = False
     for r in datafile.rows():
         if cols is None:
             datafile.mask[r.i, :] = not func(r)
@@ -148,9 +147,9 @@ def del_nan(datafile, col=None, clone=False):
     dels = np.zeros(len(ret)).astype(bool)
     for ix in col:
         dels = np.logical_or(
-            dels, np.isnan(ret.data[:, ix])
+            dels, np.isnan(ret.to_numpy()[:, ix])
         )  # dels contains True if any row contains a NaN in columns col
-    not_masked = np.logical_not(ma.mask_rows(ret.data).mask[:, 0])  # pylint: disable=no-member
+    not_masked = np.logical_not(ma.mask_rows(ret.to_numpy()).mask[:, 0])  # pylint: disable=no-member
     dels = np.logical_and(not_masked, dels)  # And make dels just be unmasked rows with NaNs
 
     ret.del_rows(np.logical_not(dels))  # Del the those rows
@@ -252,7 +251,7 @@ def SG_Filter(  # pylint: disable=invalid-name
         else:
             iterdata = r
         for column, head in zip(iterdata, header):
-            datafile.add_column(column.ravel(), header=head, index=result, replace=replace)
+            datafile.add_column(column.ravel(), header=head, index=None if result is True else result, replace=replace)
         return datafile
     return r
 
@@ -294,6 +293,8 @@ def bin(
             Either a clone of the current data set with the new binned data or
             tuple of (bin centres, bin values, bin errors, number points/bin),
             depending on the *clone* parameter.
+            The Data result contains one centre column followed by a value,
+            uncertainty and count column for each selected y column.
 
     Notes:
         Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
@@ -317,30 +318,29 @@ def bin(
     ycol = datafile.find_col(ycol, force_list=True)
     if yerr:
         yerr = datafile.find_col(yerr, force_list=True)
-        yerr = datafile.data[:, yerr]
+        yerr = datafile.column(yerr)
     else:
         yerr = None
 
     bin_centres, y_vals, y_errs, bin_counts = _bin_weighted(
-        datafile.data[:, xcol], datafile.data[:, ycol], bin_edges, yerr
+        datafile.column(xcol), datafile.column(ycol), bin_edges, yerr
     )
 
     if not clone:
         return bin_centres, y_vals, y_errs, bin_counts
 
     ret = datafile.clone
-    ret.data = np.zeros((len(bin_centres), 3 * y_vals.shape[1]))
-    ret.data[:, 0] = bin_centres
-    ret.data[:, 1::3] = y_vals
-    ret.data[:, 2::3] = y_errs
-    ret.data[:, 3::3] = bin_counts
+    ret.data = np.zeros((len(bin_centres), 1 + 3 * y_vals.shape[1]))
+    ret[:, 0] = bin_centres
+    ret[:, 1::3] = y_vals
+    ret[:, 2::3] = y_errs
+    ret[:, 3::3] = bin_counts
 
-    columns = np.zeros(ret.data.shape[1], dtype=str)
-    columns[0] = datafile.column_headers[xcol]
-    columns[1::3] = datafile.column_headers[ycol]
-    columns[2::3] = [f"d{h}" for h in datafile.column_headers[ycol]]
-    columns[3::3] = [f"#/bin {h}" for h in datafile.column_headers[ycol]]
-    setas = np.ones_like(columns, dtype=str)
+    columns = [datafile.column_headers[xcol]]
+    for column in ycol:
+        header = datafile.column_headers[column]
+        columns.extend([header, f"d{header}", f"#/bin {header}"])
+    setas = np.ones(len(columns), dtype=str)
     setas[0] = "x"
     setas[1::3] = "y"
     setas[2::3] = "e"
@@ -375,29 +375,18 @@ def deduplicate(datafile, col, action="average", clone=True):
             Either a clone of the current data set with the depuplciated data, or just a data array.
     """
     cols = datafile.find_col(col, force_list=True)
-    idx = []
-    for row in datafile.data[:, cols]:
-        if row.size > 1:
-            idx.append((x for x in row))
-        else:
-            idx.append(row)
-    idx = np.array(idx)
-    vals, rev, _, nums = np.unique(idx, return_index=True, return_inverse=True, return_counts=True)
-
-    select = np.zeros_like(idx, dtype=bool)
-    select[rev] = True
-    ix = np.arange(len(datafile))
-    vals = vals[nums > 1]
-    nums = nums[nums > 1]
-    data = datafile.data.copy()
-    for val, _, _ in zip(vals, idx, nums):
-        subset = data[idx == val]
-        indices = ix[idx == val]
+    keys = np.ma.getdata(datafile.column(cols))
+    _, first, groups, counts = np.unique(keys, axis=0, return_index=True, return_inverse=True, return_counts=True)
+    select = np.sort(first)
+    data = datafile.to_numpy()
+    for group in np.flatnonzero(counts > 1):
+        indices = np.flatnonzero(groups == group)
+        subset = data[indices]
         match action:
             case "average":
-                data[indices] = np.average(subset, axis=0)
+                data[indices] = np.ma.average(subset, axis=0)
             case "median":
-                data[indices] = np.median(subset, axis=0)
+                data[indices] = np.ma.median(subset, axis=0)
             case "first":
                 data[indices] = data[indices.min()]
             case "last":
@@ -406,9 +395,9 @@ def deduplicate(datafile, col, action="average", clone=True):
                 raise ValueError(f"Unknown deduplication action {action}")
     if clone:
         ret = datafile.clone
-        ret.data = datafile.data[select, :]
+        ret.data = data[select, :]
         return ret
-    return datafile.data[select, :]
+    return data[select, :]
 
 
 def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, kind="linear", errors=None):
@@ -509,7 +498,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
             case _:
                 raise TypeError(f"Overlap should be an integer or floating point number not a {type(overlap)}")
         pointdata = work.select(**bounds)
-        pointdata.data[:, _.xcol] = pointdata.column(_.xcol) - mid_x
+        pointdata[:, _.xcol] = pointdata.column(_.xcol) - mid_x
         ret = pointdata.curve_fit(kindf, _.xcol, _.ycol, sigma=_.yerr, absolute_sigma=True)
         if isinstance(ret, tuple):
             ret = [ret]
@@ -560,8 +549,7 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
         interpolation function takes one argument - if *xcol* was None, this argument is interpreted as
         array indices, but if *xcol* was specified, then this argument is interpreted as an array of xvalues.
     """
-    DataArray = type(datafile.data)  # pylint: disable=E0203
-    lines = np.shape(datafile.data)[0]  # pylint: disable=E0203
+    lines = len(datafile)  # pylint: disable=E0203
     index = np.arange(lines)
     if xcol is None:
         xcol = datafile.setas._get_cols("xcol")
@@ -574,7 +562,7 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
     if xcol is not None and newX is not None:  # We need to convert newX to row indices
         xfunc = interp1d(datafile.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
         newX = xfunc(newX)
-    inter = interp1d(index, datafile.data, kind, 0)  # pylint: disable=E0203
+    inter = interp1d(index, datafile.to_numpy(), kind, 0)  # pylint: disable=E0203
 
     if newX is None:  # Ok, we're going to return an interpolation function
 
@@ -595,7 +583,7 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
         datafile.data = inter(newX)
         ret = datafile
     else:
-        ret = DataArray(inter(newX), isrow=True)
+        ret = numerical_result(inter(newX), isrow=True)
         ret.setas = datafile.setas.clone
     return ret
 
@@ -761,7 +749,8 @@ def outlier_detection(
             pass
 
     where *i* is the number of the outlier row, *column* the same value as above
-    and *data* is the complete set of data.
+    and *data* is a writable masked-array draft of the complete dataset. Numeric
+    edits commit together after all callbacks succeed; an exception discards them.
 
     In all cases the indices of the outlier rows are added to the ;outlier' metadata.
 
@@ -792,7 +781,7 @@ def outlier_detection(
             kwargs.pop(k)
     index = np.zeros(len(datafile), dtype=bool)
     for i, t in enumerate(datafile.rolling_window(window, wrap=False, exclude_centre=width)):
-        index[i] = func(datafile.data[i], t, metric=certainty, **kwargs)
+        index[i] = func(datafile[i], t, metric=certainty, **kwargs)
     datafile["outliers"] = np.arange(len(datafile))[index]  # add outlier indices to metadata
     match action:
         case "mask":
@@ -800,10 +789,11 @@ def outlier_detection(
         case "mask row":
             datafile.mask[index, :] = True
         case "delete":
-            datafile.data = datafile.data[~index]
+            datafile.data = datafile.to_numpy()[~index]
         case _ if callable(action):  # this will call the action function with each row in turn from back to start
-            for i in np.arange(len(datafile))[index][::-1]:
-                action(i, column, datafile.data, *action_args, **action_kwargs)
+            with datafile.edit_numpy() as draft:
+                for i in np.arange(len(datafile))[index][::-1]:
+                    action(i, column, draft, *action_args, **action_kwargs)
         case _:
             raise ValueError(f"Unrecognised action {action}")
     return datafile
@@ -932,13 +922,13 @@ def scale(
     else:  # Don't try to be clever
         m0 = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
     popt, perr, trans = _twoD_fit(xy1, xy2, xmode=xmode, ymode=ymode, m0=m0)
-    data = datafile.data[:, [_.xcol, _.ycol]]
+    data = datafile.column([_.xcol, _.ycol])
     new_data = trans(data)
     if replace:  # In place scaling, replace and return datafile
         datafile.metadata["Transform"] = popt
         datafile.metadata["Transform Err"] = perr
-        datafile.data[:, _.xcol] = new_data[:, 0]
-        datafile.data[:, _.ycol] = new_data[:, 1]
+        datafile[:, _.xcol] = new_data[:, 0]
+        datafile[:, _.ycol] = new_data[:, 1]
         if headers:
             if isinstance(headers, str):
                 headers = [headers]
@@ -999,7 +989,7 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
         data = datafile.interpolate(nx, kind="linear", xcol=_.xcol, replace=False)
         datafile["Smoothing window size"] = size
     elif isinstance(size, int_types):
-        data = copy(datafile.data)
+        data = datafile.to_numpy()
         interp_data = False
     else:
         raise ValueError(f"size should either be a float or integer, not a {type(size)}")
@@ -1015,7 +1005,7 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
 
     # Reinterpolate the smoothed data back if necessary
     if interp_data:
-        nx = datafile.data[:, _.xcol]
+        nx = datafile.column(_.xcol)
         tmp = datafile.clone
         tmp.data = data
         data = tmp.interpolate(nx, kind="linear", xcol=_.xcol, replace=False)
@@ -1024,7 +1014,7 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
     if isinstance(result, bool) and not result:
         return data[:, _.ycol]
     for yc in _.ycol:
-        datafile.add_column(data[:, yc], header=header, index=result, replace=replace)
+        datafile.add_column(data[:, yc], header=header, index=None if result is True else result, replace=replace)
     return datafile
 
 
@@ -1096,7 +1086,7 @@ def spline(
         header = datafile.column_headers[_.ycol]
 
     if not (result is None or (isinstance(result, bool) and not result)):
-        datafile.add_column(new_y, header, index=result, replace=replace)
+        datafile.add_column(new_y, header, index=None if result is True else result, replace=replace)
         return datafile
     if result is None:
         return new_y

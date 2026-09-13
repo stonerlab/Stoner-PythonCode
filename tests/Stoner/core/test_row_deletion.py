@@ -11,8 +11,8 @@ def make_data():
     data = Data(np.column_stack((np.arange(5), np.arange(5) * 10)),
                 column_headers=["Position", "Signal"], setas="xy")
     data["Run"] = "row deletion"
-    data.data.mask = np.zeros(data.shape, dtype=bool)
-    data.data.mask[2, 1] = True
+    data.mask = np.zeros(data.shape, dtype=bool)
+    data.mask[2, 1] = True
     return data
 
 

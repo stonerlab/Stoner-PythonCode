@@ -438,9 +438,9 @@ def _up_down(data):
 
     # Clone the data and select rows that are either rising or falling in the two clones.
     up = data.clone
-    up.data = up.data[rising]
+    up.data = up.to_numpy()[rising]
     down = data.clone
-    down.data = down.data[~rising]
+    down.data = down.to_numpy()[~rising]
     # Done.
     return up, down
 
@@ -501,7 +501,7 @@ def split_up_down(data, col=None, folder=None):
         risefall = ["falling", "rising"]
     for i in range(len(splits) - 1):
         working = data.clone
-        working.data = data.data[splits[i] : splits[i + 1], :]
+        working.data = data.to_numpy()[splits[i] : splits[i + 1], :]
         output.groups[risefall[i % 2]].append(working)
     return output
 

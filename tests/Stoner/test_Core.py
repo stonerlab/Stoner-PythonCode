@@ -23,7 +23,7 @@ from Stoner.core.base import metadataObject
 
 
 def mask_func(r):
-    return np.abs(r.q) < 0.25 * np.pi
+    return np.abs(np.arctan2(r.x, r.y)) < 0.25 * np.pi
 
 
 datadir = path.join(pth, "sample-data")
@@ -84,7 +84,7 @@ def test_constructor():
     """Constructor Tests"""
     global selfd, selfd1, selfd2, selfd3, selfd4
     d = Data()
-    assert d.shape == (1, 0), "Bare constructor failed"
+    assert d.shape == (0, 0), "Bare constructor failed"
     d = Data(selfd)
     assert np.all(d.data == selfd.data), "Constructor from DataFile failed"
     d = Data([np.ones(100), np.zeros(100)])
@@ -105,8 +105,10 @@ def test_constructor():
     e = Data(d.dict_records)
     e.metadata = d.metadata
     assert d == e, "Copy from dict records failed."
-    d = Data(pd.DataFrame(np.zeros((100, 3))))
-    assert d.column_headers == ["Column 0:0", "Column 1:1", "Column 2:2"]
+    with pytest.raises(TypeError):
+        Data(pd.DataFrame(np.zeros((100, 3))))
+    d = Data(pd.DataFrame(np.zeros((100, 3)), columns=["a", "b", "c"]))
+    assert d.column_headers == ["a", "b", "c"]
     d = Data(np.ones(100), np.zeros(100), np.zeros(100), selfd.filename)
     assert d == selfd, "Multiple argument constructor dind't find it's filename"
     with pytest.raises(TypeError):
@@ -211,7 +213,7 @@ def test_attributes():
     assert all(selfd.y == selfd.column(1)), "y attribute not right."
     assert all(selfd.q == np.arctan2(selfd.data[:, 0], selfd.data[:, 1])), "Calculated theta attribute not right."
     assert all(sqrt(selfd[:, 0] ** 2 + selfd[:, 1] ** 2) == selfd.r), "Calculated r attribute not right."
-    assert selfd2.records._[5]["Column 2"] == selfd2.data[5, 2], "Records and as array attributes problem"
+    assert selfd2.records[5]["Column 2"] == selfd2.data[5, 2], "Records and array values differ"
     d = Data(np.ones((10, 2)), ["A", "A"])
     assert d.records.dtype == np.dtype(
         [("A_1", "<f8"), ("A", "<f8")]
@@ -295,6 +297,12 @@ def test_dir():
             '__annotations_cache__',
         ]
     )
+    storage_api = {"from_storage", "from_pandas", "export_storage", "to_numpy",
+                   "edit_numpy", "edit_pandas", "column_ids",
+                   "_require_storage_owner", "_storage_array", "_storage_slice",
+                   "__copy__"}
+    assert storage_api <= set(dir(selfd))
+    bad_keys.update(storage_api)
     attrs = set(dir(selfd)) - bad_keys
     assert len(attrs) == 214, "DataFile.__dir__ failed."
     selfd.setas.clear()
@@ -308,7 +316,7 @@ def test_filter():
     ix = np.argmax(selfd.x)
     selfd.filter(lambda r: r.x <= 50)
     assert np.max(selfd.x) == 50, "Failure of filter method to set mask"
-    assert np.isnan(selfd.x[ix]), "Failed to mask maximum value"
+    assert np.ma.is_masked(selfd.x[ix]), "Failed to mask maximum value"
     selfd._pop_mask()
     assert selfd2.select(Temp__not__gt=150).shape == (839, 3), "Seect method failure."
     assert selfd.select(lambda r: r.x < 30) == selfd.select(X__lt=30), "Select  method as callable failed."

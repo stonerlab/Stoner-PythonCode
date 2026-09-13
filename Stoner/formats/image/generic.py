@@ -81,11 +81,16 @@ def _delim_detect(line):
     what="Image",
 )
 def load_imagefile(new_image, *args, **kwargs):
-    """Load an ImageFile by calling the ImageArray method instead."""
+    """Read numerical pixels and publish them through the image owner."""
     filename, args, kwargs = get_filename(args, kwargs)
-    new_image._image = make_Class("Image.ImageArray", filename, *args, **kwargs)
-    for k in new_image._image._public_attrs:
-        setattr(new_image, k, getattr(new_image._image, k, None))
+    from ...Image.numerical import load_pixels
+    try:
+        loaded = load_pixels(filename, **kwargs)
+    except (OSError, ValueError, TypeError) as error:
+        raise StonerLoadError(f"Cannot load image pixels from {filename}") from error
+    new_image.image = loaded
+    for k in loaded._public_attrs:
+        setattr(new_image, k, getattr(loaded, k, None))
     return new_image
 
 
@@ -106,7 +111,7 @@ def load_{name}file(new_image, *args, **kwargs):
     except Exception as err:
         print(name,err)
         raise StonerLoadError
-    new_image._image=make_Class("Image.ImageArray",data["data"])
+    new_image.image=data["data"]
     new_image.metadata.update(data["metadata"])
     new_image.metadata["axes"]=data["axes"]
     return new_image

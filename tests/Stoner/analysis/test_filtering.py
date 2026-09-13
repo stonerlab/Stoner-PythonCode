@@ -37,7 +37,7 @@ def test_sgfilter():
     testd.del_column(2)
     testd.SG_Filter(order=1, result=True, header="cos", pad=False)
     testd.setas = "xyz"
-    testd.z /= 2
+    testd.z = testd.z / 2
     testd.add_column(testd.z**2 + testd.y**2, header="sin*cos")
     testd.setas = "xyyy"
     testd.SG_Filter(col=3, order=0, points=51, replace=True, result=True, pad=1.0)
@@ -49,7 +49,7 @@ def test_sgfilter():
 def test_extrapolate():
     global testd
     testd.setas = "xy"
-    testd.x -= 3
+    testd.x = testd.x - 3
     with pytest.raises(TypeError):
         testd.extrapolate(kind=3.0)
     with pytest.raises(TypeError):
@@ -88,7 +88,7 @@ def test_bins():
 def test_outlier_detect():
     global testd
     testd.add_column(np.zeros_like(testd.x), header="zeros")
-    testd.data[[90, 270, 450, 630], 1] = 0
+    testd[[90, 270, 450, 630], 1] = 0
     d1 = testd.clone
     with pytest.raises(ValueError):
         d1.outlier_detection(action="bad")

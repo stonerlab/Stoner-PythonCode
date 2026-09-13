@@ -108,15 +108,15 @@ def test_ImageStack_methods():
         -1.0,
         1.0,
     ), "Adjust contrast failure"
-    im1 = selfistack2[0]
+    im1 = selfistack2[0].clone
     im1.normalise()
     im1.convert(np.int32)
     im2 = im1.convert(np.float32, force_copy=True)
     conv_err = (selfistack2[0].image - im2.image).max()
     assert conv_err < 1e-7, "Problems double converting images:{}.".format(conv_err)
-    im1 = selfistack2[0].convert(np.int64)
+    im1 = selfistack2[0].clone.convert(np.int64)
     im1 = im1.convert(np.int8)
-    im2 = selfistack2[0].convert(np.int8)
+    im2 = selfistack2[0].clone.convert(np.int8)
     assert abs((im2 - im1).max()) <= 2.0, "Failed up/down conversion to integer images."
 
 
@@ -145,9 +145,11 @@ def test_accessing():
     im = np.zeros((3, 5), dtype=int)
     ist2[0].image = im
     ist2[1] = im
-    ist2[2].image[:] = im
+    with pytest.raises(ValueError):
+        ist2[2].image[:] = im
+    ist2[2][:] = im
     ist2[3][0, 0] = 100
-    ist2[3].image[0, 1] = 101
+    ist2[3][0, 1] = 101
     # ist2[3,0,2] = 102 may want to support this type of index accessing in the future?
     for i in range(3):
         assert np.allclose(ist2[i].asarray(), im)
@@ -156,7 +158,10 @@ def test_accessing():
     # check imarray behaviour
     ist2.imarray = np.arange(60).reshape(4, 3, 5) * 3
     assert np.allclose(ist2.imarray, np.arange(60).reshape(4, 3, 5) * 3)
-    ist2.imarray[1, 2, 3] = 500
+    with pytest.raises(ValueError):
+        ist2.imarray[1, 2, 3] = 500
+    with ist2.edit_numpy() as draft:
+        draft[1, 2, 3] = 500
     assert ist2.imarray[1, 2, 3] == 500
     # check slice access #not implemented yet
     # im2 = np.zeros((2,3,5))
@@ -195,7 +200,7 @@ def test_methods():
     pi = np.pi
     X, Y = np.mgrid[-pi : pi : pi / 50, -pi : pi : pi / 50]
     bground = ImageFile(np.sin(X) + np.cos(Y))
-    im2.image += bground.image
+    im2 += bground
     bground.mask = im1.image == 1.0
     ist = ImageStack() + im2
     ist.subtract(bground)
@@ -234,12 +239,14 @@ def test_operators():
 def test_mask():
     im = ImageFile(np.arange(12).reshape(3, 4))
     im.mask = np.zeros(im.shape, dtype=bool)
-    im.mask.data[1, 1] = True
+    im.mask[1, 1] = True
     ist2 = ImageStack(np.arange(60).reshape(4, 3, 5))
     ist2.insert(1, im)  # Insert an image with a mask
     assert ist2[1].mask.data.shape == ist2[1].shape
     assert ist2[1].mask[1, 1], "inserting an image with a mask into an ImageStack has failed"
-    ist2[3].mask = np.ones(im.shape, dtype=bool)
+    with pytest.raises(ValueError):
+        ist2[3].mask = np.ones(im.shape, dtype=bool)
+    ist2[3].mask = np.ones(ist2[3].shape, dtype=bool)
     assert np.all(ist2[3].mask), "setting mask on an image stack item not working"
     istack2 = selfistack2.clone
     mask = ImageFile(np.zeros_like(istack2[0].image)).mask.draw.circle(20, 20, 10).mask

@@ -11,7 +11,7 @@ p.template(  # pylint: disable=not-callable
     axes__prop_cycle=cycler("color", ["r", "g", "b"])
 )  # pylint: disable=not-callable
 p.plot()
-p.y += 1.0
+p.y = p.y + 1.0
 p.plot()
-p.y += 1.0
+p.y = p.y + 1.0
 p.plot()

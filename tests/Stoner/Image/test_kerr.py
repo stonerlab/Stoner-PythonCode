@@ -17,7 +17,7 @@ import pytest
 
 import Stoner
 from Stoner import Data, __home__
-from Stoner.Image.kerr import KerrArray, KerrImageFile, KerrStack
+from Stoner.Image.kerr import KerrImageFile, KerrStack
 from Stoner.Image import kerr, kerrfuncs
 
 Stoner.Options.multiprocessing = False
@@ -36,7 +36,7 @@ def shares_memory(arr1, arr2):
     return ret
 
 
-selfimage2 = KerrArray(os.path.join(testdir, "kermit3.png"))
+selfimage2 = KerrImageFile(os.path.join(testdir, "kermit3.png"))
 selfimage3 = KerrImageFile(os.path.join(sample_data_dir, "testnormalsave.png"))
 selfks = KerrStack(testdir2)
 
@@ -44,21 +44,21 @@ selfks = KerrStack(testdir2)
 @pytest.mark.plotting
 def test_kerr_ops():
     im = selfimage3.clone
-    assert isinstance(im.image, KerrArray), "KerrImageFile not blessing the image property correctly"
+    assert type(im.image) is np.ma.MaskedArray, "KerrImageFile not blessing the image property correctly"
     im1 = im.float_and_croptext()
-    assert isinstance(im1.image, KerrArray), "Calling a crop routine without the _ argument returns a new KerrArray"
+    assert type(im1.image) is np.ma.MaskedArray, "Calling a crop routine without the _ argument returns a new KerrImageFile"
     im2 = im.float_and_croptext(_=True)
     assert im2 == im, "Calling crop method with _ argument changed the KerrImageFile"
     im = KerrImageFile(selfimage2.clone)
     im.float_and_croptext(_=True)
     mask = im.image.defect_mask_subtract_image()
-    im.image[~mask] = np.mean(im.image[mask])
+    im[~mask] = np.mean(im.image[mask])
     _ = im
     assert mask.sum() == 343228, "Mask didn't work out right"
     im = KerrImageFile(selfimage2.clone)
     im.float_and_croptext(_=True)
     mask = im.image.defect_mask(radius=4)
-    im.image[~mask] = np.mean(im.image[mask])
+    im[~mask] = np.mean(im.image[mask])
     selim2 = im
     assert mask.sum() == 342540, "Mask didn't work out right"
     selim2.level_image()
@@ -74,7 +74,7 @@ def test_kerr_ops():
 def test_tesseract_ocr():
     if not kerr._tesseractable or which("tesseract") is None:
         pytest.skip("Optional pytesseract wrapper and Tesseract executable are required")
-    image = KerrArray(os.path.join(testdir, "kermit3.png"), ocr_metadata=True)
+    image = KerrImageFile(os.path.join(testdir, "kermit3.png"), ocr_metadata=True)
     metadata = image.metadata
     assert metadata["ocr_scalebar_length_microns"] == pytest.approx(50.0)
     assert metadata["ocr_field"] == pytest.approx(-0.13, abs=0.01)
@@ -87,7 +87,7 @@ def test_tesseract_ocr():
 @pytest.mark.parametrize("field_only", [False, True])
 def test_ocr_uses_text_crops(monkeypatch, field_only):
     """Recognise each text region rather than the complete annotated image."""
-    image = KerrArray(os.path.join(testdir, "kermit3.png"), asfloat=False, crop_text=False)
+    image = KerrImageFile(os.path.join(testdir, "kermit3.png"), asfloat=False, crop_text=False)
     calls = []
 
     def recognise(crop, key):
@@ -96,7 +96,7 @@ def test_ocr_uses_text_crops(monkeypatch, field_only):
         calls.append(key)
         return {"ocr_field": -0.13, "ocr_scalebar_length_microns": 50.0}.get(key, "text")
 
-    monkeypatch.setattr(KerrArray, "tesseractable", property(lambda self: True))
+    monkeypatch.setattr(KerrImageFile, "tesseractable", property(lambda self: True))
     monkeypatch.setattr(kerrfuncs, "_tesseract_image", recognise)
     image.ocr_metadata(field_only=field_only)
     assert image.metadata["ocr_field"] == -0.13
@@ -108,7 +108,7 @@ def test_no_ocr_without_dependencies(monkeypatch, wrapper_available):
     """Keep ordinary image operations usable when either OCR dependency is absent."""
     monkeypatch.setattr(kerr, "_tesseractable", wrapper_available)
     monkeypatch.setattr(kerr, "which", lambda name: None, raising=False)
-    image = KerrArray(os.path.join(testdir, "kermit3.png"))
+    image = KerrImageFile(os.path.join(testdir, "kermit3.png"))
     assert not image.tesseractable
     image.normalise()
     assert image.shape == (554, 672)
@@ -123,8 +123,8 @@ def test_import_without_ocr_wrapper(tmp_path):
     environment["PYTHONPATH"] = str(Path(__home__).parent)
     filename = str(Path(testdir, "kermit3.png").resolve())
     code = (
-        "import sys; sys.modules['pytesseract'] = None; from Stoner.Image.kerr import KerrArray; "
-        f"import numpy as np; image = KerrArray({filename!r}); "
+        "import sys; sys.modules['pytesseract'] = None; from Stoner.Image.kerr import KerrImageFile; "
+        f"import numpy as np; image = KerrImageFile({filename!r}); "
         "assert not image.tesseractable; image.normalise(); assert np.isfinite(image).all()"
     )
     result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path, env=environment,

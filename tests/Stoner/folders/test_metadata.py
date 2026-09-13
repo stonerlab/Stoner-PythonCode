@@ -52,9 +52,9 @@ def test_metadata_slice(monkeypatch):
     assert isinstance(
         fldr6.metadata.slice("Loaded from", values_only=True), list
     ), "metadata.slice not returtning a list with values_only=True."
-    assert isinstance(
-        fldr6.metadata.slice("Loaded from", output="Data"), Data
-    ), "metadata.slice not returtning Data with outpt='data'."
+    with pytest.raises(TypeError, match="numeric metadata"):
+        fldr6.metadata.slice("Loaded from", output="Data")
+    assert isinstance(fldr6.metadata.slice("Loaded from", output="frame"), DataFrame)
     for fmt, typ in zip(
         ["dict", "list", "array", "data", "frame", "smart"],
         [

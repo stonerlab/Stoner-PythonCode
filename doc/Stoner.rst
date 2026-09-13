@@ -48,15 +48,11 @@ Core Package and Modules
    keep these lists explicit so intentional public re-exports remain visible.
 
 .. automodapi:: Stoner.core.data
-    :skip: ClassTester, DataArray, DataFileInterfacesMixin, DataFileOperatorsMixin, DataFilePropertyMixin, FileManager, Iterable, Mapping, MutableSequence, PlotMixin, StonerLoadError, StonerSetasError, Tab_Delimited, TextWrapper, TypeHintedDict, metadataObject
+    :skip: ClassTester, DataFileInterfacesMixin, DataFileOperatorsMixin, DataFilePropertyMixin, FileManager, Iterable, Mapping, MutableSequence, PlotMixin, StonerLoadError, StonerSetasError, Tab_Delimited, TextWrapper, TypeHintedDict, metadataObject
     :no-inheritance-diagram:
     :headings: -~
 
 .. automodapi:: Stoner.core.base
-    :no-inheritance-diagram:
-    :headings: -~
-
-.. automodapi:: Stoner.core.array
     :no-inheritance-diagram:
     :headings: -~
 

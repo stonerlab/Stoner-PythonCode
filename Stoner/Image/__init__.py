@@ -14,16 +14,15 @@ __all__ = [
     "stack",
     "kerr",
     "widgets",
-    "ImageArray",
     "ImageFile",
     "ImageFolder",
     "ImageStack",
-    "KerrArray",
     "KerrStack",
     "MaskStack",
 ]
 from . import attrs, widgets
-from .core import ImageArray, ImageFile
+from .core import ImageFile
+from .numerical import numerical_image
 from .folders import ImageFolder
-from .kerr import KerrArray, KerrStack, MaskStack
+from .kerr import KerrImageFile, KerrStack, MaskStack
 from .stack import ImageStack

@@ -55,10 +55,11 @@ def test_stack_clone_state_independence():
     assert stack[0].metadata["Field"] == 10
 
 
-def test_legacy_padding_is_unmasked_zero():
-    """Record existing padding; explicit exclusion is a proposed migration change."""
+def test_padding_is_excluded_zero():
+    """Exclude ragged padding while retaining deterministic raw zeros."""
     stack = ImageStack([np.ones((2, 3)), np.ones((3, 4))])
     assert stack[0].shape == (2, 3)
-    np.testing.assert_array_equal(stack.imarray[0, 2, :], 0)
-    np.testing.assert_array_equal(stack.imarray[0, :, 3], 0)
-    assert not np.ma.getmaskarray(stack.imarray).any()
+    np.testing.assert_array_equal(stack.to_numpy(masked=False)[0, 2, :], 0)
+    np.testing.assert_array_equal(stack.to_numpy(masked=False)[0, :, 3], 0)
+    assert np.ma.getmaskarray(stack.imarray)[0, 2, :].all()
+    assert np.ma.getmaskarray(stack.imarray)[0, :, 3].all()

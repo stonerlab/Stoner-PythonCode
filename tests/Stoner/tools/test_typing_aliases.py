@@ -5,18 +5,16 @@ from typing import get_args, get_type_hints
 import numpy as np
 
 from Stoner import Data, ImageFile
-from Stoner.Image.core import ImageArray
 from Stoner.core.setas import Setas
 from Stoner.tools import typing as aliases
 
 
 def test_runtime_class_aliases():
-    def annotated(data: aliases.Data, image: aliases.ImageArray, file: aliases.ImageFile, roles: aliases.Setas):
+    def annotated(data: aliases.Data, file: aliases.ImageFile, roles: aliases.Setas):
         pass
 
     hints = get_type_hints(annotated)
     assert hints["data"] is Data
-    assert hints["image"] is ImageArray
     assert hints["file"] is ImageFile
     assert Setas in get_args(hints["roles"])
     assert get_type_hints(Data.add)["return"] is Data

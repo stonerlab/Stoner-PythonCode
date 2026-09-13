@@ -1,24 +1,11 @@
 # -*- coding: utf-8 -*-
 """Functions for manipulating Kerr (or any other) images.
 
-All of these functions are accessible through the :class:`ImageArray` attributes e.g.:
-
-    k=ImageArray('myfile'); k.level_image().
-
-The first 'im' function argument is automatically added in this case.
-
-If you want to add new functions that's great. There's a few important points:
-
-    * Please make sure they take an image as the first argument
-
-    * Don't give them the same name as functions from the numpy library or
-          skimage library if you don't want to override them.
-
-    * The function should not change the shape of the array. Please use crop_image
-          before doing the function if you want to do that.
-
-    * After that you're free to treat im as a ImageArray
-          or numpy array, it should all behave the same.
+These functions are exposed as methods on ImageFile and KerrImageFile. The
+method adapter supplies a detached NumPy working array, then publishes numerical
+results through the owner. Call helpers explicitly or prepare a numerical_image
+when a calculation needs metadata after ordinary NumPy arithmetic. Native NumPy
+operations do not propagate Stoner metadata or bound numerical helpers.
 """
 
 __all__ = [
@@ -69,7 +56,7 @@ from ..compat import (  # Some things to help with Python2 and Python3 compatibi
     string_types,
 )
 
-# from .core import ImageArray
+from .numerical import numerical_image
 from ..core.base import metadataObject
 from ..plot.utils import auto_fit_fontsize
 from ..tools import isiterable, istuple, make_Data
@@ -134,7 +121,7 @@ def adjust_contrast(im, lims=(0.1, 0.9), percent=True):
     """Rescale the intensity of the image.
 
     Args:
-        im (ImageArray, ImageFile):
+        im (ImageFile, ImageFile):
             Image data to be worked with.
 
     Keyword Arguments:
@@ -145,7 +132,7 @@ def adjust_contrast(im, lims=(0.1, 0.9), percent=True):
             histogram, otherwise lims are absolute
 
     Returns:
-        (ImageArray):
+        (ImageFile):
             rescaled image
 
     Mostly a call through to skimage.exposure.rescale_intensity. The absolute limits of contrast are
@@ -225,7 +212,7 @@ def align(im, ref, method="scharr", **kwargs):
             If given specifies which module to try and use.
             Options: 'scharr', 'chi2_shift', 'imreg_dft', 'cv2'
         _box (int, float or tuple):
-            Used with ImageArray.crop to select a subset of the image to use for the aligning process.
+            Used with ImageFile.crop to select a subset of the image to use for the aligning process.
         scale (int):
             Rescale the image and reference image by constant factor before finding the translation vector.
         prefilter (callable):
@@ -234,7 +221,7 @@ def align(im, ref, method="scharr", **kwargs):
 
 
     Returns:
-        (ImageArray or ndarray):
+        (ImageFile or ndarray):
             aligned image
 
     Notes:
@@ -298,10 +285,10 @@ def align(im, ref, method="scharr", **kwargs):
 
     if scale:
         tvec /= scale
-    new_im = im.shift((tvec[1], tvec[0]), prefilter=prefilter, mode=mode, cval=cval)
+    new_im = im.shift(tuple(tvec), prefilter=prefilter, mode=mode, cval=cval)
     new_im.metadata.update(data)
-    new_im["tvec"] = tuple(tvec)
-    new_im["translation_limits"] = new_im.translate_limits("tvec")
+    new_im.metadata["tvec"] = tuple(tvec)
+    new_im.metadata["translation_limits"] = new_im.translate_limits("tvec")
     return new_im
 
 
@@ -470,7 +457,7 @@ def correct_drift(im, ref, **kwargs):
     Args:
         im (ImargeArray,ImageFile):
             Image data to be worked with.
-        ref (ImageArray): Reference image with assumed zero drift
+        ref (ImageFile): Reference image with assumed zero drift
 
     Keyword Arguments:
         threshold (float): threshold for detecting imperfections in images
@@ -499,19 +486,19 @@ def correct_drift(im, ref, **kwargs):
     ret = align(im, ref, **kwargs)
     if do_shift:
         im = ret
-    im["correct_drift"] = -np.array(ret["tvec"])[::-1]
+    im.metadata["correct_drift"] = -np.array(ret.metadata["tvec"])[::-1]
 
     return im
 
 
 def subtract_image(im, background, contrast=16, clip=True, offset=0.5):
-    """Subtract a background image from the ImageArray.
+    """Subtract a background image from the ImageFile.
 
     Multiply the contrast by the contrast parameter.
     If clip is on then clip the intensity after for the maximum allowed data range.
     """
     im = im.asfloat(normalise=False, clip_negative=False)
-    im = contrast * (im - background) + offset
+    im = numerical_image(contrast * (im - background) + offset, metadata=im.metadata)
     if clip:
         im = im.clip_intensity()
     return im
@@ -544,7 +531,7 @@ def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None, window=None
     """
     if window:
         window = filters.window(window, im.shape)
-        im = im.clone * window
+        im = numerical_image(im * window, metadata=im.metadata)
     r = np.fft.fft2(im)
 
     if remove_dc:
@@ -561,11 +548,10 @@ def fft(im, shift=True, phase=False, remove_dc=False, gaussian=None, window=None
         r = np.abs(r)
     else:
         r = np.angle(r)
-    r = r.view(type(im))
+    r = numerical_image(r, metadata=im.metadata)
     if isinstance(gaussian, (float, int)):
-        r.gaussian(gaussian)
+        r = r.gaussian(gaussian)
 
-    r.metadata.update(im.metadata)
     return r
 
 
@@ -608,9 +594,9 @@ def gridimage(im, points=None, xi=None, method="linear", fill_value=None, rescal
         doesn't change the image after it has been corrected once.
     """
     if points is None:
-        points = np.column_stack((im["actual_x"].ravel(), im["actual_y"].ravel()))
+        points = np.column_stack((im.metadata["actual_x"].ravel(), im.metadata["actual_y"].ravel()))
     if xi is None:
-        xi = xi = (im["sample_x"], im["sample_y"])
+        xi = xi = (im.metadata["sample_x"], im.metadata["sample_y"])
 
     if fill_value is None:
         fill_value = np.mean
@@ -654,7 +640,7 @@ def imshow(
     """Quickly plot of image.
 
     Args:
-        im (ImageArray, ImageFile):
+        im (ImageFile, ImageFile):
             Image data to be worked with.
 
     Keyword Arguments:
@@ -710,7 +696,7 @@ def imshow(
 
     if title is None:
         if "filename" in im.metadata.keys():
-            title = os.path.split(im["filename"])[1]
+            title = os.path.split(im.metadata["filename"])[1]
         elif hasattr(im, "filename"):
             title = os.path.split(im.filename)[1]
         else:
@@ -726,8 +712,8 @@ def imshow(
         auto_fit_fontsize(txt, width, height)
     ax.axis("on" if kwargs.get("show_axis", False) else "off")
     try:
-        im["ax"] = ax
-        im["fig"] = fig
+        im.metadata["ax"] = ax
+        im.metadata["fig"] = fig
     except IndexError:
         pass
 
@@ -773,6 +759,7 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None, mode="clip")
     gradient within the box. The polynomial subtracted is added to the
     metadata as 'poly_vert_subtract' and 'poly_horiz_subtract'
     """
+    metadata = im.metadata
     if box is None:
         box = im.max_box
     cim = im.crop(box=box)
@@ -801,6 +788,7 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None, mode="clip")
         vertcoord = np.indices(im.shape)[0]
         for i, c in enumerate(p_vert):
             im = im - c * vertcoord ** (len(p_vert) - i - 1)
+    im = numerical_image(im, metadata=metadata)
     im.metadata["poly_sub"] = (p_horiz, p_vert)
     if mode == "clip":
         im = im.clip_intensity()  # saturate any pixels outside allowed range
@@ -841,7 +829,7 @@ def normalise(im, scale=None, sample=False, limits=(0.0, 1.0), scale_masked=Fals
     """
     mask = im.mask
     cls = type(im)
-    im = im.astype(float)
+    im = numerical_image(im.astype(float), metadata=im.metadata)
     if scale is None:
         scale = (-1.0, 1.0)
     section = im[im._box(sample)]
@@ -884,7 +872,7 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
     """Wrap sckit-image method of the same name to get a line_profile.
 
     Args:
-        img(ImageArray):
+        img(ImageFile):
             Image data to take line section of
 
     Keyword Arguments:
@@ -909,7 +897,7 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
     Returns:
         A :py:class:`~Stoner.core.data.Data` object containing the line profile data and the metadata from the image.
     """
-    scale = 1.0 if kwargs.get("no_scale", False) else img.get("MicronsPerPixel", 1.0)
+    scale = 1.0 if kwargs.get("no_scale", False) else img.metadata.get("MicronsPerPixel", 1.0)
     r, c = img.shape
     fast_mode = False
     if src is None and dst is None:
@@ -1101,7 +1089,7 @@ def quantize(im, output, levels=None):
     else:
         raise RuntimeError(f"{len(output)} output levels and {len(levels)} input levels")
 
-    ret = im.clone
+    ret = numerical_image(im)
     ret.mask = False
     for lvl, lvh, val in zip(levels[:-1], levels[1:], output):
         select = np.logical_and(np.less_equal(im, lvh), np.greater(im, lvl))
@@ -1169,10 +1157,10 @@ def rotate(im, angle, resize=False, center=None, order=1, mode="constant", cval=
             produce values outside the given input range.
         preserve_range (bool):
             Whether to keep the original range of values. Otherwise, the input
-            image is converted according to the conventions of `Stpomer.Image.ImageArray.as_float`.
+            image is converted according to the conventions of `Stpomer.Image.ImageFile.as_float`.
 
     Returns:
-        (ImageFile/ImageArray):
+        (ImageFile/ImageFile):
             Rotated image
 
     Notes:
@@ -1204,7 +1192,7 @@ def sgolay2d(img, points=15, poly=1, derivative=None):
     """Implements a 2D Savitsky Golay Filter for a 2D array (e.g. image).
 
     Args:
-        img (ImageArray or ImageFile):
+        img (ImageFile or ImageFile):
             image to be filtered
 
     Keyword Arguments:
@@ -1307,8 +1295,9 @@ def sgolay2d(img, points=15, poly=1, derivative=None):
         ret = signal.fftconvolve(Z, -r, mode="valid"), signal.fftconvolve(Z, -c, mode="valid").view(type(img))
     else:
         raise ValueError(f"Unknown derivative mode {derivative}")
-    ret.metadata.update(img.metadata)
-    return ret
+    if isinstance(ret, tuple):
+        return tuple(numerical_image(value, metadata=img.metadata) for value in ret)
+    return numerical_image(ret, metadata=img.metadata)
 
 
 def span(im):
@@ -1338,7 +1327,7 @@ def translate(im, translation, add_metadata=False, order=3, mode="wrap", cval=No
             The value to fill with if *mode* is constant. If not specified or None, defaults to the mean pixcel value.
 
     Returns:
-        im (ImageArray): translated image
+        im (ImageFile): translated image
 
     Areas lost by move are cropped, and areas gained are made black (0)
     The area not lost or cropped is added as a metadata parameter
@@ -1373,11 +1362,11 @@ def translate_limits(im, translation, reverse=False):
             (xmin,xmax,ymin,ymax) the maximum coordinates of the image with original
             information
 
-    After using ImageArray.translate some areas will be black,
+    After using ImageFile.translate some areas will be black,
     this finds the max area that still has original pixels in
     """
     if isinstance(translation, string_types):
-        translation = im[translation]
+        translation = im.metadata[translation]
 
     translation = np.array(translation)
     if reverse:
@@ -1418,7 +1407,7 @@ def denoise(im, weight=0.1):
 
 
 def do_nothing(image):
-    """Nulop function for testing the integration into ImageArray."""
+    """Nulop function for testing the integration into ImageFile."""
     return image
 
 
@@ -1438,7 +1427,7 @@ def crop(image, *args, **kwargs):
         copy(bool):
             If True return a copy of ImageFile with the cropped image
     Returns:
-        (ImageArray):
+        (ImageFile):
             view or copy of array asked for
 
     Notes:
@@ -1462,7 +1451,7 @@ def crop(image, *args, **kwargs):
     box = image._box(*args, **kwargs)
     ret = image[box]
     if kwargs.get("copy", False):
-        ret = ret.clone
+        ret = numerical_image(ret)
     return ret
 
 
@@ -1489,7 +1478,7 @@ def dtype_limits(image, clip_negative=True):
 
 @keep_return_type
 def asarray(image):
-    """Provide a consistent way to get at the underlying array data in both ImageArray and ImageFile objects."""
+    """Provide a consistent way to get at the underlying array data in both ImageFile and ImageFile objects."""
     return image
 
 
@@ -1517,14 +1506,7 @@ def asfloat(image, normalise=True, clip=False, clip_negative=False):
     if image.dtype.kind == "f":
         ret = image
     else:
-        ret = image.convert(dtype=np.float64, normalise=normalise).view(type(image))  # preserve metadata
-        tmp = metadataObject.__new__(metadataObject)
-        for k, v in tmp.__dict__.items():
-            if k not in ret.__dict__:
-                ret.__dict__[k] = v
-        c = image.clone  # copy formatting and apply to new array
-        for k, v in c._optinfo.items():
-            setattr(ret, k, v)
+        ret = numerical_image(convert(image, dtype=np.float64, normalise=normalise), metadata=image.metadata)
     if clip or clip_negative:
         ret = ret.clip_intensity(clip_negative=clip_negative)
     return ret
@@ -1637,7 +1619,7 @@ def save(image, filename=None, **kwargs):
 
 
 def save_png(image, filename):
-    """Save the ImageArray with metadata in a png file.
+    """Save the ImageFile with metadata in a png file.
 
     Args:
         image (ImargeArray,ImageFile):
@@ -1660,13 +1642,13 @@ def save_png(image, filename):
 
 
 def save_npy(image, filename):
-    """Save the ImageArray as a numpy array."""
+    """Save the ImageFile as a numpy array."""
     npyname = os.path.splitext(filename)[0] + ".npy"
     np.save(npyname, np.array(image))
 
 
 def save_tiff(image, filename, forcetype=False):
-    """Save the ImageArray as a tiff image with metadata.
+    """Save the ImageFile as a tiff image with metadata.
 
     Args:
         image (ImargeArray,ImageFile):
@@ -1688,7 +1670,7 @@ def save_tiff(image, filename, forcetype=False):
 
     """
     dtype = np.dtype(image.dtype).name  # string representation of dtype we can save
-    image["ImageArray.dtype"] = dtype  # add the dtype to the metadata for saving.
+    image.metadata["ImageArray.dtype"] = dtype  # add the dtype to the metadata for saving.
     if forcetype:  # PIL supports uint8, int32 and float32, try to find the best match
         if image.dtype == np.uint8 or image.dtype.kind == "b":  # uint8 or boolean
             im = Image.fromarray(image, mode="L")

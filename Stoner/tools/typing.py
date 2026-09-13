@@ -10,12 +10,11 @@ from numpy.typing import NDArray
 if TYPE_CHECKING:
     from ..core.data import Data
     from ..core.setas import Setas
-    from ..Image.core import ImageArray, ImageFile
+    from ..Image.core import ImageFile
 else:
     # Resolve after package import, without importing partially initialised classes.
     Setas = ForwardRef("core.setas.Setas", module="Stoner")
     Data = ForwardRef("core.data.Data", module="Stoner")
-    ImageArray = ForwardRef("Image.core.ImageArray", module="Stoner")
     ImageFile = ForwardRef("Image.core.ImageFile", module="Stoner")
 
 Args = Tuple[Any]

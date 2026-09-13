@@ -239,7 +239,7 @@ def test_setas_metadata():
         "Timestamp",
     ], f"Metadata reading error {selfd2.metadata}"
     assert d.metadata.type(["User", "Timestamp"]) == ["String", "Timestamp"], "Metadata.type with slice failed"
-    d.data["Column 2", :] = np.zeros(len(d))  # TODO make this work with d["Column 2",:] as well
+    d[:, "Column 2"] = np.zeros(len(d))
     assert d.z.max() == 0.0 and d.z.min() == 0.0, "Failed to set Dataarray using string indexing"
     assert d.setas.x == 0 and d.setas.y == [1] and d.setas.z == [2]
     d.setas(x=1, y="Column 2")

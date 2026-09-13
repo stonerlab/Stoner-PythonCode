@@ -17,7 +17,10 @@ from scipy.optimize import curve_fit
 from ..compat import bytes2str, string_types
 from ..core.base import TypeHintedDict
 from ..core.exceptions import StonerLoadError
-from ..Image import ImageArray, ImageFile, ImageStack
+from ..Image import ImageFile
+from ..Image.numerical import numerical_image
+from ..Image.stack import ImageStack
+from ..Image.scan_metadata import ScanMetadataMixin, read_exclusions, write_exclusions
 from ..tools.file import FileManager, HDFFileManager, file_dialog, get_filename
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
@@ -71,7 +74,7 @@ def _read_signal(scandata, g):
         else:
             tmp[i] = metadata.attrs[i]
     tmp.filename = path.basename(g.name)
-    return tmp
+    return read_exclusions(g, tmp)
 
 
 def _load_files(scandata, root_name, regrid):
@@ -137,7 +140,7 @@ def _load_parameters(scandata, root_name):
     return scandata
 
 
-class AttocubeScan(ImageStack):
+class AttocubeScan(ScanMetadataMixin, ImageStack):
     """An ImageStack subclass that can load scans from the AttocubeScan SPM System.
 
     AttocubeScan represents a scan from an Attocube SPM system as a 3D stack of scan data with
@@ -201,12 +204,12 @@ class AttocubeScan(ImageStack):
 
         self._common_metadata = TypeHintedDict()
 
+        self.scan_no = scan
+        self._common_metadata["Scan #"] = scan
+
         if root_name:
             _load_files(self, root_name, regrid)
 
-        self.scan_no = scan
-
-        self._common_metadata["Scan #"] = scan
 
         self.compression = "gzip"
         self.compression_opts = 6
@@ -220,7 +223,7 @@ class AttocubeScan(ImageStack):
 
         """
         other = super().__clone__(other, attrs_only)
-        other._common_metadata = deepcopy(self._common_metadata)
+        other._common_metadata = self._common_metadata.copy()
         return other
 
     def __getitem__(self, name):
@@ -276,20 +279,8 @@ class AttocubeScan(ImageStack):
         return loader(f, *args, **kwargs)
 
     def _instantiate(self, idx):
-        """Reconstructs the data type."""
-        r, c = self._sizes[idx]
-        if issubclass(
-            self.type, ImageArray
-        ):  # IF the underlying type is an ImageArray, then return as a view with extra metadata
-            tmp = self._stack[:r, :c, idx].view(type=self.type)
-        else:  # Otherwise it must be something with a data attribute
-            tmp = self.type()  # pylint: disable=E1102
-            tmp.data = self._stack[:r, :c, idx]
-        tmp.metadata = deepcopy(self._common_metadata)
-        tmp.metadata.update(self._metadata[self.__names__()[idx]])
-        tmp.metadata["Scan #"] = self.scan_no
-        tmp._fromstack = True
-        return tmp
+        """Return a stable frame with live common-header defaults."""
+        return super()._instantiate(idx)
 
     def _load_asc(self, filename):
         """Load a single scan file from ascii data."""
@@ -343,7 +334,7 @@ class AttocubeScan(ImageStack):
         Y = Y.ravel()
         Z = Z.ravel()
 
-        Z -= method((X, Y), *curve_fit(method, (X, Y), Z)[0])
+        Z = Z - method((X, Y), *curve_fit(method, (X, Y), Z)[0])
 
         data.data = Z.reshape(xs, ys)
         return self
@@ -440,7 +431,9 @@ class AttocubeScan(ImageStack):
                 )
                 metadata = signal.require_group("metadata")
                 typehints = signal.require_group("typehints")
-                for k in [x for x in data.metadata if x not in self._common_metadata]:
+                signal["signal"][...] = data.to_numpy(masked=False)
+                write_exclusions(signal, data)
+                for k in data.metadata:
                     try:
                         typehints.attrs[k] = data.metadata._typehints[k]
                         metadata.attrs[k] = data.metadata[k]

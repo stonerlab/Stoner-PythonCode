@@ -75,7 +75,7 @@ def test_recursive_slice_preserves_default_and_order():
 @pytest.mark.parametrize("output", ["array", "data", "frame"])
 def test_recursive_numeric_formats(output):
     result = hierarchy().metadata.slice("value", recurse=True, output=output)
-    values = result.values if output == "frame" else result.data if output == "data" else result
+    values = result.values if output == "frame" else result.to_numpy() if output == "data" else result
     np.testing.assert_array_equal(np.asarray(values).ravel(), [3, 2, 4, 1])
 
 

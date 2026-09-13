@@ -11,6 +11,7 @@ from scipy.integrate import cumulative_simpson, cumulative_trapezoid
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 
+from ..core.numerical import numerical_result
 from ..core.exceptions import assertion
 from ..tools import isiterable, istuple
 from ..tools.typing import Data, Index, Kwargs, NumericArray
@@ -280,7 +281,7 @@ def integrate(
                 datafile.add_column(resultdata, header=header, replace=False)
             else:
                 result_name = datafile.column_headers[datafile.find_col(result)]
-                datafile.add_column(resultdata, header=header, index=result, replace=i == 0)
+                datafile.add_column(resultdata, header=header, index=None if result is True else result, replace=i == 0)
         final.append(resultdata[-1])
     if len(final) == 1:
         final = final[0]
@@ -362,7 +363,7 @@ def normalise(
             else:
                 high = data.max()
                 low = data.min()
-            data = np.copy(datafile.data[:, t])
+            data = np.copy(datafile.column(t))
             data = np.where(data > high, high, np.where(data < low, low, data))
             scl, sch = scale
             data = (data - low) / (high - low) * (sch - scl) + scl
@@ -517,8 +518,8 @@ def stitch(
     # Curve fit for optimal A,B,C
     popt, pcov = curve_fit(_transform, set1, set2, p0=p0)  # pylint: disable=unbalanced-tuple-unpacking
     perr = np.sqrt(np.diagonal(pcov))
-    datafile.data[:, _.xcol], datafile.data[:, _.ycol] = func(
-        datafile.data[:, _.xcol], datafile.data[:, _.ycol], *popt
+    datafile[:, _.xcol], datafile[:, _.ycol] = func(
+        datafile.column(_.xcol), datafile.column(_.ycol), *popt
     )
     datafile["Stitching Coefficients"] = list(popt)
     datafile["Stitching Coefficient Errors"] = list(perr)
@@ -578,7 +579,6 @@ def threshold(
         positional argument list. In order to support the use of assigned columns, this has been swapped to the
         present order.
     """
-    DataArray = type(datafile.data)
     _ = datafile._col_args(xcol=xcol, ycol=col)
 
     col = _.ycol
@@ -594,20 +594,20 @@ def threshold(
         if isinstance(xcol, bool) and not xcol:
             ret = np.zeros((len(threshold), datafile.shape[1]))
         else:
-            ret = np.zeros_like(threshold).view(type=DataArray)
+            ret = np.zeros_like(threshold).view(type=np.ma.MaskedArray)
         for ix, th in enumerate(threshold):
             ret[ix] = datafile.threshold(th, col=col, xcol=xcol, rising=rising, falling=falling, all_vals=all_vals)
-        # Now we have to clean up the  retujrn list into a DataArray
+        # Now we have to clean up the  retujrn list into a NumPy masked array
         if isinstance(xcol, bool) and not xcol:  # if xcol was False we got a complete row back
             ch = datafile.column_headers
             ret.setas = datafile.setas.clone
             ret.column_headers = ch
-            ret.i = ret[0].i
+            ret.i = np.arange(len(ret))
         else:  # Either xcol was None so we got indices or we got a specified column back
             if xcol is not None:  # Specific column
                 ret = np.atleast_2d(ret)
                 ret.column_headers = [datafile.column_headers[datafile.find_col(xcol)]]
-                ret.i = [r.i for r in ret]
+                ret.i = np.arange(len(ret))
                 ret.setas = "x"
                 ret.isrow = False
             else:
@@ -632,14 +632,14 @@ def threshold(
         # retval.i=ret
         ret = retval
     else:
-        ret = DataArray(ret)
+        ret = numerical_result(ret)
     if not all_vals:
         if ret.size == 1:
-            pass
+            ret = ret.item()
         elif ret.size > 1:
             ret = ret[0]
         else:
             ret = []
-    if isinstance(ret, DataArray):
+    if isinstance(ret, np.ma.MaskedArray):
         ret.isrow = True
     return ret

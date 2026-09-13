@@ -13,7 +13,7 @@ from ..utils.maximus import flatten_header, hdr_to_dict, read_scan
     patterns=[(".hdr", 16), (".xim", 16)], mime_types=("text/plain", 16), name="MaximusImage", what="Image"
 )
 def load_maximus_image(new_data, *args, **kwargs):
-    """Load an ImageFile by calling the ImageArray method instead."""
+    """Load an ImageFile by calling the ImageFile method instead."""
     filename, args, kwargs = get_filename(args, kwargs)
     try:
         new_data.filename = filename

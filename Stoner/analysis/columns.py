@@ -64,7 +64,7 @@ def __get_math_val(datafile: Data, col: Index) -> Tuple[Data, str]:
             float then just return it as col_a float.
 
     Returns:
-        (tuple of (:py:class:`Stoner.cpre.DataArray`,str)):
+        (tuple of (:py:class:`numpy.ma.MaskedArray`,str)):
             The matching data.
     """
     match col:
@@ -270,7 +270,7 @@ def max(  # pylint: disable=redefined-builtin
     try:
         if bounds is not None:
             datafile._set_mask(bounds, True, col)
-        result = datafile.data[:, col].max(), datafile.data[:, col].argmax()
+        result = datafile.column(col).max(), datafile.column(col).argmax()
     finally:
         if bounds is not None:
             datafile._pop_mask()
@@ -318,12 +318,12 @@ def mean(
             sigma = np.array(sigma)
             _["has_yerr"] = True
         elif _.has_yerr:
-            sigma = datafile.data[:, _.yerr]
+            sigma = datafile.column(_.yerr)
 
         if not _.has_yerr:
-            result = datafile.data[:, _.ycol].mean()
+            result = datafile.column(_.ycol).mean()
         else:
-            ydata = datafile.data[:, _.ycol]
+            ydata = datafile.column(_.ycol)
             w = 1 / (sigma**2 + 1e-8)
             norm = w.sum(axis=0)
             error = np.sqrt((sigma**2).sum(axis=0)) / len(sigma)
@@ -367,7 +367,7 @@ def min(  # pylint: disable=redefined-builtin
     try:
         if bounds is not None:
             datafile._set_mask(bounds, True, col)
-        result = datafile.data[:, col].min(), datafile.data[:, col].argmin()
+        result = datafile.column(col).min(), datafile.column(col).argmin()
     finally:
         if bounds is not None:
             datafile._pop_mask()
@@ -493,11 +493,11 @@ def std(
         if isiterable(sigma) and len(sigma) == len(datafile) and all_type(sigma, float):
             sigma = np.array(sigma)
         elif _.yerr:
-            sigma = datafile.data[:, _.yerr]
+            sigma = datafile.column(_.yerr)
         else:
             sigma = np.ones(len(datafile))
 
-        ydata = datafile.data[:, _.ycol]
+        ydata = datafile.column(_.ycol)
 
         sigma = np.abs(sigma) / np.nanmax(np.abs(sigma))
         sigma = np.where(sigma < 1e-8, 1e-8, sigma)

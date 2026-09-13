@@ -238,8 +238,8 @@ with a "fill" value of 10^20.
    chance that you will need the masked data values again later !
 
 .. note::
-    Strictly speaking, the :py:attr:`~Stoner.core.data.Data.data` attribute is a subclass of the NumPy masked array, :py:class:`Stoner.core.array.DataArray`.
-    This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.
+    ``Data.data`` returns a detached, read-only NumPy masked array.
+    The pandas owner holds values, exclusions, column identities and roles.
 
 .. _setas:
 
@@ -491,29 +491,26 @@ rows, or directly pull out the last fews rows in the file.
 Special Magic When Working with Subsets of Data
 -----------------------------------------------
 
-As mentioned above, the data in a :py:class:`~Stoner.core.data.Data` is a special subclass of NumPy's masked array, :py:class:`Stoner.core.array.DataArray`.
-A DataArray understands that columns can have names and can be assigned to hold specific types of data - x,y,z values etc. In
-fact, the logic used for the column names and setas attribute in a :py:class:`~Stoner.core.data.Data` is actually supplied by the
-:py:class:`~Stoner.core.array.DataArray`. When you index a Data object or its data, the resulting data remembers its column names and assignments
-and these can be used directly::
+Indexing ``Data`` returns ordinary NumPy masked arrays. Direct row and slice
+results may carry descriptive ``i``, ``column_headers`` and ``setas`` annotations
+prepared from the owner. These describe that result only: further NumPy slicing,
+arithmetic and copying follow NumPy semantics and do not propagate the annotations.
+Changing an annotation never changes the source schema or row identity.
 
-    r=d[1:4]
-    print r.x,r.y
+NumPy results use integer or Boolean indexing, so replace ``row["Temperature"]``
+with ``row[d.find_col("Temperature")]``. Compute derived angles explicitly with
+NumPy, or use ``d.q`` and ``d.p`` on the Data owner. Structured records support
+``d.records[index]["header"]`` without the former ``._`` array alias. Excluded
+scalar reads return ``numpy.ma.masked``; test them with ``numpy.ma.is_masked``.
 
-In addition to the column assignments, :py:class:`~Stoner.core.array.DataArray` also keeps track of the row numbers and makes them available via
-the *i* attribute.::
+Use the Data object's ``column_headers``, ``setas`` and ``column_ids`` for live
+schema access, and ``export_storage()`` for a lossless package. Numerical column
+exports are positional arrays; use ``d.column_headers[index]`` for a label::
 
-    d.data.i # [0,1,2,3...,len(d)]
-    r=d[10]
-    r.i # 10
-    r.column_headers
-
-You can reset the row numbers by assigning a value to the *i* attribute.
-
-A single column of data also gains a *.name* attribute that matches its column_header::
-
-    c=d[:,0]
-    c.name == c.column_headers[0] #True
+    row = d[10]
+    print(row.i)  # 10, recorded when this row was selected
+    values = d[:, 0]
+    label = d.column_headers[0]
 
 Manipulating the metadata
 -------------------------
@@ -740,8 +737,7 @@ A final way of searching data is to look for the closest row to a given value. F
     r=d.closest(10.3)
 
 If the *xcol* parameter is not supplied, the value from the :py:attr:`~Stoner.core.data.Data.setas` attribute is used. Since the returned row
-is an instance of :py:class:`Stoner.core.array.DataArray` taken from the original data, it will know what row number it was and
-will make that available via its *i* attribute.
+is a detached NumPy masked array, its explicitly supplied *i* annotation records the selected row number.
 
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -838,10 +834,10 @@ Working with Columns of Data
 Changing Individual Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :py:attr:`~Stoner.core.data.Data.data` attribute is not simply a 2D NumPy array, but a special subclass :py:class:`Stoner.core.array.DataArray`; it can still
-be directly modified like any other NumPy array-like class. If, however, the :py:attr:`~Stoner.core.data.Data.setas` attribute has
-been used to identify columns as containing x,y,z,u,v,w,d,e or f type data, then the corresponding attributes can be written
-to as well as read to directly modify the data without having to keep track any further of which column(s) is indexed.
+The ``data`` property supplies a read-only numerical snapshot. Assign through
+``d[row, column]``, replace ``d.data`` as a whole, or use ``d.edit_numpy()`` to
+commit pixelwise changes. Assigned roles such as ``x``, ``y`` and ``z`` support
+direct column replacement on the Data object.
 Thus the following will work::
 
     d.setas="x..y..z"

@@ -13,7 +13,7 @@ import pytest
 from lmfit.models import LorentzianModel
 
 from Stoner import __datapath__
-from Stoner.Image import ImageArray, ImageFile
+from Stoner.Image import ImageFile
 
 thisdir = dirname(__file__)
 
@@ -108,10 +108,10 @@ def test_imagefile_ops():
 
 
 def test_funcs():
-    img_a = ImageArray(join(thisdir, "coretestdata/im2_noannotations.png"))
-    img_a1 = ImageArray(join(thisdir, "coretestdata/im1_annotated.png"))
-    b = img_a.translate((2.5, 3))
-    c = b.correct_drift(ref=img_a)
+    img_a = ImageFile(join(thisdir, "coretestdata/im2_noannotations.png"))
+    img_a1 = ImageFile(join(thisdir, "coretestdata/im1_annotated.png"))
+    b = img_a.clone.translate((2.5, 3))
+    c = b.clone.correct_drift(ref=img_a)
     d = b.align(img_a, method="scharr")
     tv = np.array(d["tvec"]) * 10
     cd = np.array(c["correct_drift"]) * 10

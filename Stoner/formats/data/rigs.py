@@ -32,7 +32,7 @@ def load_bigblue(new_data, *args, **kwargs):
     new_data.filename = filename
 
     new_data = load_csvfile(new_data, filename, *args, header_line=3, data_line=7, data_delim=" ", header_delim=",")
-    if np.all(np.isnan(new_data.data)):
+    if np.all(np.isnan(new_data.to_numpy())):
         raise StonerLoadError("All data was NaN in Big Blue format")
     return new_data
 
@@ -161,9 +161,9 @@ def _extend_columns(new_data, i):
     if len(new_data.column_headers) < i:
         length = len(new_data.column_headers)
         new_data.data = np.append(
-            new_data.data, np.zeros((new_data.shape[0], i - length)), axis=1
+            new_data.to_numpy(), np.zeros((new_data.shape[0], i - length)), axis=1
         )  # Need to expand the array first
-        new_data.column_headers.extend([f"Column {x}" for x in range(length, i)])
+        new_data.column_headers[length:i] = [f"Column {x}" for x in range(length, i)]
 
 
 def _et_cmd(new_data, parts):
@@ -242,7 +242,7 @@ def load_easyplot(new_data, *args, **kwargs):
     new_data.data = np.genfromtxt(
         new_data.filename, skip_header=datastart, skip_footer=i - dataend, delimiter=delimiter
     )
-    if new_data.data.shape[1] == 2:
+    if new_data.shape[1] == 2:
         new_data.setas = "xy"
     return new_data
 
@@ -280,7 +280,7 @@ def load_pinklib(new_data, *args, **kwargs):
         column_headers = f[header_line].strip("#\t ").split("\t")
         data = np.genfromtxt(f, dtype="float", delimiter="\t", invalid_raise=False, comments="#")
     new_data.data = data[:, 0:-2]  # Deal with an errant tab at the end of each line
-    new_data.column_headers = column_headers
+    new_data.column_headers = column_headers[:new_data.shape[1]]
     if np.all([h in column_headers for h in ("T (C)", "R (Ohm)")]):
         new_data.setas(x="T (C)", y="R (Ohm)")  # pylint: disable=not-callable
     return new_data

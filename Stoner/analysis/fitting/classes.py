@@ -266,7 +266,7 @@ class _Curve_Fit_Result:
             raise ValueError(
                 "Need to have some x-data, the fitting functions and optimal parameters  before calculating fit"
             )
-        return self.func(self.data.data[:, self.settings.columns.xcol], *self.popt)
+        return self.func(self.data.to_numpy(masked=False)[:, self.settings.columns.xcol], *self.popt)
 
     @property
     def perr(self):

@@ -293,7 +293,8 @@ def save_tdi2_format(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """
     filename, args, kwargs = get_filename(args, kwargs)
     metadata = _flatten_to_metadata(save_data.metadata)
-    columns = [(col, save_data.data[:, ix]) for ix, col in enumerate(save_data.column_headers)]
+    values = save_data.to_numpy()
+    columns = [(col, values[:, ix]) for ix, col in enumerate(save_data.column_headers)]
 
     dest = Path(filename)
     content = "\n".join("\t".join(row) for row in _build_rows(metadata, columns)) + "\n"

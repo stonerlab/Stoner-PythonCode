@@ -9,14 +9,10 @@ import pathlib
 import urllib
 
 import numpy as np
-from numpy import ma
 
 from ..compat import path_types
 from ..tools import get_option
-from ..tools.classes import copy_into
 from ..tools.file import URL_SCHEMES
-from .array import DataArray
-from .setas import ColumnHeadersDescriptor, Setas
 
 try:
     from tabulate import tabulate
@@ -30,15 +26,6 @@ class DataFilePropertyMixin:
     """Provide the properties for DataFile Like Objects."""
 
     _subclasses = None
-
-    #: setas (:py:class:`Setas`): Descriptor that delegates column-type assignments to the
-    #:   internal :py:class:`DataArray` (``_data``).  Getting or setting ``obj.setas`` is
-    #:   equivalent to ``obj._data.setas``.
-    setas = Setas(source="_data")
-
-    #: column_headers (list): Descriptor that forwards to ``setas.column_headers`` via the
-    #:   delegating :py:class:`Setas` descriptor above.
-    column_headers = ColumnHeadersDescriptor()
 
     @property
     def _repr_html_(self):
@@ -64,16 +51,7 @@ class DataFilePropertyMixin:
         except TypeError:
             return ""
 
-    @property
-    def clone(self):
-        """Get a deep copy of the current DataFile."""
-        c = type(self)()
-        if self.debug:
-            print("Cloning in DataFile")
-        return copy_into(self, c)
 
-    data = DataArray([])
-    """DataArray descriptor that enforces the data attribute is always a :class:`DataArray` instance."""
 
     @property
     def dict_records(self):
@@ -82,13 +60,9 @@ class DataFilePropertyMixin:
 
     @property
     def dims(self):
-        """Alias for self.data.axes."""
-        return self.data.axes
+        """Return the dimensions inferred from the owner column roles."""
+        return self.setas.cols.axes
 
-    @property
-    def dtype(self):
-        """Return the np dtype attribute of the data."""
-        return self.data.dtype
 
     @property
     def filename(self):
@@ -151,19 +125,7 @@ class DataFilePropertyMixin:
         ret = tabulate(outp, tablefmt=fmt, numalign="decimal", stralign="center")
         return ret
 
-    @property
-    def mask(self):
-        """Return the mask of the data array."""
-        self.data.mask = ma.getmaskarray(self.data)
-        return self.data.mask
 
-    @mask.setter
-    def mask(self, value):
-        """Set the mask attribute by setting the data.mask."""
-        if callable(value):
-            self._set_mask(value, invert=False)
-        else:
-            self.data.mask = value
 
     @property
     def records(self):
@@ -187,14 +149,10 @@ class DataFilePropertyMixin:
         self.setas = setas
         self.column_headers = ch_bak
         try:
-            return self.data.view(dtype=dtype).reshape(len(self))
+            return self.data.copy().view(dtype=dtype).reshape(len(self))
         except TypeError as err:
             raise TypeError(f"Failed to get record view. Dtype was {dtype}") from err
 
-    @property
-    def shape(self):
-        """Pass through the numpy shape attribute of the data."""
-        return self.data.shape
 
     @property
     def T(self):

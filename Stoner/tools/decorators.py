@@ -23,71 +23,25 @@ def image_file_adaptor(workingfunc):
         The wrapped functions take additional keyword arguments that are stripped off from the call.
 
     Keyword Arguments:
-        _box(:py:meth:`Stoner.ImageArray.crop` arguments):
+        _box(:py:meth:`Stoner.Image.core.ImageFile.crop` arguments):
             Crops the image first before calling the parent method.
         _(bool, None):
-            Controls whether a :py:class:`ImageArray` return will be substituted for the current
-            :py:class:`ImageArray`.
+            Controls whether a :py:class:`ImageFile` return will be substituted for the current
+            :py:class:`ImageFile`.
 
-            * True: - all ImageArray return types are substituted.
+            * True: - all ImageFile return types are substituted.
             * False (default) - Imagearray return types are substituted if they are the same size as the original
-            * None - A copy of the current object is taken and the returned ImageArray provides the data.
+            * None - A copy of the current object is taken and the returned ImageFile provides the data.
     """
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
     def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
-        box = kwargs.pop("_box", False)
-        transpose = getattr(workingfunc, "transpose", False)
-        if isinstance(box, bool) and not box:
-            im = self.image
-        else:
-            im = self.image[im._box(box)]
-        if transpose:
-            im = im.T
-        args = list(args)
-        for ix, a in enumerate(args):
-            if isinstance(a, type(self)):
-                args[ix] = a.image
-
-        if getattr(workingfunc, "changes_size", False) and "_" not in kwargs:
-            # special case for common function crop which will change the array shape
-            force = True
-        else:
-            force = kwargs.pop("_", False)
-        r = workingfunc(im, *args, **kwargs)
-        if getattr(workingfunc, "keep_class", False):
-            return r
-        if isinstance(r, type(self.image)):
-            self.image = r
-            return self
-        if isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
-            ret = make_Data(r)
-            ret.metadata = self.metadata.copy()
-            ret.column_headers[0] = workingfunc.__name__
-            return self
-        if isinstance(r, np.ndarray):  # make sure we return a ImageArray
-            if transpose:
-                r = r.T
-            if isinstance(r, type(im)) and np.shares_memory(r, im):  # Assume everything was inplace
-                self.image = r
-
-                return self
-            r = r.view(type(im))
-            if r.shape == self.shape:
-                if im.metadata is not r.metadata:
-                    self.image = r.clone  # We're going to need to clone the return data because we can do fast copies.
-                self.image[...] = r[...]
-                self.metadata.update(r.metadata)
-                return self
-            ret = self.clone if not force else self
-            ret.image = r.view(type(im))
-            metadata = copy(self.metadata)
-            metadata.update(r.metadata)
-            ret.metadata = metadata
-            return ret
-        return r
+        from ..Image.storage_bridge import call_method
+        if "_image_owner" not in self.__dict__:
+            raise ValueError("Assign image pixels before numerical operations")
+        return call_method(self, workingfunc, args, kwargs)
 
     return fix_signature(gen_func, workingfunc)
 
@@ -99,65 +53,25 @@ def image_file_raw_adaptor(workingfunc):
         The wrapped functions take additional keyword arguments that are stripped off from the call.
 
     Keyword Arguments:
-        _box(:py:meth:`Stoner.ImageArray.crop` arguments):
+        _box(:py:meth:`Stoner.Image.core.ImageFile.crop` arguments):
             Crops the image first before calling the parent method.
         _(bool, None):
-            Controls whether a :py:class:`ImageArray` return will be substituted for the current
-            :py:class:`ImageArray`.
+            Controls whether a :py:class:`ImageFile` return will be substituted for the current
+            :py:class:`ImageFile`.
 
-            * True: - all ImageArray return types are substituted.
+            * True: - all ImageFile return types are substituted.
             * False (default) - Imagearray return types are substituted if they are the same size as the original
-            * None - A copy of the current object is taken and the returned ImageArray provides the data.
+            * None - A copy of the current object is taken and the returned ImageFile provides the data.
     """
     # Avoid PEP257/black issue
 
     @wraps(workingfunc)
     def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
-        box = kwargs.pop("_box", False)
-        transpose = getattr(workingfunc, "transpose", False)
-        clones = getattr(workingfunc, "clones", False)
-        if isinstance(box, bool) and not box:
-            im = self.image
-        else:
-            im = self.image[im._box(box)]
-        if transpose:
-            im = im.T
-        args = list(args)
-        for ix, a in enumerate(args):
-            if isinstance(a, type(self)):
-                args[ix] = a.image
-
-        if getattr(workingfunc, "changes_size", False) and "_" not in kwargs:
-            # special case for common function crop which will change the array shape
-            force = True
-        else:
-            force = kwargs.pop("_", False)
-        r = workingfunc(im, *args, **kwargs)
-        if getattr(workingfunc, "keep_class", False):
-            return r
-        if isinstance(r, np.ndarray) and r.ndim != 2:  # 1D Array goes back straight
-            return r
-        if isinstance(r, np.ndarray):  # make sure we return a ImageArray
-            if transpose:
-                r = r.T
-            ret = self if not clones else self.clone
-            if isinstance(r, type(im)) and np.shares_memory(r, im):  # Assume everything was inplace
-                ret.image = r
-                return ret
-            r = r.view(type(im))
-            if r.shape == ret.shape:
-                ret.image = ret.image.astype(r.dtype)
-                ret.image[...] = r[...]
-                ret.metadata.update(r.metadata)
-                return ret
-            ret = self.clone if not force else self
-            ret.image = r.view(type(im))
-            metadata = copy(ret.metadata)
-            metadata.update(r.metadata)
-            ret.metadata = metadata
-            return ret
-        return r
+        from ..Image.storage_bridge import call_method
+        if "_image_owner" not in self.__dict__:
+            raise ValueError("Assign image pixels before numerical operations")
+        return call_method(self, workingfunc, args, kwargs)
 
     return fix_signature(gen_func, workingfunc)
 
@@ -181,19 +95,10 @@ def array_file_property(workingfunc):
     @wraps(workingfunc)
     def gen_func(self, *args, **kwargs):
         """Wrap magic proxy function call."""
-        transpose = getattr(workingfunc, "transpose", False)
-        clones = getattr(workingfunc, "clones", False)
-        im = self.image if not clones else self.clone.image
-        if transpose:
-            im = im.T
-        args = list(args)
-        for ix, a in enumerate(args):
-            if isinstance(a, type(self)):
-                args[ix] = a.image
-
-        ret = workingfunc(im, *args, **kwargs)
-        # This shouldn't in fact be returning anything
-        return ret
+        from ..Image.storage_bridge import call_method
+        if "_image_owner" not in self.__dict__:
+            raise ValueError("Assign image pixels before numerical operations")
+        return call_method(self, workingfunc, args, kwargs, setter=True)
 
     return fix_signature(gen_func, workingfunc)
 
@@ -202,9 +107,26 @@ def array_file_attr(name):
     """Construct a property that will handle getting setting ande deleting the name attribute."""
 
     def getter(self):
+        owner = self.__dict__.get("_image_owner")
+        if owner is not None:
+            if name in {"shape", "dtype"}:
+                return getattr(owner, name)
+            if name == "size":
+                return int(np.prod(owner.shape))
+            if name == "ndim":
+                return 2
         return getattr(self._image, name)
 
     def setter(self, value):
+        if "_image_owner" in self.__dict__:
+            from ..Image.storage_bridge import snapshot, replace_image
+            if name in {"filename", "debug", "_title", "_mask_color", "_mask_alpha"}:
+                self.__dict__["_image_attrs"][name] = value
+                return
+            draft = snapshot(self, writable=True)
+            setattr(draft, name, value)
+            replace_image(self, draft)
+            return
         return setattr(self._image, name, value)
 
     def deleter(self):
@@ -213,57 +135,6 @@ def array_file_attr(name):
     return property(getter, setter, deleter, f"Pass thrpough for {name}")
 
 
-def image_array_adaptor(workingfunc):
-    """Wrap an arbitrary callbable to make it a bound method of this class.
-
-    Args:
-        workingfunc (callable):
-            The callable object to be wrapped.
-
-    Returns:
-        (function):
-            A function with enclosure that holds additional information about this object.
-
-    The function returned from here will call workingfunc with the first argument being a clone of this
-    ImageArray. If the meothd returns an ndarray, it is wrapped back to our own class and the metadata dictionary
-    is updated. If the function returns a :py:class:`~Stoner.core.data.Data` object then this is also updated with our
-    metadata.
-
-    This method also updates the name and documentation strings for the wrapper to match the wrapped function -
-    thus ensuring that Spyder's help window can generate useful information.
-
-    """
-    # Avoid PEP257/black issue
-
-    @wraps(workingfunc)
-    def gen_func(self, *args, **kwargs):
-        """Wrap magic proxy function call."""
-        transpose = getattr(workingfunc, "transpose", False)
-        if transpose:
-            change = self.T
-        else:
-            change = self
-        r = workingfunc(change, *args, **kwargs)  # send copy of self as the first arg
-        if isinstance(r, make_Data(None)):
-            pass  # Data return is ok
-        elif isinstance(r, np.ndarray) and np.prod(r.shape) == np.max(r.shape):  # 1D Array
-            r = make_Data(r)
-            r.metadata = self.metadata.copy()
-            r.column_headers[0] = workingfunc.__name__
-        elif isinstance(r, np.ndarray):  # make sure we return a ImageArray
-            if transpose:
-                r = r.T
-            if isinstance(r, type(self)) and np.shares_memory(r, self):  # Assume everything was inplace
-                return r
-            r = r.view(type(self))
-            sm = self.metadata.copy()  # Copy the currently metadata
-            sm.update(r.metadata)  # merge in any new metadata from the call
-            r.metadata = sm  # and put the returned metadata as the merged data
-        # NB we might not be returning an ndarray at all here !
-        return r
-
-    gen_func.keep_class = getattr(workingfunc, "keep_class", False)
-    return fix_signature(gen_func, workingfunc)
 
 
 def label(**kwargs):
@@ -284,7 +155,7 @@ def label(**kwargs):
 
 def class_modifier(
     module,
-    adaptor=image_array_adaptor,
+    adaptor=None,
     transpose=False,
     overload=False,
     proxy_cls=None,
@@ -303,7 +174,7 @@ def class_modifier(
 
     Keyword Arguments:
         adaptor (callable or None):
-            Factory that wraps each source function, defaulting to image_array_adaptor.
+            Factory that wraps each source function, or None to attach it unchanged.
             None attaches the original function without adapting inputs or results.
         transpose (bool):
             Whether there functions in the module need to have their data transposed to work.
@@ -413,7 +284,7 @@ def class_wrapper(
 
 
 def changes_size(func):
-    """Mark a function as one that changes the size of the ImageArray."""
+    """Mark a function as one that changes the size of the ImageFile."""
     func.changes_size = True
     return func
 

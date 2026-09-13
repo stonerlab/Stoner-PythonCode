@@ -41,5 +41,5 @@ def test_copy_into_preserves_native_types_and_independent_storage():
         assert destination.metadata.type(key) == source.metadata.type(key)
     destination["nested"]["first"][1]["array"][0] = 99
     assert source["nested"]["first"][1]["array"][0] == 1
-    destination.data[1, 0] = 99
+    destination[1, 0] = 99
     assert source.data[1, 0] == 3

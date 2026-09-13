@@ -10,6 +10,7 @@ from skimage import exposure, io, transform
 
 from ..compat import which
 from ..core.base import TypeHintedDict
+from .numerical import numerical_image
 from ..core.exceptions import StonerAssertionError, assertion
 
 GRAY_RANGE = (0, 65535)  # 2^16
@@ -71,7 +72,7 @@ def crop_text(kerr_im, copy=False):
     """Crop the bottom text area from a standard Kermit image.
 
     Args:
-        kerr_im (KerrArray):
+        kerr_im (KerrImageFile):
             Image to crop, supplied by the instance when called as a bound method.
 
     Keyword Arguments:
@@ -80,7 +81,7 @@ def crop_text(kerr_im, copy=False):
             An already cropped image is returned unchanged even when True.
 
     Returns:
-        ImageArray:
+        ImageFile:
             Image with shape (512, 672). An input of this shape is returned directly;
             an annotated image of shape (554, 672) has its bottom 42 rows removed.
 
@@ -104,16 +105,16 @@ def reduce_metadata(kerr_im):
         (:py:class:`TypeHintedDict`): the new metadata
     """
     newmet = {}
-    if not all((k in kerr_im.keys() for k in _test_keys)):
+    if not all((k in kerr_im.metadata for k in _test_keys)):
         return kerr_im.metadata  # we've not got a standard Labview output, not safe to reduce
     for key in _useful_keys:
-        if key in kerr_im.keys():
-            newmet[key] = kerr_im[key]
+        if key in kerr_im.metadata:
+            newmet[key] = kerr_im.metadata[key]
     newmet["field"] = newmet.pop("X-B-2d")  # rename
-    if "Subtraction Std" in kerr_im.keys():
+    if "Subtraction Std" in kerr_im.metadata:
         newmet["subtraction"] = newmet.pop("Subtraction Std")
-    if "Averaging" in kerr_im.keys():
-        if kerr_im["Averaging"]:  # averaging was on
+    if "Averaging" in kerr_im.metadata:
+        if kerr_im.metadata["Averaging"]:  # averaging was on
             newmet["Averaging"] = newmet.pop("Images to Average")
         else:
             newmet["Averaging"] = 1
@@ -197,7 +198,7 @@ def ocr_metadata(kerr_im, field_only=False):
     """Recognise metadata from the text regions of an annotated Kerr image.
 
     Args:
-        kerr_im (KerrArray):
+        kerr_im (KerrImageFile):
             Image containing the standard Kermit annotation strip.
 
     Keyword Arguments:
@@ -264,7 +265,7 @@ def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=
     """Create a boolean defect mask for an unprocessed Kerr image.
 
     Args:
-        kerr_im (KerrArray):
+        kerr_im (KerrImageFile):
             Image to analyse, supplied by the instance when called as a bound method.
 
     Keyword Arguments:
@@ -290,7 +291,7 @@ def defect_mask(kerr_im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=
         detected in the FAST corner response. It does not remove pixels from the image.
 
     See Also:
-        :py:meth:`Stoner.Image.kerr.KerrArray.defect_mask_subtract_image`:
+        :py:meth:`Stoner.Image.kerr.KerrImageFile.defect_mask_subtract_image`:
             Mask an image formed by subtraction.
     """
     im = kerr_im.asfloat()
@@ -316,7 +317,7 @@ def defect_mask_subtract_image(kerr_im, threshmin=0.25, threshmax=0.9, denoise_w
     """Create a boolean defect mask for a Kerr subtraction image.
 
     Args:
-        kerr_im (KerrArray):
+        kerr_im (KerrImageFile):
             Subtraction image to analyse, supplied by the instance when called as a bound method.
 
     Keyword Arguments:

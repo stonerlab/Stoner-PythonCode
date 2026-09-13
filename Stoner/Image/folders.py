@@ -17,7 +17,8 @@ from ..compat import int_types, string_types
 from ..folders.core import BaseFolder
 from ..folders.mixins import DiskBasedFolderMixin
 from . import ImageFile
-from .core import ImageArray
+from .numerical import numerical_image
+from .core import ImageFile
 
 
 def _prep_figure(self, kwargs):
@@ -56,7 +57,7 @@ class ImageFolderMixin:
     functions and loaders appropriate for image based files.
 
     Attributes:
-        type (:py:class:`Stoner.Image.core.ImageArray`):
+        type (:py:class:`Stoner.Image.core.ImageFile`):
             the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
@@ -82,7 +83,7 @@ class ImageFolderMixin:
             Whether to read the directory immediately on creation. Default is True
     """
 
-    _defaults = {"type": ImageArray, "pattern": ["*.png", "*.tiff", "*.jpeg", "*.jpg", "*.tif"]}
+    _defaults = {"type": ImageFile, "pattern": ["*.png", "*.tiff", "*.jpeg", "*.jpg", "*.tif"]}
     _no_defaults = ["flat"]
 
     @property
@@ -105,7 +106,7 @@ class ImageFolderMixin:
                 if hasattr(im, "image"):
                     im = im.image
                 else:
-                    raise TypeError(f"Cannot represent {type(im)} as an ImageArray.")
+                    raise TypeError(f"Cannot represent {type(im)} as an ImageFile.")
             yield im
 
     #########################################################################################################
@@ -143,9 +144,9 @@ class ImageFolderMixin:
         """Align each image in the folder to the reference image.
 
         Args:
-            ref (str, int, ImageFile, ImageArray or 2D array):
+            ref (str, int, ImageFile, ImageFile or 2D array):
                 The reference image to align to. If a string or an int, then this is used to lookup the corresponding
-                member of the ImageFolder which is then used. ImageFiles, ImageArrays and 2D arrays are used directly
+                member of the ImageFolder which is then used. ImageFiles, ImageFiles and 2D arrays are used directly
                 as reference images.
 
         Keyword Arguments:
@@ -171,21 +172,26 @@ class ImageFolderMixin:
         # Get me reference data
         if isinstance(ref, (string_types, int_types)):
             ref_data = self.__getter__(ref, instantiate=True)
-            if isinstance(ref_data, ImageFile):
-                ref_data = ref_data.image
         elif isinstance(ref, ImageFile):
-            ref_data = ref.image.view(ImageArray)
+            ref_data = ref
         elif isinstance(ref, np.ndarray) and ref.ndim == 2:
-            ref_data = ref.view(ImageArray)
+            ref_data = ref.view(np.ma.MaskedArray)
         else:
             try:
-                ref_data = np.array(ref).view(ImageArray)
+                ref_data = np.array(ref).view(np.ma.MaskedArray)
                 if ref_data.ndim != 2:
                     raise TypeError()
             except (TypeError, ValueError) as err:
                 raise TypeError(f"Cannot interpret {type(ref)} as reference image data.") from err
         # Call align on each object
-        self.each.align(ref_data, **kwargs)
+        if isinstance(ref_data, ImageFile):
+            kwargs["_reference_grid"] = ref_data.export_storage().dataset.coords.to_dataset()
+            ref_data = ref_data.image
+        kwargs.setdefault("_", None)
+        results = self.each.align(ref_data, **kwargs)
+        for name, result in zip(self.__names__(), results):
+            if isinstance(result, tuple) and result and isinstance(result[0], Exception):
+                raise RuntimeError(f"Alignment failed for {name}: {result[0]}") from result[0]
         limits = self.metadata.slice("translation_limits", output="array")
         stack_limits = np.zeros(4)
         stack_limits[::2] = limits.max(axis=0)[::2]
@@ -201,7 +207,7 @@ class ImageFolderMixin:
 
         Args:
             func(string or callable):
-                if string it must be a function reachable by ImageArray
+                if string it must be a function reachable by ImageFile
             quiet(bool):
                 if False print '.' for every iteration
 
@@ -226,19 +232,15 @@ class ImageFolderMixin:
                 - "none': no metadata from images.
 
         Returns:
-            average(ImageArray):
+            average(ImageFile):
                 average values
         """
         if not self.size:
             raise RuntimeError("Cannot average Imagefolder if images have different sizes")
-        if hasattr(self, "_stack"):
-            stack = self._stack.view(np.ndarray)
-            axis = -1
-        else:
-            stack = np.stack(list(self.images), axis=0)
-            axis = 0
+        stack = np.ma.stack(list(self.images), axis=0)
+        axis = 0
         average = np.average(stack, axis=axis, weights=weights)
-        ret = average.view(ImageArray)
+        ret = numerical_image(average)
         if _metadata == "common":
             ret.metadata = self.metadata.common_metadata
         elif _metadata == "first":
@@ -258,7 +260,7 @@ class ImageFolderMixin:
 
     @classmethod
     def from_tiff(cls, filename, **kwargs):
-        """Create a new ImageArray from a tiff file."""
+        """Create a new ImageFile from a tiff file."""
         self = cls(**kwargs)
         with Image.open(filename, "r") as img:
             tags = img.tag_v2
@@ -404,10 +406,7 @@ class ImageFolderMixin:
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
         if weights is None:  # shortcircuit
-            if hasattr(self, "_stack"):
-                sumsqdev = np.std(self._stack.view(np.ndarray), axis=-1)
-            else:
-                sumsqdev = np.stack(list(self.images), axis=0).std(axis=0)
+            sumsqdev = np.ma.stack(list(self.images), axis=0).std(axis=0)
         else:
             avs = self.average(weights=weights)
             if not isinstance(avs, np.ndarray) and hasattr(avs, "image"):
@@ -416,7 +415,7 @@ class ImageFolderMixin:
             for ix, img in enumerate(self.images):
                 sumsqdev += weights[ix] * (img - avs) ** 2
             sumsqdev = np.sqrt(sumsqdev) / np.sum(weights, axis=0)
-        ret = sumsqdev.view(ImageArray)
+        ret = numerical_image(sumsqdev)
         ret.metadata = self.metadata.common_metadata
         return self._type(ret[ret._box(_box)])
 
@@ -436,7 +435,7 @@ class ImageFolderMixin:
         return serr
 
     def to_tiff(self, filename):
-        """Save the ImageArray as a tiff image with metadata.
+        """Save the ImageFile as a tiff image with metadata.
 
         Args:
             filename (str):
@@ -491,7 +490,7 @@ class ImageFolder(ImageFolderMixin, DiskBasedFolderMixin, BaseFolder):
     functions and loaders appropriate for image based files.
 
     Attributes:
-        type (:py:class:`Stoner.Image.core.ImageArray`):
+        type (:py:class:`Stoner.Image.core.ImageFile`):
             the type ob object to store in the folder (defaults to :py:class:`Stoner.Cire.Data`)
         extra_args (dict):
             Extra arguments to use when instantiatoing the contents of the folder from a file on disk.

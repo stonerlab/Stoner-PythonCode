@@ -665,7 +665,8 @@ class metadataObject(MutableMapping):  # pylint: disable=invalid-name
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Initialise the current metadata attribute."""
         metadata = kwargs.pop("metadata", {})
-        self._metadata = getattr(self, "_metadata", TypeHintedDict())
+        if "_storage_owner" not in self.__dict__:
+            self._metadata = getattr(self, "_metadata", TypeHintedDict())
         self.metadata.update(metadata)
         super().__init__()
 

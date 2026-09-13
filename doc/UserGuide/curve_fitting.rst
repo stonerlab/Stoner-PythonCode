@@ -134,7 +134,7 @@ True if the row is to be included in the fit and False if not. e.g.::
     """Keep only data points between (100,5) and (200,20) in x and y.
 
     x (float): x data value
-    row (DataArray): complete row of data."""
+    row (numpy.ma.MaskedArray): complete row of data."""
         return 100<x<200 and 5<row.y<20
 
 Simple function fitting

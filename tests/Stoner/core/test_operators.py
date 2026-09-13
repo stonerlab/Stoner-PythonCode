@@ -90,7 +90,9 @@ def test_add_operator():
     f1, f2 = f.shape
     assert f1 == selfd2.shape[0] + 1, "Failed to add a row by providing a dictionary"
     assert f2 == selfd2.shape[1] + 1, "Failed to add an extra columns by adding a dictionary with a new key"
-    assert np.isnan(f[-1, 2]) and np.isnan(f[0, -1]), "Unset values when adding a dictionary not NaN"
+    assert f[-1, 2] is np.ma.masked and f[0, -1] is np.ma.masked
+    raw = f.to_numpy(masked=False)
+    assert np.isnan(raw[-1, 2]) and np.isnan(raw[0, -1]), "Unset raw dictionary values not NaN"
     d = Data()
     d += np.ones(5)
     d += np.zeros(5)

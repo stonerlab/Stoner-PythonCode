@@ -69,6 +69,23 @@ class DataFileInterfacesMixin:
             and DataFile[5,3] would return the 6th element of the
             4th column.
         """
+        owner = self.__dict__.get("_storage_owner")
+        if owner is not None and isinstance(name, tuple):
+            try:
+                if name in self.metadata:
+                    return self.metadata[name]
+            except (TypeError, ValueError):
+                pass
+            if isinstance(name[0], str) and name[0] not in self.metadata:
+                return self._storage_slice((name[1], name[0]))
+        if owner is not None and isinstance(name, (str, _pattern_type)):
+            try:
+                return self.metadata[name]
+            except KeyError:
+                return self._storage_slice((slice(None), name))
+        if owner is not None and not isinstance(name, (str, _pattern_type)):
+            if not (isinstance(name, tuple) and name and isinstance(name[0], str)):
+                return self._storage_slice(name)
         match name:
             case str() | _pattern_type():
                 try:
@@ -111,6 +128,8 @@ class DataFileInterfacesMixin:
 
         Returns: Returns the number of rows of data
         """
+        if "_storage_owner" in self.__dict__:
+            return self.__dict__["_storage_owner"]._state.values.shape[0]
         if np.prod(self.data.shape) > 0:
             return np.shape(self.data)[0]
         return 0
@@ -130,6 +149,21 @@ class DataFileInterfacesMixin:
             existing metadata item that is iterable, and if so, sets the metadata. In all other circumstances,
             it attempts to set an item in the main data array.
         """
+        owner = self.__dict__.get("_storage_owner")
+        if owner is not None and isinstance(name, tuple):
+            try:
+                if name in self.metadata:
+                    self.metadata[name] = value
+                    return
+            except (TypeError, ValueError):
+                pass
+            if isinstance(name[0], str) and name[0] not in self.metadata:
+                owner[name[1], name[0]] = value
+                return
+        if owner is not None and not isinstance(name, str):
+            if not (isinstance(name, tuple) and name and isinstance(name[0], str)):
+                owner[name] = value
+                return
         match name:
             case str():
                 self.metadata[name] = value
@@ -173,4 +207,7 @@ class DataFileInterfacesMixin:
 
     def insert(self, index, obj):
         """Implement the insert method."""
+        if "_storage_owner" in self.__dict__:
+            self.insert_rows(index, obj)
+            return
         self.data = np.insert(self.data, index, obj, axis=0).view(type(self.data))

@@ -19,7 +19,7 @@ import numpy as np
 import PIL
 
 from ...compat import Hyperspy_ok, hs, hsload, str2bytes
-from ...core.array import DataArray
+from ...core.numerical import numerical_result
 from ...core.data import Data
 from ...core.exceptions import StonerLoadError
 from ...core.utils import Tab_Delimited
@@ -163,11 +163,12 @@ def load_tdi_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     if data.ndim < 2:
         data = np.ma.atleast_2d(data)
     retain = np.all(np.isnan(data), axis=1)
-    new_data.data = DataArray(data[~retain])
+    new_data.data = numerical_result(data[~retain])
     new_data["TDI Format"] = fmt
     new_data["Stoner.class"] = "Data"
-    if new_data.data.ndim == 2 and new_data.data.shape[1] > 0:
-        new_data.column_headers = col_headers_tmp
+    if new_data.shape[1] > 0:
+        width = new_data.shape[1]
+        new_data.column_headers = (col_headers_tmp + [f"Column {i}" for i in range(len(col_headers_tmp), width)])[:width]
     new_data.metadata = copy.deepcopy(new_data.metadata)  # This fixes some type issues TODO - work out why!
     return new_data
 
@@ -192,7 +193,7 @@ def save_tdi_format(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     """
     filename, args, kwargs = get_filename(args, kwargs)
     header = ["TDI Format 1.5"]
-    header.extend(save_data.column_headers[: save_data.data.shape[1]])
+    header.extend(save_data.column_headers[: save_data.shape[1]])
     header = "\t".join(header)
     mdkeys = sorted(save_data.metadata)
     if len(mdkeys) > len(save_data):
@@ -203,7 +204,7 @@ def save_tdi_format(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     mdtext = np.array([save_data.metadata.export(k) for k in mdkeys])
     if len(mdtext) < len(save_data):
         mdtext = np.append(mdtext, np.zeros(len(save_data) - len(mdtext), dtype=str))
-    data_out = np.column_stack([mdtext, save_data.data])
+    data_out = np.column_stack([mdtext, save_data.to_numpy()])
     fmt = ["%s"] * data_out.shape[1]
     with io.open(filename, "w", errors="replace", encoding="utf-8") as f:
         np.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
@@ -284,8 +285,9 @@ def load_csvfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
             column_headers = ["Column" + str(x) for x in range(np.shape(data)[1])]
 
     new_data.data = data
-    new_data.column_headers = column_headers
-    new_data.metadata |= kwargs
+    width = min(len(column_headers), new_data.shape[1])
+    new_data.column_headers[:width] = column_headers[:width]
+    new_data.metadata.update(kwargs)
     return new_data
 
 
@@ -333,8 +335,9 @@ def save_csvfile(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         i = 0
         if not no_header:
             spamWriter.writerow(save_data.column_headers)
-        while i < save_data.data.shape[0]:
-            spamWriter.writerow(save_data.data[i, :])
+        values = save_data.to_numpy()
+        while i < len(save_data):
+            spamWriter.writerow(values[i, :])
             i += 1
     save_data.filename = filename
     return save_data
@@ -476,7 +479,7 @@ def save_pngfile(save_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         key = parts[0]
         val = str2bytes("=".join(parts[1:]))
         metadata.add_text(key, val)
-    img = PIL.Image.fromarray(save_data.data)
+    img = PIL.Image.fromarray(save_data.to_numpy())
     img.save(filename, "png", pnginfo=metadata)
     save_data.filename = filename
     return save_data

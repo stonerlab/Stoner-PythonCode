@@ -23,15 +23,14 @@ def test_same_dtype_copy(dtype):
 def test_stack_same_dtype_copy_preserves_mask():
     """The public stack operation replaces pixel storage and restores its mask."""
     stack = ImageStack(np.arange(24, dtype=np.uint8).reshape(2, 3, 4))
-    stack._stack.mask = np.zeros(stack._stack.shape, dtype=bool)
-    stack._stack.mask.flat[2] = True
-    original = stack._stack
+    stack[0].mask[0, 1] = True
+    original = stack.imarray
     mask = original.mask.copy()
     result = stack.convert(np.uint8, force_copy=True)
     assert result is stack
-    np.testing.assert_array_equal(stack._stack.data, original.data)
-    np.testing.assert_array_equal(stack._stack.mask, mask)
-    assert stack._stack.dtype == original.dtype
-    assert not np.shares_memory(stack._stack.data, original.data)
-    stack._stack.data.flat[0] = 99
+    np.testing.assert_array_equal(stack.imarray.data, original.data)
+    np.testing.assert_array_equal(stack.imarray.mask, mask)
+    assert stack.imarray.dtype == original.dtype
+    assert not np.shares_memory(stack.imarray.data, original.data)
+    stack[0][0, 0] = 99
     assert original.data.flat[0] == 0

@@ -7,6 +7,10 @@ The recurring checklist and current release work are in
 
 ## Tests and source checks
 
+The isolated [storage composition prototype](storage_prototype/README.md) has
+acceptance tests and a paired benchmark runner. It remains outside the production
+package during the pandas/xarray migration.
+
 ```powershell
 ./maintenance/run-baseline.ps1 -Check focused -TestPaths tests/Stoner/test_Core.py
 ./maintenance/run-baseline.ps1 -Check serial

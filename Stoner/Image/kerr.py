@@ -2,12 +2,12 @@
 """Kerr Image Processing Module.
 
 Created on Fri Apr 21 17:29:08 2017
-Derivatives of ImageArray and ImageStack specific to processing Kerr images.
+Derivatives of ImageFile and ImageStack specific to processing Kerr images.
 
 @author: phyrct
 """
 
-__all__ = ["KerrArray", "KerrStack", "MaskStack"]
+__all__ = ["KerrImageFile", "KerrStack", "MaskStack"]
 
 import os
 from shutil import which
@@ -18,9 +18,10 @@ from numpy.typing import NDArray
 
 from ..tools import make_Data
 from ..tools.decorators import class_modifier, image_file_adaptor
-from ..tools.typing import Args, Data, Filename, Kwargs
+from ..tools.typing import Args, Data, Kwargs
 from . import kerrfuncs
-from .core import ImageArray, ImageFile
+from .core import ImageFile
+from .numerical import numerical_image
 from .stack import ImageStack
 
 try:
@@ -37,101 +38,45 @@ AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
 
 
-@class_modifier(kerrfuncs)
-class KerrArray(ImageArray):
-    """A subclass for Kerr microscopy specific image functions."""
-
-    # useful_keys are metadata keys that we'd usually like to keep from a
-    # standard kerr output.
-
-    def __init__(self: Self, *args: Args, **kwargs: Kwargs) -> None:
-        """Initialise KerrArray as a subclasses ImageArray.
-
-        Args:
-            *args:
-                Positional arguments passed through to parent method.
-
-        Keyword Arguments:
-            **kwargs:
-                Extra keyword arguments accepted are given below.
-                reduce_metadata(bool):
-                    if True reduce the metadata to useful bits and do some processing on it
-                asfloat(bool)
-                    if True convert the image to float values between 0 and 1 (necessary
-                    for some forms of processing)
-                crop_text(bool):
-                    whether to crop the bottom text area from the image
-                ocr_metadata(bool):
-                    whether to try to use optical character recognition to get the
-                    metadata from the image (necessary for images taken pre 06/2016
-                    and so far field from hysteresis images)
-                field_only(bool):
-                    if ocr_metadata is true, get field only (bit faster)
-        """
-        kerrdefaults = {
-            "ocr_metadata": False,
-            "field_only": False,
-            "reduce_metadata": True,
-            "asfloat": True,
-            "crop_text": True,
-        }
-        kerrdefaults.update(kwargs)
-        super().__init__(*args, **kwargs)
-        self._tesseractable = None
-        if kerrdefaults["reduce_metadata"]:
-            self.reduce_metadata()
-        if kerrdefaults["ocr_metadata"]:
-            self.ocr_metadata(field_only=kerrdefaults["field_only"])
-        if kerrdefaults["asfloat"]:
-            self.asfloat()
-        if kerrdefaults["crop_text"]:
-            self.crop_text()
-
-    @property
-    def tesseractable(self: Self) -> bool:
-        """Return whether the optional OCR wrapper and executable are available."""
-        return _tesseractable and which("tesseract") is not None
-
-    def save(self: Self, filename: Optional[Filename] = None, **kwargs: Kwargs) -> None:
-        """Stub method for a save function."""
-        raise NotImplementedError(f"Save is not implemented in {self.__class__}")
 
 
 @class_modifier(kerrfuncs, adaptor=image_file_adaptor)
 class KerrImageFile(ImageFile):
-    """Subclass of ImageFile that keeps the data as a KerrArray so that extra functions are available."""
+    """Own Kerr image storage and dispatch specialised numerical functions."""
 
+    tesseractable = property(lambda self: _tesseractable and which("tesseract") is not None)
     priority = 16
     mime_type = ["image/png"]
     pattern = ["*.png"]
 
+
     def __init__(self: Self, *args: Args, **kwargs: Kwargs) -> None:
-        """Ensure that the image is a KerrImage."""
+        """Construct a Kerr image with optional preparation steps.
+
+        Keyword Arguments:
+            reduce_metadata (bool):
+                Keep recognised Kerr metadata fields when True. Default False.
+            ocr_metadata (bool):
+                Recognise the annotation strip before cropping. Default False.
+            field_only (bool):
+                Limit OCR to the applied field. Default False.
+            asfloat (bool):
+                Convert intensities to normalised floating point. Default False.
+            crop_text (bool):
+                Remove the standard annotation strip. Default False.
+        """
+        options = {name: kwargs.pop(name, False) for name in
+                   ("reduce_metadata", "ocr_metadata", "field_only", "asfloat", "crop_text")}
         super().__init__(*args, **kwargs)
-        self._image = self.image.view(KerrArray)
-
-    @property
-    def image(self: Self) -> ImageArray:  # pylint: disable=invalid-overridden-method
-        """Access the image data."""
-        return self._image.view(KerrArray)
-
-    @image.setter
-    def image(self: Self, v) -> None:  # noqa: F811  # pylint: disable=redefined-outer-name, function-redefined
-        """Ensure stored image is always an ImageArray."""
-        filename = self.filename
-        v = KerrArray(v)
-        # ensure setting image goes into the same memory block if from stack
-        if (
-            hasattr(self, "_fromstack")
-            and self._fromstack
-            and self._image.shape == v.shape
-            and self._image.dtype == v.dtype
-        ):
-            self._image[:] = v
-            self._image = self._image.view(KerrArray)
-        else:
-            self._image = KerrArray(v)
-        self.filename = filename
+        if self.size:
+            if options["reduce_metadata"]:
+                self.reduce_metadata()
+            if options["ocr_metadata"]:
+                self.ocr_metadata(field_only=options["field_only"])
+            if options["asfloat"]:
+                self.asfloat()
+            if options["crop_text"]:
+                self.crop_text()
 
 
 class KerrStackMixin:
@@ -148,12 +93,11 @@ class KerrStackMixin:
     @property
     def fields(self: Self) -> NDArray:
         """Produce an array of field values from the metadata."""
-        if not hasattr(self, "_field"):
-            if "field" not in self.metadata:
-                self._field = np.arange(len(self))
-            else:
-                self._field = np.array(self.metadata["field"])
-        return self._field
+        if hasattr(self, "_field"):
+            return self._field
+        if "field" not in self.metadata:
+            return np.arange(len(self))
+        return np.array(self.metadata["field"])
 
     def crop_text(self: Self) -> Self:
         """Crop the bottom text area from a standard Kermit image across the complete stack.
@@ -171,18 +115,16 @@ class KerrStackMixin:
             Cropping updates the stack storage and recorded image sizes in place.
             Pixel masks are retained over the cropped region, and the number of images is unchanged.
         """
-        images = self.shape[0]
         if self.shape[1:3] == IM_SIZE:
             return self
         if self.shape[1:3] != AN_IM_SIZE:
             raise ValueError(
                 f"Need a full sized Kerr image to crop. Current size is {self.shape}"
             )  # check it's a normal image
-        self._sizes = np.column_stack(
-            (np.ones(images, dtype=int) * IM_SIZE[0], np.ones(images, dtype=int) * IM_SIZE[1])
-        )
-        new_size = self.max_size + (images,)
-        self._resize_stack(new_size)
+        package = self.export_storage()
+        package.dataset = package.dataset.isel(y=slice(0, IM_SIZE[0]))
+        package.dataset.valid_height.data = np.minimum(package.dataset.valid_height.values, IM_SIZE[0])
+        self._stack_owner.replace(package)
         return self
 
     def hysteresis(self: Self, mask=None) -> Data:
@@ -214,10 +156,10 @@ class KerrStackMixin:
         d.column_headers = ["Field", "Intensity"]
         return d
 
-    def index_to_field(self: Self, index_map: NDArray) -> ImageArray:
+    def index_to_field(self: Self, index_map: NDArray) -> np.ma.MaskedArray:
         """Convert an image of index values into an image of field values."""
         fieldvals = np.take(self.fields, index_map)
-        return ImageArray(fieldvals)
+        return numerical_image(fieldvals)
 
     def denoise_thresh(
         self: Self, denoise_weight: float = 0.1, thresh: float = 0.5, invert: bool = False
@@ -234,7 +176,10 @@ class KerrStackMixin:
         masks.each.threshold_minmax(threshmin=thresh, threshmax=np.max(masks.imarray))
         masks = MaskStack(masks)
         if invert:
-            masks.stack = ~masks.stack  # pylint: disable=attribute-defined-outside-init
+            with masks.edit_numpy() as draft:
+                for index, image in enumerate(masks):
+                    height, width = image.shape
+                    draft.data[index, :height, :width] = ~draft.data[index, :height, :width]
         return masks
 
     def find_threshold(self: Self, testim: Optional[Union[NDArray, int, str]] = None, mask: Optional[NDArray] = None):
@@ -290,7 +235,7 @@ class KerrStackMixin:
                 be tuned for each stack
             correct_drift(bol):
                 whether to correct drift on the image stack before proceeding
-            baseimage(int or ImageArray):
+            baseimage(int or ImageFile):
                 we use drift correction from the baseimage.
             saturation_end(bool):
                 last image in stack is closest to saturation
@@ -301,13 +246,13 @@ class KerrStackMixin:
             extra_info(bool):
                 choose whether to return intermediate calculation steps as an extra dictionary
         Returns:
-            (ImageArray): The map of field values for switching of each pixel in the stack
+            (ImageFile): The map of field values for switching of each pixel in the stack
         """
         ks = self.clone
         if isinstance(baseimage, int):
             baseimage = self[baseimage].clone
         elif isinstance(baseimage, np.ndarray):
-            baseimage = baseimage.view(ImageArray)
+            baseimage = baseimage.view(np.ma.MaskedArray)
         if correct_drift:
             ks.apply_all("correct_drift", ref=baseimage, quiet=quiet)
             if not quiet:
@@ -335,7 +280,7 @@ class KerrStackMixin:
                 Weight zero values in an image as 0 in the averaging.
 
         Returns:
-            average(ImageArray):
+            average(ImageFile):
                 average values
         """
         if ignore_zeros:
@@ -346,7 +291,7 @@ class KerrStackMixin:
                 weights[m] = np.select([condition, np.logical_not(condition)], [np.ones_like(weights[m]), weights[m]])
             # weights means we only account for non-zero values in average
         average = np.average(self.imarray, axis=0, weights=weights)
-        return average.view(ImageArray)
+        return average.view(np.ma.MaskedArray)
 
 
 class MaskStackMixin:
@@ -355,7 +300,12 @@ class MaskStackMixin:
     def __init__(self: Self, *args: Args, **kwargs: Kwargs):
         """Ensure the data is boolean."""
         super().__init__(*args, **kwargs)
-        self._stack = self._stack.astype(bool)
+        package = self.export_storage()
+        package.dataset.intensity.data = package.dataset.intensity.values.astype(bool)
+        package.fill_value = True
+        for frame in package.frames:
+            frame.fill_value = True
+        self._stack_owner.replace(package)
 
     def switch_index(
         self: Self, saturation_end: bool = True, saturation_value: bool = True
@@ -390,30 +340,27 @@ class MaskStackMixin:
                 stack of masks showing when each pixel saturates
 
         """
-        ms = self.clone
+        if not len(self):
+            raise ValueError("Switching analysis requires at least one frame")
+        values = self.to_numpy()
         if not saturation_end:
-            ms = ms.reverse()
-        # arr1 = ms[0].astype(float) #find out whether True is at begin or end
-        # arr2 = ms[-1].astype(float)
-        # if np.average(arr1)>np.average(arr2): #OK so it's bright at the start
+            values = values[::-1]
         if not saturation_value:
-            self.imarray = np.invert(ms.imarray)  # Now it's bright (True) at end
-        switch_ind = np.zeros(ms[0].shape, dtype=int)
+            values = ~values
+        switch_ind = np.zeros(self.max_size, dtype=int)
         switch_prog = self.clone
-        switch_prog.imarray = np.zeros(self.shape, dtype=bool)
         del switch_prog[-1]
-        for m in reversed(range(len(ms) - 1)):  # go from saturation backwards
-            already_done = np.copy(switch_ind).astype(dtype=bool)  # only change switch_ind if it hasn't already
-            condition = np.logical_and(not ms[m], ms[m + 1])
-            condition = np.logical_and(condition, np.invert(already_done))
-            condition = [condition, np.logical_not(condition)]
-            choice = [np.ones(switch_ind.shape) * m, switch_ind]  # index or leave as is
-            switch_ind = np.select(condition, choice)
-            switch_prog[m] = already_done
-        if not saturation_end:
-            switch_ind = -switch_ind + len(self) - 1  # should check this!
-            switch_prog.reverse()
-        switch_ind = ImageArray(switch_ind.astype(int))
+        done = np.zeros(self.max_size, dtype=bool)
+        if len(switch_prog):
+            with switch_prog.edit_numpy() as draft:
+                draft.data[:] = False
+                for m in reversed(range(len(values) - 1)):
+                    destination = m if saturation_end else len(values) - 2 - m
+                    draft.data[destination] = done
+                    changed = np.ma.filled((~values[m]) & values[m + 1], False) & ~done
+                    switch_ind[changed] = m if saturation_end else len(values) - 1 - m
+                    done |= changed
+        switch_ind = numerical_image(np.ma.array(switch_ind, mask=np.ma.getmaskarray(values).any(axis=0)))
         return switch_ind, switch_prog
 
 

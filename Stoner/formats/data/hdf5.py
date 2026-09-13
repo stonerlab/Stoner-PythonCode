@@ -87,9 +87,9 @@ def save_hdf(save_data, filename=None, **kwargs):  # pylint: disable=unused-argu
     with HDFFileManager(filename, mode) as f:
         f.require_dataset(
             "data",
-            data=save_data.data,
-            shape=save_data.data.shape,
-            dtype=save_data.data.dtype,
+            data=save_data.to_numpy(),
+            shape=save_data.shape,
+            dtype=save_data.dtype,
         )
         metadata = f.require_group("metadata")
         typehints = f.require_group("typehints")
@@ -188,11 +188,11 @@ def load_sls_stxm(new_data, *args, **kwargs):
     )
     if "control.data" in new_data.metadata:
         mod = import_module("Stoner.Image")
-        ImageArray = getattr(mod, "ImageArray")
+        from ...Image.numerical import numerical_image
 
-        new_data.metadata["beam current"] = ImageArray(new_data.metadata["control.data"].reshape(new_data.data.shape))
+        new_data.metadata["beam current"] = numerical_image(new_data.metadata["control.data"].reshape(new_data.shape))
         new_data.metadata["beam current"].metadata = new_data.metadata
-    new_data.data = new_data.data[::-1]
+    new_data.data = new_data.to_numpy()[::-1]
     return new_data
 
 

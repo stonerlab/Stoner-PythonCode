@@ -12,7 +12,7 @@ datafile = join(__home__, "..", "sample-data", "PCAR Co Data.csv")
 d = cfg_data_from_ini(config, datafile)
 model, p0 = cfg_model_from_ini(config, data=d)
 
-d.x += 0.25
+d.x = d.x + 0.25
 d.setas = "xy"
 d.plot(fmt="r.")  # plot the data
 fit = d.lmfit(model, result=True, header="lmfit")

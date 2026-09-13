@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """Mxinin classes for DataFile objects."""
 
-import copy
 import pathlib
 import re
-from collections.abc import Iterable
 from sys import float_info
 
 import numpy as np
@@ -15,7 +13,6 @@ from ..compat import _pattern_type, int_types, str2bytes
 from ..tools import all_type, format_error, isiterable, make_Class, operator
 from ..tools.file import HDFFileManager, file_dialog
 from ..tools.widgets import RangeSelect
-from .array import DataArray
 
 try:
     import pandas as pd
@@ -81,11 +78,11 @@ def closest(datafile, value, xcol=None):
 
     Returns:
         ndarray:
-            A single row of data as a :py:class:`Stoner.core.array.DataArray`.
+            A single row of data as a :py:class:`numpy.ma.MaskedArray`.
 
     Notes:
-        To find which row it is that has been returned, use the :py:attr:`Stoner.core.array.DataArray.i`
-        index attribute.
+        To find which row it is that has been returned, use the explicitly prepared ``i`` annotation. It does not propagate
+        through subsequent NumPy slicing or arithmetic.
     """
     _ = datafile._col_args(xcol=xcol)
     xdata = np.abs(datafile // _.xcol - value)
@@ -106,6 +103,9 @@ def column(datafile, col):
         (ndarray):
             One or more columns of data as a :py:class:`numpy.ndarray`.
     """
+    owner = datafile.__dict__.get("_storage_owner")
+    if owner is not None:
+        return owner[:, col]
     return datafile.data[:, datafile.find_col(col)]
 
 
@@ -139,7 +139,7 @@ def find_col(datafile, col, force_list=False):
         int, list of ints:
             The matching column index as an integer or a KeyError
     """
-    return datafile.data._setas.find_col(col, force_list)
+    return datafile.setas.find_col(col, force_list)
 
 
 def find_duplicates(datafile, xcol=None, delta=1e-8):
@@ -166,7 +166,7 @@ def find_duplicates(datafile, xcol=None, delta=1e-8):
     _ = datafile._col_args(xcol=xcol)
     if not _.has_xcol:
         _.xcol = list(range(datafile.shape[1]))
-    search_data = datafile.data[:, _.xcol]
+    search_data = datafile.column(_.xcol).copy()
     if search_data.ndim == 1:
         search_data = np.atleast_2d(search_data).T
 
@@ -219,9 +219,10 @@ def remove_duplicates(datafile, xcol=None, delta=1e-8, strategy="keep first", yc
     _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
     dups = datafile.find_duplicates(xcol=xcol, delta=delta)
     tmp = datafile.clone
-    tmp.data = np.ma.empty((0, datafile.data.shape[1]))
+    tmp.data = np.ma.empty((0, datafile.shape[1]))
+    values = datafile.to_numpy()
     for indices in dups.values():
-        section = datafile[indices, :]
+        section = values[indices, :]
         if strategy == "keep first":
             section = section[0, :]
         elif strategy == "average":
@@ -240,7 +241,7 @@ def remove_duplicates(datafile, xcol=None, delta=1e-8, strategy="keep first", yc
             raise RuntimeError(f"Unknown duplicate removal strategy {strategy}")
         tmp += section
     setas = datafile.setas
-    datafile.data = tmp.data
+    datafile.data = tmp.to_numpy()
     datafile.setas = setas
     return datafile
 
@@ -291,18 +292,18 @@ def rolling_window(datafile, window=7, wrap=True, exclude_centre=False):
             post_data = np.zeros((0, datafile.shape[1]))
         starti = max(i - hw, 0)
         stopi = min(len(datafile), i + hw + 1)
-        if exclude_centre:  # hacked to stop problems with DataArray concatenation
+        if exclude_centre:  # hacked to stop problems with NumPy masked array concatenation
             tmp = datafile.clone  # copy all properties
             data = np.vstack((datafile.data[starti : i - hc], datafile.data[i + 1 + hc : stopi]))
             tmp.data = np.array(data)  # guarantee an ndarray
-            data = tmp.data  # get the DataArray
+            data = tmp.data  # get the NumPy masked array
         else:
             data = datafile.data[starti:stopi]
         if wrap:
             tmp = datafile.clone  # copy all properties
             ret = np.vstack((pre_data, data, post_data))
             tmp.data = np.array(ret)  # guarantee an ndarray
-            ret = tmp.data  # get the DataArray
+            ret = tmp.data  # get the NumPy masked array
         else:
             ret = data
         yield ret
@@ -480,7 +481,7 @@ def select(datafile, *args, **kwargs):
         parts = arg.split("__")
         if parts == ["", ""]:
             func = val
-            res = np.logical_or(res, np.array([func(r) for r in datafile.data]))
+            res = np.logical_or(res, np.array([func(r) for r in datafile.rows()]))
             continue
         if len(parts) == 1 or parts[-1] not in operator:
             parts.append("eq")
@@ -525,40 +526,8 @@ def sort(datafile, *order, reverse=False):
         a list of column indices. If no sort orders are supplied then the data is sorted by the
         :py:attr:`DataFile.setas` attribute or if that is not set, then order of the columns in the data.
     """
-    order = list(order)
-    setas = datafile.setas.clone
-    ch = copy.copy(datafile.column_headers)
-    if not order:
-        if datafile.setas.cols["xcol"] is not None:
-            order = [datafile.setas.cols["xcol"]]
-        order.extend(datafile.setas.cols["ycol"])
-        order.extend(datafile.setas.cols["zcol"])
-    if not order:  # Ok, no setas here then
-        order = None
-    elif len(order) == 1:
-        order = order[0]
-
-    if order is None:
-        order = list(range(len(datafile.column_headers)))
-    recs = datafile.records
-    match order:
-        case _ if callable(order):
-            d = sorted(recs, cmp=order)
-        case int() | str() | _pattern_type():
-            order = [recs.dtype.names[datafile.find_col(order)]]
-            d = np.sort(recs, order=order)
-        case Iterable():
-            order = [recs.dtype.names[datafile.find_col(x)] for x in order]
-            d = np.sort(recs, order=order)
-        case _:
-            raise KeyError(f"Unable to work out how to sort by a {type(order)}")
-
-    datafile.data = d.view(dtype=datafile.dtype).reshape(len(datafile), len(datafile.column_headers))
-    if reverse:
-        datafile.data = datafile.data[::-1]
-    datafile.data._setas = setas
-    datafile.column_headers = ch
-    return datafile
+    from . import storage_operations
+    return storage_operations.sort(datafile, *order, reverse=reverse)
 
 
 def split(datafile, *args, final="files"):
@@ -622,6 +591,8 @@ def split(datafile, *args, final="files"):
                 keys = xcol(datafile.data)
                 if not isiterable(keys):
                     keys = [keys] * len(datafile)
+                if len(keys) != len(datafile):
+                    raise ValueError("Vectorised split did not return one key per row")
             except Exception:  # pylint: disable=W0703  # Ok try instead to do it row by row
                 keys = [xcol(r) for r in datafile]
             if not isiterable(keys) or len(keys) != len(datafile):
@@ -673,57 +644,10 @@ def unique(datafile, col, return_index=False, return_inverse=False):
     return np.unique(datafile.column(col), return_index, return_inverse)
 
 
-def _validate_index(datafile, index, replace):
-    match index:
-        case None | True:
-            index = datafile.shape[1]
-            replace = False
-        case int() if index == datafile.shape[1]:
-            replace = False
-        case _:
-            index = datafile.find_col(index)
-    return index, replace
 
 
-def _normalise_column_data(datafile, column_data, header, func_args):
-    """Sort out the data and get it into an array of values."""
-    if isinstance(column_data, list):
-        column_data = np.array(column_data)
-
-    if isinstance(column_data, DataArray) and header is None:
-        header = column_data.column_headers
-
-    match column_data:
-        case np.ndarray():
-            np_data = column_data
-        case _ if callable(column_data) and isinstance(func_args, dict):
-            new_data = [column_data(x, **func_args) for x in datafile]
-            np_data = np.array(new_data)
-        case _ if callable(column_data):
-            new_data = [column_data(x) for x in datafile]
-            np_data = np.array(new_data)
-        case _:
-            raise NotImplementedError
-
-    return np_data, header
 
 
-def _data_make_setas(setas, cw):
-    """Make setas based on the existing setas and the one supplied."""
-    setas = "." * cw if setas is None else setas
-
-    if isiterable(setas) and len(setas) == cw:
-        for s in setas:
-            if s not in ".-xyzuvwdefpqr":
-                raise TypeError(
-                    f"setas parameter should be a string or list of letter in the set xyzdefuvw.-, not {setas}"
-                )
-    else:
-        raise TypeError(
-            f"""setas parameter should be a string or list of letter the same length as the number of columns
-            being added in the set xyzdefuvw.-, not {setas}"""
-        )
-    return setas
 
 
 def add_column(datafile, column_data, header=None, index=None, func_args=None, replace=False, setas=None):
@@ -755,118 +679,8 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
         the original DataFile Instance as well as returning it.
     """
-    if index is None or isinstance(index, bool) and index:  # Enure index is set
-        index = datafile.shape[1]
-        replace = False
-    elif isinstance(index, int_types) and index == datafile.shape[1]:
-        replace = False
-    else:
-        index = datafile.find_col(index)
-
-    # Sort out the data and get it into an array of values.
-    if isinstance(column_data, list):
-        column_data = np.array(column_data)
-
-    if isinstance(column_data, DataArray) and header is None:
-        header = column_data.column_headers
-
-    if isinstance(column_data, np.ndarray):
-        np_data = column_data
-    elif callable(column_data):
-        if isinstance(func_args, dict):
-            new_data = [column_data(x, **func_args) for x in datafile]
-        else:
-            new_data = [column_data(x) for x in datafile]
-        np_data = np.array(new_data)
-    else:
-        return NotImplemented
-
-    # Sort out the sizes of the arrays
-    if np_data.ndim == 1:
-        np_data = np.atleast_2d(np_data).T
-    cl, cw = np_data.shape
-
-    # Make setas
-    setas = "." * cw if setas is None else setas
-
-    if isiterable(setas) and len(setas) == cw:
-        for s in setas:
-            if s not in ".-xyzuvwdefpqr":
-                raise TypeError(
-                    f"setas parameter should be a string or list of letter in the set xyzdefuvw.-, not {setas}"
-                )
-    else:
-        raise TypeError(
-            f"""setas parameter should be a string or list of letter the same length as the number of columns
-            being added in the set xyzdefuvw.-, not {setas}"""
-        )
-
-    # Make sure our current data is at least 2D and get its size
-    match datafile.data.shape:
-        case (_,):
-            datafile.data = np.atleast_2d(datafile.data).T
-        case (_, _):
-            dr, dc = datafile.data.shape
-        case _ if not datafile.data.shape:
-            datafile.data = np.array([[]])
-            dr, dc = (0, 0)
-        case _:
-            raise ValueError("Data should be 1 or 2 dimensional")
-
-    # Expand either our current data or new data to have the same number of rows
-    if cl > dr and dc * dr > 0:  # Existing data is finite and too short
-        datafile.data = DataArray(np.append(datafile.data, np.zeros((cl - dr, dc)), 0), setas=datafile.setas.clone)
-    elif cl < dr:  # New data is too short
-        np_data = np.append(np_data, np.zeros((dr - cl, cw)))
-        if np_data.ndim == 1:
-            np_data = np.atleast_2d(np_data).T
-    elif dc == 0:  # Existing data has no width - replace with cl,0
-        datafile.data = DataArray(np.zeros((cl, 0)))
-    elif dr == 0:  # Existing data has no rows - expand existing data with zeros to have right length
-        datafile.data = DataArray(np.append(datafile.data, np.zeros((cl, dr)), axis=0), setas=datafile.setas.clone)
-
-    # If not replacing, then add extra columns to existing data.
-    if not replace:
-        columns = copy.copy(datafile.column_headers)
-        old_setas = datafile.setas.clone
-        if index == datafile.data.shape[1]:  # appending column
-            datafile.data = DataArray(np.append(datafile.data, np_data, axis=1), setas=datafile.setas.clone)
-        else:
-            datafile.data = DataArray(
-                np.append(
-                    datafile.data[:, :index],
-                    np.append(np.zeros_like(np_data), datafile.data[:, index:], axis=1),
-                    axis=1,
-                ),
-                setas=datafile.setas.clone,
-            )
-        for ix in range(0, index):
-            datafile.column_headers[ix] = columns[ix]
-            datafile.setas[ix] = old_setas[ix]
-        for ix in range(index, dc):
-            datafile.column_headers[ix + cw] = columns[ix]
-            datafile.setas[ix + cw] = old_setas[ix]
-    # Check that we don't need to expand to overwrite with the new data
-    if index + cw > datafile.shape[1]:
-        datafile.data = DataArray(
-            np.append(datafile.data, np.zeros((datafile.data.shape[0], datafile.data.shape[1] - index + cw)), axis=1),
-            setas=datafile.setas.clone,
-        )
-
-    # Put the data into the array
-    datafile.data[:, index : index + cw] = np_data
-
-    if header is None:  # This will fix the header if not defined.
-        header = [f"Column {ix}" for ix in range(index, index + cw)]
-    if isinstance(header, str):
-        header = [header]
-    if len(header) != cw:
-        header.extend(["Column {ix}" for x in range(index, index + cw)])
-    for ix, (hdr, s) in enumerate(zip(header, setas)):
-        datafile.column_headers[ix + index] = hdr
-        datafile.setas[index + ix] = s
-
-    return datafile
+    from . import storage_operations
+    return storage_operations.add_column(datafile, column_data, header=header, index=index, func_args=func_args, replace=replace, setas=setas)
 
 
 def columns(datafile, not_masked=False, reset=False):
@@ -920,54 +734,8 @@ def del_column(datafile, col=None, duplicates=False):
         - If col is None and duplicates is None, then all columns with at least one elelemtn masked
                 will be deleted
     """
-    if duplicates:
-        ch = datafile.column_headers
-        dups = []
-        if col is None:
-            for i, chi in enumerate(ch):
-                if chi in ch[i + 1 :]:
-                    dups.append(ch.index(chi, i + 1))
-        else:
-            col = ch[datafile.find_col(col)]
-            i = ch.index(col)
-            while True:
-                try:
-                    i = ch.index(col, i + 1)
-                    dups.append(i)
-                except ValueError:
-                    break
-        return datafile.del_column(dups, duplicates=False)
-    if col is None or (isinstance(col, bool) and not col):  # Without defining col we just compress by the mask
-        datafile.data = ma.mask_cols(datafile.data)
-        t = DataArray(datafile.column_headers)
-        t.mask = datafile.mask[0]
-        datafile.column_headers = list(ma.compressed(t))
-        datafile.data = ma.compress_cols(datafile.data)
-    elif isinstance(col, bool) and col:  # Without defining col we just compress by the mask
-        ch = [datafile.column_headers[ix] for ix, v in enumerate(datafile.setas.set) if v]
-        setas = [datafile.setas[ix] for ix, v in enumerate(datafile.setas.set) if v]
-        datafile.data = datafile.data[:, datafile.setas.set]
-        datafile.setas = setas
-        datafile.column_headers = ch
-    elif isiterable(col) and all_type(col, bool):  # If col is an iterable of booleans then we index by that
-        col = ~np.array(col)
-        col_hdrs = np.array(datafile.column_headers)[col]
-        new_setas = np.array(datafile.setas)[col]
-        datafile.data = datafile.data[:, col]
-        datafile.setas = new_setas
-        datafile.column_headers = col_hdrs
-    else:  # Otherwise find individual columns
-        c = datafile.find_col(col)
-        ch = datafile.column_headers
-        datafile.data = DataArray(np.delete(datafile.data, c, 1), mask=np.delete(datafile.data.mask, c, 1))
-        if isinstance(c, list):
-            c.sort(reverse=True)
-        else:
-            c = [c]
-        for cl in c:
-            del ch[cl]
-        datafile.column_headers = ch
-    return datafile
+    from . import storage_operations
+    return storage_operations.del_column(datafile, col, duplicates=duplicates)
 
 
 def del_rows(datafile, col=None, val=None, invert=False):
@@ -998,7 +766,7 @@ def del_rows(datafile, col=None, val=None, invert=False):
     Notes:
         If col is None, then all rows with masked data are deleted
 
-        if *col* is callable then it is passed each row as a :py:class:`DataArray` and if it returns
+        if *col* is callable then it is passed each row as a :py:class:`numpy.ma.MaskedArray` and if it returns
         True, then the row will be deleted or kept depending on the value of *invert*.
 
         If *val* is a callable it should take two arguments - a float and a
@@ -1010,56 +778,8 @@ def del_rows(datafile, col=None, val=None, invert=False):
         are deleted.
 
     """
-    if col is None:
-        datafile.data = ma.compress_rows(datafile.data)
-    else:
-        if isinstance(col, slice) and val is None:  # delete rows with a slice to make a list of indices
-            indices = col.indices(len(datafile))
-            col = list(range(*indices))
-        elif callable(col) and val is None:  # Delete rows usinga callalble taking the whole row
-            col = [r.i for r in datafile.rows() if col(r)]
-        elif isiterable(col) and all_type(col, bool):  # Delete rows by a list of booleans
-            if len(col) < len(datafile):
-                col.extend([False] * (len(datafile) - len(col)))
-            datafile.data = datafile.data[col]
-            return datafile
-        if isiterable(col) and all_type(col, int_types) and val is None and not invert:
-            col.sort(reverse=True)
-            for c in col:
-                datafile.del_rows(c)
-        elif isinstance(col, list) and all_type(col, int_types) and val is None and invert:
-            for i in range(len(datafile) - 1, -1, -1):
-                if i not in col:
-                    datafile.del_rows(i)
-        elif isinstance(col, int_types) and val is None and not invert:
-            tmp_mask = datafile.mask
-            tmp_setas = datafile.data._setas.clone
-            datafile.data = np.delete(datafile.data, col, 0)
-            datafile.data.mask = np.delete(tmp_mask, col, 0)
-            datafile.data._setas = tmp_setas
-        elif isinstance(col, int_types) and val is None and invert:
-            col = range(len(datafile))[col]
-            datafile.del_rows([col], invert=invert)
-        else:
-            col = datafile.find_col(col)
-            d = datafile.column(col)
-            if callable(val):
-                rows = np.nonzero(
-                    [(bool(val(x[col], x) and bool(x[col] is not ma.masked)) != invert) for x in datafile]
-                )[0]
-            elif isinstance(val, float):
-                rows = np.nonzero([bool(x == val) != invert for x in d])[0]
-            elif isiterable(val) and len(val) == 2:
-                upper, lower = (max(list(val)), min(list(val)))
-                rows = np.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
-            else:
-                raise SyntaxError("If val is specified it must be a float,callable, or iterable object of length 2")
-            tmp_mask = datafile.mask
-            tmp_setas = datafile.data._setas.clone
-            datafile.data = np.delete(datafile.data, rows, 0)
-            datafile.data.mask = np.delete(tmp_mask, rows, 0)
-            datafile.data._setas = tmp_setas
-    return datafile
+    from . import storage_operations
+    return storage_operations.del_rows(datafile, col, val, invert=invert)
 
 
 def dir(datafile, pattern=None):  # pylint: disable=redefined-builtin
@@ -1123,8 +843,8 @@ def insert_rows(datafile, row, new_data):
         datafile:
             A copy of the modified :py:class:`DataFile` object
     """
-    datafile.data = np.insert(datafile.data, row, new_data, 0)
-    return datafile
+    from . import storage_operations
+    return storage_operations.insert_rows(datafile, row, new_data)
 
 
 def rename(datafile, old_col, new_col):
@@ -1164,22 +884,8 @@ def reorder_columns(datafile, cols, headers_too=True, setas_too=True):
         datafile:
             A copy of the modified :py:class:`DataFile` object
     """
-    if headers_too:
-        column_headers = [datafile.column_headers[datafile.find_col(x)] for x in cols]
-    else:
-        column_headers = datafile.column_headers
-    if setas_too:
-        setas = [datafile.setas[datafile.find_col(x)] for x in cols]
-    else:
-        setas = datafile.setas.clone
-
-    newdata = np.atleast_2d(datafile.data[:, datafile.find_col(cols.pop(0))])
-    for col in cols:
-        newdata = np.append(newdata, np.atleast_2d(datafile.data[:, datafile.find_col(col)]), axis=0)
-    datafile.data = DataArray(np.transpose(newdata))
-    datafile.setas = setas
-    datafile.column_headers = column_headers
-    return datafile
+    from . import storage_operations
+    return storage_operations.reorder_columns(datafile, cols, headers_too=headers_too, setas_too=setas_too)
 
 
 def rows(datafile, not_masked=False, reset=False):
@@ -1198,16 +904,14 @@ def rows(datafile, not_masked=False, reset=False):
     Yields:
         1D array: Returns the next row of data
     """
-    for ix, row in enumerate(datafile.data):
-        if not isinstance(row, DataArray):
-            row = DataArray([row])
-            row.i = ix
-            row.setas = datafile.setas
-        if ma.is_masked(row) and not_masked:
+    if reset:
+        return
+    for ix in range(len(datafile)):
+        row = datafile._storage_slice(ix)
+        if not_masked and ma.is_masked(row):
             continue
-        if reset:
-            return
         yield row
+    return
 
 
 def swap_column(datafile, *swp, headers_too=True, **kwargs):
@@ -1227,7 +931,7 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
         headers_too (bool):
             Indicates the column headers are swapped as well
         **kwargs:
-            Other keyword arguments passed to :py:meth:`Stoner.DataArray.swap_cokumns`.
+            Other keyword arguments passed to :py:meth:`numpy.ma.MaskedArray.swap_cokumns`.
 
     Returns:
         datafile:
@@ -1238,34 +942,32 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
         element of the list. Thus in principle the @swp could contain
         lists of lists of tuples
     """
-    datafile.data.swap_column(*swp, headers_too=headers_too, **kwargs)
-    return datafile
+    from . import storage_operations
+    return storage_operations.swap_column(datafile, *swp, headers_too=headers_too, **kwargs)
 
 
-def to_pandas(datafile):
+def to_pandas(datafile, *, format="legacy", masked="nan"):
     """Create a pandas DataFrame from a :py:class:`~Stoner.core.data.Data` object.
 
+    Args:
+        datafile (Data):
+            Instance whose values are exported independently.
+
+    Keyword Arguments:
+        format (str):
+            ``legacy`` exports Headers/Setas column levels; ``plain`` exports names.
+        masked (str):
+            ``nan`` substitutes excluded exported values; ``raw`` retains hidden values.
+
     Notes:
-        In addition to transferring the numerical data, the DataFrame's columns are set to
-        a multi-level index of the :py:attr:`~Stoner.core.data.Data.column_headers` and
-        :py:attr:`~Stoner.core.data.Data.setas`
-        values. A pandas DataFrame extension attribute, *metadata* is registered and is used to store
-        the metadata from the :py:class:`~Stoner.core.data.Data` object. This pandas extension attribute
-        is in fact a trivial
-        subclass of the :py:class:`Stoner.core.TypeHintedDict`.
+        Frame-backed instances use explicit lossy interchange and warn when exclusions
+        or typed metadata are omitted. Retain ``export_storage()`` for lossless use.
+        ``format="legacy"`` retains the Headers/Setas column levels.
+        ``format="plain"`` uses column names alone. Import either representation
+        with ``Data.from_pandas()``.
 
-        The inverse operation can be carried out simply by passing a DataFrame into the copnstructor of the
-        :py:class:`~Stoner.core.data.Data` object.
-
-    Raises:
-        **NotImplementedError** if pandas didn't import correctly.
     """
-    if pd is None:
-        raise NotImplementedError("Pandas not available")
-    idx = pd.MultiIndex.from_tuples(zip(*[datafile.column_headers, datafile.setas]), names=("Headers", "Setas"))
-    df = pd.DataFrame(datafile.data, columns=idx)
-    df.metadata.update(datafile.metadata)
-    return df
+    return datafile.export_storage().to_pandas(format=format, masked=masked)
 
 
 def format(  # pylint: disable=redefined-builtin

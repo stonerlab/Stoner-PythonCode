@@ -43,6 +43,7 @@ dependencies = [
     "scikit-image>=0.24",
     "scipy>=1.14",
     "statsmodels",
+    "xarray",
 ]
 
 [project.optional-dependencies]

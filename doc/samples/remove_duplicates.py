@@ -8,7 +8,7 @@ from Stoner import Data, __homepath__
 data = Data(
     __homepath__ / ".." / "sample-data" / "TDI_Format_RT.txt", setas="xye"
 )
-data.e /= 10000
+data.e = data.e / 10000
 # Plot the original data
 data.plot(fmt="k-", label="Original Data", capsize=3)
 # De-dupe the data

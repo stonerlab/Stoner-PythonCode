@@ -4,9 +4,10 @@
 
 import os
 
+import numpy as np
 import pytest
 
-from Stoner.Image import ImageArray, ImageFolder
+from Stoner.Image import ImageFile, ImageFolder
 
 knownkeys = [
     "Averaging",
@@ -52,7 +53,7 @@ def test_properties():
     fldr[1] = fldr[1].crop(4)
     assert not fldr.size, f"fldr.size didn't return False for non-uniform images, got {fldr.size}"
     for im in fldr.images:
-        assert isinstance(im, ImageArray), "fldr.images returned something that wasn't an image array"
+        assert type(im) is np.ma.MaskedArray
 
 
 def test_methods():

@@ -31,6 +31,7 @@ dependencies:
   - scikit-image >=0.24
   - scipy >=1.14
   - statsmodels
+  - xarray
 
   # Optional features exercised by tests and documentation examples
   - cycler >=0.10.0

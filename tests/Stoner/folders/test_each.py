@@ -33,7 +33,12 @@ def test_each_call(monkeypatch):
     filenames = [path.relpath(x, start=fldr6.directory) for x in fldr6.each.filename.tolist()]
     assert filenames == paths, "Reading attributes from each failed."
     meths = [x for x in dir(fldr6.each) if not x.startswith("_")]
-    assert len(meths) == 133, "Dir of folders.each failed ({}).".format(len(meths))
+    storage_api = {"from_storage", "from_pandas", "export_storage", "to_numpy",
+                   "edit_numpy", "edit_pandas", "column_ids"}
+    assert storage_api <= set(meths)
+    # Column deletion now retains roles, so the second-axis shortcuts survive.
+    assert {"x2", "y2"} <= set(meths)
+    assert len(set(meths) - storage_api - {"x2", "y2"}) == 133, "Dir of folders.each failed."
 
 
 def test_each_call_or_operator(monkeypatch):
@@ -64,7 +69,8 @@ def test_each_attr(monkeypatch):
     fldr6 = DataFolder(".", pattern="QD*.dat", pruned=True)
     with pytest.raises(AttributeError):
         _ = fldr6.each.bad_item
-    fldr6.each.column_headers = ["X", "Y"]
+    for data in fldr6:
+        data.column_headers[:2] = ["X", "Y"]
     assert fldr6.each.column_headers.size == 4, "Read back of an attribute failed to return the right array length"
     res = [x[0] for x in fldr6.each.column_headers]
     assert res == ["X"] * 4, "Setting DataFolder.each.attr failed"

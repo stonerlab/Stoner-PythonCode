@@ -4,8 +4,52 @@ This is the executable baseline for batch 1 of
 [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md), characterised on `devel`
 starting at `9d36d0460`. It distinguishes behaviours to retain from observed
 defects and API decisions. It is a migration specification, not a promise to keep
-every current implementation quirk. No production storage code changes are part
-of this batch.
+every current implementation quirk. The observations below describe the original
+baseline; Stage 4 now implements the approved Data changes.
+
+Batch 2 decisions are now specified in
+[STORAGE_INTERCHANGE.md](STORAGE_INTERCHANGE.md). References below to decisions
+needed in batch 2 describe the original observations; the new specification
+settles their target behaviour. The Data contract tests now assert detached
+read-only reads, preserved masks/roles through structural edits, distinct duplicate
+matches, ordinary negative bounds, absolute error-column positions and masked
+scalar results. Empty Data now has shape `(0, 0)`. Stage 6a now asserts a sole
+xarray owner for populated standalone ImageFile, detached read-only image/mask
+snapshots, direct pixel/mask writes, typed interchange, guarded editing and shared
+crop handles. Stage 6b now asserts sole stack ownership, stable frame handles,
+calibrated interchange, excluded-zero padding and masked reductions. Stage 6c.2
+extends owner storage to Kerr, MaskStack, Attocube and Maximus. Tests in
+`tests/Stoner/Image/test_specialised_storage.py` cover stable specialised items,
+shared scan headers with frame overrides, HDF5 masks/fill and repeated saves,
+detached named-channel views, and Boolean mask-stack transitions and padding.
+Stage 6c.1 adds exact calibrated transpose, flips and quarter turns, tested in
+`tests/Stoner/Image/test_storage_transforms.py`. Values and exclusions move with
+axis coordinates, units and auxiliary dimensions. `ImageFile.T` returns an
+independent ImageFile; shared geometry requires a clone and in-place permutations
+invalidate saved crop bounds. Stage 6c.3 adds calibrated interpolation, explicit
+two-dimensional physical maps, ragged map packing and operand compatibility.
+`tests/Stoner/Image/test_storage_interpolation.py` covers numerical/map agreement,
+mask propagation, registration shifts, detachment, output-buffer rejection and
+atomic rejection of mismatched units. Interpolation excludes positions outside
+the source calibration and conservatively expands exclusions for higher orders.
+Current consumer integration and validation evidence are recorded in the migration
+plan's handover.
+
+Stage 6e removes `DataArray`, `ImageArray`, `KerrArray`, their descriptors and
+the old `ImageStackMixin`. `tests/Stoner/core/test_storage_removal.py` audits
+production classes/imports and public exports, checks that `Stoner.core.array`
+cannot be imported, and verifies native NumPy result types and annotation loss
+through ordinary copying. No replacement ndarray subclass is introduced.
+Direct Data row/slice reads may have explicit descriptive annotations; subsequent
+NumPy operations do not propagate them. Named row indexing and `records._` are
+replaced by resolved numerical positions and ordinary structured-field indexing.
+Calculated row angles use NumPy; Data's owner-level angle properties remain.
+Masked scalar checks use `numpy.ma.is_masked`, preserving the stored raw value.
+
+Real image, TIFF, Kerr/OCR, scan, stack, peak-finding and widget tests continue to
+exercise the migrated public owners. Existing TIFF `ImageArray.dtype` metadata
+keys remain readable as historical format labels, without importing any removed
+class. Useful numerical functions remain ordinary helpers, not storage classes.
 
 ## How to use this inventory
 
@@ -123,10 +167,12 @@ accessor behaviour on older supported dependency lines.
 Durable metadata ownership is required; no dependency-specific workaround is
 introduced in batch 1.
 
-Unequal image sizes are recoverable from stack items, but padded pixels in
-`imarray` are currently unmasked zeros. The proposed exclusion of padding is a
-deliberate change to whole-stack reductions, not a behaviour-preserving storage
-detail. Specify reduction/padding policy and expected results in batch 2.
+Unequal image sizes are recoverable from stack items. Stage 6b replaces the
+historical unmasked padding with excluded raw zeros. Whole-stack reductions now
+ignore padding and user masks; standard error uses the included count per pixel.
+`imarray` is a detached read-only snapshot. Edit through stack/item assignment or
+the guarded NumPy/xarray transaction interfaces. Regression coverage is in
+`tests/Stoner/Image/test_stack_bridge.py` and `test_storage_contracts.py`.
 
 ## Validation and resumption
 
@@ -159,6 +205,6 @@ Use Conda activation through the runner: a direct unactivated interpreter probe
 did not complete successfully and is not validation evidence.
 
 This is Windows/Python 3.14 baseline evidence, not Python 3.12, hosted CI, xarray
-compatibility or migration performance evidence. The next step is batch 2's
-interchange/ownership specification, using the decision cases above. Do not start
-production replacement or wrapper expansion until the applicable plan gates.
+compatibility or migration performance evidence. It is retained as historical
+context; use the migration plan for current primitive and consumer validation.
+Wrapper expansion remains gated on completing storage validation.

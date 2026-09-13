@@ -16,7 +16,7 @@ from scipy.version import version as spv
 
 from Stoner import Data, __home__
 from Stoner.core.base import TypeHintedDict
-from Stoner.Image import ImageArray, ImageFile
+from Stoner.Image import ImageFile
 
 spv = [int(x) for x in spv.split(".")]
 
@@ -46,11 +46,11 @@ selfarr = np.array(
         [0.2984083, 0.9167951, 0.73820304, 0.7655299],
     ]
 )
-selfimarr = ImageArray(np.copy(selfarr))  # ImageArray object
-selfimarrfile = ImageArray(os.path.join(thisdir, "coretestdata/im1_annotated.png"))
-# ImageArray object from file
+selfimarr = ImageFile(np.copy(selfarr))  # ImageFile object
+selfimarrfile = ImageFile(os.path.join(thisdir, "coretestdata/im1_annotated.png"))
+# ImageFile object from file
 
-selfimarr_x = np.copy(selfimarr).view(ImageArray)
+selfimarr_x = ImageFile(np.copy(selfimarr))
 #####test loading with different datatypes  ####
 
 
@@ -58,25 +58,25 @@ def test_load_from_array():
     # from array
     assert np.array_equal(selfimarr, selfarr)
     # int type
-    imarr = ImageArray(np.arange(12, dtype="int32").reshape(3, 4))
+    imarr = ImageFile(np.arange(12, dtype="int32").reshape(3, 4))
     assert imarr.dtype == np.dtype("int32"), "Failed to set correct dtype - actual dtype={}".format(imarr.dtype)
 
 
-def test_load_from_ImageArray():
-    # from ImageArray
-    t = ImageArray(selfimarr)
-    assert shares_memory(selfimarr, t), "no overlap on creating ImageArray from ImageArray"
+def test_detached_image_constructor():
+    # from ImageFile
+    t = ImageFile(selfimarr)
+    assert not shares_memory(selfimarr, t), "no overlap on creating ImageFile from ImageFile"
 
 
 def test_load_from_png(monkeypatch):
     subpath = os.path.join("coretestdata", "im1_annotated.png")
     fpath = os.path.join(thisdir, subpath)
-    anim = ImageArray(fpath)
+    anim = ImageFile(fpath)
     assert (
         os.path.normpath(anim.metadata["Loaded from"]).lower() == os.path.normpath(fpath).lower()
     ), "Failed with {os.path.normpath(anim.metadata['Loaded from'])} and {os.path.normpath(fpath)}"
     monkeypatch.chdir(thisdir)
-    anim = ImageArray(subpath)
+    anim = ImageFile(subpath)
     # check full path is in loaded from metadata
     assert (
         os.path.normpath(anim.metadata["Loaded from"]).lower() == os.path.normpath(fpath).lower()
@@ -128,50 +128,50 @@ def test_conversion_bitness():
 
 
 def test_load_from_ImageFile():
-    # uses the ImageFile.im attribute to set up ImageArray. Memory overlaps
+    # uses the ImageFile.im attribute to set up ImageFile. Memory overlaps
     imfi = ImageFile(selfarr)
-    imarr = ImageArray(imfi)
+    imarr = ImageFile(imfi)
     assert np.array_equal(imarr, imfi.image), "Initialising from ImageFile failed"
-    assert shares_memory(imarr, imfi.image)
+    assert not shares_memory(imarr, imfi.image)
 
 
 def test_load_from_list():
-    t = ImageArray([[1, 3], [3, 2], [4, 3]])
+    t = ImageFile([[1, 3], [3, 2], [4, 3]])
     assert np.array_equal(t, np.array([[1, 3], [3, 2], [4, 3]])), "Initialising from list failed"
 
 
 def test_load_1d_data():
-    t = ImageArray(np.arange(10) / 10.0)
-    assert len(t.shape) == 2  # converts to 2d
+    t = ImageFile(np.arange(10) / 10.0)
+    assert len(t.shape) == 2  # image owners have two spatial dimensions
 
 
 def test_load_no_args():
     # Should be a 2d empty array
-    t = ImageArray()
+    t = ImageFile()
     assert len(t.shape) == 2
     assert t.size == 0
 
 
 def test_load_bad_data():
     def testload(arg):
-        ImageArray(arg)
+        ImageFile(arg)
 
     # dictionary
     with pytest.raises(ValueError):
         testload({"a": 1})
 
     # bad filename
-    with pytest.raises(ValueError):
+    from Stoner.core.exceptions import StonerLoadError
+    with pytest.raises(StonerLoadError):
         testload("sillyfile.xyz")
-
 
 def test_load_kwargs():
     # metadata keyword arg
-    t = ImageArray(selfarr, metadata={"a": 5, "b": 7})
+    t = ImageFile(selfarr, metadata={"a": 5, "b": 7})
     assert ("a" in t.metadata.keys()) and ("b" in t.metadata.keys())
     assert t.metadata["a"] == 5
     # asfloat
-    t = ImageArray(np.arange(12).reshape(3, 4), asfloat=True)
+    t = ImageFile(np.arange(12).reshape(3, 4), asfloat=True)
     assert t.dtype == np.float64, "Initialising asfloat failed"
     assert "Loaded from" in t.metadata.keys(), "Loaded from should always be in metadata"
 
@@ -180,12 +180,12 @@ def test_load_kwargs():
 
 
 def test_filename():
-    im = ImageArray(np.linspace(0, 1, 12).reshape(3, 4))
+    im = ImageFile(np.linspace(0, 1, 12).reshape(3, 4))
     fpath = os.path.join(thisdir, "coretestdata/im1_annotated.png")
     assert (
         os.path.normpath(selfimarrfile.filename).lower() == os.path.normpath(fpath).lower()
     ), f"Failed with {os.path.normpath(selfimarrfile.filename)} and {os.path.normpath(fpath)}"
-    im = ImageArray(np.linspace(0, 1, 12).reshape(3, 4))
+    im = ImageFile(np.linspace(0, 1, 12).reshape(3, 4))
     im["Loaded from"]
     im.filename
     assert im.filename == "", "{}, {}".format(selfimarr.shape, im.filename)
@@ -196,7 +196,7 @@ def test_clone():
     selfimarr["nested"] = [1, 2, 3]  # add some nested metadata to check deepcopy
     selfimarr.userxyz = 123  # add a user attribute
     c = selfimarr.clone
-    assert isinstance(c, ImageArray), "Clone not ImageArray"
+    assert isinstance(c, ImageFile), "Clone not ImageFile"
     assert np.array_equal(c, selfimarr), "Clone not replicating elements"
     assert all([k in c.metadata.keys() for k in selfimarr.metadata.keys()]), "Clone not replicating metadata"
     assert not shares_memory(c, selfimarr), "memory overlap on clone"  # formal check
@@ -218,7 +218,7 @@ def test_clone():
 
 
 def test_metadata():
-    assert isinstance(selfimarr.metadata, TypeHintedDict)
+    assert isinstance(selfimarr.export_storage().metadata, TypeHintedDict)
     selfimarr["testmeta"] = "abc"
     assert selfimarr["testmeta"] == "abc", "Couldn't change metadata"
     del selfimarr["testmeta"]
@@ -236,12 +236,12 @@ def test_metadata():
 def test_user_attributes():
     selfimarr.abc = "new att"
     assert hasattr(selfimarr, "abc")
-    t = ImageArray(selfimarr)
+    t = ImageFile(selfimarr)
     assert hasattr(t, "abc"), "problem copying new attributes"
-    t = selfimarr.view(ImageArray)  # check array_finalize copies attribute over
+    t = selfimarr.clone
     assert hasattr(t, "abc")
-    t = selfimarr * np.random.random(selfimarr.shape)
-    assert isinstance(t, ImageArray), "problem with ufuncs"
+    t = selfimarr + np.random.random(selfimarr.shape)
+    assert isinstance(t, ImageFile), "problem with ufuncs"
     assert hasattr(t, "abc"), "Ufunc lost attribute!"
 
 
@@ -252,7 +252,7 @@ def test_save(tmp_path):
     keys = selfimarr.keys()
     for e in ext:
         selfimarr.save(testfile + e)
-        load = ImageArray(testfile + e)
+        load = ImageFile(testfile + e)
         assert all([k in load.keys() for k in keys]), "problem saving metadata {} {}".format(list(load.keys()), e)
         if e == ".npy":
             # tolerance is really poor for png which saves in 8bit format
@@ -263,17 +263,17 @@ def test_save(tmp_path):
 def test_savetiff(tmp_path):
     testfile = str(tmp_path / "testsave.tiff")
     # create a few different data types
-    testb = ImageArray(np.zeros((4, 5), dtype=bool))  # bool
+    testb = ImageFile(np.zeros((4, 5), dtype=bool))  # bool
     testb[0, :] = True
-    testui = ImageArray(np.arange(20).reshape(4, 5))  # int32
-    testi = ImageArray(np.copy(testui) - 10)
-    testf = ImageArray(np.linspace(-1, 1, 20).reshape(4, 5))  # float64
+    testui = ImageFile(np.arange(20).reshape(4, 5))  # int32
+    testi = ImageFile(np.copy(testui) - 10)
+    testf = ImageFile(np.linspace(-1, 1, 20).reshape(4, 5))  # float64
     for im in [testb, testui, testi, testf]:
         im["a"] = [1, 2, 3]
         im["b"] = "abc"  # add some test metadata
         im.filename = testfile
         im.save()
-        n = ImageArray(testfile)
+        n = ImageFile(testfile)
         assert all([n["a"][i] == im["a"][i] for i in range(len(n["a"]))])
         assert n["b"] == im["b"]
         assert "ImageArray.dtype" in n.metadata.keys()  # check the dtype metadata got added
@@ -287,18 +287,19 @@ def test_max_box():
 
 
 def test_crop():
-    c = selfimarr.crop((1, 3, 1, 4), copy=True)
+    c = selfimarr.clone.crop((1, 3, 1, 4), copy=True)
     assert np.array_equal(c, selfimarr[1:4, 1:3]), "crop didn't work"
     assert not shares_memory(c, selfimarr), "crop copy failed"
-    c2 = selfimarr.crop(1, 3, 1, 4, copy=True)
+    c2 = selfimarr.clone.crop(1, 3, 1, 4, copy=True)
     assert np.array_equal(c2, c), "crop with separate arguments didn't work"
-    c3 = selfimarr.crop(box=(1, 3, 1, 4), copy=False)
+    c3 = selfimarr.clone.crop(box=(1, 3, 1, 4), copy=False)
     assert np.array_equal(c3, c), "crop with no arguments failed"
-    assert shares_memory(selfimarr, c3), "crop with no copy failed"
+    c3[0, 0] = 42
+    assert selfimarr[1, 1] != 42
 
 
 def test_asint():
-    ui = selfimarr.asint()
+    ui = selfimarr.clone.asint()
     assert ui.dtype == np.uint16
     intarr = np.array(
         [[27311, 43318, 60131, 22148], [3943, 9439, 22571, 64979], [19556, 60082, 48378, 50169]], dtype=np.uint16
@@ -316,21 +317,21 @@ def test_other_funcs():
     assert hasattr(selfimarr, "img_as_float"), "skimage funcs not being added to dir"
     im = selfimarr.do_nothing()  # see if it can run
     assert np.allclose(im, selfimarr), "imagefuncs not working"
-    assert shares_memory(im, selfimarr), "imagefunc failed to share memory"
-    im0 = ImageArray(np.linspace(0, 1, 12).reshape(3, 4))
-    im1 = im0.clone * 5
+    assert im is selfimarr, "imagefunc failed to share memory"
+    im0 = ImageFile(np.linspace(0, 1, 12).reshape(3, 4))
+    im1 = ImageFile(im0.to_numpy() * 5)
     im2 = im1.rescale_intensity()  # test skimage
     assert np.allclose(im2, im0), "skimage func failed"
-    assert not shares_memory(im2, im1), "skimage failed to clone"
+    assert im2 is im1, "Image methods update their owner by default"
     im3 = im1.skimage__exposure__exposure__rescale_intensity()  # test call with module name
     assert np.allclose(im3, im0), "skimage call with module name failed"
 
 
 def test_attrs():
-    test = ImageArray([])
-    assert _has_method(test, "gaussian_filter"), "Failed to get scipy.ndimage.gaussian_filter as ImageArray attr"
-    assert _has_method(test, "gaussian"), "Failed to get skimage.filter.gaussian as ImageArray attr"
-    assert _has_method(test, "gridimage"), "Failed to get imagfuncs.gridimage has ImageArray attr"
+    test = ImageFile(np.zeros((2, 2)))
+    assert _has_method(test, "gaussian_filter"), "Failed to get scipy.ndimage.gaussian_filter as ImageFile attr"
+    assert _has_method(test, "gaussian"), "Failed to get skimage.filter.gaussian as ImageFile attr"
+    assert _has_method(test, "gridimage"), "Failed to get imagfuncs.gridimage has ImageFile attr"
 
 
 selfa = np.linspace(0, 5, 12).reshape(3, 4)
@@ -364,12 +365,12 @@ def test_properties():
 
 
 def test_attrs2():
-    """Check that creating new attributes puts them on ImageFile and not ImageArray and updates public_attrs."""
+    """Check that creating new attributes puts them on ImageFile and not ImageFile and updates public_attrs."""
     assert selfifi["Loaded from"] == ""
     selfifi.abc = 123
     assert selfifi.abc == 123
     assert "abc" in selfifi.__dict__
-    assert "abc" not in selfifi._image.__dict__
+    assert "_image" not in selfifi.__dict__
     assert "abc" in selfifi._public_attrs
 
 
@@ -507,33 +508,33 @@ def test_operators():
 
 
 def test_image_descriptor():
-    """Test that ImageArray acts as a descriptor on ImageFile.image."""
+    """Test that ImageFile acts as a descriptor on ImageFile.image."""
     # Class-level: ImageFile.image should return the descriptor itself
-    assert isinstance(ImageFile.__dict__["image"], ImageArray), "ImageFile.image class attr is not an ImageArray descriptor"
+    assert isinstance(ImageFile.__dict__["image"], property), "ImageFile.image class attr is not an ImageFile descriptor"
 
-    # Setting a plain numpy array should produce an ImageArray
+    # Setting a plain numpy array should produce an ImageFile
     imf = ImageFile()
     arr = np.ones((5, 6))
     imf.image = arr
-    assert isinstance(imf.image, ImageArray), "image is not ImageArray after setting numpy array"
+    assert type(imf.image) is np.ma.MaskedArray, "image is not ImageFile after setting numpy array"
     assert imf.image.shape == (5, 6), "shape mismatch after setting numpy array"
 
-    # Setting an ImageArray should keep it as an ImageArray
-    ima = ImageArray(np.zeros((3, 4)))
+    # Setting an ImageFile should keep it as an ImageFile
+    ima = ImageFile(np.zeros((3, 4)))
     imf2 = ImageFile()
     imf2.image = ima
-    assert isinstance(imf2.image, ImageArray), "image is not ImageArray after setting ImageArray"
+    assert type(imf2.image) is np.ma.MaskedArray, "image is not ImageFile after setting ImageFile"
 
     # metadata should be preserved across assignment
     imf3 = ImageFile()
-    imf3.image = ImageArray(np.ones((4, 4)))
-    imf3.image.metadata["test_key"] = "test_value"
+    imf3.image = ImageFile(np.ones((4, 4)))
+    imf3.metadata["test_key"] = "test_value"
     imf3.image = np.zeros((4, 4))
     assert imf3.image.metadata.get("test_key") == "test_value", "metadata not preserved across image assignment"
 
     # filename should be preserved when image is replaced
     imf4 = ImageFile()
-    imf4.image = ImageArray(np.ones((4, 4)))
+    imf4.image = ImageFile(np.ones((4, 4)))
     imf4.filename = "test.png"
     imf4.image = np.zeros((4, 4))
     assert imf4.filename == "test.png", "filename not preserved across image assignment"

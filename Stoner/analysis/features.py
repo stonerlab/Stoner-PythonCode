@@ -244,9 +244,10 @@ def find_peaks(datafile, **kwargs):
     if plateau_size is not None:
         kwargs["plateau_size"] = plateau_size
 
-    seek = datafile.search(xcol, bounds)
+    row_indices = np.flatnonzero(datafile.search_index(xcol, bounds))
+    seek = datafile[row_indices, :]
     peaks, data = sp_find_peaks(seek[:, ycol], **kwargs)
-    peaks = datafile.data.i[seek.i[peaks]]  # de-reference frombounded data back to main dataset
+    peaks = row_indices[peaks]
 
     for sort_key in ["prominences", "peak_heights", "widths"]:
         if sort_key in data:
@@ -263,7 +264,7 @@ def find_peaks(datafile, **kwargs):
     for k, v in data.items():
         if k.startswith("left") or k.startswith("right") or k == "widths":
             data[k] = v / xconv + (xmin if k != "widths" else 0)
-    peak_data = datafile.data[peaks, :]
+    peak_data = datafile[peaks, :]
     for k, v in data.items():
         if prefix is None:
             datafile[k] = v

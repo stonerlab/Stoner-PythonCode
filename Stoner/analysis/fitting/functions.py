@@ -274,7 +274,7 @@ def _normalise_fit_result(datafile, settings, fit, result_obj):
             nfev = fit.nfev
             nfree = len(datafile) - len(popt)
             fit_data = func(datafile // settings.columns.xcol, *popt)
-            chisq = np.sum((datafile.data[:, settings.columns.ycol] - fit_data) ** 2) / nfree
+            chisq = np.sum((datafile.to_numpy()[:, settings.columns.ycol] - fit_data) ** 2) / nfree
         case _:
             raise RuntimeError("Unable to understand {type(fit)} as a fitting result")
     result_obj.results = {"popt": popt, "perr": perr, "nfev": nfev, "chisq": chisq, "nfree": nfree}
@@ -292,24 +292,19 @@ def _record_curve_fit_result(datafile, func, fit, settings):
     if not isinstance(settings.header, string_types):
         settings.header = f"Fitted with {result_obj.f_name}"
 
-    # Store our current mask, calculate new column's mask and turn off mask
-    tmp_mask = datafile.mask
-    col_mask = np.any(tmp_mask, axis=1)
-    datafile.mask = False
-
-    if isinstance(settings.result, bool) and settings.result:  # Appending data to end of data
+    store_result = settings.result is not None and settings.result is not False
+    if not store_result:
+        return result_obj.row
+    col_mask = np.any(np.asarray(datafile.mask), axis=1)
+    new_col = np.ma.array(result_obj.fit_values, mask=col_mask)
+    ycols = np.atleast_1d(settings.columns.ycol).tolist()
+    residuals = [datafile.column(yc).copy() - new_col for yc in ycols] if settings.residuals else []
+    if settings.result is True:
         settings.result = datafile.shape[1]
-        tmp_mask = np.column_stack((tmp_mask, col_mask))
-    else:  # Inserting data
-        tmp_mask = np.column_stack((tmp_mask[:, 0 : settings.result], col_mask, tmp_mask[:, settings.result :]))
-    new_col = result_obj.fit_values
-    if settings.result:
+    if store_result:
         datafile.add_column(new_col, index=settings.result, replace=settings.replace, header=settings.header)
-    if settings.residuals and settings.result:
-        if not islistlike(settings.columns.ycol):
-            settings.columns.ycol = [settings.columns.ycol]
-        for yc in settings.columns.ycol:
-            residual_vals = datafile.column(yc) - new_col
+    if settings.residuals and store_result:
+        for residual_vals in residuals:
             if isinstance(settings.residuals, bool) and settings.residuals:
                 match settings.result:
                     case None:
@@ -328,7 +323,6 @@ def _record_curve_fit_result(datafile, func, fit, settings):
             datafile[f"{result_obj.f_name}:chi^2"] = result_obj.chisq
             datafile[f"{result_obj.f_name}:chi^2 err"] = np.sqrt(2 / len(residual_vals)) * result_obj.chisq
 
-    datafile.mask = tmp_mask
     # Make row object
     return result_obj.row
 
@@ -437,7 +431,7 @@ def _chi2_fit_to_data(datafile, ret_val, model):
     """Convert a chi^2 fit to a Data instance."""
     ret = datafile.clone
     ret.data = ret_val
-    ret.column_headers = []
+    ret.column_headers = [f"Column {i}" for i in range(ret.shape[1])]
     ret.setas = ""
     prefix = ret["lmfit.prefix"][-1]
     ix = fixed = 0
@@ -1073,7 +1067,7 @@ def polyfit(
                     + f"{ordinal(polynomial_order)} order polynomial"
                 )
             datafile.add_column(
-                np.polyval(p[i, :], x=datafile.column(_.xcol)), index=result, replace=replace, header=header
+                np.polyval(p[i, :], x=datafile.column(_.xcol)), index=None if result is True else result, replace=replace, header=header
             )
     if len(_.ycol) == 1:
         p = p[0, :]
