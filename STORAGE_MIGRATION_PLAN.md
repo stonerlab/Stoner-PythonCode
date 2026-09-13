@@ -1,7 +1,7 @@
 # Data storage migration plan
 
 Agreed direction: 2026-09-13. Target branch: `devel`.
-Status: architecture agreed; implementation has not started.
+Status: batch 1 contract characterisation complete; production storage unchanged.
 Target release: undecided (`0.12` or `1.0`).
 Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
 new version. Python 3.15 support is conditional on its public release and support
@@ -177,11 +177,13 @@ Each numbered batch is a bounded workstream, not a requirement to finish a large
 migration in one session. Split a batch into named sub-batches in the handover when
 necessary. Complete its evidence before moving to dependent work.
 
-- [ ] **1. Characterise current contracts.** Add a focused contract inventory and
+- [x] **1. Characterise current contracts.** Add a focused contract inventory and
   meaningful regressions for the behaviours above using the existing backend.
   Reuse current tests and real scientific fixtures. Record the verified environment,
   baseline commands and outcomes. Gate: preserved behaviours and proposed changes
   are distinguishable; no production storage changes.
+  See [STORAGE_CONTRACTS.md](STORAGE_CONTRACTS.md) for the inventory, test map and
+  explicitly separated legacy defects/API decisions.
 - [ ] **2. Specify interchange and ownership.** Settle values/mask/schema ownership,
   duplicate-column identity, row identity, dtype policy, metadata conflict rules,
   pandas/xarray import/export and writable-view transition. Define conversion and
@@ -277,7 +279,7 @@ claims that a future checkout has unchanged implementations.
 - [ImageFile/ImageArray](Stoner/Image/core.py),
   [mask and drawing proxies](Stoner/Image/attrs.py),
   [stack storage](Stoner/Image/stack.py), [Kerr classes](Stoner/Image/kerr.py).
-- [Core tests](tests/Stoner/core), [image tests](tests/Stoner/image),
+- [Core tests](tests/Stoner/core), [image tests](tests/Stoner/Image),
   [analysis](Stoner/analysis), [formats](Stoner/formats),
   [public examples](doc/samples).
 - [Pandas extension guidance](https://pandas.pydata.org/docs/development/extending.html):
@@ -297,15 +299,29 @@ matches the selected environment.
 
 ## Current handover
 
-- **Completed:** architecture investigation and agreement, including the separate
-  follow-on wrapper phase; repository plan created. No storage implementation or
-  prototype has been undertaken.
-- **Next:** batch 1, beginning with Data column resolution, `setas`, indexing and
-  writable-view contracts. Inspect existing core tests, identify coverage gaps and
-  record proposed API changes separately from preserved behaviour. Defer image
-  characterisation to the next sub-batch if needed.
-- **Validation so far:** source/test inspection and upstream documentation review
-  only; no migration runtime or performance evidence yet.
+- **Completed:** batch 1 inventory in `STORAGE_CONTRACTS.md` and focused Data/Image
+  regressions in `tests/Stoner/core/test_storage_contracts.py` and
+  `tests/Stoner/Image/test_storage_contracts.py`. Existing scientific fixtures remain
+  in use. No production storage, dependency or CI changes.
+- **Next:** batch 2, specify values/mask/schema ownership and lossless interchange.
+  Start with duplicate identities, role/mask propagation and writable-view policy;
+  use the inventory's legacy cases as explicit design decisions, not behaviours
+  to preserve accidentally. Then settle metadata export and image padding policies.
+- **Validation:** baseline environment verified against all 36 entries in
+  `tests/test-env.yml`; Miniforge py314 (Python 3.14.7, pandas 3.0.5, NumPy 2.5.2).
+  Existing core/Image baseline: 190 passed, 10 warnings. Broader consumer baseline:
+  379 passed, 173 warnings in 329.81 seconds. Final focused contract run:
+  36 passed, 1 warning (after restricting the metadata observation to pandas 3).
+  Local evidence: `maintenance/runs/20260913-120057-focused-20968298` and
+  `maintenance/runs/20260913-120535-focused-092c9be3`. Relative documentation links
+  and staged whitespace checks passed. No new warning filters were introduced.
+  Reproduction commands and environment details are in `STORAGE_CONTRACTS.md`.
+  No Python 3.12/hosted CI or migration performance claim is made.
+- **Findings:** legacy tests expose duplicate regex collapse, numeric-string
+  fallback failure, slice/deletion role loss, insertion/reorder mask loss,
+  second-group x-error indexing, fill-value scalar extraction, pandas mask/metadata
+  loss and unmasked stack padding. These are reviewed inputs for batch 2; none was
+  fixed in this characterisation batch.
 - **Open decisions:** concrete mask/schema representation and interchange format;
   dtype support; writable-view transition; external backend edit reconciliation;
   alignment and metadata conflict policies; performance tolerances; release number.
