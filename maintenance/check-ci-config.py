@@ -65,6 +65,8 @@ def main() -> None:
     docs = workflows["build-docs.yaml"]
     require("contents: read" in docs and "contents: write" not in docs, "Documentation CI is not read-only.")
     require("READTHEDOCS: True" in docs, "Documentation CI does not consume the retained plot cache.")
+    require("QT_QPA_PLATFORM: offscreen" in docs, "Documentation CI must initialise Qt without a display.")
+    require("MPLBACKEND: Agg" in docs, "Documentation CI must use a non-interactive Matplotlib backend.")
     require("git push" not in docs, "Documentation CI must not push generated cache changes.")
 
     require(not (ROOT / ".travis.yml").exists(), "The inactive Travis configuration is still present.")

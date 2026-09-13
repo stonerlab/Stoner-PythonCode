@@ -49,6 +49,7 @@ jobs:
       - name: Build documentation
         env:
           MPLBACKEND: Agg
+          QT_QPA_PLATFORM: offscreen
           READTHEDOCS: True
         run: |
           cd doc

@@ -73,7 +73,9 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 ## When documentation changes, and before a release
 
 - Build cached HTML with `READTHEDOCS=True`, retaining the warning log. Run
-  `maintenance/audit-docs.py` against the platform's reviewed warning baseline in
+  headless builds with `MPLBACKEND=Agg` and `QT_QPA_PLATFORM=offscreen`; importing
+  the package can initialise Qt even when plotting uses Matplotlib's Agg backend.
+  Run `maintenance/audit-docs.py` against the platform's reviewed warning baseline in
   `maintenance/docs`. New or increased warnings need investigation; never increase
   the ceiling solely to make a build pass.
 - Verify all five primary classes and dynamically attached Data methods remain
