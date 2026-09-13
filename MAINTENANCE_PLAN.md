@@ -134,6 +134,13 @@ completed repository repair programme.
 
 ## Known limitations and follow-ups
 
+- [ ] **Data storage migration on `devel`:** follow
+  [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
+  architecture, session-sized batches, validation gates and current handover.
+  Begin with contract characterisation; backend method simplification and new
+  Stoner wrappers follow only after storage migration validation. This is separate
+  from the current release preparation above.
+
 - **MAXIMUS:** image and point-scan readers select the first region and do not
   implement region-to-file mapping or explicitly reject multi-region inputs.
   Multiple stack files do not establish multi-region support. Require authoritative

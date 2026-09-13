@@ -99,4 +99,10 @@ spellings for prose while preserving the exact spelling of API identifiers, keyw
 
 ## Maintenance plan
 
+For the planned pandas/xarray storage migration on `devel`, read
+[STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md). It is the working
+specification and session handover: take the next bounded batch and update its
+checklist and handover with validation and the next step. Keep later backend
+method wrappers separate from the initial storage replacement.
+
 `MAINTENANCE_PLAN.md` describes recurring maintenance, release preparation and current follow-ups. Keep its active checklist current; record completed work in commits, pull requests, release notes and CI runs. The initial Phase 0-7 records are historical and remain available in Git history. Retain reusable maintenance tools and reviewed documentation warning baselines, but do not accumulate completed phase reports in the live tree. See `maintenance/README.md` for tool usage.
