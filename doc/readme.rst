@@ -67,8 +67,8 @@ Installation
 
 .. installation-start
 
-The current source requires **Python 3.11 or newer**. The test workflow covers
-Python 3.11-3.14 on Linux and Python 3.14 on macOS. Published package versions
+The current source requires **Python 3.12 or newer**. The test workflow covers
+Python 3.12-3.14 on Linux and Python 3.14 on macOS. Published package versions
 may lag behind the source branch; consult the selected release's requirements.
 
 We recommend a Conda-based Python distribution, such as **Anaconda or Miniforge**.

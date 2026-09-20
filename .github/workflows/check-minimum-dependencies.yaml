@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   minimum-dependencies:
-    name: Python 3.11 lower dependency lines
+    name: Python 3.12 lower dependency lines
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,7 +26,7 @@ jobs:
         uses: mamba-org/setup-micromamba@f457c30a868e4760d3a6fcea5f25dc655b8edf39 # v3.2.1
         with:
           environment-file: tests/minimum-env.yml
-          environment-name: stoner-py311-minimum
+          environment-name: stoner-py312-minimum
           init-shell: bash
           cache-downloads: true
           cache-environment: true

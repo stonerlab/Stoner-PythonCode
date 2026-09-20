@@ -322,9 +322,10 @@ necessary. Complete its evidence before moving to dependent work.
 - [ ] **7. Validate migration and prepare compatibility release.** Run appropriate
   full-suite, platform, dependency, documentation and installed-package checks;
   repeat representative benchmarks. Reconcile dependency specifications, including
-  xarray and tested pandas bounds. Set Python 3.12 as the minimum throughout
-  packaging, environments, CI and documentation, removing Python 3.11 from the new
-  version's support matrix. Validate Python 3.15 when publicly released and supported
+  xarray and tested pandas bounds. Python 3.12 is now declared as the minimum
+  throughout packaging, environments, CI and documentation; Python 3.11 has been
+  removed from the new version's support matrix. Validate that revised matrix.
+  Validate Python 3.15 when publicly released and supported
   by the required dependencies; record readiness separately if it remains pending.
   Document changed APIs and the replacement of
   custom array classes. The maintainer selected `0.12.0a1` as the migration's
@@ -333,21 +334,13 @@ necessary. Complete its evidence before moving to dependent work.
   validation is distinguished from local evidence. Publishing is a separate action.
   **Prerequisite:** Stage 6e legacy-class removal is complete, including for a test
   or prerelease build. A passing suite with the old adapters present is not enough.
-- [ ] **8. Simplify and extend Stoner wrappers.** Only after storage validation,
-  audit existing methods for backend delegation and select new backend methods
-  worth exposing. Deliver small, independently tested wrapper batches as below.
-  Gate: a predictable documented API with equivalent retained scientific behaviour.
-  Include labelled row access using the underlying pandas index and `.loc`, as
-  requested by the maintainer after Stage 6e. Define its public spelling, label
-  versus position selection, duplicate-label behaviour, result type and guarded
-  mutation semantics. Distinguish selecting rows by index label from looking up
-  named columns within a row; do not recreate either through a custom array class.
-  This is an API enhancement batch, not additional Stage 6 removal work.
-- [ ] **9. Expose native storage through the public attributes.** The maintainer's
+- [ ] **8. Expose native storage through the public attributes.** After Stage 7
+  storage validation, establish the native public interface before simplifying
+  wrappers. The maintainer's
   target is a pandas DataFrame at `Data.data` and native xarray objects at
   `ImageFile.image` and `ImageStack.stack`, exposing the actual backend storage
-  without first rendering it as a NumPy snapshot. Coordinate this design with
-  Stage 8 so wrappers work directly with the intended public backend interface.
+  without first rendering it as a NumPy snapshot. Settle masking and ownership
+  semantics first; Stage 9 then simplifies wrappers against this validated interface.
   - [ ] Specify the xarray DataArray/Dataset interface for images and stacks,
     including multichannel grids, exclusions, ragged extents and calibration.
     Expose standard backend objects rather than new custom array subclasses.
@@ -369,7 +362,19 @@ necessary. Complete its evidence before moving to dependent work.
     suite after the interface switch. Gate: native access avoids an implicit
     NumPy export and the documented ownership and scientific contracts pass.
 
-### Follow-on wrapper policy (batch 8)
+- [ ] **9. Simplify and extend Stoner wrappers.** After the Stage 8 native interface
+  and its masking/mutation contracts pass validation, audit existing methods for
+  backend delegation and select new backend methods worth exposing. Deliver small,
+  independently tested wrapper batches as below.
+  Gate: a predictable documented API with equivalent retained scientific behaviour.
+  Review labelled row access through the pandas index and `.loc` exposed in Stage 8;
+  add Stoner conveniences only where useful. Define label versus position selection,
+  duplicate-label behaviour, result type and mutation semantics consistently with
+  that interface. Distinguish selecting rows by index label from looking up named
+  columns within a row; do not recreate either through a custom array class.
+  This is an API enhancement batch, not additional Stage 6 removal work.
+
+### Follow-on wrapper policy (batch 9)
 
 For each wrapper, record the backend operation, input resolution, mutation default,
 copy semantics, alignment, mask/schema/metadata handling and return type. Preserve
@@ -829,10 +834,21 @@ matches the selected environment.
   stub under the execution filesystem restrictions. No successful complete build
   is claimed. Repeat in a suitable isolated documentation checkout during Stage 7;
   generated API stubs and the retained plot cache were not refreshed here.
+- **Lower-bound CI correction:** run `34784426200` failed during imports because
+  `tests/minimum-env.yml` omitted the now-required xarray dependency while package
+  installation deliberately used `--no-deps`. Added xarray to that environment
+  and extended `maintenance/check-ci-config.py` to check that all declared runtime
+  dependency names are represented in the lower-bound environment. This corrects
+  environment completeness; it does not establish new tested dependency bounds.
+  Following maintainer clarification, also applied the Python 3.12 minimum to
+  package/Conda metadata, test environments, CI matrices and current documentation.
+  The CI policy check passes and a simulated missing-xarray environment is rejected.
+  A successful hosted run of the revised lower-bound environment remains pending.
 - **Next:** Stage 7 platform, dependency, installed-package, documentation and
-  integrated performance validation. Wrapper expansion, including pandas-backed
-  labelled row access, remains Stage 8; native `.data`/`.image`/`.stack` exposure
-  is recorded as Stage 9, with interface design coordinated during Stage 8.
+  integrated performance validation. At the maintainer's request, the subsequent
+  stages are reordered: Stage 8 exposes native `.data`/`.image`/`.stack` storage
+  after settling masking and ownership; Stage 9 then simplifies and extends
+  wrappers against that interface, including any useful labelled-row conveniences.
   Current Stage 6 snapshot contracts remain in effect until that implementation.
   Retain scientific fixtures and all 243
   cached plots. Local Stage 6 completion does not establish hosted CI or release readiness.

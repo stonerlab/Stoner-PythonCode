@@ -7,7 +7,7 @@ name = "Stoner"
 dynamic = ["version"]
 description = "Library to help write data analysis tools for experimental condensed matter physics."
 readme = {file = "README.rst", content-type = "text/x-rst"}
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = {file = "LICENSE.md"}
 authors = [
     {name = "Gavin Burnell", email = "g.burnell@leeds.ac.uk"},
@@ -21,7 +21,6 @@ classifiers = [
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",

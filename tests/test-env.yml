@@ -4,7 +4,7 @@ channels:
   - phygbu
   - conda-forge
 dependencies:
-  - python >=3.11
+  - python >=3.12
   - pip
 
   # Test and coverage tools

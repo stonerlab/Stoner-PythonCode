@@ -1,10 +1,10 @@
 # Representative lower supported minor lines; patch versions resolve normally.
-name: stoner-py311-minimum
+name: stoner-py312-minimum
 channels:
   - conda-forge
   - phygbu
 dependencies:
-  - python =3.11
+  - python =3.12
   - pip
 
   # Test and coverage tools
@@ -31,6 +31,7 @@ dependencies:
   - scikit-image =0.24
   - scipy =1.14
   - statsmodels
+  - xarray
 
   # Optional features exercised by tests and documentation examples
   - cycler >=0.10.0

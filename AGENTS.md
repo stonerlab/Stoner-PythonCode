@@ -19,8 +19,8 @@ Stoner is a scientific Python data-analysis package for experimental condensed-m
 
 ## Development environment
 
-- The package requires Python 3.11 or newer and CI covers Python 3.11-3.14.
-- Use a supported Conda distribution such as `C:\ProgramData\miniforge3` or `C:\ProgramData\Anaconda3`, with Python 3.11 or newer and the required project dependencies. Detect which installation is present rather than assuming one path is available on every machine.
+- The package requires Python 3.12 or newer and CI covers Python 3.12-3.14.
+- Use a supported Conda distribution such as `C:\ProgramData\miniforge3` or `C:\ProgramData\Anaconda3`, with Python 3.12 or newer and the required project dependencies. Detect which installation is present rather than assuming one path is available on every machine.
 - Ignore `C:\ProgramData\Miniconda3` for Stoner development. It is intentionally fixed at Python 3.6 for LabVIEW 2018 integration and must not be upgraded, repurposed, or treated as the project's test environment.
 - Prefer the existing Conda environments named `py314` or `py313` when they are present and contain the dependencies needed by the task. Verify their Python and package versions before use; do not assume an environment is complete solely from its name.
 - Existing base or named environments are not guaranteed to contain the complete test dependencies. Use or create an environment from `tests/test-env.yml` before claiming local test success.

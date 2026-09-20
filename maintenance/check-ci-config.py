@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import tomllib
 from pathlib import Path
 
 
@@ -30,7 +31,7 @@ def main() -> None:
         require("curl" not in text and "wget" not in text, f"{name} executes a network installer script.")
 
     tests = workflows["run-tests-action.yaml"]
-    for version in ("3.11", "3.12", "3.13", "3.14"):
+    for version in ("3.12", "3.13", "3.14"):
         require(version in tests, f"Python {version} is missing from the test matrix.")
     for runner in ("ubuntu-latest", "macos-15-intel"):
         require(runner in tests, f"{runner} is missing from the test matrix.")
@@ -80,8 +81,24 @@ def main() -> None:
     require("environment-file: tests/minimum-env.yml" in lower, "The lower dependency environment is not exercised.")
     require("python -m pytest -n 2" in lower, "The lower dependency job must run the full parallel suite.")
     require("contents: read" in lower, "The lower dependency job must be read-only.")
+    minimum_environment = (ROOT / "tests" / "minimum-env.yml").read_text(encoding="utf-8")
+    minimum_packages = {
+        re.sub(r"[-_.]+", "-", name.lower())
+        for name in re.findall(r"^  - (?:[\w-]+::)?([\w.-]+)", minimum_environment, re.MULTILINE)
+    }
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    for dependency in project["project"]["dependencies"]:
+        name = re.match(r"[\w.-]+", dependency).group()
+        require(
+            re.sub(r"[-_.]+", "-", name.lower()) in minimum_packages,
+            f"Required runtime dependency {name} is missing from tests/minimum-env.yml.",
+        )
     packages = workflows["check-packages.yaml"]
-    require("python-version: ['3.11', '3.14']" in packages, "Installed-package checks must cover Python endpoints.")
+    require(project["project"]["requires-python"] == ">=3.12", "The package minimum must be Python 3.12.")
+    require("  - python =3.12" in minimum_environment, "The lower dependency job must use Python 3.12.")
+    require("environment-name: stoner-py312-minimum" in lower, "The lower dependency environment name is stale.")
+    require("3.11" not in tests + lower + packages, "CI still advertises unsupported Python 3.11.")
+    require("python-version: ['3.12', '3.14']" in packages, "Installed-package checks must cover Python endpoints.")
     require("python-version: ${{ matrix.python-version }}" in packages, "Installed-package checks ignore the matrix.")
 
     print(f"CI policy passed ({sum(len(ANY_ACTION.findall(text)) for text in workflows.values())} pinned actions).")
