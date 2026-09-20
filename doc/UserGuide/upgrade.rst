@@ -8,7 +8,7 @@ The Stoner package has gradually undergone several changes as additional functio
 manageable. This document summarises the main changes from previous versions.
 
 Version 0.12.0a1: storage migration
-=================================
+===================================
 
 This alpha requires Python 3.12 or newer, pandas 2.2 or newer and xarray
 2024.10 or newer. Numerical tables now use pandas storage; images and stacks

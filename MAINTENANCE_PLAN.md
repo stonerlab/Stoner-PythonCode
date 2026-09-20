@@ -32,7 +32,7 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## After pushes and before merging
 
-- Check the full hosted matrix: Linux Python 3.11-3.14 and macOS Python 3.14.
+- Check the full hosted matrix: Linux Python 3.12-3.14 and macOS Python 3.14.
   The Windows development environment provides local platform coverage.
 - Check the lower-dependency job and installed-distribution jobs, including final
   test-result publishing. Do not treat a successful test step as success for a job
@@ -121,14 +121,15 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 This is the remaining work from Phase 8, not a new requirement to repeat the
 completed repository repair programme.
 
-- [ ] Verify hosted tests, package checks and documentation for the release
+- [x] Verify hosted tests, package checks and documentation for the release
   preparation commit, including source-based Sphinx versions, tag checks and
   installed-version checks. Historical records have been retired and retained
-  maintenance tools and references validated after relocation.
+  maintenance tools and references validated after relocation. Migration Stage 7
+  records the alpha's hosted matrix/package results and audited documentation build.
 - [ ] Verify hosted Codacy reanalysis of the locally reviewed cleanup.
   Keep the deferred complexity and mixed-line-ending work out of this release batch.
 - [ ] Review outstanding release metadata, archive size and service/citation links.
-- [ ] Prepare the release notes for the version set in `Stoner/__init__.py`.
+- [x] Prepare the release notes for `0.12.0a1` in `doc/UserGuide/upgrade.rst`.
 - [ ] When authorised, tag and publish; record successful package/documentation
   jobs and verify published versions before closing release preparation.
 
@@ -137,8 +138,8 @@ completed repository repair programme.
 - [ ] **Data storage migration on `devel`:** follow
   [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
   architecture, session-sized batches, validation gates and current handover.
-  Begin with contract characterisation; backend method simplification and new
-  Stoner wrappers follow only after storage migration validation. This is separate
+  Stages 1-7 are complete; Stage 7 records release-validation evidence. Native
+  storage exposure and masking design precede wrapper simplification in Stages 8-9. This is separate
   from the current release preparation above.
 
 - **MAXIMUS:** image and point-scan readers select the first region and do not

@@ -319,7 +319,7 @@ necessary. Complete its evidence before moving to dependent work.
       historical evidence and fixtures without importing removed production classes.
       Both class removal and the full-suite pass are verified on the code state
       recorded below. Stage 7 may proceed; release readiness still requires Stage 7.
-- [ ] **7. Validate migration and prepare compatibility release.** Run appropriate
+- [x] **7. Validate migration and prepare compatibility release.** Run appropriate
   full-suite, platform, dependency, documentation and installed-package checks;
   repeat representative benchmarks. Reconcile dependency specifications, including
   xarray and tested pandas bounds. Python 3.12 is now declared as the minimum
@@ -334,6 +334,20 @@ necessary. Complete its evidence before moving to dependent work.
   validation is distinguished from local evidence. Publishing is a separate action.
   **Prerequisite:** Stage 6e legacy-class removal is complete, including for a test
   or prerelease build. A passing suite with the old adapters present is not enough.
+  - [x] **7a. Supported environments and dependency declarations.** Python 3.12-3.14;
+    pandas >=2.2 and xarray >=2024.10 aligned across runtime, Conda, test and docs
+    specifications. The lower-bound job pins those backend minor lines.
+  - [x] **7b. Platform and installed-package gate.** Verify the full hosted matrix,
+    lower-bound suite, wheel/sdist contents and clean installs on the final code.
+  - [x] **7c. Documentation gate.** Build cached HTML, audit against existing warning
+    ceilings, check primary API coverage and inspect rendered migration guidance.
+  - [x] **7d. Integrated performance gate.** Compare production against the isolated
+    pre-migration checkout using the accepted time/allocation thresholds.
+  - [x] **7e. Compatibility notes and future Python readiness.** Alpha upgrade notes
+    describe removed classes, snapshot/edit semantics and the new dependencies.
+    Python 3.15 remains separately pending: as of 2026-09-20 its latest official
+    release is [3.15.0rc2](https://www.python.org/downloads/release/python-3150rc2/),
+    with final release scheduled for 2026-10-01. No 3.15 compatibility is claimed.
 - [ ] **8. Expose native storage through the public attributes.** After Stage 7
   storage validation, establish the native public interface before simplifying
   wrappers. The maintainer's
@@ -829,7 +843,7 @@ matches the selected environment.
   `e703a0e9023b3f428c781a1427f2404fc6913f9c05053c520c7ce2da86881e07`:
   hash each relative POSIX path, NUL, file bytes with CRLF normalised to LF, NUL;
   exclude `__pycache__`. Plan/prose updates do not change this runtime/test state.
-- **Documentation validation boundary:** public source documentation was updated,
+- **Historical Stage 6 documentation boundary (resolved in Stage 7):** public source documentation was updated,
   but the attempted cached Sphinx build could not write an autosummary source
   stub under the execution filesystem restrictions. No successful complete build
   is claimed. Repeat in a suitable isolated documentation checkout during Stage 7;
@@ -843,15 +857,69 @@ matches the selected environment.
   Following maintainer clarification, also applied the Python 3.12 minimum to
   package/Conda metadata, test environments, CI matrices and current documentation.
   The CI policy check passes and a simulated missing-xarray environment is rejected.
-  A successful hosted run of the revised lower-bound environment remains pending.
-- **Next:** Stage 7 platform, dependency, installed-package, documentation and
-  integrated performance validation. At the maintainer's request, the subsequent
-  stages are reordered: Stage 8 exposes native `.data`/`.image`/`.stack` storage
-  after settling masking and ownership; Stage 9 then simplifies and extends
-  wrappers against that interface, including any useful labelled-row conveniences.
+  Stage 7 subsequently verified the revised lower-bound environment; see below.
+- **Stage 7 dependency and package evidence (2026-09-20):** commits `a60a167db`
+  and `8addfd091` align Python 3.12 support and declare pandas >=2.2 / xarray
+  >=2024.10 consistently. The final runtime commit `c36dac690` passed the
+  [lower-bound suite](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/35525413747):
+  **743 passed, one skipped, 6835 warnings**, 234.49 seconds, using Python 3.12.14,
+  NumPy 2.0.2, pandas 2.2.3 and xarray 2024.10.0. The
+  [package gate](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/35525413842)
+  passed wheel/sdist archive checks and separate clean installs on Python 3.12
+  and 3.14. These are hosted results, not inferred from the Windows environment.
+- **Stage 7 hosted platform gate:** the complete
+  [test workflow](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/35525413740)
+  passed at `c36dac690`: Linux Python 3.12, 3.13 and 3.14, macOS Python 3.14,
+  and both test-result publishing jobs. Combined with the lower-bound and package
+  results above, this closes the supported-platform gate for the alpha.
+- **Stage 7 Windows gate:** the final runtime/test state at `c36dac690` passed
+  **744 tests, 709 warnings**, in **317.84 seconds**, with two workers and
+  **80% coverage** on Miniforge py314. Command:
+  `./maintenance/run-baseline.ps1 -Check parallel -Environment py314`.
+  Evidence: `maintenance/runs/20260920-182249-parallel-cb1c14e2`.
+- **Stage 7 performance:** the first complete integrated run passed 14/19 pairs,
+  exposing excessive copies in row appends, stack insertion and frame edits.
+  `c36dac690` adopts newly allocated row buffers after validation, packs uniform
+  uncalibrated stacks without unpacking every frame, avoids redundant image
+  exports and integer precision conversions, and commits validated frame-sized
+  buffers without copying the whole stack. Calibrated/ragged insertion retains
+  the general mapper. A new regression protects input/draft detachment, masks,
+  fill values and saved frame identities; the focused gate passed **58 tests**.
+  The final benchmark `maintenance/runs/stage7-integrated-final.json` passed
+  **19/19 pairs** with five repetitions and separate allocation measurements.
+  Reproduce using `maintenance/benchmark-integrated-storage.py --legacy
+  maintenance/runs/stage7-legacy --output maintenance/runs/stage7-integrated-final.json`
+  in activated Miniforge py314. Legacy checkout: `870ff1ce8`; production:
+  `c36dac690`. Both execute the public API in isolated processes; the runner
+  verifies import paths and hashes all production Python sources. Production hash:
+  `c40b7f9baea2bac09de3ae07e717587d8f76aba882e832c8bf962aad70a85fc8`.
+  Large row appends measured 60.679 -> 61.440 ms, stack insertion 244.505 ->
+  11.529 ms, and frame edits 0.423 -> 3.222 ms; all meet the accepted absolute/
+  relative time and allocation limits. These are measured workloads, not universal
+  speed guarantees or a waiver of the Stage 3 thresholds.
+- **Stage 7 documentation:** the isolated cached HTML build and existing Windows
+  warning audit passed with **88 reviewed warnings, zero unexpected warnings**,
+  all five primary classes documented and no missing dynamic Data methods.
+  Evidence: `maintenance/runs/stage7-doc-output/` and `stage7-doc-audit.log`.
+  Removed internal owner imports from public autosummary tables and qualified
+  ambiguous Kerr return types; warning ceilings were not increased. Browser checks
+  over localhost covered the index, alpha upgrade notes, image guide and Data API
+  navigation. All 243 retained plot-cache files are unchanged. The earlier hosted
+  [documentation build](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/35524678798)
+  also passed; local audit additionally validates the subsequent warning fixes.
+- **Stage 7 completion:** all five sub-gates passed on 2026-09-20. The final runtime
+  and tests are committed at `c36dac690`; subsequent changes are the documentation
+  heading correction and this validation/maintenance record. Python 3.15 readiness
+  remains explicitly pending its final release and dependency availability, rather
+  than an unverified supported version. No package tag or publication was created.
+- **Next:** Stage 8 native `.data`/`.image`/`.stack` storage exposure. Begin with the
+  masking and ownership contract before changing public attributes; Stage 9 then
+  simplifies and extends wrappers against that interface, including any useful
+  labelled-row conveniences.
   Current Stage 6 snapshot contracts remain in effect until that implementation.
   Retain scientific fixtures and all 243
-  cached plots. Local Stage 6 completion does not establish hosted CI or release readiness.
+  cached plots. Stage 7 now supplies hosted and local validation for the alpha;
+  publication remains a separately authorised release action.
   The maintainer subsequently authorised committing this migration and version
   `0.12.0a1` to `devel` and pushing to origin. Publication remains a separate action.
 
