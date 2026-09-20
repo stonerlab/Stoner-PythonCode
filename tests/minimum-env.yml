@@ -25,13 +25,13 @@ dependencies:
   - multiprocess >=0.70
   - numpy =2.0
   - packaging
-  - pandas
+  - pandas =2.2
   - pillow
   - python-dateutil >=2.8.0
   - scikit-image =0.24
   - scipy =1.14
   - statsmodels
-  - xarray
+  - xarray =2024.10
 
   # Optional features exercised by tests and documentation examples
   - cycler >=0.10.0
