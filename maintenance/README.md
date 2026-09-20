@@ -11,6 +11,19 @@ The isolated [storage composition prototype](storage_prototype/README.md) has
 acceptance tests and a paired benchmark runner. It remains outside the production
 package during the pandas/xarray migration.
 
+For the integrated production comparison, create a separate checkout of the
+pre-migration revision and run in the activated test environment:
+
+```powershell
+python maintenance/benchmark-integrated-storage.py --legacy maintenance/runs/stage7-legacy --output maintenance/runs/stage7-integrated.json
+```
+
+This reuses the prototype benchmark's public-API workloads with production Stoner
+from each checkout in separate processes. It verifies import provenance and source
+hashes, records runtime versions and all samples, and applies the agreed migration
+time/allocation thresholds. A nonzero exit means at least one measured gate failed;
+do not reinterpret that as release readiness. Keep the sources unchanged during a run.
+
 ```powershell
 ./maintenance/run-baseline.ps1 -Check focused -TestPaths tests/Stoner/test_Core.py
 ./maintenance/run-baseline.ps1 -Check serial

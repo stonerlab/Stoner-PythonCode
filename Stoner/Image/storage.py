@@ -207,7 +207,9 @@ class ImageStorage:
         frames, heights, widths = [], [], []
         for i, (image, name) in enumerate(zip(images, names)):
             raw = image.dataset.intensity.values
-            if raw.dtype.kind in "iu" and not np.array_equal(raw.astype(object), raw.astype(dtype).astype(object)):
+            if raw.dtype != dtype and raw.dtype.kind in "iu" and not np.array_equal(
+                raw.astype(object), raw.astype(dtype).astype(object)
+            ):
                 raise ValueError("Stack dtype promotion would lose integer precision")
             height, width = raw.shape
             heights.append(height)

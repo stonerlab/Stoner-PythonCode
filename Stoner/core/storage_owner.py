@@ -6,6 +6,7 @@ from dataclasses import replace
 from uuid import uuid4
 
 import numpy as np
+import pandas as pd
 
 from .storage import Column, DataStorage, resolve_columns, _copy_metadata
 from .base import TypeHintedDict
@@ -334,14 +335,21 @@ class DataOwner:
         """Insert positional rows without losing exclusions or integer precision."""
         self._check_writable()
         incoming = np.ma.atleast_2d(values)
-        current = self.to_numpy()
+        state = self._state
+        current = state.values.to_numpy(dtype=state.dtype, copy=False)
         if incoming.shape[1] != current.shape[1]:
             raise ValueError("Inserted rows must match the column count")
         dtype = np.result_type(current.dtype, incoming.dtype)
         self._check_integer_precision(dtype, incoming)
-        raw = np.insert(current.data.astype(dtype), index, incoming.data, axis=0)
-        mask = np.insert(np.ma.getmaskarray(current), index, np.ma.getmaskarray(incoming), axis=0)
-        self.replace(np.ma.array(raw, mask=mask, fill_value=current.fill_value))
+        raw = np.insert(current.astype(dtype, copy=False), index, incoming.data, axis=0)
+        mask = np.insert(state.excluded, index, np.ma.getmaskarray(incoming), axis=0)
+        fill = np.ma.array(np.empty(0, dtype=dtype), fill_value=state.fill_value).fill_value
+        # Both buffers are newly allocated. Adopt them without exporting and
+        # re-importing the whole table; no caller retains a writable reference.
+        candidate = DataStorage(pd.DataFrame(raw, columns=self.column_ids, copy=False), mask,
+                                list(state.schema), state.metadata, fill, dtype)
+        candidate.validate()
+        self._state = candidate
 
     def insert_columns(self, index, values, headers=None, roles=None, overwrite=False, schema=None, mask_padding=False):
         """Insert or replace columns, validating the entire result before commit."""

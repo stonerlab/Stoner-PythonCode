@@ -7,6 +7,26 @@ ConvertingScripts from Older Versions of the Stoner Package
 The Stoner package has gradually undergone several changes as additional functions have been added to keep the codebase
 manageable. This document summarises the main changes from previous versions.
 
+Version 0.12.0a1: storage migration
+=================================
+
+This alpha requires Python 3.12 or newer, pandas 2.2 or newer and xarray
+2024.10 or newer. Numerical tables now use pandas storage; images and stacks
+use xarray storage with explicit exclusions and preserved calibration.
+
+The legacy ``DataArray``, ``ImageArray`` and ``KerrArray`` classes have been
+removed. Use ``Data``, ``ImageFile`` and ``KerrImageFile`` respectively. Public
+numerical snapshots are ordinary NumPy masked arrays: inherited Stoner row or
+column annotations no longer propagate through NumPy slicing and arithmetic.
+Use owner methods for named selection and changes, or explicit ``edit_numpy()``,
+``edit_pandas()`` and ``edit_xarray()`` contexts where provided. Mutating a
+detached export does not update its source object.
+
+The :doc:`datafile` and :doc:`image` guides describe the current interfaces.
+Native storage access through the public attributes and further wrapper
+simplification are planned follow-on changes; this alpha retains the documented
+snapshot and explicit-edit contracts.
+
 Python Version Support
 ======================
 

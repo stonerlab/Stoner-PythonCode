@@ -1,11 +1,14 @@
 """Own stack packages and resolve live image handles by stable frame identity."""
 
 from operator import index as integer_index
+from uuid import uuid4
 
 import numpy as np
+import xarray as xr
 
 from ..core.storage_owner import _Metadata
-from .storage import ImageStorage
+from ..core.storage import _copy_metadata
+from .storage import Frame, ImageStorage
 from .storage_coordinates import _common_attrs
 from .storage_owner import ImageOwner
 
@@ -141,7 +144,11 @@ class StackOwner(ImageOwner):
             raise IndexError("Insertion position is out of range")
         if not isinstance(package, ImageStorage) or package.kind != "image":
             raise TypeError("Insertion requires an image storage package")
-        images = [self.frame(frame.id).export_storage() for frame in state.frames]
+        if self._insert_uniform(position, package, name):
+            return self.frame(position)
+        # from_images validates and detaches each input; exporting here would
+        # create a second complete copy of every existing frame.
+        images = [self.frame(frame.id)._state for frame in state.frames]
         images.insert(position, package)
         names = [frame.name for frame in state.frames]
         names.insert(position, name)
@@ -170,6 +177,42 @@ class StackOwner(ImageOwner):
         self._state = candidate
         self._frame_versions[new_frame.id] = 0
         return self.frame(new_frame.id)
+
+    def _insert_uniform(self, position, package, name):
+        """Pack equal-sized uncalibrated frames without unpacking existing images."""
+        state, incoming = self._state, package.dataset
+        ds = state.dataset
+        if (not state.frames or set(ds.coords) != {"frame", "y", "x"}
+                or set(incoming.coords) != {"y", "x"}
+                or incoming.intensity.shape != ds.intensity.shape[1:]
+                or incoming.intensity.dtype != ds.intensity.dtype):
+            return False
+        # Native attributes and non-positional axes require the general mapper.
+        if (ds.attrs or incoming.attrs or any(var.attrs for var in ds.variables.values())
+                or any(var.attrs for var in incoming.variables.values())):
+            return False
+        height, width = incoming.intensity.shape
+        if (not np.all(ds.valid_height.values == height) or not np.all(ds.valid_width.values == width)
+                or not np.array_equal(incoming.y.values, np.arange(height))
+                or not np.array_equal(incoming.x.values, np.arange(width))):
+            return False
+        package.validate()
+        new_frame = Frame(str(uuid4()), name, _copy_metadata(package.metadata), package.fill_value)
+        frames = list(state.frames)
+        frames.insert(position, new_frame)
+        variables = {
+            key: (("frame", "y", "x"), np.insert(ds[key].values, position, incoming[key].values, axis=0))
+            for key in ("intensity", "excluded")
+        }
+        variables.update(valid_height=("frame", np.full(len(frames), height, dtype=int)),
+                         valid_width=("frame", np.full(len(frames), width, dtype=int)))
+        dataset = xr.Dataset(variables, coords={"frame": [frame.id for frame in frames],
+                                               "y": np.arange(height), "x": np.arange(width)})
+        candidate = ImageStorage("stack", dataset, state.metadata, state.fill_value, frames)
+        candidate.validate()
+        self._state = candidate
+        self._frame_versions[new_frame.id] = 0
+        return True
 
 
 class _FrameMetadata(_Metadata):
@@ -259,8 +302,16 @@ class FrameOwner(ImageOwner):
 
     def _commit_dataset(self, dataset):
         position = self._root._index(self._identity)
-        candidate = self._root._state.dataset.copy(deep=True)
-        height, width = self.shape
+        state = self._root._state
+        frame = state.frames[position]
+        candidate = ImageStorage("image", dataset, frame.metadata, frame.fill_value)
+        candidate.validate()
+        height = int(state.dataset.valid_height.values[position])
+        width = int(state.dataset.valid_width.values[position])
+        if dataset.intensity.shape != (height, width) or dataset.intensity.dtype != state.dataset.intensity.dtype:
+            raise ValueError("Frame edits must preserve shape and dtype")
+        # Prepare detached buffers before publishing either field. With matching
+        # shapes and dtypes these writes cannot require casting or broadcasting.
+        buffers = {name: dataset[name].values.copy() for name in ("intensity", "excluded")}
         for name in ("intensity", "excluded"):
-            candidate[name].values[position, :height, :width] = dataset[name].values
-        self._root._commit_dataset(candidate)
+            self._root._state.dataset[name].values[position, :height, :width] = buffers[name]

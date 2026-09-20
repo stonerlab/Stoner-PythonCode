@@ -235,7 +235,7 @@ class KerrStackMixin:
                 be tuned for each stack
             correct_drift(bol):
                 whether to correct drift on the image stack before proceeding
-            baseimage(int or ImageFile):
+            baseimage (int or Stoner.Image.core.ImageFile):
                 we use drift correction from the baseimage.
             saturation_end(bool):
                 last image in stack is closest to saturation
@@ -246,7 +246,8 @@ class KerrStackMixin:
             extra_info(bool):
                 choose whether to return intermediate calculation steps as an extra dictionary
         Returns:
-            (ImageFile): The map of field values for switching of each pixel in the stack
+            Stoner.Image.core.ImageFile:
+                The map of field values for switching of each pixel in the stack.
         """
         ks = self.clone
         if isinstance(baseimage, int):
@@ -280,7 +281,7 @@ class KerrStackMixin:
                 Weight zero values in an image as 0 in the averaging.
 
         Returns:
-            average(ImageFile):
+            Stoner.Image.core.ImageFile:
                 average values
         """
         if ignore_zeros:

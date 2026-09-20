@@ -8,6 +8,31 @@ from Stoner.Image.storage import ImageStorage
 from Stoner.Image.stack_owner import StackOwner
 
 
+def test_uniform_insertion_detaches_input_and_keeps_frame_handles():
+    """Uniform packing keeps hidden pixels, fill values and saved handles."""
+    stack = StackOwner(ImageStorage.from_images([np.ones((3, 4), dtype=np.int16)] * 2))
+    saved = stack.frame(1)
+    incoming = ImageStorage.from_numpy(np.ma.array(np.full((3, 4), 7, dtype=np.int16),
+                                                  mask=False, fill_value=-9))
+    incoming.dataset.excluded.values[0, 0] = True
+    incoming.metadata["nested"] = [1]
+    added = stack.insert(1, incoming, name="new")
+    incoming.dataset.intensity.values[:] = 99
+    incoming.metadata["nested"].append(2)
+    assert stack.frame(2).id == saved.id
+    assert added.to_numpy().data[0, 0] == 7
+    assert added.to_numpy().mask[0, 0]
+    assert added.to_numpy().fill_value == -9
+    assert added.metadata["nested"] == [1]
+    snapshot = stack.to_numpy()
+    with saved.edit_numpy() as draft:
+        draft[1, 1] = 23
+    draft[:] = 80
+    assert saved[1, 1] == 23
+    assert snapshot[2, 1, 1] == 1
+    assert stack.frame(0)[1, 1] == 1
+
+
 @pytest.fixture
 def owner():
     small = np.ma.array([[1, 2, 99], [4, 5, 6]], dtype=np.int16,
