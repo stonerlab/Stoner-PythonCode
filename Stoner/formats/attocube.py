@@ -329,7 +329,7 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
         data = self[signal]
         ys, xs = data.shape
         X, Y = meshgrid(linspace(-1, 1, xs), linspace(-1, 1, ys))
-        Z = data.data
+        Z = data.to_numpy()
         X = X.ravel()
         Y = Y.ravel()
         Z = Z.ravel()
@@ -423,7 +423,7 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
                 data = self[ch]
                 signal.require_dataset(
                     "signal",
-                    data=data.data,
+                    data=data.to_numpy(),
                     shape=data.shape,
                     dtype=data.dtype,
                     compression=self.compression,

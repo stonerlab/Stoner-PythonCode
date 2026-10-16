@@ -112,7 +112,7 @@ def test_ImageStack_methods():
     im1.normalise()
     im1.convert(np.int32)
     im2 = im1.convert(np.float32, force_copy=True)
-    conv_err = (selfistack2[0].image - im2.image).max()
+    conv_err = (selfistack2[0].imarray - im2.imarray).max()
     assert conv_err < 1e-7, "Problems double converting images:{}.".format(conv_err)
     im1 = selfistack2[0].clone.convert(np.int64)
     im1 = im1.convert(np.int8)
@@ -146,7 +146,7 @@ def test_accessing():
     ist2[0].image = im
     ist2[1] = im
     with pytest.raises(ValueError):
-        ist2[2].image[:] = im
+        ist2[2].imarray[:] = im
     ist2[2][:] = im
     ist2[3][0, 0] = 100
     ist2[3][0, 1] = 101
@@ -201,10 +201,10 @@ def test_methods():
     X, Y = np.mgrid[-pi : pi : pi / 50, -pi : pi : pi / 50]
     bground = ImageFile(np.sin(X) + np.cos(Y))
     im2 += bground
-    bground.mask = im1.image == 1.0
+    bground.mask = im1.imarray == 1.0
     ist = ImageStack() + im2
     ist.subtract(bground)
-    assert np.all(np.isclose(ist[0].image, im1.image))
+    assert np.all(np.isclose(ist[0].imarray, im1.imarray))
 
 
 def test_clone():
@@ -224,13 +224,13 @@ def test_operators():
     ist1 = ImageStack() + im1
     ist2 = ImageStack() + im2
     ist3 = ist1 // ist2
-    assert np.all(np.isclose(ist3[0].image, np.ones((100, 100)) * 0.5))
+    assert np.all(np.isclose(ist3[0].imarray, np.ones((100, 100)) * 0.5))
     im1a = ImageFile(np.ones((100, 100), dtype=int))
     with pytest.raises(ValueError):
         ist1a = ImageStack() + im1a
         _ = ist1a // ist2
     im1b = im1.clone
-    im1b.image = im1b.image[1:-1, 1:-1]
+    im1b.image = im1b.imarray[1:-1, 1:-1]
     ist1b = ImageStack() + im1b
     with pytest.raises(ValueError):
         _ = ist1b // ist2
@@ -249,7 +249,7 @@ def test_mask():
     ist2[3].mask = np.ones(ist2[3].shape, dtype=bool)
     assert np.all(ist2[3].mask), "setting mask on an image stack item not working"
     istack2 = selfistack2.clone
-    mask = ImageFile(np.zeros_like(istack2[0].image)).mask.draw.circle(20, 20, 10).mask
+    mask = ImageFile(np.zeros_like(istack2[0].imarray)).mask.draw.circle(20, 20, 10).mask
     mask = ~mask
     istack2.each.mask = mask
     assert istack2[0].mask[0, 0], "Mask not set correctly in stack"

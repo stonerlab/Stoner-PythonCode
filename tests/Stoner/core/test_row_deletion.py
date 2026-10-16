@@ -18,8 +18,8 @@ def make_data():
 
 def assert_retained(data, values, mask):
     """Check row contents and the surrounding Data contract."""
-    np.testing.assert_array_equal(data.data.data, values)
-    np.testing.assert_array_equal(data.data.mask, mask)
+    np.testing.assert_array_equal(data.to_numpy().data, values)
+    np.testing.assert_array_equal(data.to_numpy().mask, mask)
     assert data.column_headers == ["Position", "Signal"]
     assert str(data.setas) == "xy"
     assert data["Run"] == "row deletion"
@@ -29,8 +29,8 @@ def assert_retained(data, values, mask):
 def test_keep_single_row(row):
     """An inverted scalar row index keeps that row, including its mask."""
     data = make_data()
-    values = data.data.data[[row]].copy()
-    mask = data.data.mask[[row]].copy()
+    values = data.to_numpy().data[[row]].copy()
+    mask = data.to_numpy().mask[[row]].copy()
     assert data.del_rows(row, invert=True) is data
     assert_retained(data, values, mask)
 
@@ -39,8 +39,8 @@ def test_keep_single_row(row):
 def test_invalid_single_row_preserves_data(row):
     """Reject an out-of-range row before deleting any data."""
     data = make_data()
-    values = data.data.data.copy()
-    mask = data.data.mask.copy()
+    values = data.to_numpy().data.copy()
+    mask = data.to_numpy().mask.copy()
     with pytest.raises(IndexError):
         data.del_rows(row, invert=True)
     assert_retained(data, values, mask)
@@ -52,7 +52,7 @@ def test_range_deletion(bounds, invert):
     """Range endpoints are inclusive and their order does not affect selection."""
     data = make_data()
     rows = [1, 2, 3] if invert else [0, 4]
-    values = data.data.data[rows].copy()
-    mask = data.data.mask[rows].copy()
+    values = data.to_numpy().data[rows].copy()
+    mask = data.to_numpy().mask[rows].copy()
     assert data.del_rows("Position", bounds, invert=invert) is data
     assert_retained(data, values, mask)

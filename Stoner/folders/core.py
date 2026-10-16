@@ -946,8 +946,8 @@ class BaseFolder(MutableSequence):
             return item[name]
         if isinstance(item, type(self)):
             if all_type(name, (int_types, slice)):  # Looks like we're accessing data arrays
-                test = (len(item),) + item[0].data[name].shape
-                output = np.array([]).view(item[0].data.__class__)
+                test = (len(item),) + item[0][name].shape
+                output = np.ma.array([])
                 for data in item:
                     append = data[name]
                     if not isinstance(append, np.ndarray):

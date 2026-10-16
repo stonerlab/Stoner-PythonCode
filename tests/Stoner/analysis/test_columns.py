@@ -117,8 +117,8 @@ def test_bounds_exception_restores_state(method):
     data = Data(np.column_stack((np.arange(6), [8, 3, 9, 2, 7, 4])), setas="xy")
     data.mask = np.zeros(data.shape, dtype=bool)
     data.mask[2, 1] = True
-    original_mask = data.data.mask.copy()
-    original_values = data.data.data.copy()
+    original_mask = data.to_numpy().mask.copy()
+    original_values = data.to_numpy().data.copy()
     original_roles = str(data.setas)
     original_stack = len(data._masks)
 
@@ -129,8 +129,8 @@ def test_bounds_exception_restores_state(method):
 
     with pytest.raises(ValueError, match="bounds failed"):
         getattr(data, method)(1, bounds=broken_bounds)
-    np.testing.assert_array_equal(data.data.mask, original_mask)
-    np.testing.assert_array_equal(data.data.data, original_values)
+    np.testing.assert_array_equal(data.to_numpy().mask, original_mask)
+    np.testing.assert_array_equal(data.to_numpy().data, original_values)
     assert str(data.setas) == original_roles
     assert len(data._masks) == original_stack
 
@@ -140,16 +140,16 @@ def test_nested_mask_snapshots_are_independent():
     data = selfd_master.clone
     data.mask = np.zeros(data.shape, dtype=bool)
     data.mask[1, 1] = True
-    original = data.data.mask.copy()
+    original = data.to_numpy().mask.copy()
     data._push_mask()
     data.mask[3, 2] = True
-    temporary = data.data.mask.copy()
+    temporary = data.to_numpy().mask.copy()
     data._push_mask()
     data.mask[5, 3] = True
     data._pop_mask()
-    np.testing.assert_array_equal(data.data.mask, temporary)
+    np.testing.assert_array_equal(data.to_numpy().mask, temporary)
     data._pop_mask()
-    np.testing.assert_array_equal(data.data.mask, original)
+    np.testing.assert_array_equal(data.to_numpy().mask, original)
 
 
 def test_std_bounds_restores_mask():
@@ -157,9 +157,9 @@ def test_std_bounds_restores_mask():
     data = selfd_master.clone
     data.mask = np.zeros(data.shape, dtype=bool)
     data.mask[2, 1] = True
-    original = data.data.mask.copy()
+    original = data.to_numpy().mask.copy()
     data.std(1, bounds=lambda row: row.i in (1, 3, 5))
-    np.testing.assert_array_equal(data.data.mask, original)
+    np.testing.assert_array_equal(data.to_numpy().mask, original)
 
 
 @pytest.mark.parametrize("column", [None, 1, "Signal"])
@@ -172,10 +172,10 @@ def test_bounds_original_indices_and_mask_restoration(column, method, expected):
     )
     data.mask = np.zeros(data.shape, dtype=bool)
     data.mask[2, 1] = True
-    original_mask = data.data.mask.copy()
+    original_mask = data.to_numpy().mask.copy()
     result = getattr(data, method)(column, bounds=lambda row: row.i in (1, 3, 5))
     assert result == expected
-    np.testing.assert_array_equal(data.data.mask, original_mask)
+    np.testing.assert_array_equal(data.to_numpy().mask, original_mask)
     assert str(data.setas) == "xy"
 
 

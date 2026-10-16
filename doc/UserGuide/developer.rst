@@ -57,13 +57,49 @@ move exclusions and roles with their columns; repeated selections receive fresh
 IDs after the first occurrence. Row appends match duplicate headers by occurrence.
 Column concatenation remaps colliding IDs. Metadata merges prefer the left value.
 
-``data``, columns and indexed array results are read-only detached snapshots.
+``data`` is the stored DataFrame. Columns and indexed array results remain
+read-only detached numerical snapshots; ``to_numpy()`` exports a writable copy.
 Use ``data[rows, columns] = values``, ``data.mask[...] = exclusions`` or an editing
-context to write. ``edit_pandas()`` edits raw values while retaining exclusions;
-both editing contexts require fixed shape and dtype. Whole-property assignment
+context to write. ``edit_pandas()`` provides displayed headers, including duplicate
+names, and edits raw values while retaining exclusions. For example::
+
+    with data.edit_pandas() as frame:
+        frame.loc[0, "Field"] = 25  # Use a header present in this measurement.
+        frame.iloc[0, 1] = 30       # Select one duplicate column by position.
+
+Both editing contexts require fixed shape and dtype. Do not sort, reorder or
+rename the pandas draft: exclusions and roles live outside it. Lossless storage
+packages continue to use UUID column labels. Whole-property assignment
 ``data.data = array`` explicitly replaces values and masks, retaining overlapping
 positional column IDs. Use structural methods to move complete columns. Reordering
 with ``headers_too=False`` or ``setas_too=False`` is rejected.
+
+The internal ``DataOwner.frame`` property returns the stored ordinary DataFrame,
+without a copy or NumPy export. ``owner.replace_pandas(frame)`` copies and validates
+a replacement with identical axes and column dtypes, retaining exclusions, roles,
+IDs, fill value and typed metadata. Frame attributes do not supply Stoner side
+state. Public ``data.data`` uses this native owner getter. Assigning a DataFrame
+uses fixed-schema replacement; numerical whole-property assignment retains the
+existing explicit positional replacement interface.
+
+Reacquire the native frame after owner mutations: saved references may point to
+retired buffers. Owner entry points reject detectable label, shape and dtype drift
+with ``ValueError``. Direct sorting or same-shaped value permutations cannot be
+reliably detected and must use owner structural operations. New native references
+and replacements are blocked during editing contexts. Do not write through a
+previously acquired native reference during an owner transaction: rollback covers
+the draft, not independent external writes. Direct native computations do not
+apply Stoner exclusions automatically.
+
+Core consumers use explicit masked numerical boundaries with native storage.
+``asarray()`` retains read-only annotations;
+multi-column search retains exclusions and raw hidden values. Short Boolean
+search selectors are padded with false. Two-item numeric lists retain their
+legacy interval meaning; numeric arrays select discrete targets. Equality retains
+its existing independent NaN filtering. Rolling windows preserve raw values,
+exclusions, dtype and fill while reading current owner values at each yield.
+Centre exclusion clips at the valid window bounds. Equal-input XOR returns
+deterministic Boolean comparisons rather than uninitialised memory.
 
 String, compressed-string, mapping, indexed and operator Setas assignments are
 supported. Masked scalar reads return ``numpy.ma.masked``. Empty construction has
@@ -102,7 +138,7 @@ detached native state and warns when typed metadata is omitted. Calibrated packi
 maps separable axes to padded physical coordinates and scalars to frame coordinates.
 ``ImageStack``, Kerr, MaskStack, Attocube and Maximus now use this package as
 their sole numerical store. Kerr items retain their specialised type; their
-``image`` snapshots are read-only, so write pixels through the item itself or
+``imarray`` snapshots are read-only, so write pixels through the item itself or
 an editing context. Scan headers live in stack metadata. Frame metadata reads
 include these shared defaults, while frame assignments create local overrides.
 
@@ -159,7 +195,10 @@ samples at each pixel. Calibrated reductions preserve matching coordinates and
 reject conflicting calibration until explicitly reconciled. Non-broadcastable
 mask assignments raise instead of silently repeating an incompatible mask.
 
-``image.image`` and ``image.data`` return detached read-only compatibility arrays.
+``image.image`` and ``image.data`` expose native Datasets; ``image.imarray``
+returns a detached read-only compatibility array. ``stack.stack`` exposes the
+stored stack Dataset. Root native getters do not export NumPy values. Native
+frame/crop getters borrow current views; direct write-back is unsupported.
 Write pixels through ``image[y, x]`` and exclusions through ``image.mask[y, x]``;
 edit metadata through ``image.metadata``. For a whole-array calculation, assign
 ``image.image = result`` or use a transaction::
@@ -312,9 +351,9 @@ The public :py:class:`Stoner.core.data.Data` class presents a compact interface,
 but delegates some responsibilities to specialised objects:
 
 ``data``
-    A detached, read-only numerical snapshot. The owner holds a pandas DataFrame,
-    a Boolean exclusion mask and stable column schema. Snapshot results carry
-    column roles and positional row indices for the retained public array API.
+    The stored pandas DataFrame of raw measurements. A separate Boolean exclusion
+    mask and stable column schema remain owner-managed. ``asarray()`` supplies
+    a detached, read-only annotated numerical snapshot.
 
 ``metadata``
     An owner-aware mapping over a :py:class:`Stoner.core.base.TypeHintedDict`.

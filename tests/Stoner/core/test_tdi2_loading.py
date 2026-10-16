@@ -32,8 +32,8 @@ def test_tdi2_independent_lengths(tmp_path, metadata_count, lengths):
         for i in range(metadata_count):
             assert result[f"entry{i}"] == f"00{i}"
         for index, column in enumerate(columns):
-            np.testing.assert_equal(result.data[:len(column), index], column)
-            np.testing.assert_array_equal(np.ma.getmaskarray(result.data)[:, index],
+            np.testing.assert_equal(result.to_numpy()[:len(column), index], column)
+            np.testing.assert_array_equal(np.ma.getmaskarray(result.to_numpy())[:, index],
                                           np.arange(max(lengths)) >= len(column))
 
 
@@ -44,8 +44,8 @@ def test_tdi2_real_and_writer_fixtures(fixture):
     streamed = Data() << source.read_text(encoding="utf-8")
     assert loaded["Loaded as"] == "TDI_2_0"
     assert Path(loaded.filename) == source
-    np.testing.assert_equal(loaded.data, streamed.data)
-    np.testing.assert_array_equal(np.ma.getmaskarray(loaded.data), np.ma.getmaskarray(streamed.data))
+    np.testing.assert_equal(loaded.to_numpy(), streamed.to_numpy())
+    np.testing.assert_array_equal(np.ma.getmaskarray(loaded.to_numpy()), np.ma.getmaskarray(streamed.to_numpy()))
     assert loaded.column_headers == streamed.column_headers
     for key, value in streamed.metadata.items():
         assert loaded[key] == value
@@ -66,8 +66,8 @@ def test_legacy_loader_length_cases(tmp_path, header, metadata_count):
     assert loaded["Loaded as"] == "DataFile"
     for i in range(metadata_count):
         assert loaded[f"entry{i}"] == i
-    np.testing.assert_equal(loaded.data[:, 0], [0, 1, 2])
-    assert np.ma.getmaskarray(loaded.data)[2, 1]
+    np.testing.assert_equal(loaded.to_numpy()[:, 0], [0, 1, 2])
+    assert np.ma.getmaskarray(loaded.to_numpy())[2, 1]
 
 
 @pytest.mark.parametrize("text", ["Not TDI\tx\n", "TDI Format 2.0\tx\nbad\t1\n",

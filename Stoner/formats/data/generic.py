@@ -523,12 +523,12 @@ try:  # Optional tdms support
                     pass  # skip the rooot group
                 elif grp.path == "/'TDI Format 1.5'":
                     tmp = Data(grp.as_dataframe())
-                    new_data.data = tmp.data
+                    new_data.data = tmp.to_numpy()
                     new_data.column_headers = tmp.column_headers
                     new_data.metadata.update(grp.properties)
                 else:
                     tmp = Data(grp.as_dataframe())
-                    new_data.data = tmp.data
+                    new_data.data = tmp.to_numpy()
                     new_data.column_headers = tmp.column_headers
         except (IOError, ValueError, TypeError, StonerLoadError) as err:
             raise StonerLoadError(f"Not a TDMS File \n{format_exc()}") from err

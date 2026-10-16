@@ -42,14 +42,14 @@ strctural = (imgs[0] + imgs[1]) / 2
 imgs += strctural
 
 # Mask out the background, using the structural image
-xmcd.mask = strctural.image > strctural.threshold_otsu()
+xmcd.mask = strctural.imarray > strctural.threshold_otsu()
 
 # Remove the background XMCD atio
 xmcd.mask.invert()
 mean = xmcd.mean()
 xmcd.mask = False
 xmcd -= mean
-xmcd.mask = strctural.image > strctural.threshold_otsu()
+xmcd.mask = strctural.imarray > strctural.threshold_otsu()
 xmcd.normalise()
 
 # Create a profile and plot it

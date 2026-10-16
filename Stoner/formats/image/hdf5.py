@@ -28,7 +28,7 @@ def load_stxm_image(new_data, *args, **kwargs):
     kwargs.setdefault("filetype", "SLS_STXMFile")
     bcn = kwargs.pop("bcn", False)
     d = make_Data(filename, *args, **kwargs)
-    new_data.image = d.data
+    new_data.image = d.to_numpy()
     new_data.metadata = deepcopy(d.metadata)
     new_data.filename = d.filename
     if isinstance(regrid, tuple):

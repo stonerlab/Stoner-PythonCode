@@ -3,6 +3,7 @@
 """Fitting Functions and classes to mixin for :py:class:`~Stoner.core.data.Data`."""
 
 from collections.abc import Mapping
+from copy import deepcopy
 from inspect import getfullargspec, isclass
 
 import lmfit as lmfit_mod
@@ -24,6 +25,7 @@ from .classes import (
     _prep_lmfit_model,
     _prep_lmfit_p0,
 )
+from .selection import curve_fit_inputs as _curve_fit_inputs
 
 _lmfit = True
 
@@ -253,7 +255,7 @@ def _normalise_fit_result(datafile, settings, fit, result_obj):
             popt = fit.popt
             perr = fit.perr
             nfev = fit.nfev
-            nfree = len(datafile) - len(popt)
+            nfree = fit.nfree
             chisq = fit.chisq
         case lmfit_mod.model.ModelResult():
             popt = [fit.params[x].value for x in args]
@@ -295,10 +297,14 @@ def _record_curve_fit_result(datafile, func, fit, settings):
     store_result = settings.result is not None and settings.result is not False
     if not store_result:
         return result_obj.row
-    col_mask = np.any(np.asarray(datafile.mask), axis=1)
-    new_col = np.ma.array(result_obj.fit_values, mask=col_mask)
-    ycols = np.atleast_1d(settings.columns.ycol).tolist()
-    residuals = [datafile.column(yc).copy() - new_col for yc in ycols] if settings.residuals else []
+    if hasattr(fit, "model_values"):
+        new_col = np.ma.array(fit.model_values, mask=fit.model_mask)
+        residuals = [np.ma.array(fit.full_residuals, mask=fit.residual_mask)] if settings.residuals else []
+    else:
+        col_mask = np.any(np.asarray(datafile.mask), axis=1)
+        new_col = np.ma.array(result_obj.fit_values, mask=col_mask)
+        ycols = np.atleast_1d(settings.columns.ycol).tolist()
+        residuals = [datafile.column(yc).copy() - new_col for yc in ycols] if settings.residuals else []
     if settings.result is True:
         settings.result = datafile.shape[1]
     if store_result:
@@ -599,6 +605,13 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
             The index of the column with the y-error bars
         bounds (callable):
             A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+        where (Boolean array, pandas.Series or None):
+            Rows to include, intersected with bounds and the finite, non-excluded
+            inputs required by each y channel. Labelled selectors must match the
+            complete row index exactly. None includes all rows.
+        parameter_bounds (tuple):
+            Lower and upper parameter limits forwarded to SciPy. The existing
+            bounds argument continues to select observations.
         result (bool):
             Determines whether the fitted data should be added into the DataFile object. If result is True then
             the last column will be used. If result is a string or an integer then it is used as a column index.
@@ -610,7 +623,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
             If this is a string then it is used as the name of the fitted data. (default None)
         absolute_sigma (bool):
             If False, `sigma` denotes relative weights of the data points. The default True means that
-            the sigma parameter is the reciprocal of the absolute standard deviation.
+            the sigma parameter contains absolute standard deviations when uncertainties are supplied.
         output (str, default "fit"):
             Specify what to return.
         **kwargs:
@@ -676,68 +689,67 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     settings.output = kwargs.pop("output", "row" if kwargs.pop("asrow", False) else "fit")
     kwargs["full_output"] = True
 
-    if not isinstance(ycol, list):
-        ycol = [ycol]
-
-    # Collect data, function and p0 together.
-    data, kwargs, settings.columns = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
-    _func, p0 = _get_curve_fit_func(func, kwargs)
-
-    if getattr(data.y, "ndim", 0) == 1:
-        for i in [1, 2, 3]:
-            if isinstance(data[i], np.ndarray):
-                data[i] = np.atleast_2d(data[i])
-    if callable(p0):  # Allow the user to supply p0 as a callanble function
-        try:  # Skip the guess if it fails
-            p0 = p0(data.y.ravel(), np.tile(data.x, data.y.size // data.x.size))
-        except (
-            ArithmeticError,
-            RuntimeError,
-            ValueError,
-        ):  # Allowable exceptions
-            p0 = None
-
-    p0 = _curve_fit_p0_list(p0, func)
-
-    retvals = []
-    i = None
-    xdat = data.x
-    if p0:
-        kwargs["p0"] = p0
-    for i, ydat in enumerate(data.y):
-        if data.e is not None:
-            kwargs["sigma"] = data.e[i]
-        else:
-            sigma = None
-        for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "scale_covar"]:
-            kwargs.pop(var, None)
-        popt, pcov, infodict, msg, ier = _curve_fit(_func, xdat, ydat, **kwargs)
+    inputs = _curve_fit_inputs(datafile, xcol, ycol, sigma, kwargs.pop("where", None), kwargs.pop("bounds", None))
+    if "parameter_bounds" in kwargs:
+        kwargs["bounds"] = kwargs.pop("parameter_bounds")
+    scale_covar = kwargs.pop("scale_covar", None)
+    _func, initial = _get_curve_fit_func(func, kwargs)
+    reports, retvals = [], []
+    for xdat, ydat, uncertainty, columns, full_x, full_y, model_mask, residual_mask in inputs:
+        p0 = initial
+        if callable(p0):
+            try:
+                p0 = p0(ydat, xdat)
+            except (ArithmeticError, RuntimeError, ValueError):
+                p0 = None
+        p0 = _curve_fit_p0_list(p0, func)
+        parameter_count = len(p0) if p0 is not None else len(_get_model_parnames(func))
+        if len(ydat) <= parameter_count:
+            raise ValueError("A fit requires more eligible observations than free parameters")
+        options = dict(kwargs)
+        options.setdefault("absolute_sigma", not scale_covar if scale_covar is not None else uncertainty is not None)
+        if p0 is not None:
+            options["p0"] = p0
+        if uncertainty is not None:
+            options["sigma"] = uncertainty
+        for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr"]:
+            options.pop(var, None)
+        popt, pcov, infodict, msg, ier = _curve_fit(_func, xdat, ydat, **options)
         report = _Curve_Fit_Result()
-        report.settings = settings
-        report.func = func
+        report.settings = deepcopy(settings)
+        report.settings.columns = columns
+        report.func = _func
         report.results = {"popt": popt, "pcov": pcov, "mesg": msg, "ier": ier}
         report.infodict = infodict
         report.p0 = np.ones(len(report.popt)) if p0 is None else p0
         report.data = datafile
-        report.residual_vals = ydat - report.fvec
-        report.chisq = (report.residual_vals**2).sum()
-        report.nfree = len(datafile) - len(report.popt)
-        report.chisq /= report.nfree
-
-        if settings.result is not None:
-            _record_curve_fit_result(
-                datafile,
-                func,
-                report,
-                settings,
-            )
+        report.residual_vals = ydat - _func(xdat, *popt)
+        report.nfree = len(ydat) - len(popt)
+        report.n_observations = len(ydat)
+        weighted_residuals = report.residual_vals if uncertainty is None else report.residual_vals / uncertainty
+        report.chisq = np.sum(weighted_residuals**2) / report.nfree
+        report.full_x = full_x
+        if settings.result is not None and settings.result is not False:
+            report.model_values = _func(full_x, *popt)
+            report.model_mask = model_mask | ~np.isfinite(report.model_values)
+            report.full_residuals = full_y - report.model_values
+            report.residual_mask = residual_mask | ~np.isfinite(report.full_residuals)
+        reports.append(report)
         try:
             retvals.append(getattr(report, settings.output))
         except AttributeError as err:
             raise RuntimeError(f"Specified output: {settings.output}, from curve_fit not recognised") from err
-    if i == 0:
-        retvals = retvals[0]
-    return retvals
+    if settings.result is not None:
+        owner = datafile._require_storage_owner()
+        owner._check_writable()
+        draft = datafile.clone
+        for report in reports:
+            _record_curve_fit_result(draft, func, report, report.settings)
+        candidate = draft.export_storage()
+        candidate.validate()
+        owner._check_writable()
+        owner._state = candidate
+    return retvals[0] if len(retvals) == 1 else retvals
 
 
 def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):

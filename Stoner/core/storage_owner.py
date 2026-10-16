@@ -2,14 +2,78 @@
 
 from collections.abc import MutableMapping, MutableSequence
 from contextlib import contextmanager
-from dataclasses import replace
+from copy import deepcopy
+from dataclasses import dataclass, replace
 from uuid import uuid4
 
 import numpy as np
 import pandas as pd
 
-from .storage import Column, DataStorage, resolve_columns, _copy_metadata
+from .storage import Column, DataStorage, resolve_columns, _copy_metadata, _validate_table
 from .base import TypeHintedDict
+
+
+@dataclass
+class _TableState:
+    """Keep header-labelled owner values separate from version-one package labels.
+
+    The frame is the sole authoritative value store. Package views only relabel
+    its columns; public exports subsequently deep-copy all interchange state.
+    """
+
+    values: pd.DataFrame
+    excluded: np.ndarray
+    schema: list
+    metadata: TypeHintedDict
+    fill_value: object
+    dtype: np.dtype
+
+    @classmethod
+    def adopt(cls, package):
+        """Adopt validated, independently prepared package buffers and side state."""
+        package.validate()
+        frame = package.values.copy(deep=False)
+        frame.columns = [column.header for column in package.schema]
+        return cls(frame, package.excluded, list(package.schema), package.metadata,
+                   package.fill_value, package.dtype)
+
+    def as_storage(self):
+        """Create a validated UUID-labelled package view without exporting NumPy values.
+
+        This internal view borrows buffers and metadata. Call ``copy()`` before
+        returning it to callers or constructing an independent owner.
+        """
+        self.validate()
+        frame = self.values.copy(deep=False)
+        frame.columns = [column.id for column in self.schema]
+        package = DataStorage(frame, self.excluded, list(self.schema), self.metadata,
+                              self.fill_value, self.dtype)
+        package.validate()
+        return package
+
+    def validate(self):
+        """Reject detectable native schema drift without creating a replacement frame."""
+        try:
+            _validate_table(self, native=True)
+        except (TypeError, ValueError) as error:
+            raise ValueError(f"Native DataFrame state is inconsistent: {error}") from error
+
+    def to_numpy(self, *, masked=True, dtype=None):
+        """Use the validated package conversion without keeping a numerical store."""
+        return self.as_storage().to_numpy(masked=masked, dtype=dtype)
+
+    def __deepcopy__(self, memo):
+        """Detach owner state without reparsing typed metadata or breaking cycles."""
+        self.as_storage()
+        result = type(self).__new__(type(self))
+        memo[id(self)] = result
+        result.values = self.values.copy(deep=True)
+        result.excluded = self.excluded.copy()
+        result.schema = list(self.schema)
+        result.metadata = _copy_metadata(self.metadata, memo)
+        result.fill_value = deepcopy(self.fill_value, memo)
+        result.dtype = self.dtype
+        return result
 
 
 class _Metadata(MutableMapping):
@@ -18,7 +82,11 @@ class _Metadata(MutableMapping):
     def __init__(self, owner):
         self._owner = owner
 
+    def _check_readable(self):
+        """Provide a read-validation hook for specialised owners sharing this proxy."""
+
     def __getitem__(self, key):
+        self._check_readable()
         return self._owner._state.metadata[key]
 
     def __setitem__(self, key, value):
@@ -35,20 +103,27 @@ class _Metadata(MutableMapping):
         del self._owner._state.metadata[key]
 
     def __iter__(self):
+        self._check_readable()
         return iter(self._owner._state.metadata)
 
     def __len__(self):
+        self._check_readable()
         return len(self._owner._state.metadata)
 
     def type(self, key):
         """Return the existing hint without inferring it again."""
+        self._check_readable()
         return self._owner._state.metadata.type(key)
 
     def copy(self):
         """Copy typed values without repeating string inference."""
+        self._check_readable()
         return _copy_metadata(self._owner._state.metadata)
 
     def __getattr__(self, name):
+        if name not in {"export", "export_all", "string_to_type", "types", "_typehints", "import_key", "import_all"}:
+            raise AttributeError(name)
+        self._check_readable()
         if name in {"export", "export_all", "string_to_type"}:
             return getattr(self._owner._state.metadata, name)
         if name in {"types", "_typehints"}:
@@ -64,10 +139,19 @@ class _Metadata(MutableMapping):
         raise AttributeError(name)
 
     def __xor__(self, other):
+        self._check_readable()
         return self._owner._state.metadata ^ (other.copy() if isinstance(other, _Metadata) else other)
 
     def __eq__(self, other):
+        self._check_readable()
         return self._owner._state.metadata == (other.copy() if isinstance(other, _Metadata) else other)
+
+
+class _DataMetadata(_Metadata):
+    """Validate native Data state while retaining the shared image metadata proxy."""
+
+    def _check_readable(self):
+        self._owner.validate()
 
 
 class _SchemaField(MutableSequence):
@@ -77,10 +161,16 @@ class _SchemaField(MutableSequence):
         self._owner, self._field = owner, field
 
     def __len__(self):
+        self._owner.validate()
         return len(self._owner._state.schema)
 
     def __getitem__(self, key):
+        self._owner.validate()
         return [getattr(column, self._field) for column in self._owner._state.schema][key]
+
+    def __iter__(self):
+        self._owner.validate()
+        return iter([getattr(column, self._field) for column in self._owner._state.schema])
 
     def __eq__(self, other):
         return list(self) == list(other)
@@ -110,6 +200,8 @@ class _SchemaField(MutableSequence):
         # Construct all immutable records before committing any change.
         schema = [replace(column, **{self._field: item})
                   for column, item in zip(self._owner._state.schema, current)]
+        if self._field == "header":
+            self._owner._state.values.columns = current
         self._owner._state.schema = schema
 
     def __delitem__(self, key):
@@ -127,6 +219,7 @@ class _Mask:
         self._owner = owner
 
     def __getitem__(self, key):
+        self._owner.validate()
         return self._owner._state.excluded[key].copy()
 
     def __setitem__(self, key, value):
@@ -136,6 +229,7 @@ class _Mask:
         self._owner._state.excluded = mask
 
     def __array__(self, dtype=None, copy=None):
+        self._owner.validate()
         if copy is False:
             raise ValueError("A mask export always requires a copy")
         return np.array(self._owner._state.excluded, dtype=dtype, copy=True)
@@ -167,6 +261,9 @@ class DataOwner:
             Owner-aware indexed Boolean exclusion interface.
         column_ids (tuple of str):
             Stable identities in current order.
+        frame (pandas.DataFrame):
+            Authoritative raw-value frame, with displayed headers. Reacquire after
+            owner mutations; direct writes must preserve axes, shape and dtype.
 
     Notes:
         This internal primitive powers the public Data class.
@@ -177,13 +274,90 @@ class DataOwner:
     def __init__(self, package):
         if not isinstance(package, DataStorage):
             raise TypeError("DataOwner requires a DataStorage package")
-        self._state = package.copy()
+        self._state = _TableState.adopt(package.copy())
         self._editing = False
+        self._native_frame_id = None
 
     def _check_writable(self):
         """Reject writes that could be overwritten by an active edit draft."""
         if self._editing:
             raise RuntimeError("The owner already has an active editing context")
+        self.validate()
+
+    def validate(self):
+        """Reject detectable native schema drift with ValueError at owner boundaries.
+
+        Same-shaped value permutations and writes through retained native objects
+        cannot all be detected. Concurrent native and owner mutation is unsupported.
+        """
+        if self._native_frame_id == id(self._state.values):
+            self._state.validate()
+        else:
+            # Owner operations validate every prepared replacement before commit.
+            # A retired native frame cannot mutate the newly owned frame.
+            self._native_frame_id = None
+
+    @property
+    def frame(self):
+        """Return the stored DataFrame without a copy or numerical conversion.
+
+        Returns:
+            pandas.DataFrame:
+                Live raw values, including excluded cells. Assign existing cells
+                through the frame itself, rather than a selected Series.
+
+        Raises:
+            RuntimeError:
+                If an owner editing context is active.
+            ValueError:
+                If detectable axes, shape or dtype drift has occurred.
+
+        Notes:
+            Reacquire after every owner mutation. Retained references may refer to
+            retired state. Direct writes are not transactional, do not apply masks
+            and must not occur during owner editing contexts.
+        """
+        self._check_writable()
+        self._native_frame_id = id(self._state.values)
+        return self._state.values
+
+    def replace_pandas(self, frame):
+        """Replace raw values atomically, preserving fixed schema and side state.
+
+        Args:
+            frame (pandas.DataFrame):
+                Replacement with identical axes and column dtypes. Copied before
+                publication; attributes do not supply masks, roles or metadata.
+
+        Raises:
+            TypeError:
+                If the replacement is not a DataFrame.
+            ValueError:
+                If axes or dtypes differ, or the current native state has drifted.
+            RuntimeError:
+                If an owner editing context is active.
+
+        Notes:
+            Successful replacement retires the former frame. Failed replacement
+            leaves it live. Structural or dtype changes require explicit owner
+            operations or validated storage-package import.
+        """
+        self._check_writable()
+        self._commit_pandas(frame)
+
+    def _commit_pandas(self, frame):
+        """Validate and detach a fixed-schema replacement or transaction draft."""
+        self.validate()
+        if not isinstance(frame, pd.DataFrame):
+            raise TypeError("Expected a DataFrame")
+        original = self._state.values
+        if not frame.index.identical(original.index) or not frame.columns.identical(original.columns):
+            raise ValueError("Pandas replacement must preserve axes")
+        if not frame.dtypes.equals(original.dtypes):
+            raise ValueError("Pandas replacement must preserve dtypes")
+        candidate = replace(self._state, values=frame.copy(deep=True))
+        candidate.validate()
+        self._state = candidate
 
     @property
     def headers(self):
@@ -198,7 +372,7 @@ class DataOwner:
     @property
     def metadata(self):
         """Return an interface that guards even saved metadata references."""
-        return _Metadata(self)
+        return _DataMetadata(self)
 
     @property
     def mask(self):
@@ -208,11 +382,12 @@ class DataOwner:
     @property
     def column_ids(self):
         """Return immutable column identities in positional order."""
+        self.validate()
         return tuple(column.id for column in self._state.schema)
 
     def export_storage(self):
         """Return independent values, exclusions, schema and typed metadata."""
-        return self._state.copy()
+        return self._state.as_storage().copy()
 
     def to_numpy(self, *, masked=True, dtype=None):
         """Return a detached numerical conversion with optional masks and dtype."""
@@ -228,6 +403,7 @@ class DataOwner:
         return key
 
     def __getitem__(self, key):
+        self.validate()
         key = self._index(key)
         values = self._state.values.to_numpy(dtype=self._state.dtype, copy=False)[key]
         mask = self._state.excluded[key]
@@ -270,6 +446,7 @@ class DataOwner:
 
     def _commit(self, draft):
         """Validate the draft, retaining stable IDs and current metadata ownership."""
+        self.validate()
         candidate = DataStorage.from_numpy(draft, headers=list(self.headers), roles=list(self.roles))
         candidate.schema = list(self._state.schema)
         candidate.values.columns = self.column_ids
@@ -277,7 +454,7 @@ class DataOwner:
         # Metadata is outside the numerical transaction. Retain the authoritative
         # dictionary, including edits to nested values while a draft was open.
         candidate.metadata = self._state.metadata
-        self._state = candidate
+        self._state = _TableState.adopt(candidate)
 
     def replace(self, array, schema=None):
         """Atomically replace numerical state, preserving positional IDs by default.
@@ -300,10 +477,11 @@ class DataOwner:
         candidate.values.columns = [c.id for c in schema]
         candidate.validate()
         candidate.metadata = self._state.metadata
-        self._state = candidate
+        self._state = _TableState.adopt(candidate)
 
     def _selection(self, rows, columns):
         """Select rectangular numerical state and remap repeated column IDs."""
+        self.validate()
         positions = resolve_columns(self._state.schema, columns, force_list=True)
         row_positions = np.atleast_1d(np.arange(self._state.values.shape[0])[rows])
         array = self.to_numpy()[np.ix_(row_positions, positions)]
@@ -348,8 +526,7 @@ class DataOwner:
         # re-importing the whole table; no caller retains a writable reference.
         candidate = DataStorage(pd.DataFrame(raw, columns=self.column_ids, copy=False), mask,
                                 list(state.schema), state.metadata, fill, dtype)
-        candidate.validate()
-        self._state = candidate
+        self._state = _TableState.adopt(candidate)
 
     def insert_columns(self, index, values, headers=None, roles=None, overwrite=False, schema=None, mask_padding=False):
         """Insert or replace columns, validating the entire result before commit."""
@@ -425,7 +602,7 @@ class DataOwner:
 
         Yields:
             pandas.DataFrame:
-                ID-labelled draft supporting positional cell edits. Axes and dtypes
+                Header-labelled draft supporting named or positional cell edits. Axes and dtypes
                 must remain fixed; structural transforms require package interchange.
 
         Notes:
@@ -438,10 +615,6 @@ class DataOwner:
         self._editing = True
         try:
             yield draft
-            if not draft.index.identical(original.index) or not draft.columns.identical(original.columns):
-                raise ValueError("Pandas editing must preserve axes")
-            if not draft.dtypes.equals(original.dtypes):
-                raise ValueError("Pandas editing must preserve dtypes")
-            self._state.values = draft.copy(deep=True)
+            self._commit_pandas(draft)
         finally:
             self._editing = False

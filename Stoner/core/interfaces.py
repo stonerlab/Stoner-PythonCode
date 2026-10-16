@@ -129,7 +129,7 @@ class DataFileInterfacesMixin:
         Returns: Returns the number of rows of data
         """
         if "_storage_owner" in self.__dict__:
-            return self.__dict__["_storage_owner"]._state.values.shape[0]
+            return self._require_storage_owner()._state.values.shape[0]
         if np.prod(self.data.shape) > 0:
             return np.shape(self.data)[0]
         return 0

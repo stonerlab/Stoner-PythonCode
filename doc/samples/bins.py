@@ -20,7 +20,7 @@ h = d.bin(bins=50, mode="log")
 for i, (binned, label) in enumerate(
     zip([e, f, g, h], ["0.05 Linear", "0.25 Linear", "0.05 Log", "50 log"])
 ):
-    binned.data = binned.data[binned.data[:, 2] != 0]
+    binned.data = binned.to_numpy()[binned.to_numpy()[:, 2] != 0]
     binned.subplot(411 + i)
     d.plot(fmt="k,", capsize=2.0)
     binned.fig = d.fig

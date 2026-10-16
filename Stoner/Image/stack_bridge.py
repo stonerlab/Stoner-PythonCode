@@ -7,6 +7,7 @@ import re
 import numpy as np
 
 from ..core.base import RegexpDict
+from ..core.selection import selected_image_values
 from .core import ImageFile
 from .numerical import numerical_image
 from .storage import ImageStorage, _fill
@@ -70,7 +71,17 @@ class OwnedStackMixin:
     @property
     def frame_ids(self):
         """Return stable identities in current positional order."""
+        self._stack_owner.validate()
         return tuple(frame.id for frame in self._stack_owner._state.frames)
+
+    @property
+    def stack(self):
+        """Return the authoritative intensity, exclusions and valid-extent Dataset."""
+        return self._stack_owner.dataset
+
+    @stack.setter
+    def stack(self, value):
+        self._stack_owner.replace_xarray(value)
 
     @property
     def imarray(self):
@@ -337,9 +348,27 @@ class OwnedStackMixin:
             result.crop(box)
         return result
 
-    def average(self, weights=None, _box=False, _metadata="first"):
-        """Average valid pixels, excluding both user masks and ragged padding."""
-        values = np.ma.average(self.to_numpy(), axis=0, weights=weights)
+    def average(self, weights=None, _box=False, _metadata="first", *, where=None):
+        """Average selected finite pixels, excluding user masks and ragged padding.
+
+        Keyword Arguments:
+            where (Boolean array, xarray.DataArray or None):
+                Full stack selection, with true including a pixel. Labelled selectors
+                must match the intensity dimensions and coordinates exactly.
+
+        Returns:
+            ImageFile:
+                Average with existing metadata and crop rules. Positions with no
+                eligible observations contain excluded NaN values.
+
+        Raises:
+            ValueError:
+                Selection axes or dtype are incompatible with the stack.
+        """
+        self._stack_owner.validate()
+        data = selected_image_values(self._stack_owner._state.dataset, where)
+        values = np.ma.average(data, axis=0, weights=weights)
+        values = np.ma.array(values.filled(np.nan), mask=np.ma.getmaskarray(values))
         return self._reduction(values, _box, _metadata)
 
     def stddev(self, weights=None, _box=False, _metadata="first"):

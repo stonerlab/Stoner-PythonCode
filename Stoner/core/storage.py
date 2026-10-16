@@ -124,6 +124,48 @@ def _numeric_dtype(dtype):
     return dtype
 
 
+def _validate_table(state, *, native=False):
+    """Validate table state without copying its frame or exporting numerical values.
+
+    Native owners use displayed headers; version-one packages use stable IDs.
+    Both boundaries share the same dtype, exclusion and metadata requirements.
+    """
+    if not isinstance(state.values, pd.DataFrame):
+        raise TypeError("Storage values must be a DataFrame")
+    _numeric_dtype(state.dtype)
+    if not isinstance(state.schema, (list, tuple)) or any(not isinstance(col, Column) for col in state.schema):
+        raise TypeError("Schema must be an ordered sequence of Column records")
+    identities = [col.id for col in state.schema]
+    labels = [col.header for col in state.schema] if native else identities
+    if len(set(identities)) != len(identities) or list(state.values.columns) != labels:
+        raise ValueError("Columns must match ordered schema headers" if native
+                         else "Columns must match unique ordered schema identities")
+    index = state.values.index
+    if not isinstance(index, pd.RangeIndex) or not index.equals(pd.RangeIndex(len(state.values))):
+        raise ValueError("Storage rows must use RangeIndex(0, nrows)")
+    if native and isinstance(state.values.columns, pd.MultiIndex):
+        raise ValueError("Native columns must use flat headers")
+    for dtype in state.values.dtypes:
+        if _numeric_dtype(dtype) != state.dtype:
+            raise ValueError("Frame columns must share the declared dtype")
+    if not isinstance(state.excluded, np.ndarray) or state.excluded.dtype != np.dtype(bool):
+        raise TypeError("Exclusions must be a Boolean ndarray")
+    if state.excluded.shape != state.values.shape:
+        raise ValueError("Exclusion shape differs from values")
+    if not isinstance(state.metadata, TypeHintedDict):
+        raise TypeError("Storage metadata must be a TypeHintedDict")
+    if np.ndim(state.fill_value) != 0:
+        raise ValueError("Fill value must be scalar")
+    if np.asarray(state.fill_value).dtype.kind not in "biufc":
+        raise ValueError("Fill value must be numeric")
+    try:
+        converted = np.ma.array(np.empty(0, dtype=state.dtype), fill_value=state.fill_value).fill_value
+        if not (converted == state.fill_value or (np.isnan(converted) and np.isnan(state.fill_value))):
+            raise ValueError("Fill value cannot be represented exactly")
+    except (TypeError, ValueError, OverflowError) as error:
+        raise ValueError("Fill value is incompatible with the dtype") from error
+
+
 @dataclass
 class DataStorage:
     """Carry editable, detached version-one Data interchange state.
@@ -169,36 +211,7 @@ class DataStorage:
         """
         if type(self.version) is not int or self.version != 1:
             raise ValueError("Unsupported storage version")
-        if not isinstance(self.values, pd.DataFrame):
-            raise TypeError("Storage values must be a DataFrame")
-        _numeric_dtype(self.dtype)
-        if not isinstance(self.schema, (list, tuple)) or any(not isinstance(col, Column) for col in self.schema):
-            raise TypeError("Schema must be an ordered sequence of Column records")
-        identities = [col.id for col in self.schema]
-        if len(set(identities)) != len(identities) or list(self.values.columns) != identities:
-            raise ValueError("Columns must match unique ordered schema identities")
-        index = self.values.index
-        if not isinstance(index, pd.RangeIndex) or not index.equals(pd.RangeIndex(len(self.values))):
-            raise ValueError("Storage rows must use RangeIndex(0, nrows)")
-        for dtype in self.values.dtypes:
-            if _numeric_dtype(dtype) != self.dtype:
-                raise ValueError("Frame columns must share the declared dtype")
-        if not isinstance(self.excluded, np.ndarray) or self.excluded.dtype != np.dtype(bool):
-            raise TypeError("Exclusions must be a Boolean ndarray")
-        if self.excluded.shape != self.values.shape:
-            raise ValueError("Exclusion shape differs from values")
-        if not isinstance(self.metadata, TypeHintedDict):
-            raise TypeError("Storage metadata must be a TypeHintedDict")
-        if np.ndim(self.fill_value) != 0:
-            raise ValueError("Fill value must be scalar")
-        if np.asarray(self.fill_value).dtype.kind not in "biufc":
-            raise ValueError("Fill value must be numeric")
-        try:
-            converted = np.ma.array(np.empty(0, dtype=self.dtype), fill_value=self.fill_value).fill_value
-            if not (converted == self.fill_value or (np.isnan(converted) and np.isnan(self.fill_value))):
-                raise ValueError("Fill value cannot be represented exactly")
-        except (TypeError, ValueError, OverflowError) as error:
-            raise ValueError("Fill value is incompatible with the dtype") from error
+        _validate_table(self)
 
     @classmethod
     def from_numpy(cls, values, *, headers=None, roles=None, metadata=None):

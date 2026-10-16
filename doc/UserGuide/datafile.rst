@@ -183,8 +183,8 @@ Data, Column headers and metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Having loaded some data, the next stage might be to take a look at it.
-Internally, data is represented as a 2D numpy masked array of floating point numbers,
-along with a list of column headers and a dictionary that keeps the metadata and
+Internally, raw numerical data is held in an ordinary pandas DataFrame, with
+a separate Boolean exclusion mask, column identities and roles. A dictionary keeps the metadata and
 also keeps track of the expected type of the metadata (ie the meta-metadata).
 These can be accessed like so::
 
@@ -238,8 +238,10 @@ with a "fill" value of 10^20.
    chance that you will need the masked data values again later !
 
 .. note::
-    ``Data.data`` returns a detached, read-only NumPy masked array.
-    The pandas owner holds values, exclusions, column identities and roles.
+    ``Data.data`` returns the stored pandas DataFrame of raw values, including
+    excluded measurements. ``d.mask`` remains the persistent exclusion interface.
+    Use ``d.to_numpy()`` for masked numerical exports or ``d.asarray()`` for a
+    detached read-only snapshot. Pandas calculations do not apply exclusions.
 
 .. _setas:
 
@@ -679,6 +681,23 @@ The 'accuracy' keyword parameter sets the level of accuracy to accept when testi
 equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
 the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.
 
+Numeric NumPy arrays select discrete target values, including arrays with two
+entries. Use a tuple for an interval: the lower endpoint is excluded and the upper
+endpoint included, after expanding by ``accuracy``. Two-item numeric lists retain
+their legacy interval meaning. For example::
+
+    import numpy as np
+
+    d.search('Temperature', np.array([4.2, 77.0]))  # Two discrete targets.
+    d.search('Temperature', (4.2, 77.0))            # An interval.
+    d.search('Temperature', [True, False])         # The first row only.
+
+Boolean lists and arrays select rows positionally; short selectors are padded
+with false. Scalar target comparisons use ``numpy.isclose``, with ``accuracy``
+as its absolute tolerance and NumPy's default relative tolerance. Returned masked
+arrays retain raw excluded values, dtype and fill value, including when several
+columns are requested. Editing a search result does not change the measurement.
+
 Filtering
 ~~~~~~~~~
 
@@ -834,7 +853,9 @@ Working with Columns of Data
 Changing Individual Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``data`` property supplies a read-only numerical snapshot. Assign through
+The ``data`` property supplies the native DataFrame. Assign existing raw cells
+through ``d.data.iloc[row, column]`` without changing dtype. Reacquire the frame
+after owner mutations and use owner operations for structural changes. Assign through
 ``d[row, column]``, replace ``d.data`` as a whole, or use ``d.edit_numpy()`` to
 commit pixelwise changes. Assigned roles such as ``x``, ``y`` and ``z`` support
 direct column replacement on the Data object.

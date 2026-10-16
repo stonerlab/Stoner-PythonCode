@@ -20,7 +20,7 @@ selfd = Data(path.join(path.dirname(__file__), "..", "CoreTest.dat"), setas="xy"
 def test_indexing():
     # Check all the indexing possibilities
     selfd = Data(path.join(path.dirname(__file__), "..", "CoreTest.dat"), setas="xy")
-    data = np.array(selfd.data)
+    data = np.array(selfd.to_numpy())
     colname = selfd.column_headers[0]
     assert all(selfd.column(colname) == selfd[:, 0]), "Failed direct indexing versus column method"
     assert all(selfd[:, 0] == data[:, 0]), "Failed direct idnexing versusus direct array index"
@@ -79,9 +79,9 @@ def test_len():
     selfd = Data(path.join(path.dirname(__file__), "..", "CoreTest.dat"), setas="xy")
     assert len(Data()) == 0, "Empty DataFile not length zero"
     assert len(selfd.column(0)) == len(selfd), "Column 0 length not equal to DataFile length"
-    assert len(selfd) == selfd.data.shape[0], "DataFile length not equal to data.shape[0]"
+    assert len(selfd) == selfd.to_numpy().shape[0], "DataFile length not equal to data.shape[0]"
     # Check that self.column_headers returns the right length
-    assert len(selfd.column_headers) == selfd.data.shape[1], "Length of column_headers not equal to data.shape[1]"
+    assert len(selfd.column_headers) == selfd.to_numpy().shape[1], "Length of column_headers not equal to data.shape[1]"
 
 
 if __name__ == "__main__":

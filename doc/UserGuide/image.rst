@@ -14,9 +14,36 @@ The :mod:`Stoner.Image` package provides image-processing functions in a similar
 ------------------
 
 In the Stoner package, a :class:`ImageFile` represent a single image along with associated metadata from when the image was taken.
-The :attr:`ImageFile.image` property exports a detached, read-only 2D NumPy array. This is actually a masked array - the mask is
-useful for ignoring certain portions of the image when carrying out operations. As well as the image data, a :class:`ImageFile` also
+The :attr:`ImageFile.image` property exposes the stored xarray Dataset, with
+``intensity(y, x)`` and Boolean ``excluded(y, x)`` variables. ``imarray`` returns a
+detached read-only masked array; ``to_numpy()`` returns a writable detached export.
+The mask is useful for ignoring portions of the image in Stoner operations.
+As well as the image data, a :class:`ImageFile` also
 has a :attr:`ImageFile.metadata` attribute that stores the associated image metadata as a set of key-value pairs in a dictionary.
+A no-argument instance remains an empty loader placeholder until pixels are
+assigned; populated owners expose the native Dataset.
+
+For a temporary region, ``image.mean(where=region)`` computes a mean without
+changing stored values or the persistent mask. ``region`` is a full-shape Boolean
+array (true includes a pixel), or an xarray DataArray with matching dimensions and
+coordinates. For example, using native storage::
+
+    dataset = image.image
+    region = (dataset.x < 2).broadcast_like(dataset.intensity)
+    background = image.mean(where=region)
+    corrected = dataset.intensity - background
+
+Non-finite pixels and persistent exclusions are omitted. An empty region returns
+NaN. Clearing a persistent exclusion restores the original value; selecting a
+region does not alter that exclusion. ``stack.average(where=region)`` uses the
+same rules with a full ``(frame, y, x)`` selector and always excludes padding
+outside each frame's valid extent. An output pixel with no eligible observations
+contains an excluded NaN. Explicitly broadcast a spatial region across frames
+before passing it; Stoner rejects implicit broadcasting and coordinate mismatch.
+Direct xarray calculations retain xarray's own semantics and do not automatically
+apply Stoner exclusions. Neighbourhood filters reject ``where``; crop explicitly
+before filtering when a rectangular domain is appropriate. Cropping changes the
+filter boundary conditions; it is not an arbitrary pixel selection.
 
 As with :class:`Stoner.core.data.Data`, :class:`ImageFile` has a rich array of methods that can carry out different image analysis tasks -
 in common with the philosophy of the Stoner package, these methods operate *in place* and also return the modified :class:`ImageFile`
@@ -66,7 +93,7 @@ ImageFile Attributes and Properties
 The key attributes and properties of the :class:`ImageFile` are:
 
     - :py:attr:`ImageFile.image`:
-        This is a detached, read-only numerical snapshot of the image.
+        This is the native Dataset. Use ``imarray`` for a read-only numerical snapshot.
     - :attr:`ImageFile.metadata`:
         This is the dictionary that contains the metadata associated with the image. This is normally parameters and
         information about the measurement or data that is encoded within the the measurement file, but can be supplemented
@@ -353,8 +380,8 @@ NumPy image exports
 ===================
 
 ``ImageFile`` owns an xarray Dataset containing intensities, exclusions and
-coordinates. ``image`` and ``data`` return detached, read-only NumPy masked
-arrays; ``to_numpy()`` returns a writable detached export. Use NumPy routines
+coordinates. ``image`` and ``data`` return the native Dataset; ``imarray`` returns
+a detached read-only masked array and ``to_numpy()`` a writable detached export. Use NumPy routines
 directly with an image when only its values are needed. Use ``to_numpy()`` when
 the exclusion mask is needed, and ``export_storage()`` to preserve calibration
 and typed metadata as well.
@@ -382,6 +409,16 @@ For example::
 
 The imarray property returns a detached read-only frame/y/x array. Use edit_numpy() for committed edits, or call functions on each ImageFile
 (including the scikit-image and scipy library).
+
+``imst.stack`` exposes the stored Dataset, including ``valid_height(frame)``,
+``valid_width(frame)`` and stable frame coordinates. Existing intensity and
+exclusion cells may be edited directly, but padding must remain excluded.
+Coordinates, extents, dtype and variable structure are owner-managed. Whole-Dataset
+assignment requires the same schema and copies its input. Use explicit storage
+packages for geometry changes. Reacquire native objects after owner mutations;
+saved references may point to retired buffers. Native frame/crop getters return
+borrowed views: edit shared pixels through their owner or transaction, rather
+than relying on backend view write-back.
 
 
 

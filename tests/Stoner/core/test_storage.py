@@ -158,10 +158,10 @@ def test_real_fixture_interchange():
     """Keep real scientific fixture values/roles across legacy frame conversion."""
     data = Data(Path(__file__).parents[1] / "CoreTest.dat", setas="xy")
     package = DataStorage.from_pandas(data.to_pandas())
-    np.testing.assert_array_equal(package.to_numpy().data, data.data.data)
+    np.testing.assert_array_equal(package.to_numpy().data, data.to_numpy().data)
     assert [col.role for col in package.schema] == ["x", "y"]
     restored = Data(package.to_pandas())
-    np.testing.assert_array_equal(restored.data, data.data)
+    np.testing.assert_array_equal(restored.to_numpy(), data.to_numpy())
 
 
 def test_uncopyable_metadata_reports_key(package):

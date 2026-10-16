@@ -111,10 +111,12 @@ def prepare(workload, backend, size):
     if workload == "column":
         return (lambda: table.column(3).copy()) if legacy else (lambda: table.column(3)), dimensions
     if workload == "convert":
-        return (lambda: np.ma.array(table.data, copy=True)) if legacy else table.to_numpy, dimensions
+        return (lambda: np.ma.array(table.to_numpy() if hasattr(table, "to_numpy") else table.data,
+                                    copy=True)) if legacy else table.to_numpy, dimensions
     if workload == "fit":
         def fit():
-            array = np.ma.array(table.data, copy=True) if legacy else table.to_numpy()
+            array = np.ma.array(table.to_numpy() if hasattr(table, "to_numpy") else table.data,
+                                copy=True) if legacy else table.to_numpy()
             valid = ~np.ma.getmaskarray(array[:, :3]).any(axis=1)
             return curve_fit(polynomial, array.data[valid, 0], array.data[valid, 1],
                              sigma=array.data[valid, 2], absolute_sigma=True)

@@ -11,7 +11,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
-from Stoner import Data, ImageFile
+import pandas as pd
+import xarray as xr
+from Stoner import Data, ImageFile, ImageStack
 import Stoner
 
 
@@ -33,6 +35,13 @@ def check_data_and_resources(checkout):
     data = Data(np.array([[0.0, 1.0], [1.0, 3.0], [2.0, 5.0]]), setas='xy')
     if data.shape != (3, 2):
         raise RuntimeError(f'Unexpected constructed data shape: {data.shape}')
+    frame = data.data
+    if type(frame) is not pd.DataFrame or frame is not data.data:
+        raise RuntimeError('Data.data does not expose the stored ordinary DataFrame')
+    data.mask[1, 1] = True
+    data.data.iloc[1, 1] = 17.0
+    if data.to_numpy().data[1, 1] != 17.0 or not data.mask[1, 1]:
+        raise RuntimeError('Native table edits lost raw values or persistent exclusions')
     loaded = Data(checkout / 'sample-data' / 'TDI_Format_RT.txt')
     if loaded.shape[0] <= 0 or loaded.shape[1] < 2:
         raise RuntimeError(f'Unexpected sample data shape: {loaded.shape}')
@@ -52,11 +61,20 @@ def check_data_and_resources(checkout):
                 raise RuntimeError(f'Empty OCR resource: {name}')
 
     image = ImageFile(np.arange(100, dtype=float).reshape(10, 10))
+    dataset = image.image
+    if type(dataset) is not xr.Dataset or dataset is not image.image:
+        raise RuntimeError('ImageFile.image does not expose the stored Dataset')
+    stack = ImageStack([image])
+    if type(stack.stack) is not xr.Dataset or stack.stack is not stack.stack:
+        raise RuntimeError('ImageStack.stack does not expose the stored Dataset')
+    stack[0][0, 0] = 7.0
+    if stack.stack.intensity.values[0, 0, 0] != 7.0:
+        raise RuntimeError('Frame edits did not reach native stack storage')
     with tempfile.TemporaryDirectory(prefix='stoner-installed-smoke-') as directory:
         target = Path(directory) / 'roundtrip.tiff'
         image.save(target)
         restored = ImageFile(target)
-        if not np.allclose(restored.image, image.image):
+        if not np.allclose(restored.to_numpy(), image.to_numpy()):
             raise RuntimeError('Image pixels changed during the TIFF round trip')
 
 

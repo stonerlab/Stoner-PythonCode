@@ -21,25 +21,46 @@ except ImportError:
 
 
 def search_index(datafile, xcol=None, value=None, accuracy=0.0, invert=False):
-    """Return an array of booleans for indexing matching rows for use with search method."""
+    """Resolve positional search matches using explicit masked column reads.
+
+    Args:
+        datafile (Data):
+            Data object to search if not used as a bound method.
+
+    Keyword Arguments:
+        xcol (column selector or None):
+            Search column, defaulting to the assigned x column.
+        value (number, tuple, list, numpy.ndarray, callable or None):
+            Match target, interval, collection of targets, Boolean row selector or
+            callback accepting the column value and row. None opens RangeSelect.
+        accuracy (float):
+            Absolute tolerance for numbers and expansion of interval endpoints.
+        invert (bool):
+            Invert the matches. Defaults to False.
+
+    Returns:
+        numpy.ndarray or numpy.ma.MaskedArray:
+            One Boolean per row; numerical predicates retain input exclusions.
+            Short Boolean selectors are padded with False before inversion.
+    """
     _ = datafile._col_args(scalar=False, xcol=xcol)
     x = datafile.find_col(_.xcol, force_list=True)[0]  # Workaround in newer numpy
     match value:
-        case int() | float():
-            ix = np.isclose(datafile.data[:, x], value, atol=accuracy)
-        case (_, _):
+        case int() | float() | np.integer() | np.floating():
+            ix = np.isclose(datafile.column(x), value, atol=accuracy)
+        case list() | np.ndarray() if all_type(value, bool) and len(value) <= len(datafile):
+            if len(value) < len(datafile):
+                ix = np.append(value, [False] * (len(datafile) - len(value)))
+            else:
+                ix = np.array(value)
+        case (_, _) if isinstance(value, (tuple, list)):
             low, u = (min(value), max(value))
             low -= accuracy
             u += accuracy
-            v = datafile.data[:, x]
+            v = datafile.column(x)
             low = np.ones_like(v) * low
             u = np.ones_like(v) * u
             ix = np.logical_and(v > low, v <= u)
-        case [] | np.ndarray() if all_type(value, bool) and len(value) <= len(datafile):
-            if len(value) < len(datafile):  # Expand array if necessary
-                ix = np.append(value, [False] * len(datafile) - len(value))
-            else:
-                ix = np.array(value)
         case list() | np.ndarray():
             ix = np.zeros(len(datafile), dtype=bool)
             for v in value:
@@ -59,8 +80,18 @@ def search_index(datafile, xcol=None, value=None, accuracy=0.0, invert=False):
 
 
 def asarray(datafile):
-    """Provide a consistent way to get at the underlying array data."""
-    return datafile.data
+    """Return an annotated, detached, read-only masked numerical snapshot.
+
+    Args:
+        datafile (Data):
+            Data object to export if not used as a bound method.
+
+    Returns:
+        numpy.ma.MaskedArray:
+            Raw values, exclusions, fill value and immediate row/column annotations.
+            NumPy slicing does not propagate the annotations or write to the owner.
+    """
+    return datafile._storage_array()
 
 
 def closest(datafile, value, xcol=None):
@@ -103,10 +134,7 @@ def column(datafile, col):
         (ndarray):
             One or more columns of data as a :py:class:`numpy.ndarray`.
     """
-    owner = datafile.__dict__.get("_storage_owner")
-    if owner is not None:
-        return owner[:, col]
-    return datafile.data[:, datafile.find_col(col)]
+    return datafile._require_storage_owner()[:, col]
 
 
 def find_col(datafile, col, force_list=False):
@@ -265,6 +293,14 @@ def rolling_window(datafile, window=7, wrap=True, exclude_centre=False):
         ndarray:
             Yields with a section of data that is window rows long, each iteration moves the marker
             one row further on.
+
+    Notes:
+        Each yield reads current owner values and returns a detached read-only
+        masked array, retaining dtype, raw excluded values and fill. Wrapping
+        borrows one prefix and suffix, preserving the legacy geometry on short
+        inputs rather than repeating indefinitely to fill a window. Centre
+        exclusion clips to the current unwrapped segment; it never uses a
+        negative slice endpoint to include unrelated rows.
     """
     if isinstance(exclude_centre, bool) and exclude_centre:
         exclude_centre = 1
@@ -282,35 +318,27 @@ def rolling_window(datafile, window=7, wrap=True, exclude_centre=False):
         hc = int((exclude_centre - 1) / 2)
 
     for i in range(len(datafile)):
-        if i < hw:
-            pre_data = datafile.data[i - hw :]
-        else:
-            pre_data = np.zeros((0, datafile.shape[1]))
-        if i + 1 > len(datafile) - hw:
-            post_data = datafile.data[0 : hw - (len(datafile) - i - 1)]
-        else:
-            post_data = np.zeros((0, datafile.shape[1]))
+        values = datafile.to_numpy()
+        positions = np.arange(len(values))
+        pre = positions[i - hw :] if i < hw else positions[:0]
+        post = positions[: hw - (len(values) - i - 1)] if i + 1 > len(values) - hw else positions[:0]
         starti = max(i - hw, 0)
         stopi = min(len(datafile), i + hw + 1)
-        if exclude_centre:  # hacked to stop problems with NumPy masked array concatenation
-            tmp = datafile.clone  # copy all properties
-            data = np.vstack((datafile.data[starti : i - hc], datafile.data[i + 1 + hc : stopi]))
-            tmp.data = np.array(data)  # guarantee an ndarray
-            data = tmp.data  # get the NumPy masked array
+        if exclude_centre:
+            selected = np.concatenate((positions[starti : max(starti, i - hc)],
+                                       positions[min(stopi, i + 1 + hc) : stopi]))
         else:
-            data = datafile.data[starti:stopi]
+            selected = positions[starti:stopi]
         if wrap:
-            tmp = datafile.clone  # copy all properties
-            ret = np.vstack((pre_data, data, post_data))
-            tmp.data = np.array(ret)  # guarantee an ndarray
-            ret = tmp.data  # get the NumPy masked array
-        else:
-            ret = data
+            selected = np.concatenate((pre, selected, post))
+        ret = values[selected]
+        ret.setflags(write=False)
+        ret._mask.setflags(write=False)
         yield ret
 
 
 def search(datafile, xcol=None, value=None, columns=None, accuracy=0.0):
-    """Search the numerica data part of the file for lines that match and returns  the corresponding rows.
+    """Return detached masked rows or columns matching a positional search.
 
     Args:
         datafile (Data):
@@ -319,38 +347,52 @@ def search(datafile, xcol=None, value=None, columns=None, accuracy=0.0):
     Keyword Arguments:
         xcol (index types, None):
             a Search Column Index. If None (default), use the current setas.x
-        value (float, tuple, list or callable, None):
-            Value to look for
+        value (number, tuple, list, numpy.ndarray, callable or None):
+            Target values, interval, Boolean row selector or row callback.
         columns (index or array of indices or None (default)):
             columns of data to return - none represents all columns.
         accuracy (float):
             Uncertainty to accept when testing equalities
 
     Returns:
-        ndarray: numpy array of matching rows or column values depending on the arguments.
+        numpy.ma.MaskedArray:
+            Matching rows in source order, retaining raw excluded values, masks,
+            dtype and fill value. A scalar or one-element column selector returns
+            a one-dimensional array; multiple columns form a rectangular array.
 
     Notes:
         The value is interpreted as follows:
 
-        - a float looks for an exact match
-        - a list is a list of exact matches
+        - scalar numbers use ``numpy.isclose`` with ``accuracy`` as its absolute
+          tolerance and NumPy's default relative tolerance
+        - numeric arrays and numeric lists other than pairs select exact matches
+        - two-item numeric lists retain the legacy interval meaning, like tuples
         - an array or list of booleans (index like Numpy does)
         - a tuple should contain a (min,max) value.
         - A callable object should have accept a float and an array representing the value of
           the search col for the the current row and the entire row.
         - None opens an interactive span selector in a plot window.
+
+        Intervals include the upper endpoint and exclude the lower endpoint after
+        tolerance expansion. Column names use Stoner's resolver, including duplicate
+        and regex rules. Values are exported once for result assembly; pandas row
+        or column alignment is not applied. The source is unchanged.
     """
     ix = search_index(datafile, xcol, value, accuracy)
+    values = datafile.to_numpy()
     if columns is None:  # Get the whole slice
-        data = datafile.data[ix, :]
+        data = values[ix, :]
     else:
         columns = datafile.find_col(columns)
         if not isinstance(columns, list):
-            data = datafile.data[ix, columns]
+            data = values[ix, columns]
         else:
-            data = datafile.data[ix, columns[0]]
-            for c in columns[1:]:
-                data = np.column_stack((data, datafile.data[ix, c]))
+            if len(columns) == 1:
+                data = values[ix, columns[0]]
+            elif columns:
+                data = values[ix, :][:, columns]
+            else:
+                raise IndexError("Search requires at least one selected column")
     return data
 
 
@@ -492,11 +534,11 @@ def select(datafile, *args, **kwargs):
             end = -1
             negate = False
         if parts[0] == "_i":
-            res = np.logical_or(res, np.logical_xor(negate, operator[parts[-1]](datafile.data.i, val)))
+            res = np.logical_or(res, np.logical_xor(negate, operator[parts[-1]](np.arange(len(datafile)), val)))
         else:
             col = "__".join(parts[:end])
             res = np.logical_or(res, np.logical_xor(negate, operator[parts[-1]](datafile.column(col), val)))
-    result.data = datafile.data[res, :]
+    result.data = datafile.to_numpy()[res, :]
     return result
 
 
@@ -588,7 +630,7 @@ def split(datafile, *args, final="files"):
                 data[val] = newfile
         case _ if callable(xcol):
             try:  # Try to call function with all data in one go
-                keys = xcol(datafile.data)
+                keys = xcol(datafile.asarray())
                 if not isiterable(keys):
                     keys = [keys] * len(datafile)
                 if len(keys) != len(datafile):
@@ -600,7 +642,7 @@ def split(datafile, *args, final="files"):
             keys = np.array(keys)
             for key in np.unique(keys):
                 data[key] = datafile.clone
-                data[key].data = datafile.data[keys == key, :]
+                data[key].data = datafile.to_numpy()[keys == key, :]
                 data[key].filename = f"{xcol.__name__}={key} {datafile.filename}"
                 data[key].setas = datafile.setas
         case _:
@@ -684,7 +726,7 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
 
 
 def columns(datafile, not_masked=False, reset=False):
-    """Iterate over the columns of data int he datafile.
+    """Iterate over detached, read-only numerical columns in positional order.
 
     Args:
         datafile (Data):
@@ -694,12 +736,14 @@ def columns(datafile, not_masked=False, reset=False):
         not_masked (bool):
             Only iterate over columns that don't have masked elements
         reset (bool):
-            If true then reset the iterator (immediately stops the current iteration without returning any data)./
+            Stop this iterator without yielding a column. Defaults to False.
 
     Yields:
-        1D array: Returns the next column of data.
+        numpy.ma.MaskedArray:
+            The next column with its exclusions. Eligibility for ``not_masked`` is
+            captured when iteration begins; yielded values use the current owner.
     """
-    for ix, col in enumerate(datafile.data.T):
+    for ix, col in enumerate(datafile.to_numpy().T):
         if not_masked and ma.is_masked(col):
             continue
         if reset:
@@ -1055,12 +1099,13 @@ def to_hdf(datafile, filename=None):  # pylint: disable=unused-argument
         mode = "r+" if pathlib.Path(filename).exists() else "w"
     else:
         mode = ""
+    values = datafile.to_numpy()
     with HDFFileManager(filename, mode) as f:
         f.require_dataset(
             "data",
-            data=datafile.data,
-            shape=datafile.data.shape,
-            dtype=datafile.data.dtype,
+            data=values,
+            shape=values.shape,
+            dtype=values.dtype,
             compression=datafile.compression,
             compression_opts=datafile.compression_opts,
         )

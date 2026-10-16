@@ -72,7 +72,7 @@ def test_metadata_precedence_and_column_assignment(measurement):
 
 def test_row_iteration_and_readonly_snapshots(measurement):
     """Return detached read-only basic and advanced selections."""
-    np.testing.assert_array_equal(np.array(list(measurement)), measurement.data)
+    np.testing.assert_array_equal(np.array(list(measurement)), measurement.to_numpy())
     column = measurement.column("Moment")
     with pytest.raises(ValueError):
         column[1] = 100
@@ -92,11 +92,11 @@ def test_mask_unmask_and_nan_are_distinct():
     data.mask[1, 1] = True
     assert data.dtype == np.dtype("int16")
     assert data.column(1).mean() == 20
-    assert data.data.data[1, 1] == 100
+    assert data.to_numpy().data[1, 1] == 100
     data.mask[1, 1] = False
     assert data[1, 1] == 100
     floating = Data(np.array([[0, np.nan], [1, 10.0]]), setas="xy")
-    assert not np.ma.getmaskarray(floating.data).any()
+    assert not np.ma.getmaskarray(floating.to_numpy()).any()
     assert np.isnan(floating.column(1).mean())
 
 
@@ -133,7 +133,7 @@ def test_real_fixture_pandas_roundtrip():
     """Retain ordinary values and roles through current interchange."""
     data = Data(Path(__file__).parents[1] / "CoreTest.dat", setas="xy")
     restored = Data(data.to_pandas())
-    np.testing.assert_array_equal(restored.data, data.data)
+    np.testing.assert_array_equal(restored.to_numpy(), data.to_numpy())
     assert restored.column_headers == data.column_headers
     assert restored.setas.to_string() == "xy"
 
@@ -166,7 +166,7 @@ def test_column_slice_roles(measurement):
     """Move headers and roles with selected columns."""
     selected = measurement[:, [3, 0, 2]]
     assert selected.column_headers == ["Moment", "Field", "Moment error"]
-    np.testing.assert_array_equal(selected, np.asarray(measurement.data)[:, [3, 0, 2]])
+    np.testing.assert_array_equal(selected, np.asarray(measurement.to_numpy())[:, [3, 0, 2]])
     assert selected.setas.to_string() == "yxe"
 
 
@@ -177,9 +177,9 @@ def test_legacy_masked_pandas_export(measurement):
     frame = measurement.to_pandas()
     assert np.isnan(frame.iloc[0, 1])
     restored = Data(frame)
-    assert not np.ma.getmaskarray(restored.data).any()
+    assert not np.ma.getmaskarray(restored.to_numpy()).any()
     assert np.isnan(restored[0, 1])
-    assert measurement.data.data[0, 1] == 1
+    assert measurement.to_numpy().data[0, 1] == 1
 
 
 def test_sort_preserves_mask_roles_and_returns_self():
@@ -188,7 +188,7 @@ def test_sort_preserves_mask_roles_and_returns_self():
     data.mask = np.zeros(data.shape, dtype=bool)
     data.mask[0, 1] = True
     assert data.sort("Field") is data
-    np.testing.assert_array_equal(data.data.data, [[0, 0], [1, 10], [2, 20]])
+    np.testing.assert_array_equal(data.to_numpy().data, [[0, 0], [1, 10], [2, 20]])
     np.testing.assert_array_equal(data.mask, [[False, False], [False, False], [False, True]])
     assert data.column_headers == ["Field", "Moment"]
     assert data.setas.to_string() == "xy"
@@ -230,4 +230,4 @@ def test_masked_scalar_retains_exclusion(measurement):
     with measurement.edit_numpy() as draft:
         draft.fill_value = -999
     assert measurement[0, 1] is np.ma.masked
-    assert measurement.data.data[0, 1] == 1
+    assert measurement.to_numpy().data[0, 1] == 1

@@ -15,5 +15,5 @@ def test_hysteretic_decomposition():
     assert result is data
     # Exclude the turning points affected by branch detection and interpolation.
     interior = np.abs(x) < 1.5
-    assert_allclose(data.data[interior, -2], 3, atol=1e-10)
-    assert_allclose(data.data[interior, -1], x[interior] + 0.5, atol=1e-10)
+    assert_allclose(data.to_numpy()[interior, -2], 3, atol=1e-10)
+    assert_allclose(data.to_numpy()[interior, -1], x[interior] + 0.5, atol=1e-10)

@@ -243,7 +243,7 @@ class MaskProxy:
     @property
     def _imagearray(self):
         """Get the underliying image data."""
-        return self._imagefolder.image
+        return self._imagefolder.imarray
 
     @property
     def _mask(self):

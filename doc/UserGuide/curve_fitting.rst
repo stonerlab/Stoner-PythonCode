@@ -147,6 +147,40 @@ the same name.::
    a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,[absolute_sigma=True|scale_covar=False], bounds=lambda x, y: True,
        result=True,replace=False,header="New Column" )
 
+For ``curve_fit``, use ``where`` to choose observations without changing the
+measurement or its persistent mask. True includes a row. For example, fit two
+background regions and evaluate the model over the complete measurement::
+
+    import numpy as np
+
+    def background(x, slope, offset):
+        return slope * x + offset
+
+    x = a.to_numpy(masked=False)[:, a.find_col("field")]
+    region = (x < -5) | (x > 5)
+    parameters, covariance = a.curve_fit(
+        background, xcol="field", ycol="signal", sigma="uncertainty",
+        where=region, result=None,
+    )
+    corrected = a.to_numpy(masked=False)[:, a.find_col("signal")] - background(x, *parameters)
+
+``where`` accepts a full-length Boolean array or a Boolean pandas Series whose
+unique index exactly matches the row index in order. Missing Boolean values,
+numeric selectors and broadcasting are rejected. If ``bounds`` is also supplied,
+the two regions are intersected. ``bounds`` retains its row-selection meaning;
+use ``parameter_bounds=(lower, upper)`` for SciPy optimiser limits.
+
+Each fitted y channel independently excludes masked or non-finite required x, y
+and uncertainty inputs. Masks on unrelated channels do not remove observations.
+External uncertainty arrays must have the full row count; eligible uncertainties
+must be positive. Each fit requires more eligible observations than parameters.
+If any channel fails, no fit columns or metadata are published.
+
+Stored model columns evaluate the full x axis, including unselected rows, and
+exclude invalid or excluded x inputs. Residual columns additionally exclude
+invalid or excluded measured y values. The original values and exclusions remain
+unchanged. Other fitting methods retain their existing selection interfaces.
+
 The first parameter is the fitting function. This should have prototype
 ``y=func(x,p[0],p[1],p[2]...)``: where *p* is a list of fitting parameters.
 

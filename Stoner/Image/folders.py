@@ -104,7 +104,7 @@ class ImageFolderMixin:
         for im in self:
             if not isinstance(im, np.ndarray):
                 if hasattr(im, "image"):
-                    im = im.image
+                    im = im.imarray
                 else:
                     raise TypeError(f"Cannot represent {type(im)} as an ImageFile.")
             yield im
@@ -186,7 +186,7 @@ class ImageFolderMixin:
         # Call align on each object
         if isinstance(ref_data, ImageFile):
             kwargs["_reference_grid"] = ref_data.export_storage().dataset.coords.to_dataset()
-            ref_data = ref_data.image
+            ref_data = ref_data.imarray
         kwargs.setdefault("_", None)
         results = self.each.align(ref_data, **kwargs)
         for name, result in zip(self.__names__(), results):
@@ -410,7 +410,7 @@ class ImageFolderMixin:
         else:
             avs = self.average(weights=weights)
             if not isinstance(avs, np.ndarray) and hasattr(avs, "image"):
-                avs = avs.image
+                avs = avs.imarray
             sumsqdev = np.zeros_like(avs)
             for ix, img in enumerate(self.images):
                 sumsqdev += weights[ix] * (img - avs) ** 2
@@ -456,12 +456,12 @@ class ImageFolderMixin:
             d["ImageArray.dtype"] = dtype  # add the dtype to the metadata for saving.
             metadata_export.append(d.metadata.export_all())
             if d.dtype.kind == "b":  # boolean we're not going to lose data by saving as unsigned int
-                imlist.append(Image.fromarray(d.image, mode="L"))
+                imlist.append(Image.fromarray(d.imarray, mode="L"))
             else:
                 try:
-                    imlist.append(Image.fromarray(d.image))
+                    imlist.append(Image.fromarray(d.imarray))
                 except TypeError:
-                    imlist.append(Image.fromarray(d.image.astype("float32")))
+                    imlist.append(Image.fromarray(d.imarray.astype("float32")))
 
         ifd = ImageFileDirectory_v2()
         ifd[270] = dumps(

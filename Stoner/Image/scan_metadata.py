@@ -103,7 +103,7 @@ class ScanMetadataMixin:
 
     def _instantiate(self, index):
         image = super()._instantiate(index)
-        bind(image, ScanFrameOwner(self._stack_owner, self.frame_ids[index]), image.image)
+        bind(image, ScanFrameOwner(self._stack_owner, self.frame_ids[index]), image.imarray)
         return image
 
     def to_xarray(self, *, format="stack"):

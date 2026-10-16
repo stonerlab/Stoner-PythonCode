@@ -174,6 +174,168 @@ ignore padding and user masks; standard error uses the included count per pixel.
 the guarded NumPy/xarray transaction interfaces. Regression coverage is in
 `tests/Stoner/Image/test_stack_bridge.py` and `test_storage_contracts.py`.
 
+## Stage 8a selection and native-access acceptance
+
+Specified on 2026-09-20. The following are acceptance cases for batches 8b-8f,
+not claims that the proposed API is implemented. The normative decisions are in
+[the Stage 8a specification](STORAGE_INTERCHANGE.md#stage-8a-decisions-2026-09-20-implementation-follows-in-8b-8e).
+
+### Current consumer audit
+
+- `Stoner/core/utils.py::assemnle_data` consumes `bounds` through `Data.search`,
+  then uses `mask_rowcols` over the entire working table. Thus an unrelated
+  excluded channel currently removes a row from every fit. The shared working
+  table also prevents independent effective selections for different y channels.
+  Stage 8b must replace this input assembly for its first fitting consumer.
+- `Stoner/analysis/fitting/functions.py::_record_curve_fit_result` currently
+  derives model-column exclusions from every source column. Model evaluation in
+  `_Curve_Fit_Result.fit_values` already uses the full raw x axis. Preserve full
+  evaluation but narrow model/residual exclusions as specified in 8a.
+- `Stoner/Image/stack_bridge.py` reductions currently consume masked NumPy
+  snapshots. Padding and exclusions already affect those reductions; operation
+  selections must compose with both, not clear or replace either one.
+- `Stoner/core/storage_bridge.py::data` is currently a detached read-only numerical
+  result; `edit_pandas` is a fixed-schema transaction. Image transactions similarly
+  prohibit coordinate/dtype/extent changes. Native exposure must retain explicit
+  transactions while documenting that ordinary raw writes cannot provide rollback.
+
+Stage 8b replaces the shared-input path for `curve_fit` with
+`Stoner/analysis/fitting/selection.py`; other fitting engines still use the
+historical assembly described above. Regional image means and stack averages now
+use `Stoner/core/selection.py`, combining operation scope with exclusions,
+finite-value checks and geometry. Public native getters remain unchanged.
+
+The two Stage 8a tests in `tests/Stoner/analysis/test_storage_consumers.py` exercise
+today's disjoint `bounds` background fit/full-axis correction and exact integer
+recovery after clearing an exclusion. They deliberately do not assert the
+unrelated-column exclusion behaviour as a desired contract. Existing tests of
+stored fit-column masks now check model-input exclusions separately from residual
+exclusions. Stage 8b tests in `tests/Stoner/analysis/test_operation_selection.py`
+and `tests/Stoner/Image/test_operation_selection.py` cover the implemented
+selection contracts, atomic failures and regional reductions. Native examples
+below remain acceptance cases for 8c/8d; equivalent current export-based examples
+are in the fitting and image user guides.
+
+Stage 8c.1 prepares native Data labels without switching the public getter.
+`tests/Stoner/core/test_storage_native_labels.py` covers header-labelled owner
+frames and pandas drafts, UUID-labelled version-1 package round trips, duplicate
+headers, stable IDs/roles, raw excluded integer recovery, named edits, rollback,
+empty axes and positional structural operations. Existing copy/metadata and TDI
+tests additionally protect typed strings and recursive metadata during cloning.
+`Data.data` remains a detached numerical snapshot.
+
+Stage 8c.2's `tests/Stoner/core/test_storage_native_owner.py` adds owner-native
+access without a frame copy/NumPy export, fixed-schema replacement with detached
+input and retained exclusions/typed metadata, failure atomicity, retained-reference
+retirement, invalid native axes/dtypes/shapes at owner and current Data boundaries,
+saved proxy checks, empty axes and clone/export independence. Transactions reject
+new native getter/replacement calls and revalidate before publishing drafts.
+Regressions explicitly distinguish draft rollback from independent writes through
+a previously acquired native frame; the latter remain outside the transaction.
+No validation claim includes detecting same-shaped value permutations. Public
+`Data.data` still returns its numerical snapshot.
+
+Stage 8c.3a's `tests/Stoner/core/test_native_numerical_consumers.py` exercises
+array/column extraction, search, column iteration and equality with both the
+current snapshot and a test-only native DataFrame property. A separate guard
+rejects any public `.data` read by these consumers. Regressions cover duplicate
+and repeated columns, masked integer recovery, result shapes/detachment, Boolean
+list/array padding, NumPy scalar targets, per-operand conversion counts and column
+iterator eligibility versus current values. Multi-column search now retains masks
+previously lost by `numpy.column_stack`. Boolean list dispatch/padding and NumPy
+scalar target handling now implement the documented numerical search forms.
+Numeric array pairs use discrete matching explicitly: NumPy 2.0 did not match
+them as sequence patterns, whereas NumPy 2.5 routed them through the interval
+branch. Restricting that branch to tuples/lists removes this version dependence.
+Two-item numeric lists retain their existing interval meaning (unlike numeric
+arrays of exact targets); equality retains independent NaN filtering. Those legacy
+semantics are characterised explicitly rather than replaced by pandas alignment.
+
+Stage 8c.3/8d now implement the native public getters. The preceding batch notes
+describe their intermediate state. `test_native_public_storage.py` tests actual
+DataFrame/Dataset identity with forbidden numerical exports, fixed-schema copied
+replacement, transaction locks, retained references, borrowed frame/crop lifetime,
+native labelled access, detectable schema drift and padding rejection. Explicit
+numerical exports retain the value/mask tests previously made through public
+storage attributes. Rolling-window tests cover masks, dtype/fill, current values
+at each yield, short/empty inputs, wrapping and clipped centre exclusion. XOR of
+equal inputs now returns deterministic Boolean comparisons. Neighbourhood image
+methods reject `where`; other fitting engines reject it before optimiser dispatch.
+The initial per-operation API remains `curve_fit`, image `mean` and stack `average`;
+native backend calculations apply neither Stoner exclusions nor hidden selection.
+
+### Worked examples and required assertions
+
+**Background fit (8b, then native syntax in 8c).** Proposed syntax:
+
+```python
+frame = measurement.data                 # native only after 8c
+region = (frame['field'] < -5) | (frame['field'] > 5)
+parameters, covariance = measurement.curve_fit(
+    background, xcol='field', ycol='signal', sigma='uncertainty',
+    where=region, p0=[1, 0], result=None, output='fit',
+)
+model = background(frame['field'], *parameters)
+corrected = frame['signal'] - model       # explicit full-axis calculation
+```
+
+Use a known linear background plus a central signal, unequal positive uncertainties,
+an excluded background point and a non-finite required input. Compare parameters
+and covariance with a direct weighted fit of explicitly selected eligible rows.
+Assert raw values, masks, schema and metadata unchanged. The central signal must
+remain in `corrected`. Add an excluded/NaN unrelated channel and obtain the same
+fit. For two y channels, compare with separate fits using each channel's own
+eligible rows. An insufficient second channel must publish neither fit.
+
+Exercise `where` intersected with legacy callable and numeric-range `bounds`.
+Check that `parameter_bounds` constrains parameters without selecting rows, and
+that `where` is consumed before backend dispatch. Wrong dtype/shape, missing
+Boolean values, reversed labelled indexes and non-positive eligible uncertainties
+must raise `ValueError` with no partial result columns or metadata.
+
+**Regional image background (8b, native syntax in 8d).** Proposed syntax:
+
+```python
+dataset = image.image
+region = (dataset['x'] < 2).broadcast_like(dataset['intensity'])
+level = image.mean(where=region)
+corrected = dataset['intensity'] - level
+```
+
+Use calibrated integer pixels with one excluded extreme value. Check the mean
+against the explicitly eligible physical region and the correction over the full
+image. Raw integers and coordinate maps remain unchanged. Clear the exclusion and
+recover the exact extreme value; do not expect clearing an exclusion to recover a
+genuine missing value. An empty region returns NaN. For a stack, explicitly
+broadcast the selector to `(frame, y, x)` and verify per-pixel counts/averages;
+outside valid extents remains excluded even after user masks are cleared. A pixel
+with no eligible observations has raw NaN and an exclusion flag. Wrong dimension
+order, mismatched calibration coordinates or implicit 2D-to-3D selection raises.
+
+**Labels, ownership and structural edits (8c/8d).** Required checks:
+
+1. Repeated root getters return the same stored native object until an owner edit;
+   instrument conversion helpers to prove no NumPy export is called. Named headers
+   work, duplicate labels retain native pandas semantics, and `.iloc` is unambiguous.
+2. Direct fixed-schema value assignment is visible to Stoner. Rename/reorder through
+   owner methods keeps column IDs, roles and exclusions attached to the right data,
+   including duplicate headers. Row reorder moves exclusions with observations.
+3. A same-axis whole-native replacement retains side state; invalid/changed-axis
+   replacement raises before publication. Use explicit package import for a new
+   schema. Version-1 package round trips still preserve IDs and excluded raw values.
+4. Keep a native reference, perform a whole-owner replacement, then edit the retired
+   reference: the new owner must remain unchanged. Reacquiring exposes current data.
+   Do not assert that every owner edit preserves the original backend object.
+5. A failing edit transaction leaves values, exclusions, metadata and coordinates
+   unchanged. Clone/export mutations are independent. Frame/crop owner edits reach
+   their parent; their borrowed native objects carry no write-through guarantee.
+6. Same-shape direct sorting and writes during a transaction are documented as
+   unsupported, not advertised as detectable. Recreate selectors after structural
+   changes; stale plain arrays cannot be identified solely from equal lengths.
+7. Real Maximus/Attocube fixtures retain channels, shared calibration and frame
+   metadata; unequal-size fixtures retain valid extents. Run ownership cases on
+   both lower-bound and current dependencies before the Stage 8 exit gate.
+
 ## Validation and resumption
 
 Environment checked against all 36 dependency entries in `tests/test-env.yml`:

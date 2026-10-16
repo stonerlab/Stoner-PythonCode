@@ -40,14 +40,14 @@ def test_numerical_exports_use_numpy_and_do_not_propagate_schema():
     assert type(row) is np.ma.MaskedArray
     assert row.i == 1
     assert not hasattr(row.copy(), "i")
-    assert type(data.data) is np.ma.MaskedArray
+    assert type(data.asarray()) is np.ma.MaskedArray
     assert "_data" not in data.__dict__
     for image_type in (ImageFile, KerrImageFile):
         image = image_type(np.arange(6.).reshape(2, 3))
-        assert type(image.image) is np.ma.MaskedArray
+        assert type(image.imarray) is np.ma.MaskedArray
         assert not hasattr(image.to_numpy() + 1, "metadata")
         assert "_image" not in image.__dict__
-        assert not image.image.flags.writeable
+        assert not image.imarray.flags.writeable
     stack = ImageStack([image])
     assert type(stack.imarray) is np.ma.MaskedArray
     assert not hasattr(stack, "_stack")

@@ -5,9 +5,11 @@ from copy import deepcopy
 from functools import wraps
 
 import numpy as np
+import xarray as xr
 
 from ..core.storage import _copy_metadata
 from ..core.base import TypeHintedDict
+from ..core.selection import selected_image_values
 from .storage import ImageStorage
 from .storage_owner import ImageOwner, ImageRegion
 from .stack_owner import FrameOwner
@@ -15,7 +17,10 @@ from .stack_owner import FrameOwner
 
 def owner_of(image):
     """Find the owner without invoking dynamically generated image attributes."""
-    return image.__dict__.get("_image_owner")
+    owner = image.__dict__.get("_image_owner")
+    if owner is not None:
+        owner.validate()
+    return owner
 
 
 def snapshot(image, writable=False):
@@ -58,6 +63,17 @@ def bind(image, owner, array=None):
 def replace_image(image, values):
     """Publish a masked replacement, preserving existing calibration when possible."""
     owner = owner_of(image)
+    if isinstance(values, xr.Dataset):
+        if owner is None:
+            package = ImageStorage.from_xarray(values, metadata=image.metadata)
+            if package.kind != "image":
+                raise ValueError("ImageFile assignment requires a y/x image Dataset")
+            bind(image, ImageOwner(package))
+        else:
+            owner.replace_xarray(values)
+        return
+    if hasattr(values, "__dict__") and owner_of(values) is not None:
+        values = snapshot(values)
     metadata = _copy_metadata(image.metadata) if isinstance(image.metadata, TypeHintedDict) else image.metadata.copy()
     incoming = getattr(values, "metadata", {})
     for key, value in incoming.items():
@@ -113,6 +129,8 @@ def call_method(image, function, args, kwargs, *, setter=False):
     owner = owner_of(image)
     name = function.__name__
     kwargs = dict(kwargs)
+    if "where" in kwargs:
+        raise TypeError(f"{name} does not support operation selection; crop explicitly or use a regional reduction")
     reference_grid = kwargs.pop("_reference_grid", None) if name in {"align", "correct_drift"} else None
     force = kwargs.pop("_", True if getattr(function, "changes_size", False) else False)
     box = kwargs.pop("_box", False)
@@ -420,6 +438,44 @@ def install(cls):
         with owner.edit_xarray() as draft:
             yield draft
 
+    def mean(self, axis=None, dtype=None, out=None, keepdims=False, *, where=None):
+        """Calculate a mean over selected finite, non-excluded pixels.
+
+        Args:
+            axis (int, tuple or None):
+                Axes to reduce; None reduces the whole image.
+            dtype (numpy.dtype or None):
+                Optional accumulation dtype, following NumPy mean semantics.
+            out (numpy.ndarray or None):
+                Optional destination for the reduced values.
+            keepdims (bool):
+                Retain reduced dimensions with length one when true.
+
+        Keyword Arguments:
+            where (Boolean array, xarray.DataArray or None):
+                Full image selection. True includes a pixel; labelled coordinates
+                must exactly match the image. None selects all pixels.
+
+        Returns:
+            scalar or numpy.ndarray:
+                Mean, with NaN at positions with no eligible observations.
+
+        Raises:
+            ValueError:
+                The selection dtype, shape or labelled axes do not match.
+        """
+        owner = owner_of(self)
+        if owner is None:
+            raise ValueError("A regional mean requires a populated image")
+        values = selected_image_values(owner._state.dataset, where)
+        result = np.ma.asarray(values.mean(axis=axis, dtype=dtype, keepdims=keepdims))
+        result = result.astype(np.result_type(result.dtype, float)).filled(np.nan)
+        if out is not None:
+            out[...] = result
+            return out
+        return result[()] if result.ndim == 0 else result
+
+    cls.mean = mean
     cls.__init__ = initialise
     cls.__new__ = staticmethod(new)
     cls.__getattribute__ = getattribute

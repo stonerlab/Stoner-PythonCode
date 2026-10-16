@@ -262,6 +262,10 @@ class _Curve_Fit_Result:
     @property
     def fit_values(self):
         """Return the fit values if x data is set."""
+        if hasattr(self, "model_values"):
+            return self.model_values
+        if hasattr(self, "full_x"):
+            return self.func(self.full_x, *self.popt)
         if self.data is None or self.func is None or self.popt is None:
             raise ValueError(
                 "Need to have some x-data, the fitting functions and optimal parameters  before calculating fit"
@@ -294,8 +298,8 @@ class _Curve_Fit_Result:
 
     @property
     def N(self):
-        """Return th number of data points in dataset."""
-        return len(self.data)
+        """Return the number of observations used by the fit."""
+        return getattr(self, "n_observations", len(self.data))
 
     @property
     def n_p(self):

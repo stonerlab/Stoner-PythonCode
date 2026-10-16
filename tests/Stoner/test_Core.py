@@ -86,7 +86,7 @@ def test_constructor():
     d = Data()
     assert d.shape == (0, 0), "Bare constructor failed"
     d = Data(selfd)
-    assert np.all(d.data == selfd.data), "Constructor from DataFile failed"
+    assert np.all(d.to_numpy() == selfd.to_numpy()), "Constructor from DataFile failed"
     d = Data([np.ones(100), np.zeros(100)])
     assert d.shape == (100, 2), "Constructor from iterable list of nd array failed"
     d = Data([np.ones(100), np.zeros(100)], ["X", "Y"])
@@ -128,16 +128,16 @@ def test_column():
     global selfd, selfd1, selfd2, selfd3, selfd4
     for i, c in enumerate(selfd.column_headers):
         # Column function checks
-        assert all(selfd.data[:, i] == selfd.column(i)), f"Failed to Access column {i} by index"
-        assert all(selfd.data[:, i] == selfd.column(c)), f"Failed to Access column {i} by name"
-        assert all(selfd.data[:, i] == selfd.column(c[0:3])), f"Failed to Access column {i} by partial name"
+        assert all(selfd.to_numpy()[:, i] == selfd.column(i)), f"Failed to Access column {i} by index"
+        assert all(selfd.to_numpy()[:, i] == selfd.column(c)), f"Failed to Access column {i} by name"
+        assert all(selfd.to_numpy()[:, i] == selfd.column(c[0:3])), f"Failed to Access column {i} by partial name"
 
     # Check that access by list of strings returns multpiple columns
     assert all(
-        selfd.column(selfd.column_headers) == selfd.data
+        selfd.column(selfd.column_headers) == selfd.to_numpy()
     ), "Failed to access all columns by list of string indices"
     assert all(
-        selfd.column([0, selfd.column_headers[1]]) == selfd.data
+        selfd.column([0, selfd.column_headers[1]]) == selfd.to_numpy()
     ), "Failed to access all columns by mixed list of indices"
 
     # Check regular expression column access
@@ -208,12 +208,12 @@ def test_attributes():
     assert selfd.shape == (100, 2), "shape attribute not correct."
     assert selfd.dims == 2, "dims attribute not correct."
     assert selfd.header == header, "Shorter header not as expected"
-    assert all(selfd.T == selfd.data.T), "Transpose attribute not right"
+    assert all(selfd.T == selfd.to_numpy().T), "Transpose attribute not right"
     assert all(selfd.x == selfd.column(0)), "x attribute quick access not right."
     assert all(selfd.y == selfd.column(1)), "y attribute not right."
-    assert all(selfd.q == np.arctan2(selfd.data[:, 0], selfd.data[:, 1])), "Calculated theta attribute not right."
+    assert all(selfd.q == np.arctan2(selfd.to_numpy()[:, 0], selfd.to_numpy()[:, 1])), "Calculated theta attribute not right."
     assert all(sqrt(selfd[:, 0] ** 2 + selfd[:, 1] ** 2) == selfd.r), "Calculated r attribute not right."
-    assert selfd2.records[5]["Column 2"] == selfd2.data[5, 2], "Records and array values differ"
+    assert selfd2.records[5]["Column 2"] == selfd2.to_numpy()[5, 2], "Records and array values differ"
     d = Data(np.ones((10, 2)), ["A", "A"])
     assert d.records.dtype == np.dtype(
         [("A_1", "<f8"), ("A", "<f8")]
@@ -264,7 +264,7 @@ def test_iterators():
     for k, r in enumerate(selfd):
         pass
     assert j == k, "Iterating over DataFile not the same as DataFile.rows"
-    assert selfd.data.shape == (j + 1, i + 1), "Iterating over rows and columns not the same as data.shape"
+    assert selfd.to_numpy().shape == (j + 1, i + 1), "Iterating over rows and columns not the same as data.shape"
 
 
 def test_dir():
@@ -354,7 +354,7 @@ def test_methods():
     d = selfd.clone
     d.add_column(np.ones(len(d)), replace=False, header="added")
     assert d.shape[1] == selfd.shape[1] + 1, "Adding a column with replace=False did not add a column."
-    assert np.all(d.data[:, -1] == np.ones(len(d))), "Didn't add the new column to the end of the data."
+    assert np.all(d.to_numpy()[:, -1] == np.ones(len(d))), "Didn't add the new column to the end of the data."
     assert len(d.column_headers) == len(selfd.column_headers) + 1, "Column headers isn't bigger by one"
     assert d.column_headers == selfd.column_headers + [
         "added",
@@ -406,7 +406,7 @@ def test_methods():
     assert d.shape == (50, 2), f"del_nan with columns from setas failed shape was {d.shape}"
     d = selfd.clone
     d2 = selfd.clone
-    d2.data = d2.data[::-1, :]
+    d2.data = d2.to_numpy()[::-1, :]
     assert d.sort(reverse=True) == d2, "Sorting reverse not the same as manually reversed data."
     d = selfd.clone
     d.mask[::2] = True
@@ -466,7 +466,7 @@ def test_metadata_save(tmp_path):
     for orig, load in [(t, tl), (t2, t2l)]:
         for k in ["Loaded as", "TDI Format"]:
             orig[k] = load[k]
-        assert np.allclose(orig.data, load.data)
+        assert np.allclose(orig.to_numpy(), load.to_numpy())
         assert orig.column_headers == load.column_headers
         _ = load.metadata ^ orig.metadata
         assert load.metadata == orig.metadata, "Metadata not the same on round tripping to disc"

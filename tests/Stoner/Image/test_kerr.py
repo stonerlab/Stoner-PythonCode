@@ -44,21 +44,21 @@ selfks = KerrStack(testdir2)
 @pytest.mark.plotting
 def test_kerr_ops():
     im = selfimage3.clone
-    assert type(im.image) is np.ma.MaskedArray, "KerrImageFile not blessing the image property correctly"
+    assert type(im.imarray) is np.ma.MaskedArray, "KerrImageFile not blessing the image property correctly"
     im1 = im.float_and_croptext()
-    assert type(im1.image) is np.ma.MaskedArray, "Calling a crop routine without the _ argument returns a new KerrImageFile"
+    assert type(im1.imarray) is np.ma.MaskedArray, "Calling a crop routine without the _ argument returns a new KerrImageFile"
     im2 = im.float_and_croptext(_=True)
     assert im2 == im, "Calling crop method with _ argument changed the KerrImageFile"
     im = KerrImageFile(selfimage2.clone)
     im.float_and_croptext(_=True)
-    mask = im.image.defect_mask_subtract_image()
-    im[~mask] = np.mean(im.image[mask])
+    mask = im.imarray.defect_mask_subtract_image()
+    im[~mask] = np.mean(im.imarray[mask])
     _ = im
     assert mask.sum() == 343228, "Mask didn't work out right"
     im = KerrImageFile(selfimage2.clone)
     im.float_and_croptext(_=True)
-    mask = im.image.defect_mask(radius=4)
-    im[~mask] = np.mean(im.image[mask])
+    mask = im.imarray.defect_mask(radius=4)
+    im[~mask] = np.mean(im.imarray[mask])
     selim2 = im
     assert mask.sum() == 342540, "Mask didn't work out right"
     selim2.level_image()
@@ -141,7 +141,7 @@ def test_kerrstack():
     )
     d = ks.hysteresis()
     assert isinstance(d, Data), "hysteresis didn't return Data"
-    assert d.data.shape == (len(ks), 2), "hysteresis didn't return correct shape"
+    assert d.to_numpy().shape == (len(ks), 2), "hysteresis didn't return correct shape"
 
 
 if __name__ == "__main__":  # Run some tests manually to allow debugging

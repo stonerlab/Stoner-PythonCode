@@ -31,6 +31,7 @@ class StackOwner(ImageOwner):
         self._frame_versions = {frame.id: 0 for frame in self._state.frames}
 
     def _index(self, selector):
+        self.validate()
         if isinstance(selector, str):
             for index, frame in enumerate(self._state.frames):
                 if frame.id == selector:
@@ -56,7 +57,7 @@ class StackOwner(ImageOwner):
 
         handle = self.frame(selector)
         result = (image_type or ImageFile)()
-        bind(result, handle, result.image)
+        bind(result, handle, result.imarray)
         result.filename = handle.name
         return result
 

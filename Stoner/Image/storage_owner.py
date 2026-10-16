@@ -10,6 +10,13 @@ from ..core.storage_owner import _Metadata
 from .storage import ImageStorage
 
 
+class _ImageMetadata(_Metadata):
+    """Validate native geometry before resolving persistent metadata."""
+
+    def _check_readable(self):
+        self._owner.validate()
+
+
 class _ImageMask:
     """Route mask writes to the current owner, never to a saved array view."""
 
@@ -17,6 +24,7 @@ class _ImageMask:
         self._owner = owner
 
     def __array__(self, dtype=None, copy=None):
+        self._owner.validate()
         return np.array(self._owner._state.dataset.excluded.values, dtype=dtype, copy=True)
 
     def __getitem__(self, key):
@@ -43,11 +51,77 @@ class ImageOwner:
         self._state = package.copy()
         self._editing = False
         self._generation = 0
+        self._remember_schema()
+
+    def _remember_schema(self):
+        """Remember geometry without duplicating measurement buffers."""
+        ds = self._state.dataset
+        self._native_dataset_id = id(ds)
+        self._native_exposed = False
+        self._native_geometry = ds.drop_vars(["intensity", "excluded"]).copy(deep=True)
+        self._native_variables = {name: (value.dims, value.dtype, deepcopy(value.attrs))
+                                  for name, value in ds.data_vars.items()}
+
+    def validate(self):
+        """Reject detectable native variable, coordinate, extent and dtype drift."""
+        if hasattr(self, "_root"):
+            self._root.validate()
+            if hasattr(self, "_identity"):
+                self._root._index(self._identity)
+            else:
+                self._check_live()
+            return
+        ds = self._state.dataset
+        if id(ds) != self._native_dataset_id:
+            self._remember_schema()
+        if not self._native_exposed:
+            return
+        try:
+            self._state.validate()
+            if set(ds.data_vars) != set(self._native_variables):
+                raise ValueError("Variable schema or attributes changed")
+            for name, value in ds.data_vars.items():
+                dims, dtype, attrs = self._native_variables[name]
+                if (value.dims != dims or value.dtype != dtype
+                        or not xr.Dataset(attrs=value.attrs).identical(xr.Dataset(attrs=attrs))):
+                    raise ValueError("Variable schema or attributes changed")
+            if not ds.drop_vars(["intensity", "excluded"]).identical(self._native_geometry):
+                raise ValueError("Coordinates, attributes or valid extents changed")
+        except (TypeError, ValueError) as error:
+            raise ValueError(f"Native Dataset state is inconsistent: {error}") from error
+
+    @property
+    def dataset(self):
+        """Return stored native state, or a borrowed current frame/region view."""
+        self._check_writable()
+        root = self._root if hasattr(self, "_root") else self
+        root._native_exposed = True
+        return self._state.dataset
+
+    def replace_xarray(self, dataset):
+        """Copy a fixed-schema native replacement and retain typed side state."""
+        self._check_writable()
+        self._validate_replacement(dataset)
+        self._commit_dataset(dataset)
+
+    def _validate_replacement(self, dataset):
+        """Require identical axes, variables, dtypes, attributes and extents."""
+        original = self._state.dataset
+        if not isinstance(dataset, xr.Dataset) or set(dataset.data_vars) != set(original.data_vars):
+            raise ValueError("Xarray replacement cannot change the variable set")
+        if not dataset.drop_vars(["intensity", "excluded"]).identical(
+                original.drop_vars(["intensity", "excluded"])):
+            raise ValueError("Xarray replacement cannot change coordinates, attributes or valid extents")
+        for name in original.data_vars:
+            if (dataset[name].dims != original[name].dims or dataset[name].dtype != original[name].dtype
+                    or not xr.Dataset(attrs=dataset[name].attrs).identical(xr.Dataset(attrs=original[name].attrs))):
+                raise ValueError("Xarray replacement cannot change dimensions, dtypes or variable attributes")
 
     @property
     def metadata(self):
         """Return a durable, transaction-guarded typed metadata interface."""
-        return _Metadata(self)
+        self.validate()
+        return _ImageMetadata(self)
 
     @property
     def mask(self):
@@ -57,15 +131,18 @@ class ImageOwner:
     @property
     def shape(self):
         """Return positional shape without exporting any values."""
+        self.validate()
         return self._state.dataset.intensity.shape
 
     @property
     def dtype(self):
         """Return the homogeneous intensity dtype."""
+        self.validate()
         return self._state.dataset.intensity.dtype
 
     def _check_writable(self):
         """Reject public writes while another draft is active."""
+        self.validate()
         if self._editing:
             raise RuntimeError("An image edit is already active")
 
@@ -76,14 +153,17 @@ class ImageOwner:
 
     def export_storage(self):
         """Return an independently editable lossless package."""
+        self.validate()
         return self._state.copy()
 
     def to_numpy(self, *, masked=True, dtype=None):
         """Return detached values with optional exclusions or dtype conversion."""
+        self.validate()
         return self._state.to_numpy(masked=masked, dtype=dtype)
 
     def to_xarray(self):
         """Return detached native state with the documented metadata-loss warning."""
+        self.validate()
         return self._state.to_xarray()
 
     def __getitem__(self, key):
@@ -161,15 +241,7 @@ class ImageOwner:
         self._editing = True
         try:
             yield draft
-            if not isinstance(draft, xr.Dataset) or set(draft.data_vars) != set(original.data_vars):
-                raise ValueError("Xarray edits cannot change the variable set")
-            if not draft.coords.to_dataset().identical(original.coords.to_dataset()):
-                raise ValueError("Xarray edits cannot change coordinates or calibration")
-            for name in original.data_vars:
-                if draft[name].dims != original[name].dims or draft[name].dtype != original[name].dtype:
-                    raise ValueError("Xarray edits cannot change dimensions or dtypes")
-                if name not in ("intensity", "excluded") and not draft[name].identical(original[name]):
-                    raise ValueError("Xarray edits cannot change valid extents")
+            self._validate_replacement(draft)
             self._commit_dataset(draft)
         finally:
             self._editing = False
@@ -217,6 +289,7 @@ class ImageRegion(ImageOwner):
         self._generation = parent._generation
 
     def _check_live(self):
+        self._root.validate()
         if self._generation != self._root._generation:
             raise ReferenceError("The region's parent image has been replaced")
 

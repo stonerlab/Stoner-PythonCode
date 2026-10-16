@@ -42,4 +42,4 @@ def test_copy_into_preserves_native_types_and_independent_storage():
     destination["nested"]["first"][1]["array"][0] = 99
     assert source["nested"]["first"][1]["array"][0] == 1
     destination[1, 0] = 99
-    assert source.data[1, 0] == 3
+    assert source.to_numpy()[1, 0] == 3

@@ -22,7 +22,7 @@ def test_single_owner_and_detached_public_arrays(image):
     assert "_image_owner" in image.__dict__
     assert "_image" not in image.__dict__
     assert "_metadata" not in image.__dict__
-    for snapshot in (image.image, image.data):
+    for snapshot in (image.imarray,):
         with pytest.raises(ValueError):
             snapshot[0, 0] = 90
         snapshot.metadata["run"] = "changed"
@@ -56,7 +56,7 @@ def test_constructor_clone_and_whole_assignment_preserve_masks(image):
     assert clone[1, 2] is np.ma.masked
     assert clone.to_numpy(masked=False)[1, 2] == 7
     assert clone.metadata["run"] == "001"
-    clone.image = clone.image
+    clone.image = clone.imarray
     assert clone.metadata["run"] == "001"
     assert clone.metadata.type("run") == "String"
 

@@ -69,9 +69,9 @@ def test_attocube_named_channels_and_irregular_position_maps():
 def test_kerr_descriptor_and_frame_handles_use_owner():
     image = KerrImageFile(np.arange(12.).reshape(3, 4))
     assert "_image" not in image.__dict__
-    assert type(image.image) is np.ma.MaskedArray
+    assert type(image.imarray) is np.ma.MaskedArray
     with pytest.raises(ValueError):
-        image.image[0, 0] = 1
+        image.imarray[0, 0] = 1
     stack = KerrStack([image, image])
     item = stack[0]
     assert isinstance(item, KerrImageFile)

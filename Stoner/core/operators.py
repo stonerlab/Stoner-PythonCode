@@ -112,7 +112,7 @@ class DataFileOperatorsMixin:
         return and_core(other, newdata)
 
     def __eq__(self, other):
-        """Equality operator.
+        """Compare positional numerical values, headers and typed metadata.
 
         Args:
             other (DataFile):
@@ -121,12 +121,19 @@ class DataFileOperatorsMixin:
         Returns:
             bool:
                 True if data, column headers and metadata are equal.
+
+        Notes:
+            Each operand is converted once to a detached masked numerical array.
+            NaNs are filtered independently from the operands, retaining the
+            existing equality rule; masked comparisons follow NumPy semantics.
+            Column roles and stable IDs are not compared. Neither operand changes.
         """
         if not isinstance(other, DataFileOperatorsMixin):  # Start checking we're all DataFile's
             return False
-        if self.data.shape != other.data.shape:  # Check we have the same data
+        if self.shape != other.shape:  # Check we have the same data
             return False
-        if not np.all(self.data[~np.isnan(self.data)] == other.data[~np.isnan(other.data)]):  # Don't compare nan!
+        left, right = self.to_numpy(), other.to_numpy()
+        if not np.all(left[~np.isnan(left)] == right[~np.isnan(right)]):  # Don't compare nan!
             return False
         if len(self.column_headers) != len(other.column_headers) or np.any(
             [c1 != c2 for c1, c2 in zip(self.column_headers, other.column_headers)]
@@ -276,6 +283,7 @@ class DataFileOperatorsMixin:
         cols = len(col_headers_tmp)
         self.data = np.empty((0, cols))
         self.setas = "." * cols
+        values = []
         for r in reader:
             if r.strip() == "":  # Blank line
                 continue
@@ -294,8 +302,8 @@ class DataFileOperatorsMixin:
                     self.metadata[md[0].strip()] = self.metadata.string_to_type(md[1].strip())
             if len(row) < 2:
                 continue
-            self.data = np.append(self.data, self._conv_float(row[1:]))
-        self.data = np.reshape(self.data, (-1, cols))
+            values.extend(self._conv_float(row[1:]))
+        self.data = np.reshape(values, (-1, cols))
         self.column_headers = [f"Column {i}" for i in range(cols)]
         for i, head_temp in enumerate(col_headers_tmp):
             self.column_headers[i] = head_temp
@@ -307,10 +315,7 @@ class DataFileOperatorsMixin:
         match other:
             case Data():
                 new = make_Data()
-                if np.all(self.data == other.data):
-                    new.data = np.ma.empty_like(self.data)
-                else:
-                    new.data = self.data == other.data
+                new.data = self.to_numpy() == other.to_numpy()
                 new.metadata = self.metadata ^ other.metadata
                 new.column_headers = [str(s == o) for s, o in zip(self.column_headers, other.column_headers)]
                 return new

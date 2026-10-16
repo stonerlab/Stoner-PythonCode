@@ -11,6 +11,42 @@ def linear(x, slope, intercept):
     return slope * x + intercept
 
 
+def test_background_fit_selection_leaves_full_measurement_available():
+    """Fit disjoint background regions without hiding the central signal."""
+    x = np.linspace(-10, 10, 41)
+    background = linear(x, 2, 3)
+    signal = np.where(np.abs(x) <= 3, 20.0, 0.0)
+    data = Data(x, background + signal, setas="xy", column_headers=["x", "y"])
+    data.mask[0, 1] = True
+    before = data.export_storage()
+
+    parameters, _ = data.curve_fit(
+        linear, p0=[1, 1], bounds=lambda value, row: abs(value) > 3,
+        output="fit", result=None,
+    )
+
+    np.testing.assert_allclose(parameters, [2, 3], atol=1e-8)
+    raw = data.to_numpy(masked=False)
+    np.testing.assert_allclose(raw[:, 1] - linear(raw[:, 0], *parameters), signal, atol=1e-8)
+    np.testing.assert_array_equal(raw, before.values.to_numpy())
+    np.testing.assert_array_equal(np.asarray(data.mask), before.excluded)
+    assert data.column_ids == tuple(column.id for column in before.schema)
+
+
+def test_clearing_exclusion_recovers_integer_measurement():
+    """Removing an exclusion must reveal the exact original integer value."""
+    values = np.array([[0, 4], [1, 10000], [2, 8]], dtype=np.int64)
+    data = Data(values, setas="xy")
+    data.mask[1, 1] = True
+    assert data.to_numpy()[:, 1].mean() == 6
+    np.testing.assert_array_equal(data.to_numpy(masked=False), values)
+    data.mask[1, 1] = False
+    restored = data.to_numpy()
+    assert restored.dtype == values.dtype
+    assert not np.any(restored.mask)
+    np.testing.assert_array_equal(restored, values)
+
+
 @pytest.mark.parametrize("result", [None, True, 0])
 def test_fit_preserves_source_masks_and_columns(result):
     x = np.arange(20, dtype=float)
@@ -29,7 +65,8 @@ def test_fit_preserves_source_masks_and_columns(result):
     if result is not None:
         fit_index = 2 if result is True else 0
         np.testing.assert_allclose(data.to_numpy(masked=False)[:, fit_index], linear(x, 2, 3), atol=1e-8)
-        np.testing.assert_array_equal(np.asarray(data.mask)[:, fit_index], np.any(before.excluded, axis=1))
+        np.testing.assert_array_equal(np.asarray(data.mask)[:, fit_index], before.excluded[:, 0])
+        np.testing.assert_array_equal(np.asarray(data.mask)[:, fit_index + 1], np.any(before.excluded, axis=1))
         np.testing.assert_allclose(data.to_numpy()[:, fit_index + 1].compressed(), 0, atol=1e-8)
 
 

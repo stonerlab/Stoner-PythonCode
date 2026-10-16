@@ -97,7 +97,7 @@ def test_load_save_all(tmp_path):
         ims[fmt].save_tiff(path.join(tmpdir, "kermit-forcetype{}.tiff".format(fmt)), forcetype=True)
         ims[fmt].save_npy(path.join(tmpdir, "kermit-{}.npy".format(fmt)))
         if fmt != "uint16":
-            im = Image.fromarray((ims[fmt].image.view(np.ndarray)).astype(fmt), mode=modes[fmt])
+            im = Image.fromarray((ims[fmt].imarray.view(np.ndarray)).astype(fmt), mode=modes[fmt])
             im.save(path.join(tmpdir, "kermit-nometadata-{}.tiff".format(fmt)))
         del ims[fmt]["Loaded from"]
     for fmt in fmts:
@@ -106,10 +106,10 @@ def test_load_save_all(tmp_path):
         assert ims[fmt] == iml, f"{ims[fmt].metadata} {iml.metadata}"
         iml = ImageFile(path.join(tmpdir, f"kermit-{fmt}.npy"))
         del iml["Loaded from"]
-        assert np.all(ims[fmt].data == iml.data), f"Round tripping npy with format {fmt} failed"
+        assert np.all(ims[fmt].to_numpy() == iml.to_numpy()), f"Round tripping npy with format {fmt} failed"
         if fmt != "uint16":
             im = ImageFile(path.join(tmpdir, f"kermit-nometadata-{fmt}.tiff"))
-            assert np.all(im.data == ims[fmt].data), f"Loading from tif without metadata failed for {fmt}"
+            assert np.all(im.to_numpy() == ims[fmt].to_numpy()), f"Loading from tif without metadata failed for {fmt}"
     _ = image.convert("uint8")
 
 
@@ -120,19 +120,19 @@ def test_conversion_bitness():
     img = image.clone
     img2 = img.clone // 256
     img.convert("uint8")  # Down conversion with prevision loss
-    assert np.all(img.image == img2.image)
+    assert np.all(img.imarray == img2.imarray)
     img.convert("int16")  # Upconversion with unequal bit lengths
     assert img.max() == 32767 and img.min() == 0
     img3 = img2.clone.convert("uint8")  # Downconversion without precision loss
-    assert np.all(img2.image == img3.image)
+    assert np.all(img2.imarray == img3.imarray)
 
 
 def test_load_from_ImageFile():
     # uses the ImageFile.im attribute to set up ImageFile. Memory overlaps
     imfi = ImageFile(selfarr)
     imarr = ImageFile(imfi)
-    assert np.array_equal(imarr, imfi.image), "Initialising from ImageFile failed"
-    assert not shares_memory(imarr, imfi.image)
+    assert np.array_equal(imarr, imfi.imarray), "Initialising from ImageFile failed"
+    assert not shares_memory(imarr, imfi.imarray)
 
 
 def test_load_from_list():
@@ -348,7 +348,7 @@ def test_constructors():
     del selfimgFile2["x_vector"]
     del selfimgFile2["y_vector"]
     assert np.all(
-        selfimgFile.image == selfimgFile2.image
+        selfimgFile.imarray == selfimgFile2.imarray
     ), "Roundtripping constructor through Data failed to dupliocate data."
     assert (
         selfimgFile.metadata == selfimgFile2.metadata
@@ -359,9 +359,9 @@ def test_constructors():
 
 def test_properties():
     selfa = np.linspace(0, 5, 12).reshape(3, 4)
-    assert np.allclose(selfifi.image, selfa)
+    assert np.allclose(selfifi.imarray, selfa)
     selfifi[0, 1] = 10.1
-    assert selfifi.image[0, 1] == 10.1
+    assert selfifi.imarray[0, 1] == 10.1
 
 
 def test_attrs2():
@@ -378,11 +378,11 @@ def test_methods():
     b = np.arange(12).reshape(3, 4)
     ifi = ImageFile(b)
     ifi.asfloat(normalise=False, clip_negative=False)  # convert in place
-    assert ifi.image.dtype.kind == "f"
+    assert ifi.imarray.dtype.kind == "f"
     assert np.max(ifi) == 11.0
-    ifi.image == ifi.image * 5
+    ifi.imarray == ifi.imarray * 5
     ifi.rescale_intensity()
-    assert np.allclose(ifi.image, np.linspace(0, 1, 12).reshape(3, 4))
+    assert np.allclose(ifi.imarray, np.linspace(0, 1, 12).reshape(3, 4))
     ifi.crop(0, 3, 0, None)
     assert ifi.shape == (3, 3)  # check crop is forced to overwrite ifi despite shape change
     datadir = path.join(__home__, "..", "sample-data")
@@ -472,13 +472,13 @@ def test_draw():
     assert len(attrs) == expected, "Directory of DrawProxy failed"
     i2 = i.clone
     i2.draw.circle(10, 100, 10, value=1)
-    assert i2.image.sum() == 305
+    assert i2.imarray.sum() == 305
     i2 = i.clone.draw.circle_perimeter_aa(100, 100, 10, value=1)
-    assert np.isclose(i2.image.sum(), 56.5657137141714)
+    assert np.isclose(i2.imarray.sum(), 56.5657137141714)
     i2 = i.clone.draw.random_shapes(i.shape, 1, 1, 30, 100)
     assert i2.label()[1] == 1
     i2 = i.clone.draw.rectangle_perimeter(100, 100, 20, 10, value=1)
-    assert i2.image.sum() == 60.0
+    assert i2.imarray.sum() == 60.0
     i2.mask.threshold(0.5)
     assert i2.mask.sum() == 60
 
@@ -488,7 +488,7 @@ def test_operators():
     i = i + 1
     i += 4
     i += i.clone
-    i += i.clone.data
+    i += i.clone.to_numpy()
     assert i.sum() == 2000, "Addition operators failed"
     i /= 4
     assert i.sum() == 500, "Division operators failed"
@@ -502,7 +502,7 @@ def test_operators():
     i = ImageFile(np.zeros((10, 5)))
     i = ~i
     assert i.shape == (5, 10), "Invert to rotate failed"
-    i.image = i.image.astype("uint8")
+    i.image = i.imarray.astype("uint8")
     i = -i
     assert i.sum() == 50 * 255, "Negate operators failed"
 
@@ -516,21 +516,22 @@ def test_image_descriptor():
     imf = ImageFile()
     arr = np.ones((5, 6))
     imf.image = arr
-    assert type(imf.image) is np.ma.MaskedArray, "image is not ImageFile after setting numpy array"
-    assert imf.image.shape == (5, 6), "shape mismatch after setting numpy array"
+    import xarray as xr
+    assert type(imf.image) is xr.Dataset
+    assert imf.image.intensity.shape == (5, 6)
 
     # Setting an ImageFile should keep it as an ImageFile
     ima = ImageFile(np.zeros((3, 4)))
     imf2 = ImageFile()
     imf2.image = ima
-    assert type(imf2.image) is np.ma.MaskedArray, "image is not ImageFile after setting ImageFile"
+    assert type(imf2.image) is xr.Dataset
 
     # metadata should be preserved across assignment
     imf3 = ImageFile()
     imf3.image = ImageFile(np.ones((4, 4)))
     imf3.metadata["test_key"] = "test_value"
     imf3.image = np.zeros((4, 4))
-    assert imf3.image.metadata.get("test_key") == "test_value", "metadata not preserved across image assignment"
+    assert imf3.metadata.get("test_key") == "test_value", "metadata not preserved across image assignment"
 
     # filename should be preserved when image is replaced
     imf4 = ImageFile()

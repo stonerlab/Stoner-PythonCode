@@ -143,6 +143,8 @@ def assemnle_data(datafile, **kwargs):
         (data,kwargs,col_assignments):
             data is a tuple of (x,y,sigma). scale_covar is False if sigma is real errors.
     """
+    if "where" in kwargs:
+        raise TypeError("This fitting method does not support where; use curve_fit or explicit bounds")
     # Special case for doing a fit where we're matching a function to a value not in data.
     return_data = _WorkingData()
     ycol = kwargs.get("ycol", None)

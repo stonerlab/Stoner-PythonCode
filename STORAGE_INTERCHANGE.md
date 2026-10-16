@@ -10,14 +10,187 @@ Stage 6e removes the old array subclasses and their storage fallback paths.
 Current behaviour remains recorded in [STORAGE_CONTRACTS.md](STORAGE_CONTRACTS.md).
 Completion of this specification does not establish backend correctness or speed.
 
+Stage 7 validation is complete. The expanded
+[Stage 8 plan](STORAGE_MIGRATION_PLAN.md#stage-8-selection-and-masking-contract)
+defines native public storage, explicit per-operation selections and persistent
+recoverable exclusions. Stage 8a below settles labels, alignment and direct
+mutation rules. Stage 8c/8d now expose actual ordinary backend objects at
+`Data.data`, `ImageFile.image` (also `.data`) and `ImageStack.stack`. Numerical
+snapshots remain explicit through `asarray()`, `imarray` and `to_numpy()`;
+editing contexts remain detached and atomic. Stage 8b implements `where`
+for `Data.curve_fit`, `ImageFile.mean` and `ImageStack.average`. The batch notes
+immediately below record intermediate snapshot states; the implemented
+native-access decisions supersede them. Stage 8f validation is recorded in the plan.
+
+Stage 8c.1 now prepares the Data owner boundary: its authoritative frame and
+`edit_pandas()` drafts use displayed headers, while version-1 packages retain
+UUID-labelled columns. `Data.data` remains a numerical snapshot until the later
+consumer/getter batch. This distinction supersedes the internal-label description
+below without changing the lossless package format.
+
+Stage 8c.2 adds the internal `DataOwner.frame` getter, `validate()` and
+`replace_pandas(frame)`. The getter returns the stored ordinary DataFrame without
+copying it or exporting NumPy values. Replacement requires identical axes and
+column dtypes, copies the incoming frame, and retains exclusions, schema, metadata,
+fill value and the explicit dtype. It never imports side state from frame attrs.
+Use explicit owner operations or package import for structural/dtype changes.
+Owner and current Data entry boundaries reject detectable label, shape and dtype
+drift with `ValueError`; saved mask/schema/metadata proxies validate on use too.
+Validation does not infer same-shaped value permutations or control previously
+returned raw objects. New native getter calls and replacements are blocked during
+editing contexts. Aborted drafts leave the current frame live; successful numerical
+or frame replacements retire it. Reacquire after any owner mutation, including
+those which may retain the same frame. These are internal prerequisites:
+`Data.data` remains a numerical snapshot until 8c.3.
+
+Stage 8c.3a starts consumer migration with array/column extraction, search, column
+iteration and equality. They use explicit owner or masked NumPy conversions,
+independently of the public `.data` property's type. `asarray()` retains its
+annotated read-only snapshot contract. Search exports once for result assembly;
+multi-column results preserve exclusions and raw hidden values in positional
+rectangles. Boolean lists/arrays are positional selectors, padded with false when
+short. NumPy integer/floating targets work as scalar numerical predicates. Existing
+two-item numeric-list interval semantics and equality's independent NaN filtering
+remain for compatibility. Rolling windows and remaining consumers still precede
+the public native getter switch.
+
+## Stage 8a decisions (2026-09-20; implementation follows in 8b-8e)
+
+This section specifies the native interface now implemented in Stage 8. The
+original design batch itself introduced no getter or selection implementation.
+The subsequent 8b implementation supplies the operation-selection contract below
+for its three initial consumers. Other operations retain their existing interfaces
+pending the 8e audit. Fitting uses independent eligible rows per y channel and
+publishes result columns/metadata only after every fit and draft update succeeds.
+
+### Operation selection
+
+- The keyword is `where=None`, meaning all observations. A table selector is a
+  one-dimensional Boolean array of length `nrows`, or a Boolean Series whose
+  unique index exactly equals the table index, including order. Image and stack
+  selectors have the full intensity shape; a DataArray must have the same ordered
+  dimensions and dimension coordinates. Supplied auxiliary coordinates must also
+  match. Reject missing Boolean values, numeric truth values, scalar selectors,
+  wrong shapes and mismatched labels with `ValueError` before any mutation.
+  Do not silently align, reorder or broadcast. A caller can explicitly broadcast
+  a spatial region across frames with xarray before passing it to Stoner.
+- Resolve each call independently. There is no stored active selection, named
+  selection registry or selection context in Stage 8. Rebuild positional selectors
+  after structural changes: an ordinary Boolean array has no provenance, and a
+  same-length stale selector cannot reliably be detected. Labelled selectors catch
+  label mismatches, not every change to the observations behind those labels.
+- Keep `bounds` as the existing fitting row-selector argument, including its
+  existing search forms. When supplied with `where`, intersect them. Do not change
+  a numeric pair from its historical row-range meaning to parameter bounds.
+  For `curve_fit`, introduce `parameter_bounds` to forward optimiser bounds under
+  SciPy's `bounds` keyword after resolving the row selection. Consume Stoner's
+  selection keywords before backend dispatch. Other fitting engines retain their
+  own parameter-constraint interfaces.
+- For each y fit, intersect the selection with exclusions and finite-value checks
+  for only its required x, y and uncertainty inputs. Resolve multiple y fits
+  separately. External uncertainty arrays must match the complete input length
+  before selection; select them by the same positions. Reject finite, non-positive
+  uncertainties among otherwise eligible observations. Drop non-finite required
+  inputs; do not drop a row for an unused channel's mask or NaN.
+- `curve_fit` requires more eligible observations than free parameters, even when
+  a backend could return a fit with an undefined covariance. Empty/insufficient
+  input and invalid uncertainties raise `ValueError`. Compute all requested fits
+  before publishing result columns or fit metadata, so a failed later channel
+  leaves the owner unchanged. Retain existing output modes and chaining.
+- Fitted parameters describe the selected inputs. Explicit model evaluation uses
+  the full raw x axis; a stored model column is excluded only for excluded or
+  invalid model inputs, not for unselected rows or excluded measured y values.
+  Residual columns additionally inherit the measured y exclusion/invalidity.
+  Neither evaluation nor fitting overwrites source values or source exclusions.
+- The first regional reduction is `ImageFile.mean(where=...)`; also add `where`
+  to `ImageStack.average`. Both omit excluded/non-finite values and stack padding.
+  An empty image mean returns floating NaN; an empty stack output pixel contains
+  raw NaN and is excluded. Existing result metadata/coordinates and weight rules
+  remain in force. Unsupported methods must reject `where`, not forward it to a
+  backend accidentally. Neighbourhood methods get individual policies in 8e.
+
+### Native values, labels and exclusions
+
+- `Data.data` will return the authoritative ordinary DataFrame, with displayed
+  headers as columns. Duplicate headers remain legal: pandas named access may
+  return several columns; `.iloc` selects one unambiguously. Stable column UUIDs
+  and roles remain in the owner schema and move with owner schema operations.
+  Rename retains identity; insertion creates identity; deletion removes it.
+- Retain the positional RangeIndex for this interface switch. `.loc` works with
+  those row labels; physical x values remain data columns, including repeated
+  sweep values. Arbitrary external row indexes remain a later extension, not a
+  hidden change to import semantics. Owner row reorder moves exclusions alongside
+  values and resets the RangeIndex. Duplicate-header column reorder uses positions
+  or stable IDs, never an inferred correspondence between duplicate strings.
+- The version-1 lossless package retains its UUID-labelled DataFrame and schema.
+  Export translates the public headers to IDs on its detached copy; import restores
+  public headers from the schema. Do not change this portable contract merely to
+  expose public labels. Preserve metadata, dtype, fill values and raw excluded data.
+- `ImageFile.image` and `ImageStack.stack` will be ordinary xarray Datasets with
+  `intensity` and Boolean `excluded`. Stacks retain `valid_height`, `valid_width`
+  and stable frame IDs. Single-image access is consequently
+  `image.image['intensity']`, rather than a DataArray getter which loses the
+  co-located exclusion variable. `.imarray` remains an explicit numerical snapshot.
+- Keep current image `(y, x)` and stack `(frame, y, x)` dimensions. Maximus and
+  Attocube channels retain their existing frame identities, channel metadata and
+  common spatial coordinates. Do not merge repeated channels or invent a new
+  channel dimension in this switch. Any later Dataset-variable/channel-axis
+  redesign requires a separate conversion contract. Physical coordinate maps and
+  valid extents survive native access and lossless export.
+- `.mask` remains the owner-aware persistent exclusion interface, with true
+  meaning excluded. Clearing it preserves raw values/dtype but never makes padding
+  valid. Direct pandas/xarray computations do not automatically honour exclusions;
+  explicitly select inputs or use a selection-aware Stoner operation. NumPy export
+  remains available, with masked export preserving recoverable excluded values.
+
+### Mutation and reference lifetime
+
+Root native getters return the stored object, without a NumPy conversion or a
+substitute DataFrame/Dataset. Supported direct edits assign existing values without
+changing axes, variable sets, shape or dtype (for example `data.data.iloc[2, 1] = 5`).
+For images, existing intensity and Boolean exclusion cells may be edited; valid
+extents, frame IDs and calibration are owner-managed. Use the parent object for
+assignment, never rely on mutation of a pandas-selected Series writing back.
+
+Direct sorting, index/column renaming, insertion/deletion, dtype changes and
+variable replacement are unsupported. Use owner methods for structural operations
+or construct a validated lossless storage package and import it as a new owner.
+Fixed-schema `edit_pandas`, `edit_xarray` and `edit_numpy` retain detached drafts
+and atomic commit/rollback. Whole-native assignment validates before publishing:
+matching axes retain identity/roles/exclusions; changed axes require explicit
+package import, rather than guessing how side state maps to the replacement.
+Native image replacement must contain both required variables and valid geometry.
+
+Ordinary backend objects cannot intercept every change. Detectable schema drift
+raises `ValueError` at Stoner entry points, but same-shaped row permutations or
+writes through a retained native reference cannot all be detected. Native writes
+are not transactional and must not occur during an owner edit context or while
+the owner is locked. Locks govern owner APIs, not previously obtained raw objects;
+concurrent native and owner mutation is unsupported. Rollback covers the edit
+draft, not independent external writes.
+
+Reacquire native references after every owner mutation: an owner may replace its
+buffers or backend object even for a fixed-shape update. A retained reference can
+then refer to retired state and has no write-back guarantee. Clones and exports
+remain independent. Owner frame/crop handles retain their existing live identity
+contract; their native getters return current xarray views, not independent raw
+stores. Direct mutation of these borrowed views is unsupported: edit through the
+frame/crop owner or its transaction. This avoids depending on backend view/copy
+behaviour for correctness. Test this contract on lower and current dependencies.
+
+Acceptance examples and current-consumer observations are in
+[STORAGE_CONTRACTS.md](STORAGE_CONTRACTS.md#stage-8a-selection-and-native-access-acceptance).
+
 ## Authoritative state
 
 `Data` owns one DataFrame of raw values, a same-shaped NumPy Boolean exclusion
 mask, an ordered column schema, a typed metadata dictionary and a dtype-compatible
 fill value. The frame has an ordinary `RangeIndex(0, nrows)` and ordinary string
-column labels containing unique opaque column IDs. Displayed headers and roles
-live only in the schema. No custom pandas index or role-bearing MultiIndex is
-used internally. The frame and mask are private; public exports are detached.
+column labels containing displayed headers, including duplicates (Stage 8c.1).
+Stable column IDs and roles live in the schema; lossless packages translate headers
+to UUID labels on export and restore headers on import. No custom pandas index or
+role-bearing MultiIndex is used internally. The public frame is authoritative raw
+storage; exclusions/schema remain owner-managed and explicit exports are detached.
 
 Each schema record contains `id`, `header` and `role`. IDs are UUID strings, unique
 within an object; headers are strings and may repeat; roles are single characters
@@ -250,8 +423,8 @@ consumers must use the masked adapter instead.
 Editing contexts yield writable detached drafts. On normal exit they validate
 and atomically copy the draft into the owner; exceptions roll back. Drafts retained
 after exit cannot change the committed owner. NumPy editing includes values and
-masks but forbids shape or dtype changes. Pandas editing exposes ID-labelled raw
-values; it retains the original mask/schema/metadata and forbids axis or dtype
+masks but forbids shape or dtype changes. Pandas editing exposes header-labelled raw
+values (Stage 8c.1); it retains the original mask/schema/metadata and forbids axis or dtype
 changes. It is for positional cell updates only: users must not sort or permute
 values independently of the mask. Structural backend transforms instead require
 an explicit storage package with consistently transformed state. Xarray editing

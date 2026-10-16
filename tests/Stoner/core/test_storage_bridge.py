@@ -50,7 +50,7 @@ def test_assignment_and_roles_preserve_identity(data):
 
 def test_snapshot_and_clone_are_independent(data):
     """Prevent legacy numerical reads and cloned owners from writing through."""
-    snapshot = data.data
+    snapshot = data.asarray()
     with pytest.raises(ValueError):
         snapshot[0, 0] = 9
     with pytest.raises(ValueError):

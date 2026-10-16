@@ -143,7 +143,7 @@ class KerrStackMixin:
         hyst = np.column_stack((self.fields, np.zeros(len(self))))
         for i, im in enumerate(self):
             if isinstance(im, ImageFile):
-                im = im.image
+                im = im.imarray
             if isinstance(mask, np.ndarray) and mask.ndim == 2:
                 hyst[i, 1] = np.average(im[np.invert(mask.astype(bool))])
             elif isinstance(mask, np.ndarray) and mask.ndim == 3:

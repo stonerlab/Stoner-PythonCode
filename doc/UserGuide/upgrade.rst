@@ -23,9 +23,27 @@ Use owner methods for named selection and changes, or explicit ``edit_numpy()``,
 detached export does not update its source object.
 
 The :doc:`datafile` and :doc:`image` guides describe the current interfaces.
-Native storage access through the public attributes and further wrapper
-simplification are planned follow-on changes; this alpha retains the documented
-snapshot and explicit-edit contracts.
+``Data.data`` now returns the stored pandas DataFrame. ``ImageFile.image`` (also
+``ImageFile.data``) and ``ImageStack.stack`` return xarray Datasets containing
+``intensity`` and Boolean ``excluded`` variables; stacks also retain valid extents.
+These native computations do not automatically apply Stoner exclusions. Use
+``to_numpy()`` for a detached masked numerical export, ``Data.asarray()`` or
+``ImageFile.imarray`` for read-only numerical snapshots, and ``export_storage()``
+for lossless state with typed metadata. Broader wrapper simplification is Stage 9.
+
+Direct native edits may change existing cells without changing dtype or geometry.
+Use Stoner methods for structural changes, and reacquire native references after
+owner mutations. Detectable schema drift raises ``ValueError``; same-shaped
+permutations cannot all be detected. Borrowed frame/crop Datasets have no direct
+write-back guarantee: edit through the frame/crop owner or its transaction.
+Do not write through saved native references during owner transactions.
+
+Search results now retain exclusions when returning multiple columns. Boolean
+lists and short Boolean arrays select rows positionally, and NumPy integer and
+floating scalars are accepted as numerical targets. Two-value numeric NumPy
+arrays consistently select discrete targets; this fixes NumPy-version-dependent
+interval dispatch. Use a tuple for an interval. Two-item numeric lists retain
+their legacy interval meaning.
 
 Python Version Support
 ======================
@@ -120,8 +138,8 @@ Use the owner classes instead::
     from Stoner import ImageFile
     from Stoner.Image.kerr import KerrImageFile
 
-Call image-processing methods on those objects. Their ``image`` property exports
-a detached read-only NumPy masked array. NumPy arithmetic returns ordinary arrays;
+Call image-processing methods on those objects. Their ``image`` property exposes
+a native Dataset; ``imarray`` returns a detached read-only masked array. NumPy arithmetic returns ordinary arrays;
 assign the result to ``image`` or use an editing context to publish changes.
 Metadata and coordinate-aware operations belong to the owner.
 

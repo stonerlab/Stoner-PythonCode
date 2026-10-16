@@ -217,7 +217,7 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
                 data = self[ch]
                 signal.require_dataset(
                     "image",
-                    data=data.data,
+                    data=data.to_numpy(),
                     shape=data.shape,
                     dtype=data.dtype,
                     compression=self.compression,

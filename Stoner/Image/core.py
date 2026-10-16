@@ -94,11 +94,11 @@ def _add_core_(result, other):
     result_type = type(result)
     match other:
         case result_type() if result.shape == other.shape:
-            result.image = result.image + other.image
+            result.image = result.imarray + other.imarray
         case np.ndarray() if result.shape == other.shape:
-            result.image = result.image + other
+            result.image = result.imarray + other
         case int() | float():
-            result.image = result.image + other
+            result.image = result.imarray + other
         case _:
             return NotImplemented
     return result
@@ -109,9 +109,9 @@ def _floor_div_core_(result, other):
     # Cheat and pass through to ImageFile
 
     if isinstance(other, ImageFile):
-        other = other.image
+        other = other.imarray
 
-    result.image = result.image // other
+    result.image = result.imarray // other
     return result
 
 
@@ -120,9 +120,9 @@ def _div_core_(result, other):
     # Cheat and pass through to ImageFile
 
     if isinstance(other, ImageFile):
-        other = other.image
+        other = other.imarray
 
-    result.image = result.image / other
+    result.image = result.imarray / other
     return result
 
 
@@ -131,11 +131,11 @@ def _sub_core_(result, other):
     result_type = type(result)
     match other:
         case result_type() if result.shape == other.shape:
-            result.image = result.image - other.image
+            result.image = result.imarray - other.imarray
         case np.ndarray() if result.shape == other.shape:
-            result.image = result.image - other
+            result.image = result.imarray - other
         case int() | float():
-            result.image = result.image - other
+            result.image = result.imarray - other
         case _:
             return NotImplemented
     return result
@@ -289,7 +289,7 @@ class ImageFile(metadataObject):
             except StonerLoadError:
                 args[0] = numerical_image(*args, **kwargs)
         if len(args) > 0 and isinstance(args[0], ImageFile):  # Fixing type
-            self._image = args[0].image
+            self._image = args[0].imarray
             for k in args[0]._public_attrs:
                 setattr(self, k, getattr(args[0], k, None))
         elif len(args) > 0 and isinstance(args[0], np.ndarray):  # Fixing type
@@ -325,10 +325,18 @@ class ImageFile(metadataObject):
     def draw(self):
         """Access the DrawProxy object for accessing the skimage draw sub module."""
         from .storage_bridge import owner_of, OwnerDraw
-        return OwnerDraw(self) if owner_of(self) is not None else DrawProxy(self.image, self)
+        return OwnerDraw(self) if owner_of(self) is not None else DrawProxy(self.imarray, self)
 
     @property
     def image(self):
+        """Return native intensity/exclusions, or a borrowed view for a shared handle."""
+        from .storage_bridge import owner_of
+        owner = owner_of(self)
+        return owner.dataset if owner is not None else self.__dict__["_image"]
+
+    @property
+    def imarray(self):
+        """Return a detached read-only masked numerical image."""
         from .storage_bridge import owner_of, snapshot
         return snapshot(self) if owner_of(self) is not None else self.__dict__["_image"]
 
@@ -364,7 +372,7 @@ class ImageFile(metadataObject):
     def mask(self, value):
         """Set the underlying ImageFile's mask."""
         if isinstance(value, ImageFile):
-            value = value.image
+            value = value.imarray
         if isinstance(value, MaskProxy):
             value = value._mask
         from .storage_bridge import owner_of
@@ -372,7 +380,7 @@ class ImageFile(metadataObject):
         if owner is not None:
             owner.mask[:] = value
         else:
-            self.image.mask = value
+            self.imarray.mask = value
     ###################################################################################################################
     ############################# Special methods #####################################################################
 
@@ -432,19 +440,19 @@ class ImageFile(metadataObject):
                 raise ValueError("Can only calculate and XMCD ratio from images of opposite polarization")
             if not (hasattr(other, "polarization") and hasattr(self, "polarization")) and Options().warnings:
                 warn("Calculating XMCD ratio even though one or both image polarizations cannoty be determined.")
-            if self.image.dtype != other.image.dtype:
+            if self.imarray.dtype != other.imarray.dtype:
                 raise ValueError(
                     "Only ImageFiles with the same type of underlying image data can be used to calculate an"
                     + "XMCD ratio.Mismatch is {self.image.dtype} vs {other.image.dtype}"
                 )
-            if self.image.dtype.kind != "f":
+            if self.imarray.dtype.kind != "f":
                 ret = self.clone.convert(float)
                 other = other.clone.convert(float)
             else:
                 ret = self.clone
             plus, minus = self, other
             polarization = getattr(self, "polarization", 1)
-            ret.image = polarization * (plus.image - minus.image) / (plus.image + minus.image)
+            ret.image = polarization * (plus.imarray - minus.imarray) / (plus.imarray + minus.imarray)
             return ret
         result = self
         return _floor_div_core_(result, other)
@@ -483,9 +491,9 @@ class ImageFile(metadataObject):
             else:
                 raise TypeError(f"Unrecognised unsigned type {self._image.dtype}, cannot negate sensibly !")
             high_val = dtype_range[k][1]
-            ret.image = high_val - self.image
+            ret.image = high_val - self.imarray
         else:
-            ret.image = -self.image
+            ret.image = -self.imarray
         return ret
 
     def __invert__(self):
@@ -499,13 +507,13 @@ class ImageFile(metadataObject):
         elif not isinstance(other, ImageFile):
             ret = False  # Shortcircuit for non equivalent types
         else:
-            ret = self.metadata == other.metadata and np.all(self.image == other.image)
+            ret = self.metadata == other.metadata and np.all(self.imarray == other.imarray)
         return ret
 
     def __repr__(self):
         """Implement standard representation for text based consoles."""
         return (
-            f"{self.filename}({type(self)}) of shape {self.shape} ({self.image.dtype}) and"
+            f"{self.filename}({type(self)}) of shape {self.shape} ({self.imarray.dtype}) and"
             + f" {len(self.metadata)} items of metadata"
         )
 
@@ -554,7 +562,7 @@ class ImageFile(metadataObject):
 
     def _repr_png_private_(self):
         """Provide a display function for iPython/Jupyter."""
-        fig = self.image.imshow(mask_color=self.mask.colour)
+        fig = self.imarray.imshow(mask_color=self.mask.colour)
         plt.title(self.filename)
         data = StreamIO()
         fig.savefig(data, format="png")
@@ -689,7 +697,7 @@ class ImageFile(metadataObject):
             saved.
         """
         # catch before metadataObject tries to take over.
-        self.image.save(filename, **kwargs)
+        self.imarray.save(filename, **kwargs)
 
 
 from .storage_bridge import install as _install_image_storage

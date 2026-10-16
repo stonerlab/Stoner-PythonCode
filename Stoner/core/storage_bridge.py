@@ -3,6 +3,7 @@
 from copy import deepcopy
 
 import numpy as np
+import pandas as pd
 
 from .numerical import numerical_result
 from .base import TypeHintedDict
@@ -178,7 +179,7 @@ class _BoundSetas:
     @property
     def shape(self):
         """Return the current owner shape."""
-        return self._data.__dict__["_storage_owner"]._state.values.shape
+        return self._data._require_storage_owner()._state.values.shape
 
     @property
     def cols(self):
@@ -198,7 +199,7 @@ class _BoundSetas:
         return self._snapshot()._get_cols(*args, **kwargs)
 
     def find_col(self, col, force_list=False):
-        return resolve_columns(self._data.__dict__["_storage_owner"]._state.schema, col, force_list=force_list)
+        return resolve_columns(self._data._require_storage_owner()._state.schema, col, force_list=force_list)
 
 
 class StorageBridgeMixin:
@@ -268,7 +269,7 @@ class StorageBridgeMixin:
         return self._require_storage_owner().edit_numpy()
 
     def edit_pandas(self):
-        """Return a raw-value editing context retaining exclusions and schema."""
+        """Return a header-labelled raw-value editing context retaining exclusions and schema."""
         return self._require_storage_owner().edit_pandas()
 
     def _require_storage_owner(self):
@@ -276,6 +277,7 @@ class StorageBridgeMixin:
         owner = self.__dict__.get("_storage_owner")
         if owner is None:
             raise RuntimeError("Use Data.from_storage(data.export_storage()) before frame editing")
+        owner.validate()
         return owner
 
     def _storage_array(self):
@@ -316,13 +318,21 @@ class StorageBridgeMixin:
 
     @property
     def data(self):
-        """Return a detached read-only NumPy masked array."""
-        return self._storage_array()
+        """Return the authoritative ordinary DataFrame of raw measurements.
+
+        Exclusions remain in ``mask``. Use ``to_numpy()`` for masked numerical
+        exports. Reacquire after owner mutations; direct structural edits are
+        unsupported. Native computations do not apply Stoner exclusions.
+        """
+        return self._require_storage_owner().frame
 
     @data.setter
     def data(self, value):
         owner = self._require_storage_owner()
         owner._check_writable()
+        if isinstance(value, pd.DataFrame):
+            owner.replace_pandas(value)
+            return
         array = np.ma.asarray(value)
         if array.ndim == 1:
             array = array[:, None]

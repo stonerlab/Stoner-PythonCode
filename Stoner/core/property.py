@@ -133,23 +133,15 @@ class DataFilePropertyMixin:
 
         If columns names are duplicated then they are made unique."""
         ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
-        ch_bak = copy.copy(ch)
-        setas = self.setas.clone  # We'll need these later !
-        f = self.data.flags
-        if (
-            not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]
-        ):  # We need our data to be contiguous before we try a records view
-            self.data = self.data.copy()
+        values = self.to_numpy()
         for i, header in enumerate(ch):
             j = 0
             while ch[i] in ch[i + 1 :] or ch[i] in ch[0:i]:
                 j = j + 1
                 ch[i] = f"{header}_{j}"
         dtype = [(str(x), self.dtype) for x in ch]
-        self.setas = setas
-        self.column_headers = ch_bak
         try:
-            return self.data.copy().view(dtype=dtype).reshape(len(self))
+            return values.copy().view(dtype=dtype).reshape(len(self))
         except TypeError as err:
             raise TypeError(f"Failed to get record view. Dtype was {dtype}") from err
 
@@ -157,7 +149,7 @@ class DataFilePropertyMixin:
     @property
     def T(self):
         """Get the current data transposed."""
-        return self.data.T
+        return self.asarray().T
 
     @T.setter
     def T(self, value):

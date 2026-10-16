@@ -93,7 +93,7 @@ def test_metadata_slice(monkeypatch):
             except KeyError:
                 ret = ret[list(ret.keys())[0]]
             except AttributeError:
-                ret = ret.data[0]
+                ret = ret.to_numpy()[0]
             except (IndexError, TypeError):
                 pass
     del fldr6.metadata["Datatype,Comment"]

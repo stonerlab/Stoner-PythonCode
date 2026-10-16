@@ -62,7 +62,7 @@ def test_extra():
     assert np.isclose(img.profile_line(10.0, -10.0).y.mean(), 0.013888888888888864)
     img = ImageFile(np.random.normal(size=(100, 100), scale=1.0))
     img.sgolay2d(points=5)
-    assert np.sqrt(img.image**2).mean() < 0.2
+    assert np.sqrt(img.imarray**2).mean() < 0.2
 
 
 @pytest.mark.plotting
@@ -82,7 +82,7 @@ def test_imagefile_ops():
     assert b.min() == -1.0, "Normalise Image failed"
     profile = b.profile_line((0, 0), (100, 100))
     profile.plot()
-    b.mask = img_a2.image > 25e3
+    b.mask = img_a2.imarray > 25e3
     hist = b.hist(bins=200)
     hist.column_headers = ["XMCD Signal", "Frequency"]
     hist.labels = None
@@ -123,7 +123,7 @@ def test_funcs():
 
     a1 = ImageFile(img_a1.clone)
     a1.asfloat()
-    a1.image = np.sqrt(a1.image) / 2 + 0.25
+    a1.image = np.sqrt(a1.imarray) / 2 + 0.25
     a1.adjust_contrast()
     assert a1.span() == (0.0, 1.0), "Either adjust_contrast or span failed with an ImageFile"
 
@@ -137,14 +137,14 @@ def test_funcs():
 @pytest.mark.plotting
 def test_imagefuncs():
     img_a2 = ImageFile(join(__datapath__, "Sample_Image_2017-10-15_100.hdf5"))
-    img_a2.subtract_image(img_a2.image, offset=0)
-    assert np.all(img_a2.image <= 0.0001), "Failed to subtract image from itself"
+    img_a2.subtract_image(img_a2.imarray, offset=0)
+    assert np.all(img_a2.imarray <= 0.0001), "Failed to subtract image from itself"
     x = np.linspace(-3 * np.pi, 3 * np.pi, 101)
     X, Y = np.meshgrid(x, x)
     i = ImageFile(np.sin(X) * np.cos(Y))
     i2 = i.clone
     j = i.fft(window="hamming", remove_dc=True)
-    assert j.image[47, 47] > 583.0
+    assert j.imarray[47, 47] > 583.0
     j.imshow()
     assert len(plt.get_fignums()) == 1, "Imshow didn't open one window"
     plt.close("all")
@@ -161,10 +161,10 @@ def test_imagefuncs():
     assert np.isclose(np.max(j), 0.004094023178423445), "Level Image failed"
     i2 = i.clone
     i2.quantize([-0.5, 0, 0.5])
-    assert np.all(np.unique(i2.data) == np.array([-0.5, 0, 0.5])), "Quantise levels failed"
+    assert np.all(np.unique(i2.to_numpy()) == np.array([-0.5, 0, 0.5])), "Quantise levels failed"
     i2 = i.clone
     i2.quantize([-0.5, 0, 0.5], levels=[-0.25, 0.25])
-    assert np.all(np.unique(i2.data) == np.array([-0.5, 0, 0.5])), "Quantise levels failed"
+    assert np.all(np.unique(i2.to_numpy()) == np.array([-0.5, 0, 0.5])), "Quantise levels failed"
     i2 = i.clone
     i2.rotate(np.pi / 4)
     i2.fft()

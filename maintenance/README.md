@@ -64,6 +64,15 @@ baseline. Preserve the committed plot cache in cached builds.
 
 ## CI package and release checks
 
+`benchmark-integrated-storage.py --legacy <retained-legacy-checkout> --output <json>`
+compares production against the accepted legacy time/allocation limits. Keep
+runtime source unchanged during its isolated measurements. Compare the resulting
+workload medians with the recorded Stage 7 baseline too.
+`benchmark-native-interface.py --output <json>` measures actual native getter
+allocations versus masked exports and records regional selection costs and a
+runtime-source fingerprint. These checks supplement the scientific regression
+suite; they do not replace hosted platform or installed-distribution validation.
+
 `check-distribution-archives.py dist` inspects CI-built wheel/sdist contents.
 `check-installed-package.py <checkout>` runs with each installed distribution from
 outside the checkout, checking import provenance, metadata, resources and sample

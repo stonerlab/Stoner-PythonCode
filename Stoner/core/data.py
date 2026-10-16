@@ -357,7 +357,7 @@ class Data(
         x = arg.get("x_vector", np.arange(arg.shape[1]))
         y = arg.get("y_vector", np.arange(arg.shape[0]))
         x, y = np.meshgrid(x, y)
-        z = arg.image
+        z = arg.to_numpy()
 
         self.data = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
         self.metadata = arg.metadata.copy()
@@ -707,7 +707,7 @@ class Data(
         retain = np.all(np.isnan(data), axis=1)
         self.data = numerical_result(data[~retain])
         self["TDI Format"] = fmt
-        if self.data.ndim == 2 and self.data.shape[1] > 0:
+        if self.shape[1] > 0:
             self.column_headers = col_headers_tmp
         return self
 
@@ -715,36 +715,36 @@ class Data(
         """Actually do the repr work, but allow for a shorten parameter to save printing big files out to disc."""
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers) + "\n"
         m = len(self.metadata)
-        self.data = np.atleast_2d(self.data)
-        r = np.shape(self.data)[0]
+        values = self.to_numpy()
+        r = values.shape[0]
         md = self.metadata.export_all()
         for x in range(min(r, m)):
-            if self.data.ndim != 2 or self.shape[1] == 1:
-                outp += f"{md[x]}\t{self.data[x]}\n"
+            if values.ndim != 2 or self.shape[1] == 1:
+                outp += f"{md[x]}\t{values[x]}\n"
             else:
-                outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                outp = outp + md[x] + "\t" + "\t".join([str(y) for y in values[x].filled()]) + "\n"
         if m > r:  # More metadata
             for x in range(r, m):
                 outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
             if shorten is not None and shorten and r - m > shorten:
                 for x in range(m, m + shorten - 100):
-                    if self.data.ndim != 2 or self.shape[1] == 1:
-                        outp += "\t" + f"\t{self.data[x]}\n"
+                    if values.ndim != 2 or self.shape[1] == 1:
+                        outp += "\t" + f"\t{values[x]}\n"
                     else:
-                        outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                        outp += "\t" + "\t".join([str(y) for y in values[x].filled()]) + "\n"
                 outp += f"... {r - m - shorten + 100} lines skipped...\n"
                 for x in range(-100, -1):
-                    if self.data.ndim != 2 or self.shape[1] == 1:
-                        outp += f"\t\t{self.data[x]}\n"
+                    if values.ndim != 2 or self.shape[1] == 1:
+                        outp += f"\t\t{values[x]}\n"
                     else:
-                        outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                        outp += "\t" + "\t".join([str(y) for y in values[x].filled()]) + "\n"
             else:
                 for x in range(m, r):
-                    if self.data.ndim != 2 or self.shape[1] == 1:
-                        outp += f"\t\t{self.data[x]}\n"
+                    if values.ndim != 2 or self.shape[1] == 1:
+                        outp += f"\t\t{values[x]}\n"
                     else:
-                        outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                        outp = outp + "\t" + "\t".join([str(y) for y in values[x].filled()]) + "\n"
         return outp
 
     def _repr_html_private(self):
@@ -762,6 +762,7 @@ class Data(
         """Convert the Data to a 2D array and then feed to tabulate."""
         if tabulate is None:
             raise ImportError("No tabulate.")
+        values = self.to_numpy()
         lb = "<br/>" if fmt == "html" else "\n"
         rows, cols = self._repr_limits
         r, c = self.shape
@@ -805,13 +806,13 @@ class Data(
         for ic, c in enumerate(interesting):
             if c >= 0:
                 if shorten[0]:
-                    col_out = np.where(self.mask[: r // 2 - 1, c], "#####", self.data[: r // 2 - 1, c].astype(str))
+                    col_out = np.where(self.mask[: r // 2 - 1, c], "#####", values[: r // 2 - 1, c].astype(str))
                     outp[1 : r // 2, ic + 1] = col_out
-                    col_out = np.where(self.mask[-r // 2 :, c], "#####", self.data[-r // 2 :, c].astype(str))
+                    col_out = np.where(self.mask[-r // 2 :, c], "#####", values[-r // 2 :, c].astype(str))
                     outp[r // 2 + 1 : r + 1, ic + 1] = col_out
                 else:
-                    col_out = np.where(self.mask[:, c], "#####", self.data[:, c].astype(str))
-                    outp[1 : len(self.data) + 1, ic + 1] = col_out
+                    col_out = np.where(self.mask[:, c], "#####", values[:, c].astype(str))
+                    outp[1 : len(values) + 1, ic + 1] = col_out
         return tabulate(outp[1:], outp[0], tablefmt=fmt, numalign="decimal", stralign="left")
 
     def _setattr_col(self, name, value):
@@ -827,9 +828,9 @@ class Data(
         """
         if isinstance(value, np.ndarray):
             value = np.atleast_2d(value)
-            if value.shape[0] == self.data.shape[0]:
+            if value.shape[0] == self.to_numpy().shape[0]:
                 pass
-            elif value.shape[1] == self.data.shape[0]:
+            elif value.shape[1] == self.to_numpy().shape[0]:
                 value = value.T
             else:
                 raise RuntimeError("Value to be assigned to data columns is the wrong shape!")

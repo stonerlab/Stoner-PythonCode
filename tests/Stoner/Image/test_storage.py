@@ -248,7 +248,7 @@ def test_frame_metadata_supplied_to_native_import(stack):
 def test_real_hdf5_image_package():
     source = Path(__file__).resolve().parents[3] / "sample-data" / "Sample_Image_2017-10-15_100.hdf5"
     image = ImageFile(source)
-    package = ImageStorage.from_numpy(image.image, metadata=image.metadata.copy())
+    package = ImageStorage.from_numpy(image.imarray, metadata=image.metadata.copy())
     restored = package.copy()
-    np.testing.assert_array_equal(restored.to_numpy(), image.image)
+    np.testing.assert_array_equal(restored.to_numpy(), image.imarray)
     assert restored.metadata == image.metadata

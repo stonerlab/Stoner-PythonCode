@@ -1,8 +1,8 @@
 # Data storage migration plan
 
 Agreed direction: 2026-09-13. Target branch: `devel`.
-Status: Stage 6 in progress; public ImageFile and ImageStack now own validated xarray storage.
-Target release: undecided (`0.12` or `1.0`).
+Status: Stages 1-7 and Stage 8a-8e implemented; Stage 8f final native-interface validation is in progress.
+Target release: `0.12.0a1` (version set; not published).
 Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
 new version. Python 3.15 support is conditional on its public release and support
 from the required dependencies, followed by successful project validation.
@@ -355,26 +355,189 @@ necessary. Complete its evidence before moving to dependent work.
   `ImageFile.image` and `ImageStack.stack`, exposing the actual backend storage
   without first rendering it as a NumPy snapshot. Settle masking and ownership
   semantics first; Stage 9 then simplifies wrappers against this validated interface.
-  - [ ] Specify the xarray DataArray/Dataset interface for images and stacks,
-    including multichannel grids, exclusions, ragged extents and calibration.
-    Expose standard backend objects rather than new custom array subclasses.
-    Reassess masking before choosing this interface: distinguish missing values
-    from excluded measurements, preserve recoverable raw values, and define how
-    native operations propagate exclusions and how users remove them.
-  - [ ] Define live access, assignment and retained-reference behaviour. Resolve
-    how direct pandas/xarray edits interact with owner validation, column roles,
-    masks, metadata, stable frame identities and shared crops. Native exposure
-    must not silently desynchronise these structures; document any operations
-    that require an explicit owner edit or replacement.
-  - [ ] Migrate consumers and examples to native indexing and backend operations.
-    Retain explicit `to_numpy()` for numerical consumers that need NumPy, without
-    requiring conversion where a routine already accepts the native object.
-    Document changes from the Stage 6 snapshot attributes and their assignment
-    contracts, including the relationship between `.stack` and `.imarray`.
-  - [ ] Verify public types, label/coordinate access, mutation and reference
-    semantics, scientific results and performance/allocation costs. Run the full
-    suite after the interface switch. Gate: native access avoids an implicit
-    NumPy export and the documented ownership and scientific contracts pass.
+  - [x] **8a. Specify selections, exclusions and native ownership.** Characterise
+    current mask/bounds consumers, write the contracts below into
+    STORAGE_INTERCHANGE.md and add acceptance examples to STORAGE_CONTRACTS.md.
+    Resolve native object types, axis labels/identity and allowed direct mutations
+    before switching attributes. Gate: each unresolved choice below has a concrete
+    decision, worked examples and a testable failure/return contract.
+  - [x] **8b. Implement operation selections.** Add one shared selection resolver
+    and integrate a bounded first batch: background fitting and regional reductions.
+    Reconcile existing fitting `bounds` and forwarded backend keyword arguments
+    before choosing the public selection keyword. Keep this usable with current
+    storage so selection correctness can be checked independently of native exposure.
+    Gate: selected-fit/full-data correction and recoverable exclusions pass without
+    changing global selection state or overwriting stored measurements.
+  - [x] **8c. Expose the DataFrame.** Switch `Data.data` to the actual native table,
+    implementing the agreed labels, exclusions, schema and mutation contract.
+    Migrate affected Data consumers in bounded batches; retain explicit NumPy
+    interchange and deliberate masked-array export. Gate: named/positional access,
+    duplicate headers, roles, structural edits, retained references and rollback pass;
+    reading `.data` does not construct a NumPy export or a substitute DataFrame.
+    - [x] **8c.1. Owner labels and lossless package boundary.** Store displayed
+      headers on the authoritative owner frame, including duplicates; retain
+      UUID-labelled version-1 packages and restore headers on import. Keep stable
+      schema IDs, exclusions, dtype, fill and typed metadata through edits/copies.
+      Pandas transaction drafts now use displayed headers. The public `Data.data`
+      snapshot contract is unchanged pending consumer migration.
+    - [x] **8c.2. Native owner validation and replacement.** Define and test the
+      owner-level native getter, detectable schema-drift rejection, fixed-schema
+      DataFrame replacement and retained-reference behaviour against 8a. Preserve
+      transaction guards and rollback; do not claim detection of same-shaped
+      permutations or concurrent writes through retained native references.
+    - [x] **8c.3. Data consumers and public getter.** Move affected core/numerical
+      consumers to explicit conversions in bounded sub-batches, then switch the
+      public property once its dependent contracts pass. Keep masked exports,
+      duplicate-name resolution and mutation/return conventions explicit.
+      - [x] **8c.3a. Numerical extraction, search and equality.** Move `asarray`,
+        `column`, `search_index`, `search`, `columns` and the equality operator off
+        public `.data` reads. Retain explicit NumPy result contracts, verify a
+        test-only native getter, and preserve masks through rectangular searches.
+      - [x] **8c.3b. Rolling-window boundary.** Migrate rolling windows with
+        explicit masks, wrapping/centre-exclusion geometry and iterator-lifetime
+        rules before moving on to selection/splitting and remaining consumers.
+  - [x] **8d. Expose image and stack storage.** Switch `.image` and `.stack` to the
+    chosen native xarray objects. Define the relation to numerical `.imarray` and
+    the representation of channel data, exclusions, valid extents and coordinates.
+    Preserve frame/crop ownership, coordinate maps and Maximus/Attocube shared grids.
+    Gate: regional calculations, native coordinate selection, stack/frame edits and
+    lossless export pass on real calibrated, multichannel and ragged fixtures.
+  - [x] **8e. Complete consumer and compatibility migration.** Audit remaining
+    fitting, analysis, plotting, image filters, folders, loaders and examples.
+    Give each selection-aware operation an explicit contract; adapt only consumers
+    required for this interface switch. Document `.mask` compatibility, public
+    attribute types, direct editing restrictions and selected/full-data result scope.
+    Gate: no consumer relies accidentally on implicit masked-array behaviour;
+    broad wrapper simplification and unrelated backend conveniences remain Stage 9.
+  - [ ] **8f. Native-interface exit gate.** Run the complete suite, supported/lower
+    dependency CI, installed-package checks and documentation audit on the final
+    interface. Repeat integrated benchmarks against the recorded legacy comparison
+    and Stage 7 production baseline; measure native reads and selection allocations.
+    Gate: no implicit NumPy export on native access, scientific/ownership contracts
+    pass, performance meets the accepted limits or has an explicit reviewed decision,
+    and the intentional API changes are documented. Do not weaken tests or silently
+    accept regressions merely because pandas/xarray behaves differently.
+
+### Stage 8 selection and masking contract
+
+This is planned behaviour, not the current public API. The motivating workflow is
+to fit a background using part of a measurement, then evaluate and apply that model
+over the complete measurement. Original values stay available throughout; clearing
+a temporary selection must never require reconstructing or restoring values.
+
+| Concept              | Meaning and proposed rule                                                     |
+| -------------------- | ----------------------------------------------------------------------------- |
+| Stored values        | Complete native measurements, including recoverable excluded values.          |
+| Persistent exclusion | Boolean state: true means excluded, retaining the corresponding raw value.    |
+| Operation selection  | Boolean region: true means included in this operation; default is all.        |
+| Missing/invalid data | NaN, missing readings or invalid inputs handled by the operation's policy.    |
+| Stack padding        | Outside the valid frame extent; never becomes a measurement by clearing flags. |
+
+The effective input is the operation selection intersected with non-excluded,
+valid observations inside the stored extent. Clearing an exclusion reveals the
+retained measurement; it cannot recover a value originally missing or invalid.
+Keep exclusions distinct from missing-value sentinels and statistical weights.
+Do not replace stored excluded values with NaN or treat zero weights as a universal
+substitute for selection. Temporary xarray `.where()` results may contain NaN and
+change dtype; they are calculation inputs, not replacements for the raw store.
+
+**First public selection form.** Stage 8a chooses the explicit per-operation Boolean
+selector `where=region`. Start with
+positional Boolean arrays and native labelled Boolean Series/DataArrays. Require
+exact shape/identity or explicitly defined coordinate matching; reject ambiguous
+duplicates, missing/extra labels and unintended alignment or broadcasting. Resolve
+selection before calling numerical backends. A native predicate such as
+`(frame['field'] < -5) | (frame['field'] > 5)` should be directly usable after 8c.
+Pandas and xarray calls made directly by the user retain their native semantics:
+they do not automatically apply Stoner exclusions or an active selection.
+
+**Rows, cells and channels.** Preserve existing cell-level exclusions, rather than
+reducing all masks permanently to whole-row flags. For a fit, combine exclusions
+and required-input validity across the actual x, y and uncertainty columns used by
+that fit. An excluded unrelated channel must not discard an otherwise usable row.
+For multiple fitted y channels, document whether fits resolve inputs separately.
+An image-region selection may intentionally apply to several channels/frames only
+through a documented dimensional rule; do not infer that from incidental broadcasting.
+
+**Input selection versus output scope.** Fit parameters come from selected inputs;
+model evaluation on the complete x coordinates is a separate explicit step. A
+background correction can therefore update all observations without refitting or
+changing the fitting region. Transform methods must state whether they update only
+selected positions or the complete result, and how omitted positions retain their
+values. Preserve established in-place/chaining contracts unless a change is recorded.
+Reject empty or insufficient fitting inputs with a clear error and no partial update.
+Specify reduction results for empty regions instead of inheriting backend accidents.
+
+**Regional image algorithms.** A mean, fit or histogram can select independent
+observations. Convolution, smoothing, interpolation and morphology need separate
+rules for neighbourhoods, boundaries and excluded pixels. In 8e, document support
+per method; reject unsupported selection combinations rather than pretending that
+dropping pixels or inserting NaN preserves the algorithm's geometry.
+
+**Optional conveniences, after explicit selection works.** Named regions and a
+scoped selection context may be added as bounded follow-ups. A context must restore
+prior state on normal exit and exceptions, define nested intersection and precedence
+with explicit arguments, and never change the native storage getter. Decide whether
+saved selections are frozen observations or predicates re-evaluated on current data.
+Structural edits must transform saved selections by stable identity or invalidate
+them explicitly; matching array length alone does not make a stale region valid.
+These conveniences are not required to close the initial Stage 8 interface gate.
+
+### Stage 8 native-access decisions and acceptance examples
+
+Stage 8a resolves the following design questions in
+[STORAGE_INTERCHANGE.md](STORAGE_INTERCHANGE.md#stage-8a-decisions-2026-09-20-implementation-follows-in-8b-8e).
+The list remains the implementation review checklist; it is not a list of open
+design choices. Worked examples and failure contracts are recorded in
+[STORAGE_CONTRACTS.md](STORAGE_CONTRACTS.md#stage-8a-selection-and-native-access-acceptance).
+
+- **Native representation:** `Data.data` is an actual DataFrame. Choose DataArray
+  versus Dataset for `.image` and `.stack`, including where exclusion variables and
+  multichannel values live. Prefer a cohesive Dataset when several variables must
+  transform together; demonstrate the single-channel ergonomic cost before deciding.
+  Do not recreate custom numerical subclasses or return a disguised snapshot.
+- **Labels and identity:** current Data storage uses opaque column IDs and a
+  positional row index. Decide how native headers, duplicate labels, row labels,
+  column roles and stable identity coexist so ordinary named indexing is useful.
+  Cover rename, reorder, insertion, deletion, selection and duplicate-label sorting.
+- **Mutation and alignment:** a raw DataFrame cannot notify Stoner of every edit to
+  an external mask/schema. Define a supported direct-edit subset and the owner
+  operation or explicit edit/replacement route for other changes. Same-shaped
+  permutations can desynchronise side state without an obvious shape change;
+  demonstrate how the chosen architecture prevents this, or document the unsupported
+  operation and provide a safe alternative. Do not promise automatic interception
+  or detection that standard pandas/xarray objects cannot provide.
+- **Reference lifetime:** specify what `native = obj.data` and equivalent image/
+  stack references see after owner edits or whole-object replacement. Settle
+  copy-on-write differences across supported pandas versions, shared crop/frame
+  writes, locking, clones and failed assignments. Direct native operations are not
+  implicitly transactional; explicit edit contexts must retain their promised rollback.
+- **Compatibility and conversions:** decide whether `.mask` remains an alias for
+  persistent exclusions and keep its true-means-excluded polarity unambiguous.
+  Preserve lossless package interchange, typed metadata, raw values and fill state.
+  Retain `to_numpy()` when a numerical consumer requires it, without mandatory
+  conversion where the consumer already accepts a DataFrame or xarray object.
+
+Acceptance coverage must include:
+
+1. Fit two disjoint background regions, evaluate on the full coordinate axis and
+   subtract across the full measurement. The fitted subset agrees with an explicit
+   native selection, including uncertainties and exclusion of invalid required inputs.
+2. Exclude an extreme value, calculate a regional statistic, remove the exclusion
+   and recover the exact raw value and original dtype. Genuine NaN remains missing.
+3. Fit one channel when an unrelated channel contains excluded cells; preserve
+   duplicate headers and selection identity through supported schema operations.
+4. Perform a calibrated image-region reduction with a dead pixel and apply the
+   resulting background to the complete image. Preserve physical coordinates,
+   channel alignment and integer raw values until an explicit dtype-changing result.
+5. Select across an unequal-sized stack without including padding; retain live
+   frame/crop behaviour and reject incompatible or stale selectors before mutation.
+6. Exercise direct value edits, explicit structural edits, whole-native replacement,
+   invalid replacement, retained references and detached exports. Verify the stated
+   ownership contract on both lower-bound and current pandas/xarray versions.
+7. Check scientific fits/uncertainties and image geometry against existing real
+   fixtures; measure native getter and selected-operation costs without assuming
+   that Boolean indexing is zero-copy.
 
 - [ ] **9. Simplify and extend Stoner wrappers.** After the Stage 8 native interface
   and its masking/mutation contracts pass validation, audit existing methods for
@@ -912,14 +1075,344 @@ matches the selected environment.
   heading correction and this validation/maintenance record. Python 3.15 readiness
   remains explicitly pending its final release and dependency availability, rather
   than an unverified supported version. No package tag or publication was created.
-- **Next:** Stage 8 native `.data`/`.image`/`.stack` storage exposure. Begin with the
-  masking and ownership contract before changing public attributes; Stage 9 then
-  simplifies and extends wrappers against that interface, including any useful
-  labelled-row conveniences.
-  Current Stage 6 snapshot contracts remain in effect until that implementation.
-  Retain scientific fixtures and all 243
-  cached plots. Stage 7 now supplies hosted and local validation for the alpha;
-  publication remains a separately authorised release action.
+- **Stage 8 planning update:** the maintainer identified temporary operation scope
+  as the main masking workflow: fit a selected background, then apply it to the
+  complete measurement. Stage 8 now separates raw values, persistent exclusions
+  and per-operation selections, with explicit native-mutation and alignment rules.
+  Batches 8a-8f and their acceptance cases are specified above. Named/scoped selection conveniences
+  are optional follow-ups after the explicit per-operation interface works.
+- **Stage 8a complete (2026-09-20):** audited shared fitting assembly, full-axis
+  model evaluation, result masks, stack reductions and owner editing boundaries.
+  Recorded normative decisions and worked acceptance cases: `where` selects inputs;
+  legacy `bounds` remains a row selector; `curve_fit(parameter_bounds=...)` handles
+  optimiser limits; fits resolve exclusions per required channel. The target native
+  objects are a header-labelled DataFrame and cohesive xarray Datasets. Positional
+  row indexes and existing channel/frame geometry remain; arbitrary row labels and
+  channel-axis redesign are deferred. Fixed-schema native edits are supported under
+  the documented lifetime rules; structural edits use owners or package import.
+  Two regression cases protect disjoint background fitting/full-axis correction and
+  exact excluded integer recovery. Focused consumer tests: **11 passed, 1 warning
+  in 5.94 s**, Miniforge `py314`; the warning is existing SciPy ODR deprecation.
+  Evidence: `maintenance/runs/20260920-185014-focused-7f823ce2/pytest.xml`.
+  `git diff --check` passed. This is design/characterisation validation, not proof
+  of future `where` or native getters; no production behaviour changed in 8a.
+- **Stage 8b complete (2026-09-20):** `Stoner/core/selection.py` validates strict
+  positional/labelled Boolean selectors. `curve_fit` resolves independent eligible
+  inputs for each y channel, intersects legacy row `bounds`, accepts optimiser
+  `parameter_bounds`, checks uncertainties and sample counts, and stages all result
+  columns/metadata before publication. Model masks now depend on model inputs;
+  residual masks additionally depend on measured y. Fit statistics use the selected
+  observations and correctly weighted residuals. Full-axis model evaluation remains
+  explicit unless result columns are requested, preserving restricted-domain fits.
+  `ImageFile.mean` and `ImageStack.average` compose selection, exclusions, finite
+  values and valid extents; empty outputs are NaN (excluded for stack pixels).
+  Added fitting/image selection regressions and user-guide examples. Final focused
+  validation: **42 passed, 1 warning in 13.50 s** at
+  `maintenance/runs/20260920-190227-focused-11842fe6`. Full parallel suite:
+  **762 passed, 708 warnings in 295.90 s; 80% coverage** at
+  `maintenance/runs/20260920-185920-parallel-62a76d9a`. The full run began before
+  the last two regression additions and restricted-domain evaluation refinement;
+  the final focused run verifies those changes. Both used Miniforge `py314` on
+  Windows. These results do not establish lower-bound/hosted CI or performance
+  validation for Stage 8; those remain the 8f exit gate. `git diff --check` passed.
+  New test paths retain canonical `tests/Stoner/Image` and `tests/Stoner/analysis`
+  spelling in Git. Public storage getter types remain unchanged; other fitting
+  engines and neighbourhood operations remain for the 8e consumer audit.
+- **Stage 8c.1 implementation (2026-10-16):** `Stoner/core/storage_owner.py`
+  separates private header-labelled `_TableState` from UUID-labelled version-1
+  `DataStorage` interchange. There remains one authoritative DataFrame; transient
+  package views relabel columns without a NumPy export, and public package exports
+  deep-copy values and side state. Construction, numerical commits, replacement,
+  selection, insertion and copies restore displayed headers, including duplicates.
+  Header edits validate every schema record before updating frame labels; roles
+  and stable IDs remain separate. `edit_pandas()` drafts now support named raw
+  value edits, retaining masks/schema and the existing fixed-axis/dtype checks.
+  `_TableState.__deepcopy__` preserves explicit metadata types, nested aliases and
+  cycles rather than reparsing strings. The first focused run caught that copying
+  regression; it was corrected before the passing rerun. New regressions are in
+  `tests/Stoner/core/test_storage_native_labels.py`; existing copy/TDI regressions
+  remain intact. Ownership/contracts, developer guidance and maintenance follow-ups
+  reflect this boundary. Public `Data.data` remains the read-only numerical snapshot;
+  no native getter or automatic schema-drift detection is claimed by this batch.
+  The starting checkout is `devel` at `721ee3db7`, with the existing uncommitted
+  8a/8b changes preserved. No commit, push, tag or publication is part of this batch.
+- **Stage 8c.1 validation:** the final focused gate passed **272 tests, five
+  warnings in 30.75 s** (`maintenance/runs/20261016-222235-focused-0732bdc0`).
+  Command: `./maintenance/run-baseline.ps1 -Check focused -Environment py314
+  -TestPaths tests/Stoner/core,tests/Stoner/analysis/test_operation_selection.py,tests/Stoner/analysis/test_storage_consumers.py`.
+  The subsequent full suite passed **776 tests, 708 warnings in 334.53 s**, with
+  two workers and **80% coverage**
+  (`maintenance/runs/20261016-222344-parallel-b19a098b`). Reproduce with
+  `./maintenance/run-baseline.ps1 -Check parallel -Environment py314`.
+  Both runs use Miniforge py314: Python 3.14.7, NumPy 2.5.2, pandas 3.0.5,
+  SciPy 1.18.0, xarray 2026.7.0 and pytest 9.1.1. Undefined-name checks pass for
+  changed Python files (`python -m ruff check --select F821 ...`); CRLF-aware
+  whitespace checks pass (`git -c core.whitespace=cr-at-eol diff --check`), without
+  normalising the checkout. All 243 tracked plot-cache files remain unchanged.
+  Conda and runtime report uncertainties 3.2.2, but its installed Python distribution
+  metadata reports 0.0.0, causing `pip check` to flag lmfit's requirement; no clean
+  pip-metadata check is claimed and the environment was not modified by this batch.
+  The maintainer subsequently supplied xarray in py312; its verification and focused
+  results are recorded below. Lower-bound dependency and hosted CI, installed-package
+  checks and repeated integrated benchmarks remain Stage 8f gates, not claims of
+  these Windows runs.
+- **Stage 8c.1 Python 3.12 validation:** after the maintainer supplied xarray,
+  Miniforge py312 was verified as Python 3.12.14, NumPy 2.5.3, pandas 3.0.5,
+  SciPy 1.18.1, xarray 2026.7.0 and pytest 9.1.1. The same focused command above,
+  substituting `-Environment py312`, passed **272 tests, five warnings in 47.62 s**
+  (`maintenance/runs/20261016-223251-focused-0d8931fd`). This validates the focused
+  owner/consumer boundary on Python 3.12 with current dependencies; it is not a
+  pandas 2.2/xarray 2024.10 lower-bound run or a full Python 3.12 suite.
+- **Stage 8c.1 documentation:** cached Sphinx HTML and the reviewed Windows
+  warning/API audit pass: **88 reviewed warnings, zero unexpected warnings**,
+  all five primary classes documented, no missing dynamic Data methods and no
+  removed API inventory objects relative to `maintenance/runs/stage7-doc-output/html`.
+  Final output: `maintenance/runs/stage8c1-doc-clean-output`; warning log and audit:
+  `maintenance/runs/stage8c1-doc-clean-warnings.log` and
+  `maintenance/runs/stage8c1-doc-clean-audit.json`. Build with `READTHEDOCS=True`,
+  `MPLBACKEND=Agg`, `QT_QPA_PLATFORM=offscreen`, and Miniforge
+  `conda run --no-capture-output -n py314 python -m sphinx -b html -E
+  maintenance/runs/stage8c1-docs-clean/doc maintenance/runs/stage8c1-doc-clean-output
+  -w maintenance/runs/stage8c1-doc-clean-warnings.log`.
+  The isolated source snapshot copies current tracked `Stoner`, `doc`, `sample-data`,
+  `scripts` and `README.rst` files, including working-tree edits. An earlier broad
+  copy included stale untracked autosummary stubs and omitted referenced assets;
+  the corrected tracked-source snapshot avoids both without modifying originals.
+  Direct Python Sphinx startup exited without diagnostics; `conda run` succeeded.
+  The developer guide's new example and Data API navigation were checked over
+  localhost; its HTML is byte-identical between that preview and the final clean
+  output. The temporary server and browser tab were closed after review.
+- **Stage 8c.2 implementation (2026-10-16):** `DataOwner.frame` returns the
+  authoritative ordinary DataFrame without a copy, substitute frame or NumPy
+  export. `replace_pandas(frame)` requires identical axes and column dtypes,
+  validates before publication, detaches incoming values, and retains stable IDs,
+  roles, exclusions, dtype, fill and typed/nested metadata. Frame attrs do not
+  provide Stoner side state. Failed replacement leaves the old frame live;
+  successful value/frame commits can retire it. Always reacquire after owner edits.
+  `Stoner/core/storage.py::_validate_table` shares validation between UUID-labelled
+  version-one packages and header-labelled owner state without copying values.
+  Owner reads/writes, saved exclusion/schema/metadata proxies and current Data
+  bridge/length/Setas entry boundaries reject detectable labels, shape and dtype
+  drift with `ValueError`. There is no inferred correspondence for duplicate-name
+  reorders or detection guarantee for same-shaped permutations/cosmetic annotations.
+  Getter calls and replacement reject active drafts; both editing contexts
+  revalidate the owner before committing and release their lock after failure.
+  Previously obtained native references cannot be intercepted: independent writes
+  are outside draft rollback, and concurrent native/owner mutation is unsupported.
+  `tests/Stoner/core/test_storage_native_owner.py` adds 36 cases for these contracts,
+  including no-copy/native-access instrumentation, current Data entry guards,
+  retained references, empty axes, raw integer/mask recovery and recursive metadata.
+  The initial focused run caught metadata-proxy attribute lookup recursing during
+  deepcopy reconstruction; unsupported attributes now raise before owner lookup.
+  The first full run then exposed the proxy's shared use by image/stack/frame
+  owners, which have no DataFrame validator. Data read checks now live on the
+  Data-only `_DataMetadata` proxy; the shared image proxy retains its existing
+  read behaviour. A new image/stack-owner regression and the real PNG/EDF/HDF5
+  autoload test cover this boundary. Final rerun evidence follows below.
+  No regression test was weakened. Existing 8a/8b/8c.1 work is preserved on `devel`
+  at `721ee3db7`; this batch does not commit, push, tag or publish.
+- **Stage 8c.2 focused validation:** after the shared-proxy correction, the expanded
+  py314 core/selection-consumer/real-image gate passed **309 tests, five warnings
+  in 60.36 s** (`maintenance/runs/20261016-224859-focused-3056d114`). Reproduce with
+  `./maintenance/run-baseline.ps1 -Check focused -Environment py314
+  -TestPaths tests/Stoner/core,tests/Stoner/analysis/test_operation_selection.py,tests/Stoner/analysis/test_storage_consumers.py,tests/Stoner/test_FileFormats.py::test_ImageAutoLoad`,
+  substituting `py312` for that interpreter. Verified py314 versions remain Python
+  3.14.7, NumPy 2.5.2, pandas 3.0.5, SciPy 1.18.0, xarray 2026.7.0 and pytest 9.1.1;
+  py312 remains Python 3.12.14, NumPy 2.5.3, pandas 3.0.5, SciPy 1.18.1, xarray
+  2026.7.0 and pytest 9.1.1. The final expanded py312 gate passed **309 tests, five
+  warnings in 70.72 s** (`maintenance/runs/20261016-225022-focused-d1a762fb`).
+- **Stage 8c.2 lower-dependency validation:** created an isolated pure-Conda
+  environment from the existing `tests/minimum-env.yml` at
+  `maintenance/runs/stage8c2-minimum-env`, without modifying py312/py314 or dependency
+  manifests. Verified Python 3.12.15, NumPy 2.0.2, pandas 2.2.3, SciPy 1.14.1,
+  xarray 2024.10.0 and pytest 9.1.1. The same expanded focused gate passed
+  **308 tests, one skipped, 16 warnings in 54.19 s**
+  (`maintenance/runs/20261016-225333-focused-45494112`). The existing
+  `test_legacy_pandas_metadata_loss` skips because it characterises the pandas 3
+  accessor lifecycle; no new skip or expected failure was added. All new native
+  owner/reference tests run on both pandas 2.2 and 3.0. Reproduce with the same
+  focused command and
+  `-EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env` instead of
+  `-Environment py314`. Environment creation used
+  `conda env create --prefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env
+  --file tests/minimum-env.yml`; its log is `maintenance/runs/stage8c2-minimum-env-create.log`.
+  This is focused lower-bound evidence, not the full hosted minimum-dependency gate.
+- **Stage 8c.2 full-suite exit:** after the shared-image-proxy correction, the
+  final runtime/test state passed **812 tests, 711 warnings in 501.39 s**, with
+  two workers and **80% coverage** on Miniforge py314. Evidence:
+  `maintenance/runs/20261016-225023-parallel-d80fed1b` (`run.log`, `pytest.xml`,
+  `coverage.xml`, `result.json`). Reproduce with
+  `./maintenance/run-baseline.ps1 -Check parallel -Environment py314`.
+  Undefined-name checks pass on the changed Python files with
+  `python -m ruff check --select F821`; CRLF-aware whitespace checks pass with
+  `git -c core.whitespace=cr-at-eol diff --check`. No permission/line-ending
+  normalisation was performed, and all 243 tracked plot-cache files remain
+  unchanged. Full lower-bound/hosted CI, installed-package checks and repeated
+  integrated benchmarks remain Stage 8f work. These local test timings are not
+  controlled performance measurements. Stage 8c.2 is complete; public `Data.data`
+  remains the numerical snapshot pending the 8c.3 consumer migration.
+- **Stage 8c.2 documentation:** cached HTML built from current tracked sources in
+  `maintenance/runs/stage8c2-docs`, preserving original generated stubs and caches.
+  `maintenance/runs/stage8c2-doc-output` passes the Windows warning/API audit:
+  **88 reviewed warnings, zero unexpected warnings**, all five primary classes
+  documented, no missing dynamic Data methods and no removed API objects compared
+  with Stage 8c.1. Evidence: `stage8c2-doc-warnings.log` and
+  `stage8c2-doc-audit.json` under `maintenance/runs`. Use the 8c.1 build/audit
+  commands with these paths, `conda run -n py314` and the same headless/cached
+  settings. Browser review over localhost verified the new owner-lifetime prose
+  and Data API navigation; the temporary tab/server were closed after review.
+- **Stage 8c.3a implementation (2026-10-16):** the first core numerical-consumer
+  batch migrates `asarray`, `column`, `search_index`, `search`, `columns` and
+  `DataFileOperatorsMixin.__eq__` independently of public `Data.data` reads.
+  `asarray()` uses the explicit annotated, read-only snapshot helper; columns
+  resolve through the owner. Numerical search predicates read the selected column,
+  and search assembles its result from one masked export. Rectangular column
+  selection retains duplicate/repeated positions, shape, dtype, fill, raw hidden
+  values and exclusions; the old `numpy.column_stack` path silently lost masks.
+  Boolean lists now dispatch as positional selectors before the interval branch,
+  and short Boolean selectors pad correctly. NumPy integer/floating scalar targets
+  are supported, including entries of numeric target arrays. Characterisation on
+  NumPy 2.0.2 versus 2.5.2 showed that numeric array pairs changed from discrete
+  targets to sequence-pattern intervals. Explicitly restricting interval patterns
+  to tuples/lists restores documented array matching across those versions while
+  retaining legacy two-item numeric-list intervals (including fitting row bounds).
+  Column iteration captures initial mask eligibility and yields current detached
+  owner columns, as before. Equality checks shape without conversion and exports
+  each operand once; its existing masked comparisons, independent NaN filtering,
+  header/metadata checks and omission of role/ID comparison remain unchanged.
+  `tests/Stoner/core/test_native_numerical_consumers.py` tests both current snapshots
+  and a test-only native DataFrame getter; a separate poison getter rejects any
+  public `.data` read by the selected consumers. Additional cases cover raw masks,
+  duplicate/repeated output columns, short Boolean forms, numeric scalar/array
+  targets, conversion counts, snapshot annotations/detachment and iterator lifetime.
+  The public getter, numerical mutation/return conventions, version and dependency
+  manifests remain unchanged. User search/upgrade guidance and ownership/contracts
+  now document the selector corrections and preserved legacy rules. Existing
+  uncommitted 8a/8b/8c.1/8c.2 work remains intact on `devel` at `721ee3db7`.
+- **Stage 8c.3a validation (2026-10-16):** the final focused command was
+  `./maintenance/run-baseline.ps1 -Check focused -Environment py314 -TestPaths tests/Stoner/core,tests/Stoner/test_Core.py,tests/Stoner/analysis/test_operation_selection.py,tests/Stoner/analysis/test_storage_consumers.py`:
+  **380 passed**, 6 warnings, 59.35 s. The same paths with `-Environment py312`
+  gave **380 passed**, 6 warnings, 87.24 s; with
+  `-EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env` they
+  gave **379 passed, 1 skipped**, 17 warnings, 83.59 s. The existing skip is the
+  pandas-3-specific legacy metadata-loss test. Reports are under
+  `maintenance/runs/20261016-231226-focused-780013db`,
+  `20261016-231425-focused-1f24ca06` and `20261016-231423-focused-d8d12ec6`.
+  Runtime versions were Python 3.14.7/NumPy 2.5.2/pandas 3.0.5/SciPy 1.18.0/
+  xarray 2026.7.0 for py314; Python 3.12.14/NumPy 2.5.3/pandas 3.0.5/
+  SciPy 1.18.1/xarray 2026.7.0 for py312; and Python 3.12.15/NumPy 2.0.2/
+  pandas 2.2.3/SciPy 1.14.1/xarray 2024.10.0 for the isolated minimum prefix.
+  All used pytest 9.1.1; no environment or dependency files changed in this batch.
+  Full-suite command
+  `./maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed:
+  **871 passed**, 711 warnings, **80% coverage**, 509.55 s, using two workers.
+  Evidence: `maintenance/runs/20261016-231419-parallel-6a0fab8e/run.log`,
+  `pytest.xml` and `coverage.xml` in that report directory.
+  Targeted Ruff `F821` checks and
+  `git -c core.whitespace=cr-at-eol diff --check` passed. All 243 tracked
+  `doc/plot_cache` files are unchanged. A clean snapshot of current tracked source
+  built with `READTHEDOCS=True`, `MPLBACKEND=Agg` and `QT_QPA_PLATFORM=offscreen`:
+  **88 reviewed warnings, no unexpected warnings**, all five primary classes
+  documented, no missing dynamic Data methods or removed API entries against the
+  8c.2 output. Evidence: `maintenance/runs/stage8c3a-doc-build.log`,
+  `stage8c3a-doc-warnings.log`, `stage8c3a-doc-audit.json` and
+  `stage8c3a-doc-output`. Browser review over localhost verified the search examples,
+  search API navigation, upgrade notes and developer guidance; the temporary tab
+  and server were closed. These are source-checkout results; installed-package,
+  hosted matrix and performance exit gates remain Stage 8f work.
+- **Stage 8c.3b-8e implementation (2026-10-16):** `Data.data` now returns the
+  owner's actual header-labelled DataFrame. DataFrame assignment uses the validated
+  fixed-schema replacement route; numerical assignment retains the explicit
+  positional replacement interface. Rolling windows read one current masked export
+  per yield, preserving masks, raw values, dtype and fill without clones or
+  unmasking concatenations. They preserve one-prefix/one-suffix wrapping on short
+  inputs; centre-exclusion bounds now clip instead of selecting unrelated rows via
+  negative endpoints. Selection/splitting, TDI input/output, records, transpose,
+  display, HDF output, folder indexing and image-to-Data conversion use explicit
+  numerical boundaries. XOR now produces deterministic Boolean comparisons for
+  equal inputs instead of uninitialised `empty_like` output.
+  `ImageFile.image`/`.data` and `ImageStack.stack` expose actual root Datasets;
+  `ImageFile.imarray` and stack `imarray` retain read-only numerical snapshots.
+  Native fixed-schema Dataset replacements copy their inputs and retain typed
+  metadata/frame identities. Image/stack owners reject detectable coordinate,
+  extent, variable, attribute and dtype drift after native access; native getters
+  and replacements respect transaction locks. Baselines track geometry without
+  duplicating intensity buffers. Unexposed internal states retain normal validated
+  owner edit paths without repeatedly scanning native drift. Borrowed frame/crop
+  getters resolve current views, with direct view write-back unsupported; owner
+  pixel/mask transactions retain their shared/stable-ID semantics. Masked ImageFile
+  assignment now explicitly exports exclusions rather than relying on raw NumPy
+  coercion. Arithmetic, display/save, folder, Kerr, scan-frame and real-format
+  callers use numerical adapters. No channel-axis redesign or wrapper expansion
+  is included. `where` remains supported by curve_fit/image mean/stack average;
+  neighbourhood filters and other fitting engines reject it explicitly before
+  backend dispatch. Guides, examples, installed-package smoke checks and numerical
+  regressions use the new public types or explicit exports as appropriate.
+  `tests/Stoner/core/test_native_public_storage.py` adds actual native identity,
+  no-export, replacement, drift, transaction, reference, ragged-padding,
+  frame/crop, masked assignment, short-window and unsupported-selection checks.
+  All pre-existing migration work is retained. The maintainer authorised committing
+  and pushing the accumulated migration to `devel` after local validation in this
+  session, so hosted final-interface and installed-distribution checks can run.
+- **Stage 8f local validation (2026-10-17):** final runtime fingerprint
+  `cae0153e76d7a1babf73f92e4d57680e9166566dacd3b70ab633aad1ac0cfdf0`.
+  `./maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
+  **898 tests**, 708 warnings, **81% coverage**, 260.51 s with two workers.
+  Evidence: `maintenance/runs/20261016-235733-parallel-42fd0791`.
+  The final focused command uses
+  `-Check focused -EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env -TestPaths tests/Stoner/core,tests/Stoner/Image,tests/Stoner/analysis/test_operation_selection.py,tests/Stoner/analysis/test_storage_consumers.py`:
+  **583 passed, 1 existing pandas-3-specific skip**, 342 warnings, 88.27 s.
+  Evidence: `maintenance/runs/20261016-235732-focused-79ec2298`. Runtime dependency
+  versions remain those recorded in 8c.3a; no environment/dependency changes were
+  made. The last targeted native drift/ownership/placeholder guard check passed
+  **91 tests** (`maintenance/runs/stage8-native-guards-final.log`). The final
+  installed-package smoke script's source preflight passes native type/identity,
+  recoverable raw exclusions, shared frame writes, resource and TIFF checks;
+  actual clean installed-import checks remain hosted evidence.
+  Cached Sphinx build and API audit pass with **88 reviewed warnings, zero
+  unexpected warnings**, all primary classes documented, no missing dynamic Data
+  methods and no removed API objects against 8c.3a. Evidence:
+  `maintenance/runs/stage8-exit-doc-build.log`, `stage8-exit-doc-warnings.log`,
+  `stage8-exit-doc-audit.json` and `stage8-exit-doc-output`. Browser inspection
+  over localhost verified native table/image/stack guidance and navigation; the
+  temporary tab/server were closed. All 243 tracked plot-cache files are unchanged.
+  Ruff `F821` over runtime/tests/changed maintenance tools and staged whitespace
+  checks pass. New tests are indexed with canonical `tests/Stoner` capitalisation.
+- **Stage 8f performance review:** the first complete integrated measurement
+  passed 16/19 pairs, flagging small row appends and both frame edits. Profiling
+  found repeated validation of trusted internal table replacements and repeated
+  construction/validation of borrowed frame views. Owners now track whether the
+  current backend object has escaped through a native getter: exposed native
+  state still validates at every boundary, while already-validated unexposed
+  state avoids redundant scans. Retired references are tracked by identity without
+  retaining old measurement buffers. Shared handles validate root state and
+  liveness without constructing an image merely to validate it. Row insertion
+  retains one complete validation before adoption. All four flagged workload/size
+  pairs then passed, with small appends 10.285 -> 12.618 ms, small frame edits
+  0.492 -> 3.154 ms, large appends 53.259 -> 64.929 ms and large frame edits
+  0.516 -> 3.445 ms. The complete final benchmark passed **19/19 pairs**, five
+  repetitions with separate traced allocations, against the accepted legacy
+  limits. Evidence: `maintenance/runs/stage8-exit-integrated.json` and `.log`;
+  its production fingerprint matches the final runtime above. Large appends
+  measured 46.102 -> 57.577 ms, stack insertion 234.237 -> 11.371 ms and frame
+  editing 0.421 -> 3.344 ms. `maintenance/runs/stage8-versus-stage7.json` also
+  compares all 19 production measurements with Stage 7: large appends
+  61.440 -> 57.577 ms, large conversion 12.538 -> 4.248 ms, large frame editing
+  3.222 -> 3.344 ms; small appends 9.840 -> 15.713 ms remain inside the agreed
+  legacy limit. Cross-session Stage 7 timings are descriptive, not a claim that
+  every difference is caused by this change. Development or interrupted
+  source-fingerprint runs do not close the gate.
+  Final native-read allocations pass against masked exports: table **2,401 vs
+  3,604,549 bytes**, image **7,234 vs 789,339**, stack **133,305 vs 789,799**.
+  Regional image selection peaks at 1,313,963 bytes and selected mean at 1,379,622
+  bytes. Evidence: `maintenance/runs/stage8-exit-native-allocations.json`, including
+  resolved environment and the same final runtime fingerprint. These are allocation
+  measurements, not a claim that native computations automatically apply masks.
+- **Next:** complete Stage 8f on the frozen runtime, commit/push the reviewed
+  migration, verify the exact-revision hosted matrix/minimum/installed-package
+  results, and record final evidence here. Stage 9 remains broader wrapper
+  simplification. Retain scientific fixtures and all 243 cached plots. Publication
+  remains a separately authorised release action.
   The maintainer subsequently authorised committing this migration and version
   `0.12.0a1` to `devel` and pushing to origin. Publication remains a separate action.
 

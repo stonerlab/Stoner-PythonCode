@@ -34,7 +34,7 @@ def test_text_input(fixture, kind):
             assert stream.read() == ""
         elif kind == "generator":
             assert list(stream) == []
-    np.testing.assert_equal(result.data, expected.data)
+    np.testing.assert_equal(result.to_numpy(), expected.to_numpy())
     assert result.column_headers == expected.column_headers
     # Loader provenance is added by Data(filename), not by the text operator.
     result["Loaded as"] = expected["Loaded as"]
@@ -50,7 +50,7 @@ def test_text_stream_starts_at_current_position():
         stream.readline()
         result = Data() << stream
         assert not stream.closed
-    np.testing.assert_equal(result.data, Data(source).data)
+    np.testing.assert_equal(result.to_numpy(), Data(source).to_numpy())
 
 
 def test_invalid_text_leaves_stream_open_and_receiver_unchanged():
@@ -79,9 +79,9 @@ def test_tdi2_writer_output(kind):
         if kind in {"stringio", "file"}:
             assert not inputs[kind].closed
     assert result.shape == (3, 2)
-    np.testing.assert_equal(result.data[:, 0], [1., 2., 3.])
-    np.testing.assert_equal(result.data[:2, 1], [4., 5.])
-    assert np.ma.getmaskarray(result.data)[2, 1]
+    np.testing.assert_equal(result.to_numpy()[:, 0], [1., 2., 3.])
+    np.testing.assert_equal(result.to_numpy()[:2, 1], [4., 5.])
+    assert np.ma.getmaskarray(result.to_numpy())[2, 1]
     assert result.column_headers == ["Voltage (V)", "Current (A)"]
     assert result["count"] == 3 and type(result["count"]) is int
     assert result["enabled"] is False
@@ -108,10 +108,10 @@ def test_real_tdi2_export(kind):
         if kind in {"stringio", "file"}:
             assert not inputs[kind].closed
     assert result.shape == (401, 8)
-    np.testing.assert_equal(result.data[:, 0], np.arange(401))
+    np.testing.assert_equal(result.to_numpy()[:, 0], np.arange(401))
     assert result["counter"]["collect_data"] is True
     assert result["counter"]["clear_filter"] == "True"
     assert result["alert"]["message_expr"] == "'Alert'"
     assert result.column_headers == text.splitlines()[0].split("\t")[1:]
     expected = np.loadtxt(source, delimiter="\t", skiprows=1, usecols=range(1, 9), comments=None)
-    np.testing.assert_allclose(result.data, expected)
+    np.testing.assert_allclose(result.to_numpy(), expected)

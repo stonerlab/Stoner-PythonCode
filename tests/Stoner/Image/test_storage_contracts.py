@@ -20,7 +20,7 @@ def test_ragged_stack_extents_order_and_item_writeback():
     assert stack["small"].metadata["Field"] == 10
     assert stack["large"].metadata["Field"] == -10
     assert stack.imarray.dtype == np.dtype("uint16")
-    np.testing.assert_array_equal(stack[0].image, np.arange(6).reshape(2, 3))
+    np.testing.assert_array_equal(stack[0].imarray, np.arange(6).reshape(2, 3))
     stack[0][1, 2] = 77
     assert stack.imarray[0, 1, 2] == 77
     stack[0].mask[1, 2] = True
@@ -35,7 +35,7 @@ def test_image_mask_reduction_and_recovery():
     image.mask = np.zeros(image.shape, dtype=bool)
     image.mask[1, 1] = True
     assert image.mean() == 2
-    assert image.image.dtype == np.dtype("uint16")
+    assert image.imarray.dtype == np.dtype("uint16")
     image.mask[1, 1] = False
     assert image[1, 1] == 100
     assert image.mean() == 26.5

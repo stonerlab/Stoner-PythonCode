@@ -30,7 +30,7 @@ def test_eq_operator():
     selfd = Data(path.join(path.dirname(__file__), "..", "CoreTest.dat"), setas="xy")
     selfd2 = selfd.clone
     selfd3 = selfd.clone
-    selfd3.data = selfd3.data[:, 1]
+    selfd3.data = selfd3.to_numpy()[:, 1]
     assert selfd == selfd2
     assert not selfd == 1
     assert not selfd3 == selfd
@@ -46,7 +46,7 @@ def test_modulo_operators():
     selfd = Data(path.join(path.dirname(__file__), "..", "CoreTest.dat"), setas="xy")
     t = [selfd % 1, selfd % "Y-Data", (selfd % re.compile(r"Y\-"))]
     for ix, tst in enumerate(["integer", "string", "regexp"]):
-        assert all(t[ix].data == np.atleast_2d(selfd.column(0)).T), f"Failed % operator with {tst} index"
+        assert all(t[ix].to_numpy() == np.atleast_2d(selfd.column(0)).T), f"Failed % operator with {tst} index"
     d = selfd % 1
     assert d.shape[1] == 1, "Column division failed"
     assert len(d.setas) == d.shape[1], "Column removal messed up setas"
