@@ -1,7 +1,7 @@
 # Data storage migration plan
 
 Agreed direction: 2026-09-13. Target branch: `devel`.
-Status: Stages 1-7 and Stage 8a-8e implemented; Stage 8f final native-interface validation is in progress.
+Status: Stages 1-8 complete; Stage 9 wrapper simplification has not started.
 Target release: `0.12.0a1` (version set; not published).
 Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
 new version. Python 3.15 support is conditional on its public release and support
@@ -348,7 +348,7 @@ necessary. Complete its evidence before moving to dependent work.
     Python 3.15 remains separately pending: as of 2026-09-20 its latest official
     release is [3.15.0rc2](https://www.python.org/downloads/release/python-3150rc2/),
     with final release scheduled for 2026-10-01. No 3.15 compatibility is claimed.
-- [ ] **8. Expose native storage through the public attributes.** After Stage 7
+- [x] **8. Expose native storage through the public attributes.** After Stage 7
   storage validation, establish the native public interface before simplifying
   wrappers. The maintainer's
   target is a pandas DataFrame at `Data.data` and native xarray objects at
@@ -409,7 +409,7 @@ necessary. Complete its evidence before moving to dependent work.
     attribute types, direct editing restrictions and selected/full-data result scope.
     Gate: no consumer relies accidentally on implicit masked-array behaviour;
     broad wrapper simplification and unrelated backend conveniences remain Stage 9.
-  - [ ] **8f. Native-interface exit gate.** Run the complete suite, supported/lower
+  - [x] **8f. Native-interface exit gate.** Run the complete suite, supported/lower
     dependency CI, installed-package checks and documentation audit on the final
     interface. Repeat integrated benchmarks against the recorded legacy comparison
     and Stage 7 production baseline; measure native reads and selection allocations.
@@ -420,8 +420,8 @@ necessary. Complete its evidence before moving to dependent work.
 
 ### Stage 8 selection and masking contract
 
-This is planned behaviour, not the current public API. The motivating workflow is
-to fit a background using part of a measurement, then evaluate and apply that model
+Stage 8 implements this contract through the documented supported operations. The
+motivating workflow is to fit a background using part of a measurement, then evaluate and apply that model
 over the complete measurement. Original values stay available throughout; clearing
 a temporary selection must never require reconstructing or restoring values.
 
@@ -1458,11 +1458,34 @@ matches the selected environment.
   image 7,569 vs 789,686 and stack 133,313 vs 789,754; selected-image input/mean
   peaks are 1,314,163/1,379,814 bytes (`stage8-complete-native-allocations.json`).
   Static/whitespace checks pass and all 243 tracked plot-cache files remain unchanged.
-- **Next:** commit/push the validated keyword follow-up and verify exact-revision
-  hosted gates, then close Stage 8.
-  Stage 9 remains broader wrapper
-  simplification. Retain scientific fixtures and all 243 cached plots. Publication
-  remains a separately authorised release action.
+- **Stage 8f final hosted evidence (2026-10-17, `449c2eb251adf1477e124ed8769b306772101614`):**
+  all four full matrix cells passed **909 tests** each: Linux Python 3.12
+  (180.86 s), 3.13 (177.29 s), 3.14 (180.39 s), and macOS Python 3.14
+  (498.54 s). Final result publishing also passed.
+  [Full matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38981834098).
+  The supported lower-dependency full suite passed **908 tests, 1 existing skip**,
+  6,942 warnings, 172.45 s, with Python 3.12/NumPy 2.0.2/pandas 2.2.3/
+  SciPy 1.14.1/xarray 2024.10.0.
+  [Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38981834059).
+  Fresh wheel and sdist installs on Python 3.12 and 3.14 passed archive-content,
+  out-of-checkout import provenance, native-interface, resource and TIFF checks.
+  [Installed distributions](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38981834151).
+  Hosted documentation passed with **61 reviewed Linux warnings, zero unexpected**
+  against the unchanged warning baseline.
+  [Documentation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38981842460).
+  Local evidence under `maintenance/runs`: `stage8-complete-hosted-matrix.log`,
+  `stage8-complete-hosted-minimum.log`, `stage8-complete-hosted-packages.log`,
+  `stage8-complete-hosted-docs.log` and
+  `stage8-complete-hosted-doc-warning-audit.json`.
+  These hosted gates and the matching local runtime fingerprint above close Stage 8.
+  The subsequent completion record changes only the two Markdown plans; validation
+  remains attached to this exact runtime revision, with no source, test or dependency
+  changes in the completion record.
+- **Next: Stage 9.** Inventory existing methods for backend delegation and choose
+  the first bounded wrapper family. Define its selection/alignment, exclusions,
+  mutation/copy and return contracts before implementing it; retain the validated
+  native ownership interface. Stage 9 has not started. Retain scientific fixtures
+  and all 243 cached plots. Publication remains a separately authorised release action.
   The maintainer subsequently authorised committing this migration and version
   `0.12.0a1` to `devel` and pushing to origin. Publication remains a separate action.
 

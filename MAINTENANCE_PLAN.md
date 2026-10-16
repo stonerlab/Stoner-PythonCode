@@ -135,21 +135,16 @@ completed repository repair programme.
 
 ## Known limitations and follow-ups
 
-- [ ] **Data storage migration on `devel`:** follow
+- [ ] **Native storage wrapper follow-up on `devel` (Stage 9):** follow
   [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
-  architecture, session-sized batches, validation gates and current handover.
-  Stages 1-7 and 8a-8b are complete; Stage 7 records release-validation evidence.
-  Stage 8c.1 implements header-labelled Data owner frames/drafts while retaining
-  UUID-labelled packages. Stage 8c.2 adds internal native access, fixed-schema
-  replacement, drift guards and reference-lifetime checks. Stage 8c.3a migrates
-  extraction/search/column iteration and equality to explicit numerical boundaries.
-  Stage 8c.3 now migrates rolling windows and remaining numerical consumers and
-  exposes the actual DataFrame. Stage 8d exposes native image/stack Datasets with
-  fixed-schema replacement and drift validation; Stage 8e updates callers and
-  documents explicit numerical/selection boundaries. Stage 8f final validation is
-  in progress; see the migration handover for evidence and remaining gates.
-  Native storage exposure precedes wrapper simplification in Stages 8-9. This is separate
-  from the current release preparation above.
+  architecture, validation gates and current handover. Stages 1-8 are complete:
+  `Data.data` exposes its actual DataFrame; `ImageFile.image` and `ImageStack.stack`
+  expose native Datasets with explicit numerical exports, selection, exclusion,
+  ownership and mutation contracts. Final full hosted suites passed 909 tests in
+  every supported matrix cell; lower dependencies, installed distributions,
+  documentation and all 19 integrated benchmark pairs also passed.
+  Next: inventory backend delegation and choose the first bounded wrapper family
+  under Stage 9's contract policy. This is separate from release preparation above.
 
 - **MAXIMUS:** image and point-scan readers select the first region and do not
   implement region-to-file mapping or explicitly reject multi-region inputs.
