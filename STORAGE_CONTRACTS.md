@@ -263,6 +263,12 @@ equal inputs now returns deterministic Boolean comparisons. Neighbourhood image
 methods reject `where`; other fitting engines reject it before optimiser dispatch.
 The initial per-operation API remains `curve_fit`, image `mean` and stack `average`;
 native backend calculations apply neither Stoner exclusions nor hidden selection.
+The final keyword audit also rejects unsupported top-level `where` before work in
+legacy numerical transforms/utilities accepting keyword dictionaries. Regression
+cases verify raw values, masks, schema and typed metadata remain unchanged, and
+callbacks are not invoked. Column queries through `select(where=value)` retain
+their existing namespace; `apply(..., _extra={"where": value})` still explicitly
+forwards a callback argument independently of operation selection.
 
 ### Worked examples and required assertions
 

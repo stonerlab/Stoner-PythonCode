@@ -1354,7 +1354,7 @@ matches the selected environment.
   All pre-existing migration work is retained. The maintainer authorised committing
   and pushing the accumulated migration to `devel` after local validation in this
   session, so hosted final-interface and installed-distribution checks can run.
-- **Stage 8f local validation (2026-10-17):** final runtime fingerprint
+- **Stage 8f initial native-interface validation (2026-10-17, `a6235d922`):** runtime fingerprint
   `cae0153e76d7a1babf73f92e4d57680e9166566dacd3b70ab633aad1ac0cfdf0`.
   `./maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
   **898 tests**, 708 warnings, **81% coverage**, 260.51 s with two workers.
@@ -1408,9 +1408,59 @@ matches the selected environment.
   bytes. Evidence: `maintenance/runs/stage8-exit-native-allocations.json`, including
   resolved environment and the same final runtime fingerprint. These are allocation
   measurements, not a claim that native computations automatically apply masks.
-- **Next:** complete Stage 8f on the frozen runtime, commit/push the reviewed
-  migration, verify the exact-revision hosted matrix/minimum/installed-package
-  results, and record final evidence here. Stage 9 remains broader wrapper
+- **Stage 8f initial hosted evidence (`a6235d922`):** all four full matrix cells
+  passed **898 tests** each: Linux Python 3.12/3.13/3.14 and macOS Python 3.14;
+  final result publishing also passed. [Matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38979578424).
+  The full lower-dependency suite passed **897 tests, 1 existing skip** on NumPy
+  2.0.2/pandas 2.2.3/SciPy 1.14.1/xarray 2024.10.0.
+  [Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38979578508).
+  Fresh wheel/sdist installs, archive assets and native-interface/resource/TIFF
+  smoke checks passed on both Python 3.12 and 3.14.
+  [Installed distributions](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38979578436).
+  Hosted documentation passed with **61 reviewed Linux warnings**, no unexpected
+  warnings after normalising GitHub's escaped terminal colours against the unchanged
+  Linux warning baseline.
+  [Documentation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/38979611113).
+  Local log copies: `maintenance/runs/stage8-hosted-matrix-initial.log`,
+  `stage8-hosted-minimum.log`, `stage8-hosted-packages.log`, `stage8-hosted-docs.log`
+  and `stage8-hosted-doc-warning-audit.json`.
+- **Stage 8e final keyword audit:** legacy numerical methods accepting arbitrary
+  keyword dictionaries could silently ignore `where`. `_reject_where` now rejects
+  it before work/mutation in `apply`, `decompose`, `integrate`, `bin`,
+  `outlier_detection`, `peaks`, `find_peaks`, `section`, `swap_column` and the
+  `hysteresis_correct` utility. Their existing numerical and callback behaviour
+  remains unchanged without this unsupported top-level keyword. `Data.select`
+  keeps its column-query namespace, including columns named `where`; `Data.apply`
+  retains explicit callback arguments through `_extra={"where": value}`. The guide
+  and interchange contract document those distinctions. New tests check rejection
+  before callback/backend work, unchanged raw values/masks/schema/typed metadata,
+  and preserved query/callback namespaces. The reusable native benchmark now
+  explicitly selects the source checkout before importing Stoner.
+- **Stage 8f final keyword-follow-up local evidence:** runtime fingerprint
+  `6e0b72f062eca9d4287cb5800ecfd44064698cb04436ce6466950e3d20b3d281`.
+  The full py314 command above passed **909 tests**, 708 warnings, **81% coverage**,
+  225.17 s (`maintenance/runs/20261017-002136-parallel-18c560cc`). The same focused
+  minimum-dependency paths passed **594 tests, 1 existing skip**, 342 warnings,
+  77.00 s (`maintenance/runs/20261017-002136-focused-016a7e85`). The final namespace
+  and selection regression rerun passed **50 tests**, including explicitly
+  forwarded callback `where` (`maintenance/runs/stage8-keyword-final.log`). Cached
+  Sphinx rebuilt with **88 reviewed warnings**, zero unexpected warnings, no missing
+  dynamic methods or removed API entries (`stage8-complete-doc-build.log`,
+  `stage8-complete-doc-warnings.log`, `stage8-complete-doc-audit.json` and
+  `stage8-complete-doc-output` under `maintenance/runs`). The revised callback/query
+  guidance was visually checked over localhost; its temporary tab/server were closed.
+  Final integrated benchmarks passed **19/19 pairs**, five repetitions with separate
+  traced allocations (`maintenance/runs/stage8-complete-integrated.json` and `.log`).
+  Its runtime fingerprint matches the native allocation report. All 19 workloads
+  are also compared with Stage 7 in `stage8-complete-versus-stage7.json`: large
+  appends 61.440 -> 56.713 ms, conversion 12.538 -> 4.039 ms and frame edits
+  3.222 -> 3.291 ms. Final native-read peaks are table 2,401 vs 3,604,549 bytes,
+  image 7,569 vs 789,686 and stack 133,313 vs 789,754; selected-image input/mean
+  peaks are 1,314,163/1,379,814 bytes (`stage8-complete-native-allocations.json`).
+  Static/whitespace checks pass and all 243 tracked plot-cache files remain unchanged.
+- **Next:** commit/push the validated keyword follow-up and verify exact-revision
+  hosted gates, then close Stage 8.
+  Stage 9 remains broader wrapper
   simplification. Retain scientific fixtures and all 243 cached plots. Publication
   remains a separately authorised release action.
   The maintainer subsequently authorised committing this migration and version

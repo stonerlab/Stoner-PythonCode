@@ -17,6 +17,7 @@ from ..tools import isiterable, istuple
 from ..tools.typing import Data, Index, Kwargs, NumericArray
 from .utils import threshold as _threshold
 from .utils import split_up_down
+from ..core.selection import _reject_where
 
 
 def apply(
@@ -61,6 +62,7 @@ def apply(
         (:py:class:`~Stoner.core.data.Data`):
             The newly modified Data object.
     """
+    _reject_where(kwargs, "apply")
     if col is None:
         col = datafile.setas.get("y", [0])[0]
     col = datafile.find_col(col)
@@ -151,6 +153,7 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
             :include-source:
             :outname: decompose
     """
+    _reject_where(kwords, "decompose")
     if xcol is None and ycol is None:
         if "_startx" in kwords:
             startx = kwords["_startx"]
@@ -256,6 +259,7 @@ def integrate(
         x-data is monotonically increasing. If it isnot and *simpson* has been requested, a warning is issued and it
         falls back to trapezoidal integration.
     """
+    _reject_where(kwargs, "integrate")
     _ = datafile._col_args(xcol=xcol, ycol=ycol)
 
     working = datafile.search(_.xcol, bounds)

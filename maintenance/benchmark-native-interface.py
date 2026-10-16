@@ -5,6 +5,7 @@ import json
 import hashlib
 from pathlib import Path
 import platform
+import sys
 from statistics import median
 import time
 import tracemalloc
@@ -12,6 +13,8 @@ import tracemalloc
 import numpy as np
 import pandas as pd
 import xarray as xr
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import Stoner
 
 from Stoner import Data, ImageFile, ImageStack

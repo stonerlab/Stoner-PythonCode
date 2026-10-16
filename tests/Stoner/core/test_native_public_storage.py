@@ -177,3 +177,50 @@ def test_other_fitting_engines_reject_where_explicitly(method):
     data = Data(np.column_stack((np.arange(6.), 2 * np.arange(6.) + 1)), setas='xy')
     with pytest.raises(TypeError, match='does not support where'):
         getattr(data, method)(lambda x, a, b: a * x + b, where=np.ones(6, dtype=bool))
+
+
+@pytest.mark.parametrize('method', ['apply', 'decompose', 'integrate', 'bin', 'outlier_detection',
+                                   'peaks', 'find_peaks', 'section', 'swap_column'])
+def test_unsupported_numerical_selections_fail_before_work_or_publication(method):
+    """Reject where even when legacy keyword dictionaries would otherwise ignore it."""
+    data = Data(np.column_stack((np.arange(7.), np.arange(7.)**2)), setas='xy')
+    data.mask[0, 1] = True
+    data.metadata['run{String}'] = '001'
+    before = data.export_storage()
+
+    def callback(row, **kwargs):
+        pytest.fail('Unsupported selection reached the row callback')
+
+    args = (callback,) if method == 'apply' else ((0, 1),) if method == 'swap_column' else ()
+    with pytest.raises(TypeError, match='does not support where'):
+        getattr(data, method)(*args, where=np.ones(len(data), dtype=bool))
+    after = data.export_storage()
+    pd.testing.assert_frame_equal(after.values, before.values)
+    np.testing.assert_array_equal(after.excluded, before.excluded)
+    assert after.schema == before.schema and data.metadata['run'] == '001'
+    assert data.metadata.type('run') == 'String'
+
+
+def test_hysteresis_utility_rejects_unsupported_selection():
+    """Reject selection before a utility loads, fits or edits a measurement."""
+    from Stoner.analysis.utils import hysteresis_correct
+
+    data = Data(np.column_stack((np.arange(7.), np.arange(7.))), setas='xy')
+    before = data.clone
+    with pytest.raises(TypeError, match='does not support where'):
+        hysteresis_correct(data, where=np.ones(len(data), dtype=bool))
+    assert data == before
+
+
+def test_select_retains_column_query_keyword_namespace():
+    """Keep column queries and explicitly forwarded callback names independent."""
+    data = Data(np.arange(6).reshape(3, 2), column_headers=['where', 'signal'])
+    result = data.select(where=2)
+    np.testing.assert_array_equal(result.to_numpy(), [[2, 3]])
+    assert data.shape == (3, 2)
+
+    def adjust(row, where):
+        return row[1] + where
+
+    data.apply(adjust, col=1, _extra={'where': 3})
+    np.testing.assert_array_equal(data.column('adjust'), [4, 6, 8])

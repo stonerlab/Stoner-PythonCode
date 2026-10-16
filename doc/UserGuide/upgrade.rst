@@ -45,6 +45,14 @@ arrays consistently select discrete targets; this fixes NumPy-version-dependent
 interval dispatch. Use a tuple for an interval. Two-item numeric lists retain
 their legacy interval meaning.
 
+Operation selections through ``where`` are supported by ``Data.curve_fit``,
+``ImageFile.mean`` and ``ImageStack.average``. Unsupported numerical transforms
+now reject this keyword before work or mutation, including methods whose legacy
+keyword dictionaries silently ignored it. For a row callback requiring its own
+argument named ``where``, use ``Data.apply(callback, _extra={"where": value})``
+to pass it explicitly to the callback. ``Data.select`` retains its separate column-query
+namespace, so ``data.select(where=value)`` still queries a column named ``where``.
+
 Python Version Support
 ======================
 

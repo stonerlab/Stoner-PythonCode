@@ -108,6 +108,11 @@ publishes result columns/metadata only after every fit and draft update succeeds
   raw NaN and is excluded. Existing result metadata/coordinates and weight rules
   remain in force. Unsupported methods must reject `where`, not forward it to a
   backend accidentally. Neighbourhood methods get individual policies in 8e.
+  Audited table transforms also reject unsupported `where` before work or mutation.
+  Pass a row callback's own `where` argument through `Data.apply(..., _extra={"where": value})`
+  rather than as a top-level selection keyword. `Data.select` retains its distinct column-query
+  namespace: `select(where=value)` queries a column named `where`, not an operation
+  selection. Plotting backend keywords likewise do not imply a Stoner input selection.
 
 ### Native values, labels and exclusions
 

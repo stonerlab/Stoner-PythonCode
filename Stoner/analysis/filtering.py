@@ -12,6 +12,7 @@ from ..core.numerical import numerical_result
 from ..tools import isiterable, islistlike, isnone, ordinal
 from .utils import GetAffineTransform, _twoD_fit
 from .utils import outlier as _outlier
+from ..core.selection import _reject_where
 
 
 def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
@@ -304,6 +305,7 @@ def bin(
     See Also:
         User Guide section :ref:`binning_guide`
     """
+    _reject_where(kwargs, "bin")
     if None in (xcol, ycol):
         cols = datafile.setas._get_cols()
         if xcol is None:
@@ -759,6 +761,7 @@ def outlier_detection(
             :include-source:
             :outname: outlier
     """
+    _reject_where(kwargs, "outlier_detection")
     if func is None:
         func = _outlier
 

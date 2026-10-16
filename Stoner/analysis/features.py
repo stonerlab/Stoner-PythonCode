@@ -10,6 +10,7 @@ from Stoner.core.exceptions import assertion
 from Stoner.tools import isiterable, istuple
 
 from .utils import threshold
+from ..core.selection import _reject_where
 
 
 def peaks(datafile, **kwargs):
@@ -57,6 +58,7 @@ def peaks(datafile, **kwargs):
     See Also:
         User guide section :ref:`peak_finding`
     """
+    _reject_where(kwargs, "peaks")
     width = kwargs.pop("width", int(len(datafile) / 20))
     peaks = kwargs.pop("peaks", True)
     troughs = kwargs.pop("troughs", False)
@@ -204,6 +206,7 @@ def find_peaks(datafile, **kwargs):
     See Also:
         User guide section :ref:`peak_finding`
     """
+    _reject_where(kwargs, "find_peaks")
     distance = kwargs.pop("distance", None)
     width = kwargs.pop("width", None)
     plateau_size = kwargs.pop("plateau_size", None)

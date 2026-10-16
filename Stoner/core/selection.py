@@ -5,6 +5,12 @@ import pandas as pd
 import xarray as xr
 
 
+def _reject_where(options, operation):
+    """Reject unsupported operation selections before numerical work or mutation."""
+    if "where" in options:
+        raise TypeError(f"{operation} does not support where; use explicit bounds or a separate selected object")
+
+
 def resolve_selection(where, target):
     """Return a Boolean selection matching a table's rows or an intensity array.
 

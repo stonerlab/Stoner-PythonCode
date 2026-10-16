@@ -9,6 +9,7 @@ from scipy.stats import sem
 
 from ..tools import format_error, make_Class, make_Data
 from .fitting.models.generic import linear
+from ..core.selection import _reject_where
 
 __all__ = [
     "outlier",
@@ -551,6 +552,7 @@ def hysteresis_correct(data, **kwargs):
             The original loop with the x and y columns replaced with corrected data and extra metadata added to give
             the background susceptibility, offset in moment, coercive fields and saturation magnetisation.
     """
+    _reject_where(kwargs, "hysteresis_correct")
     cls = make_Data(None)
     if isinstance(data, cls):
         cls = type(data)

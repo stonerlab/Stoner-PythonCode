@@ -13,6 +13,7 @@ from ..compat import _pattern_type, int_types, str2bytes
 from ..tools import all_type, format_error, isiterable, make_Class, operator
 from ..tools.file import HDFFileManager, file_dialog
 from ..tools.widgets import RangeSelect
+from .selection import _reject_where
 
 try:
     import pandas as pd
@@ -431,6 +432,7 @@ def section(datafile, x=None, y=None, z=None, r=None, accuracy=0.0, **kwargs):
     would extract points along the line 2y=3x+2 (note the use of an < operator to avoid floating point rounding
     errors) where the z-co-ordinate is 2.
     """
+    _reject_where(kwargs, "section")
     cols = datafile.setas._get_cols()
     tmp = datafile.clone
     xcol = cols["xcol"] if cols.has_xcol else None
@@ -986,6 +988,7 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
         element of the list. Thus in principle the @swp could contain
         lists of lists of tuples
     """
+    _reject_where(kwargs, "swap_column")
     from . import storage_operations
     return storage_operations.swap_column(datafile, *swp, headers_too=headers_too, **kwargs)
 
