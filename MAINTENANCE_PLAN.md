@@ -153,7 +153,8 @@ reviewed inference/test-utility advisories did not block the alpha.
   61 reviewed warnings and zero unexpected warnings.
   [Read the Docs build 35216225](https://app.readthedocs.org/projects/stoner-pythoncode/builds/35216225/)
   succeeded on `05d7cd0d84d4392535799eea56a8511aa9f69fcb`; the published `devel`
-  upgrade guide returns HTTP 200 with the alpha and completed wrapper notes.
+  upgrade guide was verified in the browser with the alpha and completed wrapper
+  notes (the separate automated HTTP client was blocked with HTTP 403).
   Keep the published alpha tag immutable; this documentation fix is on `devel`.
 
 ## Known limitations and follow-ups
