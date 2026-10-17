@@ -137,6 +137,9 @@ completed repository repair programme.
   alpha and are tracked as follow-up work below.
 - [ ] Review outstanding release metadata, archive size and service/citation links.
 - [x] Prepare the release notes for `0.12.0a1` in `doc/UserGuide/upgrade.rst`.
+  Release preparation now includes the completed Stage 9 previews, sorting and
+  retained uniqueness contracts. CI package validation checks the description
+  with strict Twine validation and reports actual archive sizes for review.
 - [ ] When authorised, tag and publish; record successful package/documentation
   jobs and verify published versions before closing release preparation.
 

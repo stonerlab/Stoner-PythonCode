@@ -73,7 +73,10 @@ allocations versus masked exports and records regional selection costs and a
 runtime-source fingerprint. These checks supplement the scientific regression
 suite; they do not replace hosted platform or installed-distribution validation.
 
-`check-distribution-archives.py dist` inspects CI-built wheel/sdist contents.
+`check-distribution-archives.py dist` inspects CI-built wheel/sdist contents and
+reports compressed/uncompressed sizes and the largest retained assets. The package
+workflow also runs `twine check --strict` on both archives to validate their
+metadata and rendered package description before installed-distribution checks.
 `check-installed-package.py <checkout>` runs with each installed distribution from
 outside the checkout, checking import provenance, metadata, resources and sample
 data. The `Package validation` workflow provides those fresh environments; use its

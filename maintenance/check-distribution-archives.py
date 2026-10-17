@@ -40,9 +40,19 @@ def main():
         raise RuntimeError(f'Expected one wheel and one source archive, found {wheels}, {sources}')
     with zipfile.ZipFile(wheels[0]) as archive:
         check(archive.namelist(), wheel=True)
+        report_size(wheels[0], [(item.filename, item.file_size) for item in archive.infolist()])
     with tarfile.open(sources[0], 'r:gz') as archive:
         check(archive.getnames(), wheel=False)
+        report_size(sources[0], [(item.name, item.size) for item in archive.getmembers() if item.isfile()])
     print('Wheel and source archive content checks passed.')
+
+
+def report_size(path, entries):
+    """Report actual CI archive sizes and their largest retained source assets."""
+    print(f'{path.name}: {path.stat().st_size:,} compressed bytes; '
+          f'{sum(size for _, size in entries):,} uncompressed bytes; {len(entries)} entries')
+    for name, size in sorted(entries, key=lambda item: item[1], reverse=True)[:5]:
+        print(f'  {size:>12,} bytes  {name}')
 
 
 if __name__ == '__main__':

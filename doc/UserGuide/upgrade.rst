@@ -29,7 +29,21 @@ The :doc:`datafile` and :doc:`image` guides describe the current interfaces.
 These native computations do not automatically apply Stoner exclusions. Use
 ``to_numpy()`` for a detached masked numerical export, ``Data.asarray()`` or
 ``ImageFile.imarray`` for read-only numerical snapshots, and ``export_storage()``
-for lossless state with typed metadata. Broader wrapper simplification is Stage 9.
+for lossless state with typed metadata.
+
+``Data.head(n=5)`` and ``Data.tail(n=5)`` return independent objects of the same
+class, preserving raw excluded measurements, masks, dtype, fill value, column
+headers/roles/IDs and typed metadata. Negative counts omit rows from the opposite
+end; zero returns an empty table. Standard previews copy only selected numerical
+rows, while custom clone/deepcopy hooks retain their established behaviour.
+
+``Data.sort`` continues to sort in place and return the same object. Compatible
+real numeric keys now delegate to pandas stable sorting, with exclusions moved
+by the same row permutation. Complex values, other float widths, non-native byte
+orders and custom comparators retain numerical paths. ``reverse=True`` reverses
+the complete ascending permutation, including ties and NaNs. ``Data.unique``
+retains NumPy's sorted masked results and optional index/inverse outputs because
+pandas distinct-value operations have different semantics.
 
 Direct native edits may change existing cells without changing dtype or geometry.
 Use Stoner methods for structural changes, and reacquire native references after
