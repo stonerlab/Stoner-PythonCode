@@ -139,14 +139,21 @@ reviewed inference/test-utility advisories did not block the alpha.
   requires a signed-in maintainer session, which was unavailable during release
   verification. The successful GitHub documentation build does not publish that
   Read the Docs version automatically.
-- [ ] Verify the Read the Docs `devel` rebuild after fixing build 35216175's Qt
+  The immutable alpha tag predates the headless startup fix below: configure
+  `QT_QPA_PLATFORM=offscreen` and `MPLBACKEND=Agg` in Read the Docs for that tagged
+  build before activating it.
+- [x] Verify the Read the Docs `devel` rebuild after fixing build 35216175's Qt
   startup abort. `doc/conf.py` now sets offscreen Qt and Agg for Read the Docs
   before importing Stoner, matching the already validated GitHub docs environment.
   Fresh-process probes pass with backend variables initially unset and confirm
   non-Read-the-Docs builds retain explicit settings. A clean cached Sphinx build
   without externally supplied headless settings passed with 88 reviewed Windows
   warnings, zero unexpected warnings and no removed API objects. All 243 tracked
-  plot-cache files are unchanged. Next: verify the actual Read the Docs rebuild.
+  plot-cache files are unchanged. The Linux documentation job also passed with
+  61 reviewed warnings and zero unexpected warnings.
+  [Read the Docs build 35216225](https://app.readthedocs.org/projects/stoner-pythoncode/builds/35216225/)
+  succeeded on `05d7cd0d84d4392535799eea56a8511aa9f69fcb`; the published `devel`
+  upgrade guide returns HTTP 200 with the alpha and completed wrapper notes.
   Keep the published alpha tag immutable; this documentation fix is on `devel`.
 
 ## Known limitations and follow-ups
