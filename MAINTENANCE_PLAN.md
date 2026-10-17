@@ -116,70 +116,29 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 - Record release evidence in the release or pull request. Remove completed items
   from the active checklist below rather than retaining another phase report.
 
-## Current release preparation
+## Current release follow-up
 
-This checklist prepares `0.12.0a1` from `devel`. Storage migration Stages 1-9 are
-complete; complexity remediation is a non-blocking maintenance follow-up.
+[`0.12.0a1`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a1)
+is published as a GitHub prerelease from `devel`, tagged at
+`4d3187a3611b6812212751aeb30a541e5b1c3e8d`. The release records full validation
+evidence; completed preparation details remain in Git history.
 
-- [x] Verify hosted tests, package checks and documentation for the release
-  preparation commit, including source-based Sphinx versions, tag checks and
-  installed-version checks. Historical records have been retired and retained
-  maintenance tools and references validated after relocation. Migration Stage 7
-  records the alpha's hosted matrix/package results and audited documentation build.
-- [x] Verify hosted Codacy reanalysis of the locally reviewed cleanup and triage
-  remaining correctness/security findings for release impact. A zero-finding
-  Codacy report is not an acceptance requirement for `0.12.0a1`.
-  Hosted analysis completed on `7e3dc747d`: **zero mixed-line-ending findings**,
-  down from 237 in the first complete migration analysis (595 findings total).
-  The remaining 358 findings include 85 complexity, 62 security-category and 47
-  error-prone-category findings. Security findings comprise 55 assertions in test
-  utilities and seven subprocess advisories in maintenance tools using argument
-  lists without a shell. Review found no release-blocking defect: dynamic image,
-  Kerr and folder APIs work at runtime; typed-metadata `super` calls deliberately
-  target a TypeHintedDict instance; TDI assignments are guarded by container type;
-  image operator closures capture each operation in a default argument; frame and
-  region owners deliberately resolve parent state without base-owner allocation.
-  The focused TDI/folder suite passed 67 tests, and dynamic-API/metadata preflights
-  passed. Remaining style, unused-code and complexity work is non-blocking.
-- [x] Review outstanding release metadata, archive size and service/citation links.
-  Python >=3.12, canonical version `0.12.0a1`, required dependency bounds, GPLv3
-  licence files and stonerlab URLs agree across packaging/runtime/test/docs inputs.
-  Package discovery retains 103 Python modules and all ten runtime resource files.
-  Hosted strict Twine checks and wheel/sdist installation passed on Python 3.12
-  and 3.14. Reviewed archive sizes are about 3.26 MB wheel and 46.43 MB sdist;
-  OCR resources and retained scientific fixtures explain the largest entries.
-  PyPI and Conda APIs still report 0.11.5, with no existing 0.12.0a1. Read the Docs
-  stable/latest and the Zenodo citation resolve (DOI 10.5281/zenodo.22734604).
-  Coveralls page access returns HTTP 403 to automated requests; CI coverage uploads
-  succeeded. Published versions, documentation version and the new citation record
-  must be checked again after release. Existing setuptools licence-format
-  deprecation warnings are maintenance follow-up; GPLv3 declarations are consistent.
-- [x] Prepare the release notes for `0.12.0a1` in `doc/UserGuide/upgrade.rst`.
-  Release preparation now includes the completed Stage 9 previews, sorting and
-  retained uniqueness contracts. CI package validation checks the description
-  with strict Twine validation and reports actual archive sizes for review.
-  Updated cached docs passed with 88 reviewed Windows warnings and 61 reviewed
-  Linux warnings, zero unexpected warnings, no removed API objects and no missing
-  dynamic Data methods. Release-note layout was checked over localhost; the
-  temporary browser tab/server were closed. All 243 cached plot files are retained.
-- **Final preparation revision:** `7e3dc747d15aaaff36959b1168c52a42826669da`.
-  Its newline-normalised runtime fingerprint is unchanged from the completed
-  Stage 9 exit: `a958a5809ae60494188e04dda3779f4f64624f6f18fa80ec3aa389a042b5be94`.
-  [Package validation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075488013)
-  passed strict Twine, archive contents and installed wheel/sdist checks on
-  Python 3.12/3.14. [Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075487997)
-  passed 1,098 tests with the existing pandas 3 lifecycle skip. The final
-  [supported matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075488004)
-  passed 1,099 tests in each Linux Python 3.12-3.14 and macOS Python 3.14 cell,
-  including final result publication and the configured coverage uploads.
-  [Cached documentation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075706849)
-  passed with 61 reviewed Linux warnings and zero unexpected warnings. The
-  candidate is ready; only the documentation-only checklist closure follows this
-  fully validated revision. Publication will use the GitHub prerelease
-  event to run the existing PyPI/Conda deployment and documentation workflows;
-  no manual distribution build or upload is required.
-- [ ] When authorised, tag and publish; record successful package/documentation
-  jobs and verify published versions before closing release preparation.
+[Packaging/publication CI](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39076474024)
+passed both deployments. PyPI has the wheel/sdist and the published wheel passed
+installed-package smoke checks outside the checkout. Conda has
+`noarch/stoner-0.12.0a1-py_1.conda`, with a passing installed import/version test.
+[Release documentation CI](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39076473982)
+passed with 61 reviewed warnings and zero unexpected warnings. Zenodo archived the
+tag as [DOI 10.5281/zenodo.23443114](https://doi.org/10.5281/zenodo.23443114).
+Codacy confirmed zero mixed-line-ending findings; remaining complexity/style and
+reviewed inference/test-utility advisories did not block the alpha.
+
+- [ ] Activate and build `v0.12.0a1` on Read the Docs, then verify its versioned
+  documentation URL. The public API detects the correct tagged SHA but reports
+  `active=false`, `built=false`; the version URL currently returns 404. Activation
+  requires a signed-in maintainer session, which was unavailable during release
+  verification. The successful GitHub documentation build does not publish that
+  Read the Docs version automatically.
 
 ## Known limitations and follow-ups
 

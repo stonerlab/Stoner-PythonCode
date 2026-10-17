@@ -2,7 +2,9 @@
 
 Agreed direction: 2026-09-13. Target branch: `devel`.
 Status: Stages 1-9 complete, including the Stage 9e cumulative wrapper exit gate.
-Target release: `0.12.0a1` (version set; not published).
+Release: [`0.12.0a1`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a1)
+(GitHub prerelease, PyPI and Conda published; release CI passed). Read the Docs
+tag activation remains a follow-up in `MAINTENANCE_PLAN.md`.
 Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
 new version. Python 3.15 support is conditional on its public release and support
 from the required dependencies, followed by successful project validation.
