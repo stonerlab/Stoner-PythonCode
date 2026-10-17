@@ -118,28 +118,66 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release preparation
 
-This is the remaining work from Phase 8, not a new requirement to repeat the
-completed repository repair programme.
+This checklist prepares `0.12.0a1` from `devel`. Storage migration Stages 1-9 are
+complete; complexity remediation is a non-blocking maintenance follow-up.
 
 - [x] Verify hosted tests, package checks and documentation for the release
   preparation commit, including source-based Sphinx versions, tag checks and
   installed-version checks. Historical records have been retired and retained
   maintenance tools and references validated after relocation. Migration Stage 7
   records the alpha's hosted matrix/package results and audited documentation build.
-- [ ] Verify hosted Codacy reanalysis of the locally reviewed cleanup and triage
+- [x] Verify hosted Codacy reanalysis of the locally reviewed cleanup and triage
   remaining correctness/security findings for release impact. A zero-finding
   Codacy report is not an acceptance requirement for `0.12.0a1`.
-  Hosted analysis now confirms the original 130 mixed-line-ending findings were
-  cleared by `bd56dd6ad`. The first complete migration analysis on `bfbeb08e6`
-  reports 595 findings, including another 237 mixed-ending occurrences across 21
-  files; those are now normalised too, with identical newline-normalised bytes and
-  syntax trees and a passing targeted Pylint check. Await their hosted reanalysis.
-  Complexity findings remain explicitly non-blocking for this alpha.
-- [ ] Review outstanding release metadata, archive size and service/citation links.
+  Hosted analysis completed on `7e3dc747d`: **zero mixed-line-ending findings**,
+  down from 237 in the first complete migration analysis (595 findings total).
+  The remaining 358 findings include 85 complexity, 62 security-category and 47
+  error-prone-category findings. Security findings comprise 55 assertions in test
+  utilities and seven subprocess advisories in maintenance tools using argument
+  lists without a shell. Review found no release-blocking defect: dynamic image,
+  Kerr and folder APIs work at runtime; typed-metadata `super` calls deliberately
+  target a TypeHintedDict instance; TDI assignments are guarded by container type;
+  image operator closures capture each operation in a default argument; frame and
+  region owners deliberately resolve parent state without base-owner allocation.
+  The focused TDI/folder suite passed 67 tests, and dynamic-API/metadata preflights
+  passed. Remaining style, unused-code and complexity work is non-blocking.
+- [x] Review outstanding release metadata, archive size and service/citation links.
+  Python >=3.12, canonical version `0.12.0a1`, required dependency bounds, GPLv3
+  licence files and stonerlab URLs agree across packaging/runtime/test/docs inputs.
+  Package discovery retains 103 Python modules and all ten runtime resource files.
+  Hosted strict Twine checks and wheel/sdist installation passed on Python 3.12
+  and 3.14. Reviewed archive sizes are about 3.26 MB wheel and 46.43 MB sdist;
+  OCR resources and retained scientific fixtures explain the largest entries.
+  PyPI and Conda APIs still report 0.11.5, with no existing 0.12.0a1. Read the Docs
+  stable/latest and the Zenodo citation resolve (DOI 10.5281/zenodo.22734604).
+  Coveralls page access returns HTTP 403 to automated requests; CI coverage uploads
+  succeeded. Published versions, documentation version and the new citation record
+  must be checked again after release. Existing setuptools licence-format
+  deprecation warnings are maintenance follow-up; GPLv3 declarations are consistent.
 - [x] Prepare the release notes for `0.12.0a1` in `doc/UserGuide/upgrade.rst`.
   Release preparation now includes the completed Stage 9 previews, sorting and
   retained uniqueness contracts. CI package validation checks the description
   with strict Twine validation and reports actual archive sizes for review.
+  Updated cached docs passed with 88 reviewed Windows warnings and 61 reviewed
+  Linux warnings, zero unexpected warnings, no removed API objects and no missing
+  dynamic Data methods. Release-note layout was checked over localhost; the
+  temporary browser tab/server were closed. All 243 cached plot files are retained.
+- **Final preparation revision:** `7e3dc747d15aaaff36959b1168c52a42826669da`.
+  Its newline-normalised runtime fingerprint is unchanged from the completed
+  Stage 9 exit: `a958a5809ae60494188e04dda3779f4f64624f6f18fa80ec3aa389a042b5be94`.
+  [Package validation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075488013)
+  passed strict Twine, archive contents and installed wheel/sdist checks on
+  Python 3.12/3.14. [Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075487997)
+  passed 1,098 tests with the existing pandas 3 lifecycle skip. The final
+  [supported matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075488004)
+  passed 1,099 tests in each Linux Python 3.12-3.14 and macOS Python 3.14 cell,
+  including final result publication and the configured coverage uploads.
+  [Cached documentation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39075706849)
+  passed with 61 reviewed Linux warnings and zero unexpected warnings. The
+  candidate is ready; only the documentation-only checklist closure follows this
+  fully validated revision. Publication will use the GitHub prerelease
+  event to run the existing PyPI/Conda deployment and documentation workflows;
+  no manual distribution build or upload is required.
 - [ ] When authorised, tag and publish; record successful package/documentation
   jobs and verify published versions before closing release preparation.
 
