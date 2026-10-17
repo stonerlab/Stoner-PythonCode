@@ -303,6 +303,9 @@ def test_dir():
                    "__copy__"}
     assert storage_api <= set(dir(selfd))
     bad_keys.update(storage_api)
+    preview_api = {"head", "tail"}
+    assert preview_api <= set(dir(selfd))
+    bad_keys.update(preview_api)
     attrs = set(dir(selfd)) - bad_keys
     assert len(attrs) == 214, "DataFile.__dir__ failed."
     selfd.setas.clear()

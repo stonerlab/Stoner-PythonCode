@@ -3,6 +3,7 @@
 
 import pathlib
 import re
+from operator import index as _index
 from sys import float_info
 
 import numpy as np
@@ -14,6 +15,7 @@ from ..tools import all_type, format_error, isiterable, make_Class, operator
 from ..tools.file import HDFFileManager, file_dialog
 from ..tools.widgets import RangeSelect
 from .selection import _reject_where
+from .storage_bridge import _copy_rows
 
 try:
     import pandas as pd
@@ -544,31 +546,124 @@ def select(datafile, *args, **kwargs):
     return result
 
 
-def sort(datafile, *order, reverse=False):
-    """Sort the data by column name.
+def _preview_rows(datafile, n, *, last=False):
+    """Resolve pandas preview positions and copy through Stoner's owner boundary."""
+    if isinstance(n, (bool, np.bool_)):
+        raise TypeError("Row count must be an integer, not Boolean")
+    n = _index(n)
+    frame = datafile.data
+    rows = (frame.tail(n) if last else frame.head(n)).index
+    return _copy_rows(datafile, rows)
+
+
+def head(datafile, n=5):
+    """Return an independent Data object containing the first rows.
 
     Args:
         datafile (Data):
-            Data object to work with if not being used as a bound method.
-        order (column index or list of indices or callable function):
-            One or more sort order keys.
+            Data object to preview if not used as a bound method.
 
     Keyword Arguments:
-        reverse (boolean):
-            If true, the sorted array isreversed.
+        n (int):
+            Number of rows, defaulting to five. Zero selects no rows; a negative
+            value omits the last ``abs(n)`` rows. Boolean counts are rejected.
 
     Returns:
-        (datafile):
-            A copy of the :py:class:`DataFile` sorted object
+        Data:
+            Independent object of the same class with a fresh positional index.
+            Raw values, exclusions, dtype, fill value, headers, roles, column IDs
+            and typed metadata are retained; the source is unchanged.
 
     Notes:
-        Sorts in place and returns a copy of the sorted data object for chaining methods.
+        Row positions follow ``pandas.DataFrame.head``. Excluded rows remain in
+        the preview, with their raw measurements recoverable. Counts larger than
+        the table return all rows. This method copies rather than mutating for
+        chaining; it accepts neither ``inplace`` nor operation selections.
 
-        If the argument is a callable function then it should take a two tuple arguments and
-        return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise
-        if the argument is interpreted as a column index. If a single argument is supplied, then it may be
-        a list of column indices. If no sort orders are supplied then the data is sorted by the
-        :py:attr:`DataFile.setas` attribute or if that is not set, then order of the columns in the data.
+        Standard copies duplicate only the selected numerical rows. Ancillary
+        attributes and metadata still follow deepcopy semantics; custom clone or
+        deepcopy hooks retain the established full-clone selection path.
+
+    See Also:
+        :py:meth:`Stoner.core.data.Data.tail`
+    """
+    return _preview_rows(datafile, n)
+
+
+def tail(datafile, n=5):
+    """Return an independent Data object containing the last rows.
+
+    Args:
+        datafile (Data):
+            Data object to preview if not used as a bound method.
+
+    Keyword Arguments:
+        n (int):
+            Number of rows, defaulting to five. Zero selects no rows; a negative
+            value omits the first ``abs(n)`` rows. Boolean counts are rejected.
+
+    Returns:
+        Data:
+            Independent object of the same class with a fresh positional index.
+            Raw values, exclusions, dtype, fill value, headers, roles, column IDs
+            and typed metadata are retained; the source is unchanged.
+
+    Notes:
+        Row positions follow ``pandas.DataFrame.tail``. Excluded rows remain in
+        the preview, with their raw measurements recoverable. Counts larger than
+        the table return all rows. This method copies rather than mutating for
+        chaining; it accepts neither ``inplace`` nor operation selections.
+
+        Standard copies duplicate only the selected numerical rows. Ancillary
+        attributes and metadata still follow deepcopy semantics; custom clone or
+        deepcopy hooks retain the established full-clone selection path.
+
+    See Also:
+        :py:meth:`Stoner.core.data.Data.head`
+    """
+    return _preview_rows(datafile, n, last=True)
+
+
+def sort(datafile, *order, reverse=False):
+    """Sort raw rows in place while moving their exclusions together.
+
+    Args:
+        datafile (Data):
+            Data object to sort if not used as a bound method.
+        *order (column selectors or callable):
+            Keys in primary-to-secondary order: positions, names, patterns, or a
+            single list/tuple of selectors. Exact duplicate names resolve to their
+            first occurrence; compiled patterns can select multiple columns.
+            A single callable compares two raw rows, returning a negative, zero
+            or positive value. With no keys, use x, y and z roles in that order,
+            falling back to all columns when those roles are unset.
+
+    Keyword Arguments:
+        reverse (bool):
+            Reverse the complete ascending permutation, including ties and NaNs.
+            Defaults to False.
+
+    Returns:
+        Data:
+            The same object for chaining. Raw values and exclusions move by the
+            same row permutation, with a fresh positional index. Column headers,
+            roles, IDs, dtype/fill and authoritative typed metadata are retained.
+
+    Raises:
+        RuntimeError:
+            If an editing context is active; no comparator or backend is called.
+        ValueError:
+            If native schema drift is detected before sorting.
+
+    Notes:
+        Sort keys use raw measurements even when excluded. Ascending ties retain
+        input order; real NaNs follow finite values and infinities. Reverse sorting
+        also reverses tied rows and places those NaNs first. No rows are removed.
+        Native Boolean/integer and float32/float64 keys delegate to pandas stable
+        sorting. Complex, other float widths, non-native byte orders and custom
+        comparators retain their numerical ordering. A failed key resolution or
+        comparator does not commit a permutation. Retained native frame references
+        are retired by the owner commit; reacquire ``data`` after sorting.
     """
     from . import storage_operations
     return storage_operations.sort(datafile, *order, reverse=reverse)
@@ -667,23 +762,53 @@ def split(datafile, *args, final="files"):
 
 
 def unique(datafile, col, return_index=False, return_inverse=False):
-    """Return the unique values from the specified column - pass through for numpy.unique.
+    """Return NumPy distinct-value results from a masked column selection.
 
     Args:
         datafile (Data):
-            Data object to work with if not being used as a bound method.
-        col (index):
-            Column to look for unique values in
+            Data object to read if not used as a bound method.
+        col (column selector):
+            Position, name, pattern, slice or sequence accepted by ``column``.
+            An exact duplicate name selects its first occurrence. Multiple columns
+            are flattened in row-major order for value uniqueness, not compared
+            as whole rows.
 
     Keyword Arguments:
         return_index (bool):
-            Pass through to :py:func:`np.unique`
+            Include the first occurrence positions in the flattened selection.
+            Defaults to False. For a single scalar column selector these are row
+            positions; for multiple columns they are flattened element positions.
         return_inverse (bool):
-            Pass through to :py:func:`np.unique`
+            Include result-group indices for each selected element, with the same
+            shape as the column selection. Defaults to False.
 
     Returns:
-        (1D array):
-            Array of unique values from the column.
+        numpy.ma.MaskedArray or tuple:
+            Detached, writable one-dimensional values retaining dtype and fill
+            value. Enabled options append ordinary integer arrays in the order
+            ``(values, first_indices, inverse)``; disabled options are omitted.
+            The source, schema and typed metadata are unchanged. Result arrays
+            do not carry Stoner schema or metadata.
+
+    Raises:
+        ValueError:
+            If detectable native schema drift makes the source inconsistent.
+
+    Notes:
+        Delegate to ``numpy.unique`` on the explicit masked column snapshot.
+        Ordinary finite values are sorted, and excluded finite observations share
+        a masked group instead of becoming raw categories or being dropped.
+        Masked payloads are not meaningful category values. NaNs, complex NaNs
+        and mixed masks/NaNs follow NumPy's existing masked-array behaviour, which
+        can produce more than one masked entry. No missingness normalisation or
+        operation selection is applied. Original excluded values remain recoverable
+        from the source. Reads during an editing context see committed state.
+
+        Pandas uniqueness preserves encounter order and has different exclusion,
+        NaN and index/inverse semantics; it is not an equivalent backend here.
+
+    See Also:
+        :py:meth:`Stoner.core.data.Data.column`
     """
     return np.unique(datafile.column(col), return_index, return_inverse)
 

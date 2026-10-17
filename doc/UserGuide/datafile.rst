@@ -243,6 +243,34 @@ with a "fill" value of 10^20.
     Use ``d.to_numpy()`` for masked numerical exports or ``d.asarray()`` for a
     detached read-only snapshot. Pandas calculations do not apply exclusions.
 
+Previewing rows
+^^^^^^^^^^^^^^^
+
+:py:meth:`~Stoner.core.data.Data.head` and :py:meth:`~Stoner.core.data.Data.tail`
+return independent Stoner objects containing the first or last five rows by
+default. They use pandas positional row selection while retaining raw excluded
+measurements, masks, dtype, fill value, duplicate headers, column roles, stable
+column IDs and typed metadata. Neither method changes the source::
+
+    first = d.head(3)
+    last = d.tail(3)
+    without_last_two = d.head(-2)
+    without_first_two = d.tail(-2)
+
+Zero selects an empty table with the same columns. Positive counts larger than
+the table select all rows; negative counts omit rows from the opposite end.
+Counts must be integers, excluding Booleans. Returned rows receive a fresh
+positional index. Exclusions remain flags and do not remove rows from a preview.
+These methods accept neither ``inplace`` nor ``where``. For a pandas result use
+``d.data.head()`` or ``d.data.tail()`` directly; those results follow pandas
+ownership rules and do not carry Stoner's separate exclusions and schema.
+
+With standard copying, only selected numerical rows and exclusion flags are
+copied. Metadata and ancillary instance attributes retain their usual deep-copy
+semantics, including shared references and cycles; large user metadata can still
+dominate the cost. Subclasses with custom ``clone`` or ``__deepcopy__`` hooks use
+the established full-clone-and-trim path so their transformations remain intact.
+
 .. _setas:
 
 Marking Columns as Dimensions: the magic *setas* attribute
@@ -761,18 +789,38 @@ is a detached NumPy masked array, its explicitly supplied *i* annotation records
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Another question you might want to ask is, what are all the unique
-values of data in a given column (or set of columns). The Python numpy
-package has a function to do this and we have a direct pass through
-from the Data object for this::
+:py:meth:`~Stoner.core.data.Data.unique` returns distinct values through NumPy's
+masked-array interface, retaining the selected dtype and fill value. It leaves
+the source unchanged and returns detached, writable result arrays::
 
    d.unique('Temp')
    d.unique(column,return_index=False, return_inverse=False)
 
-The two optional keywords cause the numpy routine to return the
-indices of the unique and all non-unique values in the array. The
-column is specified in the same way as the :py:meth:`~Stoner.core.data.Data.column`
-method does.
+   values, first, inverse = d.unique('Temp', return_index=True, return_inverse=True)
+
+``return_index=True`` adds the first occurrence positions;
+``return_inverse=True`` adds the mapping from each input element to its result
+group. With both options the result is ``(values, first, inverse)``; either option
+can be used independently. Column selection follows
+:py:meth:`~Stoner.core.data.Data.column`, including first-occurrence resolution of
+duplicate names. A scalar column selector gives one-dimensional input; a list
+containing one column keeps its two-dimensional shape. Multiple columns are
+flattened in row-major order for uniqueness, so this operation compares individual
+values, not complete rows. First-occurrence indices refer to that flattened
+selection; inverse indices retain the selection's shape.
+
+Ordinary finite values are sorted, with excluded finite observations represented
+by a masked group. Excluded raw measurements are not exposed as categories or
+deleted from the source. The payload under a masked result is not a category
+value. NaNs, complex NaNs and mixed masks/NaNs retain NumPy's masked-array behaviour;
+mixed cases can produce multiple masked entries. This API does not silently
+normalise those groups or introduce a separate missingness policy. Numerical reads
+during an edit context see committed values until the draft is published.
+
+Pandas ``unique`` preserves encounter order, does not apply Stoner exclusions and
+does not supply this index/inverse interface. Use it directly on ``d.data`` when
+those raw pandas semantics are wanted. ``Data.unique`` retains its numerical
+backend and accepts neither ``where`` nor arbitrary pandas keywords.
 
 Copying Data
 ^^^^^^^^^^^^
@@ -1002,12 +1050,32 @@ case the modulus operator %.::
 Sorting Data
 ------------
 
-Data can be sorted by one or more columns, specifying the columns as a number or
-string for single columns or a list or tuple of strings or numbers for multiple
-columns. Currently only ascending sorts are supported.::
+:py:meth:`~Stoner.core.data.Data.sort` sorts in place and returns the same object
+for chaining. Supply keys in primary-to-secondary order, using column positions,
+names, patterns, or a single list/tuple of selectors. With no keys, sorting uses
+the assigned x, y and z columns, or all columns if those roles are unset::
 
   d.sort('Temp')
   d.sort(['Temp','Gate'])
+  d.sort('Temp', 'Gate', reverse=True)
+
+Keys use raw measurements, including excluded cells. The same row permutation
+moves raw values and exclusion flags, preserving dtype, fill value, duplicate
+headers, column roles/IDs and typed metadata. Exact duplicate names select the
+first matching column; use positions or compiled patterns to distinguish them.
+Ascending ties retain input order, and real NaNs sort last. ``reverse=True``
+reverses the complete ascending permutation, including tied rows and NaNs;
+this differs from pandas descending stable sorting. Results receive a fresh
+positional row index. Reacquire ``d.data`` after sorting because the owner commit
+retires the previous native frame.
+
+Ordinary native-byte-order Boolean/integer and float32/float64 keys use pandas
+sorting through this adapter. Complex values, other float widths, non-native
+byte orders and the existing two-row comparator form retain their numerical
+ordering. The comparator receives raw rows and returns a negative, zero or
+positive value. Active editing contexts reject sorting before comparison or
+backend work. ``sort`` accepts neither ``where`` nor ``inplace``; make an explicit
+clone first when an independent sorted result is required.
 
 
 .. _save:

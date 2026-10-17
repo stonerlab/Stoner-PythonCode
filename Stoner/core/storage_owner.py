@@ -67,8 +67,12 @@ class _TableState:
         self.as_storage()
         result = type(self).__new__(type(self))
         memo[id(self)] = result
-        result.values = self.values.copy(deep=True)
-        result.excluded = self.excluded.copy()
+        result.values = deepcopy(self.values, memo)
+        result.excluded = deepcopy(self.excluded, memo)
+        # Owner leaves can be substituted for a preview. Raw frame/mask snapshots
+        # held elsewhere must still be copied in full, as before clone-then-trim.
+        memo.pop(id(self.values), None)
+        memo.pop(id(self.excluded), None)
         result.schema = list(self.schema)
         result.metadata = _copy_metadata(self.metadata, memo)
         result.fill_value = deepcopy(self.fill_value, memo)

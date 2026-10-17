@@ -1,7 +1,7 @@
 # Data storage migration plan
 
 Agreed direction: 2026-09-13. Target branch: `devel`.
-Status: Stages 1-8 complete; Stage 9 wrapper simplification has not started.
+Status: Stages 1-8 and Stage 9a-9d complete; Stage 9e review is complete and final-revision exit gates are running.
 Target release: `0.12.0a1` (version set; not published).
 Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
 new version. Python 3.15 support is conditional on its public release and support
@@ -550,6 +550,32 @@ Acceptance coverage must include:
   that interface. Distinguish selecting rows by index label from looking up named
   columns within a row; do not recreate either through a custom array class.
   This is an API enhancement batch, not additional Stage 6 removal work.
+  - [x] **9a. Inventory delegation boundaries and add row previews.** Add only
+    `Data.head(n=5)` and `Data.tail(n=5)` using pandas positional row selection and
+    the existing clone/owner selection path. Retain exclusions, raw values, schema,
+    dtype/fill, typed metadata and concrete class; return independent objects.
+  - [x] **9b. Review numeric row sorting.** Characterise the existing `Data.sort`
+    permutation contract, then delegate its ordinary numeric-key path only where
+    pandas reproduces duplicate-header resolution, ties, NaNs, reverse ordering
+    and exclusion movement. Retain custom-comparator behaviour and numerical paths
+    whose semantics do not match. Document the decision and validate independently.
+  - [x] **9c. Review distinct-column results.** Characterise `Data.unique`, including
+    exclusions, sorted order, NaNs/complex values and optional index/inverse outputs.
+    Compare pandas distinct-value operations before choosing any delegation; retain
+    numerical paths where order, mask or return contracts differ. Do not extend
+    tolerance-based duplicate merging as part of this batch.
+  - [x] **9d. Review preview-copy allocations.** Profile the existing `head`/`tail`
+    clone-before-trimming path and consider a shared independent row-subset result
+    boundary. Copy only selected observations where this preserves concrete class,
+    ancillary attributes, typed metadata aliases/cycles, raw values/exclusions,
+    schema IDs/roles and index semantics. Measure against the 9a implementation;
+    keep the existing path if an equivalent bounded adapter is not demonstrated.
+  - [ ] **9e. Cumulative wrapper exit review.** Review the complete 9a-9d diff and
+    confirm the documented delegation/retention decisions. Validate the final
+    revision with supported/lower dependency CI, installed distributions, cached
+    documentation audit and integrated benchmarks before recording Stage 9's exit
+    decision. Keep publication separate; propose further wrapper families as
+    independent work rather than automatically expanding the backend API.
 
 ### Follow-on wrapper policy (batch 9)
 
@@ -567,6 +593,142 @@ Check name collisions with existing and dynamically attached methods. Avoid
 automatic exposure of the entire backend API and accidental changes after backend
 upgrades. Lazy execution and broader coordinate-aware APIs remain separate later
 proposals, not implicit scope for this batch.
+
+### Stage 9a delegation inventory and wrapper contracts (2026-10-17)
+
+This inventory identifies bounded candidates in the current core methods and
+owner operations; it does not authorise blanket forwarding or declare Stage 9 done.
+
+| Family | Backend candidate | Decision |
+| --- | --- | --- |
+| First/last rows | `DataFrame.head` / `tail` | Add explicit `Data.head` / `tail` wrappers in 9a; neither name collides with current core, dynamic analysis/fitting/plotting or inherited methods. |
+| Existing row sorting | `DataFrame.sort_values` | 9b delegates compatible real keys after positional resolution; complex/other float widths/non-native byte orders and comparators retain numerical paths. |
+| Distinct column values | pandas `unique` / `factorize` / `drop_duplicates` | 9c retains the existing NumPy wrapper: sorted masked results, complex/NaN groups, flattened first indices and shaped inverse outputs do not match raw pandas contracts. |
+| Predicate selection | pandas indexing / `query` | Retain current `select` contracts: column-query keyword namespace, combined predicates and numerical result wrapping differ. |
+| Duplicate reduction | `DataFrame.drop_duplicates` | Retain current tolerance/weighted-merge behaviour; exact equality is not an equivalent replacement. |
+| Rename/reorder/insert/delete | pandas structural methods | Retain owner operations so exclusions, IDs and roles move atomically with values. |
+| Scientific reductions, fitting and image operations | pandas/xarray calculations | Retain explicit selection, exclusions, validity and geometry adapters; raw backend calls alone do not preserve these contracts. |
+| Labelled row conveniences | pandas index / `.loc` | Stage 8 exposes native access with a positional RangeIndex; retain that policy. General labels and duplicate-row-label APIs require a separately defined contract. |
+
+For both new wrappers:
+
+- **Backend and input resolution:** call `DataFrame.head(n)` or `tail(n)` on the
+  validated native frame and obtain its row positions. Accept integer counts
+  (including NumPy integers), reject Boolean/non-integer counts, and offer no
+  arbitrary forwarded keywords. Five is the default; zero selects no rows;
+  positive oversize counts select all rows; negative counts omit the opposite end.
+- **Mutation/copy and return:** never mutate the source; return an independent
+  object of the same concrete class, preserving ancillary instance attributes.
+  Stage 9a used `clone` plus owner `take(rows=...)`; 9d optimises standard copying
+  through the independent row-copy boundary below. Custom clone/deepcopy hooks
+  retain the original path. These remain detached previews, not lazy views.
+- **Alignment:** positional rows only, in original order; no label alignment,
+  broadcasting or column-name lookup. Reset the result to a positional RangeIndex.
+- **Exclusions/schema/metadata:** do not drop excluded rows or materialise NaNs in
+  place of recoverable measurements. Apply the same positions to raw values and
+  exclusions, retain dtype/fill and complete column schema (including duplicate
+  headers, roles and IDs), and deep-copy typed metadata with cycles/aliases intact.
+- **Boundaries:** reject detectable native schema drift and active editing
+  contexts before creating a preview. `where` and `inplace` are unsupported and
+  rejected by the explicit signatures. No new coordinate or labelled-row API.
+
+### Stage 9b sorting contract and delegation decision (2026-10-17)
+
+- **Backend/input:** Stoner resolves column positions, exact names (first duplicate
+  occurrence), compiled patterns (all matches), repeated keys and the existing
+  no-key x/y/z-role default. A temporary key frame has unique positional column
+  labels; `DataFrame.sort_values(kind="stable", na_position="last")` determines
+  the row permutation for native-byte-order Boolean/integer and float32/float64
+  values. It reads raw keys, without applying exclusions or replacing them by NaN.
+- **Retained numerical paths:** use existing `np.lexsort` for complex values,
+  float16/other float widths and non-native byte orders. In both pandas 2.2.3 and
+  3.0.5, exploratory comparisons found complex-NaN permutation differences and
+  unsupported multi-key float16 factorisation. Do not cast keys merely to make
+  pandas accept them. The existing two-row comparator still receives raw numerical
+  rows through `cmp_to_key`.
+- **Ordering/alignment:** first key is primary; ascending ties preserve input
+  order, with real NaNs last. Reverse the complete ascending permutation for
+  `reverse=True`, including ties and NaNs, rather than use pandas descending order.
+  No label alignment, implicit broadcasting or row filtering is introduced.
+- **Mutation/copy/return:** commit through existing owner `take(rows=...)` and
+  return the same Data object. Move raw values and exclusions together; preserve
+  dtype/fill, complete column schema/IDs/roles and authoritative typed metadata
+  identity. Reset the positional row index. Owner commits retire native frame
+  references, which callers must reacquire. This is an in-place method; callers
+  explicitly clone when an independent sorted result is wanted.
+- **Failure boundaries:** validate native state and reject active editing before
+  backend/comparator work. Selector/comparator failures do not commit a permutation.
+  The public signature remains `sort(*order, reverse=False)`; no `where`, `inplace`
+  or arbitrary backend keywords are added. Only the ascending real-key permutation
+  calculation is delegated; owner selection still performs its numerical export.
+
+### Stage 9c distinct-value contract and review decision (2026-10-17)
+
+- **Backend/input:** retain `np.unique(datafile.column(col), return_index,
+  return_inverse)`. This is already a thin numerical wrapper with an explicit
+  masked column snapshot. Resolve positions, names, patterns, slices and sequences
+  through existing Stoner column selection. Exact duplicate names select the first
+  occurrence; compiled patterns can select multiple columns.
+- **Ordering/alignment/results:** deduplicate individual selected elements in
+  row-major flattened order, not whole rows. Ordinary finite values are sorted.
+  Return a one-dimensional MaskedArray; enabled options append ordinary integer
+  arrays in `(values, first_indices, inverse)` order. First indices address the
+  flattened selection; inverse indices retain the selection's shape, including
+  `(rows, 1)` for a one-column list selector. No native label alignment is added.
+- **Exclusions/missingness:** ordinary excluded finite observations share a masked
+  group, retaining raw measurements only in the owner. Do not expose masked
+  payloads as categories or drop exclusions. NaNs, complex-NaN equivalence and mixed
+  masks/NaNs follow the existing NumPy masked-array behaviour; mixed NaN/mask cases
+  can yield multiple masked entries. This review does not redefine or normalise
+  missingness, nor alter tolerance-based duplicate finding or weighted merging.
+- **Mutation/copy/metadata:** no mutation and no Stoner result wrapper. Values,
+  masks, dtype/fill and optional index arrays are detached, writable numerical
+  outputs; they do not carry Stoner schema/metadata. Owner values, exclusions,
+  schema IDs and authoritative typed metadata remain unchanged. Numerical reads
+  during an editing context see committed state until the draft is published.
+  Detectable native drift still fails through the numerical column boundary.
+- **Delegation decision:** pandas `unique` preserves encounter order and reads raw
+  excluded values as categories; `factorize` has a different missing-value/index
+  convention and no NumPy-shaped inverse contract; `drop_duplicates` concerns
+  labelled rows rather than this flattened masked result. Preserving all of these
+  contracts would require a new masking/order/remapping adapter where the existing
+  numerical implementation already fits. Retain it for every dtype and flag
+  combination; do not add a data-dependent pandas fast path or blanket forwarding.
+  The signature remains `unique(col, return_index=False, return_inverse=False)`.
+
+### Stage 9d preview-copy boundary (2026-10-17)
+
+- **Selection/backend:** keep the existing pandas `head`/`tail` positional count
+  rules. Their canonical RangeIndex defines a slice; do not allocate a full-table
+  NumPy export or positional index array to trim the result. The shared private
+  `_copy_rows` adapter lives in `Stoner/core/storage_bridge.py` and serves only
+  previews in this batch, not predicate selection or unrelated structural methods.
+- **Independent numerical state:** copy the selected frame and exclusions, reset
+  the result RangeIndex and seed the standard deepcopy memo with those two leaves.
+  `_TableState.__deepcopy__` honours that memo for its frame/mask instead of making
+  unconditionally separate copies. Dtype/fill, headers, stable IDs and roles remain
+  under the existing owner/schema validation; no NumPy storage is introduced.
+- **Object graph:** use the existing Data deepcopy implementation so it registers
+  the new instance, owner and state before copying typed metadata. Preserve concrete
+  class, ancillary instance attributes, self-references and shared metadata/attribute
+  aliases. Full raw frame/mask snapshots stored in metadata or ancillary fields
+  retain their contents, independently of the selected owner leaves. The owner
+  consumes its numerical memo entries before copying that ancillary graph, matching
+  the original clone-then-trim policy. User arrays/views and metadata still follow
+  normal deepcopy semantics and can dominate cost; they are not silently cropped.
+  Result frames retain the previous canonical structural-copy policy: flat schema
+  headers with no axis names, empty native DataFrame attrs and default duplicate-label
+  flags. These backend details are not imported into the result as Stoner metadata.
+- **Custom hooks and failure boundaries:** subclasses or instances with custom
+  deepcopy hooks, and subclasses overriding `clone`, keep the existing full-clone
+  plus owner-take path. Do not bypass their transformations. Active edits and native
+  drift fail before copying; copy failures leave the source and retained references
+  unchanged. No return, mutation, selection or direct-native-write policy changes.
+- **Performance scope:** measure complete previews, including metadata cycles,
+  against the captured 9a wrapper using the same current copy foundation. Retain
+  the independently captured pre-change baseline as context. This optimises the
+  authoritative numerical store; it does not promise zero-copy results or bounded
+  cost for arbitrary user metadata or custom copying hooks.
 
 ## Session workflow
 
@@ -1481,13 +1643,227 @@ matches the selected environment.
   The subsequent completion record changes only the two Markdown plans; validation
   remains attached to this exact runtime revision, with no source, test or dependency
   changes in the completion record.
-- **Next: Stage 9.** Inventory existing methods for backend delegation and choose
-  the first bounded wrapper family. Define its selection/alignment, exclusions,
-  mutation/copy and return contracts before implementing it; retain the validated
-  native ownership interface. Stage 9 has not started. Retain scientific fixtures
-  and all 243 cached plots. Publication remains a separately authorised release action.
+- **Stage 8 completion handover:** Stage 9 follows the validated native ownership
+  interface; the first batch and current next step are recorded below. Retain
+  scientific fixtures and all 243 cached plots. Publication remains a separately
+  authorised release action.
   The maintainer subsequently authorised committing this migration and version
   `0.12.0a1` to `devel` and pushing to origin. Publication remains a separate action.
+
+- **Stage 9a implementation (2026-10-17):** added `head`/`tail` in
+  `Stoner/core/methods.py`, sharing a private row-preview adapter. Pandas determines
+  positions; existing clone and owner selection preserve scientific and ownership
+  contracts. The inventory and complete wrapper policy are recorded above.
+  `tests/Stoner/core/test_row_previews.py` covers negative/default/zero/oversize
+  counts, empty axes, duplicate headers, roles/IDs, recoverable exclusions,
+  dtype/fill (including large uint64 and complex values), independent values and
+  nested typed metadata/cycles, subclass preservation, native drift, editing guards
+  and rejection of unsupported counts/keywords. The guide adds usage examples;
+  the `Data` class overview now correctly describes `.data` as a DataFrame.
+  Existing sorting, predicate selection, duplicate reduction and image operations
+  remain unchanged. Previews use the established full-clone path before trimming;
+  reducing that allocation requires a separate measured copying-boundary change.
+- **Stage 9a validation:** verified Miniforge `py314` (Python 3.14.7, NumPy 2.5.2,
+  pandas 3.0.5, SciPy 1.18.0, xarray 2026.7.0, pytest 9.1.1) and the existing
+  pure-Conda lower-dependency prefix `maintenance/runs/stage8c2-minimum-env`
+  (Python 3.12.15, NumPy 2.0.2, pandas 2.2.3, SciPy 1.14.1, xarray 2024.10.0,
+  pytest 9.1.1); no dependencies or environment specifications changed.
+  The new preview tests passed **52 tests** on py314. The lower-dependency command
+  `maintenance/run-baseline.ps1 -Check focused -EnvironmentPrefix
+  D:\PythonCode\maintenance\runs\stage8c2-minimum-env -TestPaths
+  tests/Stoner/core/test_row_previews.py,tests/Stoner/core/test_storage_structural.py,tests/Stoner/core/test_native_public_storage.py`
+  passed **106 tests**, 13 warnings, 35.64 s
+  (`maintenance/runs/20261017-180023-focused-a2bdb8e5`). The first full py314 run
+  passed 959 tests and exposed two fixed API-directory counts. Updated
+  `tests/Stoner/test_Core.py` and `tests/Stoner/folders/test_each.py` to explicitly
+  require `head`/`tail` while retaining their existing remainder-count assertions.
+  The focused command with `-TestPaths tests/Stoner/test_Core.py::test_dir,
+  tests/Stoner/folders/test_each.py::test_each_call,tests/Stoner/core/test_row_previews.py`
+  passed **54 tests** on py314 (1 warning, 21.52 s;
+  `maintenance/runs/20261017-180614-focused-5e4e7b17`) and the lower prefix
+  (13 warnings, 9.58 s; `maintenance/runs/20261017-180703-focused-99f2f39d`).
+  Final `maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
+  **961 tests**, 708 warnings, **81% coverage**, 298.88 s with two workers
+  (`maintenance/runs/20261017-180702-parallel-58c9cabf`). This final run includes
+  the new previews and both explicit API-inventory updates; Stage 9a is complete.
+  Cached Sphinx HTML built from a clean tracked-source snapshot with
+  `READTHEDOCS=True`, **88 reviewed Windows warnings and zero unexpected warnings**
+  against the unchanged baseline. `maintenance/audit-docs.py` compared it with
+  Stage 8: all primary classes and dynamic methods are documented, with no removed
+  API objects. Evidence: `maintenance/runs/stage9a-doc-build.log`,
+  `stage9a-doc-warnings.log`, `stage9a-doc-audit.json` and `stage9a-doc-output`.
+  Localhost visual review checked the new guide section and both API links;
+  temporary browser tab and server were closed. Ruff F821 and whitespace checks
+  pass; all 243 tracked plot-cache files remain unchanged. This batch has local
+  validation only; the hosted Stage 8 runs above are not Stage 9 evidence.
+- **Stage 9b implementation (2026-10-17):** `Stoner/core/storage_operations.py`
+  adds a private numeric-key permutation adapter and checks writability before
+  comparison/backend work. Compatible real keys use a positional pandas key frame;
+  unsupported dtypes and custom comparators retain the numerical path described
+  above. No storage-owner or image interfaces changed. The `sort` docstring and
+  guide now correctly describe its in-place return, raw exclusions, role defaults,
+  duplicate-name handling, stable ascending ties, whole-permutation reversal and
+  native-reference lifetime; the old guide incorrectly claimed ascending-only
+  support. `tests/Stoner/core/test_numeric_sorting.py` characterises the legacy
+  contract and verifies delegated/fallback paths, ownership, atomic selector and
+  comparator failures, dtype precision, empty axes and early editing/drift guards.
+- **Stage 9b validation:** the initial pre-change characterisation passed **64
+  tests** on py314 (`maintenance/runs/20261017-185738-focused-7ed905cb`). After
+  implementation, numeric sorting plus structural tests passed **88 tests** on
+  py314 (`maintenance/runs/20261017-185927-focused-eeb6f347`, 7.23 s). The final
+  lower-dependency command `maintenance/run-baseline.ps1 -Check focused
+  -EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env
+  -TestPaths tests/Stoner/core/test_numeric_sorting.py,tests/Stoner/core/test_storage_structural.py`
+  passed **88 tests**, 13 warnings, 6.89 s
+  (`maintenance/runs/20261017-190110-focused-d30d7d12`). Float16 fixtures now import an explicit
+  valid fill value, avoiding unrelated constructor-default overflow warnings.
+  Final `maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
+  **1,033 tests**, 708 warnings, **81% coverage**, 214.82 s with two workers
+  (`maintenance/runs/20261017-190207-parallel-588f2519`), including both the retained
+  Stage 9a previews and all 72 new sorting cases. Stage 9b is complete.
+  Verified environments remain
+  py314 Python 3.14.7/NumPy 2.5.2/pandas 3.0.5/SciPy 1.18.0/xarray 2026.7.0 and
+  minimum Python 3.12.15/NumPy 2.0.2/pandas 2.2.3/SciPy 1.14.1/xarray 2024.10.0;
+  both use pytest 9.1.1. No dependency/environment specifications changed.
+  Exploratory pandas comparisons covered **900 permutations per environment**:
+  all 600 compatible real-dtype cases matched; float16 and complex differences
+  justify the retained paths (`maintenance/runs/stage9b-sort-review-current.json`
+  and `stage9b-sort-review-minimum.json`). Complete-sort benchmarks compare the
+  exact pre-batch function from `6f0ca8045` against this adapter, using five timed
+  repetitions plus separate traced allocations on 1,000/100,000-row, eight-column
+  float64/uint64 tables with one/three keys. All **8/8 pairs** meet the recorded
+  time limit (larger of 2x legacy or legacy + 5 ms); all allocation peaks are below
+  legacy, also satisfying its 2x ceiling. Large float64 sorts measured 24.930 ->
+  23.722 ms (one key), 37.375 -> 27.371 ms (three); uint64 22.180 -> 21.953 ms and
+  32.566 -> 23.384 ms. Large traced peaks fell from about 22.54 MB to 16.14 MB.
+  Evidence: `maintenance/runs/stage9b-sort-benchmark.json` and `.log`, runtime
+  fingerprint `ed4c6982a5fd5decfdb23a446215d7e2b68c7edcc5eb8fd82c50e98778ad1ab8`.
+  These are focused warm-operation measurements, not total process RSS or a new
+  package-wide performance claim. Cached Sphinx HTML built from a clean tracked
+  source snapshot (`READTHEDOCS=True`) with **88 reviewed Windows warnings, zero
+  unexpected warnings**, all primary classes/dynamic methods documented and no
+  removed API entries versus 9a. Evidence: `maintenance/runs/stage9b-doc-build.log`,
+  `stage9b-doc-warnings.log`, `stage9b-doc-audit.json` and `stage9b-doc-output`.
+  Localhost visual review checked the sorting guide, API page and guide-to-API
+  link; the temporary browser tab/server were closed. Ruff F821 and whitespace
+  checks pass; all 243 tracked plot-cache files remain unchanged. This batch has
+  local validation only; hosted Stage 8 results are not Stage 9b evidence.
+- **Stage 9c review (2026-10-17):** retained `Data.unique`'s numerical implementation
+  unchanged after the documented backend comparison. Updated its docstring and
+  `doc/UserGuide/datafile.rst` to specify optional tuple order, dtype/fill, masks,
+  flattening, first-occurrence indices, inverse shape, numerical ownership and
+  committed-state reads. `tests/Stoner/core/test_unique_contract.py` adds 54
+  boundary cases covering all flag combinations, finite/mixed/all-excluded input,
+  duplicate-header and multi-column selectors, empty selections, full-width uint64,
+  Boolean/float/complex dtypes, NaN/complex-NaN equivalence, result independence,
+  schema/metadata identity, active drafts, native drift and unsupported `where`.
+  No runtime algorithm, storage owner, image interface or public method name changed.
+- **Stage 9c validation:** py314 characterisation passed **54 tests**, 1 existing
+  SciPy warning, 7.06 s (`maintenance/runs/20261017-215219-focused-84008e72`).
+  Exploratory reports compare seven representative input families and all four
+  index/inverse combinations on current NumPy 2.5.2/pandas 3.0.5 and minimum NumPy
+  2.0.2/pandas 2.2.3: `maintenance/runs/stage9c-unique-review-current.json` and
+  `stage9c-unique-review-minimum.json`. Both demonstrate encounter-order and
+  mask/complex-NaN differences in raw pandas uniqueness; they also record raw
+  `factorize(sort=True)` codes/categories and `drop_duplicates` results.
+  The lower-dependency command `maintenance/run-baseline.ps1 -Check focused
+  -EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env
+  -TestPaths tests/Stoner/core/test_unique_contract.py,tests/Stoner/core/test_storage_structural.py`
+  passed **70 tests**, 13 warnings, 6.29 s
+  (`maintenance/runs/20261017-215336-focused-08a6bfb9`). Verified environments remain
+  py314 Python 3.14.7/NumPy 2.5.2/pandas 3.0.5/SciPy 1.18.0/xarray 2026.7.0 and
+  minimum Python 3.12.15/NumPy 2.0.2/pandas 2.2.3/SciPy 1.14.1/xarray 2024.10.0,
+  both with pytest 9.1.1; no dependency/environment files changed.
+  Final `maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
+  **1,087 tests**, 708 warnings, **81% coverage**, 268.45 s with two workers
+  (`maintenance/runs/20261017-215337-parallel-ef11f450`), including retained Stage
+  9a/9b behaviour and all 54 uniqueness cases. Stage 9c is complete.
+  Cached Sphinx HTML built from a clean
+  tracked-source snapshot with `READTHEDOCS=True`: **88 reviewed Windows warnings,
+  zero unexpected warnings**, all primary classes and dynamic methods documented,
+  and no removed API entries versus 9b. Evidence: `maintenance/runs/stage9c-doc-build.log`,
+  `stage9c-doc-warnings.log`, `stage9c-doc-audit.json` and `stage9c-doc-output`.
+  Localhost visual review checked the guide, API contract and guide-to-API link;
+  temporary tab/server were closed. Ruff F821 and whitespace checks pass, with
+  all 243 tracked plot-cache files unchanged. No new benchmark claim is made:
+  this batch leaves the executable uniqueness path unchanged. Validation is local;
+  previous hosted Stage 8 runs are not evidence for Stage 9c.
+- **Stage 9d implementation (2026-10-17):** replaced preview clone-then-trim on the
+  standard path with selected-row frame/mask copies and a pre-seeded deepcopy memo.
+  Changed `Stoner/core/methods.py`, `storage_bridge.py` and the two numerical-leaf
+  copies in `_TableState.__deepcopy__` in `storage_owner.py`. Custom hooks retain the
+  old wrapper path. Existing preview/scientific contracts pass; twelve new tests in
+  `tests/Stoner/core/test_row_previews.py` protect shared attribute/typed metadata
+  cycles, source-independent frame/mask aliases, inherited subclass attributes,
+  absence of full-frame copying/NumPy exports/owner trimming, custom clone/deepcopy
+  transformations, failure atomicity and the canonical result-frame policy. Full raw
+  frame/mask backups in metadata/attributes remain full independent snapshots, with
+  their shared aliases intact. The guide/docstrings explain selected-row
+  copying and the retained ancillary/custom-hook costs. No new public API added.
+- **Stage 9d validation:** final current focused tests passed **99 tests**,
+  1 existing warning, 9.50 s (`maintenance/runs/20261017-221651-focused-20c34ce3`).
+  The final lower-dependency command `maintenance/run-baseline.ps1 -Check focused
+  -EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env
+  -TestPaths tests/Stoner/core/test_row_previews.py,tests/Stoner/core/test_storage_structural.py,tests/Stoner/core/test_storage_bridge.py,tests/Stoner/core/test_storage_owner.py`
+  passed **99 tests**, 13 warnings, 7.87 s
+  (`maintenance/runs/20261017-221742-focused-adbabcd9`). Environments/dependencies
+  remain as verified in 9c; no environment or packaging specifications changed.
+  Final `maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
+  **1,099 tests**, 708 warnings, **81% coverage**, 282.27 s with two workers
+  (`maintenance/runs/20261017-221836-parallel-dbc30922`). This exact final source
+  includes canonical backend-frame policy and full ancillary raw-backup preservation;
+  its fingerprint matches the final benchmark below. Stage 9d is complete.
+  Cached Sphinx HTML built from a clean
+  tracked-source snapshot with `READTHEDOCS=True`: **88 reviewed Windows warnings,
+  zero unexpected warnings**, all primary classes/dynamic methods documented and
+  no removed API entries versus 9c. Final-source evidence:
+  `maintenance/runs/stage9d-verified-doc-build.log`, `stage9d-verified-doc-warnings.log`,
+  `stage9d-verified-doc-audit.json` and `stage9d-verified-doc-output`.
+  Localhost visual review checked the guide, both preview API contracts and the
+  guide-to-tail link; temporary browser tab/server were closed. All 243 tracked
+  plot-cache files remain unchanged. This batch's validation is local; earlier
+  hosted Stage 8 runs are not Stage 9d evidence.
+  Measured the unmodified 9a wrapper first (`maintenance/runs/stage9d-preview-baseline.json`,
+  runtime fingerprint `7e3de2d60d72b6811e36eee5c7bb26b14964b887e7389a21c1cdc14480e0e72b`)
+  and retained its exact function in the ignored benchmark snapshot. Final paired
+  complete-preview benchmarks use 1,000/100,000-row, eight-column float64 inputs,
+  both ends, counts 0/5/-5/oversize, five timed repetitions and separate traced
+  allocations. All **16/16 pairs** meet the accepted time limit (larger of 2x
+  legacy or legacy + 5 ms) and the 2x allocation ceiling; every peak is below legacy.
+  For 100,000 rows, head(5) measured 12.302 -> 6.992 ms and 14,412,430 -> 30,514
+  peak bytes; tail(5) 12.444 -> 6.865 ms and 14,414,063 -> 27,861 bytes. Full-size
+  previews fell from about 23.34 MB to 7.23 MB peak. These are warm complete-operation
+  measurements and traced allocations, not process RSS. Evidence:
+  `maintenance/runs/stage9d-preview-final.json` and `.log`, runtime fingerprint
+  `a958a5809ae60494188e04dda3779f4f64624f6f18fa80ec3aa389a042b5be94`.
+  The paired comparison isolates the old/new wrappers on the same copy foundation;
+  the pre-change capture is a separate contextual baseline. Ruff F821 and whitespace
+  checks pass.
+- **Stage 9e cumulative review (2026-10-17):** reviewed the complete 9a-9d runtime,
+  regression and documentation changes. Confirmed positional independent previews,
+  compatible pandas sorting with numerical fallbacks, retained NumPy uniqueness,
+  and selective preview copying with custom-hook fallback. No further runtime
+  changes were required. The deepcopy graph, raw backup snapshots, exclusions,
+  dtype/fill, schema and metadata contracts remain covered by regression tests.
+- **Stage 9e installed-distribution coverage:** extended
+  `maintenance/check-installed-package.py` to exercise head/tail raw values and
+  masks, independent edits, schema/roles and typed recursive metadata, reverse
+  sorting with ties/NaNs and exclusion movement, and masked uniqueness with both
+  optional index outputs. Hosted wheel/sdist checks run outside the checkout on
+  Python 3.12 and 3.14. Source preflights pass on py314 and the supported lower
+  Python 3.12 environment; these alone do not establish installed-package success.
+- **Stage 9e local checks:** F821 static checking and whitespace checks pass;
+  all 243 tracked cached plots remain unchanged. Runtime source fingerprint is
+  `a958a5809ae60494188e04dda3779f4f64624f6f18fa80ec3aa389a042b5be94`,
+  matching the final 9d full-suite and documentation evidence above. Reuse that
+  unchanged-source 1,099-test local pass. Fresh integrated and native-access
+  benchmarks and exact-revision hosted gates follow before closing 9e.
+- **Next: finish Stage 9e exit gates.** Commit and push the accumulated reviewed
+  Stage 9 changes to `devel` under the existing storage-migration authorisation;
+  verify supported/lower dependency CI, installed archives, cached hosted docs
+  and integrated performance on that final revision. Keep publication separate
+  and retain scientific fixtures and all 243 cached plots. No new backend family
+  is part of this exit batch.
 
 ### Accepted batch 3 performance decision
 

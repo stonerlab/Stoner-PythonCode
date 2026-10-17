@@ -27,7 +27,39 @@ def main():
     if version('Stoner') != Stoner.__version__:
         raise RuntimeError('Installed metadata and runtime versions differ')
     check_data_and_resources(checkout)
+    check_reviewed_wrappers()
     print(f'Installed-package checks passed: {installed}')
+
+
+def check_reviewed_wrappers():
+    """Exercise the reviewed wrapper contracts from each installed archive."""
+    data = Data(np.array([[2., 20.], [1., 10.], [1., 11.], [np.nan, 30.]]), setas='xy')
+    data.mask[1, 0] = True
+    data.metadata['run{String}'] = '001'
+    data.metadata['parent'] = data
+    for method, rows in ((data.head, slice(0, 2)), (data.tail, slice(2, 4))):
+        preview = method(2)
+        np.testing.assert_array_equal(preview.to_numpy().data, data.to_numpy().data[rows])
+        np.testing.assert_array_equal(preview.mask, np.asarray(data.mask)[rows])
+        assert preview.column_ids == data.column_ids and preview.setas == 'xy'
+        assert preview.metadata['run'] == '001' and preview.metadata.type('run') == 'String'
+        assert preview.metadata['parent'] is preview
+        preview[0, 1] = -99.
+        assert not (data.data.iloc[:, 1] == -99.).any()
+    original = data.to_numpy()
+    assert data.sort(0, reverse=True) is data
+    positions = [3, 0, 2, 1]
+    np.testing.assert_array_equal(data.to_numpy().data, original.data[positions])
+    np.testing.assert_array_equal(data.mask, original.mask[positions])
+    # Finite exclusions retain NumPy's masked group and optional result arrays.
+    categories = Data(np.array([[3], [1], [3], [2]]))
+    categories.mask[[1, 3], 0] = True
+    values, indices, inverse = categories.unique(0, True, True)
+    np.testing.assert_array_equal(values.compressed(), [3])
+    np.testing.assert_array_equal(values.mask, [False, True])
+    np.testing.assert_array_equal(indices, [0, 1])
+    np.testing.assert_array_equal(inverse, [0, 1, 0, 1])
+    print('Reviewed head/tail, sorting and masked unique checks passed')
 
 
 def check_data_and_resources(checkout):

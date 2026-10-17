@@ -143,8 +143,16 @@ completed repository repair programme.
   ownership and mutation contracts. Final full hosted suites passed 909 tests in
   every supported matrix cell; lower dependencies, installed distributions,
   documentation and all 19 integrated benchmark pairs also passed.
-  Next: inventory backend delegation and choose the first bounded wrapper family
-  under Stage 9's contract policy. This is separate from release preparation above.
+  Stage 9a adds independent `Data.head`/`tail` previews under the recorded wrapper
+  contracts and delegation inventory. Stage 9b delegates compatible real numeric
+  sorting while retaining numerical dtype/comparator fallbacks and owner commits.
+  Stage 9c retains NumPy uniqueness after reviewing its mask, ordering and optional
+  index/inverse contracts; dedicated tests and documentation record that decision.
+  Stage 9d copies selected preview rows through the existing deepcopy graph, with
+  custom copying hooks retaining their established path. Stage 9e has reviewed
+  the cumulative changes and added installed-archive wrapper smoke coverage;
+  final-revision hosted and integrated-performance exit gates are next.
+  This is separate from release preparation above.
 
 - **MAXIMUS:** image and point-scan readers select the first region and do not
   implement region-to-file mapping or explicitly reject multi-region inputs.

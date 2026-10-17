@@ -123,22 +123,39 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
     return reorder_columns(datafile, order)
 
 
+def _numeric_sort_indices(owner, positions):
+    """Resolve raw-key permutations without exporting the complete real table."""
+    dtype = owner._state.dtype
+    if not positions:
+        return np.arange(owner._state.values.shape[0])
+    if not dtype.isnative or dtype.kind == "c" or (dtype.kind == "f" and dtype.itemsize not in (4, 8)):
+        # Pandas groups complex NaNs differently and cannot factorise float16
+        # multi-keys. Other float widths and byte orders keep the numerical path.
+        array = owner.to_numpy(masked=False)
+        return np.lexsort(tuple(array[:, i] for i in reversed(positions)))
+    # Resolve Stoner headers/patterns first, then give pandas unique positional
+    # labels. Duplicate headers and repeated keys must not trigger label alignment.
+    keys = owner._state.values.iloc[:, positions].set_axis(range(len(positions)), axis="columns")
+    return keys.sort_values(by=list(keys.columns), kind="stable", na_position="last").index.to_numpy()
+
+
 def sort(datafile, *order, reverse=False):
     """Sort positional rows while applying the same permutation to exclusions."""
     owner = datafile._require_storage_owner()
-    array = owner.to_numpy(masked=False)
+    owner._check_writable()
     if len(order) == 1 and callable(order[0]):
+        array = owner.to_numpy(masked=False)
         comparator = order[0]
         indices = sorted(range(len(array)), key=cmp_to_key(lambda a, b: comparator(array[a], array[b])))
     else:
         if not order:
             roles = datafile.setas.cols
             order = ([roles.xcol] if roles.xcol is not None else []) + roles.ycol + roles.zcol
-            order = order or list(range(array.shape[1]))
+            order = order or list(range(owner._state.values.shape[1]))
         elif len(order) == 1 and isinstance(order[0], (list, tuple)):
             order = order[0]
         positions = datafile.find_col(list(order), force_list=True)
-        indices = np.lexsort(tuple(array[:, i] for i in reversed(positions))) if positions else np.arange(len(array))
+        indices = _numeric_sort_indices(owner, positions)
     if reverse:
         indices = indices[::-1]
     owner.take(rows=indices)

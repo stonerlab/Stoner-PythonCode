@@ -36,9 +36,11 @@ def test_each_call(monkeypatch):
     storage_api = {"from_storage", "from_pandas", "export_storage", "to_numpy",
                    "edit_numpy", "edit_pandas", "column_ids"}
     assert storage_api <= set(meths)
+    preview_api = {"head", "tail"}
+    assert preview_api <= set(meths)
     # Column deletion now retains roles, so the second-axis shortcuts survive.
     assert {"x2", "y2"} <= set(meths)
-    assert len(set(meths) - storage_api - {"x2", "y2"}) == 133, "Dir of folders.each failed."
+    assert len(set(meths) - storage_api - preview_api - {"x2", "y2"}) == 133, "Dir of folders.each failed."
 
 
 def test_each_call_or_operator(monkeypatch):

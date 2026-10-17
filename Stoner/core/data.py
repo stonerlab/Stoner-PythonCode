@@ -76,8 +76,8 @@ class Data(
     """Store tabular numerical data with metadata, column headers and column roles.
 
     Attributes:
-        data (NumPy masked array):
-            Two-dimensional masked numerical array, indexed by row and column.
+        data (pandas.DataFrame):
+            Native two-dimensional raw values, with exclusions held separately in ``mask``.
         metadata (TypeHintedDict):
             Metadata values and their associated type information.
         column_headers (list):

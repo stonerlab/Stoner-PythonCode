@@ -12,6 +12,39 @@ from .storage import DataStorage, resolve_columns, _copy_metadata
 from .storage_owner import DataOwner
 
 
+def _copy_rows(datafile, rows):
+    """Copy a positional preview through the existing object's deepcopy graph."""
+    from .data import Data
+
+    owner = datafile._require_storage_owner()
+    owner._check_writable()
+    # User copy hooks may transform state. Keep their established clone-then-take
+    # behaviour rather than assuming they honour a pre-seeded deepcopy memo.
+    if (
+        getattr(datafile.__deepcopy__, "__func__", None) is not Data.__deepcopy__
+        or type(datafile).clone is not Data.clone
+    ):
+        result = datafile.clone
+        result._require_storage_owner().take(rows=rows.to_numpy())
+        return result
+    selection = slice(rows.start, rows.stop, rows.step)
+    state = owner._state
+    values = state.values.iloc[selection].copy(deep=True)
+    values.index = pd.RangeIndex(len(values))
+    # Match the canonical frame rebuilt by the previous owner-take boundary.
+    values.columns = [column.header for column in state.schema]
+    values.attrs = {}
+    values.flags.allows_duplicate_labels = True
+    excluded = state.excluded[selection].copy()
+    # Standard deepcopy registers the new Data/owner/state before traversing
+    # metadata. Only the two numerical leaves are substituted, preserving cycles
+    # and shared references without copying observations outside the preview.
+    memo = {id(state.values): values, id(state.excluded): excluded}
+    result = deepcopy(datafile, memo)
+    result._require_storage_owner()._state.validate()
+    return result
+
+
 
 
 class _ResolvedSetas(Setas):
