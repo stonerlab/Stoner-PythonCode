@@ -127,7 +127,11 @@ completed repository repair programme.
   maintenance tools and references validated after relocation. Migration Stage 7
   records the alpha's hosted matrix/package results and audited documentation build.
 - [ ] Verify hosted Codacy reanalysis of the locally reviewed cleanup.
-  Keep the deferred complexity and mixed-line-ending work out of this release batch.
+  The 2026-10-17 `devel` snapshot has 252 findings, including 130 mixed-line-ending
+  findings across 32 files. Those files have been normalised to their existing
+  dominant endings (31 CRLF, one LF), with identical newline-normalised bytes and
+  Python syntax trees. Hosted clearance remains pending publication and reanalysis.
+  Keep the deferred complexity work out of this release batch.
 - [ ] Review outstanding release metadata, archive size and service/citation links.
 - [x] Prepare the release notes for `0.12.0a1` in `doc/UserGuide/upgrade.rst`.
 - [ ] When authorised, tag and publish; record successful package/documentation
