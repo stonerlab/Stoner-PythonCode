@@ -39,6 +39,11 @@ def setup(app):
 
 my_path=path.dirname(__file__)
 on_read_the_docs = os.environ.get("READTHEDOCS", "").lower() == "true"
+if on_read_the_docs:
+    # Autodoc imports Stoner, whose widget modules can initialise Qt before
+    # Sphinx renders any plots. Read the Docs has no graphical display.
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    os.environ["MPLBACKEND"] = "Agg"
 
 sys.path.insert(0, my_path)
 
