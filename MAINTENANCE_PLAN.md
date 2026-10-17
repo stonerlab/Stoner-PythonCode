@@ -129,12 +129,12 @@ completed repository repair programme.
 - [ ] Verify hosted Codacy reanalysis of the locally reviewed cleanup and triage
   remaining correctness/security findings for release impact. A zero-finding
   Codacy report is not an acceptance requirement for `0.12.0a1`.
-  The 2026-10-17 `devel` snapshot has 252 findings, including 130 mixed-line-ending
-  findings across 32 files. Those files have been normalised to their existing
-  dominant endings (31 CRLF, one LF), with identical newline-normalised bytes and
-  Python syntax trees. The cleanup is pushed as `bd56dd6ad`; hosted reanalysis has
-  not yet reflected it. Complexity findings are explicitly non-blocking for this
-  alpha and are tracked as follow-up work below.
+  Hosted analysis now confirms the original 130 mixed-line-ending findings were
+  cleared by `bd56dd6ad`. The first complete migration analysis on `bfbeb08e6`
+  reports 595 findings, including another 237 mixed-ending occurrences across 21
+  files; those are now normalised too, with identical newline-normalised bytes and
+  syntax trees and a passing targeted Pylint check. Await their hosted reanalysis.
+  Complexity findings remain explicitly non-blocking for this alpha.
 - [ ] Review outstanding release metadata, archive size and service/citation links.
 - [x] Prepare the release notes for `0.12.0a1` in `doc/UserGuide/upgrade.rst`.
   Release preparation now includes the completed Stage 9 previews, sorting and
@@ -146,7 +146,7 @@ completed repository repair programme.
 ## Known limitations and follow-ups
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
-  2026-10-17 `devel` Codacy snapshot contains 66 complexity-category findings.
+  complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.
   Review and address these in bounded maintenance batches after alpha release
   preparation, favouring cohesive helpers and meaningful regression coverage.
   Do not require complexity cleanup or a zero-finding quality report to publish
