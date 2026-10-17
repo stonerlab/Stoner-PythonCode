@@ -126,18 +126,29 @@ completed repository repair programme.
   installed-version checks. Historical records have been retired and retained
   maintenance tools and references validated after relocation. Migration Stage 7
   records the alpha's hosted matrix/package results and audited documentation build.
-- [ ] Verify hosted Codacy reanalysis of the locally reviewed cleanup.
+- [ ] Verify hosted Codacy reanalysis of the locally reviewed cleanup and triage
+  remaining correctness/security findings for release impact. A zero-finding
+  Codacy report is not an acceptance requirement for `0.12.0a1`.
   The 2026-10-17 `devel` snapshot has 252 findings, including 130 mixed-line-ending
   findings across 32 files. Those files have been normalised to their existing
   dominant endings (31 CRLF, one LF), with identical newline-normalised bytes and
-  Python syntax trees. Hosted clearance remains pending publication and reanalysis.
-  Keep the deferred complexity work out of this release batch.
+  Python syntax trees. The cleanup is pushed as `bd56dd6ad`; hosted reanalysis has
+  not yet reflected it. Complexity findings are explicitly non-blocking for this
+  alpha and are tracked as follow-up work below.
 - [ ] Review outstanding release metadata, archive size and service/citation links.
 - [x] Prepare the release notes for `0.12.0a1` in `doc/UserGuide/upgrade.rst`.
 - [ ] When authorised, tag and publish; record successful package/documentation
   jobs and verify published versions before closing release preparation.
 
 ## Known limitations and follow-ups
+
+- [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
+  2026-10-17 `devel` Codacy snapshot contains 66 complexity-category findings.
+  Review and address these in bounded maintenance batches after alpha release
+  preparation, favouring cohesive helpers and meaningful regression coverage.
+  Do not require complexity cleanup or a zero-finding quality report to publish
+  the alpha. Review any independently identified correctness or security defect
+  on its actual release impact rather than its complexity score.
 
 - [x] **Native storage wrappers on `devel` (Stages 1-9 complete):** see
   [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
