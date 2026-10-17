@@ -135,7 +135,7 @@ completed repository repair programme.
 
 ## Known limitations and follow-ups
 
-- [ ] **Native storage wrapper follow-up on `devel` (Stage 9):** follow
+- [x] **Native storage wrappers on `devel` (Stages 1-9 complete):** see
   [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
   architecture, validation gates and current handover. Stages 1-8 are complete:
   `Data.data` exposes its actual DataFrame; `ImageFile.image` and `ImageStack.stack`
@@ -149,10 +149,13 @@ completed repository repair programme.
   Stage 9c retains NumPy uniqueness after reviewing its mask, ordering and optional
   index/inverse contracts; dedicated tests and documentation record that decision.
   Stage 9d copies selected preview rows through the existing deepcopy graph, with
-  custom copying hooks retaining their established path. Stage 9e has reviewed
-  the cumulative changes and added installed-archive wrapper smoke coverage;
-  final-revision hosted and integrated-performance exit gates are next.
-  This is separate from release preparation above.
+  custom copying hooks retaining their established path. Stage 9e's cumulative
+  review and installed-wrapper coverage passed on `4525bf7d5`: 1,099 tests in each
+  supported hosted cell; 1,098 plus one existing skip with lower dependencies;
+  wheel/sdist checks on Python 3.12/3.14; cached docs with zero unexpected warnings;
+  and all 19 integrated performance pairs. The migration plan retains exact-run
+  links and source fingerprints. Next: separately authorised release preparation
+  above; additional wrapper families need independent bounded proposals.
 
 - **MAXIMUS:** image and point-scan readers select the first region and do not
   implement region-to-file mapping or explicitly reject multi-region inputs.

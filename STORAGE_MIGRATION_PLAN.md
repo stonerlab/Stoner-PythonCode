@@ -1,7 +1,7 @@
 # Data storage migration plan
 
 Agreed direction: 2026-09-13. Target branch: `devel`.
-Status: Stages 1-8 and Stage 9a-9d complete; Stage 9e review is complete and final-revision exit gates are running.
+Status: Stages 1-9 complete, including the Stage 9e cumulative wrapper exit gate.
 Target release: `0.12.0a1` (version set; not published).
 Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
 new version. Python 3.15 support is conditional on its public release and support
@@ -539,7 +539,7 @@ Acceptance coverage must include:
    fixtures; measure native getter and selected-operation costs without assuming
    that Boolean indexing is zero-copy.
 
-- [ ] **9. Simplify and extend Stoner wrappers.** After the Stage 8 native interface
+- [x] **9. Simplify and extend Stoner wrappers.** After the Stage 8 native interface
   and its masking/mutation contracts pass validation, audit existing methods for
   backend delegation and select new backend methods worth exposing. Deliver small,
   independently tested wrapper batches as below.
@@ -570,7 +570,7 @@ Acceptance coverage must include:
     ancillary attributes, typed metadata aliases/cycles, raw values/exclusions,
     schema IDs/roles and index semantics. Measure against the 9a implementation;
     keep the existing path if an equivalent bounded adapter is not demonstrated.
-  - [ ] **9e. Cumulative wrapper exit review.** Review the complete 9a-9d diff and
+  - [x] **9e. Cumulative wrapper exit review.** Review the complete 9a-9d diff and
     confirm the documented delegation/retention decisions. Validate the final
     revision with supported/lower dependency CI, installed distributions, cached
     documentation audit and integrated benchmarks before recording Stage 9's exit
@@ -1858,12 +1858,47 @@ matches the selected environment.
   matching the final 9d full-suite and documentation evidence above. Reuse that
   unchanged-source 1,099-test local pass. Fresh integrated and native-access
   benchmarks and exact-revision hosted gates follow before closing 9e.
-- **Next: finish Stage 9e exit gates.** Commit and push the accumulated reviewed
-  Stage 9 changes to `devel` under the existing storage-migration authorisation;
-  verify supported/lower dependency CI, installed archives, cached hosted docs
-  and integrated performance on that final revision. Keep publication separate
-  and retain scientific fixtures and all 243 cached plots. No new backend family
-  is part of this exit batch.
+- **Stage 9e measured exit gates:** fresh paired integrated measurements pass
+  **19/19** time/allocation limits using five timing repeats and separate traced
+  peaks, against the isolated pre-migration checkout. Evidence is ignored local
+  `maintenance/runs/stage9-exit-integrated.json`; both import provenance and source
+  fingerprints were checked during measurement. Production fingerprint matches
+  the unchanged 9d runtime above. Native getter allocation checks pass **3/3**
+  (`stage9-exit-native.json`): table 2,401 versus 3,604,549 bytes for masked export,
+  image 7,675 versus 789,637, stack 133,350 versus 789,848. These are traced operation
+  allocations, not process RSS; no new uniqueness speed claim is made. The 9b
+  sorting and 9d preview-specific paired results remain applicable to this source.
+- **Stage 9e hosted revision:** committed and pushed accumulated Stage 9 changes
+  as `4525bf7d593788ef4d4e0d2d5afcba3f6ca85ca9` on `devel` using the existing
+  migration authorisation. All final hosted gates below refer to that immutable
+  revision, rather than the earlier Stage 8 runs.
+  - [Supported test matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39071419390):
+    **1,099 passed in every cell**: Linux Python 3.12, 3.13 and 3.14, plus macOS
+    Python 3.14. Downloaded JUnit files confirm zero failures/errors/skips in each
+    cell. Final test-result publishing succeeded, as did Ubuntu 3.14's Coveralls
+    and Codacy coverage uploads; this does not claim separate service reanalysis.
+  - [Supported lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39071419386):
+    **1,098 passed, 1 existing skip**, including the new wrapper regressions. The
+    skip is the pandas 3 accessor-lifecycle observation on the pandas 2 environment.
+  - [Installed distributions](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39071419383):
+    both Python 3.12/3.14 jobs passed archive content checks and independent wheel
+    and sdist smoke checks outside the checkout, including reviewed wrappers.
+  - [Cached documentation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39071419166):
+    succeeded with **61 reviewed Linux warnings, zero unexpected**. The local
+    warning audit is `stage9-exit-hosted-doc-warning-audit.json`. The unchanged
+    source's Windows documentation/API inventory and visual review are recorded
+    under 9d above; all 243 tracked cache files remain unchanged.
+- **Stage 9 exit decision:** 9a-9e are complete. The cumulative review, final-source
+  local tests, supported/lower hosted suites, installed archives, cached docs/API
+  audit and measured performance satisfy the wrapper exit gate. Record this
+  closure in a documentation-only commit; hosted runtime evidence remains pinned
+  to `4525bf7d593788ef4d4e0d2d5afcba3f6ca85ca9` and its fingerprint above.
+- **Next step:** follow the separate release-preparation checklist in
+  `MAINTENANCE_PLAN.md` when release work is authorised. No release, tag, publication
+  or Conda deployment is part of this batch. Retain scientific fixtures and all
+  243 cached plots. Additional wrapper families, labelled-row APIs and lazy or
+  broader coordinate-aware interfaces require independent bounded proposals;
+  they are not outstanding Stage 9 requirements.
 
 ### Accepted batch 3 performance decision
 
