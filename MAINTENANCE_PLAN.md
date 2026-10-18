@@ -118,27 +118,47 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
-### 0.12.0a2 preparation
+### Published 0.12.0a2
 
-The plotting redesign and Attocube/MAXIMUS optimisation are merged into `devel`,
-including the completed hosted-validation notes. The canonical version is now
-`0.12.0a2`; the Conda build revision restarts at zero for this new version.
-Release notes and the upgrade guide identify the plotting API break and required
-stonerplots 1.9.6 dependency. The existing `v0.12.0a1` release remains immutable.
+[`0.12.0a2`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a2)
+is published as a GitHub prerelease from `devel`, tagged at
+`f995d6068eb7ecacc9a679bfa22b892769984dba`. The plotting redesign, scan-frame
+optimisation, validation notes, version and upgrade documentation are merged.
+The release records the complete validation and publication evidence; there are
+no outstanding publication gates for this alpha. Published tags remain immutable.
 
-- [x] Validate the final versioned release commit: supported platform matrix,
-  lower dependencies, fresh installed distributions, cached documentation and
-  repository/package policy checks.
-- [x] Publish the matching `v0.12.0a2` GitHub prerelease after those checks pass.
-- [ ] Verify PyPI wheel/sdist metadata and an independent installed-package smoke
-  check, Conda publication and installed import/version test, and versioned
-  documentation. Record exact release and deployment links.
+The exact release source passed 1,331 tests in every Linux 3.12-3.14/macOS 3.14
+matrix cell and on local Windows; lower dependencies passed 1,330 with one
+expected skip. Fresh wheel/sdist installations and cached documentation passed.
+[Automatic tag validation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39163437419)
+also passed all four full-suite cells, including macOS Attocube. Local cached
+documentation had 62 reviewed warnings, zero unexpected warnings and no lost API
+entries; all 276 tracked plot-cache files were retained.
+
+[PyPI](https://pypi.org/project/Stoner/0.12.0a2/) publishes the wheel and sdist
+with Python >=3.12 and stonerplots >=1.9.6 metadata. The published wheel passed
+the installed-package smoke checks outside the checkout. Conda publishes
+`noarch/stoner-0.12.0a2-py_0.conda` in `phygbu` channel repodata; its installed
+import/version test passed in the
+[recovery deployment](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39164610037),
+which checked out the original release tag and skipped PyPI.
 
 The initial Conda deployment reported success without an archive: its nested
 solver omitted `phygbu`, so stonerplots >=1.9.6 could not be resolved, and the
 third-party upload action masked the build failure. Deployment now builds/tests
 with explicit channels and Python 3.12, rejects missing archives, and supports a
 Conda-only recovery from the original release tag. The published tag is unchanged.
+
+The deployment-only fix at `4e9ec76d8` passed the
+[full matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39164565387),
+[lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39164565381)
+and [installed distributions](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39164565319).
+[Read the Docs build 35227451](https://app.readthedocs.org/projects/stoner-pythoncode/builds/35227451/)
+passed on the exact release SHA; the public
+[versioned documentation](https://stoner-pythoncode.readthedocs.io/en/v0.12.0a2/),
+release notes, plotting guide and cached images were verified in the browser.
+Zenodo archived the release as
+[DOI 10.5281/zenodo.23458853](https://doi.org/10.5281/zenodo.23458853).
 
 ### Previous alpha
 
@@ -190,7 +210,8 @@ reviewed inference/test-utility advisories did not block the alpha.
   The full Linux 3.12-3.14/macOS 3.14 matrix passes 1,327 tests per job; lower
   dependencies pass 1,326 with one expected skip. Both installed wheel/sdist
   endpoint jobs and cached documentation pass. Local cached docs have 62 reviewed
-  warnings and zero unexpected, with no unintended API removals. No release was made.
+  warnings and zero unexpected, with no unintended API removals. Included in
+  `0.12.0a2`, with final release validation recorded above.
 
 - [x] **Attocube frame metadata cost:** removed the numerical export when rebinding
   the metadata owner in `ScanMetadataMixin._instantiate`, shared with MAXIMUS.
@@ -237,8 +258,8 @@ reviewed inference/test-utility advisories did not block the alpha.
   supported hosted cell; 1,098 plus one existing skip with lower dependencies;
   wheel/sdist checks on Python 3.12/3.14; cached docs with zero unexpected warnings;
   and all 19 integrated performance pairs. The migration plan retains exact-run
-  links and source fingerprints. Next: separately authorised release preparation
-  above; additional wrapper families need independent bounded proposals.
+  links and source fingerprints. Included in the published alpha releases above;
+  additional wrapper families need independent bounded proposals.
 
 - **MAXIMUS:** image and point-scan readers select the first region and do not
   implement region-to-file mapping or explicitly reject multi-region inputs.
