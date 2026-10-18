@@ -1,6 +1,14 @@
 Release notes
 =============
 
+Unreleased: scan frame access
+-----------------------------
+
+Accessing Attocube or MAXIMUS stack frames no longer exports their pixels and
+exclusion masks merely to expose scan metadata. Saved frame handles retain their
+identity through reordering, live common-header defaults and local overrides,
+presentation attributes, masks, fill values and spatial calibration.
+
 Unreleased: plotting redesign
 -----------------------------
 

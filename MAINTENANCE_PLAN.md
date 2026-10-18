@@ -168,14 +168,17 @@ reviewed inference/test-utility advisories did not block the alpha.
   endpoint jobs and cached documentation pass. Local cached docs have 62 reviewed
   warnings and zero unexpected, with no unintended API removals. No release was made.
 
-- [ ] **Attocube frame metadata cost (non-blocking):** the final macOS plotting
-  validation passed, but `test_attocube_scan` took 201.434 seconds and triggered a
-  diagnostic faulthandler dump. `ScanMetadataMixin._instantiate` in
-  `Stoner/Image/scan_metadata.py` exports `image.imarray` before rebinding its
-  metadata owner, causing numerical pixel/mask copying during frame access.
-  Investigate avoiding that materialisation as a separate storage batch, preserving
-  frame identity, presentation state, calibration, exclusions and live common
-  metadata defaults. Do not introduce broad caching or relax format coverage.
+- [x] **Attocube frame metadata cost:** removed the numerical export when rebinding
+  the metadata owner in `ScanMetadataMixin._instantiate`, shared with MAXIMUS.
+  Regression tests retain frame identity, presentation state, calibration, masks,
+  fill values and live common/local metadata. No cache or format coverage changes.
+  Local validation passes 1,331 tests on py314 and 261 image/format/HDF5 tests with
+  the supported lower dependencies. The 1024 x 1024 metadata-access benchmark
+  falls from 16.068 to 0.820 ms and 20,234,538 to 195,855 traced peak bytes; these
+  are operation measurements, not whole-loader/macOS timings or process RSS.
+  See [the storage handover](STORAGE_MIGRATION_PLAN.md#post-migration-scan-frame-access-2026-10-18)
+  for the bounded contract and evidence. Hosted validation of this change follows
+  its next push; the earlier green plotting gates do not validate this runtime.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.

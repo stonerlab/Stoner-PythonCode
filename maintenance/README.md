@@ -70,7 +70,11 @@ runtime source unchanged during its isolated measurements. Compare the resulting
 workload medians with the recorded Stage 7 baseline too.
 `benchmark-native-interface.py --output <json>` measures actual native getter
 allocations versus masked exports and records regional selection costs and a
-runtime-source fingerprint. These checks supplement the scientific regression
+runtime-source fingerprint. It also measures metadata-only Attocube frame access
+at 64 x 64 and 1024 x 1024 pixels to expose allocations that scale with image size.
+Compare captures made before and after a change in the same environment; these
+frame-access measurements do not establish whole-loader or process-RSS performance.
+These checks supplement the scientific regression
 suite; they do not replace hosted platform or installed-distribution validation.
 
 `check-distribution-archives.py dist` inspects CI-built wheel/sdist contents and
