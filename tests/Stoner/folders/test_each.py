@@ -38,9 +38,9 @@ def test_each_call(monkeypatch):
     assert storage_api <= set(meths)
     preview_api = {"head", "tail"}
     assert preview_api <= set(meths)
-    # Column deletion now retains roles, so the second-axis shortcuts survive.
-    assert {"x2", "y2"} <= set(meths)
-    assert len(set(meths) - storage_api - preview_api - {"x2", "y2"}) == 133, "Dir of folders.each failed."
+    expected = set.intersection(*(set(dir(data)) for data in fldr6))
+    assert set(meths) == {name for name in expected if not name.startswith("_")}
+    assert "plot" in meths and not {"x2", "y2", "plot_xy", "template"}.intersection(meths)
 
 
 def test_each_call_or_operator(monkeypatch):

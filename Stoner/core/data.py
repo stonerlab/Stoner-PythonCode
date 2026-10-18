@@ -55,14 +55,14 @@ except ImportError:
 # Bring all the subclasses into memory (idnore unused imports warnings)
 from ..analysis import columns, features, filtering, functions
 from ..analysis.fitting import functions as fitting
-from ..plot import PlotMixin
+from ..plot import functions as plotting
 from ..tools.decorators import class_modifier
 from ..tools.file import best_saver
 from . import methods
 
 
 @class_modifier(
-    [methods, fitting, columns, functions, features, filtering], adaptor=None, no_long_names=True, overload=True
+    [methods, fitting, columns, functions, features, filtering, plotting], adaptor=None, no_long_names=True, overload=True
 )
 class Data(
     StorageBridgeMixin,
@@ -71,7 +71,6 @@ class Data(
     DataFilePropertyMixin,
     metadataObject,
     MutableSequence,
-    PlotMixin,
 ):
     """Store tabular numerical data with metadata, column headers and column roles.
 
@@ -93,7 +92,7 @@ class Data(
         filename (str):
             Current filename, also used as the default by load and save operations.
         title (str):
-            Title used when plotting the data.
+            Legacy plot-title proxy. Use the returned Axes for ordinary plotting.
         header (str):
             Read-only formatted header for the tabular representation.
         records (ndarray):
@@ -445,6 +444,28 @@ class Data(
         result.__dict__.pop("_metadata", None)
         result.__dict__["_storage_owner"]._editing = False
         return result
+
+    def __getstate__(self):
+        """Serialise measurements and plot configuration without live rendering targets."""
+        return self.__dict__.copy()
+
+    def __setstate__(self, state):
+        """Restore serialised measurement state without invoking attribute proxies."""
+        self.__dict__.update(state)
+
+    @property
+    def plot(self):
+        """Return a callable plotting accessor without creating a figure or reading data.
+
+        Returns:
+            Stoner.plot.accessor.DataPlotter:
+                Accessor bound to this Data. Call it to infer a scientific plot,
+                or select a named method such as line, hist or surface. Drawing
+                returns a Matplotlib Axes and does not show or save the figure.
+        """
+        from ..plot.accessor import DataPlotter
+
+        return DataPlotter(self)
 
     def __dir__(self):
         """Returns the attributes of the current object.

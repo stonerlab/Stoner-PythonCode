@@ -104,7 +104,7 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   on pushes and pull requests. Record successful results for the release commit;
   do not repeat those builds locally or reuse old files from `dist`.
 - Review metadata, licences, URLs, dependency declarations and archive size where
-  automated checks do not cover them. Check runtime assets including plot styles
+  automated checks do not cover them. Check runtime assets including OCR data and dependency-provided plot styles
   and OCR tessdata. Keep GPLv3 declarations consistent.
 - Publish the matching GitHub release only when authorised. Verify the release
   jobs build that tag, reject a version mismatch, and complete PyPI/Conda publication
@@ -158,6 +158,33 @@ reviewed inference/test-utility advisories did not block the alpha.
   Keep the published alpha tag immutable; this documentation fix is on `devel`.
 
 ## Known limitations and follow-ups
+
+- [x] **Plotting redesign (stages 0-6 complete):** see
+  [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) and the
+  [release notes](doc/release-notes.rst). Stage 5 is committed as `8d6b49b93`;
+  stage 6 fixes as `855f37010` and `33b36ec81` on the pushed feature branch.
+  The full Linux 3.12-3.14/macOS 3.14 matrix passes 1,327 tests per job; lower
+  dependencies pass 1,326 with one expected skip. Both installed wheel/sdist
+  endpoint jobs and cached documentation pass. Local cached docs have 62 reviewed
+  warnings and zero unexpected, with no unintended API removals. No release was made.
+
+- [x] **Attocube frame metadata cost:** removed the numerical export when rebinding
+  the metadata owner in `ScanMetadataMixin._instantiate`, shared with MAXIMUS.
+  Regression tests retain frame identity, presentation state, calibration, masks,
+  fill values and live common/local metadata. No cache or format coverage changes.
+  Local validation passes 1,331 tests on py314 and 261 image/format/HDF5 tests with
+  the supported lower dependencies. Pushed revision `9b42bfd74` also passes all
+  1,331 tests in every Linux 3.12-3.14/macOS 3.14 hosted job; lower dependencies
+  pass 1,330 with one expected skip. Installed wheel/sdist checks on Python
+  3.12/3.14, cached documentation and final result publishing all pass. The macOS
+  Attocube test passes in 45.787 seconds, versus 201.434 in the previous run;
+  these hosted timings are observational rather than a controlled benchmark.
+  The 1024 x 1024 metadata-access benchmark
+  falls from 16.068 to 0.820 ms and 20,234,538 to 195,855 traced peak bytes; these
+  are operation measurements, not whole-loader/macOS timings or process RSS.
+  See [the storage handover](STORAGE_MIGRATION_PLAN.md#post-migration-scan-frame-access-2026-10-18)
+  for the bounded contract, exact-revision hosted links and documentation-warning
+  review. This optimisation is validated independently of the earlier plotting gates.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.

@@ -23,12 +23,12 @@ d.plot()
 d.find_peaks(
     modify=True, prominence=(0.045, 20), width=(0.02, 0.1), distance=0.01
 )
-d.labels[1] = "Find_Peaks"
-d.plot(figure=d.fig, fmt="bx")
-d.title = "Finding peaks with peaks() and find_peaks()"
+d.plot.labels[1] = "Find_Peaks"
+d.plot(ax=d.plot.ax, fmt="bx")
+d.plot.ax.set_title("Finding peaks with peaks() and find_peaks()")
 
 # Use the metadata that find_peaks produces
 colors = jet(linspace(0, 1, len(d)), alpha=0.5)
 for l, r, c in zip(d["left_ips"], d["right_ips"], colors):
-    ax = d.axes[d.ax]
+    ax = d.plot.ax
     ax.axvspan(l, r, facecolor=c)

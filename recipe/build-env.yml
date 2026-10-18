@@ -4,6 +4,7 @@ channels:
     - phygbu
     - conda-forge
 dependencies:
+   # Packaging tools only; runtime requirements belong in recipe/meta.yaml.
    - python >=3.12
    - conda-build
    - anaconda-client

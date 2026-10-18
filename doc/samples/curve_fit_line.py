@@ -17,5 +17,5 @@ fit = d.curve_fit(
 d.setas = "x..y"
 d.plot(fmt="b-")
 d.annotate_fit(linear)
-d.draw()
+d.plot.figure.canvas.draw()
 print(fit.fit_report())

@@ -4,5 +4,7 @@
 from Stoner import Data
 
 p = Data("sample.txt", setas="xyy")
-# Quick plot
-p.plot(multiple="subplots")
+with p.plot.style("stoner"):
+    with p.plot.MultiPanel((1, 2)) as panels:
+        for column, ax in zip([1, 2], panels):
+            p.plot.line(y=column, ax=ax, title=None)

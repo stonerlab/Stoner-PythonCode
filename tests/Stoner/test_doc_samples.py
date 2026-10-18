@@ -30,13 +30,16 @@ def test_scripts(script, monkeypatch):
     print(f"Trying script {script}")
     monkeypatch.chdir(datadir)
     plt.close("all")
-    try:
-        runpy.run_path(script)
-        fignum = len(plt.get_fignums())
-        assert fignum >= 1, f"{script} Did not produce any figures !"
-        print("Done")
-    finally:
-        plt.close("all")
+    with plt.rc_context():
+        try:
+            runpy.run_path(script)
+            figures = plt.get_fignums()
+            assert figures, f"{script} Did not produce any figures !"
+            for number in figures:
+                plt.figure(number).canvas.draw()
+            print("Done")
+        finally:
+            plt.close("all")
 
 
 if __name__ == "__main__":  # Run some tests manually to allow debugging

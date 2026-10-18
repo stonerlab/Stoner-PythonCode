@@ -1,13 +1,11 @@
-"""Example plot using a style similar to Physical Review B."""
+"""Use the stonerplots APS journal style in place of the old PRB template."""
 
-# pylint: disable=invalid-name
-import os.path as path
+from pathlib import Path
 
 from Stoner import Data, __home__
-from Stoner.plot.formats import PRBPlotStyle
 
-filename = path.realpath(
-    path.join(__home__, "..", "doc", "samples", "sample.txt")
-)
-d = Data(filename, setas="xy", template=PRBPlotStyle)
-d.plot()
+d = Data(Path(__home__).parent / "doc" / "samples" / "sample.txt", setas="xy")
+
+# APS is a replacement style, not a pixel-equivalent alias for the PRB template.
+with d.plot.style(["stoner", "aps"]):
+    d.plot.line()

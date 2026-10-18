@@ -11,16 +11,8 @@ e = (
     .select(X__between=(10, 18))
     .select(Y__between=(5, 13))
 )
-e.figure(figsize=(8, 4), no_axes=True)
-
-# 2D vectors on a 2D Field
-e.setas = "xy.uv."
-e.subplot(121)
-e.plot()
-e.title = "3D Vector, 2D Field"
-
-# 3D Vector on a 2D Field
-e.subplot(122)
-e.setas = "xy.uvw"
-e.plot()
-e.title = "3D Vector, 3D Field"
+with e.plot.style("stoner"):
+    figure = e.plot.new_figure(figsize=(8, 4))
+    with e.plot.MultiPanel((1, 2), figure=figure, adjust_figsize=False) as panels:
+        e.plot.vector(x=0, y=1, u=3, v=4, w=False, ax=panels[0], title="U/V on a 2D slice")
+        e.plot.vector(x=0, y=1, u=3, v=4, w=5, ax=panels[1], title="U/V/W colour on a 2D slice")

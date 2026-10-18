@@ -28,7 +28,62 @@ def main():
         raise RuntimeError('Installed metadata and runtime versions differ')
     check_data_and_resources(checkout)
     check_reviewed_wrappers()
+    check_plotting()
     print(f'Installed-package checks passed: {installed}')
+
+
+def check_plotting():
+    """Exercise accessor, contexts, saving and folder targets from each archive."""
+    from Stoner.folders import PlotFolder
+
+    data = Data(np.arange(4.), np.arange(4.)**2, np.full(4, 0.1), setas='xye')
+    data.mask[1, 1] = True
+    before = data.export_storage()
+    with data.plot.style('stoner'):
+        fig = data.plot.new_figure(figsize=(8, 4))
+        with data.plot.MultiPanel((1, 2), figure=fig, adjust_figsize=False) as panels:
+            ax = data.plot(ax=panels[0])
+            np.testing.assert_array_equal(ax.lines[0].get_xdata(), [0., 2., 3.])
+            data.plot.hist(y=1, ax=panels[1], bins=3)
+        with data.plot.InsetPlot(ax=ax, loc='upper left', width=0.3, height=0.3) as inset:
+            if data.plot.scatter(ax=inset, title=None, legend=False) is not inset:
+                raise RuntimeError('Inset plotting lost its explicit target')
+        with data.plot.DoubleYAxis(ax=ax) as right:
+            data.plot.line(ax=right, title=None, legend=False)
+        with tempfile.TemporaryDirectory(prefix='stoner-installed-plot-') as directory:
+            target = Path(directory) / 'measurement.png'
+            with data.plot.SavedFigure(str(target), formats='png', use=fig):
+                pass
+            if not target.is_file() or target.stat().st_size == 0:
+                raise RuntimeError('SavedFigure did not write the selected figure')
+
+    after = data.export_storage()
+    np.testing.assert_array_equal(after.to_numpy(masked=False), before.to_numpy(masked=False))
+    np.testing.assert_array_equal(after.excluded, before.excluded)
+    if after.metadata != before.metadata or after.schema != before.schema:
+        raise RuntimeError('Drawing changed measurement metadata or column roles')
+    if data.clone.plot.figure is not None:
+        raise RuntimeError('Cloning retained a live rendering target')
+
+    x, y = np.meshgrid(np.arange(3.), np.arange(3.))
+    field = Data(x.ravel(), y.ravel(), (x+y).ravel(), setas='xyz')
+    surface = field.plot.new_figure().add_subplot(projection='3d')
+    if field.plot.surface(ax=surface) is not surface or not surface.collections:
+        raise RuntimeError('Scientific field rendering lost its target or artists')
+
+    folder = PlotFolder(readlist=False)
+    for index in range(3):
+        folder += Data(np.arange(3.), np.arange(3.)+index, setas='xy')
+    axes = folder.plot(plots_per_page=2)
+    if len(axes) != 3 or len(folder.figures) != 2:
+        raise RuntimeError('Folder pagination lost members or created extra pages')
+    overlay = plt.figure().subplots()
+    if folder.each.plot.line(ax=overlay) != [overlay]*3:
+        raise RuntimeError('Bulk plotting lost folder order or its explicit target')
+    if any('func' in member.metadata for member in folder):
+        raise RuntimeError('Bulk plotting added diagnostic metadata')
+    plt.close('all')
+    print(f'Plotting accessor/context/folder checks passed (stonerplots {version("stonerplots")})')
 
 
 def check_reviewed_wrappers():
@@ -78,12 +133,8 @@ def check_data_and_resources(checkout):
     if loaded.shape[0] <= 0 or loaded.shape[1] < 2:
         raise RuntimeError(f'Unexpected sample data shape: {loaded.shape}')
 
-    styles = files('Stoner.plot').joinpath('stylelib')
-    for source in (checkout / 'Stoner' / 'plot' / 'stylelib').glob('*.mplstyle'):
-        if not styles.joinpath(source.name).is_file():
-            raise RuntimeError(f'Missing plot style: {source.name}')
-    plt.style.use(str(styles.joinpath('default.mplstyle')))
-    data.plot()
+    with data.plot.style('stoner'):
+        data.plot()
     plt.close('all')
 
     resources = files('Stoner.Image').joinpath('tessdata')

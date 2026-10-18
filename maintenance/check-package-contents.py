@@ -19,7 +19,7 @@ def main():
     )
     expected = sorted(
         path.as_posix()
-        for pattern in ('Stoner/plot/stylelib/*.mplstyle', 'Stoner/Image/tessdata/*')
+        for pattern in ('Stoner/Image/tessdata/*',)
         for path in Path('.').glob(pattern) if path.is_file()
     )
     if resources != expected:

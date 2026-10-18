@@ -48,7 +48,7 @@ Core Package and Modules
    keep these lists explicit so intentional public re-exports remain visible.
 
 .. automodapi:: Stoner.core.data
-    :skip: ClassTester, DataFileInterfacesMixin, DataFileOperatorsMixin, DataFilePropertyMixin, DataOwner, DataStorage, StorageBridgeMixin, FileManager, Iterable, Mapping, MutableSequence, PlotMixin, StonerLoadError, StonerSetasError, Tab_Delimited, TextWrapper, TypeHintedDict, metadataObject
+    :skip: ClassTester, DataFileInterfacesMixin, DataFileOperatorsMixin, DataFilePropertyMixin, DataOwner, DataStorage, StorageBridgeMixin, FileManager, Iterable, Mapping, MutableSequence, StonerLoadError, StonerSetasError, Tab_Delimited, TextWrapper, TypeHintedDict, metadataObject
     :no-inheritance-diagram:
     :headings: -~
 
@@ -105,22 +105,71 @@ Fitting Models
 Plot Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodapi:: Stoner.plot.core
+.. automodapi:: Stoner.plot.accessor
     :no-inheritance-diagram:
     :headings: -~
 
 .. automodapi:: Stoner.plot
     :no-inheritance-diagram:
     :headings: -~
+    :skip: SavedFigure, MultiPanel, StackVertical, DoubleYAxis, InsetPlot, CentredAxes, PlotLabeller, TexFormatter, TexEngFormatter
 
-.. automodapi:: Stoner.plot.formats
-    :headings: -~
+Stonerplots exports
+-------------------
+
+These are direct aliases of the stonerplots classes. The
+:ref:`plotting-contexts` guide shows their use through ``d.plot``; upstream
+signatures, keyword arguments and returned objects are retained.
+
+.. py:class:: SavedFigure
+    :module: Stoner.plot
+
+    Save selected figures and apply temporary styles. Also ``d.plot.SavedFigure``.
+
+.. py:class:: MultiPanel
+    :module: Stoner.plot
+
+    Arrange regular or irregular panels. Also ``d.plot.MultiPanel``.
+
+.. py:class:: StackVertical
+    :module: Stoner.plot
+
+    Arrange stacked panels. Also ``d.plot.StackVertical``.
+
+.. py:class:: DoubleYAxis
+    :module: Stoner.plot
+
+    Add an independent Y axis. Also ``d.plot.DoubleYAxis``.
+
+.. py:class:: InsetPlot
+    :module: Stoner.plot
+
+    Add and position an inset. Also ``d.plot.InsetPlot``.
+
+.. py:class:: CentredAxes
+    :module: Stoner.plot
+
+    Centre axes through an origin. Also ``d.plot.CentredAxes``.
+
+.. py:class:: PlotLabeller
+    :module: Stoner.plot
+
+    Apply tick formatters and locators. Also ``d.plot.PlotLabeller``.
+
+.. py:class:: TexFormatter
+    :module: Stoner.plot
+
+    Format ticks in mathematical notation. Also ``d.plot.TexFormatter``.
+
+.. py:class:: TexEngFormatter
+    :module: Stoner.plot
+
+    Format ticks with engineering prefixes. Also ``d.plot.TexEngFormatter``.
 
 .. automodapi:: Stoner.plot.utils
     :headings: -~
 
 .. automodapi:: Stoner.plot.functions
-    :skip: getfullargspec, host_subplot, hsl2rgb, isanynone, isiterable, isnone, sp_griddata
     :no-inheritance-diagram:
     :no-main-docstr:
     :headings: -~

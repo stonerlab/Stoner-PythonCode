@@ -44,6 +44,7 @@ Guides and reference
 
    User Guide <UserGuide/ugindex>
    Module API Reference <Stoner>
+   Release Notes <release-notes>
    Project Overview <readme>
 
 For contributing, environment setup and documentation commands, see the

@@ -54,23 +54,23 @@ xmcd.normalise()
 
 # Create a profile and plot it
 profile = xmcd.profile_line((0, 0), (100, 100))
-profile.figure(figsize=(7, 6), no_axes=True)
-profile.subplot(222)
-profile.plot()
-profile.title = "XMCD Cross Section"
+figure = profile.plot.new_figure(figsize=(7, 6))
+profile_axes = figure.add_subplot(222)
+profile.plot(ax=profile_axes)
+profile_axes.set_title("XMCD Cross Section")
 
 # Show the images as well
-profile.subplot(221)
-strctural.imshow(figure=profile.fig, title="Structural Image")
+structural_axes = figure.add_subplot(221)
+strctural.imshow(figure=figure, ax=structural_axes, title="Structural Image")
 
-profile.subplot(223)
-xmcd.imshow(figure=profile.fig, title="XMCD Image")
+xmcd_axes = figure.add_subplot(223)
+xmcd.imshow(figure=figure, ax=xmcd_axes, title="XMCD Image")
 
 # Make a histogram of the intensity values
 hist = xmcd.hist(bins=200)
 hist.column_headers = ["XMCD Signal", "Frequency"]
-hist.labels = None
-hist.fig = profile.fig
+hist.plot.labels = None
+# Histogram and image panels share the same explicit figure.
 
 # Construct a two Lorentzian peak model
 peak1 = LorentzianModel(prefix="peak1_")
@@ -118,6 +118,6 @@ hist.add_column(res.best_fit, header="Best Fit")
 
 # Plot the results as well
 hist.setas = "xyyy"
-profile.subplot(224)
-hist.plot(fmt=["b+", "b--", "r-"])
-hist.title = "Intensity histogram"
+histogram_axes = figure.add_subplot(224)
+hist.plot(ax=histogram_axes, fmt=["b+", "b--", "r-"])
+histogram_axes.set_title("Intensity histogram")

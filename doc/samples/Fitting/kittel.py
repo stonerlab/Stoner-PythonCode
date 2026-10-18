@@ -11,7 +11,6 @@ from Stoner.analysis.fitting.models.magnetism import (
     KittelEquation,
     kittelEquation,
 )
-from Stoner.plot.formats import TexEngFormatter
 
 B = linspace(1e3, 5e4, 51)
 params = [2.2, 1e5, 2e2]
@@ -51,6 +50,6 @@ d.annotate_fit(
     prefix="KittelEquation",
     mode="eng",
 )
-d.title = "Kittel Fit"
-d.fig.gca().xaxis.set_major_formatter(TexEngFormatter())
-d.fig.gca().yaxis.set_major_formatter(TexEngFormatter())
+d.plot.ax.set_title("Kittel Fit")
+d.plot.ax.xaxis.set_major_formatter(d.plot.TexEngFormatter())
+d.plot.ax.yaxis.set_major_formatter(d.plot.TexEngFormatter())

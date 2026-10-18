@@ -102,8 +102,10 @@ class ScanMetadataMixin:
         self._stack_owner._replace_metadata(value.copy())
 
     def _instantiate(self, index):
+        """Return a live scan frame without exporting its numerical image."""
         image = super()._instantiate(index)
-        bind(image, ScanFrameOwner(self._stack_owner, self.frame_ids[index]), image.imarray)
+        # The existing handle already carries its presentation attributes.
+        bind(image, ScanFrameOwner(self._stack_owner, self.frame_ids[index]))
         return image
 
     def to_xarray(self, *, format="stack"):

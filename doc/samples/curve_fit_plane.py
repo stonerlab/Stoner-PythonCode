@@ -1,7 +1,6 @@
 """Use curve_fit to fit a plane to some data."""
 
 # pylint: disable=invalid-name, no-name-in-module, no-member
-import matplotlib.cm as cmap
 from numpy import array, column_stack, linspace, meshgrid
 from numpy.random import normal, seed
 
@@ -27,7 +26,7 @@ d = Data(
 )
 
 d.column_headers = ["X", "Y", "Z"]
-d.plot_xyz(plotter="scatter", title=None, griddata=False, color="k")
+ax = d.plot.scatter3d(title=None, color="k")
 
 popt, pcov = d.curve_fit(plane, [0, 1], 2, result=True)
 col = linspace(-10, 10, 128)
@@ -40,10 +39,9 @@ e = Data(
 )
 e.column_headers = d.column_headers[:e.shape[1]]
 
-e.plot_xyz(linewidth=0, cmap=cmap.jet, alpha=0.5, figure=d.fig)
+e.plot.surface(linewidth=0, cmap="jet", alpha=0.5, ax=ax)
 
-txt = "$z=c-ax+by$\n"
+txt = "$z=c-ax-by$\n"
 txt += "\n".join([d.format(f"plane:{k}", latex=True) for k in ["a", "b", "c"]])
 
-ax = d.axes[0]
-ax.text(-30, -10, 10, txt)
+ax.text2D(0.02, 0.9, txt, transform=ax.transAxes, fontsize="small")

@@ -52,10 +52,9 @@ d = Data(
     filename="Best fit sphere",
     column_headers=["X", "Y", "Z"],
 )
-d.template.fig_width = 5.2
-d.template.fig_height = 5.0  # Square aspect ratio
-d.plot_xyz(plotter="scatter", marker=",", griddata=False)
-d.set_box_aspect((1, 1, 1.0))  # Passing through to the current axes
+d.plot.new_figure(figsize=(5.2, 5.0))
+ax = d.plot.scatter3d(marker=".")
+ax.set_box_aspect((1, 1, 1.0))
 # curve_fit does the hard work
 popt, pcov = d.curve_fit(sphere, (0, 1, 2), zeros_like(d.x), result=True)
 
@@ -70,7 +69,6 @@ x += a
 y += b
 z += c
 
-ax = d.axes[0]
 ax.plot_surface(
     x, y, z, rstride=1, cstride=1, color=(1.0, 0.0, 0.0, 0.25), linewidth=0
 )

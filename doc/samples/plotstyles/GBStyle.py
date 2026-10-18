@@ -1,14 +1,11 @@
-"""Example plot using experimental GBStyle."""
+"""Replace the experimental GB template with explicit centred axes."""
 
-# pylint: disable=invalid-name
-import os.path as path
+from pathlib import Path
 
 from Stoner import Data, __home__
-from Stoner.plot.formats import GBPlotStyle
 
-filename = path.realpath(
-    path.join(__home__, "..", "doc", "samples", "sample.txt")
-)
-d = Data(filename, setas="xy", template=GBPlotStyle)
-d.y = d.y - (max(d.y) / 2)
-d.plot()
+d = Data(Path(__home__).parent / "doc" / "samples" / "sample.txt", setas="xy")
+
+d.y = d.y - max(d.y) / 2
+with d.plot.style("stoner"), d.plot.CentredAxes():
+    d.plot.line()

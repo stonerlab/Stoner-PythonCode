@@ -101,7 +101,13 @@ The **Stoner.Plot** and **Stoner.PlotFormats** modules were replaced with the :p
 
 should now do::
 
-    from Stoner.plot.formats import JTBPlotStyle, TexFormatter
+    from Stoner import Data
+    from Stoner.plot import TexFormatter
+
+Plot templates have now been replaced with stonerplots styles and explicit Axes
+formatting. Use ``with data.plot.style("stoner"):`` around drawing, and see
+:ref:`plotting-contexts` for journal styles and layout contexts. The removed JTB
+template's appearance is not an alias of a stonerplots style.
 
 Most of the functionality of the  **Stoner.Plot** module was in the **PlotFile** subclass and is now accessed via the :py:class:`~Stoner.core.data.Data`
 class. A few additional functions that used to be in **Stoner.Plot** are now in :py:mod:`Stoner.plot.utils`.

@@ -12,13 +12,10 @@ from Stoner import Data, __home__
 from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel
 from Stoner.folders import PlotFolder
-from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
-
-# Customise a plot template
-template = DefaultPlotStyle()
-template.xformatter = TexEngFormatter()
-template.xformatter.unit = "T"
-template.yformatter = TexEngFormatter
+def format_axes(ax):
+    """Give each axis its own engineering formatter."""
+    ax.xaxis.set_major_formatter(Data().plot.TexEngFormatter(unit="T"))
+    ax.yaxis.set_major_formatter(Data().plot.TexEngFormatter())
 
 
 def field_sign(r):
@@ -29,17 +26,17 @@ def field_sign(r):
 
 def extra(_, __, d):
     """Customise each individual plot."""
-    d.axvline(x=d["cut"], ls="--")
-    d.title = rf"$\nu={d.mean('Frequency') / 1e9:.1f}\,$GHz"
-    d.xlabel = r"Field $\mu_0H\,$"
-    d.ylabel = "Abs. (arb)"
-    d.plt_legend(loc=3)
+    format_axes(d.plot.ax)
+    d.plot.ax.axvline(x=d["cut"], ls="--")
+    d.plot.ax.set_title(rf"$\nu={d.mean('Frequency') / 1e9:.1f}\,$GHz")
+    d.plot.ax.set_xlabel(r"Field $\mu_0H\,$")
+    d.plot.ax.set_ylabel("Abs. (arb)")
+    d.plot.ax.legend(loc=3)
     d.annotate_fit(FMR_Power, fontdict={"size": 8}, x=0.05, y=0.25)
 
 
 def do_fit(f):
     """Fit just one set of data."""
-    f.template = template
     f["cut"] = f.threshold(1.75e5, rising=False, falling=True)
     f["Frequency"] = (f // "Frequency").mean()
     f.lmfit(
@@ -60,7 +57,7 @@ if __name__ == "__main__":
     d.rename("multi[1]:y", "Field").rename("multi[0]:y", "Frequency").rename(
         "Absorption::X", "FMR"
     )
-    d.labels = None
+    d.plot.labels = None
 
     # Define x and y columns and normalise to a big number
     d.setas(x="Field", y="FMR")  # pylint: disable=not-callable
@@ -69,7 +66,6 @@ if __name__ == "__main__":
 
     # Split the data file into separate files by frequencies and sign of field
     fldr = PlotFolder(fldr)  # Convert to a PlotFolder
-    fldr.template = template  # Set my custom plot template
     for f in fldr["neg"]:  # Invert the negative field side
         f.x = -f.x[::-1]
         f.y = -f.y[::-1]
@@ -93,7 +89,7 @@ if __name__ == "__main__":
         subfldr.setas[12] = "y"
         subfldr.plots_per_page = 9  # Plot results
         subfldr.plot(
-            figsize=(8, 8), fmt=["k.", "r-"], markersize=1, extra=extra
+            figsize=(8, 8), fmt=["k.", "r-"], markersize=1, plot_extra=extra
         )
 
         # Work with the overall results
@@ -122,22 +118,23 @@ if __name__ == "__main__":
     )
     result.setas[-1] = "y"
 
-    result.template.yformatter = TexEngFormatter
-    result.template.xformatter = TexEngFormatter
-    result.labels = None
-    result.figure(figsize=(6, 8), no_axes=True)
-    result.subplot(211)
-    result.plot(fmt=["r.", "b-"])
+    result.plot.labels = None
+    figure = result.plot.new_figure(figsize=(6, 8))
+    axes = figure.subplots(2, 1)
+    for target in axes:
+        target.xaxis.set_major_formatter(result.plot.TexEngFormatter())
+        target.yaxis.set_major_formatter(result.plot.TexEngFormatter())
+    result.plot(ax=axes[0], fmt=["r.", "b-"])
     result.annotate_fit(Inverse_Kittel, x=7e9, y=1e5, fontdict={"size": 8})
-    result.ylabel = "$H_{res} \\mathrm{(Am^{-1})}$"
-    result.title = "Inverse Kittel Fit"
+    axes[0].set_ylabel("$H_{res} \\mathrm{(Am^{-1})}$")
+    axes[0].set_title("Inverse Kittel Fit")
 
     # Get alpha
-    result.subplot(212)
+    # Draw the second fit into its explicit axes.
     result.setas(y="Delta_H", e="Delta_H err", x="Freq")
     result.y = result.y / mu_0
-    result.e /= mu_0
+    result.e = result.e / mu_0
     result.lmfit(Linear, result=True, header="Width", output="report")
     result.setas[-1] = "y"
-    result.plot(fmt=["r.", "b-"])
+    result.plot(ax=axes[1], fmt=["r.", "b-"])
     result.annotate_fit(Linear, x=5.5e9, y=2.8e3, fontdict={"size": 8})

@@ -9,6 +9,7 @@ Created on Tue Jan 07 22:05:55 2014
 import os.path as path
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
@@ -140,9 +141,11 @@ def test_integrate():
     result = d["Total_M"]
     assert np.isclose(result, 4.19687459365, 7), "Integrate returned the wrong result!"
     d.setas[-1] = "y"
-    d.plot(multiple="y2")
-    assert len(d.axes) == 2, "Failed to produce plot with double y-axis"
-    d.close("all")
+    ax = d.plot(y=3)
+    with d.plot.DoubleYAxis(ax=ax) as twin:
+        d.plot(y=d.shape[1]-1, ax=twin)
+    assert len(ax.figure.axes) == 2, "Failed to produce plot with double y-axis"
+    plt.close("all")
     d.setas = "x..y"
     fx = d.interpolate(None)
     assert fx(np.linspace(1, 1500, 101)).shape == (101, 7), "Failed to get the interpolated shape right"

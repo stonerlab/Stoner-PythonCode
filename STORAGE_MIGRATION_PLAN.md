@@ -1902,6 +1902,95 @@ matches the selected environment.
   broader coordinate-aware interfaces require independent bounded proposals;
   they are not outstanding Stage 9 requirements.
 
+### Post-migration scan frame access (2026-10-18)
+
+This bounded maintenance batch removes the numerical export from
+`ScanMetadataMixin._instantiate`, shared by Attocube and MAXIMUS stacks. The
+existing image handle already carries its presentation attributes; replacing its
+metadata owner needs no detached pixels or exclusion mask. Selection still uses
+the existing positional, name/channel and stable-frame-ID rules. No cache or
+loader interpretation changes are introduced.
+
+Saved handles continue to resolve their stable frame after reordering and raise
+`ReferenceError` after deletion. Common metadata remains a live default beneath
+typed local overrides. Pixel/mask writes and edit locks retain their owner path;
+raw values, ragged extents, fill values, coordinate values/units and Dataset
+attributes remain covered by the specialised and general image regressions.
+
+The source-fingerprinted native-interface benchmark now includes metadata-only
+Attocube frame access. On Windows py314, five warm timing repeats and a separate
+traced-allocation measurement gave:
+
+| Frame dimensions | Before median ms | After median ms | Before peak bytes | After peak bytes |
+| ---------------- | ---------------- | --------------- | ----------------- | ---------------- |
+| 64 x 64          | 1.927            | 0.839           | 375,274           | 209,900          |
+| 1024 x 1024      | 16.068           | 0.820           | 20,234,538        | 195,855          |
+
+These are frame-access measurements, not whole-loader timings or process RSS.
+Local evidence is under ignored `maintenance/runs/attocube-frame-access/`:
+`before.json`, `after.json` and the test/environment logs. The post-change runtime
+source fingerprint is
+`faf2b995fa8d64b784472d072f093558b39146e47a55cdb8235cfcebc7d4b1a5`.
+
+Local validation on verified Conda environments:
+
+- Current py314 full suite: **1,331 passed**, including runnable documentation
+  samples and real Attocube HDF5/TIFF and MAXIMUS fixtures (`full.xml`).
+- Supported lower Python 3.12 dependencies: **261 passed** across
+  `tests/Stoner/Image`, `tests/Stoner/test_FileFormats.py` and
+  `tests/Stoner/test_HDF5.py` (`minimum.xml`). Both environments satisfy all 38
+  `tests/test-env.yml` specifications; dependency snapshots are retained locally.
+- The four new scan regressions cover numerical-export avoidance and preserved
+  scientific/live-handle state for both Attocube and MAXIMUS. The export guards
+  fail on the original implementation and pass after the owner-only rebind.
+- Ruff F821 and whitespace checks pass. The benchmark's three existing native
+  getter allocation checks also pass. Runtime fingerprint verification confirms
+  that the tested source still matches the post-change measurement.
+- Cached Sphinx built from freshly staged sources passes the warning/API audit:
+  **62 reviewed warnings, zero unexpected and no removed API entries**. Existing
+  ignored generated API pages remain untouched; all 276 tracked plot-cache files
+  remain unchanged. Release notes describe the frame-access improvement.
+
+Hosted validation of pushed revision
+`9b42bfd744c4ed47f41c0cd5644a94f1ecdb0471` (2026-10-18):
+
+- [Supported test matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159346842):
+  **1,331 passed in each job**, Linux Python 3.12, 3.13 and 3.14 plus macOS Python
+  3.14. Downloaded JUnit reports confirm zero failures/errors/skips and all four
+  new scan regressions passing in every cell. Final test-result publishing and
+  Ubuntu 3.14's Coveralls/Codacy coverage uploads succeeded; this does not claim
+  separate downstream service reanalysis.
+- The macOS `test_attocube_scan` passed in **45.787 seconds**, compared with
+  **201.434 seconds** in the retained JUnit report for `33b36ec81`. These are
+  observed timings on hosted runners using the same workflow, not a controlled
+  performance comparison. The metadata-only benchmark above remains the bounded
+  allocation/time evidence. Linux Attocube timings were 16.114/16.579/8.201 seconds
+  for Python 3.12/3.13/3.14 respectively.
+- [Supported lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159346843):
+  **1,330 passed, one expected skip**. The skip is
+  `test_legacy_pandas_metadata_loss`, a pandas 3 accessor-lifecycle observation
+  that does not apply to pandas 2. All four scan regressions passed; the real
+  Attocube test passed in 13.545 seconds.
+- [Installed distributions](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159346813):
+  Python 3.12 and 3.14 jobs passed archive-content and strict metadata checks,
+  followed by fresh wheel and sdist installations exercised outside the checkout.
+- [Cached documentation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159360513):
+  succeeded with **36 warnings**. Hosted-log review found the existing canonical
+  `Stoner.Image.folders.ImageFolder.flatten` duplicate, already covered by the
+  Windows warning baseline but absent from the Linux ceiling. Its diagnostic
+  origin also varies between a docstring and `<unknown>`. This existing warning
+  was reviewed explicitly; no baseline was raised. The remaining diagnostics
+  match the reviewed Linux duplicate/footnote warnings. The local inventory audit
+  above remains the evidence for no API removals.
+
+Hosted snapshots, JUnit artifacts, full matrix/package/documentation logs and
+`validation-summary.json` are retained under the ignored `hosted/` subdirectory
+of this batch's evidence folder. All four workflows reference the pushed revision
+above and completed successfully, including their reporting steps. The scan
+optimisation is complete; later documentation-only notes do not change its
+runtime fingerprint. No dependency, API, loader-identification or release change
+is part of this batch.
+
 ### Accepted batch 3 performance decision
 
 Accepted per-workload median-time limit: the larger of **2 x legacy median** or

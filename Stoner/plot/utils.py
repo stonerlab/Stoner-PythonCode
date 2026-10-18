@@ -45,10 +45,8 @@ import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
-from looseversion import LooseVersion
 from matplotlib.transforms import Bbox
 
-from Stoner.compat import mpl_version
 
 __all__ = ["errorfill"]
 
@@ -70,6 +68,7 @@ def errorfill(
     label="",
     label_fill="",
     ax=None,
+    fmt=None,
     **kwargs,
 ):
     """Plot data with errors marked by a filled region.
@@ -97,21 +96,27 @@ def errorfill(
             Label for filled region.
         ax (Axis instance):
             The plot is drawn on axis `ax`. If `None` the current axis is used
+        fmt (str or None):
+            Optional Matplotlib line format. None uses the current colour cycle
+            and rcParams; an explicit format supplies its own colour/marker/style.
+        **kwargs (dict):
+            Additional line properties forwarded to Axes.plot.
+
+    Returns:
+        None:
+            Drawing adds lines and shaded regions to ax without modifying inputs.
     """
     ax = ax if ax is not None else plt.gca()
 
     alpha_fill *= alpha
 
-    if color is None:
-        if LooseVersion(mpl_version) < LooseVersion("1.5.0"):
-            color = next(ax._get_lines.color_cycle)
-        else:
-            color = next(ax._get_lines.prop_cycler)["color"]
-    if ls is None:
-        ls = plt.rcParams["lines.linestyle"]
-    if lw is None:
-        lw = plt.rcParams["lines.linewidth"]
-    ax.plot(x, y, color, linestyle=ls, linewidth=lw, alpha=alpha, label=label, **kwargs)
+    options = dict(kwargs, alpha=alpha, label=label)
+    for key, value in (("color", color), ("linestyle", ls), ("linewidth", lw)):
+        if value is not None:
+            options[key] = value
+    args = () if fmt is None else (fmt,)
+    line = ax.plot(x, y, *args, **options)[0]
+    color = line.get_color()
 
     if yerr is not None and xerr is not None:
         msg = "Setting both `yerr` and `xerr` is not supported. Ignore `xerr`."
@@ -129,13 +134,14 @@ def errorfill(
 
 def extrema_from_error_input(z, zerr):
     """Work out where to draw limits."""
-    zmin = zmax = None
-    if np.isscalar(zerr) or len(zerr) == len(z):
+    errors = np.asarray(zerr)
+    if errors.shape == (2, len(z)):
+        return z - errors[0], z + errors[1]
+    if errors.ndim == 0 or errors.shape == (len(z),):
         zmin = z - zerr
         zmax = z + zerr
-    elif len(zerr) == 2:
-        zmin, zmax = z - zerr[0], z + zerr[1]
-    return zmin, zmax
+        return zmin, zmax
+    raise ValueError("Uncertainties must be scalar, (N,) or (2, N).")
 
 
 # Wrappers around `fill_between` and `fill_between_x` that create proxy artists
@@ -155,13 +161,10 @@ def fill_between(x, y1, y2=0, ax=None, **kwargs):
     alpha = kwargs["alpha"]
     a = np.linspace(0.1, 0.9, 15)
 
-    def _z_calc(s, y):
-        return s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
-
     for h in a:
-        y = h / (np.sqrt(2 * np.pi) * yd)
-        y1 = ym - (_z_calc(yd, y))
-        y2 = ym + (_z_calc(yd, y))
+        half_width = yd * np.sqrt(-2 * np.log(h))
+        y1 = ym - half_width
+        y2 = ym + half_width
         kwargs["alpha"] = alpha * h
         if x.size > 1:
             ax.fill_between(x, y1, y2, **kwargs)
@@ -176,13 +179,10 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     alpha = kwargs["alpha"]
     a = np.linspace(0.1, 0.9, 15)
 
-    def _z_calc(s, y):
-        return s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
-
     for h in a:
-        y = h / (np.sqrt(2 * np.pi) * yd)
-        y1 = ym - (_z_calc(yd, y))
-        y2 = ym + (_z_calc(yd, y))
+        half_width = yd * np.sqrt(-2 * np.log(h))
+        y1 = ym - half_width
+        y2 = ym + half_width
         kwargs["alpha"] = alpha * h
         ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
@@ -213,7 +213,7 @@ def hsl2rgb(hue, sat, lum, alpha=False):
     zero = np.zeros_like(X)
     select = np.column_stack([Hp, Hp, Hp])
     m = np.column_stack([lum - C / 2, lum - C / 2, lum - C / 2])
-    output = np.where(select > 0, np.column_stack([C, X, zero]), output)
+    output = np.where(select >= 0, np.column_stack([C, X, zero]), output)
     output = np.where(select > 1, np.column_stack([X, C, zero]), output)
     output = np.where(select > 2, np.column_stack([zero, C, X]), output)
     output = np.where(select > 3, np.column_stack([zero, X, C]), output)
@@ -254,7 +254,9 @@ def joy_division(x, y, z, **kwargs):
 
     Constructors a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
     """
-    ax = kwargs.pop("ax", plt.gca())
+    ax = kwargs.pop("ax", None)
+    if ax is None:
+        ax = plt.gca()
     y_shift = kwargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
     bg_colour = kwargs.pop("bg_color", "k")
     color = kwargs.pop("color", kwargs.pop("colour", "w"))

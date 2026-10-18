@@ -65,19 +65,22 @@ presence-based documentation restrictions.
 - Numerical warnings, dependency deprecations and documentation-example warnings
   remain visible. Record and investigate them rather than suppressing whole
   categories to obtain a smaller warning count.
+- Runnable examples execute within an isolated Matplotlib style context, render
+  every resulting figure and close their figures afterwards. They must not depend
+  on a previous example's rcParams or an external LaTeX installation.
 
 ## Supported dependency boundaries
 
-`minimum-env.yml` exercises Python 3.11 with the lower supported minor lines of
+`minimum-env.yml` exercises Python 3.12 with the lower supported minor lines of
 NumPy (2.0), SciPy (1.14), Matplotlib (3.8), scikit-image (0.24) and lmfit (1.3).
-Other dependencies resolve normally, including pandas, which has no declared
-minimum. This is a representative combination, not an exhaustive compatibility
+It also pins pandas 2.2, xarray 2024.10 and stonerplots 1.9.6; other dependencies
+resolve normally. This is a representative combination, not an exhaustive compatibility
 matrix or a claim that every earliest patch release was tested. Keep its test
 and optional dependencies aligned with `test-env.yml`.
 
 The lower-dependency workflow runs the full suite separately from the ordinary
-Python 3.11–3.14 CI matrix. Installed wheel/sdist probes cover Python 3.11 and
-3.14, including styles and OCR resources outside the source checkout.
+Python 3.12–3.14 CI matrix. Installed wheel/sdist probes cover Python 3.12 and
+3.14, including plotting with stonerplots and OCR resources outside the source checkout.
 
 For a local prefix environment:
 

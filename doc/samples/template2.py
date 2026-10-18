@@ -1,8 +1,8 @@
-"""Customising a template for plotting."""
+"""Apply a temporary sketch effect without a template class."""
 
 # pylint: disable=invalid-name
 from Stoner import Data
-from Stoner.plot.formats import SketchPlot
 
-p = Data("sample.txt", setas="xy", template=SketchPlot)
-p.plot()
+p = Data("sample.txt", setas="xy")
+with p.plot.style(["stoner", {"path.sketch": (1, 100, 2)}]):
+    p.plot.line()

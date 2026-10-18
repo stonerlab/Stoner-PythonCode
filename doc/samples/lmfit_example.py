@@ -17,4 +17,4 @@ d.plot(fmt=["+", "-"])
 # Make apretty label using Stoner.Util methods
 text = r"$y=A e^{-\left(\frac{x}{x_0}\right)^\beta}$" + "\n"
 text += d.annotate_fit(StretchedExp, text_only=True)
-d.text(4, 6e4, text, fontsize="x-small")
+d.plot.ax.text(4, 6e4, text, fontsize="x-small")

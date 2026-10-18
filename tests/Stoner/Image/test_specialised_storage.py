@@ -6,8 +6,82 @@ import xarray as xr
 
 from Stoner.Image import ImageFile
 from Stoner.Image.kerr import KerrImageFile, KerrStack, MaskStack
+from Stoner.Image.stack_owner import FrameOwner
+from Stoner.Image.storage import ImageStorage
 from Stoner.formats.attocube import AttocubeScan
 from Stoner.formats.maximus import MaximusStack
+
+
+def calibrated_scan(kind):
+    """Construct calibrated ragged frames with typed local/common metadata."""
+    images = []
+    for index, (height, width) in enumerate(((3, 4), (2, 3))):
+        package = ImageStorage.from_numpy(np.ma.array(
+            np.arange(height*width, dtype=np.int16).reshape(height, width), mask=False, fill_value=-9))
+        package.dataset.excluded.values[0, 1] = True
+        package.dataset = package.dataset.assign_coords(
+            y=1.5-np.arange(height)*0.5, x=np.arange(width)*0.25,
+            temperature=280.+index, position=(("y", "x"), np.arange(height*width).reshape(height, width)))
+        for coordinate in ("x", "y", "position"):
+            package.dataset[coordinate].attrs["units"] = "um"
+        package.dataset.temperature.attrs["units"] = "K"
+        package.dataset.intensity.attrs["units"] = "V"
+        package.dataset.attrs["instrument"] = "scan"
+        package.metadata["channel{String}"] = f"00{index}"
+        package.metadata["display"] = ("first", "second")[index]
+        images.append(package)
+    scan = kind.from_storage(ImageStorage.from_images(images, names=["first", "second"]))
+    scan._common_metadata["run{String}"] = "001"
+    return scan
+
+
+@pytest.mark.parametrize("kind", [AttocubeScan, MaximusStack])
+def test_scan_frame_lookup_does_not_export_numerical_pixels(kind, monkeypatch):
+    """Keep frame selection and metadata lookup independent of a NumPy export."""
+    scan = calibrated_scan(kind)
+    before = scan.export_storage()
+
+    def unexpected_export(*args, **kwargs):
+        pytest.fail("Metadata-only scan access exported frame pixels/masks")
+
+    with monkeypatch.context() as patch:
+        patch.setattr(FrameOwner, "to_numpy", unexpected_export)
+        for selector in (0, "first", scan.frame_ids[0]):
+            image = scan[selector]
+            assert image.metadata["run"] == "001" and image.metadata["channel"] == "000"
+            assert image.metadata.type("run") == image.metadata.type("channel") == "String"
+        np.testing.assert_array_equal(scan.metadata.slice("run", values_only=True), ["001", "001"])
+    xr.testing.assert_identical(scan.export_storage().dataset, before.dataset)
+
+
+@pytest.mark.parametrize("kind", [AttocubeScan, MaximusStack])
+def test_scan_handles_preserve_identity_calibration_and_live_state(kind):
+    """Retain saved handles, display state, common defaults and local writes."""
+    scan = calibrated_scan(kind)
+    identity = scan.frame_ids[0]
+    scan._public_attrs_store[identity] = {"title": "Signal", "_mask_color": "blue", "_mask_alpha": 0.25}
+    item = scan[0]
+    metadata = item.metadata
+    before = item.export_storage()
+    assert item.title == "Signal" and item._mask_color == "blue" and item._mask_alpha == 0.25
+    assert item.filename == "first" and item.to_numpy().fill_value == -9
+    scan.reorder(reversed(scan.frame_ids))
+    assert scan.frame_ids[1] == identity
+    xr.testing.assert_identical(item.export_storage().dataset, before.dataset)
+    scan._common_metadata["run{String}"] = "002"
+    assert metadata["run"] == scan[1].metadata["run"] == "002"
+    metadata["run{String}"] = "003"
+    assert scan._common_metadata["run"] == "002" and scan[1].metadata["run"] == "003"
+    item[0, 0] = 99
+    item.mask[0, 1] = False
+    assert scan[1][0, 0] == 99 and not scan[1].mask[0, 1]
+    current = item.export_storage()
+    xr.testing.assert_identical(current.dataset.coords.to_dataset(), before.dataset.coords.to_dataset())
+    assert current.dataset.intensity.attrs == before.dataset.intensity.attrs
+    assert current.dataset.attrs == before.dataset.attrs and current.fill_value == before.fill_value
+    del scan[1]
+    with pytest.raises(ReferenceError):
+        metadata["run"]
 
 
 @pytest.mark.parametrize("kind", [AttocubeScan, MaximusStack])

@@ -1,13 +1,11 @@
-"""Example plot using Joe Batley's plot style."""
+"""Replace the JTB template with style and tick configuration."""
 
-# pylint: disable=invalid-name
-import os.path as path
+from pathlib import Path
 
 from Stoner import Data, __home__
-from Stoner.plot.formats import JTBPlotStyle
 
-filename = path.realpath(
-    path.join(__home__, "..", "doc", "samples", "sample.txt")
-)
-d = Data(filename, setas="xy", template=JTBPlotStyle)
-d.plot()
+d = Data(Path(__home__).parent / "doc" / "samples" / "sample.txt", setas="xy")
+
+with d.plot.style(["stoner", {"axes.linewidth": 1.5, "lines.linewidth": 2.0}]):
+    ax = d.plot.line()
+    ax.tick_params(direction="in", top=True, right=True)

@@ -7,7 +7,6 @@ from matplotlib.pyplot import figure
 
 from Stoner import Data, DataFolder, __home__
 from Stoner.analysis.fitting.models.generic import Quadratic
-from Stoner.plot.formats import TexEngFormatter
 
 # Set up the directory with our data
 datafiles = join(__home__, "..", "sample-data", "NLIV")
@@ -31,11 +30,10 @@ for d in fldr:
 
 # Set columns and set the plot axis formatting to use SI precfixes
 result.setas(x="Field", y="b", e="d_b")
-result.template.xformatter = TexEngFormatter
-result.template.yformatter = TexEngFormatter
 
 # Plot
-result.plot(fmt="k.", capsize=2)
+with result.plot.PlotLabeller():
+    result.plot(fmt="k.", capsize=2)
 
 # An alternative way to run the Analysis - this time with
 # an orthogonal didstance regression algorithm
@@ -48,13 +46,13 @@ fldr.each.setas(Current="x", Voltage="y")
 fldr.each.setas[3] = "y"
 
 
-fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", figure=fig, _serial=True)
-fldr[0].legend(ncol=2, fontsize="xx-small")
-fldr[0].title = "Non-local IV Curves"
+fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", ax=fig.gca(), _serial=True)
+fldr[0].plot.ax.legend(ncol=2, fontsize="xx-small")
+fldr[0].plot.ax.set_title("Non-local IV Curves")
 
 # Now take a slice through the metadata to get the files we want.
 result_2 = fldr.metadata.slice(["y", Quadratic], output="Data")
 
 # Set the columns assignments and plot
 result_2.setas = "x..ye"
-result_2.plot(fmt="r.", figure=result.fig, capsize=2)
+result_2.plot(fmt="r.", ax=result.plot.ax, capsize=2)

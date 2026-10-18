@@ -32,26 +32,29 @@ fit = d.curve_fit(
     output="report",
     prefix="ODRModel",
 )
-# Reset labels
-d.labels = []
-# Make nice two panel plot layout
-d.figure(figsize=(7, 5), no_axes=True)
-ax = d.subplot2grid((3, 1), (2, 0))
-d.setas = "x..y"
-d.plot(fmt="g+", label="Fit residuals")
-d.setas = "x....y"
-d.plot(fmt="b+", label="ODRModel Residuals")
-d.title = ""
+# Use Matplotlib's bundled font for portable mathematical annotations.
+with d.plot.style(["stoner", {"font.sans-serif": ["DejaVu Sans"]}]):
+    figure = d.plot.new_figure(figsize=(7, 5))
+    with d.plot.StackVertical(2, figure=figure, height_ratios=[2, 1], adjust_figsize=False) as panels:
 
-ax = d.subplot2grid((3, 1), (0, 0), rowspan=2)
-d.setas = "xyy.y"
-d.plot(fmt=["ro", "g-", "b-"])
-d.xticklabels = [[]]
-d.ax_xlabel = ""
+        d.plot.labels = []
+        # Make nice two panel plot layout
+        ax = panels[1]
+        d.setas = "x..y"
+        d.plot(fmt="g+", label="Fit residuals")
+        d.setas = "x....y"
+        d.plot(fmt="b+", label="ODRModel Residuals")
+        ax.set_title("")
 
-# Annotate plot with fitting parameters
-d.annotate_fit(PowerLaw, x=0.1, y=0.25, fontdict={"size": "x-small"})
-d.annotate_fit(
-    ODRModel, x=0.65, y=0.15, fontdict={"size": "x-small"}, prefix="ODRModel"
-)
-d.title = "curve_fit with models"
+        ax = panels[0]
+        d.setas = "xyy.y"
+        d.plot(fmt=["ro", "g-", "b-"])
+        ax.tick_params(labelbottom=False)
+        ax.set_xlabel("")
+
+        # Annotate plot with fitting parameters
+        d.annotate_fit(PowerLaw, x=0.1, y=0.25, fontdict={"size": "x-small"})
+        d.annotate_fit(
+            ODRModel, x=0.65, y=0.15, fontdict={"size": "x-small"}, prefix="ODRModel"
+        )
+        ax.set_title("curve_fit with models")

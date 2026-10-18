@@ -450,7 +450,7 @@ def _chi2_fit_to_data(datafile, ret_val, model):
         if not ret[f"{prefix}{p} vary"]:
             fixed = 2 * ix
     ret.column_headers[-1] = "$\\chi^2$"
-    ret.labels = ret.column_headers
+    ret.plot.labels = ret.column_headers
     # Workout which columns are y,e and x
     plots = list(range(0, ix * 2 + 1, 2))
     errors = list(range(1, ix * 2 + 2, 2))
@@ -464,41 +464,46 @@ def _chi2_fit_to_data(datafile, ret_val, model):
 
 
 def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode="float", **kwargs):
-    """Annotate a plot with some information about a fit.
+    """Annotate a fit or return its formatted parameter text.
 
     Args:
         datafile (Data):
-            Data object to work with if not being used as a bound method.
+            Measurement object if this function is not used as a bound method.
         model (callable or lmfit_mod.Model):
-            The function/model used to describe the fit to be annotated.
+            Function, lmfit model or ODR model describing the recorded fit.
 
     Keyword Arguments:
         x (float):
-            x coordinate of the label
+            Horizontal annotation coordinate. Defaults to 0.75.
         y (float):
-            y coordinate of the label
+            Vertical annotation coordinate. Defaults to 0.5.
         z (float):
-            z co-ordinbate of the label if the current axes are 3D
-        prefix (str):
-            The prefix placed ahead of the model parameters in the metadata.
+            Third coordinate for 3D text; None uses the midpoint of the Z limits.
         text_only (bool):
-            If False (default), add the text to the plot and return the current object, otherwise,
-            return just the text and don't add to a plot.
-        prefix(str):
-            If given  overridges the prefix from the model to determine a prefix to the parameter names in the
-            metadata
+            Return text without drawing when True. Defaults to False.
+        ax (matplotlib.axes.Axes or None):
+            Explicit annotation target. None uses the plotting accessor's recent
+            axes, falling back to an existing legacy field plot during migration.
+        prefix (str):
+            Override the metadata prefix inferred from the model and recorded fit.
         mode (str):
-            Formatting mode to use for numbers in fit - see :py:func:`Stoner.core.functions.format`.
-        **kwargs:
-            Other keyword arguments, such as `prefix`, `arrowprops`.
+            Number-formatting mode passed to Data.format. Defaults to float.
+        **kwargs (dict):
+            Text properties or annotation options, including arrowprops.
 
     Returns:
-        (Datam, str):
-            A copy of the current Data instance if text_only is False, otherwise returns the text.
+        Data or str:
+            The same Data object after drawing, or formatted text when text_only=True.
 
-    If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
-    otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
-    are set to be 0.75 * maximum x and y limit of the plot.
+    Raises:
+        ValueError:
+            If drawing is requested without an existing plot or explicit axes.
+
+    Notes:
+        Ordinary 2D text uses axes-fraction coordinates; annotation calls with
+        arrowprops retain Matplotlib's coordinate options. 3D text uses data
+        coordinates. Parameter labels/units may be recorded in metadata for
+        formatting, including when text_only is True. Drawing creates no figure.
     """
     if isclass(model) and ((_lmfit and issubclass(model, Model)) or issubclass(model, odrModel)):
         model = model()  # Instantiate a bare class first
@@ -562,7 +567,14 @@ def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode=
         pass
 
     if not text_only:
-        ax = datafile.fig.gca()
+        ax = kwargs.pop("ax", None)
+        if ax is None:
+            ax = datafile.plot.ax
+        if ax is None:
+            figure = datafile.__dict__.get("_figure")
+            if figure is None or not figure.axes:
+                raise ValueError("Plot data first or supply ax= to annotate_fit.")
+            ax = figure.gca()
         if "zlim" in ax.properties():
             # 3D plot then
             if z is None:

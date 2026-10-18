@@ -1,13 +1,34 @@
-"""Stoner.plot sub-package - contains classes and functions for visuallising data.
+"""Provide the callable Data plotting accessor and stonerplots layout contexts.
 
-Most of the plotting functionality is provided by the :class:`.PlotMixin` mixin class which is available through the
-:py:class:`~Stoner.core.data.Data` class.
-
-The :mod:`.formats` module provides a set of template classes for producing different plot styles and formats. The
-:py:mod:`Stoner.plot.util` module provides
-some handy utility functions.
+Use :py:attr:`Stoner.core.data.Data.plot` for automatic or explicit scientific
+plotting through :py:class:`Stoner.plot.accessor.DataPlotter`. Numerical
+``Data.griddata`` remains independently callable in :mod:`Stoner.plot.functions`.
 """
 
-from .core import PlotMixin
+from stonerplots import (
+    CentredAxes,
+    DoubleYAxis,
+    InsetPlot,
+    MultiPanel,
+    PlotLabeller,
+    SavedFigure,
+    StackVertical,
+    TexEngFormatter,
+    TexFormatter,
+)
 
-__all__ = ["PlotMixin", "formats", "utils"]
+from .accessor import DataPlotter
+
+__all__ = [
+    "CentredAxes",
+    "DataPlotter",
+    "DoubleYAxis",
+    "InsetPlot",
+    "MultiPanel",
+    "PlotLabeller",
+    "SavedFigure",
+    "StackVertical",
+    "TexEngFormatter",
+    "TexFormatter",
+    "utils",
+]

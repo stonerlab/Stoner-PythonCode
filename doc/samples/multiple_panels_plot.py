@@ -4,8 +4,7 @@
 from Stoner import Data
 
 p = Data("sample.txt", setas="xyy")
-# Quick plot
-p.plot(multiple="panels")
-# Helps to fix layout !
-p.set_layout_engine("tight")
-p.draw()
+with p.plot.style("stoner"):
+    with p.plot.StackVertical(2) as panels:
+        p.plot.line(y=1, ax=panels[0], title=None)
+        p.plot.line(y=2, ax=panels[1], title=None)

@@ -43,4 +43,4 @@ d.annotate_fit(
     fontdict={"size": "x-small", "color": "green"},
     prefix="FluchsSondheimer",
 )
-d.title = "Fluchs-Sondheimer Fit"
+d.plot.ax.set_title("Fluchs-Sondheimer Fit")

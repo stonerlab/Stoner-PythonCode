@@ -85,7 +85,7 @@ def test_imagefile_ops():
     b.mask = img_a2.imarray > 25e3
     hist = b.hist(bins=200)
     hist.column_headers = ["XMCD Signal", "Frequency"]
-    hist.labels = None
+    hist.plot.labels = None
 
     # Construct a two Lorentzian peak model
     peak1 = LorentzianModel(prefix="peak1_")

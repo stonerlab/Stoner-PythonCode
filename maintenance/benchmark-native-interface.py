@@ -19,6 +19,7 @@ import Stoner
 
 from Stoner import Data, ImageFile, ImageStack
 from Stoner.core.selection import selected_image_values
+from Stoner.formats.attocube import AttocubeScan
 
 
 def measure(function, repeats=5):
@@ -60,6 +61,12 @@ def main():
     region[:128, :128] = True
     results['image_selection'] = measure(lambda: selected_image_values(image.image, region))
     results['image_selected_mean'] = measure(lambda: image.mean(where=region))
+    # Metadata-only frame access should not allocate a numerical image payload.
+    for side in (64, 1024):
+        scan = AttocubeScan()
+        scan.append(ImageFile(np.ones((side, side))))
+        scan._common_metadata['run{String}'] = '001'
+        results[f'attocube_metadata_{side}'] = measure(lambda: scan[0].metadata['run'])
     digest = hashlib.sha256()
     for path in sorted((root / 'Stoner').rglob('*.py')):
         digest.update(path.relative_to(root).as_posix().encode() + b'\0')

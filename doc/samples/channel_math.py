@@ -5,13 +5,12 @@ from numpy import cos, linspace, ones_like, pi, sin
 from numpy.random import normal, seed
 
 from Stoner import Data
-from Stoner.plot.utils import errorfill
 
 seed(12345)  # Ensure consistent random numbers!
 x = linspace(0, 10 * pi, 101) + 1e-9
 e = 0.01 * ones_like(x)
 y = 0.1 * sin(x) + normal(size=len(x), scale=0.01) + 0.1
-e2 = 0.01 * cos(x)
+e2 = 0.01 * abs(cos(x))  # Standard uncertainties are non-negative magnitudes.
 y2 = 0.1 * ones_like(x)
 d = Data(
     x,
@@ -32,10 +31,8 @@ d.multiply(a, b, replace=False)
 d.divide(a, b, replace=False)
 d.diffsum(a, b, replace=False)
 d.setas = "xyeyeyeyeyeyeye"
-d.plot(
-    multiple="panels",
-    plotter=errorfill,
-    color="red",
-    alpha_fill=0.2,
-    figsize=(5, 8),
-)
+with d.plot.style("stoner"):
+    figure = d.plot.new_figure(figsize=(5, 8))
+    with d.plot.StackVertical(7, figure=figure, adjust_figsize=False) as panels:
+        for column, ax in zip(range(1, 14, 2), panels):
+            d.plot.errorfill(y=column, ax=ax, color="red", alpha_fill=0.2, title=None)
