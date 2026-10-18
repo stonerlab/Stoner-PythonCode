@@ -466,7 +466,7 @@ class Data(
         Returns:
             Stoner.plot.accessor.DataPlotter:
                 Accessor bound to this Data. Call it to infer a scientific plot,
-                or use line, scatter, errorbar or errorfill explicitly. Drawing
+                or select a named method such as line, hist or surface. Drawing
                 returns a Matplotlib Axes and does not show or save the figure.
         """
         from ..plot.accessor import DataPlotter

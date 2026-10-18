@@ -18,6 +18,7 @@ from stonerplots import (
 from .fields import draw_field, draw_matrix
 from .selection import prepare_traces, resolve_columns, uncertainty_specs
 from .state import PlotState, live_figure
+from .statistics import draw_distribution, draw_hexbin
 from .utils import errorfill as draw_errorfill
 
 __all__ = ["DataPlotter"]
@@ -25,6 +26,7 @@ __all__ = ["DataPlotter"]
 _XY_KINDS = ("line", "scatter", "errorbar", "errorfill")
 _FIELD_KINDS = ("surface", "contour", "pcolormesh", "image", "matrix", "scatter3d",
                 "vector", "vector3d", "quiver", "voxels", "waterfall")
+_STAT_KINDS = ("hist", "box", "kde", "hexbin")
 _AUTO = object()
 _LEGACY_OPTIONS = {
     "figure", "template", "plotter", "multiple", "show_plot", "save_filename",
@@ -157,7 +159,7 @@ class DataPlotter:
         Keyword Arguments:
             kind (str):
                 auto infers the scientific plot. An explicit kind selects its
-                named method, including scalar, vector, matrix and volume fields.
+                named method, including fields and hist/box/KDE/hexbin plots.
             z (column selector or None):
                 Scalar-field coordinate; False disables an assigned Z role.
             u (column selector or None):
@@ -198,8 +200,20 @@ class DataPlotter:
             even when X/Y are explicitly supplied; kind='line' requests a plain line.
             Invalid/excluded samples are removed independently for each trace.
         """
-        if kind not in ("auto", *_XY_KINDS, *_FIELD_KINDS):
+        if kind not in ("auto", *_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
             raise ValueError(f"Unknown plot kind {kind!r}; use auto or a named plotting method.")
+        if kind in _STAT_KINDS:
+            if any(value is not None and value is not False for value in (z, u, v, w, xerr, yerr)):
+                raise ValueError("Statistical plots do not accept field or uncertainty selectors.")
+            annotations = self._stat_options(kind, kwargs)
+            if kind != "hexbin":
+                if x is not None:
+                    raise ValueError(f"{kind} selects sample columns with y=; X is not required.")
+                return draw_distribution(self, kind, y, startx=startx, no_guess=no_guess,
+                                         annotations=annotations, **kwargs)
+            columns = resolve_columns(self._data, x=x, y=y, z=False, u=False, v=False, w=False,
+                                      startx=startx, no_guess=no_guess)
+            return draw_hexbin(self, columns, annotations=annotations, **kwargs)
         if kind == "matrix":
             if any(value is not None for value in (z, u, v, w, xerr, yerr)):
                 raise ValueError("matrix uses x/y coordinates and a table block, not field or uncertainty selectors.")
@@ -310,6 +324,130 @@ class DataPlotter:
                 The axes containing lines and shading, without changing measurements.
         """
         return self(x, y, kind="errorfill", xerr=xerr, yerr=yerr, **kwargs)
+
+    def hist(self, y=None, **kwargs):
+        """Draw histograms from independently valid samples using Axes.hist.
+
+        Args:
+            y (column selector or None):
+                Sample columns, in Stoner selector order. Defaults to assigned Y
+                columns in the selected X group, or all real numeric columns if
+                none are assigned. No separate X coordinate is required.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax selects a 2D Axes. startx selects a role group; no_guess=True
+                disables the numeric-column fallback. weights is one column
+                selector or a source-row array, filtered separately per series.
+                label supplies legend labels; None suppresses them. legend=True,
+                xlabel, ylabel, title, xscale and yscale control presentation.
+                Other keywords go to Axes.hist, including bins, range, density,
+                cumulative, stacked, histtype and orientation.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary axes containing the distributions, without changing data.
+
+        Notes:
+            Each selected column independently excludes masked/non-finite values
+            and matching invalid weights. Assigned errors and unrelated masks are
+            ignored. Every selected series must retain samples. Bins are shared
+            across series; stacked means adding bin values, not arranging panels.
+            Native histogram weights may be negative. Drawing does not show/save.
+        """
+        return self(y=y, kind="hist", **kwargs)
+
+    def box(self, y=None, **kwargs):
+        """Draw one box per independently filtered sample column.
+
+        Args:
+            y (column selector or None):
+                Sample columns with the same role/numeric defaults as hist.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax, startx, no_guess and annotation controls work as for hist.
+                label supplies category labels, defaulting to column labels;
+                None clears them. orientation is vertical or horizontal. Native
+                Axes.boxplot options include whis, showfliers, notch, positions,
+                widths, patch_artist and box/median/whisker properties. Weights,
+                grouping and layout forwarding are unsupported.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes. Only selected samples determine box statistics;
+                no values, exclusions, roles or metadata are changed.
+        """
+        return self(y=y, kind="box", **kwargs)
+
+    def kde(self, y=None, **kwargs):
+        """Estimate and draw a Gaussian probability density for each sample column.
+
+        Args:
+            y (column selector or None):
+                Sample columns with the same role/numeric defaults as hist.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax, weights, label, legend and annotation controls work as for
+                hist. bw_method is SciPy gaussian_kde's bandwidth factor, name
+                or callable (None uses Scott's rule). ind is an integer point
+                count of at least two, or a finite evaluation vector. By default
+                each series uses 1000 points, extending half its observed range
+                beyond each end. Other keywords go to Axes.plot.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes containing density curves, without changing data.
+
+        Raises:
+            ValueError:
+                If a series has fewer than two distinct effective samples,
+                weights are negative/all zero, or bandwidth/evaluation is invalid.
+
+        Notes:
+            Exclusions are independent per series. Zero-weight samples do not
+            determine the estimator or default range. Gaussian kernels extend
+            beyond the observed data; density is not clipped at a physical bound.
+        """
+        return self(y=y, kind="kde", **kwargs)
+
+    def hexbin(self, x=None, y=None, *, C=None, **kwargs):
+        """Bin jointly valid XY samples into hexagons with Axes.hexbin.
+
+        Args:
+            x, y (column selector or None):
+                One column each, with ordinary scientific role/count defaults.
+
+        Keyword Arguments:
+            C (column selector, array or None):
+                Optional reduced values, as one column or a source-row array.
+                None counts points. Masks/non-finite values combine with X/Y.
+            **kwargs (dict):
+                ax selects a 2D Axes. colorbar=True adds a colour scale. xlabel,
+                ylabel and title override source annotations. Other arguments go
+                to Axes.hexbin, including gridsize, mincnt, reduce_C_function,
+                extent, bins, cmap, norm and xscale/yscale for logarithmic bins.
+                Assigned errors and unrelated column masks are ignored.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary axes, retained as the recent target after adding a colour
+                bar. Counts/reductions use only finite, unexcluded joint samples.
+        """
+        return self(x, y, kind="hexbin", C=C, **kwargs)
+
+    @staticmethod
+    def _stat_options(kind, kwargs):
+        """Reject backend/group/layout forwarding before selecting statistical axes."""
+        removed = _LEGACY_OPTIONS | {"backend", "subplots", "layout", "secondary_y", "by", "data", "figsize",
+                                     "return_type", "fmt", "zlabel"}
+        if kind == "box":
+            removed |= {"vert", "labels", "tick_labels"}
+        unsupported = removed.intersection(kwargs)
+        if unsupported:
+            raise ValueError(f"Unsupported statistical options {sorted(unsupported)}; use named methods, ax= and contexts.")
+        return {key: kwargs.pop(key) for key in ("xlabel", "ylabel", "title") if key in kwargs}
 
     def _text(self, value):
         """Interpolate metadata while retaining existing mathematical label strings."""

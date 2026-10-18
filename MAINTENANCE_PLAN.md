@@ -159,16 +159,18 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
-- [ ] **Plotting redesign (stages 0-3 complete):** see
+- [ ] **Plotting redesign (stages 0-4 complete):** see
   [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) for the callable Data
-  plotting accessor, stonerplots layouts/formatting and bounded pandas delegation.
+  plotting accessor, stonerplots layouts/formatting and statistical conveniences.
   API changes are acceptable with aligned examples and documentation. The plan
-  records ordinary/scientific plotting and direct stonerplots layout/style
+  records ordinary/scientific/statistical plotting and direct stonerplots layout/style
   contexts, aligned examples and local validation. Stages 0/1 are committed as
-  `374980c2e`; stage 2 as `ec0d62fa6`, using required stonerplots 1.9.6. Stage 3
-  remains uncommitted on `codex/plotting-accessor-stages-0-1`; its full local suite
-  passes 1,218 tests. Next is stage 4's bounded pandas convenience evaluation;
-  folder pagination/removal remains in stage 5. No push or release
+  `374980c2e`; stage 2 as `ec0d62fa6`, using required stonerplots 1.9.6; stage 3
+  as `1c1293512`. Stage 4 remains uncommitted on
+  `codex/plotting-accessor-stages-0-1`; it selects direct Matplotlib/SciPy for
+  hist/box/KDE/hexbin after reviewing pandas delegation. Its full local suite
+  passes 1,271 tests; cached docs retain 88 reviewed warnings and zero unexpected.
+  Next is stage 5 folder pagination, bulk calls and final legacy removal. No push or release
   is part of this batch.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the

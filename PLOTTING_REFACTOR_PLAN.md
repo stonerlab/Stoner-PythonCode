@@ -1,6 +1,6 @@
 # Plotting redesign
 
-Status: stages 0, 1, 2 and 3 completed on 18 October 2026.
+Status: stages 0, 1, 2, 3 and 4 completed on 18 October 2026.
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -25,9 +25,9 @@ The main scope is Data/table plotting and its folder consumers. Audit image APIs
 for shared utilities and routing, but do not redesign image display/widgets as an
 incidental part of this work.
 
-The accessor now exposes ordinary and scientific field plotting, together with
-the stonerplots layout/formatting contexts. Folder pagination and final removal
-of the transitional top-level methods remain for stage 5.
+The accessor now exposes ordinary, scientific field and statistical plotting,
+together with the stonerplots layout/formatting contexts. Folder pagination and
+final removal of the transitional top-level methods remain for stage 5.
 
 ## What the code currently does
 
@@ -112,7 +112,7 @@ The proposed initial method families are:
 | `surface`, `contour`, `pcolormesh`, `image` | Existing XYZ/gridding capabilities with explicit rendering choices. |
 | `matrix` | Existing matrix-oriented surface capability; retain its distinct input interpretation. |
 | `vector`, `vector3d`, `quiver`, `voxels` | Preserve colour-vector, glyph, 3D vector and scalar-volume capabilities. |
-| `hist`, `box`, `kde`, `hexbin` | First candidates for small pandas-backed implementations, admitted after their selection and missing-data contracts are checked. |
+| `hist`, `box`, `kde`, `hexbin` | Bounded statistical methods; stage 4 selected direct Matplotlib/SciPy after checking selection and missing-data contracts. |
 
 Explicit named methods determine the rendering type. In particular, `line` is a
 plain line; use the automatic call or `errorbar` for inferred uncertainties.
@@ -320,6 +320,8 @@ Suggested small modules under `Stoner/plot`:
   request descriptions where useful; reuse core resolution rules.
 - `renderers.py`: ordinary XY/uncertainty drawing and selected pandas delegates.
 - `fields.py`: surface/image/vector/voxel drawing using existing numerical helpers.
+- `statistics.py`: independent distribution samples and joint hexbin inputs,
+  drawn directly with Matplotlib and SciPy's Gaussian KDE estimator.
 - `state.py`: lightweight settings and recent axes/figure bookkeeping, if this is
   large enough to warrant its own module.
 
@@ -362,7 +364,7 @@ the transition; they are not a commitment to permanent public compatibility.
   numerical algorithms, remove implicit backend selection and update the 3D/
   colour-field examples. Gate: coordinate orientation, masks, colour mapping,
   limits and selected artists match the intended scientific inputs.
-- [ ] **4. Add bounded pandas conveniences.** Evaluate histogram/box/KDE/hexbin
+- [x] **4. Add bounded pandas conveniences.** Evaluate histogram/box/KDE/hexbin
   one family at a time. Implement directly where forwarding is more complicated.
   Gate: excluded values never reappear, duplicate headers resolve consistently,
   only required columns are materialised, and the backend/return contract holds.
@@ -549,8 +551,8 @@ Python/Matplotlib/NumPy/pandas/SciPy versions:
 
 ### Stage 3 handover
 
-Implemented on the same feature branch after the stage 2 commit. Stage 3 remains
-uncommitted; no push or release was performed.
+Implemented on the same feature branch after the stage 2 commit. Committed as
+`1c1293512` before starting stage 4; no push or release was performed.
 
 - Added explicit `surface`, `contour`, `pcolormesh`, `image`, `matrix`, `scatter3d`,
   `vector`, `quiver`, `vector3d`, `voxels` and `waterfall` methods. Named methods,
@@ -609,9 +611,72 @@ satisfied and the stage 2 versions including stonerplots 1.9.6:
   evidence; hosted, lower-dependency and installed-distribution gates remain for
   the complete redesign.
 
-Next bounded batch: stage 4 histogram/box/KDE/hexbin evaluation. Choose direct
-Matplotlib where it is simpler than pandas delegation; retain per-operation
-selection/missing-data rules. Folder pagination and final removal remain stage 5.
+### Stage 4 handover
+
+Implemented on the same feature branch after the stage 3 commit. Stage 4 remains
+uncommitted; no push or release was performed.
+
+- Evaluated histogram/box/KDE/hexbin delegation against direct drawing. All four
+  are smaller and clearer with native Matplotlib arrays after Stoner selection
+  and mask handling; KDE uses the existing SciPy dependency's `gaussian_kde`.
+  No pandas intermediate/export, backend forwarding, subclass or general plotting
+  proxy was added. No dependency manifest changes are needed.
+- Added explicit `hist`, `box`, `kde` and `hexbin` methods and matching `kind=`
+  calls. Automatic scientific role/count dispatch is unchanged. Every method
+  returns its primary Axes, inherits caller styles, honours explicit/current
+  targets, and does not show/save. Hexbin colour bars retain the primary target,
+  including on unmanaged object-oriented Figures.
+- Distribution selectors use Y roles in the selected X group, otherwise all real
+  numeric columns. Explicit selectors preserve Stoner lookup and ordering;
+  `no_guess=True` disables the numeric fallback. There is no separate X validity
+  requirement. Each series and optional source-row weights are filtered jointly,
+  independently of other series or unselected columns. Every selected series must
+  retain samples. Integer data is filtered without inserting NaNs into storage.
+- Histograms share native bin edges and retain density/cumulative/stacked and
+  signed-weight semantics. Box plots keep independent samples and categorical
+  labels; a small signature-based choice uses native orientation/tick-label
+  keyword names across the declared Matplotlib floor and current versions.
+- KDEs require two distinct positive-weight samples, non-negative weights and
+  valid bandwidth/evaluation controls. All curves are prepared before axes are
+  selected. The default grid extends half the observed range beyond both ends;
+  zero-weight outliers do not affect it. The guide states the Gaussian-tail
+  interpretation rather than implying physical-boundary correction.
+- Hexbin validity combines X/Y and optional C only, with native count/reduction,
+  grid, logarithmic binning and colour-map controls. Raw source-row C arrays and
+  selectors align with exclusions. Backend, grouping, legacy and layout controls
+  are explicitly rejected; stonerplots contexts remain responsible for layouts.
+- Added a runnable four-panel example and its three cache formats. No existing
+  cache was refreshed or removed. The guide and accessor docstrings explain the
+  selection, missing-data, weighting and return contracts.
+
+Validation on Windows `py314`, freshly verified against all 38 test-environment
+Conda specifications, with Python 3.14.7, stonerplots 1.9.6, Matplotlib 3.11.1,
+NumPy 2.5.2, pandas 3.0.5 and SciPy 1.18.0:
+
+- Full suite: **1,271 passed** in 255.94 seconds, including every runnable
+  documentation example. Reports: ignored
+  `maintenance/runs/plotting-stage4/full.xml` and `.log`.
+- Focused statistical suite: **52 passed**. It checks numerical histogram/box/KDE
+  results, hexbin counts/reductions against native Matplotlib, independent masks,
+  weights and non-finite inputs, repeated calls after mutation, required-column
+  reads, duplicate selectors, source ownership/immutability, caller styles, and a
+  non-default pandas backend.
+- Targeted Ruff passes for the accessor, new statistics module, tests and example.
+  The core Data change is a one-line docstring update. Whitespace checks pass with
+  retained line endings; the new regression path uses tracked `tests/Stoner` case.
+- Fresh cached Sphinx HTML: **88 reviewed warnings, zero unexpected**, with no
+  lost public inventory entries or missing dynamic Data methods. All **38**
+  required accessor/context targets have canonical inventory entries. All 255
+  pre-existing cached files remain present; the new example adds three formats.
+- Visually reviewed the new example, rendered guide and new API navigation over
+  localhost. The current preview serves only
+  `maintenance/runs/plotting-stage4/html` on port 8792 while the user reviews it.
+  These are local Windows results; the supported hosted/lower-dependency and
+  installed-distribution gates remain for stage 6.
+
+Next bounded batch: stage 5 folder pagination, nested bulk calls and final legacy
+removal. Keep the complete redesign's hosted/lower-dependency/distribution gates
+in stage 6.
 
 ## External sources inspected
 
@@ -623,6 +688,11 @@ selection/missing-data rules. Folder pagination and final removal remain stage 5
 - [SciPy scattered griddata interpolation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html)
 - [Matplotlib image origin and extent](https://matplotlib.org/stable/users/explain/artists/imshow_extent.html)
 - [Matplotlib voxel corners and colours](https://matplotlib.org/stable/api/_as_gen/mpl_toolkits.mplot3d.axes3d.Axes3D.voxels.html)
+- [Matplotlib histogram arrays, shared bins and weights](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html)
+- [Matplotlib box plot options](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.boxplot.html),
+  [Matplotlib 3.8 box plot keyword names](https://matplotlib.org/3.8.4/api/_as_gen/matplotlib.axes.Axes.boxplot.html)
+- [Matplotlib hexbin counts and reductions](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hexbin.html)
+- [SciPy Gaussian KDE and bandwidth conventions](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.gaussian_kde.html)
 - [PyPI metadata](https://pypi.org/pypi/stonerplots/json),
   [phygbu stonerplots metadata](https://api.anaconda.org/package/phygbu/stonerplots),
   [phygbu bad_path metadata](https://api.anaconda.org/package/phygbu/bad_path)

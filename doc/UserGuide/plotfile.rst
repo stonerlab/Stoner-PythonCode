@@ -6,7 +6,7 @@ Plotting Data
 
 The :py:attr:`~Stoner.core.data.Data.plot` property returns a callable
 :py:class:`~Stoner.plot.accessor.DataPlotter`. Use it to infer a scientific plot,
-or select a particular ordinary plot through its methods. Only the normal
+or select a particular plot through its methods. Only the normal
 Stoner import is needed::
 
     from Stoner import Data
@@ -47,8 +47,9 @@ The ordinary methods are:
 ``d.plot(kind="scatter", ...)`` and ``d.plot.scatter(...)`` share an
 implementation. Named ordinary methods override field roles, so
 ``d.plot.line(x=0, y=1)`` works on an XYZ table. Scalar, vector and volume fields
-also have named accessor methods, described below. Pandas conveniences remain a
-later stage.
+also have named accessor methods, as do histogram, box, KDE and hexbin plots.
+These choices are described below; the automatic call keeps its scientific
+role/count dispatch.
 
 .. plot:: samples/plot_accessor.py
     :include-source:
@@ -96,7 +97,85 @@ negative uncertainties at plotted samples, and empty/all-excluded requests raise
 an error before drawing. Measurements, masks, roles and metadata are unchanged.
 
 The raw ``d.data.plot()`` interface uses pandas semantics and does not apply
-Stoner's separate exclusions. Mask-aware pandas-backed plotting is a later stage.
+Stoner's separate exclusions. Use the accessor's statistical methods for
+mask-aware distributions and binning.
+
+.. _plotting-statistics:
+
+Distributions and hexagonal binning
+===================================
+
+``hist``, ``box``, ``kde`` and ``hexbin`` use Matplotlib directly, with SciPy's
+``gaussian_kde`` for density estimation. Each returns its primary Axes, respects
+``ax=`` and current styling, and does not show/save. Direct drawing keeps the
+selection/mask handling small and avoids an intermediate DataFrame or pandas
+backend. Changing pandas' global plotting backend does not affect these methods.
+
+For ``hist``, ``box`` and ``kde``, ``y`` selects sample columns rather than XY
+pairs. Omitting it selects assigned Y columns in the current ``startx`` group;
+if none exist, all real numeric columns are selected. A single-column table
+therefore works. ``no_guess=True`` disables that numeric fallback. Explicit
+selectors use Stoner's normal positional/header/pattern/slice rules and preserve
+selection order, including duplicate-header behaviour::
+
+    ax = d.plot.hist(y=[1, 3], bins=30, histtype="step")
+    ax = d.plot(kind="hist", y=[1, 3], bins=30, histtype="step")
+    ax = d.plot.box(y=[1, 3], orientation="horizontal")
+    ax = d.plot.kde(y=1, bw_method="silverman", ind=300)
+
+Each sample column removes its own excluded/non-finite values independently.
+Masks in unselected X/error columns do not remove distribution samples;
+no separate X coordinate is read for alignment. Every selected series must retain
+samples, otherwise the call raises before creating axes. Integer samples are filtered without inserting
+NaNs into the measurement table. All methods leave values, exclusions, metadata,
+roles and storage ownership unchanged.
+
+``hist`` forwards native options such as ``bins``, ``range``, ``density``,
+``cumulative``, ``histtype`` and ``stacked``. Selected series share bin edges.
+``stacked=True`` adds histogram values; use ``StackVertical`` to arrange panels.
+For histograms and KDEs, ``weights`` is one column selector or an array with one
+entry per original row. Invalid weights combine with each series' exclusions,
+preserving alignment independently. Histograms retain native support for signed
+weights. KDE weights must be non-negative with positive total weight.
+
+``box`` passes independent sample arrays to Matplotlib; it has no weights or
+group-by forwarding. ``label`` supplies category labels and ``orientation`` is
+``"vertical"`` or ``"horizontal"``. Native controls such as ``whis``,
+``showfliers``, ``notch``, ``positions`` and artist-property dictionaries remain
+available. The accessor handles the native orientation/tick-label keyword names
+across the supported Matplotlib versions.
+
+``kde`` requires at least two distinct samples with positive weight per series.
+``bw_method`` uses SciPy's factor/name/callable convention; None uses Scott's
+rule. ``ind`` is an integer of at least two points or a finite evaluation vector.
+By default each series is evaluated at 1000 points extending half its observed
+range beyond each end; zero-weight samples do not determine that range. Gaussian
+kernels extend beyond the measured range, including physical bounds. Remaining
+styling arguments go to ``Axes.plot``.
+
+Distribution ``label`` values default to column labels; explicit ``None``
+suppresses legend/category labels. Histograms and KDEs update their legend by
+default; ``legend=False`` disables that update. ``xlabel``, ``ylabel`` and
+``title`` retain source/metadata interpolation and existing text unless explicitly
+overridden; ``None`` clears an annotation. Unsupported ``backend``, ``by``,
+``subplots``, ``layout`` and ``secondary_y`` options raise an error; use the
+stonerplots contexts for layout and axes management.
+
+``hexbin`` uses one X and one Y column, with the ordinary scientific coordinate
+defaults. ``C=None`` counts jointly valid points; a column selector or source-row
+array supplies values to aggregate with ``reduce_C_function`` (mean by default).
+Only X/Y and optional C determine joint validity. Assigned uncertainties and
+unrelated masks are ignored. Native ``gridsize``, ``mincnt``, ``extent``,
+``bins``, ``cmap``, ``norm`` and ``xscale``/``yscale`` controls are supported,
+including logarithmic binning. ``colorbar=True`` adds a colour scale without
+replacing the primary recent target::
+
+    ax = d.plot.hexbin(x=0, y=1, gridsize=25, mincnt=1)
+    ax = d.plot.hexbin(x=0, y=1, C=3, reduce_C_function=sum, colorbar=False)
+
+.. plot:: samples/statistical_plots.py
+    :include-source:
+    :outname: statistics
 
 .. _plotting-fields:
 
