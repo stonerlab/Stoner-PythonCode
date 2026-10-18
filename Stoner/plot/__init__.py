@@ -1,9 +1,9 @@
-"""Provide the callable Data plotting accessor and retained legacy field helpers.
+"""Provide the callable Data plotting accessor, fields and layout contexts.
 
-Use :py:attr:`Stoner.core.data.Data.plot` for automatic or explicit ordinary
+Use :py:attr:`Stoner.core.data.Data.plot` for automatic or explicit scientific
 plotting through :py:class:`Stoner.plot.accessor.DataPlotter`. The legacy
 :py:class:`Stoner.plot.core.PlotMixin` and template classes remain temporarily
-available for field and folder helpers awaiting the later refactor stages.
+available for folder helpers and the final removal stage.
 """
 
 from stonerplots import (

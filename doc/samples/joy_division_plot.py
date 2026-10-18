@@ -4,10 +4,9 @@
 
 from pathlib import Path
 
-from numpy import log10
+from numpy.ma import log10
 
 from Stoner import Data, DataFolder
-from Stoner.plot.utils import joy_division
 
 
 class RigakuFolder(DataFolder):
@@ -57,10 +56,10 @@ total.setas = "xzy"
 total.z = log10(total.z)
 total.column_headers = [
     r"$\omega(^\circ)$",
-    r"$2\theta (^\circ)5",
+    r"$2\theta (^\circ)$",
     r"$\log_{10}(Counts)$",
 ]
 # Do the plot
-total.figure(figsize=(12, 9))
-total.plot_xyz(plotter=joy_division, griddata=False, projection=None, linewidth=1)
-total.legend(ncol=3, labelcolor="white", fontsize="xx-small")
+total.plot.new_figure(figsize=(12, 9))
+ax = total.plot.waterfall(linewidth=1, title=None)
+ax.legend(ncol=3, labelcolor="white", fontsize="xx-small")

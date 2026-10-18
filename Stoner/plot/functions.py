@@ -50,40 +50,6 @@ def _getargspec(*args, **kwargs):
 FIG_KARGS = _getargspec(plt.figure)[1] + ["ax"]
 
 
-def __mpl3DQuiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs):
-    """Plot vector fields using mpltoolkit.quiver.
-
-    Args:
-        x_coord_coord_coord (array):
-            x data coordinates
-        y_coord (array):
-            y data coordinates
-        z_coord (array):
-            z data coordinates
-        u_comp (array):
-            u data vector field component
-        v_comp (array):
-            v data vector field component
-        w_comp (array):
-            w data vector field component
-
-    Returns:
-        matpltolib.pyplot.figure with a quiver plot.
-    """
-    if not _3D:
-        raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-    if "ax" not in kwargs:
-        ax = plt.axes(projection="3d")
-    else:
-        ax = kwargs["ax"]
-    C = kwargs.pop("color", None)
-    if isinstance(C, np.ndarray) and C.ndim == 1:  # replace colours with a colour mapped array
-        cmap = kwargs.get("cmap", getattr(cm, "viridis"))
-        C = cmap(C)
-    vector_field = ax.quiver(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, colors=C, **kwargs)
-
-    return vector_field
-
 
 def _Plot(datafile, ix, iy, fmt, plotter, figure, **kwords):
     """Private method for plotting a single plot to a figure.
@@ -172,43 +138,6 @@ def _vector_color(datafile, xcol=None, ycol=None, ucol=None, vcol=None, wcol=Non
     Z = hsl2rgb(qdata, rdata, phidata).astype("f") / 255.0001 + 1e-7
     return Z
 
-
-def _vector_field_plotter(datafile, x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs):
-    """Plot vector fields using mayavi.mlab.
-
-    Args:
-        x_coord, y_coord, z_coord (array):
-            Data point coordinates
-        u_comp, v_comp, w_comp (array):
-            U,V,W vector field component
-
-    Returns:
-        An mlab figure reference.
-    """
-    try:
-        from mayavi import mlab  # pylint: disable=import-outside-toplevel
-    except ImportError:
-        return None
-    if "scalars" in kwargs:
-        col_mode = "color_by_scalar"
-    else:
-        col_mode = "color_by_vector"
-    if "scalars" in kwargs and isinstance(kwargs["scalars"], bool) and kwargs["scalars"]:  # fancy mode on
-        kwargs["scalars"] = np.arange(len(datafile))
-        colors = (
-            _vector_color(
-                datafile,
-            )
-            * 255
-        )
-        colors = np.column_stack((colors, np.ones(len(datafile)) * 255))
-        quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs)
-        quiv.glyph.color_mode = col_mode
-        quiv.module_manager.scalar_lut_manager.lut.table = colors
-    else:
-        quiv = mlab.quiver3d(x_coord, y_coord, z_coord, u_comp, v_comp, w_comp, **kwargs)
-        quiv.glyph.color_mode = col_mode
-    return quiv
 
 
 def _fix_cols(datafile, scalar=True, **kwargs):
@@ -1337,162 +1266,37 @@ plot_xyuvw = plot_xyuv
 
 
 def plot_xyzuvw(datafile, xcol=None, ycol=None, zcol=None, ucol=None, vcol=None, wcol=None, **kwargs):
-    """Plot a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.
+    """Draw a 3D vector field through the new Matplotlib accessor.
 
     Args:
-        xcol (index):
-            Xcolumn index or label
-        ycol (index):
-            Y column index or label
-        zcol (index):
-            Z column index or label
-        ucol (index):
-            U column index or label
-        vcol (index):
-            V column i
-            ndex or label
-        wcol (index): W column index or label
+        datafile (Data):
+            Measurement object if this is not used as a bound method.
+        xcol (column selector or None):
+            X coordinates.
+        ycol (column selector or None):
+            Y coordinates.
+        zcol (column selector or None):
+            Z coordinates.
+        ucol (column selector or None):
+            X vector component.
+        vcol (column selector or None):
+            Y vector component.
+        wcol (column selector or None):
+            Z vector component.
 
     Keyword Arguments:
-        colormap (string):
-            Vector field colour map - defaults to the jet colour map
-        colors (column index or numpy array):
-            Values used to map the colours of the resultant file.
-        mode (string):
-            glyph type, default is "cone"
-        scale_factor(float):
-            Scale-size of glyphs.
-        figure (mlab figure):
-            Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new
-            figure is always used,
-            otherwise it will default to using the last figure used by this DataFile object.
-        plotter (callable):
-            Optional argument that passes a plotting function into the routine. Sensible choices might be
-            plt.plot (default), py.semilogy, plt.semilogx
-        kwargs (dict):
-            A dictionary of other keyword arguments to pass into the plot function.
+        **kwargs (dict):
+            Arguments for DataPlotter.vector3d. Legacy figure/template/backend
+            controls are unsupported; use ax and Matplotlib artist keywords.
 
     Returns:
-        A mayavi scene instance
+        matplotlib.axes.Axes:
+            Primary Matplotlib 3D Axes, without displaying or saving it.
+
+    See Also:
+        :py:meth:`Stoner.plot.accessor.DataPlotter.vector3d`
     """
-    try:
-        from mayavi import core, mlab  # pylint: disable=import-outside-toplevel
-
-        mlab.figure()
-        mayavi = True
-    except ImportError:
-        mayavi = False
-    c = _fix_cols(datafile, xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, scalar=True, **kwargs)
-
-    if "template" in kwargs:  # Catch template in kwargs
-        datafile.template = kwargs.pop("template")
-
-    if mayavi:
-        defaults = {
-            "figure": datafile._figure,
-            "plotter": partial(_vector_field_plotter, datafile),
-            "show_plot": True,
-            "mode": "cone",
-            "scale_factor": 1.0,
-            "colors": True,
-        }
-        otherkwargs = [
-            "color",
-            "colormap",
-            "extent",
-            "figure",
-            "line_width",
-            "mask_points",
-            "mode",
-            "name",
-            "opacity",
-            "reset_zoom",
-            "resolution",
-            "scalars",
-            "scale_factor",
-            "scale_mode",
-            "transparent",
-            "vmax",
-            "vmin",
-        ]
-    else:
-        defaults = {
-            "plotter": globals()["__mpl3DQuiver"],
-            "show_plot": True,
-            "figure": datafile._figure,
-            "title": os.path.basename(datafile.filename),
-            "save_filename": None,
-            "cmap": getattr(cm, "jet"),
-            "scale": 1.0,
-            "units": "xy",
-            "color": hsl2rgb(
-                (1 + datafile.q / np.pi) / 2, datafile.r / np.max(datafile.r), (1 + datafile.w) / 2, alpha=True
-            )
-            / 255.0,
-        }
-        projection = kwargs.pop("projection", "3d")
-        coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
-        for k, coltype in coltypes.items():
-            if isinstance(coltype, (int, str, _pattern_type)):
-                label = datafile._col_label(coltype)
-                if isinstance(label, list):
-                    label = ",".join(label)
-                defaults[k] = label
-        if "plotter" not in kwargs or ("plotter" in kwargs and kwargs["plotter"] is __mpl3DQuiver):
-            otherkwargs = ["color", "cmap", "linewidth", "ax", "length", "pivot", "arrow_length_ratio"]
-        else:
-            otherkwargs = ["color", "linewidth"]
-
-    kwargs, nonkwargs, _ = _fix_kwargs(datafile, None, defaults, otherkwargs=otherkwargs, **kwargs)
-    colors = nonkwargs.pop("color", True)
-    if isinstance(colors, bool) and colors:
-        pass
-    elif isinstance(colors, (int, str, _pattern_type)):
-        colors = datafile.column(colors)
-    elif isinstance(colors, np.ndarray):
-        pass
-    elif callable(colors):
-        colors = np.array([colors(x) for x in datafile.rows()])
-    else:
-        raise RuntimeError("Do not recognise what to do with the colors keyword.")
-    if mayavi:
-        kwargs["scalars"] = colors
-    figure = nonkwargs["figure"]
-    plotter = nonkwargs["plotter"]
-    if mayavi:
-        if isinstance(figure, int):
-            figure = mlab.figure(figure)
-        elif isinstance(figure, bool) and not figure:
-            figure = mlab.figure(bgcolor=(1, 1, 1))
-        elif isinstance(figure, core.scene.Scene):
-            pass
-        elif isinstance(datafile._figure, core.scene.Scene):
-            figure = datafile._figure
-        else:
-            figure = mlab.figure(bgcolor=(1, 1, 1))
-        datafile._figure = figure
-
-    else:
-        datafile._figure, ax = _fix_fig(datafile, nonkwargs["figure"], projection=projection)
-        if isinstance(plotter, str):
-            plotter = getattr(ax, plotter)
-
-    kwargs["figure"] = figure
-    plotter(
-        datafile.column(c.xcol),
-        datafile.column(c.ycol),
-        datafile.column(c.zcol),
-        datafile.column(c.ucol),
-        datafile.column(c.vcol),
-        datafile.column(c.wcol),
-        **kwargs,
-    )
-    if nonkwargs["show_plot"]:
-        if mayavi:
-            mlab.show()
-        else:
-            plt.show()
-    return datafile.showfig
+    return datafile.plot.vector3d(xcol, ycol, zcol, ucol, vcol, wcol, **kwargs)
 
 
 def plot_voxels(datafile, xcol=None, ycol=None, zcol=None, ucol=None, cmap=None, **kwargs):

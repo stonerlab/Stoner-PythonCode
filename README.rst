@@ -91,7 +91,7 @@ For pip installations, extras select additional functionality, for example::
     python -m pip install "Stoner[TDMS,image_alignment,ocr]"
 
 Other extras include ``facility_formats``, ``hyperspy``, ``plot_styles``,
-``PrettyPrint``, ``mimetype_detection``, ``numba``, ``cv2``, ``mayavi`` and ``qt``.
+``PrettyPrint``, ``mimetype_detection``, ``numba``, ``cv2`` and ``qt``.
 Their declarations are in ``pyproject.toml``. In Conda environments, install
 optional packages from the Conda channels where available.
 

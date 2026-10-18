@@ -1,7 +1,6 @@
 """3D surface plot example."""
 
 # pylint: disable=invalid-name, no-name-in-module
-import matplotlib.cm
 import numpy as np
 
 from Stoner import Data
@@ -16,5 +15,4 @@ p = p & x & y & z
 p.column_headers = ["X", "Y", "Z"]
 p.setas = "xyz"
 
-p.plot_xyz(cmap=matplotlib.cm.jet)
-p.title = "Surface plot"
+ax = p.plot.surface(cmap="jet", title="Surface plot")

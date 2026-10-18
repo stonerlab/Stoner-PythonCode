@@ -213,7 +213,7 @@ def hsl2rgb(hue, sat, lum, alpha=False):
     zero = np.zeros_like(X)
     select = np.column_stack([Hp, Hp, Hp])
     m = np.column_stack([lum - C / 2, lum - C / 2, lum - C / 2])
-    output = np.where(select > 0, np.column_stack([C, X, zero]), output)
+    output = np.where(select >= 0, np.column_stack([C, X, zero]), output)
     output = np.where(select > 1, np.column_stack([X, C, zero]), output)
     output = np.where(select > 2, np.column_stack([zero, C, X]), output)
     output = np.where(select > 3, np.column_stack([zero, X, C]), output)
@@ -254,7 +254,9 @@ def joy_division(x, y, z, **kwargs):
 
     Constructors a mono-chromatic waterfall plot in the style of the Joy Division album cover of Pulsar signals.
     """
-    ax = kwargs.pop("ax", plt.gca())
+    ax = kwargs.pop("ax", None)
+    if ax is None:
+        ax = plt.gca()
     y_shift = kwargs.pop("y_shift", (z.max() - z.min()) / np.unique(y).size)
     bg_colour = kwargs.pop("bg_color", "k")
     color = kwargs.pop("color", kwargs.pop("colour", "w"))

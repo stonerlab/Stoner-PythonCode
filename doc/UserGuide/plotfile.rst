@@ -36,7 +36,7 @@ and four mean X, X uncertainty, Y and Y uncertainty. Five/six columns retain the
 existing XYUVW/XYZUVW vector-field guesses. Three unassigned columns do not mean
 a surface. Use ``no_guess=True`` to disable column-count guesses.
 
-The ordinary methods available in this stage are:
+The ordinary methods are:
 
 * ``d.plot()``: infer lines or error bars from resolved coordinates/uncertainties;
 * ``d.plot.line()``: plain lines, ignoring assigned uncertainties;
@@ -46,9 +46,9 @@ The ordinary methods available in this stage are:
 
 ``d.plot(kind="scatter", ...)`` and ``d.plot.scatter(...)`` share an
 implementation. Named ordinary methods override field roles, so
-``d.plot.line(x=0, y=1)`` works on an XYZ table. Automatic field plots remain
-available through retained scientific helpers. Named field methods and pandas
-conveniences are later stages and are not yet accessor methods.
+``d.plot.line(x=0, y=1)`` works on an XYZ table. Scalar, vector and volume fields
+also have named accessor methods, described below. Pandas conveniences remain a
+later stage.
 
 .. plot:: samples/plot_accessor.py
     :include-source:
@@ -97,6 +97,166 @@ an error before drawing. Measurements, masks, roles and metadata are unchanged.
 
 The raw ``d.data.plot()`` interface uses pandas semantics and does not apply
 Stoner's separate exclusions. Mask-aware pandas-backed plotting is a later stage.
+
+.. _plotting-fields:
+
+Scalar, vector and volume fields
+================================
+
+Field methods return their **primary Matplotlib Axes**, accept explicit ``ax=``
+and inherit the caller's style. They do not display or save figures. An explicit
+target must have the correct 2D/3D projection; an incompatible implicit current
+axes causes a new figure to be created. No field method imports or selects Mayavi.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 30 45
+
+    * - Method
+      - Inputs
+      - Rendering
+    * - ``surface``
+      - X, Y, scalar Z
+      - Gridded 3D surface.
+    * - ``contour``
+      - X, Y, scalar Z
+      - 2D contours; ``filled=True`` selects filled contours.
+    * - ``pcolormesh`` / ``image``
+      - X, Y, scalar Z
+      - Pseudocolour cells / an image with physical pixel-centre coordinates.
+    * - ``scatter3d``
+      - X, Y, Z
+      - Ungridded 3D points, including per-sample ``c`` and ``s`` arrays.
+    * - ``vector``
+      - X, Y, U, V, optional W
+      - Directional RGB image with optional U/V arrows.
+    * - ``quiver``
+      - X, Y, U, V
+      - Ungridded 2D arrows; unused Z/W roles do not affect validity.
+    * - ``vector3d``
+      - X, Y, Z, U, V, W
+      - Matplotlib 3D arrows coloured by vector direction by default.
+    * - ``voxels``
+      - X, Y, Z, scalar U
+      - A scalar volume with physical cell corners and visibility controls.
+    * - ``matrix``
+      - Table block and X/Y coordinate vectors
+      - 3D surface; data rows index X and data columns index Y.
+    * - ``waterfall``
+      - X, grouping Y, response Z
+      - Ungridded grouped traces using the Joy Division utility.
+
+A named method and ``d.plot(kind="surface", ...)`` use the same implementation.
+The automatic call retains the scientific role/default choices: XYZ selects a
+surface, XYUV[W] a vector image, XYZUVW a 3D vector plot, and XYZU voxels. Unassigned
+three-column automatic calls still infer XY with Y uncertainty. Explicit field
+methods on entirely unassigned tables instead take their required inputs in the
+listed order: ``d.plot.surface()`` uses columns 0/1/2 and ``d.plot.quiver()`` uses
+0/1/2/3. Explicit selectors override those defaults; ``no_guess=True`` requires
+roles or explicit selectors. For assigned tables, supply missing field selectors
+explicitly. Named methods can take their listed coordinates positionally, while
+the automatic call still accepts only X/Y positionally::
+
+    ax = d.plot.surface(x="Field", y="Temperature", z="Response", cmap="viridis")
+    ax = d.plot.scatter3d(x=0, y=1, z=2, color="black")
+    other.plot.surface(ax=ax, alpha=0.4, colorbar=False)
+
+Gridding and exclusions
+-----------------------
+
+Scalar grids use SciPy's existing ``griddata`` interpolation engine, with
+``method="linear"`` by default; ``nearest`` and 2D ``cubic`` are also available.
+``shape=(nx, ny)`` gives inclusive centre counts in X/Y order; volumes use
+``(nx, ny, nz)``. Default counts equal the number of distinct coordinates along
+each axis, matching the previous grid-count policy. ``xlim``, ``ylim`` and volume
+``zlim`` select increasing grid-centre bounds. Ungridded methods instead use limits
+as ordinary axes limits and reject gridding arguments.
+
+Complete regular lattices are reordered directly. Two-dimensional renderer arrays
+have Y rows and X columns; voxel arrays use X/Y/Z indexing. Only required columns
+contribute to joint validity. Excluded/non-finite scalar or vector samples do not
+participate in interpolation; an excluded measured site coinciding with an output
+grid centre stays missing. Other unsampled sites can be interpolated, and
+linear/cubic values outside the convex hull remain missing. Duplicate positions
+use their first valid sample. Measurements, exclusions and roles are unchanged.
+Unlike the old surface helper, missing values are never replaced with zero.
+
+``image`` retains scalar values for normalisation; it does not clip them by
+pre-converting them to RGB. Its default ``origin="lower"`` maps the first row to
+the smallest Y. Image extents extend half a cell beyond the outer centres. A
+single centre spans one coordinate unit. Scalar fields use ``cmap``/``norm`` or
+``vmin``/``vmax`` and add a colour bar by default. Use ``colorbar=False`` for an
+overlay or when managing the colour bar yourself. A solid-colour surface has no
+scalar colour bar. Surface and matrix colour maps otherwise follow the current
+Matplotlib ``image.cmap`` setting.
+
+.. plot:: samples/field_plots.py
+    :include-source:
+    :outname: fields
+
+.. plot:: samples/3D_plot.py
+    :include-source:
+    :outname: 3D
+
+Vector colours and arrows
+-------------------------
+
+``vector`` reuses the established HSL mapping: hue follows ``atan2(U,V)``,
+saturation follows relative vector magnitude, and optional W controls luminance
+across its range. Constant W has neutral luminance; an all-zero field is finite
+neutral grey. The hue boundary now correctly renders red. These directional RGB
+colours have no scalar colour bar; use a scalar plotting method for a numerical
+colour scale. ``arrows=False`` suppresses the overlay; ``quiver_kwargs={...}``
+supplies arrow styling separately from image options.
+
+At duplicate positions, the vector image and its overlay use the same first
+valid vector. The ungridded ``quiver`` and ``vector3d`` methods retain every valid
+sample. ``waterfall`` intentionally applies the Joy Division helper's black
+background and white traces; use ``bg_color``, ``color`` and ``axes_color`` to
+change these colours.
+
+``quiver`` and the vector overlay default to ``pivot="mid"``, ``angles="xy"``,
+``scale_units="xy"`` and ``scale=1``: arrow directions and lengths are expressed
+in data coordinates. Override these native Matplotlib options when the vector
+components have different units from the spatial coordinates. ``vector3d`` passes
+native 3D quiver options such as ``length``, ``normalize`` and
+``arrow_length_ratio``. All selected component masks follow the rendered arrows.
+
+.. plot:: samples/Vectorfield.py
+    :include-source:
+    :outname: vector_field
+
+.. plot:: samples/3D_vector_plot.py
+    :include-source:
+    :outname: vector3d
+
+Matrices and voxels
+-------------------
+
+``matrix`` has a separate interpretation from a row-wise XYZ table. By default,
+the first column supplies X coordinates and the remaining numeric column headers
+supply Y. The selected data block has shape ``(nx, ny)`` and is transposed once
+for Matplotlib's Y/X mesh. This works for non-square blocks and preserves missing
+cells. ``x`` can instead be a selector or explicit vector, and ``y`` a coordinate
+row index or explicit vector. A coordinate row starts the default block below it.
+``rect=(row, column[, rows, columns])`` crops the block, with corresponding
+coordinate slices. Coordinate vectors must be finite and unexcluded.
+
+.. plot:: samples/matrix_plot.py
+    :include-source:
+    :outname: matrix
+
+``voxels`` treats X/Y/Z as cell centres and U as intensity. Cell corners lie
+halfway between centres, extending the outer cells by half a spacing. A singleton
+coordinate spans one unit. ``visible=lambda x, y, z: ...`` evaluates a Boolean
+predicate on **grid centres**; alternatively, ``filled`` supplies a Boolean array
+with the gridded shape. Both combine with finite/unexcluded values. The colour
+bar and voxel faces share one scalar normalisation. ``face_alpha`` and
+``edge_alpha`` set the mapped opacity (defaults 0.5 and 0.9).
+
+.. plot:: samples/voxel_plot.py
+    :include-source:
+    :outname: voxel2
 
 Figures, axes and formatting
 ============================
@@ -293,13 +453,20 @@ its native style and plotting contexts.
     :include-source:
     :outname: customising
 
-Retained scientific and folder helpers
-======================================
+Retained legacy helpers and field migration
+===========================================
 
-Field plotting and folder pagination await their later refactor stages. Their
-legacy templates, figure selection and return policies remain distinct from
-ordinary accessor drawing. ``plot_xyz``, ``contour_xyz`` and ``image_plot`` handle
-scalar fields; ``plot_xyuv``, ``plot_xyzuvw`` and ``plot_voxels`` handle vector and
-volume plots. Scientific gridding remains separately available through
-``d.griddata``. The old template classes, layout methods and style assets remain
-temporarily for these consumers and will be removed in the final migration stage.
+Use ``d.plot.surface`` instead of ``plot_xyz``; ``scatter3d`` replaces
+``plot_xyz(plotter="scatter", griddata=False)``. Use ``contour``, ``pcolormesh``,
+``image``, ``matrix``, ``vector``, ``quiver``, ``vector3d`` and ``voxels`` in place
+of their old top-level field helpers. ``waterfall`` replaces the custom
+``plotter=joy_division`` path. Old ``griddata``, ``projection``, ``plotter`` and
+backend options are rejected by the accessor: select the required named method.
+The unused Mayavi installation extra has been removed.
+
+The old top-level methods/templates remain temporarily for the final removal
+stage. Their return, figure and styling policies are distinct from the accessor;
+``plot_xyzuvw`` now forwards to the Matplotlib accessor and returns its Axes.
+Folder pagination remains a later stage. Scientific ``d.griddata`` and shared
+image utilities are still independently callable; this plotting batch does not
+redesign those numerical APIs or image-display classes.

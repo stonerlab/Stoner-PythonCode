@@ -159,15 +159,16 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
-- [ ] **Plotting redesign (stages 0-2 complete):** see
+- [ ] **Plotting redesign (stages 0-3 complete):** see
   [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) for the callable Data
   plotting accessor, stonerplots layouts/formatting and bounded pandas delegation.
   API changes are acceptable with aligned examples and documentation. The plan
-  records ordinary plotting and direct stonerplots layout/style contexts, aligned
-  examples, full local tests and documentation/API validation. Stages 0/1 are
-  committed as `374980c2e`; stage 2 uses required stonerplots 1.9.6 and remains
-  uncommitted on `codex/plotting-accessor-stages-0-1`. Next is stage 3 scientific
-  field plotting; folder pagination/removal remains in stage 5. No push or release
+  records ordinary/scientific plotting and direct stonerplots layout/style
+  contexts, aligned examples and local validation. Stages 0/1 are committed as
+  `374980c2e`; stage 2 as `ec0d62fa6`, using required stonerplots 1.9.6. Stage 3
+  remains uncommitted on `codex/plotting-accessor-stages-0-1`; its full local suite
+  passes 1,218 tests. Next is stage 4's bounded pandas convenience evaluation;
+  folder pagination/removal remains in stage 5. No push or release
   is part of this batch.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the

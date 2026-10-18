@@ -1,6 +1,6 @@
 # Plotting redesign
 
-Status: stages 0, 1 and 2 completed on 18 October 2026.
+Status: stages 0, 1, 2 and 3 completed on 18 October 2026.
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -25,9 +25,9 @@ The main scope is Data/table plotting and its folder consumers. Audit image APIs
 for shared utilities and routing, but do not redesign image display/widgets as an
 incidental part of this work.
 
-The accessor now exposes ordinary plotting and the stonerplots layout/formatting
-contexts. Field helpers and folder pagination remain on transitional legacy paths
-until their later stages.
+The accessor now exposes ordinary and scientific field plotting, together with
+the stonerplots layout/formatting contexts. Folder pagination and final removal
+of the transitional top-level methods remain for stage 5.
 
 ## What the code currently does
 
@@ -357,7 +357,7 @@ the transition; they are not a commitment to permanent public compatibility.
   choosing the dependency floor. Gate: the full nested-context examples work
   with one Stoner import; caller styles survive, with no extra axes or hidden
   figures. Update all dependency manifests in this batch.
-- [ ] **3. Port fields and special scientific plots.** Move surface, matrix,
+- [x] **3. Port fields and special scientific plots.** Move surface, matrix,
   image/contour/pseudocolour, vector and voxel entry points to the accessor. Reuse
   numerical algorithms, remove implicit backend selection and update the 3D/
   colour-field examples. Gate: coordinate orientation, masks, colour mapping,
@@ -498,8 +498,8 @@ Validation on the verified Windows `py314` environment:
 
 ### Stage 2 handover
 
-Implemented on the same feature branch, following the stages 0/1 commit. Stage 2
-changes remain uncommitted; no push or release was performed.
+Implemented on the same feature branch, following the stages 0/1 commit.
+Committed as `ec0d62fa6` before starting stage 3; no push or release was performed.
 
 - Added required `stonerplots>=1.9.6` to Python, Conda, testing and documentation
   manifests; the minimum environment pins 1.9.6. The recipe build environment
@@ -547,8 +547,71 @@ Python/Matplotlib/NumPy/pandas/SciPy versions:
   no hosted matrix, lower-dependency environment or installed-distribution result
   is claimed.
 
-Next bounded batch: stage 3 field/scientific plotting. Keep pandas conveniences
-and final folder pagination/removal in their separate planned stages.
+### Stage 3 handover
+
+Implemented on the same feature branch after the stage 2 commit. Stage 3 remains
+uncommitted; no push or release was performed.
+
+- Added explicit `surface`, `contour`, `pcolormesh`, `image`, `matrix`, `scatter3d`,
+  `vector`, `quiver`, `vector3d`, `voxels` and `waterfall` methods. Named methods,
+  `kind=` and automatic scientific dispatch share the native Matplotlib path.
+  All return the primary Axes and inherit caller styling without showing/saving.
+  A colour bar does not replace the recent primary target, including with an
+  unmanaged Figure. The old automatic field bridge has been removed.
+- Reused SciPy `griddata` interpolation and Stoner's vector HSL mapping, keeping
+  independent numerical `Data.griddata` behaviour. Required columns alone define
+  joint validity; measured exclusions and convex-hull gaps remain missing.
+  Regular lattices preserve holes directly. Duplicate sites use the first valid
+  sample, consistently for both vector pixels and their arrow overlay.
+- Made coordinate interpretation explicit: grid counts are X/Y[/Z], 2D renderer
+  arrays are Y/X, matrix inputs are rows X/columns Y, and voxel arrays are X/Y/Z.
+  Image limits derive from half-cell edges, retaining scalar values for normalised
+  colours. Matrix crops slice corresponding coordinates. Voxel visibility uses
+  grid centres; corners and the colour bar share the documented volume mapping.
+- Kept automatic three-column XYE guessing; an explicit field method supplies its
+  own sensible column-order defaults on an unassigned table. Incompatible field
+  uncertainties and obsolete layout/backend controls raise useful errors.
+- Removed implicit Mayavi selection and its unused optional extra. Even the
+  retained legacy 3D-vector entry point now forwards to Matplotlib. Other legacy
+  public helpers/templates remain until stage 5. Corrected the HSL hue-zero sector
+  and finite zero/constant-vector cases; explicit waterfall axes no longer create
+  a hidden pyplot figure.
+- Migrated the surface, matrix, scalar, vector, voxel, waterfall and 3D-fitting
+  examples, adding a masked scalar comparison and rotating 3D vector example.
+  Corrected the plane example's displayed equation to match its fitted function.
+  Refreshed 13 affected cache groups, including two new groups, retaining every
+  original cache file. The guide documents shapes, masks, colours and migration.
+
+Validation on Windows `py314`, with all 38 test-environment Conda specifications
+satisfied and the stage 2 versions including stonerplots 1.9.6:
+
+- Final full suite: **1,218 passed** in 232.18 seconds, including all runnable
+  documentation examples. Report: ignored
+  `maintenance/runs/plotting-stage3/final-full.xml` and `.log`.
+- Focused field suite: **41 passed**, covering non-square orientation, scalar
+  normalisation, joint exclusions, interpolation, duplicate vectors, zero fields,
+  pure Matplotlib 3D rendering, voxel centres/corners/visibility, matrix cropping,
+  target state, source immutability and independent numerical gridding.
+- Targeted Ruff checks pass for new/changed accessor code and tests, together
+  with undefined-name checks on the modified legacy helpers. No required runtime
+  dependencies changed; Mayavi was declared only in the removed Python extra.
+- Fresh cached Sphinx HTML: **88 reviewed warnings, zero unexpected**, with no
+  lost public inventory entries or missing dynamic Data methods. All **34**
+  required accessor/context targets have canonical inventory entries, including
+  the 11 new field methods. All 249 pre-existing cache files remain present;
+  only affected groups were refreshed and six files added for the two new groups.
+- Visually reviewed scalar/masked, surface, vector, voxel and fitted-sphere
+  graphics, then the guide and new API links over localhost. Enlarged the new
+  3D-vector example to retain its labels and re-rendered it after the full run;
+  this final change affects figure size only. The stage 3 preview is served from
+  `maintenance/runs/plotting-stage3/html` on port 8791 while the user reviews it.
+  Whitespace checks pass with retained line endings. Validation is local Windows
+  evidence; hosted, lower-dependency and installed-distribution gates remain for
+  the complete redesign.
+
+Next bounded batch: stage 4 histogram/box/KDE/hexbin evaluation. Choose direct
+Matplotlib where it is simpler than pandas delegation; retain per-operation
+selection/missing-data rules. Folder pagination and final removal remain stage 5.
 
 ## External sources inspected
 
@@ -557,6 +620,9 @@ and final folder pagination/removal in their separate planned stages.
 - [stonerplots tick formatters and PlotLabeller](https://github.com/stonerlab/stonerplots/blob/c2500ee0e374657d426a63c3ef6893c95826ee18/src/stonerplots/format.py)
 - [pandas DataFrame.plot API](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html)
 - [pandas plotting and missing-data behaviour](https://pandas.pydata.org/docs/user_guide/visualization.html)
+- [SciPy scattered griddata interpolation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html)
+- [Matplotlib image origin and extent](https://matplotlib.org/stable/users/explain/artists/imshow_extent.html)
+- [Matplotlib voxel corners and colours](https://matplotlib.org/stable/api/_as_gen/mpl_toolkits.mplot3d.axes3d.Axes3D.voxels.html)
 - [PyPI metadata](https://pypi.org/pypi/stonerplots/json),
   [phygbu stonerplots metadata](https://api.anaconda.org/package/phygbu/stonerplots),
   [phygbu bad_path metadata](https://api.anaconda.org/package/phygbu/bad_path)

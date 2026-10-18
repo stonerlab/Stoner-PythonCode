@@ -15,5 +15,4 @@ p = p & x & y & z
 p.column_headers = ["X", "Y", "Z"]
 p.setas = "xyz"
 
-p.contour_xyz()
-p.title = "Contour plot"
+ax = p.plot.contour(title="Contour plot")

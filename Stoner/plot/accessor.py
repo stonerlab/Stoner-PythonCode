@@ -15,6 +15,7 @@ from stonerplots import (
     TexFormatter,
 )
 
+from .fields import draw_field, draw_matrix
 from .selection import prepare_traces, resolve_columns, uncertainty_specs
 from .state import PlotState, live_figure
 from .utils import errorfill as draw_errorfill
@@ -22,6 +23,8 @@ from .utils import errorfill as draw_errorfill
 __all__ = ["DataPlotter"]
 
 _XY_KINDS = ("line", "scatter", "errorbar", "errorfill")
+_FIELD_KINDS = ("surface", "contour", "pcolormesh", "image", "matrix", "scatter3d",
+                "vector", "vector3d", "quiver", "voxels", "waterfall")
 _AUTO = object()
 _LEGACY_OPTIONS = {
     "figure", "template", "plotter", "multiple", "show_plot", "save_filename",
@@ -46,7 +49,7 @@ class DataPlotter:
         Calls inherit Matplotlib's current axes/style unless ax is supplied. They
         neither show nor save figures. The context classes and tick formatters
         are direct stonerplots exports with their upstream signatures and handles.
-        Automatic field plots currently use the retained legacy scientific helpers.
+        Field methods use Matplotlib and return their primary Axes as well.
     """
 
     # Folder bulk calls inspect the name of their callable, including accessors.
@@ -153,8 +156,8 @@ class DataPlotter:
 
         Keyword Arguments:
             kind (str):
-                auto infers the scientific plot; line, scatter, errorbar and
-                errorfill select the corresponding explicit ordinary method.
+                auto infers the scientific plot. An explicit kind selects its
+                named method, including scalar, vector, matrix and volume fields.
             z (column selector or None):
                 Scalar-field coordinate; False disables an assigned Z role.
             u (column selector or None):
@@ -195,11 +198,26 @@ class DataPlotter:
             even when X/Y are explicitly supplied; kind='line' requests a plain line.
             Invalid/excluded samples are removed independently for each trace.
         """
-        if kind not in ("auto", *_XY_KINDS):
-            raise ValueError(f"Unknown plot kind {kind!r}; use auto or one of {_XY_KINDS}.")
+        if kind not in ("auto", *_XY_KINDS, *_FIELD_KINDS):
+            raise ValueError(f"Unknown plot kind {kind!r}; use auto or a named plotting method.")
+        if kind == "matrix":
+            if any(value is not None for value in (z, u, v, w, xerr, yerr)):
+                raise ValueError("matrix uses x/y coordinates and a table block, not field or uncertainty selectors.")
+            return self._matrix(x, y, **kwargs)
+        if kind in _FIELD_KINDS and not no_guess and not any(role != "." for role in self._data.setas):
+            required = {"vector": "xyuv", "quiver": "xyuv", "vector3d": "xyzuvw", "voxels": "xyzu"}.get(kind, "xyz")
+            selections = {"x": x, "y": y, "z": z, "u": u, "v": v, "w": w}
+            for index, name in enumerate(required):
+                if selections[name] is None and index < self._data.shape[1]:
+                    selections[name] = index
+            x, y, z, u, v, w = (selections[name] for name in "xyzuvw")
         columns = resolve_columns(self._data, x=x, y=y, z=z, u=u, v=v, w=w, startx=startx, no_guess=no_guess)
         if kind == "auto" and columns.kind != "xy":
-            return self._field(columns, **kwargs)
+            kind = columns.kind
+        if kind in _FIELD_KINDS:
+            if xerr is not None and xerr is not False or yerr is not None and yerr is not False:
+                raise ValueError("Field plots do not draw uncertainties; omit xerr/yerr or use an ordinary error plot.")
+            return self._field(kind, columns, **kwargs)
         if kind == "auto":
             xspec, yspecs = uncertainty_specs(columns, xerr, yerr)
             kind = "errorbar" if any(spec is not None and spec is not False for spec in (xspec, *yspecs)) else "line"
@@ -387,27 +405,311 @@ class DataPlotter:
         if title is not _AUTO or not ax.get_title():
             ax.set_title(self._text(self._data.basename if title is _AUTO else title or ""))
 
-    def _field(self, columns, **kwargs):
-        """Keep automatic scientific fields available until their stage 3 port."""
-        from . import functions
+    @staticmethod
+    def _field_options(kwargs):
+        """Separate annotations and reject legacy controls before creating axes."""
+        removed = (_LEGACY_OPTIONS | {"griddata", "projection", "backend", "mode", "scale_factor", "colormap"}).intersection(kwargs)
+        if removed:
+            raise ValueError(f"Unsupported field options {sorted(removed)}; select a named method and use ax=.")
+        annotations = {key: kwargs.pop(key) for key in ("xlabel", "ylabel", "zlabel", "title") if key in kwargs}
+        return annotations
 
-        helpers = {"surface": functions.plot_xyz, "vector": functions.plot_xyuv,
-                   "vector3d": functions.plot_xyzuvw, "voxels": functions.plot_voxels}
-        selector_names = {"surface": "xyz", "vector": "xyuvw", "vector3d": "xyzuvw", "voxels": "xyzu"}
-        kind = columns.kind
-        target = kwargs.pop("ax", None)
-        if target is not None:
-            if not isinstance(target, Axes) or not live_figure(target.figure):
-                raise ValueError("ax must be a live Matplotlib Axes.")
-            plt.sca(target)
-            self._data.__dict__["_figure"] = target.figure
-        selectors = {"xcol": columns.x}
-        for name in selector_names[kind][1:]:
-            values = getattr(columns, name)
-            selectors[f"{name}col"] = values[0] if values else None
-        kwargs["show_plot"] = False
-        helpers[kind](self._data, **selectors, **kwargs)
-        figure = self._data.__dict__["_figure"]
-        ax = figure.gca()
-        self._record(figure, ax)
-        return ax
+    def _field(self, kind, columns, **kwargs):
+        """Draw through the shared Matplotlib field preparation/rendering path."""
+        annotations = self._field_options(kwargs)
+        return draw_field(self, kind, columns, annotations=annotations, **kwargs)
+
+    def _matrix(self, x, y, **kwargs):
+        """Draw a matrix without passing its coordinate arrays to column resolution."""
+        annotations = self._field_options(kwargs)
+        return draw_matrix(self, x, y, annotations=annotations, **kwargs)
+
+    def surface(self, x=None, y=None, z=None, **kwargs):
+        """Draw a scalar Z(X,Y) field as a Matplotlib 3D surface.
+
+        Args:
+            x (column selector or None):
+                X coordinates; omitted selectors use roles or explicit-method defaults.
+            y (column selector or None):
+                One Y coordinate column.
+            z (column selector or None):
+                Scalar response column. Unassigned tables use columns 0/1/2.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax selects a live 3D Axes. shape=(nx, ny) controls inclusive grid
+                centres; defaults count distinct coordinates. xlim/ylim specify
+                grid bounds. method is linear (default), nearest or cubic.
+                colorbar=True adds a scalar colour scale. xlabel, ylabel, zlabel
+                and title override annotations; None clears one. Other keywords
+                go to Axes3D.plot_surface, including cmap, norm, vmin/vmax and alpha.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 3D Axes. Measurements, roles, masks and metadata are unchanged.
+
+        Notes:
+            Required columns are masked jointly. Excluded measured grid sites and
+            points outside the linear/cubic interpolation hull remain missing.
+            Regular lattices retain their original values and holes; scattered
+            samples use scipy.interpolate.griddata. Duplicate sites use the first
+            valid sample. Drawing never chooses Mayavi, shows or saves a figure.
+        """
+        return self(x, y, z=z, kind="surface", **kwargs)
+
+    def contour(self, x=None, y=None, z=None, **kwargs):
+        """Draw scalar-field contour lines, or filled contours with filled=True.
+
+        Args:
+            x (column selector or None):
+                X coordinate column, as for surface.
+            y (column selector or None):
+                Y coordinate column.
+            z (column selector or None):
+                Scalar response column.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                Grid, exclusions, annotations and colorbar controls work as for
+                surface. ax must be 2D; filled=False selects Axes.contour and True
+                selects Axes.contourf. Other keywords include levels and cmap.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes, without modifying the measurements.
+        """
+        return self(x, y, z=z, kind="contour", **kwargs)
+
+    def pcolormesh(self, x=None, y=None, z=None, **kwargs):
+        """Draw a gridded scalar field with Axes.pcolormesh.
+
+        Args:
+            x (column selector or None):
+                X coordinate column.
+            y (column selector or None):
+                Y coordinate column.
+            z (column selector or None):
+                Scalar response column.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                Grid, mask, annotation and colorbar controls work as for surface.
+                ax selects a 2D Axes; other keywords go to Axes.pcolormesh.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes, with missing grid cells masked.
+        """
+        return self(x, y, z=z, kind="pcolormesh", **kwargs)
+
+    def image(self, x=None, y=None, z=None, **kwargs):
+        """Draw a scalar field as an image with its physical coordinate extent.
+
+        Args:
+            x (column selector or None):
+                Horizontal pixel-centre coordinates.
+            y (column selector or None):
+                Vertical pixel-centre coordinates.
+            z (column selector or None):
+                Scalar response column.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                Grid, mask, annotation and colorbar controls work as for surface.
+                Other keywords go to Axes.imshow. Defaults use origin='lower' and
+                aspect='auto'; bounds extend half a cell beyond the outer centres.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes. The image retains scalar values for normalisation
+                and colour bars, rather than pre-converting them to RGB.
+        """
+        return self(x, y, z=z, kind="image", **kwargs)
+
+    def scatter3d(self, x=None, y=None, z=None, **kwargs):
+        """Draw ungridded XYZ samples with Axes3D.scatter.
+
+        Args:
+            x (column selector or None):
+                X coordinate column.
+            y (column selector or None):
+                Y coordinate column.
+            z (column selector or None):
+                Z coordinate column.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax selects a 3D Axes. Annotation controls work as for surface;
+                other keywords go to Axes3D.scatter. Per-row c/s/colour arrays are
+                filtered with coordinate exclusions. No interpolation is applied.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 3D Axes, without changing measurements.
+        """
+        return self(x, y, z=z, kind="scatter3d", **kwargs)
+
+    def vector(self, x=None, y=None, u=None, v=None, w=None, **kwargs):
+        """Draw a 2D vector-colour image with an optional arrow overlay.
+
+        Args:
+            x (column selector or None):
+                X coordinate column.
+            y (column selector or None):
+                Y coordinate column.
+            u (column selector or None):
+                X vector component.
+            v (column selector or None):
+                Y vector component.
+            w (column selector, False or None):
+                Optional third component for colour mapping; False disables it.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax, shape, method and xlim/ylim work as for image. arrows=True
+                overlays U/V arrows; quiver_kwargs supplies separate arrow styling
+                as for quiver. Remaining keywords go to Axes.imshow (alpha=0.75
+                by default). Directional RGB colours have no scalar colour bar.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes, without changing measurements or column roles.
+
+        Notes:
+            Hue uses atan2(U,V); saturation is vector magnitude relative to the
+            maximum, and W controls luminance across its range. Constant W uses
+            neutral luminance; a zero field is finite neutral grey. Required
+            coordinate/component exclusions apply to both image and arrows.
+        """
+        return self(x, y, u=u, v=v, w=w, kind="vector", **kwargs)
+
+    def quiver(self, x=None, y=None, u=None, v=None, **kwargs):
+        """Draw ungridded 2D U/V arrows in data coordinates.
+
+        Args:
+            x (column selector or None):
+                X coordinate column.
+            y (column selector or None):
+                Y coordinate column.
+            u (column selector or None):
+                X vector component.
+            v (column selector or None):
+                Y vector component.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax selects a 2D Axes. Other keywords go to Axes.quiver, with
+                pivot='mid', angles='xy', scale_units='xy' and scale=1 defaults.
+                Annotation controls work as for surface. Unused Z/W roles are ignored.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes, with joint X/Y/U/V exclusions applied.
+        """
+        return self(x, y, u=u, v=v, kind="quiver", **kwargs)
+
+    def vector3d(self, x=None, y=None, z=None, u=None, v=None, w=None, **kwargs):
+        """Draw XYZ positions and U/V/W vectors with Matplotlib 3D quiver.
+
+        Args:
+            x (column selector or None):
+                X coordinate column.
+            y (column selector or None):
+                Y coordinate column.
+            z (column selector or None):
+                Z coordinate column.
+            u (column selector or None):
+                X vector component.
+            v (column selector or None):
+                Y vector component.
+            w (column selector or None):
+                Z vector component.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax selects a 3D Axes. Annotation controls work as for surface;
+                remaining keywords go to Axes3D.quiver. Defaults colour arrows
+                with the vector method's directional mapping; color/colors can
+                override it. All six selected columns contribute to validity.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 3D Axes. Installed optional packages do not change backend.
+        """
+        return self(x, y, z=z, u=u, v=v, w=w, kind="vector3d", **kwargs)
+
+    def voxels(self, x=None, y=None, z=None, u=None, **kwargs):
+        """Draw scalar U(X,Y,Z) values as physical voxels.
+
+        Args:
+            x (column selector or None):
+                X cell-centre coordinate column.
+            y (column selector or None):
+                Y cell-centre coordinate column.
+            z (column selector or None):
+                Z cell-centre coordinate column.
+            u (column selector or None):
+                Scalar intensity column.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                shape=(nx, ny, nz), grid bounds xlim/ylim/zlim and method control
+                gridding. visible is a callable of grid-centre X/Y/Z arrays;
+                filled is an alternative Boolean grid. Both combine with validity.
+                face_alpha=0.5 and edge_alpha=0.9 control mapped opacity.
+                cmap, norm and vmin/vmax control the same scalar map as the colour
+                bar (colorbar=True). Remaining keywords go to Axes3D.voxels.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 3D Axes; absent/excluded samples are never filled as zeros.
+        """
+        return self(x, y, z=z, u=u, kind="voxels", **kwargs)
+
+    def matrix(self, x=None, y=None, **kwargs):
+        """Draw a surface from a table whose rows index X and columns index Y.
+
+        Args:
+            x (column selector, array or None):
+                X coordinates. None uses the first column and excludes it from
+                the matrix. A vector supplies explicit coordinates instead.
+            y (row index, array or None):
+                Y coordinates. None parses selected column headers as floats.
+                A row index reads its values and starts the default block below it.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                rect=(row, column[, rows, columns]) selects a block. Explicit
+                coordinate arrays can span the whole table or only that block.
+                ax selects a 3D Axes. colorbar=True, annotation controls and other
+                Axes3D.plot_surface keywords work as for surface.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 3D Axes. The matrix's masks and values are preserved;
+                non-square tables are transposed only for Matplotlib's Y/X grid.
+        """
+        return self(x, y, kind="matrix", **kwargs)
+
+    def waterfall(self, x=None, y=None, z=None, **kwargs):
+        """Draw grouped Z(X,Y) traces with the existing Joy Division waterfall helper.
+
+        Args:
+            x (column selector or None):
+                Horizontal coordinate column.
+            y (column selector or None):
+                Column grouping each trace.
+            z (column selector or None):
+                Vertical response, offset between successive Y groups.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                ax selects a 2D Axes. y_shift, bg_color, color, axes_color,
+                linewidth and legend_fmt go to the Stoner joy_division utility.
+                Annotation overrides work as for surface. No gridding is applied.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Primary 2D Axes containing only finite, unexcluded samples.
+        """
+        return self(x, y, z=z, kind="waterfall", **kwargs)
