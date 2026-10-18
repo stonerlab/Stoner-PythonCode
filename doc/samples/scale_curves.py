@@ -1,7 +1,6 @@
 """Example of using scale to overlap data."""
 
 # pylint: disable=invalid-name, no-member
-import matplotlib as mpl
 from numpy import column_stack, exp, linspace, pi, sin
 from numpy.random import normal, seed
 from tabulate import tabulate
@@ -9,7 +8,6 @@ from tabulate import tabulate
 from Stoner import Data
 
 seed(3)  # Just fix the random numbers to stop optimizer warnings
-mpl.rc("text", usetex=True)
 
 
 x = linspace(0, 10 * pi, 201)

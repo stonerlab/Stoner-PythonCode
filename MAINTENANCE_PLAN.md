@@ -167,13 +167,13 @@ reviewed inference/test-utility advisories did not block the alpha.
   contexts, aligned examples and local validation. Stages 0/1 are committed as
   `374980c2e`; stage 2 as `ec0d62fa6`, using required stonerplots 1.9.6; stage 3
   as `1c1293512`; stage 4 as `4c948401e`, selecting direct Matplotlib/SciPy for
-  hist/box/KDE/hexbin after reviewing pandas delegation. Stage 5 remains uncommitted
-  on `codex/plotting-accessor-stages-0-1`: folder pagination and serial nested bulk
+  hist/box/KDE/hexbin after reviewing pandas delegation. Stage 5 is committed as
+  `8d6b49b93` on `codex/plotting-accessor-stages-0-1`: folder pagination and serial nested bulk
   drawing use the accessor, and legacy methods/templates/proxies are removed.
   Its full local suite passes 1,324 tests; cached docs retain 62 reviewed warnings
   and zero unexpected, with only the 319 reviewed legacy API removals. Next is
-  stage 6 integrated lower-dependency, hosted and installed-distribution validation.
-  No push or release is part of this batch.
+  stage 6 integrated lower-dependency, hosted and installed-distribution validation,
+  now in progress with the feature branch pushed. No release is part of this batch.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.

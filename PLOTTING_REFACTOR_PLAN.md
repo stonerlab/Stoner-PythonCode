@@ -1,6 +1,7 @@
 # Plotting redesign
 
 Status: stages 0-5 completed on 18 October 2026.
+Stage 6 integrated validation is in progress.
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -679,7 +680,8 @@ NumPy 2.5.2, pandas 3.0.5 and SciPy 1.18.0:
 ### Stage 5 handover
 
 Implemented on `codex/plotting-accessor-stages-0-1` after committing stage 4.
-Stage 5 remains uncommitted; no push or release was performed.
+Stage 5 was committed as `8d6b49b93` before stage 6 and pushed for hosted
+validation. No release was performed.
 
 - Replaced PlotFolder pagination with stonerplots MultiPanel and explicit member
   Axes. Pages support one/many members, portrait/landscape figures and mixed 2D/3D
@@ -737,6 +739,24 @@ NumPy 2.5.2, pandas 3.0.5 and SciPy 1.18.0:
 Next bounded batch: stage 6 integrated lower-dependency, supported hosted matrix,
 installed wheel/sdist and release-note validation. The results above are local
 Windows evidence; do not substitute them for those remaining gates.
+
+### Stage 6 validation in progress
+
+- Hosted wheel/sdist checks passed for stage 5 on Python 3.12 and 3.14. Extended
+  the maintained installed-package probe to exercise scientific inference with
+  masks, stonerplots panels/insets/double axes, saving an existing figure, surface
+  rendering, clone target detachment, pagination and named bulk drawing.
+- A rejected all-excluded folder page left an open partial figure. Failed pages
+  now close and restore member targets while preserving earlier completed pages.
+  Regressions cover invalid data, callback errors and interruption.
+- The hosted lower-dependency run exposed global external-LaTeX configuration in
+  `scale_curves.py`, which broke a later example. The unnecessary setting is
+  removed; example tests isolate rcParams and render every resulting figure.
+  All 79 rendered examples pass locally, as do 37 focused folder/archive checks.
+  Only the three affected scaling-cache files were refreshed.
+- Added unreleased plotting API/visual release notes and aligned testing guidance
+  with the current Python, pandas/xarray and stonerplots support boundaries.
+  Fresh full, lower-dependency, documentation and hosted checks are still pending.
 
 ## External sources inspected
 

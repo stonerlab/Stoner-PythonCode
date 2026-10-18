@@ -15,7 +15,7 @@ from numbers import Integral
 from os import path
 from typing import ClassVar
 
-from matplotlib.pyplot import figure
+from matplotlib.pyplot import close, figure
 from numpy import asarray, mean, std
 from numpy.ma import masked_invalid
 from stonerplots import MultiPanel
@@ -575,6 +575,8 @@ class PlotFolder(DataFolder):
         Notes:
             Rendering is serial regardless of multiprocessing options. Layouts
             use MultiPanel with explicit targets, including mixed 2D/3D members.
+            A failed page is closed and its members' prior targets are restored;
+            earlier completed pages remain available through figures.
             Measurements are unchanged; callbacks may deliberately modify them.
             Methods neither show/save nor apply an implicit stylesheet.
         """
@@ -604,19 +606,30 @@ class PlotFolder(DataFolder):
             width, height = fig.get_size_inches()
             columns = min(len(page), max(1, ceil(sqrt(len(page)*width/height))))
             rows = ceil(len(page)/columns)
-            with MultiPanel((rows, columns), figure=fig, adjust_figsize=False,
-                            label_panels=False, same_aspect=False) as panels:
-                axes = asarray(panels.axes, dtype=object).reshape(-1)
-                for slot, (data, projection) in enumerate(page):
-                    ax = axes[slot]
-                    if ax.name != projection:
-                        spec = ax.get_subplotspec()
+            previous = [(data, data.__dict__.get("_plot_state")) for data, _ in page]
+            try:
+                with MultiPanel((rows, columns), figure=fig, adjust_figsize=False,
+                                label_panels=False, same_aspect=False) as panels:
+                    axes = asarray(panels.axes, dtype=object).reshape(-1)
+                    for slot, (data, projection) in enumerate(page):
+                        ax = axes[slot]
+                        if ax.name != projection:
+                            spec = ax.get_subplotspec()
+                            ax.remove()
+                            ax = fig.add_subplot(spec, projection=projection)
+                            axes[slot] = ax
+                        result.append(data.plot(*args, ax=ax, **kwargs))
+                        if plot_extra is not None:
+                            plot_extra(start+slot, slot, data)
+                    for ax in axes[len(page):]:
                         ax.remove()
-                        ax = fig.add_subplot(spec, projection=projection)
-                        axes[slot] = ax
-                    result.append(data.plot(*args, ax=ax, **kwargs))
-                    if plot_extra is not None:
-                        plot_extra(start+slot, slot, data)
-                for ax in axes[len(page):]:
-                    ax.remove()
+            except BaseException:
+                # Release this page even when a user callback interrupts drawing.
+                close(fig)
+                self._plot_pages.pop()
+                for data, state in previous:
+                    data.__dict__.pop("_plot_state", None)
+                    if state is not None:
+                        data.__dict__["_plot_state"] = state
+                raise
         return result

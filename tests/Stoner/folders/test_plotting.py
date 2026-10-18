@@ -59,6 +59,27 @@ def test_mixed_2d_3d_members_use_their_page_without_hidden_figures():
     assert len(result[1].collections) == 1 and len(folder.figures[0].axes) == 3
 
 
+@pytest.mark.parametrize("failure", ["excluded", "callback", "interrupt"])
+def test_failed_page_closes_and_restores_member_targets(failure):
+    folder = make_folder(4)
+    old_ax = plt.figure().subplots()
+    folder[2].plot(ax=old_ax)
+    if failure == "excluded":
+        folder[3].mask[:] = True
+
+    def callback(index, slot, data):
+        if index == 3 and failure != "excluded":
+            raise KeyboardInterrupt if failure == "interrupt" else RuntimeError("callback failed")
+
+    error = {"excluded": ValueError, "callback": RuntimeError, "interrupt": KeyboardInterrupt}[failure]
+    with pytest.raises(error):
+        folder.plot(plots_per_page=2, plot_extra=callback)
+    assert len(folder.figures) == 1 and len(plt.get_fignums()) == 2
+    assert folder[0].plot.figure is folder.figures[0] and folder[1].plot.figure is folder.figures[0]
+    assert folder[2].plot.ax is old_ax and folder[3].plot.ax is None
+    assert len(folder.figures[0].axes) == 2 and len(old_ax.lines) == 1
+
+
 def test_figure_settings_do_not_assign_member_targets_or_share_defaults():
     folder, other = make_folder(2), make_folder(1)
     fig = folder.figure(figsize=(4, 5), facecolor="pink")

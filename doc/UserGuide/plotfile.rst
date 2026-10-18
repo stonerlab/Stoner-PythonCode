@@ -567,6 +567,10 @@ Unused page slots are removed. Single-panel, portrait and landscape layouts work
 and each target uses its member's required 2D/3D projection. Auxiliary colour-bar
 axes are separate from the returned primary axes.
 
+If drawing or a callback fails, the failed page is closed and its members' prior
+plotting targets are restored. Completed earlier pages remain in ``folder.figures``.
+Callbacks can deliberately change measurements; those changes are not rolled back.
+
 ``figsize``, ``dpi``, ``facecolor``, ``edgecolor``, ``frameon``, ``FigureClass`` and
 ``layout`` configure page figures. Other arguments go to each ``Data.plot`` call,
 including ``kind``. ``folder.figure(**kwargs)`` creates an independent figure and
