@@ -456,6 +456,19 @@ Firstly, the initialisation file should take the form like so.
 This initialisation file can be passed to :py:func:`Stoner.analysis.fitting.models.cfg_data_from_ini` which will use the information in the [Data]
 section to read in the data file and identify the x and y columns.
 
+The INI examples retain the CSV layout controls as reference. The CSVFile loader
+accepts zero-based ``header_line`` and ``data_line`` row numbers and independent
+``header_delim`` and ``data_delim`` separators. A ``header_line`` of ``None``
+selects headerless input; ``None`` delimiters request automatic detection.
+However, ``cfg_data_from_ini()`` currently does not forward these layout entries;
+this is tracked for a future release in
+`issue #41 <https://github.com/stonerlab/Stoner-PythonCode/issues/41>`_.
+For custom layouts, pass the options directly to ``Data.load(...,
+filetype="CSVFile", ...)``. The bundled PCAR examples use the CSV defaults:
+headers on the first line and comma-separated data on the following line.
+The historical ``start_line`` and ``separator`` entries correspond to the
+current loader's ``data_line`` and ``header_delim``/``data_delim`` names.
+
 The initialisation file can then be passed to :py:func:`Stoner.analysis.fitting.models.cfg_model_from_ini` which will use the configuration file to
 setup the model and parameter hints. The configuration file should have one section for eac parameter in the model. This function
 returns the configured model and also a 2D array of values to feed as the starting values to :py:meth:`~Stoner.core.data.Data.lmfit`. Depending

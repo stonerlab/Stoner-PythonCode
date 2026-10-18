@@ -74,7 +74,7 @@ def _parse_bnl_data(new_data):
     column_headers = map(lambda x: x.strip(), header_string.split())
     _bnl_get_metadata(new_data)
     try:
-        new_data.data = np.genfromtxt(new_data.filename, skip_header=new_data.line_numbers[1] - 1)
+        new_data.data = np.genfromtxt(new_data.filename, skip_header=new_data.line_numbers[1] - 1, ndmin=2)
     except IOError:
         new_data.data = np.array([0])
         print(f"Did not import any data for {new_data.filename}")

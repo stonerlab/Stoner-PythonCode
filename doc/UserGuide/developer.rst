@@ -299,6 +299,14 @@ the plotting examples and deliberately refreshes that cache. Documentation
 examples are also exercised by ``tests/Stoner/test_doc_samples.py``; use that
 test module to check changes to example behaviour.
 
+The repository ``scripts`` directory contains longer scientific workflows and
+the external GenX loader plugin. Its ``README.md`` describes their inputs,
+callable entry points and interactive requirements. These scripts use the same
+plotting accessor and explicit numerical-storage boundaries as the documentation
+examples. Run ``python -m pytest tests/Stoner/test_scripts.py`` after changing
+them. The GenX tests supply its external host interface; they do not validate a
+running GenX application or its wxPython settings dialog.
+
 Edit the repository-root ``README.rst`` as the definitive project overview.
 ``make -C doc readme`` copies it to ``doc/readme.rst``; both ``make commit``
 and ``make -C doc html`` run that copy step. When building directly with Sphinx,

@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-"""Sample script for fitting BlochGrueneisen function to a data file.
+"""Fit a Bloch-Gruneisen resistance model to temperature-dependent data."""
 
-@author: phygbu
-"""
-
-# pylint: disable=invalid-name
 import re
 
 import numpy as np
@@ -14,60 +9,49 @@ from Stoner.analysis.fitting.models.e_transport import BlochGrueneisen
 
 
 def select_col(data, message):
-    """Select the column with the data."""
-    print("Unable to guess column")
+    """Prompt for a valid column index when the header cannot be identified."""
     for i, col in enumerate(data.column_headers):
         print(f"{i} : {col}")
     while True:
         try:
-            return int(input(message))
+            column = int(input(message))
+            if 0 <= column < data.shape[1]:
+                return column
         except ValueError:
-            print("Please select a column number")
+            pass
+        print("Please select a column number from the list")
+
+
+def guess_col(data, patterns, message):
+    """Find one matching column, otherwise ask the user to select it."""
+    for pattern in patterns:
+        try:
+            columns = data.find_col(re.compile(pattern), force_list=True)
+        except KeyError:
             continue
+        if len(columns) == 1:
+            return columns[0]
+    return select_col(data, message)
 
 
-# Load a datafile
-d = Data(False)
+def fit(filename=False):
+    """Load or copy data, fit resistance versus temperature and return the plotted Data."""
+    data = Data(filename)
+    temperature = guess_col(data, [r"^[Tt][\s\(]", r"[Tt]emp"], "Temperature column: ")
+    resistance = guess_col(data, [r"[Rr]ho", r"[Rr]es"], "Resistance column: ")
+    data.mask |= np.isnan(data.to_numpy(masked=False))
+    data.del_rows()
+    data.setas(x=temperature, y=resistance)
+    model = BlochGrueneisen()
+    model.set_param_hint("n", vary=False, value=5)
+    print(f"Initial guesses: {model.guess(data.y, x=data.x)}")
+    data.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
+    data.setas(Bloch="y", reset=False)
+    ax = data.plot(fmt=["r.", "b-"], label=["Data", "Bloch-Grüneisen fit"], markersize=1)
+    ax.set(xlabel="Temperature (K)", ylabel=r"Resistance ($\Omega$)")
+    data.annotate_fit(model, ax=ax, x=0.05, y=0.35, mode="eng")
+    return data
 
-# These regular expressions are intended to match a tempeerature and resistance coluimns
-t_pat = [re.compile(r"^[Tt][\s\(]"), re.compile(r"[Tt]emp")]
-r_pat = [re.compile(r"[Rr]ho"), re.compile(r"[Rr]es")]
 
-# Search for each column
-for pat in t_pat:
-    t_col = d.find_col(pat, force_list=True)
-    if len(t_col) == 1:
-        t_col = t_col[0]
-        break
-else:
-    t_col = select_col(d, "Select column for temperature data :")
-
-for pat in r_pat:
-    r_col = d.find_col(pat, force_list=True)
-    if len(r_col) == 1:
-        r_col = r_col[0]
-        break
-else:
-    r_col = select_col(d, "Select column for resistance data :")
-
-# Configure the columns in the setas attribute
-d.mask = np.isnan(d.data)
-d.del_rows()
-d.setas(x=t_col, y=r_col)
-# Initialise the model, set the n parmeter to be fixed and show our guesses
-model = BlochGrueneisen()
-model.param_hints["n"] = {"vary": False, "value": 5}
-print(f"Initial guesses: {model.guess(d.y, x=d.x)}")
-
-# Do the fit
-popt, pcov = d.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
-
-# Add the Bloch column to the setas
-d.setas(Bloch="y", reset=False)
-# Make a plot
-d.plot(
-    fmt=["r.", "b-"], label=["Data", r"$Bloch-Gr\"ueisen Fit$"], markersize=1
-)
-d.xlabel = "Temperature (K)"
-d.ylabel = r"Resistance ($\Omega$)"
-d.annotate_fit(model, x=0.05, y=0.35, mode="eng")
+if __name__ == "__main__":
+    fit().plot.show()

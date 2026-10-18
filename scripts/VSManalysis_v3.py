@@ -1,119 +1,86 @@
-# -*- coding: utf-8 -*-
-"""VSM Analysis v3.
+"""VSM corrections using the current Data selection and numerical APIs."""
 
-Created on Sat Aug 24 20:18:05 2013
-
-@author: Gavin Burnell
-"""
-
-# pylint: disable=invalid-name
 import numpy as np
 
 from Stoner import Data
-from Stoner.analysis.fitting.models.generic import Linear
+from Stoner.analysis.fitting.models.generic import linear
 
 
 class VSMAnalysis(Data):
-    """Augment Data with some extra methods."""
+    """Augment Data with in-place magnetometry corrections and loop measurements."""
+
+    def _replace_signal(self, column, values):
+        """Commit corrected values without clearing the column's existing exclusions."""
+        mask = np.ma.getmaskarray(self.column(column)) | np.ma.getmaskarray(values)
+        self[:, column] = np.ma.array(values, mask=mask)
 
     def true_m(self):
-        """Calculate correct m from lockin X and Y components."""
-        # Get some constants that scale betweent he columns
-        s_vol = np.mean(self.column("Mvol") / self.column("m (emu)"))
-        s_mass = np.mean(self.column("Mmass") / self.column("m (emu)"))
-        l_ratio = np.mean(self.column("m (emu)") / self.column("X"))
-
-        # Now calculate new column values and put them into self.data
-        self.data[:, self.find_col("m (emu)")] = (
-            np.sqrt(self.column("X") ** 2 + self.column("Y") ** 2) * l_ratio
-        )
-        self.data[:, self.column("Mvol")] = self.column("m (emu)") * s_vol
-        self.data[:, self.column("Mmass")] = self.column("m (emu)") * s_mass
+        """Recalculate moment and its volume/mass normalisations from lock-in magnitude."""
+        s_vol = np.ma.masked_invalid(self.column("Mvol") / self.column("m (emu)")).mean()
+        s_mass = np.ma.masked_invalid(self.column("Mmass") / self.column("m (emu)")).mean()
+        l_ratio = np.ma.masked_invalid(self.column("m (emu)") / self.column("X")).mean()
+        moment = np.ma.sqrt(self.column("X") ** 2 + self.column("Y") ** 2) * l_ratio
+        self._replace_signal("m (emu)", moment)
+        self._replace_signal("Mvol", moment * s_vol)
+        self._replace_signal("Mmass", moment * s_mass)
         return self
 
     def correct_drift(self, threshold=0.95):
-        """Correct for drift in the signal.
-
-        Masks out data that isn't above threshold*maximum field and fits a straight line to
-        Moment(Time) and then subtracts this from the data.
+        """Subtract the fitted time dependence of each lock-in-derived signal.
 
         Args:
-            threshold (float): fraction of the maximum field to look at to work out drift in time.
+            threshold (float):
+                Fraction of the maximum field above which points are fitted.
 
         Returns:
-            the current object with a new corrected moment.
+            VSMAnalysis:
+                The corrected object, retaining existing exclusions and metadata.
         """
-        H_max = max(self.column("H_vsm"))
-        for m in self.find_col(
-            ["m (emu)", "Mvol", "Mmass", "X", "Y"]
-        ):  # Correct for all lockin derived signals
-            self.filter(
-                lambda r: r[0] > threshold * H_max, ["H_vsm"]
-            )  # Mask out only the max filed data
-            coeff, _ = self.curve_fit(
-                Linear, "Time", m
-            )  # Do linear fit wrt to time
-            self.mask = False  # Now we work with all the data
-            correct_m = self.column(m) - Linear(
-                self.column("Time"), *coeff
-            )  # calculate corrected data
-            self.data[:, m] = correct_m  # and push it back
-
-    def remove_diamagnetism_and_offset(self, threshold=0.85):
-        """Remove a diamagnetic component from the data.
-
-        Fits straight lines to the upper and lower parts of the curve (within
-        threshold of the extreme fields) and uses this to remove diamangeteic omponents
-        and recentre the loop
-
-        Args:
-            threshold (float): Fraction of maximum/minimum  field to assume is saturated
-
-        ReturnsL
-            a copy of self with the corrections applied
-        """
-        H_max = max(self.column("H_vsm"))
-        H_min = min(self.columns("H_vsm"))
-        for m in self.find_col(["m (emu)", "Mvol", "Mmass", "X", "Y"]):
-            self.filter(
-                lambda r: r[0] > H_max * threshold, ["H_vsm"]
-            )  # mask out everything expcet max field data
-            pcoeff, _ = self.curve_fit(Linear, "H_vsm", m)  # Get a linear fit
-            self.filter(
-                lambda r: r[0] < H_min * threshold, ["H_vsm"]
-            )  # mask out everything except min field data
-            ncoeff, _ = self.curve_fit(Linear, "H_vsm", m)  # Get a linear fit
-            coeff = (
-                pcoeff + ncoeff
-            ) / 2.0  # Average the co-=fficients of the two fits
-            correct_m = self.column(m) - Linear(
-                self.column("H_vsm"), *coeff
-            )  # Calculate corrected fits
-            self.data[:, m] = correct_m  # Apply corrected fits
+        field = np.ma.masked_invalid(self.column("H_vsm"))
+        high_field = np.ma.filled(field > threshold * field.max(), False)
+        for column in self.find_col(["m (emu)", "Mvol", "Mmass", "X", "Y"]):
+            coeff, _ = self.curve_fit(linear, "Time", column, where=high_field)
+            self._replace_signal(column, self.column(column) - linear(self.column("Time"), *coeff))
         return self
 
+    def remove_diamagnetism_and_offset(self, threshold=0.85):
+        """Subtract the average linear background fitted to both saturated arms.
+
+        Args:
+            threshold (float):
+                Fraction of the positive/negative extreme field defining saturation.
+
+        Returns:
+            VSMAnalysis:
+                The corrected object, retaining existing exclusions and metadata.
+        """
+        field = np.ma.masked_invalid(self.column("H_vsm"))
+        upper = np.ma.filled(field > field.max() * threshold, False)
+        lower = np.ma.filled(field < field.min() * threshold, False)
+        for column in self.find_col(["m (emu)", "Mvol", "Mmass", "X", "Y"]):
+            positive, _ = self.curve_fit(linear, "H_vsm", column, where=upper)
+            negative, _ = self.curve_fit(linear, "H_vsm", column, where=lower)
+            coeff = (positive + negative) / 2
+            self._replace_signal(column, self.column(column) - linear(self.column("H_vsm"), *coeff))
+        return self
+
+    def _crossings(self, column, coordinate):
+        """Find falling/rising zero crossings after the initial maximum field."""
+        original_mask = self.mask.copy()
+        try:
+            turning_point = int(np.ma.argmax(np.ma.masked_invalid(self.column("H_vsm"))))
+            self.mask |= ~np.isfinite(self.to_numpy(masked=False))
+            self.mask[:turning_point, :] = True
+            falling = self.threshold(0.0, col=column, rising=False, falling=True, xcol=coordinate)
+            rising = self.threshold(0.0, col=column, rising=True, falling=False, xcol=coordinate)
+            return falling, rising
+        finally:
+            self.mask = original_mask
+
     def find_Hc(self):
-        """Use thresholding and interpolation to find fields for zero crossing moments."""
-        h_m = int(self.peaks(ycol="H_vsm", wiodth=15)[0])
-        mask = self.mask
-        self.mask = np.zeros(self.shape)
-        self.mask[1:h_m, :] = True
-        hc_p = self.threshold(0.0, col="m (emu)", xcol="H_vsm")
-        hc_m = self.threshold(
-            0.0, col="m (emu)", rising=False, falling=True, xcol="H_vsm"
-        )
-        self.mask = mask
-        return (hc_m, hc_p)
+        """Return the falling/rising moment-zero fields without changing exclusions."""
+        return self._crossings("m (emu)", "H_vsm")
 
     def find_Br(self):
-        """Use thresholding and interpolation to find moments for zero crossing fields."""
-        h_m = int(self.peaks(ycol="H_vsm", width=15)[0])
-        mask = self.mask
-        self.mask = np.zeros(self.shape)
-        self.mask[1:h_m, :] = True
-        br_p = self.threshold(0.0, col="H_vsm", xcol="m (emu)")
-        br_m = self.threshold(
-            0.0, col="H_vsm", rising=False, false=True, xcol="m (emu)"
-        )
-        self.mask = mask
-        return (br_m, br_p)
+        """Return the falling/rising field-zero moments without changing exclusions."""
+        return self._crossings("H_vsm", "m (emu)")

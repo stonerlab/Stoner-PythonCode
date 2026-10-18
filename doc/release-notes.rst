@@ -1,6 +1,20 @@
 Release notes
 =============
 
+Unreleased
+----------
+
+The repository analysis scripts now use the plotting accessor, explicit
+Matplotlib axes and mask-preserving numerical edits. Standalone scripts have
+import-safe callable entry points and documented input requirements. Regression
+coverage includes the bundled transport, PCAR, VSM, BNL, diffraction and image
+data, with controlled fringe/XMCD/GenX inputs. The GenX loader's host interface
+is exercised separately from the external application's interactive UI.
+The PCAR INI files retain their CSV layout reference. Forwarding those entries
+through the configuration helper remains deferred under
+`issue #41 <https://github.com/stonerlab/Stoner-PythonCode/issues/41>`_;
+direct CSV loader layout controls remain available.
+
 Version 0.12.0a2 (2026-10-18)
 --------------------------------
 

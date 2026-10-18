@@ -1,80 +1,48 @@
-# -*- coding: utf-8 -*-
-"""Script to produce plots from GenX output."""
+"""Plot polarised neutron reflectivity, spin asymmetry and SLD from GenX exports."""
 
-# pylint: disable=invalid-name
 import numpy as np
-import matplotlib.pyplot as plt
-from Stoner import DataFolder, Data
 
-f = DataFolder(directory=False, pattern="*.dat", type=Data)
-f.sort("dataset")
-up = f[2]
-up &= f[1]
-asym = f[0]
+from Stoner import DataFolder
 
-up.column_headers = [
-    "q_up",
-    "Isim_up",
-    "I_up",
-    "dI_up",
-    "q_down",
-    "Isim_down",
-    "I_down",
-    "dI_down",
-]
 
-up.plot_xy("q_up", "Isim_up", "r-", plotter=plt.semilogy, label=None)
-up.plot_xy("q_down", "Isim_down", "b-", label=None)
-up.plot_xy("q_up", "I_up", "ro", yerr="dI_up", label="Up", ms=2.0)
-up.plot_xy("q_down", "Isim_down", "bx", yerr="dI_down", label="Down", ms=2.0)
+def plot_exports(folder=False):
+    """Plot three GenX datasets ordered by their dataset metadata and return the combined data."""
+    files = folder.clone if isinstance(folder, DataFolder) else DataFolder(folder, pattern="*.dat")
+    files.sort("dataset")
+    up = files[2].clone
+    up &= files[1]
+    sld = files[0].clone
+    up.column_headers = ["q_up", "Isim_up", "I_up", "dI_up", "q_down", "Isim_down", "I_down", "dI_down"]
+    up.plot.new_figure()
+    ax = up.plot.line("q_up", "Isim_up", fmt="r-", label=None)
+    up.plot.line("q_down", "Isim_down", ax=ax, fmt="b-", label=None)
+    up.plot.errorbar("q_up", "I_up", ax=ax, fmt="ro", yerr="dI_up", label="Up", ms=2)
+    up.plot.errorbar("q_down", "I_down", ax=ax, fmt="bx", yerr="dI_down", label="Down", ms=2)
+    ax.set(xlabel=r"Momentum transfer $Q$ ($\AA^{-1}$)", ylabel="Normalised intensity",
+           title="Spin up and down signals", yscale="log")
 
-plt.legend()
-plt.xlabel("Momentum Transfer Q($\AA^{-1}$)")
-plt.ylabel("Normalised Intensity")
-plt.title("Spin Up and Down Signals")
+    up.diffsum("I_up", "I_down", header="SpinAsym_data")
+    up.diffsum("Isim_up", "Isim_down", header="SpinAsym_sim")
+    intensity_up, intensity_down = up.column("I_up"), up.column("I_down")
+    total = intensity_up + intensity_down
+    error = 2 * np.sqrt((intensity_down * up.column("dI_up")) ** 2
+                        + (intensity_up * up.column("dI_down")) ** 2) / total**2
+    up.add_column(error, "dSpinAsym")
+    up.plot.new_figure()
+    ax = up.plot.errorbar("q_up", "SpinAsym_data", fmt="ro", yerr="dSpinAsym",
+                          label="Spin asymmetry data", ms=2)
+    up.plot.line("q_up", "SpinAsym_sim", ax=ax, fmt="r-", label="Calculated spin asymmetry")
+    ax.set(xlabel=r"Momentum transfer $Q$ ($\AA^{-1}$)", ylabel="Spin asymmetry",
+           title="Spin asymmetry data and calculation")
 
-up.diffsum("I_up", "I_down", header="SpinAsym_data")
-up.diffsum("Isim_up", "Isim_down", header="SpinAsym_sim")
-up_c = up.find_col("I_up")
-down_c = up.find_col("I_down")
-up_ec = up.find_col("dI_up")
-down_ec = up.find_col("dI_down")
-func = lambda r: np.sqrt(
-    (
-        1.0 / (r[up_c] + r[down_c])
-        - (r[up_c] - r[down_c]) / (r[up_c] + r[down_c]) ** 2
-    )
-    ** 2
-    * r[up_ec] ** 2
-    + (
-        -1.0 / (r[up_c] + r[down_c])
-        - (r[up_c] - r[down_c]) / (r[up_c] + r[down_c]) ** 2
-    )
-    ** 2
-    * r[down_ec] ** 2
-)
-up.apply(func, up.find_col("SpinAsym_data"), replace=False, header="dSpinAsym")
-up.fig = plt.figure()
+    sld.add("real sld +", "real sld -", header="Structure")
+    sld.subtract("real sld +", "real sld -", header="Magnetic")
+    sld.plot.new_figure()
+    ax = sld.plot.line(0, ["Structure", "Magnetic"])
+    ax.set(xlabel="Distance z (nm)", ylabel="Scattering potential",
+           title="Magnetic and structural scattering potentials")
+    return up, sld
 
-up.plot_xy(
-    "q_up",
-    "SpinAsym_data",
-    fmt="ro",
-    yerr="dSpinAsym",
-    label="Spin Asymmetry Data",
-    ms=2.0,
-)
-up.plot_xy("q_up", "SpinAsym_sim", "r-", label="Calculated Spin Asymmetry")
-plt.legend()
-plt.xlabel("Momentum Transfer Q($\AA^{-1}$)")
-plt.ylabel("Spin Asymmetry")
-plt.title("Spin Asymmetry Data and Calculated")
 
-asym.add("real sld +", "real sld -", header="Structure")
-asym.subtract("real sld +", "real sld -", header="Magnetic")
-asym.plot_xy(0, "Structure")
-asym.plot_xy(0, "Magnetic")
-plt.legend()
-plt.xlabel("Distance z\ (nm)")
-plt.ylabel("Scattering Potential")
-plt.title("Magnetic and Structural Scattering Potentials")
+if __name__ == "__main__":
+    plot_exports()[0].plot.show()

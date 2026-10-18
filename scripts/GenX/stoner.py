@@ -7,11 +7,10 @@ read in data files. Supports loading from the Brucker D8
 # pylint: disable=invalid-name
 import numpy as np
 import wx
-from plugins.data_loader_framework import Template
-from plugins.utils import ShowWarningDialog
+from genx.plugins.data_loader_framework import Template
+from genx.plugins.utils import ShowWarningDialog
 
 from Stoner import Data
-from Stoner.compat import string_types
 from Stoner.core.exceptions import StonerUnrecognisedFormat
 
 
@@ -25,13 +24,28 @@ class Plugin(Template):
         self.y_col = "Counts"
         self.e_col = "Counts"
 
-    def LoadData(self, data_item_number, filename):
-        """Load the data from filename into the data_item_number."""
+    def LoadData(self, dataset, filename, data_id=0):
+        """Load one measurement into the dataset supplied by the GenX loader framework.
+
+        Args:
+            dataset (genx.data.DataSet):
+                Destination dataset. Raw X, Y and error arrays are replaced together.
+            filename (str or pathlib.Path):
+                Measurement to load with Stoner's registered loaders.
+            data_id (int):
+                Dataset number for multi-dataset sources. This loader reads one
+                table per file, so the default zero is the supported selection.
+
+        Notes:
+            Assigned Stoner roles take precedence over the configured column
+            names. Excluded and non-finite triples are omitted together. GenX's
+            framework handles list updates and GUI events after this call.
+        """
+        if data_id != 0:
+            raise ValueError("The Stoner loader reads one dataset per file")
         try:
-            datafile = Data(
-                str(filename), debug=True
-            )  # does all the hard work here
-        except StonerUnrecognisedFormat as e:
+            datafile = Data(filename)
+        except (StonerUnrecognisedFormat, ValueError, OSError) as e:
             ShowWarningDialog(
                 self.parent,
                 f"""Could not load the file: {filename}\nPlease check the format.
@@ -41,19 +55,15 @@ class Plugin(Template):
         else:
             # For the freak case of only one data point
             try:
-                if datafile.setas.cols["axes"] == 0:
-                    self.x_col = datafile.find_col(self.x_col)
-                    self.y_col = datafile.find_col(self.y_col)
-                    self.e_col = datafile.find_col(self.e_col)
-                    datafile.etsas(x=self.x_col, y=self.y_col, e=self.e_col)
+                columns = datafile.setas.cols
+                if "x" not in datafile.setas or "y" not in datafile.setas:
+                    x = datafile.column(self.x_col)
+                    y = datafile.column(self.y_col)
+                    error = datafile.column(self.e_col)
                 else:
-                    self.x_col = datafile.setas.cols["xcol"]
-                    self.y_col = datafile.setas.cols["ycol"][0]
-                    if len(datafile.setas.cols["yerr"]) > 0:
-                        self.e_col = datafile.setas.cols["yerr"][0]
-                    else:
-                        datafile.add_column(np.ones(len(datafile)))
-                        datafile.setas[-1] = "e"
+                    x = datafile.column(columns["xcol"])
+                    y = datafile.column(columns["ycol"][0])
+                    error = datafile.column(columns["yerr"][0]) if columns["yerr"] else np.ones(len(datafile))
             except Exception as e:
                 ShowWarningDialog(
                     self.parent,
@@ -64,16 +74,15 @@ class Plugin(Template):
             # The data is set by the default Template.__init__ function, neat hu
             # Know the loaded data goes into *_raw so that they are not
             # changed by the transforms
-            datafile.y = np.where(datafile.y == 0.0, 1e-8, datafile.y)
-            self.data[data_item_number].x_raw = datafile.x
-            self.data[data_item_number].y_raw = datafile.y
-            self.data[data_item_number].error_raw = datafile.e
+            # GenX accepts ordinary arrays: remove excluded or non-finite triples together.
+            values = np.ma.column_stack((x, y, error))
+            valid = ~np.any(np.ma.getmaskarray(values) | ~np.isfinite(values.data), axis=1)
+            dataset.x_raw = values.data[valid, 0].copy()
+            dataset.y_raw = np.where(values.data[valid, 1] == 0, 1e-8, values.data[valid, 1])
+            dataset.error_raw = values.data[valid, 2].copy()
             # Run the commands on the data - this also sets the x,y, error memebers
             # of that data item.
-            self.data[data_item_number].run_command()
-
-            # Send an update that new data has been loaded
-            self.SendUpdateDataEvent()
+            dataset.run_command()
 
     def SettingsDialog(self):
         """Implement a dialog box that allows the user set import settings for example."""
@@ -81,7 +90,6 @@ class Plugin(Template):
             "x": self.x_col,
             "y": self.y_col,
             "y error": self.e_col,
-            "format": self.format,
         }
         dlg = SettingsDialog(self.parent, col_values)
         if dlg.ShowModal() == wx.ID_OK:
@@ -107,8 +115,7 @@ class SettingsDialog(wx.Dialog):
 
         col_grid = wx.GridBagSizer(len(col_values), 2)
         self.col_controls = col_values.copy()
-        keys = col_values.keys()
-        keys.sort()
+        keys = sorted(col_values)
         for i, name in enumerate(keys):
             text = wx.StaticText(self, -1, name + ": ")
             control = wx.TextCtrl(
@@ -154,15 +161,4 @@ class SettingsDialog(wx.Dialog):
         values = {}
         for key in self.col_controls:
             values[key] = self.col_controls[key].GetValue()
-        return values
-
-    def GetMiscValues(self):
-        """Initialise other dialog values."""
-        values = {}
-        for key in self.misc_controls:
-            val = self.misc_controls[key].GetValue()
-            if isinstance(val, string_types):
-                if val.lower() == "none":
-                    val = None
-            values[key] = val
         return values

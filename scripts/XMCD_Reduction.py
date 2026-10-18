@@ -2,12 +2,13 @@
 
 # pylint: disable=invalid-name, redefined-outer-name,no-member
 import re
+from pathlib import Path
 
 import numpy as np
-import scipy
 
 # Normaliser with Stoner module
 from Stoner import Data, DataFolder
+from Stoner.analysis.fitting.models.generic import linear
 
 
 def helicity(f):
@@ -30,8 +31,9 @@ def position(f):
 
 def temp(f):
     """Get the temperature data in bins."""
-    if "sensor_temp" in f:
-        return str(np.round(f["itc2"])) + "K"
+    temperature = f.get("sensor_temp", f.get("itc2"))
+    if temperature is not None:
+        return str(np.round(temperature)) + "K"
     return "None"
 
 
@@ -51,10 +53,11 @@ def alt_norm(f, _, **kwargs):
     ec = 0
 
     md = f.find_col(signal)
-    coeffs = f.polyfit(ec, md, 1, lambda x, y: lfit[0] <= x <= lfit[1])
-    linearfit = scipy.poly1d(coeffs)
+    parameters, _ = f.curve_fit(linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1])
+    coeffs = parameters[::-1]
+    linearfit = np.poly1d(coeffs)
     f.add_column(lambda r: r[md] - linearfit(r[ec]), "minus linear")
-    highend = f.mean("minus", lambda r: rfit[0] <= r[ec] <= rfit[1])
+    highend = f.mean("minus", bounds=lambda r: rfit[0] <= r[ec] <= rfit[1])
     ret = [run]
     ret.extend(coeffs)
     ret.append(highend)
@@ -72,16 +75,19 @@ def norm_group(pos, _, **kwargs):
     posfile = posfile & pos[0].column(0)
     posfile.column_headers = ["Energy"]
     for f in pos:
+        if not np.ma.allequal(f.column(0), pos[0].column(0)):
+            raise ValueError("Grouped scans must use the same energy grid")
         print(str(f["run"]) + str(f.find_col(signal)))
         posfile = posfile & f.column(signal)
     posfile.add_column(lambda r: np.mean(r[1:]), "mean drain")
     ec = posfile.find_col("Energy")
     md = posfile.find_col("mean drain")
-    linearfit = scipy.poly1d(
-        posfile.polyfit(ec, md, 1, lambda x, y: lfit[0] <= x <= lfit[1])
-    )
+    parameters, _ = posfile.curve_fit(linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1])
+    linearfit = np.poly1d(parameters[::-1])
     posfile.add_column(lambda r: r[md] - linearfit(r[ec]), "minus linear")
-    highend = posfile.mean("minus", lambda r: rfit[0] <= r[ec] <= rfit[1])
+    highend = posfile.mean("minus", bounds=lambda r: rfit[0] <= r[ec] <= rfit[1])
+    if not np.isfinite(highend) or highend == 0:
+        raise ValueError("The normalisation window must contain a finite, non-zero edge step")
     ml = posfile.find_col("minus linear")
     posfile.add_column(lambda r: r[ml] / highend, "normalised")
     if "group_key" in kwargs:
@@ -93,19 +99,20 @@ def asym(grp, trail, **kwargs):
     """Take a group of two files for Pos and Neg helicity and calcualtes the Asymmetry ratio."""
     posfile = grp["Pos"]
     negfile = grp["Neg"]
+    if not np.ma.allequal(posfile.column("Energy"), negfile.column("Energy")):
+        raise ValueError("The two helicities must use the same energy grid")
     pdat = posfile.column("normalised")
     ndat = negfile.column("normalised")
     edat = posfile.column("Energy")
     ret = posfile.clone
-    ret.column_headers = []
-    ret.data = np.array([])
+    ret.del_column(list(range(ret.shape[1])))
     ret = ret & edat & pdat & ndat
     ret.column_headers = ["Energy", "I+", "I-"]
     ret.add_column(lambda r: (r[1] - r[2]), "Asymmetry")
     ret.filename = "-".join(trail)
     if "group_key" in kwargs:
         ret[kwargs["group_key"]] = grp.key
-    ret.title = ret.filename
+    ret["title"] = ret.filename
     if "save" in kwargs and kwargs["save"]:
         ret.save()
     return ret
@@ -117,7 +124,7 @@ def collate(grp, trail, **kwargs):
     final = Data()
     final.add_column(grp[0].column("Energy"), "Energy")
     for g in grp:
-        final.add_column(g.column("Asym"), g.title)
+        final.add_column(g.column("Asym"), g.get("title", g.filename))
     if "group_key" in kwargs:
         final[kwargs["group_key"]] = grp.key
     final["path"] = trail
@@ -126,51 +133,37 @@ def collate(grp, trail, **kwargs):
     return final
 
 
-# The start and end runs for this batch
-startrun = 49173
-endrun = 52000
-# Which column are we analysing ?
-signal = "fluo"
-# A filename pattern that will grab the run number from the filename
-pattern = re.compile(r"i10-(?P<run>\d*)\.dat")
-# The Data spool directory
-directory = r"C:\Data\data"
-# Set the limits used on the normalisation
-rfit = (660, 670)
-lfit = (615, 630)
+def reduce(directory, startrun=49173, endrun=52000, signal="fluo", lfit=(615, 630), rfit=(660, 670),
+           output_directory=None):
+    """Reduce grouped helicity scans and optionally save the compiled position tables.
 
-# Read the directory of data files and sort by run number
-fldr = DataFolder(directory, pattern=pattern, read_means=True)
-fldr.sort("run")  # pylint: disable=no-member
-# Remove files outside of the run number range
-fldr.filterout(lambda f: f["run"] > endrun or f["run"] < startrun)
-# group the files by position, temperatures and polarisations
-fldr.group([position, temp, helicity])
-# Normalise the files grouped by helicity, temperature and position and produce one averaged file
-# for each position, temperature and helicity
-fldr.walk_groups(
-    norm_group,
-    group=True,
-    replace_terminal=True,
-    walker_args={"signal": signal, "lfit": lfit, "rfit": rfit},
-)
-# Calcualte the asymmetry by position and temperature and produce one file per positiona nd temeprature
-# Set the walker_args to {"save":True} to save this file to disc
-fldr.walk_groups(
-    asym,
-    group=True,
-    replace_terminal=True,
-    walker_args={"save": True, "group_key": "temperature"},
-)
-# Collate the asummetry curves into one file and save it
-fldr.walk_groups(
-    collate,
-    group=True,
-    replace_terminal=True,
-    walker_args={"group_key": "Position"},
-)
+    Notes:
+        The reported Asymmetry remains the normalised intensity difference I+ - I-.
+        The two helicities must have the same energy grid. Output is written only
+        when output_directory is supplied; input scans are not overwritten.
+    """
+    pattern = re.compile(r"i10-(?P<run>\d*)\.dat")
+    folder = directory.clone if isinstance(directory, DataFolder) else DataFolder(directory, pattern=pattern)
+    folder.sort("run")
+    folder.filterout(lambda f: f["run"] > endrun or f["run"] < startrun)
+    folder.group([position, temp, helicity])
+    folder.walk_groups(norm_group, group=True, replace_terminal=True,
+                       walker_args={"signal": signal, "lfit": lfit, "rfit": rfit})
+    folder.walk_groups(asym, group=True, replace_terminal=True, walker_args={"group_key": "temperature"})
+    folder.walk_groups(collate, group=True, replace_terminal=True, walker_args={"group_key": "Position"})
+    if output_directory is not None:
+        output = Path(output_directory)
+        output.mkdir(parents=True, exist_ok=True)
+        for data in folder:
+            data.save(output / f"Compiled Fluorescence Data {data['Position']}.txt")
+    return folder
 
-for f in fldr:
-    f.filename = "Run 2 Compiled Fluorescence Data {f['Position']}.txt"
-    f.save()
-# norm_data=fldr.walk_groups(alt_norm,walker_args={"rfit":(660,670),"lfit":(615,630),"signal":"fluo"})
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("directory", type=Path, help="Directory containing the i10 run files")
+    parser.add_argument("--output-directory", type=Path, help="Save compiled tables in this directory")
+    args = parser.parse_args()
+    reduce(args.directory, output_directory=args.output_directory)

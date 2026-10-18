@@ -203,6 +203,24 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
+- [x] **Scientific script API alignment:** all eleven Python scripts now use
+  current plotting/storage interfaces and import-safe entry points where
+  standalone. See [the script guide](scripts/README.md). Real-data and controlled
+  regressions cover fitting, masks, reductions, GenX handoff and one-point BNL
+  import. Local py314 validation passes 1,359 tests with three expected failures
+  for issue #41 below. Fresh cached docs have 62 reviewed warnings, zero unexpected
+  warnings and no lost API entries; all 276 plot-cache files are retained.
+  Native GenX/wxPython and interactive mask/VSM workflows still need user-driven
+  validation; host-stub and headless tests do not certify those application UIs.
+
+- [ ] **CSV layout options in fitting INI files:**
+  [issue #41](https://github.com/stonerlab/Stoner-PythonCode/issues/41) records that
+  `cfg_data_from_ini()` ignores the CSV layout entries although direct `Data.load`
+  supports them. Retain the PCAR INI files as the options guide. Fix forwarding,
+  document the historical option-name migration and validate non-default layouts
+  in a future release; three strict expected-failure script regressions retain
+  the reproductions. The bundled CSV examples continue to use loader defaults.
+
 - [x] **Plotting redesign (stages 0-6 complete):** see
   [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) and the
   [release notes](doc/release-notes.rst). Stage 5 is committed as `8d6b49b93`;

@@ -24,11 +24,15 @@ import numpy as np
 
 import Stoner
 
-plot.ion()  # put the plotting in interactive mode
-raw_input = input
-print("Analysis program for VSM files\n\n\n")
-print("Please wait while program loads...\n")
 # vsm_calibration=0.86224   #m to X ratio, determined by reference Py sample
+
+
+def saturated_fit(data, index, points):
+    """Fit a saturated arm, excluding missing values and masked observations."""
+    window = data[max(0, index - points):min(len(data), index + points), 1:3]
+    window = np.ma.masked_invalid(window)
+    valid = ~np.any(np.ma.getmaskarray(window), axis=1)
+    return np.polyfit(window.data[valid, 0], window.data[valid, 1], 1)
 
 
 def delete_corrupt_lines(data):
@@ -50,19 +54,11 @@ def delete_corrupt_lines(data):
 
 def drift_eliminator(data, N):
     """Take off a linear drift of m with time from the data."""
-    max_harg = int(np.argmax(data[: len(data[:, 0]) / 2, 1]))
+    max_harg = int(np.ma.argmax(np.ma.masked_invalid(data[: len(data) // 2, 1])))
     final_harg = int(len(data[:, 1]) - 1)
     # linear fit to saturated data (+- N points from max field and final field)
-    final_fit = np.polyfit(
-        data[final_harg - N : final_harg, 1],
-        data[final_harg - N : final_harg, 2],
-        1,
-    )
-    first_fit = np.polyfit(
-        data[max_harg - N : max_harg + N, 1],
-        data[max_harg - N : max_harg + N, 2],
-        1,
-    )
+    final_fit = saturated_fit(data, final_harg, N)
+    first_fit = saturated_fit(data, max_harg, N)
     pt = np.zeros((2, 2))
     pt[0] = [
         data[max_harg, 0],
@@ -86,32 +82,24 @@ def shift(data, N):
     (uses the average y value of all the saturated points given to determine upper and lower bounds of curve
     """
     max_harg = int(
-        np.argmax(data[: len(data[:, 0]) / 2, 1])
+        np.ma.argmax(np.ma.masked_invalid(data[: len(data) // 2, 1]))
     )  # gives the data index of maximum field (in the first half of the data
-    min_harg = int(np.argmin(data[:, 1]))
+    min_harg = int(np.ma.argmin(np.ma.masked_invalid(data[:, 1])))
     # average saturated data (+- N points from max/min field)
-    high_ave = np.average(data[(max_harg - N) : (max_harg + N), 2])
-    low_ave = np.average(data[min_harg - N : min_harg + N, 2])
+    high_ave = np.ma.masked_invalid(data[max(0, max_harg - N):max_harg + N, 2]).mean()
+    low_ave = np.ma.masked_invalid(data[max(0, min_harg - N):min_harg + N, 2]).mean()
     data[:, 2] = data[:, 2] - (high_ave + low_ave) / 2.0
     return data
 
 
 def diamag_background_rem(data, N):
     """Remove a diamagnetic background using a linear fit to the N data points surrounding the max and min field."""
-    max_harg = int(np.argmax(data[: len(data[:, 0]) / 2, 1]))
-    min_harg = int(np.argmin(data[:, 1]))
+    max_harg = int(np.ma.argmax(np.ma.masked_invalid(data[: len(data) // 2, 1])))
+    min_harg = int(np.ma.argmin(np.ma.masked_invalid(data[:, 1])))
 
     # linear fit to saturated data (+- N points from max/min field)
-    high_fit = np.polyfit(
-        data[max_harg - N : max_harg + N, 1],
-        data[max_harg - N : max_harg + N, 2],
-        1,
-    )
-    low_fit = np.polyfit(
-        data[min_harg - N : min_harg + N, 1],
-        data[min_harg - N : min_harg + N, 2],
-        1,
-    )
+    high_fit = saturated_fit(data, max_harg, N)
+    low_fit = saturated_fit(data, min_harg, N)
     # Average grad
     fit_grad = (high_fit[0] + low_fit[0]) / 2
     # Delete linear grad from all data
@@ -121,23 +109,19 @@ def diamag_background_rem(data, N):
 
 def invert(data):
     """Flip data in y axis."""
-    for i in range(len(data.data[:, "0"])):
-        data.data[i, data.find_col("m (emu)")] = -data.data[
-            i, data.find_col("m (emu)")
-        ]
+    data[:, "m (emu)"] = -data.column("m (emu)")
     return data
 
 
 def make_true_m(data):
     """VSM takes m from lock in X, this takes m from lock in R, useful if theta!=0."""
     vsm_calibration = (
-        data.data[5, data.find_col("m (emu)")]
-        / data.data[5, data.find_col("X (V)")]
+        data[5, data.find_col("m (emu)")]
+        / data[5, data.find_col("X (V)")]
     )  # taken from row 5 at random
-    for i in range(len(data.data[:, "0"])):
-        data.data[i, data.find_col("m (emu)")] = (
-            vsm_calibration * data.data[i, data.find_col("R (V)")]
-        )
+    moment = vsm_calibration * data.column("R (V)")
+    mask = np.ma.getmaskarray(data.column("m (emu)")) | np.ma.getmaskarray(moment)
+    data[:, "m (emu)"] = np.ma.array(moment, mask=mask)
     return data
 
 
@@ -145,7 +129,7 @@ def plot_m_h(data):
     """Take a stoner type data source."""
     plot.clf()
     plot.xlabel("H(T)")
-    plot.ylabel("m(1e-5 emu)")
+    plot.ylabel("Moment (emu)")
     plot.plot(data.column("H"), data.column("m (emu)"), "b-")
     plot.draw()
 
@@ -170,18 +154,21 @@ def edit_data(data, operations):
     N = int(input("Input the number of saturated data points on each arm:   "))
     if 1 in operations:
         data = make_true_m(data)
-    if 2 in operations:
-        data.data = drift_eliminator(data.data, N)
-    if 3 in operations:
-        data.data = diamag_background_rem(data.data, N)
-    if 4 in operations:
-        data.data = shift(data.data, N)
+    with data.edit_numpy() as values:
+        if 2 in operations:
+            drift_eliminator(values, N)
+        if 3 in operations:
+            diamag_background_rem(values, N)
+        if 4 in operations:
+            shift(values, N)
     if 5 in operations:
         data = invert(data)
     return data
 
 
 if __name__ == "__main__":
+    plot.ion()
+    print("Analysis program for VSM files")
     # Set up a directory and determine files to be processed
     directory_name = input(
         "Enter path to directory in which files are stored:   "
@@ -211,7 +198,7 @@ if __name__ == "__main__":
         with open(  # pylint: disable=unspecified-encoding
             "EditedFiles/" + pathsplit[0] + "_edit.txt",
             "w",
-            enconcoding="utf-8",
+            encoding="utf-8",
         ) as fw:
             data = delete_corrupt_lines(data)
             fw.writelines(
@@ -271,6 +258,7 @@ if __name__ == "__main__":
             break
         if (
             what_next == "q"
+            or f_counter >= len(filenames)
             or input(
                 f"Press enter to do file {filenames[f_counter]} or q to quit:"
             )

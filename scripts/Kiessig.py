@@ -1,14 +1,9 @@
-"""A very quick and dirty Kiessig Fringe Analysis code.
+"""Estimate film thickness from Kiessig fringes in a low-angle reflection scan.
 
-Gavin Burnell 28/12/2010
-
-TODO: Implement an error bar on the uncertainity by understanding the significance of the covariance terms
+The empirical peak sensitivity and critical edge should be chosen for the scan.
+The reported uncertainty propagates the fitted slope uncertainty only.
 """
 
-# pylint: disable=invalid-name
-from copy import copy
-
-from matplotlib import pyplot
 import numpy as np
 from lmfit.models import ExponentialModel
 
@@ -16,73 +11,42 @@ from Stoner import Data
 from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.analysis.utils import format_error
 
-filename = False
-sensitivity = 50
 
-critical_edge = 0.8
-fringe_offset = 1
+def analyse(filename=False, sensitivity=50, critical_edge=0.8, fringe_offset=1):
+    """Fit the fringe order and return the scan, peak table and thickness in angstroms."""
+    data = Data(filename, setas="xy")
+    data.lmfit(ExponentialModel, result=True, replace=False, header="Envelope")
+    data.subtract("Counts", "Envelope", replace=False, header="peaks")
+    data.setas = "xy"
+    positions = data.peaks(ycol="peaks", xcol=0, significance=sensitivity, width=8, poly=4, full_data=False)
+    peaks = Data(data.interpolate(positions, xcol=0),
+                 column_headers=list(data.column_headers))
+    data %= "peaks"
+    peaks %= "peaks"
+    peaks.del_rows(0, lambda x, row: x < critical_edge)
+    if len(peaks) < 3:
+        raise ValueError("At least three fringes above the critical edge are required")
+    data.setas = peaks.setas = "xy"
+    figure = data.plot.new_figure(figsize=(7, 5))
+    ax = data.plot.line(ax=figure.add_subplot(), title=None)
+    peaks.plot.line(ax=ax, fmt="go", label="Peak positions", title=None)
+    ax.set(xlabel=r"Reflection angle $2\theta$", yscale="log")
 
-d = Data(filename, setas="xy")  # Load the low angle scan
+    peaks.apply(lambda row: np.sin(np.radians(row[0] / 2.0)) ** 2, 0, header=r"$\sin^2\theta$")
+    peaks.add_column((np.arange(len(peaks)) + fringe_offset) ** 2, header="$m^2$")
+    peaks.setas(x="$m^2$", y=r"$\sin^2\theta$")
+    fit = peaks.lmfit(Linear, result=True, replace=False, header="Fit", output="report")
+    slope = fit.params["slope"].value
+    thickness = float(data["Lambda"]) / (2 * np.sqrt(slope))
+    uncertainty = thickness * fit.params["slope"].stderr / (2 * slope)
+    with peaks.plot.InsetPlot(ax=ax, loc="upper right", width=0.5, height=0.4) as inset:
+        peaks.plot.line(x="$m^2$", y="Fit", ax=inset, fmt="b-", label="Fit", title=None)
+        peaks.plot.line(x="$m^2$", y=r"$\sin^2\theta$", ax=inset, fmt="ro", label="Peak positions", title=None)
+        inset.set(xlabel="Fringe $m^2$", ylabel=r"$\sin^2\theta$")
+    ax.text(0.05, 0.05, rf"Thickness: {format_error(thickness, uncertainty, latex=True)} $\AA$",
+            transform=ax.transAxes)
+    return data, peaks, thickness, uncertainty
 
-# Now get the section of the data file that has the peak positions
-# This is really doing the hard work
-# We differentiate the data using a Savitsky-Golay filter with a 5 point window fitting quartics.
-# This has proved most succesful for me looking at some MdV data.
-# We then threshold for zero crossing of the derivative
-# And check the second derivative to see whether we like the peak as signficant. This is the significance parameter
-# and seems to be largely empirical
-# Finally we interpolate back to the complete data set to make sure we get the angle as well as the counts.
-d.lmfit(ExponentialModel, result=True, replace=False, header="Envelope")
-d.subtract("Counts", "Envelope", replace=False, header="peaks")
-d.setas = "xy"
-t = Data(d.interpolate(d.peaks(significance=sensitivity, width=8, poly=4)))
 
-t.column_headers = copy(d.column_headers)
-d %= "peaks"
-t %= "peaks"
-d.setas = "xy"
-d.labels[d.find_col("Angle")] = r"Reflection Angle $\theta$"
-t.del_rows(0, lambda x, y: x < critical_edge)
-t.setas = "xy"
-t.template.fig_width = 7.0
-t.template.fig_height = 5.0
-t.plot(fmt="go", plotter=pyplot.semilogy)
-main_fig = d.plot(figure=t.fig, plotter=pyplot.semilogy)
-d.show()
-# Now convert the angle to sin^2
-t.apply(
-    lambda x: np.sin(np.radians(x[0] / 2.0)) ** 2, 0, header=r"$sin^2\theta$"
-)
-# Now create the m^2 order
-m = np.arange(len(t)) + fringe_offset
-m = m**2
-# And add it to t
-t.add_column(m, column_header="$m^2$")
-# Now we can it a straight line
-t.setas = "x..y"
-fit = t.lmfit(Linear, result=True, replace=False, header="Fit")
-g = t["LinearModel:slope"]
-gerr = t["LinearModel:slope err"] / g
-g = np.sqrt(1.0 / g)
-gerr /= 2.0
-l = float(d["Lambda"])
-th = l / (2 * g)
-therr = th * (gerr)
-
-t.inset(loc="top right", width=0.5, height=0.4)
-t.plot_xy(r"Fit", r"$sin^2\theta$", "b-", label="Fit")
-t.plot_xy(r"$m^2$", r"$sin^2\theta$", "ro", label="Peak Position")
-t.xlabel = "Fringe $m^2$"
-t.ylabel = r"$sin^2\theta$"
-t.title = ""
-t.legend(loc="upper left")
-t.draw()
-pyplot.sca(t.axes[0])
-# Get the wavelength from the metadata
-# Calculate thickness and report
-pyplot.text(
-    0.05,
-    0.05,
-    rf"Thickness is: {format_error(th, therr, latex=True)} $\AA$",
-    transform=main_fig.axes[0].transAxes,
-)
+if __name__ == "__main__":
+    analyse()[0].plot.show()
