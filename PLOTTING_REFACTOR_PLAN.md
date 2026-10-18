@@ -1,6 +1,6 @@
 # Plotting redesign
 
-Status: stages 0, 1, 2, 3 and 4 completed on 18 October 2026.
+Status: stages 0-5 completed on 18 October 2026.
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -27,9 +27,11 @@ incidental part of this work.
 
 The accessor now exposes ordinary, scientific field and statistical plotting,
 together with the stonerplots layout/formatting contexts. Folder pagination and
-final removal of the transitional top-level methods remain for stage 5.
+serial bulk plotting use this interface; the transitional top-level plotting
+methods, templates and broad formatting proxies have been removed. Integrated
+hosted, lower-dependency and installed-distribution validation remain for stage 6.
 
-## What the code currently does
+## Initial investigation before the redesign
 
 Inspected checkout: `devel` at
 `9db1aea5d33b39593ea52988dd751f315908efaa`, remote
@@ -368,7 +370,7 @@ the transition; they are not a commitment to permanent public compatibility.
   one family at a time. Implement directly where forwarding is more complicated.
   Gate: excluded values never reappear, duplicate headers resolve consistently,
   only required columns are materialised, and the backend/return contract holds.
-- [ ] **5. Complete folders, documentation and removal.** Adapt folder pagination
+- [x] **5. Complete folders, documentation and removal.** Adapt folder pagination
   to stonerplots, pass `ax=` to members and update bulk callable introspection
   (`_worker` currently reads `func.__name__`). Decide supported nested `each`
   access explicitly; do not accidentally collect accessor objects as metadata.
@@ -613,8 +615,8 @@ satisfied and the stage 2 versions including stonerplots 1.9.6:
 
 ### Stage 4 handover
 
-Implemented on the same feature branch after the stage 3 commit. Stage 4 remains
-uncommitted; no push or release was performed.
+Implemented on the same feature branch after the stage 3 commit. Stage 4 was
+committed as `4c948401e` before stage 5; no push or release was performed.
 
 - Evaluated histogram/box/KDE/hexbin delegation against direct drawing. All four
   are smaller and clearer with native Matplotlib arrays after Stoner selection
@@ -674,9 +676,67 @@ NumPy 2.5.2, pandas 3.0.5 and SciPy 1.18.0:
   These are local Windows results; the supported hosted/lower-dependency and
   installed-distribution gates remain for stage 6.
 
-Next bounded batch: stage 5 folder pagination, nested bulk calls and final legacy
-removal. Keep the complete redesign's hosted/lower-dependency/distribution gates
-in stage 6.
+### Stage 5 handover
+
+Implemented on `codex/plotting-accessor-stages-0-1` after committing stage 4.
+Stage 5 remains uncommitted; no push or release was performed.
+
+- Replaced PlotFolder pagination with stonerplots MultiPanel and explicit member
+  Axes. Pages support one/many members, portrait/landscape figures and mixed 2D/3D
+  projections, with unused slots removed. Returns contain one primary Axes per
+  member; colour bars are separate. `folder.figures` inspects recent live pages.
+  Figure configuration is independent of member targets and detached on copying.
+- Added explicit `folder.each.plot()` and named drawing methods, also available
+  through dotted strings and `each.iter`. Plotting is serial even with global
+  multiprocessing/threading enabled, including loading members without parallel
+  prefetch. Calls preserve metadata by default; explicit `_return` retains the
+  bulk result-storage contract. Accessor configuration/context attributes are not
+  collected or exposed. Generic user callables can still request `_serial=True`.
+  Callable introspection now supports partials and callable objects.
+- Removed PlotMixin, top-level drawing/layout methods, template classes, their
+  broad pyplot/Axes/Figure proxies and bundled template stylesheets. The required
+  stonerplots dependency supplies styles. Retained independent numerical
+  `Data.griddata` behaviour and image display/utilities. Updated copying, fitting
+  labels and RangeSelect to use accessor state and explicit Axes/Figures.
+- Migrated remaining runnable examples and API/upgrade guides together, including
+  fitting annotations, smoothing layouts, image-profile plots and the full FMR
+  folder example. Its uncertainty conversion uses an explicit column assignment
+  to respect the storage API's read-only coordinate views. Added a synthetic
+  pagination/overlay example. Refreshed only affected cache groups and retained
+  every pre-existing cache file.
+- Removed obsolete style assets from package-data checks while retaining OCR
+  resources. Updated the installed-package style smoke check. Dependency floors
+  remain unchanged. Reviewed 319 intentionally removed plotting inventory targets
+  in `maintenance/docs/plotting-removed-api.json`; tightened both platform warning
+  baselines by removing 26 obsolete allowances, without raising ceilings.
+
+Validation on Windows `py314`, freshly verified against all 38 test-environment
+Conda specifications, with Python 3.14.7, stonerplots 1.9.6, Matplotlib 3.11.1,
+NumPy 2.5.2, pandas 3.0.5 and SciPy 1.18.0:
+
+- Full suite: **1,324 passed** in 189.16 seconds, including runnable documentation
+  examples and all 28 new folder plotting cases. Reports: ignored
+  `maintenance/runs/plotting-stage5/final.xml` and `.log`. A focused core/bulk/folder
+  recheck passed 45 tests. The complete main-guarded FMR example separately ran
+  successfully and produced five figures.
+- Targeted Ruff checks pass for the accessor, numerical gridding, bulk plotting
+  and new/rewritten plotting tests. Undefined-name checks pass modified legacy
+  consumers; unrelated existing lint findings remain outside this batch.
+  Whitespace checks pass with retained line endings and canonical test path case.
+- Source package-content checks pass for retained runtime assets. This is source
+  evidence; no local distribution build or installed-distribution gate is claimed.
+- Fresh cached Sphinx HTML has **62 reviewed warnings, zero unexpected**, down
+  from 88 after removing obsolete allowances. API comparison finds no unintended
+  removals; 38 accessor/context targets and four folder/gridding targets retain
+  canonical inventory entries. All 258 pre-existing cached files remain; 123
+  affected files were refreshed and 18 new files supply six rendered groups.
+- Visually reviewed pagination, the overlay, migrated fitting output and the
+  rendered guide/API navigation over localhost. The preview serves only
+  `maintenance/runs/plotting-stage5/html` on port 8793 while the user reviews it.
+
+Next bounded batch: stage 6 integrated lower-dependency, supported hosted matrix,
+installed wheel/sdist and release-note validation. The results above are local
+Windows evidence; do not substitute them for those remaining gates.
 
 ## External sources inspected
 

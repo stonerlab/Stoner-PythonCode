@@ -21,7 +21,7 @@ model, p0 = cfg_model_from_ini(config, data=d)
 
 fit = d.lmfit(model, result=True, header="lmfit", output="report")
 
-d.plot_xy(0, [2, 1], ["r-", "bo"], title="PCAR Co Data")  # plot the data
+d.plot.line(0, [2, 1], fmt=["r-", "bo"], title="PCAR Co Data")  # plot the data
 d.annotate_fit(model, x=0.05, y=0.75, fontdict={"size": "x-small"})
 
 print(fit.fit_report())

@@ -16,7 +16,7 @@ def test_archive_checks_under_optimisation(defect):
     """Accept required assets and reject broken manifests even under python -O."""
     resources = [
         path.relative_to(REPO).as_posix()
-        for pattern in ('Stoner/plot/stylelib/*.mplstyle', 'Stoner/Image/tessdata/*')
+        for pattern in ('Stoner/Image/tessdata/*',)
         for path in REPO.glob(pattern) if path.is_file()
     ]
     names = ['COPYING', 'LICENSE.md', 'Stoner/tools/tests.py', *resources]

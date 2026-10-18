@@ -228,7 +228,7 @@ def test_copies_detach_rendering_state_and_preserve_independent_labels(measureme
     figures = plt.get_fignums()
     cloned = copy_operation(measurements)
     assert cloned.plot.ax is None and cloned.plot.figure is None
-    assert cloned.__dict__["_figure"] is None and plt.get_fignums() == figures
+    assert "_figure" not in cloned.__dict__ and plt.get_fignums() == figures
     assert cloned.plot.labels[1] == "Custom"
     cloned.plot.labels[1] = "Independent"
     assert measurements.plot.labels[1] == "Custom"
@@ -239,14 +239,14 @@ def test_copy_into_detaches_existing_destination_target(measurements):
     destination.plot.line(y=1)
     measurements.plot.line(y=3)
     copy_into(measurements, destination)
-    assert destination.plot.ax is None and destination.__dict__["_figure"] is None
+    assert destination.plot.ax is None and "_figure" not in destination.__dict__
 
 
 def test_no_automatic_show_save_or_legacy_return_policy(measurements, monkeypatch):
     monkeypatch.setattr(plt, "show", lambda *args, **kwargs: pytest.fail("Automatic show"))
     monkeypatch.setattr(Figure, "savefig", lambda *args, **kwargs: pytest.fail("Automatic save"))
     monkeypatch.setattr(Options, "no_figs", True)
-    measurements.showfig = False
+    assert not hasattr(measurements, "showfig")
     assert isinstance(measurements.plot(), Axes)
     assert isinstance(Data(np.ones((3, 2)), setas="xy").plot(), Axes)
 

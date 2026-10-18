@@ -1,199 +1,44 @@
-# -*- coding: utf-8 -*-
-"""
-test_Core.py
-Created on Tue Jan 07 22:05:55 2014
+"""Exercise real-data plotting and the removal of implicit Matplotlib proxies."""
 
-@author: phygbu
-"""
-
-import os.path as path
-import sys
-import warnings
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-from matplotlib.figure import Figure
-import pyparsing
 
-
-pth = path.dirname(__file__)
-pth = path.realpath(path.join(pth, "../../../"))
-sys.path.insert(0, pth)
-from Stoner import Data, Options, __home__
-from Stoner.core.base import TypeHintedDict
-from Stoner.Image import ImageFile
-from Stoner.plot.formats import DefaultPlotStyle
-from Stoner.plot.functions import hsl2rgb
-
-datadir = path.join(pth, "sample-data")
-
-selfd = Data(path.join(__home__, "..", "sample-data", "New-XRay-Data.dql"))
-
-
-pytestmark = [
-    pytest.mark.filterwarnings("error"),
-    pytest.mark.filterwarnings(
-        "ignore:FigureCanvasAgg is non-interactive, and thus cannot be shown:UserWarning"
-    ),
-]
+from Stoner import Data, __home__
+from Stoner.plot.utils import hsl2rgb
 
 
 @pytest.fixture(autouse=True)
-def plot_state(monkeypatch, request):
-    """Restore plotting options and close figures even after a failed assertion."""
-    global selfd
-    monkeypatch.setattr(Options, "no_figs", True)
-    selfd = Data(path.join(__home__, "..", "sample-data", "New-XRay-Data.dql"))
-    plt.close("all")
-    with plt.rc_context(), warnings.catch_warnings():
-        # Matplotlib 3.8 uses legacy Pyparsing aliases; newer Pyparsing warns.
-        # Limit this exception to Matplotlib's parser modules and alias warnings.
-        parser_warning = getattr(pyparsing, "PyparsingDeprecationWarning", None)
-        if parser_warning is not None:
-            warnings.filterwarnings(
-                "ignore",
-                message="'.*' (?:deprecated - use|argument is deprecated, use) '.*'",
-                category=parser_warning,
-                module=r"matplotlib\.(?:_fontconfig_pattern|_mathtext)",
-            )
-            # parseString's compatibility wrapper reports this one inside Pyparsing.
-            warnings.filterwarnings(
-                "ignore",
-                message="'parseAll' argument is deprecated, use 'parse_all'",
-                category=parser_warning,
-                module=r"pyparsing\.util",
-            )
-        if request.node.name in {"test_plot_magic", "test_misc_funcs"}:
-            # These tests deliberately construct axes outside a GridSpec.
-            warnings.filterwarnings("ignore", message="There are no gridspecs with layoutgrids", category=UserWarning)
-        try:
-            yield
-        finally:
-            plt.close("all")
-
-def test_set_no_figs():
-    global selfd
-    assert Options.no_figs, "Default setting for no_figs option is incorrect."
-    Options.no_figs = True
-    e = selfd.clone
-    ret = e.plot_xy()
-    assert ret is None, "Output of Data.plot_xy() was not None when no_figs is True  and showfig is not set({})".format(
-        type(ret)
-    )
-    Options.no_figs = False
-    e.showfig = False
-    ret = e.plot_xy()
-    assert isinstance(ret, Data), "Return value of Data.plot_xy() was not self when Data.showfig=False ({})".format(
-        type(ret)
-    )
-    e.showfig = True
-    ret = e.plot_xy()
-    assert isinstance(ret, Figure), "Return value of Data.plot_xy() was not Figure when Data.showfig=False({})".format(
-        type(ret)
-    )
-    e.showfig = None
-    ret = e.plot_xy()
-    assert ret is None, "Output of Data.plot_xy() was not None when Data.showfig is None ({})".format(type(ret))
-    Options.no_figs = True
-    assert Options.no_figs, "set_option no_figs failed."
-    selfd = Data(path.join(__home__, "..", "sample-data", "New-XRay-Data.dql"))
-    selfd.showfig = False
-    ret = selfd.plot_xy()
-    assert ret is None, "Output of Data.plot_xy() was not None when no_figs is True ({})".format(type(ret))
-    Options.no_figs = True
+def isolated_figures():
+    """Keep test-owned figures and styles isolated."""
+    with plt.rc_context():
+        yield
     plt.close("all")
 
 
-def test_template_settings():
-    template = DefaultPlotStyle(font__weight="bold")
-    assert template["font.weight"] == "bold", "Setting ytemplate parameter in init failed."
-    template(font__weight="normal")
-    assert template["font.weight"] == "normal", "Setting ytemplate parameter in call failed."
-    template["font.weight"] = "bold"
-    assert template["font.weight"] == "bold", "Setting ytemplate parameter in setitem failed."
-    del template["font.weight"]
-    assert template["font.weight"] == "normal", "Resettting template parameter failed."
-    keys = sorted([x for x in template])
-    assert sorted(template.keys()) == keys, "template.keys() and template.iter() disagree."
-    attrs = [x for x in dir(template) if template._allowed_attr(x)]
-    length = len(dict(plt.rcParams)) + len(attrs)
-    assert len(template) == length, "templa length wrong."
+def test_real_xray_data_supports_explicit_axes_and_native_formatting():
+    data = Data(Path(__home__).parent / "sample-data/New-XRay-Data.dql")
+    ax = data.plot()
+    ax.set(xlabel="Angle", title="Diffraction", yscale="log")
+    data.plot.line(ax=ax, color="red")
+    assert len(ax.lines) == 2 and ax.get_title() == "Diffraction"
+    assert ax.get_xlabel() == "Angle" and ax.get_yscale() == "log"
+    assert len(plt.get_fignums()) == 1
 
 
-def test_plot_magic():
-    selfd.figure()
-    dpi = selfd.fig_dpi
-    selfd.fig_dpi = dpi * 2
-    assert selfd.fig.dpi == dpi * 2, "Failed to get/set attributes on current figure"
-    vis = selfd.fig_visible
-    selfd.fig_visible = not vis
-    assert not selfd.fig_visible, "Setting/Getting figure.visible failed"
-    plt.close("all")
-    plt.figure()
-    fn = plt.get_fignums()[0]
-    selfd.fig = fn
-    selfd.plot_xy()
-    assert len(plt.get_fignums()) == 1, "Setting Data.fig by integer failed."
-    plt.close("all")
-    selfd.plot_xy(plotter=plt.semilogy)
-    assert selfd.ax_lines[0].get_c() == "k", "Auto formatting of plot failed"
-    selfd.plot_xy(figure=False)
-    selfd.plot_xy(figure=1)
-    assert len(plt.get_fignums()) == 2, "Plotting setting figure failed"
-    assert len(selfd.ax_lines) == 2, "Plotting setting figure failed"
-    selfd.figure(2)
-    selfd.plot_xy()
-    selfd.plot_xy(figure=True)
-    assert len(plt.get_fignums()) == 2, "Plotting setting figure failed"
-    assert len(selfd.ax_lines) == 3, "Plotting setting figure failed"
-    plt.close("all")
+def test_hsl_mapping_remains_available_to_image_and_field_code():
+    np.testing.assert_equal(hsl2rgb(0.5, 0.5, 0.5), [[63, 191, 191]])
 
 
-def test_extra_plots():
-    x = np.random.uniform(-np.pi, np.pi, size=5001)
-    y = np.random.uniform(-np.pi, np.pi, size=5001)
-    z = (np.cos(4 * np.sqrt(x**2 + y**2)) * np.exp(-np.sqrt(x**2 + y**2) / 3.0)) ** 2
-    selfd2 = Data(x, y, z, column_headers=["X", "Y", "Z"], setas="xyz")
-    selfd2.contour_xyz(projection="2d")  #
-    assert len(plt.get_fignums()) == 1, "Setting Data.fig by integer failed."
-    plt.close("all")
-    X, Y, Z = selfd2.griddata(xlim=(-np.pi, np.pi), ylim=(-np.pi, np.pi))
-    plt.imshow(Z)
-    assert len(plt.get_fignums()) == 1, "Setting Data.fig by integer failed."
-    plt.imshow(Z)
-    plt.close("all")
-    x, y = np.meshgrid(np.linspace(-np.pi, np.pi, 10), np.linspace(-np.pi, np.pi, 10))
-    z = np.zeros_like(x)
-    w = np.cos(np.sqrt(x**2 + y**2))
-    q = np.arctan2(x, y)
-    u = np.abs(w) * np.cos(q)
-    v = np.abs(w) * np.sin(q)
-    selfd3 = Data(x.ravel(), y.ravel(), z.ravel(), u.ravel(), v.ravel(), w.ravel(), setas="xyzuvw")
-    selfd3.plot()
-    assert len(plt.get_fignums()) == 1, "Setting Data.fig by integer failed."
-    plt.close("all")
-    # i=ImageFile(path.join(__home__,"..","sample-data","Kermit.png"))
-    # selfd3=Data(i)
-    # selfd3.data=i.data
-    # selfd3.plot_matrix()
-
-
-def test_misc_funcs():
-    assert np.all(hsl2rgb(0.5, 0.5, 0.5) == np.array([[63, 191, 191]]))
-    selfd.load(selfd.filename, Q=True)
-    selfd.plot()
-    selfd.x2()
-    selfd.setas = ".yx"
-    selfd.plot()
-    assert len(selfd.fig_axes) == 2, "Creating a second X axis failed"
-    plt.close("all")
-    for i in range(4):
-        selfd.subplot(2, 2, i + 1)
-        selfd.plot()
-    assert len(selfd.fig_axes) == 4, "Creating subplots failed"
-    selfd.close()
-
-
-if __name__ == "__main__":  # Run some tests manually to allow debugging
-    pytest.main(["--pdb", __file__])
+@pytest.mark.parametrize("name", ["plot_xy", "plot_xyz", "plot_matrix", "plot_xyuv", "plot_xyuvw",
+                                        "plot_xyzuvw", "plot_voxels", "quiver_plot", "colormap_xyz", "contour_xyz",
+                                        "image_plot", "figure", "subplot", "subplot2grid", "x2", "y2", "fig",
+                                        "fignum", "template", "showfig", "ax_lines", "plt_legend", "fig_dpi",
+                                        "xlabel", "labels", "_span_slice", "_col_label"])
+def test_removed_plotting_names_are_absent_and_do_not_create_figures(name):
+    data = Data(np.arange(8.).reshape(4, 2))
+    with pytest.raises(AttributeError):
+        getattr(data, name)
+    assert name not in dir(data) and not plt.get_fignums()

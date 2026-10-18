@@ -55,14 +55,14 @@ except ImportError:
 # Bring all the subclasses into memory (idnore unused imports warnings)
 from ..analysis import columns, features, filtering, functions
 from ..analysis.fitting import functions as fitting
-from ..plot import PlotMixin
+from ..plot import functions as plotting
 from ..tools.decorators import class_modifier
 from ..tools.file import best_saver
 from . import methods
 
 
 @class_modifier(
-    [methods, fitting, columns, functions, features, filtering], adaptor=None, no_long_names=True, overload=True
+    [methods, fitting, columns, functions, features, filtering, plotting], adaptor=None, no_long_names=True, overload=True
 )
 class Data(
     StorageBridgeMixin,
@@ -71,7 +71,6 @@ class Data(
     DataFilePropertyMixin,
     metadataObject,
     MutableSequence,
-    PlotMixin,
 ):
     """Store tabular numerical data with metadata, column headers and column roles.
 
@@ -333,10 +332,8 @@ class Data(
         """Initialise from datafile."""
         memo = {id(arg): self}
         for key, value in arg.__dict__.items():
-            if key not in {"_baseclass", "_figure", "_subplots"}:
+            if key != "_baseclass":
                 self.__dict__[key] = copy.deepcopy(value, memo)
-        self.__dict__["_figure"] = None
-        self.__dict__["_subplots"] = []
         self.__dict__.pop("_data", None)
         self.__dict__.pop("_metadata", None)
         self.__dict__["_storage_owner"]._editing = False
@@ -442,10 +439,7 @@ class Data(
         result = cls()
         memo[id(self)] = result
         for key, value in self.__dict__.items():
-            if key not in {"_figure", "_subplots"}:
-                object.__setattr__(result, key, copy.deepcopy(value, memo))
-        result.__dict__["_figure"] = None
-        result.__dict__["_subplots"] = []
+            object.__setattr__(result, key, copy.deepcopy(value, memo))
         result.__dict__.pop("_data", None)
         result.__dict__.pop("_metadata", None)
         result.__dict__["_storage_owner"]._editing = False
@@ -453,7 +447,7 @@ class Data(
 
     def __getstate__(self):
         """Serialise measurements and plot configuration without live rendering targets."""
-        return dict(self.__dict__, _figure=None, _subplots=[])
+        return self.__dict__.copy()
 
     def __setstate__(self, state):
         """Restore serialised measurement state without invoking attribute proxies."""

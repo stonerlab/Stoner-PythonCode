@@ -18,7 +18,7 @@ model, p0 = cfg_model_from_ini(config, data=d)
 
 fit = d.lmfit(model, result=True, header="Strijkers", output="report")
 
-d.plot_xy(0, [1, 2], ["bo", "r-"])  # plot the data
+d.plot.line(0, [1, 2], fmt=["bo", "r-"])  # plot the data
 d.annotate_fit(model, x=0.05, y=0.75, fontdict={"size": "x-small"})
 
 print(fit.fit_report())
@@ -26,7 +26,7 @@ print(fit.fit_report())
 model = Woods_Diffusive()
 fit = d.lmfit(model, result=True, header="Woods Diffusive", output="report")
 
-d.plot_xy(0, [3], ["m-"])  # plot the data
+d.plot.line(0, [3], fmt=["m-"])  # plot the data
 d.annotate_fit(
     model, x=0.05, y=0.5, fontdict={"size": "x-small"}, prefix="Woods_Diffusive"
 )
@@ -36,7 +36,7 @@ print(fit.fit_report())
 model = Woods_Ballistic()
 fit = d.lmfit(model, result=True, header="Woods Ballistic", output="report")
 
-d.plot_xy(0, [4], ["g-"])  # plot the data
+d.plot.line(0, [4], fmt=["g-"])  # plot the data
 d.annotate_fit(
     model,
     x=0.05,

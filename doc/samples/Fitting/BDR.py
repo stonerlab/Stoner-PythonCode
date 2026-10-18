@@ -49,5 +49,5 @@ d.annotate_fit(
     fontdict={"size": "x-small", "color": "green"},
 )
 
-d.ylabel = "Current"
-d.title = "BDR Model test"
+d.plot.ax.set_ylabel("Current")
+d.plot.ax.set_title("BDR Model test")

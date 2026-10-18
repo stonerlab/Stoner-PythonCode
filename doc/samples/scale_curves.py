@@ -26,15 +26,15 @@ d3 = d2.scale(d, headers="Signal 2 scaled", xmode="affine")
 d3.plot(ax=d.plot.ax, label="1$^\\mathrm{st}$ scaled signals")
 d3["test"] = linspace(1, 10, 10)
 txt = tabulate(d3["Transform"], floatfmt=".2f", tablefmt="grid")
-d3.text(10, 4, f"Transform\n{txt}", fontdict={"size": "x-small"})
+d3.plot.ax.text(10, 4, f"Transform\n{txt}", fontdict={"size": "x-small"})
 
 np_data = column_stack((x2, y2))
 d4 = d.scale(
     np_data, headers="Signal 2 scaled", xmode="affine", use_estimate=True
 )
 d4.plot(ax=d.plot.ax, label="2$^\\mathrm{nd}$ scaled signal")
-d4.ylim = (-7, 9)
+d4.plot.ax.set_ylim((-7, 9))
 txt = tabulate(d4["Transform"], floatfmt=".2f", tablefmt="grid")
-d4.text(10, -7, f"Transform\n{txt}", fontdict={"size": "x-small"})
+d4.plot.ax.text(10, -7, f"Transform\n{txt}", fontdict={"size": "x-small"})
 
-d4.title = "Scaling Example"
+d4.plot.ax.set_title("Scaling Example")

@@ -450,7 +450,7 @@ def _chi2_fit_to_data(datafile, ret_val, model):
         if not ret[f"{prefix}{p} vary"]:
             fixed = 2 * ix
     ret.column_headers[-1] = "$\\chi^2$"
-    ret.labels = ret.column_headers
+    ret.plot.labels = ret.column_headers
     # Workout which columns are y,e and x
     plots = list(range(0, ix * 2 + 1, 2))
     errors = list(range(1, ix * 2 + 2, 2))

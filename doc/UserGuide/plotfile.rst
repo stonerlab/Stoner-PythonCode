@@ -18,8 +18,8 @@ Stoner import is needed::
 
 Drawing returns the Matplotlib ``Axes`` and does not show or save it. Notebook
 display follows Matplotlib's normal behaviour; elsewhere use ``d.plot.show()``.
-Legacy ``showfig`` and ``Options.no_figs`` settings do not affect accessor returns
-or suppress drawing.
+The removed ``showfig`` setting has no replacement: returns are consistent.
+``Options.no_figs`` does not affect accessor returns or suppress drawing.
 
 .. autoattribute:: Stoner.core.data.Data.plot
 
@@ -475,8 +475,8 @@ Migration of ordinary calls
       - always the primary Axes; use ``ax.figure`` or retain ``d`` explicitly
 
 The ordinary accessor rejects ``figure``, ``template``, ``plotter``, ``multiple``,
-``show_plot``, ``save_filename`` and old ``*col`` keywords. Retained top-level
-methods are temporary migration support, not aliases on the new accessor.
+``show_plot``, ``save_filename`` and old ``*col`` keywords. The former top-level
+plotting methods have been removed.
 
 Layout and style migration examples
 ====================================
@@ -532,8 +532,8 @@ its native style and plotting contexts.
     :include-source:
     :outname: customising
 
-Retained legacy helpers and field migration
-===========================================
+Removed helpers and field migration
+====================================
 
 Use ``d.plot.surface`` instead of ``plot_xyz``; ``scatter3d`` replaces
 ``plot_xyz(plotter="scatter", griddata=False)``. Use ``contour``, ``pcolormesh``,
@@ -543,9 +543,52 @@ of their old top-level field helpers. ``waterfall`` replaces the custom
 backend options are rejected by the accessor: select the required named method.
 The unused Mayavi installation extra has been removed.
 
-The old top-level methods/templates remain temporarily for the final removal
-stage. Their return, figure and styling policies are distinct from the accessor;
-``plot_xyzuvw`` now forwards to the Matplotlib accessor and returns its Axes.
-Folder pagination remains a later stage. Scientific ``d.griddata`` and shared
-image utilities are still independently callable; this plotting batch does not
-redesign those numerical APIs or image-display classes.
+The top-level plotting methods, PlotMixin, template classes and broad pyplot/
+Figure/Axes proxies have been removed. Replace ``d.fig`` with ``ax.figure``,
+``d.labels`` with ``d.plot.labels``, and formatting attributes such as ``d.title``
+with ``ax.set_title(...)``. Use the Figure's ``subplots``/``add_subplot`` methods
+or stonerplots contexts for layouts. An independent X scale uses ``ax.twiny()``;
+an independent Y scale uses ``d.plot.DoubleYAxis``. Styles now come from the
+required stonerplots dependency, rather than bundled template stylesheets.
+
+Scientific ``d.griddata`` and shared image utilities remain independently callable;
+the numerical gridding API and image-display classes retain their separate rules.
+
+.. _plotting-folders:
+
+Folder pages and bulk plotting
+==============================
+
+``PlotFolder.plot`` draws members serially on independent pages arranged with
+stonerplots ``MultiPanel``. It returns one primary Axes per member, in folder
+order, and ``folder.figures`` lists recent live pages. ``plots_per_page`` must be
+a positive integer; an empty folder returns an empty list and creates no figure.
+Unused page slots are removed. Single-panel, portrait and landscape layouts work,
+and each target uses its member's required 2D/3D projection. Auxiliary colour-bar
+axes are separate from the returned primary axes.
+
+``figsize``, ``dpi``, ``facecolor``, ``edgecolor``, ``frameon``, ``FigureClass`` and
+``layout`` configure page figures. Other arguments go to each ``Data.plot`` call,
+including ``kind``. ``folder.figure(**kwargs)`` creates an independent figure and
+remembers its figure options for later pages, without assigning member targets.
+``plot_extra(i, j, data)`` runs after each draw; both member index ``i`` and page
+slot ``j`` are zero-based, and the target is ``data.plot.ax``.
+
+``folder.each.plot(...)`` calls each member's automatic accessor;
+``folder.each.plot.line(...)`` and the other named drawing methods are supported.
+The equivalent dotted string form is ``folder.each("plot.line", ...)``. All these
+plotting calls run serially even when global multiprocessing/threading is enabled,
+and return results in folder order. Default calls do not write diagnostic
+function/argument metadata or collect accessors. Explicit ``_return="name"``
+retains the normal each-result storage contract. Generic user callables that draw
+plots should pass ``_serial=True`` themselves.
+
+Use ``ax=`` on bulk calls to overlay members on one explicit target. A paginated
+``folder.plot`` chooses its own targets and rejects ``ax``/``figure`` overrides.
+Configure layouts/styles outside bulk calls; properties, configuration and context
+classes such as ``folder.each.plot.labels`` or ``.SavedFigure`` are deliberately
+not exposed. Set individual ``data.plot.labels`` or use a surrounding style context.
+
+.. plot:: samples/folder_plotting.py
+    :include-source:
+    :outname: folder_pages

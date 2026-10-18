@@ -14,14 +14,14 @@ s1 = Data("Stitch-scan1.txt", setas="xy")
 s2 = Data("Stitch-scan2.txt", setas="xy")
 s3 = s2.clone
 s1.plot(fmt="b-", label="Set 1", linewidth=1)
-s2.fig = s1.fig
+# Overlay on the first measurement's axes.
 s2.plot(fmt="r-", label="Set 2", linewidth=1)
 
 # Stitch scan 2 onto scan 1
 s2.stitch(s1, overlap=100)
 
 s2.plot(fmt="b:", label="Set 2 Stictched on Set 1", linewidth=1)
-s2.title = "Stictching Example"
+s2.plot.ax.set_title("Stitching Example")
 
 # Tidy up the plot by adding annotation for the stitching co-efficients
 labels = ["A", "B", "C"]

@@ -20,7 +20,7 @@ d.plot(fmt="r.")
 d.polyfit(result=True, header="Polyfit")
 d.setas = "x..y"
 d.plot(fmt="m-", label="Polyfit")
-d.text(
+d.plot.ax.text(
     -9,
     450,
     "Polynominal co-efficients\n{d['2nd-order polyfit coefficients']}",
@@ -53,6 +53,6 @@ d.annotate_fit(
     y=0.65,
     fontdict={"size": "x-small", "color": "green"},
 )
-d.ylim(0, 500)
-d.title = "Qudratic Fitting"
+d.plot.ax.set_ylim(0, 500)
+d.plot.ax.set_title("Qudratic Fitting")
 plt.legend(loc=4)

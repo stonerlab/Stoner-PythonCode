@@ -32,4 +32,4 @@ g = g.outlier_detection(
 )
 g.plot(color="purple", label="Masked outliers")
 g = d.clone
-e.title = "Outlier detection test"
+e.plot.ax.set_title("Outlier detection test")

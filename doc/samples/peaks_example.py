@@ -10,15 +10,15 @@ d = Data("../../sample-data/New-XRay-Data.dql")
 e = d.clone
 d.plot()
 d.peaks(width=0.08, poly=4, significance=100, modify=True)
-d.labels[1] = "Peaks"
+d.plot.labels[1] = "Peaks"
 d.plot(fmt="ro")
 e.find_peaks(modify=True, prominence=80, width=0.01)
-e.labels[1] = "Find_Peaks"
+e.plot.labels[1] = "Find_Peaks"
 e.plot(ax=d.plot.ax, fmt="bx")
-d.title = "Finding peaks with peaks() and find_peaks()"
+d.plot.ax.set_title("Finding peaks with peaks() and find_peaks()")
 
 # Use the metadata that find_peaks produces
 colors = jet(linspace(0, 1, len(e)), alpha=0.5)
 for l, r, c in zip(e["left_ips"], e["right_ips"], colors):
-    ax = d.axes[d.ax]
+    ax = d.plot.ax
     ax.axvspan(l, r, facecolor=c)

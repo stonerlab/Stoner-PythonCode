@@ -48,7 +48,7 @@ Core Package and Modules
    keep these lists explicit so intentional public re-exports remain visible.
 
 .. automodapi:: Stoner.core.data
-    :skip: ClassTester, DataFileInterfacesMixin, DataFileOperatorsMixin, DataFilePropertyMixin, DataOwner, DataStorage, StorageBridgeMixin, FileManager, Iterable, Mapping, MutableSequence, PlotMixin, StonerLoadError, StonerSetasError, Tab_Delimited, TextWrapper, TypeHintedDict, metadataObject
+    :skip: ClassTester, DataFileInterfacesMixin, DataFileOperatorsMixin, DataFilePropertyMixin, DataOwner, DataStorage, StorageBridgeMixin, FileManager, Iterable, Mapping, MutableSequence, StonerLoadError, StonerSetasError, Tab_Delimited, TextWrapper, TypeHintedDict, metadataObject
     :no-inheritance-diagram:
     :headings: -~
 
@@ -109,10 +109,6 @@ Plot Package and Modules
     :no-inheritance-diagram:
     :headings: -~
 
-.. automodapi:: Stoner.plot.core
-    :no-inheritance-diagram:
-    :headings: -~
-
 .. automodapi:: Stoner.plot
     :no-inheritance-diagram:
     :headings: -~
@@ -170,14 +166,10 @@ signatures, keyword arguments and returned objects are retained.
 
     Format ticks with engineering prefixes. Also ``d.plot.TexEngFormatter``.
 
-.. automodapi:: Stoner.plot.formats
-    :headings: -~
-
 .. automodapi:: Stoner.plot.utils
     :headings: -~
 
 .. automodapi:: Stoner.plot.functions
-    :skip: getfullargspec, host_subplot, hsl2rgb, isanynone, isiterable, isnone, sp_griddata
     :no-inheritance-diagram:
     :no-main-docstr:
     :headings: -~

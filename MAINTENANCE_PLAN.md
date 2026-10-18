@@ -104,7 +104,7 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   on pushes and pull requests. Record successful results for the release commit;
   do not repeat those builds locally or reuse old files from `dist`.
 - Review metadata, licences, URLs, dependency declarations and archive size where
-  automated checks do not cover them. Check runtime assets including plot styles
+  automated checks do not cover them. Check runtime assets including OCR data and dependency-provided plot styles
   and OCR tessdata. Keep GPLv3 declarations consistent.
 - Publish the matching GitHub release only when authorised. Verify the release
   jobs build that tag, reject a version mismatch, and complete PyPI/Conda publication
@@ -159,19 +159,21 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
-- [ ] **Plotting redesign (stages 0-4 complete):** see
+- [ ] **Plotting redesign (stages 0-5 complete):** see
   [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) for the callable Data
   plotting accessor, stonerplots layouts/formatting and statistical conveniences.
   API changes are acceptable with aligned examples and documentation. The plan
   records ordinary/scientific/statistical plotting and direct stonerplots layout/style
   contexts, aligned examples and local validation. Stages 0/1 are committed as
   `374980c2e`; stage 2 as `ec0d62fa6`, using required stonerplots 1.9.6; stage 3
-  as `1c1293512`. Stage 4 remains uncommitted on
-  `codex/plotting-accessor-stages-0-1`; it selects direct Matplotlib/SciPy for
-  hist/box/KDE/hexbin after reviewing pandas delegation. Its full local suite
-  passes 1,271 tests; cached docs retain 88 reviewed warnings and zero unexpected.
-  Next is stage 5 folder pagination, bulk calls and final legacy removal. No push or release
-  is part of this batch.
+  as `1c1293512`; stage 4 as `4c948401e`, selecting direct Matplotlib/SciPy for
+  hist/box/KDE/hexbin after reviewing pandas delegation. Stage 5 remains uncommitted
+  on `codex/plotting-accessor-stages-0-1`: folder pagination and serial nested bulk
+  drawing use the accessor, and legacy methods/templates/proxies are removed.
+  Its full local suite passes 1,324 tests; cached docs retain 62 reviewed warnings
+  and zero unexpected, with only the 319 reviewed legacy API removals. Next is
+  stage 6 integrated lower-dependency, hosted and installed-distribution validation.
+  No push or release is part of this batch.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.

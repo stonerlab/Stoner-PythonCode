@@ -10,13 +10,13 @@ from Stoner.analysis.utils import format_error
 s1 = Data("Stitch-scan1.txt", setas="xy")
 s2 = Data("Stitch-scan2.txt", setas="xy")
 s1.plot(label="Set 1")
-s2.fig = s1.fig
+# Overlay on the first measurement's axes.
 s2.plot(label="Set 2")
 # Stitch scan 2 onto scan 1
 s2.stitch(s1)
 
 s2.plot(label="Stictched")
-s2.title = "Stictching Example"
+s2.plot.ax.set_title("Stitching Example")
 
 # Tidy up the plot by adding annotation for the stitching co-efficients
 labels = ["A", "B", "C"]

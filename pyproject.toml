@@ -75,7 +75,6 @@ include = ["Stoner*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-"Stoner.plot" = ["stylelib/*.mplstyle"]
 "Stoner.Image" = ["tessdata/*"]
 
 [tool.coverage.run]

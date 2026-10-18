@@ -1,9 +1,8 @@
-"""Provide the callable Data plotting accessor, fields and layout contexts.
+"""Provide the callable Data plotting accessor and stonerplots layout contexts.
 
 Use :py:attr:`Stoner.core.data.Data.plot` for automatic or explicit scientific
-plotting through :py:class:`Stoner.plot.accessor.DataPlotter`. The legacy
-:py:class:`Stoner.plot.core.PlotMixin` and template classes remain temporarily
-available for folder helpers and the final removal stage.
+plotting through :py:class:`Stoner.plot.accessor.DataPlotter`. Numerical
+``Data.griddata`` remains independently callable in :mod:`Stoner.plot.functions`.
 """
 
 from stonerplots import (
@@ -19,7 +18,6 @@ from stonerplots import (
 )
 
 from .accessor import DataPlotter
-from .core import PlotMixin
 
 __all__ = [
     "CentredAxes",
@@ -28,11 +26,9 @@ __all__ = [
     "InsetPlot",
     "MultiPanel",
     "PlotLabeller",
-    "PlotMixin",
     "SavedFigure",
     "StackVertical",
     "TexEngFormatter",
     "TexFormatter",
-    "formats",
     "utils",
 ]

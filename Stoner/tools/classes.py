@@ -254,10 +254,11 @@ def copy_into(source: Data, dest: Data) -> Data:
     else:
         dest.data = source.data.copy()
         dest.setas = source.setas
-    # Rendering targets are transient: copying measurements must not share or
-    # recreate a figure, nor apply the source's legacy template globally.
-    dest.__dict__["_figure"] = None
-    dest.__dict__["_subplots"] = []
+    # Rendering targets are transient; label configuration remains independent.
+    if "_labels" in source.__dict__:
+        dest.__dict__["_labels"] = copy.deepcopy(source.__dict__["_labels"])
+    else:
+        dest.__dict__.pop("_labels", None)
     if "_plot_state" in source.__dict__:
         dest.__dict__["_plot_state"] = copy.deepcopy(source.__dict__["_plot_state"])
     else:
@@ -265,7 +266,7 @@ def copy_into(source: Data, dest: Data) -> Data:
     for attr in source._public_attrs:
         if copied_storage and attr in {"data", "metadata", "column_headers", "setas", "mask"}:
             continue
-        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr in ["data", "fig"]:
+        if not hasattr(source, attr) or callable(getattr(source, attr)) or attr == "data":
             continue
         try:
             value = getattr(source, attr)

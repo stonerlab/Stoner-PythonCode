@@ -3,6 +3,8 @@ Working with Lots of Files
 **************************
 .. currentmodule:: Stoner.folders
 
+For paginated plots and named bulk drawing calls, see :ref:`plotting-folders`.
+
 
 A common case is that you have measured lots of data and now have a large stack of data
 files sitting in a tree of directories on disc and need to process all of them with some code.

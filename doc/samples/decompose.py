@@ -15,11 +15,11 @@ coeffs = d.polyfit(polynomial_order=3)
 str_coeffs = [format_val(c, mode="eng", places=1) for c in coeffs.ravel()]
 str_coeffs = reshape(array(str_coeffs), coeffs.shape)
 d.plot()
-d.text(
+d.plot.ax.text(
     -6,
     -800,
     f"Coefficients\n{str_coeffs}",
     fontdict={"size": "x-small"},
 )
-d.ylabel = "Data"
-d.title = "Decompose Example"
+d.plot.ax.set_ylabel("Data")
+d.plot.ax.set_title("Decompose Example")

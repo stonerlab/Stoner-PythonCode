@@ -104,7 +104,7 @@ def test_loader(mocked_dialog):
 def _event(data, name, **kwargs):
     """Make a fake event."""
     select = data._select
-    event = Event("fake", select.data.fig.canvas)
+    event = Event("fake", select.ax.figure.canvas)
     for k, v in kwargs.items():
         setattr(event, k, v)
     try:

@@ -50,6 +50,6 @@ d.annotate_fit(
     prefix="KittelEquation",
     mode="eng",
 )
-d.title = "Kittel Fit"
+d.plot.ax.set_title("Kittel Fit")
 d.plot.ax.xaxis.set_major_formatter(d.plot.TexEngFormatter())
 d.plot.ax.yaxis.set_major_formatter(d.plot.TexEngFormatter())

@@ -10,15 +10,20 @@ import os
 from copy import deepcopy
 from functools import partial
 from importlib import import_module
+from math import ceil, sqrt
+from numbers import Integral
 from os import path
+from typing import ClassVar
 
-from matplotlib.pyplot import figure, subplots
-from numpy import ceil, floor, mean, sqrt, std
+from matplotlib.pyplot import figure
+from numpy import asarray, mean, std
 from numpy.ma import masked_invalid
+from stonerplots import MultiPanel
 
 from ..compat import _pattern_type, get_filedialog, makedirs, path_types, string_types
 from ..core.base import metadataObject, string_to_type
 from ..core.exceptions import StonerUnrecognisedFormat, assertion
+from ..plot.state import PlotState, live_figure
 from ..tools import isiterable, make_Data
 from .core import BaseFolder
 from .core import _add_core_ as _base_add_core_
@@ -493,94 +498,125 @@ class DataFolder(DiskBasedFolderMixin, BaseFolder):
 
 
 class PlotFolder(DataFolder):
-    """A :py:class:`Stoner.folders.BaseFolder` that knows how to ploth its underlying data files."""
+    """Draw Data members serially on pages arranged with stonerplots.MultiPanel.
 
-    _defaults = {"plots_per_page": 12, "fig_defaults": {"figsize": (8, 6)}}
+    Attributes:
+        plots_per_page (int):
+            Maximum number of member plots per page, defaulting to 12.
+        fig_defaults (dict):
+            Default Matplotlib figure options, initially figsize=(8, 6).
+
+    Notes:
+        Inspect recent live pages with figures. Copying a folder detaches its
+        rendering state while retaining figure configuration.
+    """
+
+    _defaults: ClassVar[dict] = {"plots_per_page": 12, "fig_defaults": {"figsize": (8, 6)}}
 
     def __init__(self, *args, **kwargs):
-        """Fixup attributes."""
+        """Initialise page configuration without creating a figure."""
         super().__init__(*args, **kwargs)
-        self._figure = getattr(self, "_figure", [])
-        self._fig_args = getattr(self, "_fig_args", [])
-        self._fig_kwargs = getattr(self, "_fig_kwargs", {})
+        self._fig_kwargs = {}
+        self._plot_pages = []
 
-    def figure(self, *args, **kwargs):
-        """Pass through for :py:func:`matplotlib.pyplot.figure` but also takes a note of the arguments for later."""
-        self._fig_args = args
+    @property
+    def figures(self):
+        """Return recent live page figures without selecting or creating one."""
+        return [state.figure for state in self._plot_pages if live_figure(state.figure)]
 
-        self._fig_kwargs = getattr(self, "fig_defaults", {})
-        self._fig_kwargs.update(kwargs)
-        fig = figure(*self._fig_args, **self._fig_kwargs)
-        self.each.fig = fig
-        self._figure = fig
-        return self._figure
-
-    def plot(self, *args, **kwargs):
-        """Call the plot method for each metadataObject, but switching to a subplot each time.
-
-        Args:
-            args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
-            kwargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+    def figure(self, **kwargs):
+        """Create an independent figure and remember its options for later pages.
 
         Keyword Arguments:
-            plot_extra (callable(i,j,d)):
-                A callable that can carry out additional processing per plot after the plot is done
-            figsize(tuple(x,y)):
-                Size of the figure to create
-            dpi(float):
-                dots per inch on the figure
-            edgecolor,facecolor(matplotlib colour):
-                figure edge and frame colours.
-            frameon (bool):
-                Turns figure frames on or off
-            FigureClass(class):
-                Passed to matplotlib figure call.
-            plots_per_page(int):
-                maximum number of plots per figure.
+            **kwargs (dict):
+                Matplotlib figure options such as figsize, dpi and facecolor.
+                num is unsupported; figures are always independent. No member's
+                plotting target or style is changed.
 
         Returns:
-            A list of :py:class:`matplotlib.pyplot.Axes` instances.
+            matplotlib.figure.Figure:
+                New current figure; obtain an axes with figure.subplots().
+        """
+        if "num" in kwargs:
+            raise ValueError("Folder figures are independent; omit num.")
+        self._fig_kwargs = dict(deepcopy(self.fig_defaults), **kwargs)
+        result = figure(**self._fig_kwargs)
+        self._plot_pages = [PlotState(result)]
+        return result
+
+    def plot(self, *args, plots_per_page=None, plot_extra=None, **kwargs):
+        """Draw members in order on independent pages, returning primary axes.
+
+        Args:
+            *args (tuple):
+                Positional X/Y selectors for each Data.plot call.
+
+        Keyword Arguments:
+            plots_per_page (int or None):
+                Positive maximum per page, defaulting to this folder's setting.
+            plot_extra (callable or None):
+                Called after drawing as (member_index, page_slot, data), using
+                zero-based indices. The primary axes is data.plot.ax.
+            **kwargs (dict):
+                figsize, dpi, facecolor, edgecolor, frameon, FigureClass and
+                layout configure page figures. Other keywords go to Data.plot,
+                including kind. ax/figure overrides are unsupported on paginated
+                calls; use each.plot with explicit axes for overlays instead.
+
+        Returns:
+            list of matplotlib.axes.Axes:
+                One primary axes per member in order. Empty folders return an
+                empty list without creating figures. Unused page slots are removed.
+
+        Raises:
+            ValueError:
+                If pagination or target controls are invalid.
 
         Notes:
-            If the underlying type of the :py:class:`Stoner.core.base.metadataObject` instances in the
-            :py:class:`PlotFolder` lacks a **plot** method, then the instances are converted to
-            :py:class:`Stoner.core.data.Data`.
-
-            Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
-            from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
+            Rendering is serial regardless of multiprocessing options. Layouts
+            use MultiPanel with explicit targets, including mixed 2D/3D members.
+            Measurements are unchanged; callbacks may deliberately modify them.
+            Methods neither show/save nor apply an implicit stylesheet.
         """
-        plts = kwargs.pop("plots_per_page", getattr(self, "plots_per_page", len(self)))
-        plts = min(plts, len(self))
-
-        if not hasattr(self.type, "plot"):  # switch the objects to being Stoner.Data instances
-            for i, d in enumerate(self):
-                self[i] = make_Data(d)
-
-        plot_extra = kwargs.pop("plot_extra", lambda i, j, d: None)
-
-        fig_args = getattr(self, "_fig_args", [])
-        fig_kwargs = getattr(self, "_fig_kwargs", {})
-        for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
-            if arg in kwargs:
-                fig_kwargs[arg] = kwargs.pop(arg)
-        w, h = fig_kwargs.setdefault("figsize", (18, 12))
-        plt_x = int(floor(sqrt(plts * w / h)))
-        plt_y = int(ceil(plts / plt_x))
-        ret = []
-        j = -1
-        fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kwargs)
-        fignum = fig.number
-        for i, d in enumerate(self):
-            if i % plts == 0 and i != 0:
-                fig, axs = subplots(plt_x, plt_y, *fig_args, **fig_kwargs)
-                fignum = fig.number
-                j = 0
-            else:
-                j += 1
-            fig = figure(fignum)
-            kwargs["ax"] = axs.ravel()[j]
-            ret.append(d.plot(*args, **kwargs))
-            plot_extra(i, j, d)
-        for n in range(j + 1, plt_x * plt_y):
-            axs.ravel()[n].remove()
-        return ret
+        count = self.plots_per_page if plots_per_page is None else plots_per_page
+        if isinstance(count, bool) or not isinstance(count, Integral) or count < 1:
+            raise ValueError("plots_per_page must be a positive integer.")
+        if {"ax", "figure"}.intersection(kwargs):
+            raise ValueError("Paginated plots choose their axes; use each.plot with ax= for an overlay.")
+        if plot_extra is not None and not callable(plot_extra):
+            raise TypeError("plot_extra must be callable or None.")
+        figure_options = dict(deepcopy(self.fig_defaults), **self._fig_kwargs)
+        for name in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass", "layout"):
+            if name in kwargs:
+                figure_options[name] = kwargs.pop(name)
+        members = []
+        for index, data in enumerate(self):
+            if not hasattr(getattr(data, "plot", None), "_projection_for"):
+                data = make_Data(data)
+                self[index] = data
+            members.append((data, data.plot._projection_for(*args, **kwargs)))
+        self._plot_pages = []
+        result = []
+        for start in range(0, len(members), int(count)):
+            page = members[start:start+int(count)]
+            fig = figure(**figure_options)
+            self._plot_pages.append(PlotState(fig))
+            width, height = fig.get_size_inches()
+            columns = min(len(page), max(1, ceil(sqrt(len(page)*width/height))))
+            rows = ceil(len(page)/columns)
+            with MultiPanel((rows, columns), figure=fig, adjust_figsize=False,
+                            label_panels=False, same_aspect=False) as panels:
+                axes = asarray(panels.axes, dtype=object).reshape(-1)
+                for slot, (data, projection) in enumerate(page):
+                    ax = axes[slot]
+                    if ax.name != projection:
+                        spec = ax.get_subplotspec()
+                        ax.remove()
+                        ax = fig.add_subplot(spec, projection=projection)
+                        axes[slot] = ax
+                    result.append(data.plot(*args, ax=ax, **kwargs))
+                    if plot_extra is not None:
+                        plot_extra(start+slot, slot, data)
+                for ax in axes[len(page):]:
+                    ax.remove()
+        return result

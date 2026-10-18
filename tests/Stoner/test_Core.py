@@ -308,10 +308,12 @@ def test_dir():
     assert preview_api <= set(dir(selfd))
     bad_keys.update(preview_api)
     attrs = set(dir(selfd)) - bad_keys
-    assert len(attrs) == 214, "DataFile.__dir__ failed."
+    assert {"plot", "griddata", "load", "save", "column"} <= attrs
+    assert not {"plot_xy", "fig", "template", "showfig"}.intersection(attrs)
     selfd.setas.clear()
-    attrs = set(dir(selfd)) - bad_keys
-    assert len(attrs) == 212, "DataFile.__dir__ failed."
+    cleared = set(dir(selfd)) - bad_keys
+    assert attrs-cleared == {"x", "y"}, "Clearing roles did not remove role-dependent attributes."
+    assert cleared <= attrs
 
 
 def test_filter():

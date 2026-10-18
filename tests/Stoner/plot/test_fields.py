@@ -113,9 +113,9 @@ def test_colourbar_does_not_steal_current_or_explicit_axes(scalar):
     assert plt.gca() is ax
 
 
-def test_legacy_vector_entry_point_also_uses_matplotlib(monkeypatch):
+def test_explicit_vector_entry_point_uses_matplotlib():
     data = Data(np.arange(12, dtype=float).reshape(2, 6), setas="xyzuvw")
-    ax = data.plot_xyzuvw(color="blue")
+    ax = data.plot.vector3d(color="blue")
     assert isinstance(ax, Axes3D)
 
 

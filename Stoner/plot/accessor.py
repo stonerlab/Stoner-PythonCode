@@ -54,9 +54,6 @@ class DataPlotter:
         Field methods use Matplotlib and return their primary Axes as well.
     """
 
-    # Folder bulk calls inspect the name of their callable, including accessors.
-    __name__ = "plot"
-
     #: Save figures and temporarily apply styles using stonerplots.
     SavedFigure = SavedFigure
     #: Arrange a regular or irregular grid, yielding the upstream panel sequence.
@@ -122,9 +119,17 @@ class DataPlotter:
         self._data.__dict__["_labels"] = labels
 
     def _record(self, figure, ax=None):
-        """Record recent targets and keep the remaining field helpers in sync."""
+        """Record recent targets without changing the measurement's public attributes."""
         self._data.__dict__["_plot_state"] = PlotState(figure, ax)
-        self._data.__dict__["_figure"] = figure
+
+    def _projection_for(self, x=None, y=None, *, kind="auto", **kwargs):
+        """Resolve a folder member's required projection without creating axes."""
+        if kind not in ("auto", *_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
+            raise ValueError(f"Unknown plot kind {kind!r}.")
+        if kind == "auto":
+            selections = {key: kwargs[key] for key in ("z", "u", "v", "w", "startx", "no_guess") if key in kwargs}
+            kind = resolve_columns(self._data, x=x, y=y, **selections).kind
+        return "3d" if kind in ("surface", "matrix", "scatter3d", "vector3d", "voxels") else "rectilinear"
 
     def new_figure(self, **kwargs):
         """Create and select an independent figure without creating axes.

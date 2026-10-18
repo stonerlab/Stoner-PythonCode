@@ -43,4 +43,4 @@ d.annotate_fit(
     prefix="lmfit",
     mode="eng",
 )
-d.title = "Differential Lorentzian Fit"
+d.plot.ax.set_title("Differential Lorentzian Fit")

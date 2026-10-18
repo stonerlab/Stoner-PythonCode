@@ -19,7 +19,7 @@ def check(names, wheel):
         if not any(path.name == licence for path in paths):
             raise RuntimeError(f'Archive is missing {licence}')
     repo = Path(__file__).resolve().parents[1]
-    for pattern in ('Stoner/plot/stylelib/*.mplstyle', 'Stoner/Image/tessdata/*'):
+    for pattern in ('Stoner/Image/tessdata/*',):
         for source in repo.glob(pattern):
             if source.is_file():
                 relative = source.relative_to(repo).as_posix()

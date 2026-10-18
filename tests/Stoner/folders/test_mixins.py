@@ -18,14 +18,11 @@ import matplotlib.pyplot as plt
 
 from Stoner import Data, Options, __home__
 from Stoner.folders import PlotFolder
-from Stoner.plot.formats import DefaultPlotStyle, TexEngFormatter
 
 
 def extra(i, j, d):
     """Cleanup plot window."""
-    d.title = "{},{}".format(i, j)
-    d.xlabel("$V$")
-    d.ylabel("$I$")
+    d.plot.ax.set(title="{},{}".format(i, j), xlabel="$V$", ylabel="$I$")
 
 
 datadir = path.join(pth, "sample-data")
@@ -39,8 +36,7 @@ def test_plotting():
     assert len(plt.get_fignums()) == 1, "Plotting to a single figure in PlotFolder failed."
     selffldr.plot(plot_extra=extra)
     assert len(plt.get_fignums()) == 2, "Plotting to a single figure in PlotFolder failed."
-    selfax = selffldr[0].subplots
-    assert len(selfax) == 16, "Subplots check failed."
+    assert len(selffldr.figures[0].axes) == len(selffldr), "Unused panel slots were retained."
 
     plt.close("all")
     Options.multiprocessing = False

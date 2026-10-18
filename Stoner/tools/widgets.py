@@ -188,7 +188,7 @@ class RangeSelect:
         # rendering state or another open pyplot figure.
         from ..plot.state import live_figure
 
-        previous = {key: self.data.__dict__[key] for key in ("_figure", "_plot_state") if key in self.data.__dict__}
+        previous = self.data.__dict__.get("_plot_state")
         current = plt.gcf() if plt.get_fignums() else None
         fig = plt.figure()
         try:
@@ -206,9 +206,9 @@ class RangeSelect:
                 plt.pause(0.1)
         finally:
             plt.close(fig)
-            for key in ("_figure", "_plot_state"):
-                self.data.__dict__.pop(key, None)
-            self.data.__dict__.update(previous)
+            self.data.__dict__.pop("_plot_state", None)
+            if previous is not None:
+                self.data.__dict__["_plot_state"] = previous
             self.data.__dict__.pop("_select", None)
             if live_figure(current):
                 plt.figure(current.number)
@@ -249,7 +249,7 @@ class RangeSelect:
             if len(self.selection) > 0:
                 del self.selection[-1]
                 self.ax.patches[-1].remove()
-                self.data.fig.canvas.draw()
+                self.ax.figure.canvas.draw()
         elif event.key.lower() == "i":  # Invert selection
             self.invert = not self.invert
             col = "red" if self.invert else "green"

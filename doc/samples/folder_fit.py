@@ -47,8 +47,8 @@ fldr.each.setas[3] = "y"
 
 
 fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", ax=fig.gca(), _serial=True)
-fldr[0].legend(ncol=2, fontsize="xx-small")
-fldr[0].title = "Non-local IV Curves"
+fldr[0].plot.ax.legend(ncol=2, fontsize="xx-small")
+fldr[0].plot.ax.set_title("Non-local IV Curves")
 
 # Now take a slice through the metadata to get the files we want.
 result_2 = fldr.metadata.slice(["y", Quadratic], output="Data")

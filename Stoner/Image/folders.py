@@ -328,8 +328,8 @@ class ImageFolderMixin:
         """Call the plot method for each metadataObject, but switching to a subplot each time.
 
         Args:
-            args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
-            kwargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+            args: Positional arguments for each image's imshow method.
+            kwargs: Keyword arguments for each image's imshow method.
 
         Keyword Arguments:
             plot_extra (callable(i,j,d)):

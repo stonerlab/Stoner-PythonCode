@@ -1,5 +1,0 @@
-axes.prop_cycle:cycler("color","brgcmy")
-font.family: Comic Sans MS
-xtick.direction:inout
-ytick.direction:inout
-mathtext.default:regular

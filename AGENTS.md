@@ -9,7 +9,7 @@ Stoner is a scientific Python data-analysis package for experimental condensed-m
 - `Stoner/formats`: registry-based data and image loaders/savers. Preserve loader identification and priority behaviour when changing formats.
 - `Stoner/folders`: hierarchical collections, grouping, bulk operations, and HDF5/ZIP-backed folders.
 - `Stoner/Image`: image arrays/files/folders/stacks, Kerr microscopy, masks, and interactive selections.
-- `Stoner/plot`: plotting methods and packaged Matplotlib styles.
+- `Stoner/plot`: plotting accessor, scientific rendering and stonerplots exports.
 - `Stoner/tools`: shared decorators, options, file utilities, widgets, formatting, and test helpers.
 - `tests`: pytest suite and test data.
 - `doc`: Sphinx user guide, API documentation, and runnable examples under `doc/samples`.
@@ -81,7 +81,7 @@ Known consistency issues to verify rather than perpetuate include:
 - The project licence is GPLv3; keep `pyproject.toml`, `LICENSE.md`, `COPYING`, and the Conda recipe consistent with it.
 - Keep required runtime dependencies aligned across `pyproject.toml`, `requirements.txt`, and the Conda recipe. Testing and documentation environments may intentionally add role-specific dependencies.
 - Project URLs should use the current `stonerlab/Stoner-PythonCode` repository. Do not reintroduce legacy personal-repository URLs.
-- Package builds should be checked for non-Python runtime assets, especially `Stoner/plot/stylelib` and `Stoner/Image/tessdata`.
+- Package builds should be checked for non-Python runtime assets, especially `Stoner/Image/tessdata`. Plot styles are supplied by the required stonerplots dependency.
 
 Conda recipes and environment files should remain as pure Conda specifications as practical. Search `phygbu` and `conda-forge` for uncommon packages before adding a `pip:` subsection; report any dependency that is genuinely available only from pip as a packaging defect rather than silently mixing installers.
 

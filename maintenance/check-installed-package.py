@@ -78,12 +78,8 @@ def check_data_and_resources(checkout):
     if loaded.shape[0] <= 0 or loaded.shape[1] < 2:
         raise RuntimeError(f'Unexpected sample data shape: {loaded.shape}')
 
-    styles = files('Stoner.plot').joinpath('stylelib')
-    for source in (checkout / 'Stoner' / 'plot' / 'stylelib').glob('*.mplstyle'):
-        if not styles.joinpath(source.name).is_file():
-            raise RuntimeError(f'Missing plot style: {source.name}')
-    plt.style.use(str(styles.joinpath('default.mplstyle')))
-    data.plot()
+    with data.plot.style('stoner'):
+        data.plot()
     plt.close('all')
 
     resources = files('Stoner.Image').joinpath('tessdata')

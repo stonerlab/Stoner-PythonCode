@@ -8,6 +8,7 @@ from traceback import format_exc
 import numpy as np
 
 from ..compat import string_types
+from ..plot.accessor import _FIELD_KINDS, _STAT_KINDS, _XY_KINDS
 from ..tools import isiterable
 from .utils import get_pool
 
@@ -16,23 +17,58 @@ def _worker(d, **kwargs):
     """Support function to run an arbitrary function over a :py:class:`~Stoner.core.data.Data` object."""
     byname = kwargs.get("byname", False)
     func = kwargs.get("func", lambda x: x)
-    if byname:
-        func = getattr(d, func, lambda x: x)
-    args = kwargs.get("args", tuple())
-    kwargs = kwargs.get("kwargs", dict)
-    if hasattr(d, "setas"):
-        d["setas"] = list(d.setas)
-    d["args"] = args
-    d["kwargs"] = kwargs
-    d["func"] = func.__name__
+    plotting = byname and isinstance(func, str) and (func == "plot" or func.startswith("plot."))
+    args = kwargs.get("args", ())
+    kwargs = kwargs.get("kwargs", {})
     try:
+        if byname:
+            resolved = d
+            for part in func.split("."):
+                resolved = getattr(resolved, part)
+            func = resolved
+        if not plotting:
+            if hasattr(d, "setas"):
+                d["setas"] = list(d.setas)
+            d["args"] = args
+            d["kwargs"] = kwargs
+            d["func"] = getattr(func, "__name__", type(func).__name__)
         if byname:  # Ut's an instance bound moethod
             ret = func(*args, **kwargs)
         else:  # It's an arbitrary function
             ret = func(d, *args, **kwargs)
-    except Exception as e:  # pylint: disable=W0703 # Ok to be broad as user func could do anything
+    # User callbacks can fail arbitrarily; the bulk API returns their traceback.
+    except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         ret = e, format_exc()
     return (d, ret)
+
+
+class PlotProxy:
+    """Call member plotting accessors serially without collecting accessor objects.
+
+    Only drawing methods are exposed. Configure styles/layouts outside bulk calls
+    and pass explicit ax handles when overlaying members on a shared plot.
+    """
+
+    __slots__ = ("_folder",)
+
+    def __init__(self, folder):
+        """Retain the folder without loading members or creating figures."""
+        self._folder = folder
+
+    def __call__(self, *args, **kwargs):
+        """Return primary axes from automatic member plots in folder order."""
+        return self._folder.each("plot", *args, **kwargs)
+
+    def __getattr__(self, name):
+        """Return a serial bulk call for a declared DataPlotter drawing method."""
+        if name not in (*_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
+            raise AttributeError(f"each.plot exposes drawing methods, not {name!r}; configure individual accessors.")
+
+        def draw(*args, **kwargs):
+            return self._folder.each(f"plot.{name}", *args, **kwargs)
+
+        draw.__name__ = name
+        return draw
 
 
 class SetasWrapper(MutableSequence):
@@ -125,6 +161,11 @@ class Item:
         self._folder = folder
 
     @property
+    def plot(self):
+        """Return serial automatic/named member plotting calls, without reading data."""
+        return PlotProxy(self._folder)
+
+    @property
     def setas(self):
         """Return a proxy object for manipulating all the setas objects in a folder."""
         return SetasWrapper(self)
@@ -159,6 +200,10 @@ class Item:
             string. then return result is stored in the corresponding name.
         """
         # Just call the iter generator but assemble into a list.
+        if isinstance(func, str) and (func == "plot" or func.startswith("plot.")):
+            if func != "plot" and func[5:] not in (*_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
+                raise AttributeError(f"Unsupported bulk plotting method {func!r}.")
+            kwargs["_byname"] = True
         if isinstance(func, string_types) and "_byname" not in kwargs:
             if func in globals() and callable(globals()[func]):
                 func = globals()[func]
@@ -355,10 +400,18 @@ class Item:
             :py:class:`Stoner.core.base.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
+        if isinstance(func, str) and (func == "plot" or func.startswith("plot.")):
+            if func != "plot" and func[5:] not in (*_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
+                raise AttributeError(f"Unsupported bulk plotting method {func!r}.")
+            kwargs["_byname"] = True
         _return = kwargs.pop("_return", None)
         _byname = kwargs.pop("_byname", False)
         _serial = kwargs.pop("_serial", False)
-        self._folder.fetch()  # Prefetch thefolder in case we can do it in parallel
+        plotting = _byname and isinstance(func, str) and (func == "plot" or func.startswith("plot."))
+        if plotting:
+            _serial = True
+        else:
+            self._folder.fetch()  # Preserve generic bulk prefetching; plots load on the rendering thread.
         p, imap = get_pool(_serial)
         items = (item.clone for item in self._folder) if "_stack_owner" in self._folder.__dict__ else self._folder
         for ix, (new_d, ret) in enumerate(
@@ -375,7 +428,7 @@ class Item:
                     pass
             elif _return is not None:
                 if isinstance(_return, bool) and _return:
-                    _return = func.__name__
+                    _return = func.rsplit(".", 1)[-1] if isinstance(func, str) else getattr(func, "__name__", type(func).__name__)
                 new_d[_return] = ret
             name = self._folder.__names__()[ix]
             self._folder.__setter__(name, new_d)
