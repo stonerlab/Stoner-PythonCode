@@ -30,7 +30,8 @@ fit = d.differential_evolution(
     residuals=True,
 )
 
-with d.plot.style("stoner"):
+# Use Matplotlib's bundled font for portable mathematical annotations.
+with d.plot.style(["stoner", {"font.sans-serif": ["DejaVu Sans"]}]):
     figure = d.plot.new_figure(figsize=(7, 5))
     with d.plot.StackVertical(2, figure=figure, height_ratios=[2, 1], adjust_figsize=False) as panels:
 

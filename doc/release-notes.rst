@@ -18,6 +18,8 @@ stacked plots, double Y axes, insets and saving contexts. These are available fr
 the accessor with the normal ``from Stoner import Data`` import. Drawing inherits
 the caller's style; no legacy template is applied implicitly. Journal styles can
 differ visibly from the removed template stylesheets.
+Fitting examples use Matplotlib's bundled DejaVu Sans for portable mathematical
+annotations instead of relying on the platform's preferred sans-serif font.
 
 ``PlotFolder.plot`` now paginates with stonerplots and returns primary Axes in
 member order. ``folder.figures`` inspects recent live pages. Named bulk drawing

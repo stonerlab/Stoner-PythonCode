@@ -756,7 +756,43 @@ Windows evidence; do not substitute them for those remaining gates.
   Only the three affected scaling-cache files were refreshed.
 - Added unreleased plotting API/visual release notes and aligned testing guidance
   with the current Python, pandas/xarray and stonerplots support boundaries.
-  Fresh full, lower-dependency, documentation and hosted checks are still pending.
+  These changes were committed as `855f37010` and pushed to exercise the hosted
+  matrix and extended installed-distribution probes.
+
+Validation so far (reports under ignored `maintenance/runs/plotting-stage6`):
+
+- Current Windows environment, freshly verified against all 38 specifications:
+  **1,327 passed** in 231.86 seconds with two workers. Separate rendered-example
+  verification passed all 79 examples. The focused folder/archive run passed 37.
+- Fresh local lower-dependency environment, verified against all 38 specifications:
+  Python 3.12.15, NumPy 2.0.2, pandas 2.2.3, xarray 2024.10.0, SciPy 1.14.1,
+  Matplotlib 3.8.4 and stonerplots 1.9.6. **1,326 passed, 1 skipped** in 264.70
+  seconds. The skip characterises pandas 3's old accessor lifecycle and does not
+  apply to pandas 2.2. Rendering exposes existing Matplotlib 3.8/Pyparsing alias
+  deprecations; numerical/model warnings remain visible without new suppression.
+- Fresh cached Sphinx HTML: **62 reviewed warnings, zero unexpected**, with no
+  lost inventory entries or missing dynamic Data methods. All 38 required
+  accessor/context names are canonical. All 276 cached files remain present.
+  Source package-content, CI policy, repository-content and targeted Ruff checks
+  pass. The changed scaling cache, context/panel/inset/twin-axis, scalar, vector,
+  surface, statistical and replacement journal-style figures were reviewed.
+- Hosted Python 3.12-3.14 Linux jobs, the Python 3.12 lower-dependency job, both
+  Python 3.12/3.14 package jobs and the cached documentation build have passed at
+  `855f37010`. The package jobs built and strictly checked wheel/sdist metadata,
+  then independently installed and exercised each archive outside the checkout,
+  including the extended plotting probe. No distribution was built locally.
+- macOS validation is pending. Its initial stage 5 run failed inside FreeType
+  while rendering mathematical text; the stage 6 run must establish whether that
+  remains after example style isolation before closing the integrated gate.
+  The same five small-annotation fitting examples failed after isolation. A
+  second bounded change selects Matplotlib's bundled DejaVu Sans in these five
+  examples; the corresponding five cached groups are refreshed. This changes
+  example typography only, leaving caller-selected styles and scientific methods
+  untouched. Hosted verification of this font-selection hypothesis is pending.
+
+Current preview: `maintenance/runs/plotting-stage6/html` on port 8794, with
+release notes and the updated plotting guide checked in the browser. No merge,
+tag, release or publication has been performed.
 
 ## External sources inspected
 

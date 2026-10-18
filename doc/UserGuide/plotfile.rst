@@ -430,6 +430,12 @@ base style and journal modifiers such as ``aps``, ``aip`` and ``nature``. Styles
 affect artists as they are created; configure existing axes explicitly when
 changing their properties. No style is applied merely by calling ``d.plot()``.
 
+System font selection varies across platforms. The fitting examples select
+Matplotlib's bundled DejaVu Sans for portable small mathematical annotations::
+
+    with d.plot.style(["stoner", {"font.sans-serif": ["DejaVu Sans"]}]):
+        ax = d.plot()
+
 ``PlotLabeller`` formats newly created axes by default. Use
 ``include_open=True`` to include existing axes in all open figures, or configure
 a selected existing Axes directly. Supply formatter/locator classes or configured instances: stonerplots
