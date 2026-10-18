@@ -70,6 +70,18 @@ def main() -> None:
     require("MPLBACKEND: Agg" in docs, "Documentation CI must use a non-interactive Matplotlib backend.")
     require("git push" not in docs, "Documentation CI must not push generated cache changes.")
 
+    deployment = workflows["build_conda.yaml"]
+    require(deployment.count("ref: ${{ env.RELEASE_TAG }}") == 2,
+            "Both deployment jobs must build the selected immutable release tag.")
+    require("--python=3.12" in deployment and "--override-channels --channel phygbu --channel conda-forge" in deployment,
+            "Conda build/test must use supported Python and explicit runtime channels.")
+    require('set -euo pipefail' in deployment and 'test -s "${packages[0]}"' in deployment,
+            "Conda deployment must reject failed builds and missing/empty archives.")
+    require("uibcdf/action-build-and-upload-conda-packages" not in deployment,
+            "The release action that masked Conda build failures must not return.")
+    require("inputs.target != 'conda'" in deployment and "inputs.target != 'pypi'" in deployment,
+            "Manual recovery must be able to publish one registry without overwriting another.")
+
     require(not (ROOT / ".travis.yml").exists(), "The inactive Travis configuration is still present.")
     require("prospector" not in (ROOT / "Makefile").read_text(encoding="utf-8"), "Obsolete Prospector target remains.")
 

@@ -126,13 +126,19 @@ including the completed hosted-validation notes. The canonical version is now
 Release notes and the upgrade guide identify the plotting API break and required
 stonerplots 1.9.6 dependency. The existing `v0.12.0a1` release remains immutable.
 
-- [ ] Validate the final versioned release commit: supported platform matrix,
+- [x] Validate the final versioned release commit: supported platform matrix,
   lower dependencies, fresh installed distributions, cached documentation and
   repository/package policy checks.
-- [ ] Publish the matching `v0.12.0a2` GitHub prerelease after those checks pass.
+- [x] Publish the matching `v0.12.0a2` GitHub prerelease after those checks pass.
 - [ ] Verify PyPI wheel/sdist metadata and an independent installed-package smoke
   check, Conda publication and installed import/version test, and versioned
   documentation. Record exact release and deployment links.
+
+The initial Conda deployment reported success without an archive: its nested
+solver omitted `phygbu`, so stonerplots >=1.9.6 could not be resolved, and the
+third-party upload action masked the build failure. Deployment now builds/tests
+with explicit channels and Python 3.12, rejects missing archives, and supports a
+Conda-only recovery from the original release tag. The published tag is unchanged.
 
 ### Previous alpha
 

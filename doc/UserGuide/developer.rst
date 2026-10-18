@@ -334,8 +334,11 @@ For a release, commit the version change and create the matching ``v<version>``
 Git tag on that commit, then publish the GitHub release. The release jobs reject
 a tag that disagrees with the source before building/uploading packages or
 building documentation. They build the tagged checkout, including the docs.
-The check also accepts an unprefixed version tag. Manual workflow dispatches
-use the selected ref and do not require a release tag.
+The check also accepts an unprefixed version tag. Manual deployment dispatches
+require an existing ``release_tag`` and accept ``target=all``, ``conda`` or
+``pypi`` so one registry can be recovered independently. The deployment workflow
+can run from a later maintenance commit while checking out the immutable tag for
+the package source. Manual documentation dispatches use their selected ref.
 
 Package builds belong in GitHub Actions. ``Package validation`` builds wheel
 and sdist archives on pushes and pull requests, checks their contents, and

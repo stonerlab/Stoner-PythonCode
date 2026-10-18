@@ -3,14 +3,31 @@ name: Conda
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to build and publish
+        required: true
+        type: string
+      target:
+        description: Registry to publish
+        required: true
+        default: all
+        type: choice
+        options: [all, conda, pypi]
   release:
     types: ['released', 'prereleased']
 
-# workflow_dispatch:        # Un comment line if you also want to trigger action manually
+env:
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+
+defaults:
+  run:
+    shell: bash -l {0}
 
 jobs:
   conda_deployment_with_new_tag:
-    name: Conda deployment of package for platform ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    name: Conda deployment (Python 3.12)
+    if: github.event_name == 'release' || inputs.target != 'pypi'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -18,6 +35,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ env.RELEASE_TAG }}
       - name: Conda environment creation and activation
         uses: mamba-org/setup-micromamba@f457c30a868e4760d3a6fcea5f25dc655b8edf39 # v3.2.1
         with:
@@ -26,23 +45,34 @@ jobs:
           create-args: python=3.12
           init-shell: bash
       - name: Check release version
-        if: github.event_name == 'release'
-        shell: bash -l {0}
+        run: |
+          set -euo pipefail
+          python maintenance/check-release-version.py --tag "$RELEASE_TAG"
+          git log -1 --format='%H %s'
+      - name: Build and test Conda package
+        run: |
+          set -euo pipefail
+          conda build recipe --python=3.12 --no-anaconda-upload \
+            --override-channels --channel phygbu --channel conda-forge \
+            --output-folder "$RUNNER_TEMP/stoner-conda"
+          shopt -s nullglob
+          packages=("$RUNNER_TEMP/stoner-conda/noarch/"*.conda)
+          test "${#packages[@]}" -eq 1
+          test -s "${packages[0]}"
+      - name: Upload Conda package
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
-      - name: Build and upload the conda packages
-        uses: uibcdf/action-build-and-upload-conda-packages@aac1ccb14aa0d4d43a0b10c18b17c5285a746544 # v1.5.0
-        with:
-          meta_yaml_dir: recipe
-          overwrite: true
-          python-version: "3.12"
-          user: phygbu
-          label: main
-          token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
+          ANACONDA_API_TOKEN: ${{ secrets.ANACONDA }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          packages=("$RUNNER_TEMP/stoner-conda/noarch/"*.conda)
+          test "${#packages[@]}" -eq 1
+          test -s "${packages[0]}"
+          anaconda upload --user phygbu --label main "${packages[0]}"
 
   pypi_deployment:
     name: PyPI deployment of package
+    if: github.event_name == 'release' || inputs.target != 'conda'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -50,14 +80,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ env.RELEASE_TAG }}
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.12"
       - name: Check release version
-        if: github.event_name == 'release'
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
       - name: Install build tools
         run: pip install build==1.2.2
