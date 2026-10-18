@@ -93,7 +93,7 @@ if __name__ == "__main__":
         subfldr.setas[12] = "y"
         subfldr.plots_per_page = 9  # Plot results
         subfldr.plot(
-            figsize=(8, 8), fmt=["k.", "r-"], markersize=1, extra=extra
+            figsize=(8, 8), fmt=["k.", "r-"], markersize=1, plot_extra=extra
         )
 
         # Work with the overall results

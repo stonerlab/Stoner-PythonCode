@@ -291,6 +291,7 @@ def test_dir():
             "_abc_impl",
             "__annotations__",
             "__getstate__",
+            "__setstate__",
             "__static_attributes__",
             "__firstlineno__",
             '__annotate_func__',

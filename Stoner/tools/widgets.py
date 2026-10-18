@@ -184,31 +184,34 @@ class RangeSelect:
         else:
             self.ycol = list(range(self.data.shape[1]))
             self.ycol.remove(self.xcol)
-        # Preserve figure settings before creating plot
-        fig_tmp = getattr(self.data, "fig", None), getattr(self.data, "axes", None)
+        # This transient selector owns its figure, not the measurement's recent
+        # rendering state or another open pyplot figure.
+        from ..plot.state import live_figure
+
+        previous = {key: self.data.__dict__[key] for key in ("_figure", "_plot_state") if key in self.data.__dict__}
+        current = plt.gcf() if plt.get_fignums() else None
         fig = plt.figure()
-        self.data.plot(self.xcol, self.ycol, figure=fig)
-        self.data.title = "Select Data and press Enter to confirm\nEsc to cancel, i to invert selection."
-        self.ax = self.data.axes[-1]
-        if mpl_version.minor >= 5:
-            kwargs = {"props": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
-        else:
-            kwargs = {"rectprops": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
-        self.selector = SpanSelector(
-            self.ax,
-            self.onselect,
-            "horizontal",
-            useblit=True,
-            **kwargs,
-        )
-        fig.canvas.mpl_connect("key_press_event", self.keypress)
-        while not self.finished:
-            plt.pause(0.1)
-        # Clean up and restore the figure settings
-        plt.close(self.data.fig.number)
-        if fig_tmp[0] is not None and fig_tmp[0] in plt.get_fignums():
-            self.data.fig = fig_tmp[0]
-        delattr(self.data, "_select")
+        try:
+            self.ax = self.data.plot.line(
+                self.xcol, self.ycol, ax=fig.add_subplot(),
+                title="Select Data and press Enter to confirm\nEsc to cancel, i to invert selection.",
+            )
+            if mpl_version.minor >= 5:
+                kwargs = {"props": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
+            else:
+                kwargs = {"rectprops": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
+            self.selector = SpanSelector(self.ax, self.onselect, "horizontal", useblit=True, **kwargs)
+            fig.canvas.mpl_connect("key_press_event", self.keypress)
+            while not self.finished:
+                plt.pause(0.1)
+        finally:
+            plt.close(fig)
+            for key in ("_figure", "_plot_state"):
+                self.data.__dict__.pop(key, None)
+            self.data.__dict__.update(previous)
+            self.data.__dict__.pop("_select", None)
+            if live_figure(current):
+                plt.figure(current.number)
         idx = np.ones(len(self.data), dtype=bool)
         for ix, selection in enumerate(self.selection):
             if ix == 0:

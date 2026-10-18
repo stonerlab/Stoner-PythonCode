@@ -1,13 +1,12 @@
-"""Stoner.plot sub-package - contains classes and functions for visuallising data.
+"""Provide the callable Data plotting accessor and retained legacy field helpers.
 
-Most of the plotting functionality is provided by the :class:`.PlotMixin` mixin class which is available through the
-:py:class:`~Stoner.core.data.Data` class.
-
-The :mod:`.formats` module provides a set of template classes for producing different plot styles and formats. The
-:py:mod:`Stoner.plot.util` module provides
-some handy utility functions.
+Use :py:attr:`Stoner.core.data.Data.plot` for automatic or explicit ordinary
+plotting through :py:class:`Stoner.plot.accessor.DataPlotter`. The legacy
+:py:class:`Stoner.plot.core.PlotMixin` and template classes remain available for
+field and layout examples awaiting the later refactor stages.
 """
 
 from .core import PlotMixin
+from .accessor import DataPlotter
 
-__all__ = ["PlotMixin", "formats", "utils"]
+__all__ = ["DataPlotter", "PlotMixin", "formats", "utils"]

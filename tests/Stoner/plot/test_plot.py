@@ -77,30 +77,30 @@ def test_set_no_figs():
     assert Options.no_figs, "Default setting for no_figs option is incorrect."
     Options.no_figs = True
     e = selfd.clone
-    ret = e.plot()
-    assert ret is None, "Output of Data.plot() was not None when no_figs is True  and showfig is not set({})".format(
+    ret = e.plot_xy()
+    assert ret is None, "Output of Data.plot_xy() was not None when no_figs is True  and showfig is not set({})".format(
         type(ret)
     )
     Options.no_figs = False
     e.showfig = False
-    ret = e.plot()
-    assert isinstance(ret, Data), "Return value of Data.plot() was not self when Data.showfig=False ({})".format(
+    ret = e.plot_xy()
+    assert isinstance(ret, Data), "Return value of Data.plot_xy() was not self when Data.showfig=False ({})".format(
         type(ret)
     )
     e.showfig = True
-    ret = e.plot()
-    assert isinstance(ret, Figure), "Return value of Data.plot() was not Figure when Data.showfig=False({})".format(
+    ret = e.plot_xy()
+    assert isinstance(ret, Figure), "Return value of Data.plot_xy() was not Figure when Data.showfig=False({})".format(
         type(ret)
     )
     e.showfig = None
-    ret = e.plot()
-    assert ret is None, "Output of Data.plot() was not None when Data.showfig is None ({})".format(type(ret))
+    ret = e.plot_xy()
+    assert ret is None, "Output of Data.plot_xy() was not None when Data.showfig is None ({})".format(type(ret))
     Options.no_figs = True
     assert Options.no_figs, "set_option no_figs failed."
     selfd = Data(path.join(__home__, "..", "sample-data", "New-XRay-Data.dql"))
     selfd.showfig = False
-    ret = selfd.plot()
-    assert ret is None, "Output of Data.plot() was not None when no_figs is True ({})".format(type(ret))
+    ret = selfd.plot_xy()
+    assert ret is None, "Output of Data.plot_xy() was not None when no_figs is True ({})".format(type(ret))
     Options.no_figs = True
     plt.close("all")
 
@@ -133,18 +133,18 @@ def test_plot_magic():
     plt.figure()
     fn = plt.get_fignums()[0]
     selfd.fig = fn
-    selfd.plot()
+    selfd.plot_xy()
     assert len(plt.get_fignums()) == 1, "Setting Data.fig by integer failed."
     plt.close("all")
-    selfd.plot(plotter=plt.semilogy)
+    selfd.plot_xy(plotter=plt.semilogy)
     assert selfd.ax_lines[0].get_c() == "k", "Auto formatting of plot failed"
-    selfd.plot(figure=False)
-    selfd.plot(figure=1)
+    selfd.plot_xy(figure=False)
+    selfd.plot_xy(figure=1)
     assert len(plt.get_fignums()) == 2, "Plotting setting figure failed"
     assert len(selfd.ax_lines) == 2, "Plotting setting figure failed"
     selfd.figure(2)
-    selfd.plot()
-    selfd.plot(figure=True)
+    selfd.plot_xy()
+    selfd.plot_xy(figure=True)
     assert len(plt.get_fignums()) == 2, "Plotting setting figure failed"
     assert len(selfd.ax_lines) == 3, "Plotting setting figure failed"
     plt.close("all")

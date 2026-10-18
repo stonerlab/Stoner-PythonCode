@@ -159,6 +159,15 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
+- [ ] **Plotting redesign (stages 0 and 1 complete):** see
+  [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) for the callable Data
+  plotting accessor, stonerplots layouts/formatting and bounded pandas delegation.
+  API changes are acceptable with aligned examples and documentation. The plan
+  records the callable ordinary plotting implementation, full local tests and
+  documentation/API validation. Next is stage 2 layout/formatting integration,
+  including upstream stonerplots issues #79 and #80. Changes remain uncommitted
+  on `codex/plotting-accessor-stages-0-1`; no release or push is part of this batch.
+
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.
   Review and address these in bounded maintenance batches after alpha release

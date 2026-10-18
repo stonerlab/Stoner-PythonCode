@@ -16,4 +16,4 @@ d = Data(
         stylename="dark", context="talk", palette="muted"
     ),
 )
-d.plot(multiple="y2")
+d.plot_xy(multiple="y2")

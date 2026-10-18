@@ -5,7 +5,6 @@ from numpy import exp, linspace, random
 from scipy.odr import Model as odrModel
 
 from Stoner import Data
-from Stoner.plot.utils import errorfill
 
 random.seed(12345)  # Ensure consistent random numbers!
 
@@ -49,8 +48,8 @@ d.setas = "xy"
 d.plot(fmt="ro")
 
 d.setas = "x.y"
-d.plot(plotter=errorfill, yerr=0.2, color="orange")
-d.plot(plotter=errorfill, xerr=0.1, color="orange", label=None)
+d.plot.errorfill(yerr=0.2, color="orange")
+d.plot.errorfill(xerr=0.1, color="orange", label=None)
 d.xticklabels = [[]]
 d.xlabel = ""
 

@@ -1,422 +1,215 @@
 *************
 Plotting Data
 *************
+
 .. currentmodule:: Stoner
 
-Data plotting and visualisation is handled by :py:class:`Stoner.core.data.Data`.
-The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing
-publication-ready figures. Plotting support is included as part of the ``Data`` class.
+The :py:attr:`~Stoner.core.data.Data.plot` property returns a callable
+:py:class:`~Stoner.plot.accessor.DataPlotter`. Use it to infer a scientific plot,
+or select a particular ordinary plot through its methods. Only the normal
+Stoner import is needed::
 
-Quick Plots
-===========
+    from Stoner import Data
 
-The :py:class:`~Stoner.core.data.Data` class is intended to help you make plots that look reasonably good with as little hassle as possible.
-In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
-for containing error bars. This is done with the :py:attr:`~Stoner.core.data.Data.setas` attribute (see :ref:`setas` for full details).
-Once this is done, the plotting methods will use these to try to make a sensible plot.::
+    d = Data("sample.txt", setas="xye")
+    ax = d.plot()
+    ax.set_title("My measurement")
+    ax.figure.savefig("measurement.pdf")
 
-    p.setas="xye"
-    p.plot()
+Drawing returns the Matplotlib ``Axes`` and does not show or save it. Notebook
+display follows Matplotlib's normal behaviour; elsewhere use ``d.plot.show()``.
+Legacy ``showfig`` and ``Options.no_figs`` settings do not affect accessor returns
+or suppress drawing.
 
-:py:meth:`~Stoner.core.data.Data.plot` is simply a wrapper that inspects the available columns and calls either :py:meth:`~Stoner.core.data.Data.plot_xy` or
-:py:meth:`~Stoner.core.data.Data.plot_xyz` as appropriate. All keyword arguments to :py:meth:`~Stoner.core.data.Data.plot` are passed on to the actual plotting method.
-
-Each :py:class:`~Stoner.core.data.Data` instance maintains its own Matplotlib ``Figure`` in the :py:attr:`Stoner.plot.core.PlotMixin.fig` attribute. If no
-figure is set when the :py:meth:`~Stoner.core.data.Data.plot` method is called, a new figure will be created.
-
-Types of Plot
-=============
-
-:py:meth:`~Stoner.core.data.Data.plot` will try to make the most sensible choice of plot depending on which columns you have specified and
-the number of axes represented.
-
-    * x-y, x-y+-e, x-y-e-y-e etc. data will default to a 2D scatter plot with error bars and call :py:meth:`~Stoner.core.data.Data.plot_xy`
-    * x-y-z data will be converted to a grid and plotted as a 3D surface plot and call :py:meth:`~Stoner.core.data.Data.plot_xyz`
-    * x-y-u-v (i.e. 2D vector fields) and x-y-u-v-w (3D vectors on a 2D plane) will be plotted as a colour image
-        where the colour is mapped to a hue-saturation-luminance scale. The hue gives the in-plane angle while the luminance gives
-        the out-of-plane component of the vector field. These are handled with :py:meth:`~Stoner.core.data.Data.plot_xyuv`
-    * x-y-z-u-v-w data (i.e. 3D vector field on a 3D grid) is represented as a 3D quiver plot with coloured quivers (using the same H-S-L
-        colour space mapping as above) assuming mayavi is importable, otherwise using a 3D quiver plot from matplotlib's 3D toolkit.
-        :py:meth:`~Stoner.core.data.Data.plot_xyzuvw` handles the work for this case.
-
-An alternative plot type for data with error bars is :py:func:`Stoner.plot.utils.errorfill`. This uses a shaded line as an
-alternative to the error bars, where the shading of the line varies from intense to transparent the further one
-gets from the mean value. For 3D x-y-z plotting there is a :py:meth:`~Stoner.core.data.Data.contour_xyz` and a :py:meth:`~Stoner.core.data.Data.image_plot`
-methods available. These give contour plots and 2D colour-map plots respectively.
-
-Plotting 2D data
-----------------
-
-*x-y* plots are produced by the :py:meth:`~Stoner.core.data.Data.plot_xy` method::
-
-   p.plot_xy(column_x, column_y)
-   p.plot_xy(column_x, [y1,y2])
-   p.plot_xy(x,y,'ro')
-   p.plot_xy(x,[y1,y2],['ro','b-'])
-   p.plot_xy(x,y,title='My Plot')
-   p.plot_xy(x,y,figure=2)
-   p.plot_xy(x,y,plotter=pyplot.semilogy)
-
-The examples above demonstrate several use cases of the :py:meth:`~Stoner.core.data.Data.plot_xy` method. The first parameter is always
-the x column that contains the data, the second is the y-data either as a single column or list of columns.
-The third parameter is the style of the plot (lines, points, colours etc) and can either be a list if the y-column data
-is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure
-is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed
-through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log
-plots. By default, :py:meth:`~Stoner.core.data.Data.plot_xy` uses the **pyplot.plot** function to produce linear scaler plots. There
-are a number of useful plotter functions that will work like this
-
-*   [:py:func:`matplotlib.pyplot.semilogx`,:py:func:`matplotlib.pyplot.semilogy`] These two plotting functions will produce
-    log-linear plots, with semilogx making the x-axes the log one and semilogy the y-axis.
-*   [:py:func:`matplotlib.pyplot.loglog`] Like the semi-log plots, this will produce a log-log plot.
-*   [:py:func:`matplotlib.pyplot.errorbar`] this particularly useful plotting function will draw error bars. The values for
-    the error bars are passed as keyword arguments, *xerr* or *yerr*. In standard matplotlib, these can be numpy arrays or constants.
-    :py:meth:`~Stoner.core.data.Data.plot_xy` extends this by intercepting these arguments and offering some short cuts::
-
-         p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',xerr=[5,'dTemp+'])
-
-    This is equivalent to doing something like::
-
-         p.plot_xy(x,y,plotter=errorbar,yerr=p.column('dResistance'),xerr=[p.column(5),p.column('dTemp+')])
-
-    If you actually want to pass a constant to the *x/yerr* keywords you should use a float rather than an integer.
-
-The X and Y axis label will be set from the column headers.
-
-
-Plotting 3D Data
-----------------
-
-A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot
-these on a surface plot or 3D plot. The :py:meth:`~Stoner.core.data.Data.plot_xyz` method can be used for this.
-
-.. plot:: samples/3D_plot.py
-    :include-source:
-    :outname: 3D
-
-.. plot:: samples/colormap_plot.py
-    :include-source:
-    :outname: colormap
-
-By default the :py:meth:`~Stoner.core.data.Data.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
-(specifically, the matplotlib provided *matplotlib.cm.jet* colour-map. This can be overridden with the *cmap* keyword
-parameter. If a simple 2D surface plot is required, then the *plotter* parameter should be set to a suitable function
-such as **pyplot.pcolor**.
-
-Like :py:meth:`~Stoner.core.data.Data.plot_xy`, a *figure* parameter can be used to control the figure being used and any additional
-keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
-
-Another option is a contour plot based on ``(x,y,z)`` data points. This can be done with the :py:meth:`~Stoner.core.data.Data.contour_xyz`
-method.
-
-.. plot:: samples/contour_plot.py
-    :include-source:
-    :outname: contour
-
-Both :py:meth:`~Stoner.core.data.Data.plot_xyz` and :py:meth:`~Stoner.core.data.Data.contour_xyz` make use of a call to :py:meth:`~Stoner.core.data.Data.griddata`
-which is a utility method of the :py:class:`~Stoner.core.data.Data` -- essentially this is just a pass through method to the underlying
-*scipy.interpolate.griddata** function. The shape of the grid is determined through a combination of the *xlim*, *ylim*
-and *shape* arguments.::
-
-    X,Y,Z=p.griddata(xcol,ycol,zcol,shape=(100,100))
-    X,Y,Z=p.griddata(xcol,ycol,zcol,xlim=(-10,10,100),ylim=(-10,10,100))
-
-If a *xlim* or *ylim* arguments are provided and are two tuples, then they set the maximum and minimum values of the relevant axis.
-If they are three tuples, then the third argument is the number of points along that axis and overrides any setting in the *shape*
-parameter. If the *xlim* or *ylim* parameters are not presents, then the maximum and minimum values of the relevant axis are used.
-If no *shape* information is provided, the default is to make the shape a square of sidelength given by the square root of the
-number of points.
-
- Alternatively, if your data is already in the form of a matrix, you can use the :py:meth:`~Stoner.core.data.Data.plot_matrix` method.
-
-.. plot:: samples/matrix_plot.py
-    :include-source:
-    :outname: matrix
-
-The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the
-file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and
-the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults
-to the built in 'jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set
-either from the meta data item 'ylabel or to 'Y Data'. Likewise the z axis label is set from the corresponding metadata
-item or defaults to 'Z Data;. In the second form these parameters are all set explicitly. The *xvals* parameter can be
-either a column index (integer or string) or a list, tuple or numpy array. The *yvals* parameter can be either a row number
-(integer) or list,tuple or numpy array. Other parameters (including *plotter*, *figure* etc) work as for the
-:py:meth:`~Stoner.core.data.Data.plot_xyz` method. The *rectang* parameter is used to select only part of the data array to use as the matrix.
-It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth
-elements are the number of rows and columns to include. If *xvals* or *yvals* specify particular column or rows then the
-origin of the matrix is moved to be one column further over and one row further down (ie the matrix is to the right and
-below the columns and rows used to generate the x and y data values). The final example illustrates how to generate a
-new 2D surface plot in a new window using default matrix setup.
-
-Plotting 3D Scalar Fields
--------------------------
-
-A 3D scalar field is a some :math:`F(x,y,z)` where the function returns a scalar value. One option is to plot this as a
-volumetric plot where a colour is interpolated over a volume. For this purpose, :py:meth:`~Stoner.core.data.Data.plot_voxels` is provided.
-The function will accept x,y and z column indices for the coordinates (or take them from the :py:attr:`~Stoner.core.data.Data.setas`
-attribute) and a fourth, *u* column index (or the column defined as holding the *u* data in the :py:attr:`~Stoner.core.data.Data.setas`
-attribute). Keyword arguments *visible* or $filled$ indicate whether a particular voxel will be plotted or not to
-allow a cross-section of the 3D coordinate space to be shown.
-
-.. plot:: samples/voxel_plot.py
-    :include-source:
-    :outname: voxel2
-
-Plotting Vector Fields
-----------------------
-
-For these purposes a vector field is a set of points $(x,y,z)$ at which a 3D vector $(u,v,w)$ is defined. Often vector
-fields are visualised by using quiver plots, where a small arrow points in the direction of the vector and whose length
-is proportional to the magnitude. This can also be supplemented by colour information - in one scheme a hue-saturation-luminance
-space is used, where hue describes a direction in the x-y plane, the luminance describes the vertical component and the
-saturation, the relative magnitude. This is a common scheme in micro-magnetics, so is supported in the Stoner package.
-Following the naming convention above, the :py:meth:`~Stoner.core.data.Data.plot_xyzuvw` method handles these plots.::
-
-    p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol)
-    p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,colors="color_data")
-    p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,colors=np.random(len(p))
-    p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,mode='arrow')
-    p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,mode='arrow',colors=True,scale_factor=1.0)
-    p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,plotter=myplotfunc)
-
-The :py:meth:`~Stoner.core.data.Data.plot_xyzuvw` method uses a default vector field plot function that is based on mayavi from
-Enthought. The import is done when the plot is required to speed loading times for the :py:mod:`Stoner.plot` when
-2D plotting only is required. If the mayavi package is not available, then matplotlib's 3D quiver plot is used as a fall back.
-
-The first example above will result in a plot using flat arrows coloured according to the vector magnitude. The second
-example will instead colour them using the specified column from the data. The third example demonstrates passing in
-a separate list of colour data. In both of these cases the relative magnitude of the colour data is mapped to a colour map
-(which can be given via a colormap keyword parameter).
-
-The next example demonstrates changing the glyph used for each data point - in this case to a 3D arrow, but "cone" is also
-a common choice. In the fifth example, the *colors* keyword is set to *True*. This signals the plotting function to colour
-the individual points with the H-S-L colour space as described above. The other keyword parameter, *scale_factor*, is
-passed through (as indeed are any other keyword parameters) to the underlying mayavi.mlab functions. The final example
-demonstrates the use of the *plotter* keyword, analogous to the 2D and 3D examples to switch the actual plotting function.
-
-As the mayavi.mlab quiver3d plotting function doesn't support a title, and axes labels by default, these are not used by
-default in this function.
-
-As usual, the default operation should still produce reasonable graphs.
-
-.. plot:: samples/Vectorfield.py
-    :include-source:
-    :outname: vector_field
-
-
-
-Very Quick Plotting
-===================
-
-For convenience, a :py:meth:`~Stoner.core.data.Data.plot` method is defined that will try to work out the necessary details. In combination
-with the :py:attr:`~Stoner.core.data.Data.setas` attribute it allows very quick plots to be constructed.
+.. autoattribute:: Stoner.core.data.Data.plot
 
 .. plot:: samples/single_plot.py
     :include-source:
     :outname: single
 
+Automatic and explicit plotting
+===============================
 
-Getting More Control on the Figure
-==================================
+Explicit selectors override assigned :ref:`setas` roles. Unassigned tables retain
+these column-count guesses: two columns mean XY, three mean XY and Y uncertainty,
+and four mean X, X uncertainty, Y and Y uncertainty. Five/six columns retain the
+existing XYUVW/XYZUVW vector-field guesses. Three unassigned columns do not mean
+a surface. Use ``no_guess=True`` to disable column-count guesses.
 
-It is useful to be able to get access to the matplotlib figure that is used for each :py:class:`~Stoner.core.data.Data` instance. The
-:py:attr:`Stoner.plot.core.PlotMixin.fig` attribute can do this, thus allowing plots from multiple :py:class:`~Stoner.core.data.Data` instances to be
-combined in a single figure.::
+The ordinary methods available in this stage are:
 
-    p1.plot_xy(0,1,'r-')
-    p2.plot_xy(0,1,'bo',figure=p1.fig)
+* ``d.plot()``: infer lines or error bars from resolved coordinates/uncertainties;
+* ``d.plot.line()``: plain lines, ignoring assigned uncertainties;
+* ``d.plot.scatter()``: points drawn with Matplotlib's scatter method;
+* ``d.plot.errorbar()``: data and inferred/explicit uncertainties;
+* ``d.plot.errorfill()``: lines with shaded uncertainty in one direction.
 
-Likewise, the :py:attr:`Stoner.plot.core.PlotMixin.axes` attribute returns the current axes object of the current figure in use by the :py:class:`~Stoner.core.data.Data`
-instance. It always returns a list of Matplotlib ``Axes`` instances, one for each subplot on the figure.
+``d.plot(kind="scatter", ...)`` and ``d.plot.scatter(...)`` share an
+implementation. Named ordinary methods override field roles, so
+``d.plot.line(x=0, y=1)`` works on an XYZ table. Automatic field plots remain
+available through retained scientific helpers. Named field methods and pandas
+conveniences are later stages and are not yet accessor methods.
 
-There's a couple of extra methods that just pass through to the pyplot equivalents::
-
-    p.draw()
-    p.show()
-
-Setting Axes Labels, Plot Titles and Legends
---------------------------------------------
-
-:py:class:`~Stoner.core.data.Data` provides some useful attributes for setting specific aspects of the figures. Any
-*get_* and *set_* method of a Matplotlib ``Axes`` or ``Figure`` can be read or
-written as a :py:class:`~Stoner.core.data.Data` attribute.
-
-Internally this is implemented by calling the corresponding method on the current axes or figure of the :py:class:`~Stoner.core.data.Data`
-instance. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
-keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
-element tuple.
-
-Particularly useful attributes include:
-
--   ``Data.xlabel`` and ``Data.ylabel`` set the x- and y-axis labels.
--   ``Data.title`` sets the plot title.
--   ``Data.xlim`` and ``Data.ylim`` accept a tuple to set the x- and y-axis limits.
--   :py:attr:`Stoner.plot.core.PlotMixin.labels` sets a list of strings that are the preferred name for each column. This is to
-        allow the plotting routines to provide a default name for an axis label that can be different from the
-        name of the column used for indexing purposes. If the label for a column is not set, then the column
-        header is used instead. If a column header is changed, then the ``Data.labels`` attribute will
-        be overwritten.
-
-In addition, you can read any function of :py:mod:`matplotlib.pyplot`, or method of a Matplotlib ``Axes`` or
-``Figure``, as an attribute of :py:class:`~Stoner.core.data.Data`. This allows one to call the methods directly on
-the Data instance without needing to extract a reference to the current axes or figure.::
-
-    p.xlabel="My X Axis"
-    p.set_xlabel("My X Axis")
-
-are both equivalent, but the latter form allows access to the full keyword arguments of the x axis label control.
-
-Plotting on Second Y (or X) Axes
---------------------------------
-
-To plot a second curve using the same x axis, but a different y axis scale, the :py:meth:`~Stoner.core.data.Data.y2` method is
-provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.
-
-.. plot:: samples/double_y_plot.py
+.. plot:: samples/plot_accessor.py
     :include-source:
-    :outname: double_y
+    :outname: accessor
 
-There is an equivalent :py:meth:`~Stoner.core.data.Data.x2` method to create a second set of axes with a common y scale but different x scales.
+Columns, uncertainties and exclusions
+=====================================
 
-To work out which set of axes you are currently working with, the :py:attr:`Stoner.plot.core.PlotMixin.ax` attribute can be read or set::
+Use ``x`` and ``y`` for selectors. Y can select several columns sharing one axes.
+Exact headers, compiled regular expressions, slices, lists and integer positions
+follow Stoner's existing rules, including duplicate-header handling. ``startx``
+selects the assigned X group at or after that column position::
 
-    p.plot_xy(0,1)
-    p.y2()
-    p.plot_xy(0,2)
-    p.ax=0 # Set back to first x,y1 plot
-    p.label="Plot 1"
-    p.ax=1 # Set to the second
-    p.ylabel="Plot 2"
+    ax = d.plot(x="Field", y=["Signal A", "Signal B"])
+    ax = d.plot.errorbar(y=[3, 1])  # errors follow their assigned Y columns
+    ax = d.plot.line(0, 1, fmt="r-")
 
+Only X and Y are positional in the automatic call. Supply ``fmt`` as a keyword:
+``d.plot(0, 1, "r-")`` is no longer accepted. ``fmt`` and ``label`` can be lists
+with one entry per selected Y column. Scatter uses ``marker`` and ``color``
+instead of ``fmt``.
 
-Plot Templates
-==============
+Error specifications have these meanings:
 
-.. currentmodule:: Stoner.plot.formats
+* ``None`` infers assigned/guessed errors; ``False`` disables them.
+* An integer, string or compiled pattern selects one uncertainty column.
+* A floating scalar supplies constant uncertainty, for example ``yerr=0.2``.
+* NumPy arrays provide values of shape ``(N,)`` or asymmetric errors ``(2, N)``.
+* A Y list/tuple matching the trace count supplies specifications per trace. Use
+  an array to avoid ambiguity with a list of column selectors.
 
-Frequently one wishes to create many plots that have a similar set of formatting options - for example
-in a thesis or to conform to a journal's specifications. The :py:mod:`Stoner.plot.formats` in conjunctions with
-the :py:attr:`Stoner.plot.core.PlotMixin.template` attribute can help here.
+Explicit coordinates can still inherit column-count uncertainty guesses; use
+``kind="line"`` for a plain line. Plain line/scatter calls reject explicit errors
+and direct you to an uncertainty method. For example::
 
-A :py:attr:`Stoner.plot.core.PlotMixin.template` is a set of instructions that controls the default settings for many
-aspects of a matplotlib figure's style. In addition the template allows for pyplot formatting commands to be
-executed during the process of plotting a figure.
+    ax = d.plot.errorbar(xerr=False, yerr=0.2, fmt="o", capsize=3)
+    ax = d.plot.errorfill(yerr=0.2, xerr=False, color="orange", alpha_fill=0.3)
 
-.. plot:: samples/template2.py
-    :include-source:
-    :outname:  template2
+Shaded errors support one direction per trace. Disable the other explicitly when
+both roles are assigned; the accessor does not silently discard one direction.
+Exclusions and non-finite values are applied independently to each trace and its
+errors. Excluded points are removed, so lines connect remaining points. Unrelated
+column masks do not remove samples from a selected trace. Invalid error shapes,
+negative uncertainties at plotted samples, and empty/all-excluded requests raise
+an error before drawing. Measurements, masks, roles and metadata are unchanged.
 
-The template can either be set by passing a subclass of :py:class:`Stoner.plot.formats.DefaultPlotStyle` or
-a particular instance of such a subclass. This latter option allows you to override the default plot attribute
-settings defined by the template class with your own choice - or indeed, to add further style attributes. This
-can be done by either calling the template and passing it arguments as keywords, or by setting attributes directly on the template.
-Because the matplotlib *rcParams* dictionary has keys that are not valid Python identifiers, periods in the rcParams keys
-are translated as underscores and thus underscores become double underscores. When setting attributes on the template directly,
-prefix the translated rcParam key with *template_*.
+The raw ``d.data.plot()`` interface uses pandas semantics and does not apply
+Stoner's separate exclusions. Mask-aware pandas-backed plotting is a later stage.
 
-.. plot:: samples/template.py
-    :include-source:
-    :outname:  template
+Figures, axes and formatting
+============================
 
-You can also copy the style template from one plot to the next.
+Ordinary plots use explicit ``ax=`` or Matplotlib's current compatible axes. They
+create a figure only when needed; a new Data object does not imply a new figure.
+An incompatible implicit projection creates a suitable figure, while an
+incompatible explicit axes raises an error::
 
-    q=Data()
-    q.template=p.template
+    ax = d.plot()
+    other.plot.line(x=0, y=1, ax=ax)
+    figure = d.plot.new_figure(figsize=(7, 4))
+    ax = d.plot.line()
 
-Matplotlib makes use of stylesheets - essentially separate files of matplotlibrc entries. The template classes have a stylename
-parameter that controls which stylesheet is used. This can be either one of the built-in styles (see ``matplotlib.style.available``)
-or refer to a file on disc. The template will search for the file (named *<stylename>*.mplstyle) in.
+``d.plot.ax``, ``d.plot.figure`` and ``d.plot.axes`` inspect recent live targets
+without selecting or creating a figure. Obtain the Figure from ``ax.figure``.
+Copy, deepcopy, clone, construction from another Data, and pickle round trips
+preserve label configuration while detaching live figures/axes.
 
-    #. the same directory as the template class file is,
-    #. a subdirectory called *stylelib* of the directory where the template class file is or,
-    #. the stylelib subfolder of the Stoner package directory.
+Drawing inherits current rcParams and existing axes styling. It does not reset
+styles or apply a legacy template. Use the returned Axes for formatting::
 
-Where a template class is a subclass of the  :py:class:`DefaultPlotStyle`, the stylesheets are inherited in the same order as the
-class hierarchy.
+    ax = d.plot(fmt="o", xlabel="Field / T", ylabel="Signal", title="Run 1")
+    ax.set_xscale("log")
+    ax.set_ylim(0, 10)
+    ax.legend(loc="upper left")
 
-Changing the value of :py:attr:`Stoner.plot.formats.DefaultPlotStyle.stylename` will force the template to recalculate the stylesheet hierarchy, refinding
-the paths to the stylesheets. You can also do any in-place modifications to the template stylesheet list (e.g. appending or extending it).
+``xscale`` and ``yscale`` are also accessor arguments. ``d.plot.labels`` provides
+mutable column-label overrides, defaulting to column headers. Plain text labels,
+titles and styling strings retain metadata ``{name}`` interpolation; strings
+containing ``$`` retain their mathematical markup.
 
-Further customisation is possible by creating a subclass of :py:class:`DefaultPlotStyle` and overriding the
-:py:meth:`DefaultPlotStyle.customise` method and :py:meth:`DefaultPlotStyle.customise_axes` method.
+Omitted annotations fill empty labels/titles; subsequent traces do not overwrite
+existing text. Explicit values override it; ``None`` clears it. ``label=None``
+suppresses that series' legend entry and ``legend=False`` stops automatic legend
+updates. User formatters and locators are left alone.
 
-One-off changes in the template can also be done. The :py:class:`DefaultPlotStyle` behaves like a dictionary - the keys of the dictionary
-correspond to settings of the :py:class:`matplotlib.RcParams`. Reading the keys of the :py:class:`DefaultPlotStyle` returns the current settings,
-setting them changes the underlying :py:class:`matplotlib.RcParams` and deleting them resets the settings back to defaults. The
-:py:class:`DefaultPlotStyle` otherwise behaves like a standard mutable-mapping object, supporting the expected methods such as *get*, *pop*,
-*keys*, *values* etc. It is also possible to access the settings as attributes of the template except that they are prefixed with *template_* and
-periods '.' are replaced with double underscores '__'.
+Explicit ``ax=`` works with externally imported Matplotlib/stonerplots contexts.
+The one-import stonerplots context attributes, styles and replacement template
+examples are the next stage and are not yet exposed on the accessor.
 
-.. plot:: samples/plotstyles/customising.py
-    :include-source:
-    :outname:  customising
+Migration of ordinary calls
+===========================
 
-The seaborn package offers many options for producing visually appealing plots with a higher-level abstraction of the Matplotlib API.
-The :py:class:`SeabornPlotStyle` template class offers a quick interface to using this. It takes attributes :py:attr:`SeabornPlotStyle.stylename`,
-:py:attr:`SeabornPlotStyle.context` and :py:attr:`SeabornPlotStyle.palette` to set the corresponding seaborn settings.
+.. list-table::
+    :header-rows: 1
+    :widths: 45 55
 
+    * - Previous call
+      - Current accessor call
+    * - ``d.plot_xy(0, 1, "r-")``
+      - ``d.plot.line(0, 1, fmt="r-")`` or automatic ``d.plot(0, 1, fmt="r-")``
+    * - ``d.plot(xcol=0, ycol=1)``
+      - ``d.plot(x=0, y=1)``
+    * - ``d.plot(figure=False)``
+      - ``d.plot.new_figure(); d.plot()``
+    * - ``d.plot(figure=existing_figure)``
+      - ``d.plot(ax=existing_axes)``
+    * - ``d.plot(plotter=errorfill, ...)``
+      - ``d.plot.errorfill(...)``
+    * - ``d.plot(plotter=pyplot.semilogy, ...)``
+      - ``d.plot(yscale="log", ...)``
+    * - conditional Figure/Data/None return
+      - always the primary Axes; use ``ax.figure`` or retain ``d`` explicitly
 
-.. currentmodule:: Stoner.plot
+The ordinary accessor rejects ``figure``, ``template``, ``plotter``, ``multiple``,
+``show_plot``, ``save_filename`` and old ``*col`` keywords. Retained top-level
+methods are temporary migration support, not aliases on the new accessor.
 
+Retained field, layout and template examples
+============================================
 
-Making Multi-plot Figures
--------------------------
+These families await later stages. Their templates, figure selection and return
+policies are distinct from ordinary accessor drawing. Scientific gridding remains
+available separately through ``d.griddata``.
 
-Adding an Inset to a Figure
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The :py:func:`Stoner.plot.functions.inset` function, exposed as ``Data.inset``, can be used to create an inset in the current figure. Subsequent plots
-will be to the inset until a new set of axes is chosen. The inset's Matplotlib ``Axes`` instance is appended to the
-:py:attr:`Stoner.plot.core.PlotMixin.axes` attribute.
-
-.. plot:: samples/inset_plot.py
-    :include-source:
-    :outname:  inset
-
-The *loc* parameter specifies the location of the inset, the width and height the size (either as a percentage or
-fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
-inset.
-
-    *   *loc* = 1 top-right inset
-    *   *loc* = 2 top left inset
-    *   *loc* = 3 bottom left inset
-    *   *loc* = 4 bottom right inset
-    *   *loc* = 5 mid-right inset
-    *   *loc* = 6 mid-left inset
-    *   *loc* = 7 mid-right inset
-    *   *loc* = 8 mid-bottom inset
-    *   *loc* = 9 mid-top inset
-    *   *loc* = 0 centre inset
-
-
-Handling More than One Column of Y Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-By default if :py:meth:`~Stoner.core.data.Data.plot_xy` is given more than one column of y data, it will plot all
-of the data on a single y-axis scale. If the y data to be plotted is not of a similar order of magnitude
-this can result in a less than helpful plot.
+* ``plot_xyz``, ``contour_xyz`` and ``image_plot`` handle scalar fields.
+* ``plot_xyuv``, ``plot_xyzuvw`` and ``plot_voxels`` handle vector/volume plots.
+* ``plot_xy(multiple="panels"/"subplots"/"y2")``, inset/twin-axis helpers and
+  template classes remain the temporary layout interface.
 
 .. plot:: samples/common_y_plot.py
     :include-source:
     :outname: common_y
 
-The :py:meth:`~Stoner.core.data.Data.plot_xy` method (and also the :py:meth:`~Stoner.core.data.Data.plot` method when doing 2D plots) will take
-a keyword argument *multiple* that can offer a number of alternatives. If you have just two y columns, or the the
-second and subsequent ones can fit on a common scale, then a double-y axis plot might be appropriate.
+.. plot:: samples/double_y_plot.py
+    :include-source:
+    :outname: double_y
+
+.. plot:: samples/inset_plot.py
+    :include-source:
+    :outname: inset
 
 .. plot:: samples/multiple_y2_plot.py
     :include-source:
-    :outname:  multiple_y
-
-Alternatively, if you want the various y plots to form multiple panels with a common x-axis (a *ganged plot*) then
-*multiple* can be set of *panels*.
+    :outname: multiple_y
 
 .. plot:: samples/multiple_panels_plot.py
     :include-source:
-    :outname:  panels
-
-Finally, you can also simply plot the y data as a grid of independent subplots.
+    :outname: panels
 
 .. plot:: samples/subplot_plot.py
     :include-source:
-    :outname:  subplots
+    :outname: subplots
+
+.. plot:: samples/template.py
+    :include-source:
+    :outname: template
+
+.. plot:: samples/template2.py
+    :include-source:
+    :outname: template2
+
+.. plot:: samples/plotstyles/customising.py
+    :include-source:
+    :outname: customising

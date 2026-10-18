@@ -578,7 +578,6 @@ class PlotFolder(DataFolder):
             else:
                 j += 1
             fig = figure(fignum)
-            kwargs["figure"] = fig
             kwargs["ax"] = axs.ravel()[j]
             ret.append(d.plot(*args, **kwargs))
             plot_extra(i, j, d)

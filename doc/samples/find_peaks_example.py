@@ -24,7 +24,7 @@ d.find_peaks(
     modify=True, prominence=(0.045, 20), width=(0.02, 0.1), distance=0.01
 )
 d.labels[1] = "Find_Peaks"
-d.plot(figure=d.fig, fmt="bx")
+d.plot(ax=d.plot.ax, fmt="bx")
 d.title = "Finding peaks with peaks() and find_peaks()"
 
 # Use the metadata that find_peaks produces

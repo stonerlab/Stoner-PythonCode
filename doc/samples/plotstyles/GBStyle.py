@@ -11,4 +11,4 @@ filename = path.realpath(
 )
 d = Data(filename, setas="xy", template=GBPlotStyle)
 d.y = d.y - (max(d.y) / 2)
-d.plot()
+d.plot_xy()

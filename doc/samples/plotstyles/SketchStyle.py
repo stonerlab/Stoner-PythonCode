@@ -10,4 +10,4 @@ filename = path.realpath(
     path.join(__home__, "..", "doc", "samples", "sample.txt")
 )
 d = Data(filename, setas="xy", template=SketchPlot)
-d.plot()
+d.plot_xy()

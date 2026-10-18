@@ -2,14 +2,11 @@
 
 # pylint: disable=invalid-name
 from Stoner import Data
-from Stoner.plot.utils import errorfill
 
 d = Data("Noisy_Data.txt", setas="xy")
 
-d.template.fig_height = 6
-d.template.fig_width = 8
-d.figure(figsize=(6, 8), no_axes=True)
-d.subplot(411)
+figure = d.plot.new_figure(figsize=(6, 8), layout="constrained")
+axes = figure.subplots(4, 1, sharex=True)
 
 e = d.bin(bins=0.05, mode="lin")
 f = d.bin(bins=0.25, mode="lin")
@@ -21,11 +18,7 @@ for i, (binned, label) in enumerate(
     zip([e, f, g, h], ["0.05 Linear", "0.25 Linear", "0.05 Log", "50 log"])
 ):
     binned.data = binned.to_numpy()[binned.to_numpy()[:, 2] != 0]
-    binned.subplot(411 + i)
-    d.plot(fmt="k,", capsize=2.0)
-    binned.fig = d.fig
-    binned.plot(plotter=errorfill, label=label, color="red")
-
-    d.xlim = (1, 6)
-    d.ylim(-100.0, 400)
-    d.title = "Bin demo" if i == 0 else ""
+    ax = axes[i]
+    d.plot.line(fmt="k,", ax=ax)
+    binned.plot.errorfill(label=label, color="red", ax=ax)
+    ax.set(xlim=(1, 6), ylim=(-100, 400), title="Bin demo" if i == 0 else "")

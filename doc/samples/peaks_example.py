@@ -14,7 +14,7 @@ d.labels[1] = "Peaks"
 d.plot(fmt="ro")
 e.find_peaks(modify=True, prominence=80, width=0.01)
 e.labels[1] = "Find_Peaks"
-e.plot(figure=d.fig, fmt="bx")
+e.plot(ax=d.plot.ax, fmt="bx")
 d.title = "Finding peaks with peaks() and find_peaks()"
 
 # Use the metadata that find_peaks produces

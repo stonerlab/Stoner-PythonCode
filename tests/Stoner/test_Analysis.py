@@ -140,7 +140,7 @@ def test_integrate():
     result = d["Total_M"]
     assert np.isclose(result, 4.19687459365, 7), "Integrate returned the wrong result!"
     d.setas[-1] = "y"
-    d.plot(multiple="y2")
+    d.plot_xy(multiple="y2")
     assert len(d.axes) == 2, "Failed to produce plot with double y-axis"
     d.close("all")
     d.setas = "x..y"

@@ -37,7 +37,7 @@ def test_plotting():
     selffldr.plots_per_page = len(selffldr)
     selffldr.plot(figsize=(18, 12), title="{iterator}")
     assert len(plt.get_fignums()) == 1, "Plotting to a single figure in PlotFolder failed."
-    selffldr.plot(extra=extra)
+    selffldr.plot(plot_extra=extra)
     assert len(plt.get_fignums()) == 2, "Plotting to a single figure in PlotFolder failed."
     selfax = selffldr[0].subplots
     assert len(selfax) == 16, "Subplots check failed."

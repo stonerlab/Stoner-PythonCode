@@ -105,6 +105,10 @@ Fitting Models
 Plot Package and Modules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. automodapi:: Stoner.plot.accessor
+    :no-inheritance-diagram:
+    :headings: -~
+
 .. automodapi:: Stoner.plot.core
     :no-inheritance-diagram:
     :headings: -~

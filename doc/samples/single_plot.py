@@ -5,4 +5,6 @@ from Stoner import Data
 
 p = Data("sample.txt", setas="xy")
 # Quick plot
-p.plot()
+ax = p.plot()
+# Drawing returns the Matplotlib Axes; showing/saving is explicit.
+ax.set_title("A quick plot")

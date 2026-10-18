@@ -30,14 +30,14 @@ d.template["figure.autolayout"] = True
 d.figure(no_axes=True)
 d.subplot(212)
 # Pkot with our customised defaults
-d.plot()
+d.plot_xy()
 d.grid(True, color="green", linestyle="-.")
 d.title = "Customised Plot settings"
 # Reset the template to defaults and switch to next subplot
 d.template.clear()
 d.subplot(211)
 # Plot with defaults
-d.plot()
+d.plot_xy()
 d.title = "Style Default settings"
 # Fixup layout
 d.figwidth = 7  # Magic pass through attribute access

@@ -62,5 +62,5 @@ total.column_headers = [
 ]
 # Do the plot
 total.figure(figsize=(12, 9))
-total.plot(plotter=joy_division, griddata=False, projection=None, linewidth=1)
+total.plot_xyz(plotter=joy_division, griddata=False, projection=None, linewidth=1)
 total.legend(ncol=3, labelcolor="white", fontsize="xx-small")

@@ -93,7 +93,7 @@ class Data(
         filename (str):
             Current filename, also used as the default by load and save operations.
         title (str):
-            Title used when plotting the data.
+            Legacy plot-title proxy. Use the returned Axes for ordinary plotting.
         header (str):
             Read-only formatted header for the tabular representation.
         records (ndarray):
@@ -333,8 +333,10 @@ class Data(
         """Initialise from datafile."""
         memo = {id(arg): self}
         for key, value in arg.__dict__.items():
-            if key != "_baseclass":
+            if key not in {"_baseclass", "_figure", "_subplots"}:
                 self.__dict__[key] = copy.deepcopy(value, memo)
+        self.__dict__["_figure"] = None
+        self.__dict__["_subplots"] = []
         self.__dict__.pop("_data", None)
         self.__dict__.pop("_metadata", None)
         self.__dict__["_storage_owner"]._editing = False
@@ -440,11 +442,36 @@ class Data(
         result = cls()
         memo[id(self)] = result
         for key, value in self.__dict__.items():
-            object.__setattr__(result, key, copy.deepcopy(value, memo))
+            if key not in {"_figure", "_subplots"}:
+                object.__setattr__(result, key, copy.deepcopy(value, memo))
+        result.__dict__["_figure"] = None
+        result.__dict__["_subplots"] = []
         result.__dict__.pop("_data", None)
         result.__dict__.pop("_metadata", None)
         result.__dict__["_storage_owner"]._editing = False
         return result
+
+    def __getstate__(self):
+        """Serialise measurements and plot configuration without live rendering targets."""
+        return dict(self.__dict__, _figure=None, _subplots=[])
+
+    def __setstate__(self, state):
+        """Restore serialised measurement state without invoking attribute proxies."""
+        self.__dict__.update(state)
+
+    @property
+    def plot(self):
+        """Return a callable plotting accessor without creating a figure or reading data.
+
+        Returns:
+            Stoner.plot.accessor.DataPlotter:
+                Accessor bound to this Data. Call it to infer a scientific plot,
+                or use line, scatter, errorbar or errorfill explicitly. Drawing
+                returns a Matplotlib Axes and does not show or save the figure.
+        """
+        from ..plot.accessor import DataPlotter
+
+        return DataPlotter(self)
 
     def __dir__(self):
         """Returns the attributes of the current object.
