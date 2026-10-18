@@ -1,17 +1,14 @@
-"""Simple plotting with a template."""
+"""Customise the colour cycle with a temporary style context."""
 
 # pylint: disable=invalid-name, no-member
 from cycler import cycler
 
 from Stoner import Data
-from Stoner.plot.formats import DefaultPlotStyle
 
-p = Data("sample.txt", setas="xy", template=DefaultPlotStyle())
-p.template(  # pylint: disable=not-callable
-    axes__prop_cycle=cycler("color", ["r", "g", "b"])
-)  # pylint: disable=not-callable
-p.plot_xy()
-p.y = p.y + 1.0
-p.plot_xy()
-p.y = p.y + 1.0
-p.plot_xy()
+p = Data("sample.txt", setas="xy")
+with p.plot.style(["stoner", {"axes.prop_cycle": cycler("color", ["r", "g", "b"])}]):
+    ax = p.plot.line(label="Original")
+    p.y = p.y + 1.0
+    p.plot.line(ax=ax, label="Offset by 1")
+    p.y = p.y + 1.0
+    p.plot.line(ax=ax, label="Offset by 2")

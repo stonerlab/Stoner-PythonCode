@@ -1,19 +1,13 @@
-"""Example plot style using Seaborn plot styling template."""
+"""Combine Seaborn's native contexts with Stoner plotting and double axes."""
 
-# pylint: disable=invalid-name
-import os.path as path
+from pathlib import Path
+
+import seaborn as sns
 
 from Stoner import Data, __home__
-from Stoner.plot.formats import SeabornPlotStyle
 
-filename = path.realpath(
-    path.join(__home__, "..", "doc", "samples", "sample.txt")
-)
-d = Data(
-    filename,
-    setas="xyy",
-    template=SeabornPlotStyle(
-        stylename="dark", context="talk", palette="muted"
-    ),
-)
-d.plot_xy(multiple="y2")
+d = Data(Path(__home__).parent / "doc" / "samples" / "sample.txt", setas="xyy")
+with sns.axes_style("dark"), sns.plotting_context("talk"), sns.color_palette("muted"):
+    ax = d.plot.line(y=1, legend=False)
+    with d.plot.DoubleYAxis(ax=ax) as right:
+        d.plot.line(y=2, ax=right, color="red", legend=False)

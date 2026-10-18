@@ -1,6 +1,6 @@
 # Plotting redesign
 
-Status: stages 0 and 1 completed on 18 October 2026.
+Status: stages 0, 1 and 2 completed on 18 October 2026.
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -25,9 +25,9 @@ The main scope is Data/table plotting and its folder consumers. Audit image APIs
 for shared utilities and routing, but do not redesign image display/widgets as an
 incidental part of this work.
 
-The contracts below were accepted for stages 0 and 1. Later-stage APIs are still
-planned: the stage 1 accessor exposes ordinary plotting, while field/layout
-helpers remain temporarily on their legacy entry points.
+The accessor now exposes ordinary plotting and the stonerplots layout/formatting
+contexts. Field helpers and folder pagination remain on transitional legacy paths
+until their later stages.
 
 ## What the code currently does
 
@@ -280,7 +280,8 @@ pandas semantics; its operations do not automatically apply Stoner exclusions.
 
 Reviewed upstream `main` at
 [`c2500ee0e374657d426a63c3ef6893c95826ee18`](https://github.com/stonerlab/stonerplots/tree/c2500ee0e374657d426a63c3ef6893c95826ee18),
-which declares 1.9.5. The installed 1.9.5 was also exercised locally.
+which declares 1.9.5. That initial investigation exercised installed 1.9.5;
+stage 2 subsequently verified the released 1.9.6 fixes as recorded below.
 
 | Candidate | Recommendation |
 | --- | --- |
@@ -294,16 +295,16 @@ which declares 1.9.5. The installed 1.9.5 was also exercised locally.
 Filed reproducible upstream bug reports after checking existing issues:
 [stonerplots #79](https://github.com/stonerlab/stonerplots/issues/79) tracks inset
 restoration and [#80](https://github.com/stonerlab/stonerplots/issues/80) tracks
-per-axis formatter/locator ownership. Optional strict-xfail probes in
-`tests/Stoner/plot/test_upstream_contexts.py` record both 1.9.5 regressions. These
-are prerequisites for the later layout integration, not fixes in this checkout.
+per-axis formatter/locator ownership. Both probes now pass as required regressions
+against stonerplots 1.9.6 in `tests/Stoner/plot/test_upstream_contexts.py`. The
+generic fixes remain upstream; Stoner does not copy or monkeypatch them.
 
 Also test restoration on exceptions, nested panels/insets/double axes, saving an
 existing figure (`SavedFigure(use=...)`), and repeated context instances. These
 tests should establish what upstream actually guarantees. Fix generic context
 issues in stonerplots rather than adding Stoner-specific copies.
 
-PyPI reports 1.9.5. The phygbu channel contains
+At the initial investigation, PyPI reported 1.9.5 and the phygbu channel contained
 `noarch/stonerplots-1.9.5-pyh2b07374_0.conda` and
 `noarch/bad_path-0.2.1-py_0.conda`; both conda-forge package endpoints returned 404
 on inspection. There is no demonstrated need for a pip subsection. The minimum
@@ -350,7 +351,7 @@ the transition; they are not a commitment to permanent public compatibility.
   unported field helpers until stage 5. Update core tests, fitting annotation
   calls, copying helpers and simple examples together. Gate: automatic/explicit plots resolve the same
   request, changing Data is visible on the next call, and drawing never mutates it.
-- [ ] **2. Integrate stonerplots layouts and formatting.** Add the dependency and
+- [x] **2. Integrate stonerplots layouts and formatting.** Add the dependency and
   public contexts, replace templates and `multiple`, migrate inset/double-axis/
   panel/style examples. Verify/fix upstream restoration and formatting before
   choosing the dependency floor. Gate: the full nested-context examples work
@@ -445,7 +446,7 @@ Read-only probes additionally reproduced:
 ### Stages 0 and 1 handover
 
 Implemented on `codex/plotting-accessor-stages-0-1`, based on the inspected `devel`
-revision. Changes are uncommitted. The original plan and maintenance-link changes
+revision. Committed as `374980c2e` before starting stage 2. The original plan and maintenance-link changes
 were carried onto this branch. There is no new runtime dependency in this batch.
 
 - `Data.plot` is a side-effect-free getter returning a callable `DataPlotter`.
@@ -495,10 +496,59 @@ Validation on the verified Windows `py314` environment:
   user reviews it. This is local Windows proof; no hosted, lower-bound or installed
   distribution run is claimed, and no push/release was performed.
 
-Next bounded batch: stage 2. Resolve upstream #79/#80, choose the corresponding
-stonerplots dependency floor, then expose its contexts and replace the remaining
-layout/template examples. Keep the field migration and pandas conveniences in
-their separate planned stages.
+### Stage 2 handover
+
+Implemented on the same feature branch, following the stages 0/1 commit. Stage 2
+changes remain uncommitted; no push or release was performed.
+
+- Added required `stonerplots>=1.9.6` to Python, Conda, testing and documentation
+  manifests; the minimum environment pins 1.9.6. The recipe build environment
+  intentionally contains packaging tools only. Verified PyPI metadata and the
+  `phygbu` Conda build, then upgraded only stonerplots from 1.9.5 to 1.9.6 in
+  `py314`. All 38 test-environment Conda specifications are satisfied.
+- Exposed the seven planned context classes and both tick formatters directly on
+  `DataPlotter` and `Stoner.plot`, preserving upstream identity/signatures/handles.
+  `plot.style` is Matplotlib's native style context. No layout stack, context
+  wrappers, template engine or implicit styling was introduced.
+- Migrated inset, double-axis, stacked/grid-panel, colour-cycle, journal, sketch,
+  Seaborn and fitting-residual examples. Legacy template API documentation now
+  points to replacement examples and explains their changed appearance. Field
+  helpers and folder pagination retain their required templates/assets until
+  stages 3/5; their implementations were not prematurely removed.
+- Nested layouts, inset handle identity, repeated contexts, normal/exception
+  restoration, actual saving of new/existing figures, mixed pandas/Matplotlib
+  draws, caller style restoration and independent ticker ownership are tested.
+  `SavedFigure` and `PlotLabeller` scan figures at entry/exit and can change the
+  current pyplot target. This upstream behaviour is documented; explicit `ax=`
+  handles remain reliable. `DoubleXAxis` is still an upstream candidate, not a
+  1.9.6 export; the guide uses native `Axes.twiny()` for that case.
+- Corrected a sample uncertainty to use non-negative magnitudes, and an existing
+  fit annotation to use axes-fraction coordinates. Refreshed only the affected
+  guide/API cache entries: 23 example groups, including one new nested-context
+  illustration. All existing cached files are retained.
+
+Validation on Windows `py314` with stonerplots 1.9.6 and the previously recorded
+Python/Matplotlib/NumPy/pandas/SciPy versions:
+
+- Full suite: **1,175 passed**, including all runnable documentation examples and
+  both former upstream xfails. Report: ignored
+  `maintenance/runs/plotting-stage2/full.xml` and `.log`.
+- Final focused plotting recheck: **79 passed**. The annotation-only example
+  correction was rechecked separately after the full run.
+- Targeted Ruff passes; only the existing capitalised `Stoner` package-name
+  convention (`N999`) is excluded. Dependency consistency and whitespace pass.
+- Fresh cached Sphinx HTML returns to **88 reviewed warnings, zero unexpected**,
+  with no lost API entries or missing dynamic methods. The context aliases are
+  documented without duplicating upstream class docstrings. Retained cache
+  graphics are consumed by `READTHEDOCS=True` builds.
+- Visually reviewed representative stacked/inset/double-axis, APS, centred-axes,
+  custom-style and residual figures, plus the guide/API navigation over localhost.
+  The stage 2 preview is served from `html-final` on port 8790. Validation is local;
+  no hosted matrix, lower-dependency environment or installed-distribution result
+  is claimed.
+
+Next bounded batch: stage 3 field/scientific plotting. Keep pandas conveniences
+and final folder pagination/removal in their separate planned stages.
 
 ## External sources inspected
 

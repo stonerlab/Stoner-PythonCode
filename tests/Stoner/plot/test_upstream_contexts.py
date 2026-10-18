@@ -1,15 +1,10 @@
-"""Record upstream context regressions that gate the later stonerplots integration."""
+"""Keep the upstream regressions required by the stonerplots dependency floor."""
 
 import matplotlib.pyplot as plt
-import pytest
+import stonerplots
 from matplotlib.ticker import MultipleLocator
-from packaging.version import Version
-
-stonerplots = pytest.importorskip("stonerplots")
-known_release = Version(stonerplots.__version__) <= Version("1.9.5")
 
 
-@pytest.mark.xfail(known_release, strict=True, reason="stonerplots#79: inset target restoration")
 def test_inset_restores_parent():
     fig, parent = plt.subplots()
     try:
@@ -20,7 +15,6 @@ def test_inset_restores_parent():
         plt.close(fig)
 
 
-@pytest.mark.xfail(known_release, strict=True, reason="stonerplots#80: axis-bound locator sharing")
 def test_labeller_allocates_locator_per_axis():
     try:
         with stonerplots.PlotLabeller(y=MultipleLocator):

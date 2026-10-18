@@ -4,6 +4,7 @@
 from Stoner import Data
 
 p = Data("sample.txt", setas="xyy")
-p.plot_xy(0, 1, "k-")
-p.y2()
-p.plot_xy(0, 2, "r-")
+with p.plot.style("stoner"):
+    ax = p.plot.line(0, 1, fmt="k-", legend=False)
+    with p.plot.DoubleYAxis(ax=ax, colours=["black", "red"]) as right:
+        p.plot.line(0, 2, ax=right, fmt="r-", legend=False)

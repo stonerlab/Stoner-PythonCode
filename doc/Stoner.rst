@@ -116,6 +116,59 @@ Plot Package and Modules
 .. automodapi:: Stoner.plot
     :no-inheritance-diagram:
     :headings: -~
+    :skip: SavedFigure, MultiPanel, StackVertical, DoubleYAxis, InsetPlot, CentredAxes, PlotLabeller, TexFormatter, TexEngFormatter
+
+Stonerplots exports
+-------------------
+
+These are direct aliases of the stonerplots classes. The
+:ref:`plotting-contexts` guide shows their use through ``d.plot``; upstream
+signatures, keyword arguments and returned objects are retained.
+
+.. py:class:: SavedFigure
+    :module: Stoner.plot
+
+    Save selected figures and apply temporary styles. Also ``d.plot.SavedFigure``.
+
+.. py:class:: MultiPanel
+    :module: Stoner.plot
+
+    Arrange regular or irregular panels. Also ``d.plot.MultiPanel``.
+
+.. py:class:: StackVertical
+    :module: Stoner.plot
+
+    Arrange stacked panels. Also ``d.plot.StackVertical``.
+
+.. py:class:: DoubleYAxis
+    :module: Stoner.plot
+
+    Add an independent Y axis. Also ``d.plot.DoubleYAxis``.
+
+.. py:class:: InsetPlot
+    :module: Stoner.plot
+
+    Add and position an inset. Also ``d.plot.InsetPlot``.
+
+.. py:class:: CentredAxes
+    :module: Stoner.plot
+
+    Centre axes through an origin. Also ``d.plot.CentredAxes``.
+
+.. py:class:: PlotLabeller
+    :module: Stoner.plot
+
+    Apply tick formatters and locators. Also ``d.plot.PlotLabeller``.
+
+.. py:class:: TexFormatter
+    :module: Stoner.plot
+
+    Format ticks in mathematical notation. Also ``d.plot.TexFormatter``.
+
+.. py:class:: TexEngFormatter
+    :module: Stoner.plot
+
+    Format ticks with engineering prefixes. Also ``d.plot.TexEngFormatter``.
 
 .. automodapi:: Stoner.plot.formats
     :headings: -~

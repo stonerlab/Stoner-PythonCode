@@ -134,9 +134,82 @@ existing text. Explicit values override it; ``None`` clears it. ``label=None``
 suppresses that series' legend entry and ``legend=False`` stops automatic legend
 updates. User formatters and locators are left alone.
 
-Explicit ``ax=`` works with externally imported Matplotlib/stonerplots contexts.
-The one-import stonerplots context attributes, styles and replacement template
-examples are the next stage and are not yet exposed on the accessor.
+.. _plotting-contexts:
+
+Layouts and styles with one Stoner import
+=========================================
+
+Stoner requires stonerplots 1.9.6 or newer. Its context classes are available
+directly from ``d.plot`` and :py:mod:`Stoner.plot`. They have the upstream
+signatures and return their native handles; Stoner does not wrap their behaviour.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 30 70
+
+    * - Context
+      - Purpose
+    * - ``SavedFigure``
+      - Apply styles and save figures created in the block, or an existing Figure with ``use=figure``.
+    * - ``MultiPanel``
+      - Regular or irregular panels; iterate its native sequence or index its axes.
+    * - ``StackVertical``
+      - Stacked panels with shared X coordinates and optional joined boundaries.
+    * - ``DoubleYAxis``
+      - Independent right-hand Y scale with combined legend handling.
+    * - ``InsetPlot``
+      - Inset axes positioned within their parent.
+    * - ``CentredAxes``
+      - Position axes through a specified origin.
+    * - ``PlotLabeller``
+      - Apply tick formatters/locators to axes created inside the block.
+
+Use explicit ``ax=`` to make each target clear. Indexing/iterating panel handles,
+insets and double-axis blocks also select pyplot's current axes, so ordinary
+``d.plot()`` calls work in those contexts. Start a new Figure before constructing
+a layout when the current figure already contains plots::
+
+    from Stoner import Data
+
+    d = Data("sample.txt", setas="xyy")
+    with d.plot.SavedFigure("measurement.pdf", style=["stoner", "aps"], formats="pdf"):
+        figure = d.plot.new_figure()
+        with d.plot.StackVertical(2, figure=figure) as panels:
+            d.plot.line(y=1, ax=panels[0], title=None)
+            d.plot.line(y=2, ax=panels[1], title=None)
+
+``SavedFigure(filename=False, ...)`` applies style/formatting without saving.
+For an existing figure use ``SavedFigure(..., use=ax.figure)``; set
+``formats="png"`` or another format explicitly when needed. Figures stay open
+unless ``autoclose=True``. Saving is an explicit context action; ordinary drawing
+still does not save or display anything.
+
+``d.plot.style(...)`` is Matplotlib's native style context. It accepts a style
+name, list, style file or rcParams dictionary and restores rcParams on exit,
+including when the block raises an exception. Stonerplots registers the ``stoner``
+base style and journal modifiers such as ``aps``, ``aip`` and ``nature``. Styles
+affect artists as they are created; configure existing axes explicitly when
+changing their properties. No style is applied merely by calling ``d.plot()``.
+
+``PlotLabeller`` formats newly created axes by default. Use
+``include_open=True`` to include existing axes in all open figures, or configure
+a selected existing Axes directly. Supply formatter/locator classes or configured instances: stonerplots
+creates independent tick objects per axis. ``d.plot.TexFormatter`` and
+``d.plot.TexEngFormatter`` expose the upstream formatter classes::
+
+    with d.plot.PlotLabeller():
+        ax = d.plot.line(y=1)
+    ax.yaxis.set_major_formatter(d.plot.TexEngFormatter(unit="V"))
+
+Inset and double-axis contexts restore the previous target, and the inset handle
+remains valid after repositioning. Layout contexts restore their entry target.
+``SavedFigure`` and ``PlotLabeller`` scan tracked figures at entry/exit and can change
+pyplot's current figure; pass ``ax=`` on subsequent draws when that matters.
+They do not create an extra figure merely to perform formatting.
+
+.. plot:: samples/plot_contexts.py
+    :include-source:
+    :outname: contexts
 
 Migration of ordinary calls
 ===========================
@@ -166,17 +239,16 @@ The ordinary accessor rejects ``figure``, ``template``, ``plotter``, ``multiple`
 ``show_plot``, ``save_filename`` and old ``*col`` keywords. Retained top-level
 methods are temporary migration support, not aliases on the new accessor.
 
-Retained field, layout and template examples
-============================================
+Layout and style migration examples
+====================================
 
-These families await later stages. Their templates, figure selection and return
-policies are distinct from ordinary accessor drawing. Scientific gridding remains
-available separately through ``d.griddata``.
-
-* ``plot_xyz``, ``contour_xyz`` and ``image_plot`` handle scalar fields.
-* ``plot_xyuv``, ``plot_xyzuvw`` and ``plot_voxels`` handle vector/volume plots.
-* ``plot_xy(multiple="panels"/"subplots"/"y2")``, inset/twin-axis helpers and
-  template classes remain the temporary layout interface.
+Ordinary multiple-Y plotting replaces ``multiple="common"``. Use
+``StackVertical`` for ``multiple="panels"``, ``MultiPanel`` for
+``multiple="subplots"``, and ``DoubleYAxis`` for ``multiple="y2"``. Replace
+``d.inset(...)`` with ``d.plot.InsetPlot(ax=parent, ...)``. For an independent
+second X scale use the returned Axes' ``twiny()``; stonerplots 1.9.6 does not
+provide a ``DoubleXAxis`` context. Transformed units use Matplotlib's
+``secondary_xaxis``/``secondary_yaxis``.
 
 .. plot:: samples/common_y_plot.py
     :include-source:
@@ -206,6 +278,13 @@ available separately through ``d.griddata``.
     :include-source:
     :outname: template
 
+Template classes are replaced by rcParams/style contexts and explicit Axes
+formatting. The following examples use sketch settings and colour/line cycles.
+The old PRB template and stonerplots ``aps`` style have different appearances;
+``aps`` is the supported replacement rather than an equivalent alias. The GB/JTB
+examples now show explicit centred axes and tick/line configuration; Seaborn uses
+its native style and plotting contexts.
+
 .. plot:: samples/template2.py
     :include-source:
     :outname: template2
@@ -213,3 +292,14 @@ available separately through ``d.griddata``.
 .. plot:: samples/plotstyles/customising.py
     :include-source:
     :outname: customising
+
+Retained scientific and folder helpers
+======================================
+
+Field plotting and folder pagination await their later refactor stages. Their
+legacy templates, figure selection and return policies remain distinct from
+ordinary accessor drawing. ``plot_xyz``, ``contour_xyz`` and ``image_plot`` handle
+scalar fields; ``plot_xyuv``, ``plot_xyzuvw`` and ``plot_voxels`` handle vector and
+volume plots. Scientific gridding remains separately available through
+``d.griddata``. The old template classes, layout methods and style assets remain
+temporarily for these consumers and will be removed in the final migration stage.

@@ -1,13 +1,10 @@
-"""Example plot in XKCD comic style SketchPlot template."""
+"""Apply a sketch effect through a temporary rcParams style."""
 
-# pylint: disable=invalid-name
-import os.path as path
+from pathlib import Path
 
 from Stoner import Data, __home__
-from Stoner.plot.formats import SketchPlot
 
-filename = path.realpath(
-    path.join(__home__, "..", "doc", "samples", "sample.txt")
-)
-d = Data(filename, setas="xy", template=SketchPlot)
-d.plot_xy()
+d = Data(Path(__home__).parent / "doc" / "samples" / "sample.txt", setas="xy")
+
+with d.plot.style(["stoner", {"path.sketch": (1, 100, 2)}]):
+    d.plot.line()

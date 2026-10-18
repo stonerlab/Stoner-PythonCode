@@ -7,7 +7,6 @@ from matplotlib.pyplot import figure
 
 from Stoner import Data, DataFolder, __home__
 from Stoner.analysis.fitting.models.generic import Quadratic
-from Stoner.plot.formats import TexEngFormatter
 
 # Set up the directory with our data
 datafiles = join(__home__, "..", "sample-data", "NLIV")
@@ -31,11 +30,10 @@ for d in fldr:
 
 # Set columns and set the plot axis formatting to use SI precfixes
 result.setas(x="Field", y="b", e="d_b")
-result.template.xformatter = TexEngFormatter
-result.template.yformatter = TexEngFormatter
 
 # Plot
-result.plot(fmt="k.", capsize=2)
+with result.plot.PlotLabeller():
+    result.plot(fmt="k.", capsize=2)
 
 # An alternative way to run the Analysis - this time with
 # an orthogonal didstance regression algorithm

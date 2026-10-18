@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Plot Templates module - contains classes that style plots produced by :class:`.Data`."""
+"""Retain legacy templates for unported field/folder helpers.
+
+Ordinary :py:attr:`Stoner.core.data.Data.plot` drawing uses stonerplots contexts
+and Matplotlib styles. The examples below show replacements for these templates.
+"""
 
 __all__ = [
     "TexFormatter",
@@ -162,24 +166,31 @@ class TexEngFormatter(EngFormatter):
 
 
 class DefaultPlotStyle(MutableMapping):
-    """Produces a default plot style.
-
-    To produce alternative plot styles, create subclasses of this plot. Either override or
-    create additional attributes to define rc Parameters (see Matplotlib documentation for
-    available rc parameters) and override the :py:meth:Stoner.pot.formats.DefaultPlotStyle.customise`
-    method to carry out additional plot formatting.
+    """Retain default template behaviour for legacy field and folder helpers.
 
     Attributes:
-        fig_width_pt (float): Preferred width of plot in points
-        show_xlabel (bool): Show the title in the plot
-        show_ylabel (bool): Show the x-axis Labels
-        show_zlabel (bool): show the y-xaxis labels
-        show_title (bool): show the title
-        show_legend (bool): show the legend
-        stylename (string): Name of the matplotlib style to use
-        stylesheet (list): Calculated list of stylesheets found by traversing the class hierarchy
+        fig_width_pt (float):
+            Preferred plot width in points.
+        show_xlabel (bool):
+            Whether to show the X label.
+        show_ylabel (bool):
+            Whether to show the Y label.
+        show_zlabel (bool):
+            Whether to show the Z label.
+        show_title (bool):
+            Whether to show the title.
+        show_legend (bool):
+            Whether to show the legend.
+        stylename (str):
+            Name of the legacy Matplotlib style.
+        stylesheet (list):
+            Stylesheets collected through the class hierarchy.
 
-    Example
+    Notes:
+        Ordinary accessor plots do not apply this template. Use plot.style or
+        plot.SavedFigure instead. The example shows the stonerplots replacement.
+
+    Example:
         .. plot:: samples/plotstyles/default.py
             :include-source:
             :outname: defaultstyle
@@ -610,10 +621,11 @@ class DefaultPlotStyle(MutableMapping):
 
 
 class GBPlotStyle(DefaultPlotStyle):
-    """Template developed for Gavin's plotting.
+    """Retain the experimental GB template for legacy plots.
 
-    This is largely an experimental class for trying things out rather than
-    for serious plotting.
+    Notes:
+        The example shows its ordinary-plot replacement using CentredAxes and a
+        style context. It does not construct this legacy template.
 
     Example:
         .. plot:: samples/plotstyles/GBStyle.py
@@ -638,7 +650,11 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
 class JTBPlotStyle(DefaultPlotStyle):
-    """Template class for Joe's Plot settings.
+    """Retain the legacy JTB template.
+
+    Notes:
+        The example shows explicit style and tick settings for ordinary plots,
+        rather than constructing this legacy template.
 
     Example:
         .. plot:: samples/plotstyles/JTBStyle.py
@@ -671,7 +687,11 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 
 class PRBPlotStyle(DefaultPlotStyle):
-    """A figure Style for making figures for Phys Rev * Jounrals.
+    """Retain the legacy Physical Review journal template.
+
+    Notes:
+        The example uses the stonerplots aps replacement style. Its appearance
+        differs from this template; it is not an equivalent alias.
 
     Example:
         .. plot:: samples/plotstyles/PRBStyle.py
@@ -688,10 +708,11 @@ class PRBPlotStyle(DefaultPlotStyle):
 
 
 class SketchPlot(DefaultPlotStyle):
-    """Turn on xkcd plot style.
+    """Retain the legacy sketch template.
 
-    Implemented as a bit of a joke, but perhaps someone will use this in a real
-    presentation one day ?
+    Notes:
+        The example applies an rcParams sketch effect for ordinary accessor plots
+        rather than constructing this legacy template.
 
     Example:
         .. plot:: samples/plotstyles/SketchStyle.py
@@ -730,15 +751,19 @@ class SketchPlot(DefaultPlotStyle):
 if SEABORN:  # extra classes if we have seaborn available
 
     class SeabornPlotStyle(DefaultPlotStyle):
-        """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
+        """Retain the legacy Seaborn template.
 
         Attributes:
             stylename (str):
-                The seaborn plot style to use - darkgrid, whitegrid, dark, white, or ticks
+                Seaborn plot style: darkgrid, whitegrid, dark, white or ticks.
             context (str):
-                The seaborn plot context for scaling elements - paper,notebook,talk, or poster
+                Seaborn sizing context: paper, notebook, talk or poster.
             palette (str):
                 A name of a predefined seaborn palette.
+
+        Notes:
+            The example uses Seaborn's native contexts with ordinary accessor
+            plotting rather than constructing this legacy template.
 
         Example:
             .. plot:: samples/plotstyles/SeabornStyle.py

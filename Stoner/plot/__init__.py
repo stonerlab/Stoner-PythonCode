@@ -2,11 +2,37 @@
 
 Use :py:attr:`Stoner.core.data.Data.plot` for automatic or explicit ordinary
 plotting through :py:class:`Stoner.plot.accessor.DataPlotter`. The legacy
-:py:class:`Stoner.plot.core.PlotMixin` and template classes remain available for
-field and layout examples awaiting the later refactor stages.
+:py:class:`Stoner.plot.core.PlotMixin` and template classes remain temporarily
+available for field and folder helpers awaiting the later refactor stages.
 """
 
-from .core import PlotMixin
-from .accessor import DataPlotter
+from stonerplots import (
+    CentredAxes,
+    DoubleYAxis,
+    InsetPlot,
+    MultiPanel,
+    PlotLabeller,
+    SavedFigure,
+    StackVertical,
+    TexEngFormatter,
+    TexFormatter,
+)
 
-__all__ = ["DataPlotter", "PlotMixin", "formats", "utils"]
+from .accessor import DataPlotter
+from .core import PlotMixin
+
+__all__ = [
+    "CentredAxes",
+    "DataPlotter",
+    "DoubleYAxis",
+    "InsetPlot",
+    "MultiPanel",
+    "PlotLabeller",
+    "PlotMixin",
+    "SavedFigure",
+    "StackVertical",
+    "TexEngFormatter",
+    "TexFormatter",
+    "formats",
+    "utils",
+]

@@ -3,6 +3,17 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
+from stonerplots import (
+    CentredAxes,
+    DoubleYAxis,
+    InsetPlot,
+    MultiPanel,
+    PlotLabeller,
+    SavedFigure,
+    StackVertical,
+    TexEngFormatter,
+    TexFormatter,
+)
 
 from .selection import prepare_traces, resolve_columns, uncertainty_specs
 from .state import PlotState, live_figure
@@ -33,13 +44,34 @@ class DataPlotter:
 
         Drawing returns an Axes, independently of legacy showfig/no_figs options.
         Calls inherit Matplotlib's current axes/style unless ax is supplied. They
-        neither show nor save figures. Named field methods and stonerplots context
-        exports are introduced in later refactor stages; automatic field plots
-        currently use the retained legacy scientific helpers.
+        neither show nor save figures. The context classes and tick formatters
+        are direct stonerplots exports with their upstream signatures and handles.
+        Automatic field plots currently use the retained legacy scientific helpers.
     """
 
     # Folder bulk calls inspect the name of their callable, including accessors.
     __name__ = "plot"
+
+    #: Save figures and temporarily apply styles using stonerplots.
+    SavedFigure = SavedFigure
+    #: Arrange a regular or irregular grid, yielding the upstream panel sequence.
+    MultiPanel = MultiPanel
+    #: Arrange vertically stacked panels with shared X coordinates.
+    StackVertical = StackVertical
+    #: Add an independent right-hand Y axis, yielding its Matplotlib Axes.
+    DoubleYAxis = DoubleYAxis
+    #: Add an inset, yielding its Matplotlib Axes.
+    InsetPlot = InsetPlot
+    #: Place axes through a chosen origin using stonerplots.
+    CentredAxes = CentredAxes
+    #: Apply tick formatters and locators to axes selected by stonerplots.
+    PlotLabeller = PlotLabeller
+    #: Format ticks in mathematical notation.
+    TexFormatter = TexFormatter
+    #: Format ticks using engineering prefixes and mathematical notation.
+    TexEngFormatter = TexEngFormatter
+    #: Temporarily apply Matplotlib style names, files or rcParams dictionaries.
+    style = staticmethod(plt.style.context)
 
     def __init__(self, data):
         """Bind to the owner without reading columns or creating rendering state."""
