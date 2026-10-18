@@ -1951,10 +1951,45 @@ Local validation on verified Conda environments:
   ignored generated API pages remain untouched; all 276 tracked plot-cache files
   remain unchanged. Release notes describe the frame-access improvement.
 
-Next: run the normal hosted platform gates after committing/pushing this batch.
-The earlier plotting-refactor CI results validate its prior runtime, not this
-optimisation. No dependency, API, loader identification or distribution change is
-part of this batch.
+Hosted validation of pushed revision
+`9b42bfd744c4ed47f41c0cd5644a94f1ecdb0471` (2026-10-18):
+
+- [Supported test matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159346842):
+  **1,331 passed in each job**, Linux Python 3.12, 3.13 and 3.14 plus macOS Python
+  3.14. Downloaded JUnit reports confirm zero failures/errors/skips and all four
+  new scan regressions passing in every cell. Final test-result publishing and
+  Ubuntu 3.14's Coveralls/Codacy coverage uploads succeeded; this does not claim
+  separate downstream service reanalysis.
+- The macOS `test_attocube_scan` passed in **45.787 seconds**, compared with
+  **201.434 seconds** in the retained JUnit report for `33b36ec81`. These are
+  observed timings on hosted runners using the same workflow, not a controlled
+  performance comparison. The metadata-only benchmark above remains the bounded
+  allocation/time evidence. Linux Attocube timings were 16.114/16.579/8.201 seconds
+  for Python 3.12/3.13/3.14 respectively.
+- [Supported lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159346843):
+  **1,330 passed, one expected skip**. The skip is
+  `test_legacy_pandas_metadata_loss`, a pandas 3 accessor-lifecycle observation
+  that does not apply to pandas 2. All four scan regressions passed; the real
+  Attocube test passed in 13.545 seconds.
+- [Installed distributions](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159346813):
+  Python 3.12 and 3.14 jobs passed archive-content and strict metadata checks,
+  followed by fresh wheel and sdist installations exercised outside the checkout.
+- [Cached documentation](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39159360513):
+  succeeded with **36 warnings**. Hosted-log review found the existing canonical
+  `Stoner.Image.folders.ImageFolder.flatten` duplicate, already covered by the
+  Windows warning baseline but absent from the Linux ceiling. Its diagnostic
+  origin also varies between a docstring and `<unknown>`. This existing warning
+  was reviewed explicitly; no baseline was raised. The remaining diagnostics
+  match the reviewed Linux duplicate/footnote warnings. The local inventory audit
+  above remains the evidence for no API removals.
+
+Hosted snapshots, JUnit artifacts, full matrix/package/documentation logs and
+`validation-summary.json` are retained under the ignored `hosted/` subdirectory
+of this batch's evidence folder. All four workflows reference the pushed revision
+above and completed successfully, including their reporting steps. The scan
+optimisation is complete; later documentation-only notes do not change its
+runtime fingerprint. No dependency, API, loader-identification or release change
+is part of this batch.
 
 ### Accepted batch 3 performance decision
 

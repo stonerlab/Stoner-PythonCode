@@ -173,12 +173,18 @@ reviewed inference/test-utility advisories did not block the alpha.
   Regression tests retain frame identity, presentation state, calibration, masks,
   fill values and live common/local metadata. No cache or format coverage changes.
   Local validation passes 1,331 tests on py314 and 261 image/format/HDF5 tests with
-  the supported lower dependencies. The 1024 x 1024 metadata-access benchmark
+  the supported lower dependencies. Pushed revision `9b42bfd74` also passes all
+  1,331 tests in every Linux 3.12-3.14/macOS 3.14 hosted job; lower dependencies
+  pass 1,330 with one expected skip. Installed wheel/sdist checks on Python
+  3.12/3.14, cached documentation and final result publishing all pass. The macOS
+  Attocube test passes in 45.787 seconds, versus 201.434 in the previous run;
+  these hosted timings are observational rather than a controlled benchmark.
+  The 1024 x 1024 metadata-access benchmark
   falls from 16.068 to 0.820 ms and 20,234,538 to 195,855 traced peak bytes; these
   are operation measurements, not whole-loader/macOS timings or process RSS.
   See [the storage handover](STORAGE_MIGRATION_PLAN.md#post-migration-scan-frame-access-2026-10-18)
-  for the bounded contract and evidence. Hosted validation of this change follows
-  its next push; the earlier green plotting gates do not validate this runtime.
+  for the bounded contract, exact-revision hosted links and documentation-warning
+  review. This optimisation is validated independently of the earlier plotting gates.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.
