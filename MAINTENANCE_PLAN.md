@@ -118,6 +118,24 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
+### 0.12.0a2 preparation
+
+The plotting redesign and Attocube/MAXIMUS optimisation are merged into `devel`,
+including the completed hosted-validation notes. The canonical version is now
+`0.12.0a2`; the Conda build revision restarts at zero for this new version.
+Release notes and the upgrade guide identify the plotting API break and required
+stonerplots 1.9.6 dependency. The existing `v0.12.0a1` release remains immutable.
+
+- [ ] Validate the final versioned release commit: supported platform matrix,
+  lower dependencies, fresh installed distributions, cached documentation and
+  repository/package policy checks.
+- [ ] Publish the matching `v0.12.0a2` GitHub prerelease after those checks pass.
+- [ ] Verify PyPI wheel/sdist metadata and an independent installed-package smoke
+  check, Conda publication and installed import/version test, and versioned
+  documentation. Record exact release and deployment links.
+
+### Previous alpha
+
 [`0.12.0a1`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a1)
 is published as a GitHub prerelease from `devel`, tagged at
 `4d3187a3611b6812212751aeb30a541e5b1c3e8d`. The release records full validation
@@ -186,7 +204,7 @@ reviewed inference/test-utility advisories did not block the alpha.
   for the bounded contract, exact-revision hosted links and documentation-warning
   review. This optimisation is validated independently of the earlier plotting gates.
 
-- [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
+- [ ] **Code complexity remediation (non-blocking for the alpha releases):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.
   Review and address these in bounded maintenance batches after alpha release
   preparation, favouring cohesive helpers and meaningful regression coverage.

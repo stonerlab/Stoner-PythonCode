@@ -7,6 +7,23 @@ ConvertingScripts from Older Versions of the Stoner Package
 The Stoner package has gradually undergone several changes as additional functions have been added to keep the codebase
 manageable. This document summarises the main changes from previous versions.
 
+Version 0.12.0a2: plotting redesign
+====================================
+
+The second alpha requires stonerplots 1.9.6 or newer and replaces the legacy
+plotting methods and templates with the callable ``Data.plot`` accessor.
+``ax = data.plot()`` still infers scientific column roles and uncertainties;
+``data.plot.line()``, ``surface()`` and other named methods choose the plot type.
+Drawing returns the primary Matplotlib Axes. Use native Axes methods for
+formatting and ``ax.figure.savefig(...)`` for saving. Display is explicit, for
+example with ``matplotlib.pyplot.show()``. Accessor contexts provide styles and
+figure layout.
+
+The :doc:`plotfile` guide includes the call-by-call migration table and current
+examples for panels, stacked plots, double axes, insets, statistics and folders.
+See :doc:`../release-notes` for removed APIs and the scan frame-access improvement.
+The pandas/xarray storage and numerical export contracts below remain in force.
+
 Version 0.12.0a1: storage migration
 ===================================
 

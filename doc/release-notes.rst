@@ -1,16 +1,16 @@
 Release notes
 =============
 
-Unreleased: scan frame access
------------------------------
+Version 0.12.0a2 (2026-10-18)
+--------------------------------
 
-Accessing Attocube or MAXIMUS stack frames no longer exports their pixels and
-exclusion masks merely to expose scan metadata. Saved frame handles retain their
-identity through reordering, live common-header defaults and local overrides,
-presentation attributes, masks, fill values and spatial calibration.
+This second alpha introduces a breaking redesign of the plotting API and keeps
+the pandas/xarray storage model from 0.12.0a1. Existing scripts using the legacy
+plotting methods and templates need the migration changes below. Python 3.12 or
+newer and stonerplots 1.9.6 or newer are required.
 
-Unreleased: plotting redesign
------------------------------
+Plotting API (breaking changes)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``Data.plot`` is now a callable accessor: ``ax = data.plot()`` retains scientific
 column-role and uncertainty inference, while named methods such as
@@ -46,3 +46,19 @@ display APIs remain available. The unused Mayavi extra has been removed.
 See :doc:`UserGuide/plotfile` for current examples, selection/mask semantics and
 the call-by-call migration guide. Supported Python versions remain 3.12–3.14;
 the storage migration's pandas/xarray requirements are unchanged.
+
+Scan frame access
+~~~~~~~~~~~~~~~~~~~~
+
+Accessing Attocube or MAXIMUS stack frames no longer exports their pixels and
+exclusion masks merely to expose scan metadata. Saved frame handles retain their
+identity through reordering, live common-header defaults and local overrides,
+presentation attributes, masks, fill values and spatial calibration.
+
+Documentation and maintenance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The plotting guide, runnable examples and retained plot cache describe the new
+accessor and stonerplots contexts. The Read the Docs configuration initialises
+headless Qt and Matplotlib before package imports. Repository maintenance and
+storage handovers record the scientific contracts and validation evidence.
