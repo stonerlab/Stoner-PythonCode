@@ -23,8 +23,8 @@ Scientific data analysis for experimental condensed matter physics.
    :target: https://anaconda.org/phygbu/stoner
    :alt: Conda version
 
-.. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=stable
-   :target: https://stoner-pythoncode.readthedocs.io/en/stable/
+.. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=devel
+   :target: https://stoner-pythoncode.readthedocs.io/en/devel/
    :alt: Documentation status
 
 .. image:: https://zenodo.org/badge/10057055.svg
