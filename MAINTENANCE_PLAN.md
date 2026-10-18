@@ -159,21 +159,23 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
-- [ ] **Plotting redesign (stages 0-5 complete):** see
-  [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) for the callable Data
-  plotting accessor, stonerplots layouts/formatting and statistical conveniences.
-  API changes are acceptable with aligned examples and documentation. The plan
-  records ordinary/scientific/statistical plotting and direct stonerplots layout/style
-  contexts, aligned examples and local validation. Stages 0/1 are committed as
-  `374980c2e`; stage 2 as `ec0d62fa6`, using required stonerplots 1.9.6; stage 3
-  as `1c1293512`; stage 4 as `4c948401e`, selecting direct Matplotlib/SciPy for
-  hist/box/KDE/hexbin after reviewing pandas delegation. Stage 5 is committed as
-  `8d6b49b93` on `codex/plotting-accessor-stages-0-1`: folder pagination and serial nested bulk
-  drawing use the accessor, and legacy methods/templates/proxies are removed.
-  Its full local suite passes 1,324 tests; cached docs retain 62 reviewed warnings
-  and zero unexpected, with only the 319 reviewed legacy API removals. Next is
-  stage 6 integrated lower-dependency, hosted and installed-distribution validation,
-  now in progress with the feature branch pushed. No release is part of this batch.
+- [x] **Plotting redesign (stages 0-6 complete):** see
+  [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) and the
+  [release notes](doc/release-notes.rst). Stage 5 is committed as `8d6b49b93`;
+  stage 6 fixes as `855f37010` and `33b36ec81` on the pushed feature branch.
+  The full Linux 3.12-3.14/macOS 3.14 matrix passes 1,327 tests per job; lower
+  dependencies pass 1,326 with one expected skip. Both installed wheel/sdist
+  endpoint jobs and cached documentation pass. Local cached docs have 62 reviewed
+  warnings and zero unexpected, with no unintended API removals. No release was made.
+
+- [ ] **Attocube frame metadata cost (non-blocking):** the final macOS plotting
+  validation passed, but `test_attocube_scan` took 201.434 seconds and triggered a
+  diagnostic faulthandler dump. `ScanMetadataMixin._instantiate` in
+  `Stoner/Image/scan_metadata.py` exports `image.imarray` before rebinding its
+  metadata owner, causing numerical pixel/mask copying during frame access.
+  Investigate avoiding that materialisation as a separate storage batch, preserving
+  frame identity, presentation state, calibration, exclusions and live common
+  metadata defaults. Do not introduce broad caching or relax format coverage.
 
 - [ ] **Code complexity remediation (non-blocking for `0.12.0a1`):** the
   complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.

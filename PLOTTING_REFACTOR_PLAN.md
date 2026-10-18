@@ -1,7 +1,6 @@
 # Plotting redesign
 
-Status: stages 0-5 completed on 18 October 2026.
-Stage 6 integrated validation is in progress.
+Status: stages 0-6 completed on 18 October 2026.
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -30,7 +29,8 @@ The accessor now exposes ordinary, scientific field and statistical plotting,
 together with the stonerplots layout/formatting contexts. Folder pagination and
 serial bulk plotting use this interface; the transitional top-level plotting
 methods, templates and broad formatting proxies have been removed. Integrated
-hosted, lower-dependency and installed-distribution validation remain for stage 6.
+hosted, lower-dependency and installed-distribution validation have passed; see
+the stage 6 handover for results and the separate Attocube performance follow-up.
 
 ## Initial investigation before the redesign
 
@@ -378,7 +378,7 @@ the transition; they are not a commitment to permanent public compatibility.
   Remove remaining old plotting entry points/templates/proxies and update API
   inventories, the migration guide and examples in the same batch. Gate: old
   symbols have no unintended internal callers or published example references.
-- [ ] **6. Validate the complete redesign.** Run the focused and full suites,
+- [x] **6. Validate the complete redesign.** Run the focused and full suites,
   lower dependencies, supported hosted matrix, installed wheel/sdist checks and
   documentation checks. Review representative rendered figures and the user
   guide over localhost. Record accepted visual/API changes in release notes.
@@ -736,11 +736,10 @@ NumPy 2.5.2, pandas 3.0.5 and SciPy 1.18.0:
   rendered guide/API navigation over localhost. The preview serves only
   `maintenance/runs/plotting-stage5/html` on port 8793 while the user reviews it.
 
-Next bounded batch: stage 6 integrated lower-dependency, supported hosted matrix,
-installed wheel/sdist and release-note validation. The results above are local
-Windows evidence; do not substitute them for those remaining gates.
+The results above are local Windows evidence. The following stage 6 handover
+records the integrated lower-dependency, hosted and installed-distribution gates.
 
-### Stage 6 validation in progress
+### Stage 6 handover
 
 - Hosted wheel/sdist checks passed for stage 5 on Python 3.12 and 3.14. Extended
   the maintained installed-package probe to exercise scientific inference with
@@ -758,8 +757,14 @@ Windows evidence; do not substitute them for those remaining gates.
   with the current Python, pandas/xarray and stonerplots support boundaries.
   These changes were committed as `855f37010` and pushed to exercise the hosted
   matrix and extended installed-distribution probes.
+- Five fitting examples now select Matplotlib's bundled DejaVu Sans for small
+  mathematical annotations, avoiding the FreeType failures reproduced with the
+  platform's preferred sans-serif font on macOS. Their five cached groups were
+  refreshed. This typography change was committed as `33b36ec81`; caller styles
+  and scientific implementations are unchanged. All five examples were rechecked
+  with current/lower dependencies and passed in the final macOS run.
 
-Validation so far (reports under ignored `maintenance/runs/plotting-stage6`):
+Validation (reports under ignored `maintenance/runs/plotting-stage6`):
 
 - Current Windows environment, freshly verified against all 38 specifications:
   **1,327 passed** in 231.86 seconds with two workers. Separate rendered-example
@@ -776,19 +781,25 @@ Validation so far (reports under ignored `maintenance/runs/plotting-stage6`):
   Source package-content, CI policy, repository-content and targeted Ruff checks
   pass. The changed scaling cache, context/panel/inset/twin-axis, scalar, vector,
   surface, statistical and replacement journal-style figures were reviewed.
-- Hosted Python 3.12-3.14 Linux jobs, the Python 3.12 lower-dependency job, both
-  Python 3.12/3.14 package jobs and the cached documentation build have passed at
-  `855f37010`. The package jobs built and strictly checked wheel/sdist metadata,
+- Hosted Python 3.12-3.14 Linux and Python 3.14 macOS each passed **1,327 tests**
+  at `33b36ec81`. The Python 3.12 lower-dependency job passed **1,326 with 1
+  expected skip**. Both Python 3.12/3.14 package jobs and the cached documentation
+  build passed at that same commit. The package jobs built and strictly checked wheel/sdist metadata,
   then independently installed and exercised each archive outside the checkout,
   including the extended plotting probe. No distribution was built locally.
-- macOS validation is pending. Its initial stage 5 run failed inside FreeType
-  while rendering mathematical text; the stage 6 run must establish whether that
-  remains after example style isolation before closing the integrated gate.
-  The same five small-annotation fitting examples failed after isolation. A
-  second bounded change selects Matplotlib's bundled DejaVu Sans in these five
-  examples; the corresponding five cached groups are refreshed. This changes
-  example typography only, leaving caller-selected styles and scientific methods
-  untouched. Hosted verification of this font-selection hypothesis is pending.
+- Final matrix: [pytest run 39149915845](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39149915845).
+  Lower lines: [39149915877](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39149915877).
+  Installed distributions: [39149915872](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39149915872).
+  Cached docs: [39149915436](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/39149915436).
+- The final macOS run completed in 890.23 seconds; `test_attocube_scan` passed in
+  201.434 seconds. Its two-minute faulthandler dump was diagnostic, not a fatal
+  test timeout. A previous slow attempt was cancelled to retrieve partial logs;
+  those logs showed continued progress, so only macOS was rerun on the same
+  commit and allowed to finish. The final JUnit reports contain zero failures.
+  The snapshot path in ScanMetadataMixin._instantiate eagerly exports image
+  pixels/masks when rebinding frame metadata. Investigating that cost is a
+  separate bounded storage-performance follow-up; no image implementation was
+  changed during stage 6.
 
 Current preview: `maintenance/runs/plotting-stage6/html` on port 8794, with
 release notes and the updated plotting guide checked in the browser. No merge,
