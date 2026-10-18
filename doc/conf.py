@@ -40,6 +40,12 @@ def setup(app):
 my_path=path.dirname(__file__)
 on_read_the_docs = os.environ.get("READTHEDOCS", "").lower() == "true"
 
+# Stoner imports initialise Qt as well as Matplotlib. Read the Docs has no
+# display server, so configure both before importing Stoner or extensions.
+if on_read_the_docs:
+    os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    os.environ["MPLBACKEND"] = "Agg"
+
 sys.path.insert(0, my_path)
 
 # Document this checkout, even when another Stoner release is installed in the
