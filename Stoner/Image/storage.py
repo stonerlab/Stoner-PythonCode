@@ -176,9 +176,10 @@ class ImageStorage:
         array = np.ma.asarray(values)
         if array.ndim != 2:
             raise ValueError("An image must have two dimensions")
-        ds = xr.Dataset({"intensity": (("y", "x"), array.data.copy()),
-                         "excluded": (("y", "x"), np.ma.getmaskarray(array).copy())},
-                        coords={"y": np.arange(array.shape[0]), "x": np.arange(array.shape[1])})
+        ds = xr.Dataset(
+            {"intensity": (("y", "x"), array.data.copy()), "excluded": (("y", "x"), np.ma.getmaskarray(array).copy())},
+            coords={"y": np.arange(array.shape[0]), "x": np.arange(array.shape[1])},
+        )
         fill = np.ma.array(np.empty(0, dtype=array.dtype), fill_value=array.fill_value).fill_value
         result = cls("image", ds, _copy_metadata(metadata) if metadata is not None else TypeHintedDict(), fill)
         result.validate()
@@ -201,14 +202,19 @@ class ImageStorage:
             if image.kind != "image":
                 raise ValueError("Only image packages can be packed")
         dtype = np.result_type(*[image.dataset.intensity.dtype for image in images]) if images else np.dtype(float)
-        shape = (len(images), max((im.dataset.sizes["y"] for im in images), default=0),
-                 max((im.dataset.sizes["x"] for im in images), default=0))
+        shape = (
+            len(images),
+            max((im.dataset.sizes["y"] for im in images), default=0),
+            max((im.dataset.sizes["x"] for im in images), default=0),
+        )
         values, excluded = np.zeros(shape, dtype=dtype), np.ones(shape, dtype=bool)
         frames, heights, widths = [], [], []
         for i, (image, name) in enumerate(zip(images, names)):
             raw = image.dataset.intensity.values
-            if raw.dtype != dtype and raw.dtype.kind in "iu" and not np.array_equal(
-                raw.astype(object), raw.astype(dtype).astype(object)
+            if (
+                raw.dtype != dtype
+                and raw.dtype.kind in "iu"
+                and not np.array_equal(raw.astype(object), raw.astype(dtype).astype(object))
             ):
                 raise ValueError("Stack dtype promotion would lose integer precision")
             height, width = raw.shape
@@ -217,14 +223,23 @@ class ImageStorage:
             values[i, :height, :width] = raw
             excluded[i, :height, :width] = image.dataset.excluded.values
             frames.append(Frame(str(uuid4()), name, image.metadata, _fill(image.fill_value, dtype)))
-        ds = xr.Dataset({"intensity": (("frame", "y", "x"), values),
-                         "excluded": (("frame", "y", "x"), excluded),
-                         "valid_height": ("frame", np.array(heights, dtype=int)),
-                         "valid_width": ("frame", np.array(widths, dtype=int))},
-                        coords={"frame": [f.id for f in frames], "y": np.arange(shape[1]), "x": np.arange(shape[2])})
+        ds = xr.Dataset(
+            {
+                "intensity": (("frame", "y", "x"), values),
+                "excluded": (("frame", "y", "x"), excluded),
+                "valid_height": ("frame", np.array(heights, dtype=int)),
+                "valid_width": ("frame", np.array(widths, dtype=int)),
+            },
+            coords={"frame": [f.id for f in frames], "y": np.arange(shape[1]), "x": np.arange(shape[2])},
+        )
         pack_coordinates(ds, images)
-        result = cls("stack", ds, _copy_metadata(metadata) if metadata is not None else TypeHintedDict(),
-                     np.ma.array(np.empty(0, dtype=dtype)).fill_value, frames)
+        result = cls(
+            "stack",
+            ds,
+            _copy_metadata(metadata) if metadata is not None else TypeHintedDict(),
+            np.ma.array(np.empty(0, dtype=dtype)).fill_value,
+            frames,
+        )
         result.fill_value = np.ma.array(np.empty(0, dtype=dtype), fill_value=result.fill_value).fill_value
         result.validate()
         return result
@@ -244,12 +259,19 @@ class ImageStorage:
             supplied = frame_metadata if frame_metadata is not None else {}
             if set(supplied) - set(dataset.frame.values.tolist()):
                 raise ValueError("Metadata refers to unknown frame IDs")
-            frames = [Frame(identity, identity, _copy_metadata(supplied.get(identity, TypeHintedDict())), fill)
-                      for identity in dataset.frame.values.tolist()]
+            frames = [
+                Frame(identity, identity, _copy_metadata(supplied.get(identity, TypeHintedDict())), fill)
+                for identity in dataset.frame.values.tolist()
+            ]
         elif frame_metadata:
             raise ValueError("Single images cannot have frame metadata")
-        result = cls(kind, dataset.copy(deep=True),
-                     _copy_metadata(metadata) if metadata is not None else TypeHintedDict(), fill, frames)
+        result = cls(
+            kind,
+            dataset.copy(deep=True),
+            _copy_metadata(metadata) if metadata is not None else TypeHintedDict(),
+            fill,
+            frames,
+        )
         result.validate()
         return result
 

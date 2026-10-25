@@ -39,6 +39,7 @@ def image_file_adaptor(workingfunc):
     def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
         from ..Image.storage_bridge import call_method
+
         if "_image_owner" not in self.__dict__:
             raise ValueError("Assign image pixels before numerical operations")
         return call_method(self, workingfunc, args, kwargs)
@@ -69,6 +70,7 @@ def image_file_raw_adaptor(workingfunc):
     def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
         from ..Image.storage_bridge import call_method
+
         if "_image_owner" not in self.__dict__:
             raise ValueError("Assign image pixels before numerical operations")
         return call_method(self, workingfunc, args, kwargs)
@@ -96,6 +98,7 @@ def array_file_property(workingfunc):
     def gen_func(self, *args, **kwargs):
         """Wrap magic proxy function call."""
         from ..Image.storage_bridge import call_method
+
         if "_image_owner" not in self.__dict__:
             raise ValueError("Assign image pixels before numerical operations")
         return call_method(self, workingfunc, args, kwargs, setter=True)
@@ -120,6 +123,7 @@ def array_file_attr(name):
     def setter(self, value):
         if "_image_owner" in self.__dict__:
             from ..Image.storage_bridge import snapshot, replace_image
+
             if name in {"filename", "debug", "_title", "_mask_color", "_mask_alpha"}:
                 self.__dict__["_image_attrs"][name] = value
                 return
@@ -133,8 +137,6 @@ def array_file_attr(name):
         return delattr(self._image, name)
 
     return property(getter, setter, deleter, f"Pass thrpough for {name}")
-
-
 
 
 def label(**kwargs):

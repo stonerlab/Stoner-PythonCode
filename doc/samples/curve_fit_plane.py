@@ -37,7 +37,7 @@ e = Data(
     filename="Fitting a Plane",
     setas="xyz",
 )
-e.column_headers = d.column_headers[:e.shape[1]]
+e.column_headers = d.column_headers[: e.shape[1]]
 
 e.plot.surface(linewidth=0, cmap="jet", alpha=0.5, ax=ax)
 

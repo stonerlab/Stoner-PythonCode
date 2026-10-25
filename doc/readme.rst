@@ -23,8 +23,8 @@ Scientific data analysis for experimental condensed matter physics.
    :target: https://anaconda.org/phygbu/stoner
    :alt: Conda version
 
-.. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=stable
-   :target: https://stoner-pythoncode.readthedocs.io/en/stable/
+.. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=devel
+   :target: https://stoner-pythoncode.readthedocs.io/en/devel/
    :alt: Documentation status
 
 .. image:: https://zenodo.org/badge/10057055.svg
@@ -91,7 +91,7 @@ For pip installations, extras select additional functionality, for example::
     python -m pip install "Stoner[TDMS,image_alignment,ocr]"
 
 Other extras include ``facility_formats``, ``hyperspy``, ``plot_styles``,
-``PrettyPrint``, ``mimetype_detection``, ``numba``, ``cv2``, ``mayavi`` and ``qt``.
+``PrettyPrint``, ``mimetype_detection``, ``numba``, ``cv2`` and ``qt``.
 Their declarations are in ``pyproject.toml``. In Conda environments, install
 optional packages from the Conda channels where available.
 

@@ -26,7 +26,8 @@ There are further variants that can work with compressed ZIP archives, :py:class
 :py:class:`Stoner.folders.hdf5.HDF5Folder`.
 
 Finally, for the case of image files, there is a specialised :py:class:`Stoner.Image.ImageStack` class that is optimised for image files of the same dimension
-and stores the images in a single 3D numpy array to allow much faster operations (at the expense of taking more RAM).
+and stores their pixels, masks and coordinates together in an xarray Dataset.
+It can also hold differently sized images, with unused padding masked out. See :doc:`image`.
 
 In the documentation below, except where noted explicitly, you can use a :py:class:`Stoner.Image.ImageFolder` in place of the :py:class:`~Stoner.folders.mixins.DataFolder`, but working
 with :py:class:`Stoner.Image.ImageFile` instead of :py:class:`~Stoner.core.data.Data`.
@@ -38,7 +39,7 @@ Building a (virtual) Folder of Data
 -----------------------------------
 
 The first thing you probably want to do is to get a list of data files in a directory
-(possibly including its subdirectories) and probably matching some sort of filename pattern.::
+(possibly including its subdirectories) and probably matching some sort of filename pattern::
 
    from Stoner import DataFolder
    f=DataFolder(pattern='*.dat')
@@ -59,7 +60,7 @@ Additional parameters needed for the class's constructor can be passed via a dic
 :py:class:`~Stoner.folders.mixins.DataFolder` constructor.
 
 To specify a particular directory to look in, simply give the directory as the first
-argument - otherwise the current directory will be used.::
+argument - otherwise the current directory will be used::
 
    f=DataFolder('/home/phygbu/Data',pattern='*.tdi')
 
@@ -70,18 +71,18 @@ then you can use the dialog box to select multiple individual files.
 More Options on Reading the Files on Disk
 -----------------------------------------
 
-The *pattern* argument for :py:class:`~Stoner.folders.mixins.DataFolder` can also take a list of multiple patterns if there are different filename types in the directory tree.::
+The *pattern* argument for :py:class:`~Stoner.folders.mixins.DataFolder` can also take a list of multiple patterns if there are different filename types in the directory tree::
 
-   f=DataFolder(pattern=['*.tdi',*/txt'])
+   f=DataFolder(pattern=['*.tdi','*.txt'])
 
 Sometimes a more complex filename matching mechanism than simple ''globbing'' is useful.
 The *pattern* keyword can also be a compiled regular expression::
 
    import re
-   p=re.compile('i10-\d*.dat')
+   p=re.compile(r'i10-\d+\.dat')
    f=DataFolder(pattern=p)
-   p2=re.compile('i10-(?P<run>\d*)')
-   f=DataFolder(pattern=p)
+   p2=re.compile(r'i10-(?P<run>\d+)')
+   f=DataFolder(pattern=p2)
    f[0]['run']
 
 The second case illustrates a useful feature of regular expressions - they can be used to capture
@@ -99,7 +100,7 @@ The loading process will also add the metadata key ''Loaded From'' to the file w
 note of the filename used to read the data. If the attribute ``read_means`` is set to **True**
 then additional metadata is set for each file that contains the mean value and standard deviation of each column of data.
 If you don't want the file listing to be recursive, this can be suppressed by using the *recursive*
-keyword argument and the file listing can be suppressed altogether with the *nolist* keyword.::
+keyword argument and the file listing can be suppressed altogether with the *readlist=False* option::
 
    f=DataFolder(pattern='*.dat',recursive=False)
    f2=DataFolder(readlist=False)
@@ -111,18 +112,18 @@ If you don't want to create groups for each sub-directory, then set the keyword 
 Dealing With Revision Numbers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The Leeds CM Physics LabVIEW maeasurement software (aka 'The One Code') has a feature that adds a *revision number* into the filename when it is asked to
+The Leeds CM Physics LabVIEW measurement software (aka 'The One Code') has a feature that adds a *revision number* into the filename when it is asked to
 overwrite a saved data file. This revision number is incremented until a non-colliding filename is created - thus ensuring that data isn't accidentally
 overwritten. The downside of this is that sometimes only the latest revision number actually contains the most useful data - in this case the option
 *discard_earlier* in the :py:meth:`~Stoner.folders.mixins.DataFolder.__init__` constructor can be useful, or equivalently the :py:meth:`~Stoner.folders.mixins.DataFolder.keep_latest` method::
 
-    f=DataFolder(".",discard_earlier=true)
+    f=DataFolder(".",discard_earlier=True)
     # is equivalent to....
     f=DataFolder(".")
     f.keep_latest()
 
 More DataFolder features
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Since a :py:class:`~Stoner.core.data.Data` represents data in named columns, the :py:class:`~Stoner.folders.mixins.DataFolder` offers a couple of additional options for actions to take
 when reading the files in from disk. It is possible to have the mean and standard deviation of each column of data to be calculated and added as
@@ -147,7 +148,7 @@ All of these keywords to the constructor will set corresponding attributes on th
 process of reading the list of files from disk by directly manipulating these attributes.
 
 The current root directory and pattern are set in the *directory* and *pattern* keywords and stored in the similarly named attributes.
-The :py:meth:`~Stoner.folders.mixins.DataFolder.getlist` method can be used to force a new listing of files.::
+The :py:meth:`~Stoner.folders.mixins.DataFolder.getlist` method can be used to force a new listing of files::
 
    f.directory='/home/phygbu/Data'
    f.pattern='*.txt'
@@ -196,7 +197,7 @@ groups (including nested  groups) that have no data files in them. If you supply
          |
          |-->G--> (2 files)
 
-**root.groups.prune(name="B")** will have the effect of removing sub-folders *C*, *D*, and *F*
+**root.groups.prune(name="B")** will have the effect of removing sub-folders *B*, *C*, *D* and *E*
 
 ::
 
@@ -230,7 +231,7 @@ parameter. For example,
                     |--> E--> (0 files)
 
 
-The :py:meth:`Stoner.folders.groups.GroupsDict.compress` is useful when a :py:class:`~Stoner.folders.mixins.DataFolder` contains a chain of sub-folers that have only one sub-folder in them - as can
+The :py:meth:`Stoner.folders.groups.GroupsDict.compress` is useful when a :py:class:`~Stoner.folders.mixins.DataFolder` contains a chain of subfolders that have only one sub-folder in them - as can
 result when reading one specific directory from a deep directory tree. The :py:meth:`~Stoner.folders.mixins.DataFolder.compress` method adjusts the virtual tree so that the
 root group is at the first level that contains more than just a single sub-folder.
 
@@ -245,7 +246,7 @@ root group is at the first level that contains more than just a single sub-folde
                     |
                     |--> C--> (5 files)
 
-**root.groups.compress** will reformat the :py:class:`~Stoner.folders.mixins.DataFolder` to:
+**root.groups.compress()** will reformat the :py:class:`~Stoner.folders.mixins.DataFolder` to:
 
 ::
 
@@ -265,14 +266,14 @@ groups by using the :py:meth:`~Stoner.folders.mixins.DataFolder.unflatten` metho
 flatten and unflatten a :py:class:`~Stoner.folders.mixins.DataFolder`::
 
     g=~f # Flatten (if f has groups) or unflatten (if f has no groups)
-    f.unlatten()
+    f.unflatten()
 
 .. note::
 
     The unary invert operator ~ will always create a new :py:class:`~Stoner.folders.mixins.DataFolder` before doing the :py:meth:`~Stoner.folders.mixins.DataFolder.flatten` or
     :py:meth:`~Stoner.folders.mixins.DataFolder.unflatten` - so that the original :py:class:`~Stoner.folders.mixins.DataFolder` is left unchanged. In contrast the
-    :py:meth:`~Stoner.folders.mixins.DataFolder.flatten` and :py:meth:`~Stoner.folders.mixins.DataFolder.unflatten` methods will change the :py:class:`~Stoner.folders.mixins.DataFolder` as well as return a
-    copy of the changed :py:class:`~Stoner.folders.mixins.DataFolder`.
+    :py:meth:`~Stoner.folders.mixins.DataFolder.flatten` and :py:meth:`~Stoner.folders.mixins.DataFolder.unflatten` methods will change the :py:class:`~Stoner.folders.mixins.DataFolder` as well as return the
+    changed :py:class:`~Stoner.folders.mixins.DataFolder`.
 
 If you need to combine multiple :py:class:`~Stoner.folders.mixins.DataFolder` objects or add :py:class:`Stoner.core.data.Data`
 objects to an existing :py:class:`~Stoner.folders.mixins.DataFolder` then the arithmetic addition operator can be used::
@@ -297,14 +298,14 @@ Getting a List of Files
 
 To get a list of the names of the files in a :py:class:`~Stoner.folders.mixins.DataFolder`, you can use the :py:attr:`~Stoner.folders.core.BaseFolder.ls` attribute.
 Sub-:py:class:`~Stoner.folders.mixins.DataFolder` s also have a name (essentially a string key to the dictionary that holds them), this can be accessed
-via the :py:attr:`~Stoner.folders.core.BaseFolder.lsgrp` generator fumnction.::
+via the :py:attr:`~Stoner.folders.core.BaseFolder.lsgrp` generator function::
 
     list(f.ls)
     list(f.lsgrp)
 
 .. note::
 
-    Both the :py:attr:`~Stoner.folders.core.BaseFolder.ls` and the :py:attr:`~Stoner.folders.core.BaseFolder.lsgrp` are generators, so they only return enties as they
+    Both the :py:attr:`~Stoner.folders.core.BaseFolder.ls` and the :py:attr:`~Stoner.folders.core.BaseFolder.lsgrp` are generators, so they only return entries as they
     are iterated over. This is (roughly) in line with the Python 3 way of doing things - if you actually want the whole list
     then you should wrap them in a *list()*.
 
@@ -313,7 +314,7 @@ will do this.
 
 As well as the list of filenames, you can get at the underlying stored objects through the :py:attr:`~Stoner.folders.core.BaseFolder.files` attribute.
 This will return a list of either instances of the stored :py:class:`Stoner.core.data.Data` type if they have already been loaded
-or the filename if they haven't been loaded into memory yet.::
+or the filename if they haven't been loaded into memory yet::
 
    f.files
 
@@ -335,50 +336,44 @@ performing the same operation on each::
 
     folder=DataFolder(pattern='*.tdi',type=Stoner.Data)
     for f in folder:
-      	f.normalise('mac116','mac119')
-     	f.save()
+        f.normalise('mac116','mac119')
+        f.save()
 
-or even more compacts::
+To apply a method to every file, use ``each``::
 
-  [f.normalise('mac116','macc119').save() for f in DataFolder(pattern='*.tdi',type=Stoner.Data)]
+    folder = DataFolder(pattern="*.tdi", setas="xy")
+    folder.each.normalise("mac116", "mac119")
+    folder.each.save()
 
-of even (!)::
+Each call returns a list of results, one per file; it does not return the folder
+for chaining. Methods such as ``normalise`` change the stored objects. Methods
+returning a new Data object replace the corresponding folder member. Other
+results, such as a span or a plot's Axes, are collected in the returned list::
 
-    DataFolder(pattern='*.tdi',type=Stoner.Data).each.normalise('mac116','mac119').save()
+    new_temperatures = np.linspace(1.4, 10, 100)
+    results = folder.each.interpolate(new_temperatures, xcol="Temp", replace=True)
+    spans = folder.each.span("Resistance")  # A list of (minimum, maximum) pairs.
 
-This last example illustrates a special ability of a :py:class:`~Stoner.folders.mixins.DataFolder` to use the methods of the
-type of :py:class:`~Stoner.core.data.Data` inside the DataFolder. The special :py:attr:`~Stoner.folders.core.BaseFolder.each` attribute (which is actually a
-:py:class:`Stoner.folders.each.Item`) provides special hooks to let you call methods of the underlying :py:attr:`~Stoner.folders.core.BaseFolder.type` class on each
-file in the :py:class:`~Stoner.folders.mixins.DataFolder` in turn. When you access a method on :py:attr:`~Stoner.folders.core.BaseFolder.each` that
-is actually a method of the DataFile, they call a method that wraps a call to each :py:class:`~Stoner.core.data.Data` in turn. If the method
-on :py:class:`~Stoner.core.data.Data` returns the :py:class:`~Stoner.core.data.Data` back, then this is stored in the :py:class:`~Stoner.folders.mixins.DataFolder`. In this case the result back`
-to the user is the revised :py:class:`~Stoner.folders.mixins.DataFolder`. If, on the otherhand, the method when executed on the :py:class:`~Stoner.core.data.Data` returns some other
-return value, then the user is returned a list of all of those return values. For example::
-
-    newT=np.linspace(1.4,10,100)
-    folder=DataFolder(pattern="*.txt",type=Stoner.Data)
-    ret=folder.each.interpolate(newT,xcol="Temp",replace=True)
-    # ret will be a copy of folder as Data,interpolate returns a copy of itself.
-
-    ret=folder.each.span("Resistance")
-    # ret is a list of tuples as the return value of Data.span() is a tuple
+If an individual call fails, its list entry contains the exception and traceback.
+Check the returned results when processing a batch of files.
 
 What happens if the analysis routine you want to run through all the items in :py:class:`~Stoner.folders.mixins.DataFolder` is not a method of the :py:class:`Stoner.core.data.Data`
 class, but a function written by you? In this case, so long as you write your custom analysis function so that the first positional argument
 is the :py:class:`~Stoner.core.data.Data` to be analysed, then the following syntax can be used::
 
-    def my_analysis(data,arg1,arg2,karg=True)
+    def my_analysis(data,arg1,arg2,karg=True):
         """Some sort of analysis function with some arguments and keyword argument that works
         on some data *data*."""
-        return data.modified()
+        data["Analysis complete"] = True
+        return data
 
     f.each(my_analysis,arg1,arg2,karg=False)
 
 (or alternatively using the matrix multiplication operator @)::
 
-    (my_analysis@f)(arg1,arg2,karg=False)
+    (my_analysis@f.each)(arg1,arg2,karg=False)
 
-*(my_analysis@f)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above just calls this iterating object.
+*(my_analysis@f.each)* creates the callable object that iterates *my_analysis* over f, the second set of parenthesis above just calls this iterating object.
 
 If the return value of the function is another instance of :py:class:`~Stoner.core.data.Data` (or whatever is being stored as the items in the
 :py:class:`~Stoner.folders.mixins.DataFolder`) then it will replace the items inside the :py:class:`~Stoner.folders.mixins.DataFolder`. The call to :py:attr:`~Stoner.folders.core.BaseFolder.each` will also return a
@@ -388,7 +383,7 @@ the name of the metadata to store the return value explicitly.
 
 Thus, if your analysis function calculates some parameter that you want to call *beta* you might use the following::
 
-    f=DataFolder(",",pattern="*.txt")
+    f=DataFolder(".",pattern="*.txt")
     f.each(my_analysis,arg1,arg2,karg=False,_return="beta")
 
 :py:class:`~Stoner.folders.mixins.DataFolder` is also indexable and has a length::
@@ -413,7 +408,7 @@ metadata on the individual :py:class:`~Stoner.core.data.Data` objects.
 
 Indexing the :py:attr:`~Stoner.folders.core.BaseFolder.metadata` will return an array of the requested metadata key, with one element from each data file in the
 folder. If the metadata key is not present in all files, then the array is a masked array and the mask is set for the files where it
-is missing.::
+is missing::
 
     f.metadata["Info.Sample_Material"]
     >>> masked_array(data=['Er', --, 'None', 'FeNi'],
@@ -482,7 +477,10 @@ or, if *values_only* is True, a list of values. The *output* parameter can chang
         return a single array - like list above, but returns as a numpy array. This can create a 2D array from multiple keys
     -   "Data" or Stoner.Data
 
-        returns the metadata in a Stoner.Data object where the column headers are the metadata keys.
+        returns numerical metadata in a Stoner.Data object, with the keys as column headers.
+    -   "frame"
+
+        returns a pandas DataFrame, suitable for text and mixed metadata as well as numbers.
     -   "smart"
 
         switch between dict and list depending whether there is one or more keys.
@@ -527,13 +525,13 @@ The order of the files in a :py:class:`~Stoner.folders.mixins.DataFolder` is arb
 them in a given order then the :py:meth:`~Stoner.folders.mixins.DataFolder.sort` method can be used::
 
    f.sort()
-   f.sort('tmperature')
+   f.sort('Temperature')
    f.sort('Temperature',reverse=True)
    f.sort(lambda x:len(x))
 
 The first variant simply sorts the files by filename. The second and third variants both
 look at the ''temperature'' metadata in each file and use that as the sort key. In the
-third variant, the *revers* keyword is used to reverse the order of the sort. In the final
+third variant, the *reverse* keyword is used to reverse the order of the sort. In the final
 variant, each file is loaded in turn and the supplied function is called and evaluated to find a
 sort key.
 
@@ -545,13 +543,13 @@ The :py:meth:`~Stoner.folders.mixins.DataFolder.filter` method can be used to pr
 
    f.filter('[ab]*.dat')
    import re
-   f.filter(re.compile('i10-\d*\.dat'))
+   f.filter(re.compile(r'i10-\d*\.dat'))
    f.filter(lambda x: x['Temperature']>150)
    f.filter(lambda x: x['Temperature']>150,invert=True,copy=True)
    f.filterout(lambda x: x['Temperature']>150,copy=True)
 
 The first form performs the filter on the filenames (using the standard python fnmatch module).
-One can also use a regular expression as illustrated int he second example -- although unlike using
+One can also use a regular expression as illustrated in the second example -- although unlike using
 the *pattern* keyword in :py:meth:`~Stoner.folders.mixins.DataFolder.getlist`, there is no option to capture metadata
 (although one could then subsequently set the pattern to achieve this). The third variant calls the
 supplied function, passing the current file as a :py:class:`~Stoner.core.data.Data` object in each time.
@@ -565,26 +563,26 @@ method with the *invert* keyword set.
 Selecting Data
 --------------
 
-Selecting data from the :py:class:`~Stoner.folders.mixins.DataFolder` is somewhat similar to filtering, but allows an east way to build complex selection rules
-based on metadata values.::
+Selecting data from the :py:class:`~Stoner.folders.mixins.DataFolder` is somewhat similar to filtering, but allows an easy way to build complex selection rules
+based on metadata values::
 
-    f.setlect(temperature_T1=4.2)
+    f.select(temperature_T1=4.2)
     f.select(temperature_T1__gt=77.0)
-    f.select(tmemperature__not__between(4.5,8.2))
-    f.select(user__contains="phygbu",user__contains="phyma")
+    f.select(temperature__not__between=(4.5,8.2))
+    f.select(user__contains="phygbu", project__contains="transport")
     f.select(user__contains="phygbu").select(project__icontains="superconduct")
     f.select({"temp:T1":4.2})
 
 The basic pattern of the :py:meth:`~Stoner.folders.mixins.DataFolder.select` method is that each keyword argument determines both the name of the metadata to use
-as the asis of the selection and also the operation to be performed. The value of the keyword argument is the value use to check. The operation is
+as the basis of the selection and also the operation to be performed. The value of the keyword argument is the value use to check. The operation is
 separated from the column name by a double underscore.
 
 In the first example, only those files with a metadata value "temperature_T1" which is 4.2 will be selected, here there is no operator specified,
 so for a single scalar value it is assumed to be ''__eq'' for equals. For a tuple it would be ''__between'' and for a longer list ''__in''.
 In the second example, the ''__gt'' (greater than) operator is used and in the third it is ''__between'', but in addition, this is inverted with
-'__not''. The fourth option illustrates a test with memtadata whose values are strings. In addition, the use of the two keyword arguments is the
-logical OR of testing for either. The equiavblant process for a logical AND is shown in the sixth example with successive selects (the ''__icontains''
-operator is a case insenesitive match). The final example uses a dictionary passed as a non-keyword argument to show how to select memtadata keys
+'__not''. The fourth option illustrates a test with metadata whose values are strings. In addition, the use of the two keyword arguments is the
+logical OR of testing for either. The equivalent process for a logical AND is shown in the fifth example with successive selects (the ''__icontains''
+operator is a case-insensitive match). The final example uses a dictionary passed as a non-keyword argument to show how to select metadata keys
 that are not valid Python identifiers.
 
 Grouping
@@ -610,11 +608,11 @@ method. A group is itself another instance of the :py:class:`~Stoner.folders.mix
 are the distinct values of the argument of the :py:meth:`~Stoner.folders.mixins.DataFolder.group` methods and whose values are
 :py:class:`~Stoner.folders.mixins.DataFolder` objects. So, if our :py:class:`~Stoner.folders.mixins.DataFolder` *f* contained files measured at
 4.2, 77 and 300K and at fields of 1T and -1T then the first variant would create 3 groups: 4.2, 77 and
-300 each one of which would be a :py:class:`~Stoner.folders.mixins.DataFolder` object congaing the files measured at those
+300 each one of which would be a :py:class:`~Stoner.folders.mixins.DataFolder` object containing the files measured at those
 temperatures. The second variant would produce 2 groups -- ''positive'' containing the files measured with
 magnetic field of 1T and ''negative'' containing the files measured at -1T. The third variant then goes
 one stage further and would produce 3 groups, each of which in turn had 2 groups. The groups are accessed
-via the :py:meth:`~Stoner.folders.mixins.DataFolder.group` attribute::
+via the :py:attr:`~Stoner.folders.core.BaseFolder.groups` attribute::
 
    f.groups[4.2].groups["positive"].files
 
@@ -622,17 +620,17 @@ would return a list of the files measured at 4.2K and 1T.
 
 If you try indexing a :py:class:`~Stoner.folders.mixins.DataFolder` with a string it first checks to see if there is a matching group
 with a key of the same string then :py:class:`~Stoner.folders.mixins.DataFolder` will return the
-corresponding group. This allows a more compact navigation through an extended group structure.::
+corresponding group. This allows a more compact navigation through an extended group structure::
 
     f.group(['project','sample','device']) # group will take a list
-    f['ASF']['ASF038']['A'] # Succsive indexing
+    f['ASF']['ASF038']['A'] # Successive indexing
     f['ASF','ASF038','A'] # index with a tuple
 
 The last variant will index through multiple levels of groups and then index for a file with a matching name and
 then finally index metadata in that file.
 
 If you just want to create a new empty group in your :py:class:`~Stoner.folders.mixins.DataFolder`, you can use
-the :py:meth:`~Stoner.folders.mixins.DataFolder.add_group` method.::
+the :py:meth:`~Stoner.folders.mixins.DataFolder.add_group` method::
 
     f.add_group("key_value")
 
@@ -653,11 +651,11 @@ easily accomplished by the :py:meth:`~Stoner.folders.mixins.DataFolder.gather` m
 In the first two forms you specify the x column and one or more y columns. In the third form, the
 x and y columns are determined by the values from the :py:attr:`~Stoner.core.data.Data.setas` attribute.
 (you can set the value of this attribute for all files in the :py:class:`~Stoner.folders.mixins.DataFolder` by setting the
-:py:attr:`~Stoner.folders.core.BaseFolder.setas` attribute.)
+``folder.each.setas`` attribute.)
 
 A similar operation to :py:meth:`~Stoner.folders.mixins.DataFolder.gather` is to build a new set of data where each row corresponds
 to a set of metadata values from each file in the :py:class:`~Stoner.folders.mixins.DataFolder`. This can be achieved with the
-:py:meth:`~Stoner.folders.mixins.DataFolder.extract` method.::
+:py:meth:`~Stoner.folders.mixins.DataFolder.extract` method::
 
     f.extract(["Temperature","Angle","Other_metadata"])
 
@@ -669,7 +667,7 @@ table are the names of the metadata that were used in the extraction.
 One task you might want to do would be to work through all the groups in a :py:class:`~Stoner.folders.mixins.DataFolder`
 and run some function either with each file in the group or on the whole group. This is further
 complicated if you want to iterate over all the sub-groups within a group. The
-:py:meth:`~Stoner.folders.mixins.DataFolder.walk_groups` method is useful here.::
+:py:meth:`~Stoner.folders.mixins.DataFolder.walk_groups` method is useful here::
 
      f.walk_groups(func,group=True,replace_terminal=True,walker_args={"arg1":"value1"})
 
@@ -677,17 +675,19 @@ This will iterate over the complete hierarchy of groups and sub groups in the fo
 execute the function *func* once for each group. If the *group* parameter is **False**
 then it will execute *func* once for each file. The function *fun* should be defined something like::
 
-    def func(group,list_of-group_keys,arg1,arg2...)
+    def func(group, group_keys, arg1="value1"):
+        # Process this group; group_keys gives its path within the folder.
+        return group
 
-The first parameter should expect and instance of :py:class:`~Stoner.core.data.Data` if
+The first parameter should expect an instance of :py:class:`~Stoner.core.data.Data` if
 *group* is **False** or an instance of :py:class:`~Stoner.folders.mixins.DataFolder` if *group* is **True**.
-The second parameter will be given a list of of strings representing the group key values from
+The second parameter receives a list of group keys from
 the topmost group to the lowest (terminal) group.
 
 By default, ``only_terminal=True`` visits terminal groups only. Set
 ``only_terminal=False`` to visit non-terminal groups too, after their subgroups
 (or each group's direct members when ``group=False``). The option is honoured
-at every depth. The starting folder receives an empty breadcrumb list.
+at every depth. The starting folder receives an empty list of group keys.
 
 The *replace_terminal* parameter applies when *group* is **True** and the function returns a
 :py:class:`Stoner.core.data.Data` object. This indicates that the group on which the function was
@@ -701,7 +701,7 @@ data files representing a multi-dimensional data set into a single file with min
 In some cases you will want to work with sets of files coming from different groups in order.
 For example, if above we had a sequence of 10 data files for each field and temperature and we wanted
 to process the positive and negative field curves together for a given temperature in turn.
-In this case the :py:meth:`~Stoner.folders.mixins.DataFolder.zip_groups` method can be useful.::
+In this case the :py:meth:`~Stoner.folders.mixins.DataFolder.zip_groups` method can be useful::
 
    f.groups[4.2].zip_groups(['positive','negative'])
 

@@ -1,5 +1,5 @@
 ************************************************************
-ConvertingScripts from Older Versions of the Stoner Package
+Converting Scripts from Older Versions of the Stoner Package
 ************************************************************
 
 .. currentmodule:: Stoner
@@ -8,7 +8,7 @@ The Stoner package has gradually undergone several changes as additional functio
 manageable. This document summarises the main changes from previous versions.
 
 Version 0.12.0a3: additional plotting contexts
-=============================================
+==============================================
 
 The current accessor additionally exposes ``data.plot.OffsetPlots`` (also
 ``Stoner.plot.OffsetPlots``), plus ``DoubleXAxis`` and ``DoubleXYAxis`` alongside
@@ -22,7 +22,7 @@ SavedFigure-style names and overrides. Omitting the style uses
 ``stonerplots.default.style``; pass an empty list for overrides alone.
 
 Version 0.12.0a2: plotting redesign
-====================================
+===================================
 
 The second alpha requires stonerplots 1.9.6 or newer and replaces the legacy
 plotting methods and templates with the callable ``Data.plot`` accessor.
@@ -98,8 +98,11 @@ argument named ``where``, use ``Data.apply(callback, _extra={"where": value})``
 to pass it explicitly to the callback. ``Data.select`` retains its separate column-query
 namespace, so ``data.select(where=value)`` still queries a column named ``where``.
 
-Python Version Support
-======================
+Historical Python Version Support
+=================================
+
+The current development version requires Python 3.12 or newer. The following
+list records older releases; it is not the current support policy.
 
     - Versions <= 0.5 supported Python 2.7 with some support for Python 3.x
     - Version 0.7 and 0.8 supported Python 2.7, 3.5 and 3.6
@@ -178,11 +181,11 @@ these functions are now in the :py:mod:`Stoner.analysis.fitting.models` package 
 Stoner.FileFormats Module deprecated
 ====================================
 
-The **Stoner.FileFormats** module was getting a bit big and unwieldy with many different file formats being implemented. It has
+The former **Stoner.FileFormats** module collected the file-format implementations. It has
 now been superseded by the :py:mod:`Stoner.formats` package which groups the fileformats into different sub-modules.
 
-Generally there is no particular reason to directly access the individual file format classes - the :py:class:`~Stoner.core.data.Data` class
-can access all the subclasses loaded in memory and so::
+Current formats use registered loader functions rather than a subclass for each
+format. ``Data`` selects a loader automatically, so this old import is unnecessary::
 
     import Stoner.FileFormats
 

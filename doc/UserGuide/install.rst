@@ -16,9 +16,17 @@ Requirements and packages
 Installing from source
 ======================
 
-The maintained source is on the ``stable`` branch. To install it directly::
+To install the source from the ``stable`` branch directly::
 
     python -m pip install git+https://github.com/stonerlab/Stoner-PythonCode.git@stable
+
+This guide also describes the development API on ``devel``, including the
+0.12 storage and plotting changes. To try that version in a separate environment::
+
+    python -m pip install git+https://github.com/stonerlab/Stoner-PythonCode.git@devel
+
+Development versions may change before release. Use the documentation matching
+your installed version when following examples.
 
 For an editable checkout with test dependencies, follow the
 :doc:`developer guide <developer>`.

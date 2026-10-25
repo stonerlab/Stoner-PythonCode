@@ -53,7 +53,9 @@ def alt_norm(f, _, **kwargs):
     ec = 0
 
     md = f.find_col(signal)
-    parameters, _ = f.curve_fit(linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1])
+    parameters, _ = f.curve_fit(
+        linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1]
+    )
     coeffs = parameters[::-1]
     linearfit = np.poly1d(coeffs)
     f.add_column(lambda r: r[md] - linearfit(r[ec]), "minus linear")
@@ -82,12 +84,18 @@ def norm_group(pos, _, **kwargs):
     posfile.add_column(lambda r: np.mean(r[1:]), "mean drain")
     ec = posfile.find_col("Energy")
     md = posfile.find_col("mean drain")
-    parameters, _ = posfile.curve_fit(linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1])
+    parameters, _ = posfile.curve_fit(
+        linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1]
+    )
     linearfit = np.poly1d(parameters[::-1])
     posfile.add_column(lambda r: r[md] - linearfit(r[ec]), "minus linear")
-    highend = posfile.mean("minus", bounds=lambda r: rfit[0] <= r[ec] <= rfit[1])
+    highend = posfile.mean(
+        "minus", bounds=lambda r: rfit[0] <= r[ec] <= rfit[1]
+    )
     if not np.isfinite(highend) or highend == 0:
-        raise ValueError("The normalisation window must contain a finite, non-zero edge step")
+        raise ValueError(
+            "The normalisation window must contain a finite, non-zero edge step"
+        )
     ml = posfile.find_col("minus linear")
     posfile.add_column(lambda r: r[ml] / highend, "normalised")
     if "group_key" in kwargs:
@@ -133,8 +141,15 @@ def collate(grp, trail, **kwargs):
     return final
 
 
-def reduce(directory, startrun=49173, endrun=52000, signal="fluo", lfit=(615, 630), rfit=(660, 670),
-           output_directory=None):
+def reduce(
+    directory,
+    startrun=49173,
+    endrun=52000,
+    signal="fluo",
+    lfit=(615, 630),
+    rfit=(660, 670),
+    output_directory=None,
+):
     """Reduce grouped helicity scans and optionally save the compiled position tables.
 
     Notes:
@@ -143,19 +158,39 @@ def reduce(directory, startrun=49173, endrun=52000, signal="fluo", lfit=(615, 63
         when output_directory is supplied; input scans are not overwritten.
     """
     pattern = re.compile(r"i10-(?P<run>\d*)\.dat")
-    folder = directory.clone if isinstance(directory, DataFolder) else DataFolder(directory, pattern=pattern)
+    folder = (
+        directory.clone
+        if isinstance(directory, DataFolder)
+        else DataFolder(directory, pattern=pattern)
+    )
     folder.sort("run")
     folder.filterout(lambda f: f["run"] > endrun or f["run"] < startrun)
     folder.group([position, temp, helicity])
-    folder.walk_groups(norm_group, group=True, replace_terminal=True,
-                       walker_args={"signal": signal, "lfit": lfit, "rfit": rfit})
-    folder.walk_groups(asym, group=True, replace_terminal=True, walker_args={"group_key": "temperature"})
-    folder.walk_groups(collate, group=True, replace_terminal=True, walker_args={"group_key": "Position"})
+    folder.walk_groups(
+        norm_group,
+        group=True,
+        replace_terminal=True,
+        walker_args={"signal": signal, "lfit": lfit, "rfit": rfit},
+    )
+    folder.walk_groups(
+        asym,
+        group=True,
+        replace_terminal=True,
+        walker_args={"group_key": "temperature"},
+    )
+    folder.walk_groups(
+        collate,
+        group=True,
+        replace_terminal=True,
+        walker_args={"group_key": "Position"},
+    )
     if output_directory is not None:
         output = Path(output_directory)
         output.mkdir(parents=True, exist_ok=True)
         for data in folder:
-            data.save(output / f"Compiled Fluorescence Data {data['Position']}.txt")
+            data.save(
+                output / f"Compiled Fluorescence Data {data['Position']}.txt"
+            )
     return folder
 
 
@@ -163,7 +198,13 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("directory", type=Path, help="Directory containing the i10 run files")
-    parser.add_argument("--output-directory", type=Path, help="Save compiled tables in this directory")
+    parser.add_argument(
+        "directory", type=Path, help="Directory containing the i10 run files"
+    )
+    parser.add_argument(
+        "--output-directory",
+        type=Path,
+        help="Save compiled tables in this directory",
+    )
     args = parser.parse_args()
     reduce(args.directory, output_directory=args.output_directory)

@@ -138,8 +138,11 @@ def _validate_table(state, *, native=False):
     identities = [col.id for col in state.schema]
     labels = [col.header for col in state.schema] if native else identities
     if len(set(identities)) != len(identities) or list(state.values.columns) != labels:
-        raise ValueError("Columns must match ordered schema headers" if native
-                         else "Columns must match unique ordered schema identities")
+        raise ValueError(
+            "Columns must match ordered schema headers"
+            if native
+            else "Columns must match unique ordered schema identities"
+        )
     index = state.values.index
     if not isinstance(index, pd.RangeIndex) or not index.equals(pd.RangeIndex(len(state.values))):
         raise ValueError("Storage rows must use RangeIndex(0, nrows)")
@@ -246,10 +249,14 @@ class DataStorage:
         # NumPy may store its generic integer default as int64 even on an int8
         # array. Import the sentinel that NumPy would actually use when filling.
         fill_value = np.ma.array(np.empty(0, dtype=array.dtype), fill_value=array.fill_value).fill_value
-        result = cls(pd.DataFrame(array.data, columns=[col.id for col in schema], copy=True),
-                     np.ma.getmaskarray(array).copy(), schema,
-                     _copy_metadata(metadata) if metadata is not None else TypeHintedDict(),
-                     fill_value, array.dtype)
+        result = cls(
+            pd.DataFrame(array.data, columns=[col.id for col in schema], copy=True),
+            np.ma.getmaskarray(array).copy(),
+            schema,
+            _copy_metadata(metadata) if metadata is not None else TypeHintedDict(),
+            fill_value,
+            array.dtype,
+        )
         result.validate()
         return result
 
@@ -357,13 +364,19 @@ class DataStorage:
             raise ValueError("Unknown pandas export policy")
         values = self.to_numpy(masked=False)
         if self.excluded.any() or self.metadata:
-            warnings.warn("Pandas export omits exclusions or typed metadata; retain DataStorage for lossless use",
-                          UserWarning, stacklevel=2)
+            warnings.warn(
+                "Pandas export omits exclusions or typed metadata; retain DataStorage for lossless use",
+                UserWarning,
+                stacklevel=2,
+            )
         if masked == "nan" and self.excluded.any():
             if values.dtype.kind not in "fc":
                 values = values.astype(np.result_type(values.dtype, float))
             values[self.excluded] = np.nan
         headers = [col.header for col in self.schema]
-        columns = pd.MultiIndex.from_arrays([headers, [col.role for col in self.schema]],
-                                           names=["Headers", "Setas"]) if format == "legacy" else headers
+        columns = (
+            pd.MultiIndex.from_arrays([headers, [col.role for col in self.schema]], names=["Headers", "Setas"])
+            if format == "legacy"
+            else headers
+        )
         return pd.DataFrame(values, columns=columns, copy=True)

@@ -28,11 +28,17 @@ def split_file(filename, output_directory=None):
         The process working directory is unchanged.
     """
     filename = Path(filename)
-    output = Path(output_directory) if output_directory is not None else filename.parent / "BNLSplitFiles"
+    output = (
+        Path(output_directory)
+        if output_directory is not None
+        else filename.parent / "BNLSplitFiles"
+    )
     output.mkdir(parents=True, exist_ok=True)
     scans = []
     with filename.open(encoding="utf-8") as source, ExitStack() as stack:
-        target = stack.enter_context((output / "title.txt").open("w", encoding="utf-8"))
+        target = stack.enter_context(
+            (output / "title.txt").open("w", encoding="utf-8")
+        )
         for line in source:
             if line.startswith("#S"):
                 target.close()
@@ -46,8 +52,10 @@ def split_file(filename, output_directory=None):
     valid = []
     for path in scans:
         # Aborted scans can have a header but no numerical rows.
-        if not any(line.strip() and not line.lstrip().startswith("#")
-                   for line in path.read_text(encoding="utf-8").splitlines()):
+        if not any(
+            line.strip() and not line.lstrip().startswith("#")
+            for line in path.read_text(encoding="utf-8").splitlines()
+        ):
             path.unlink()
             continue
         data = Data(path, filetype="BNLFile")

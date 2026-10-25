@@ -22,8 +22,6 @@ def _load_numerical_image(f, **kwargs):
     return numerical_image(f, **kwargs)
 
 
-
-
 class StackAnalysisMixin:
     def asfloat(self, normalise=True, clip=False, clip_negative=False, **kwargs):
         """Convert stack to floating point type.
@@ -58,6 +56,7 @@ class StackAnalysisMixin:
         if clip or clip_negative:
             self.each.clip_intensity(clip_negative=clip_negative)
         return self
+
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.
 
@@ -74,6 +73,7 @@ class StackAnalysisMixin:
         if clip_negative:
             ret = [max(0, x) for x in ret]
         return ret
+
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Dispatch legacy drift correction across the stack.
 
@@ -103,6 +103,7 @@ class StackAnalysisMixin:
         warnings.warn("correct_drift is a deprecated method for an image stack - consider using align.")
         ref = self[refindex]
         self.apply_all("correct_drift", ref, threshold=threshold, upsample_factor=upsample_factor, box=box)
+
     def crop_stack(self, box):
         """Crop the imagestack to a box.
 
@@ -116,6 +117,7 @@ class StackAnalysisMixin:
         """
         warnings.warn("crop_stack is deprecated - sam effect can be achieved with crop(box)")
         self.each.crop(box)
+
     def show(self):
         """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`."""
         warnings.warn("show() is deprecated in favour of ImageFolder.view()")
@@ -126,7 +128,6 @@ class StackAnalysisMixin:
     These functions may override :py:class:`Stoner,Image.ImageFile` functions but do them efficiently for a numpy
     stack of images.
     """
-
 
 
 class ImageStack(OwnedStackMixin, StackAnalysisMixin, ImageFolderMixin, DiskBasedFolderMixin, BaseFolder):

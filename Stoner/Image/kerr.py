@@ -38,8 +38,6 @@ AN_IM_SIZE = (554, 672)  # Kerr image with annotation not cropped
 pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
 
 
-
-
 @class_modifier(kerrfuncs, adaptor=image_file_adaptor)
 class KerrImageFile(ImageFile):
     """Own Kerr image storage and dispatch specialised numerical functions."""
@@ -48,7 +46,6 @@ class KerrImageFile(ImageFile):
     priority = 16
     mime_type = ["image/png"]
     pattern = ["*.png"]
-
 
     def __init__(self: Self, *args: Args, **kwargs: Kwargs) -> None:
         """Construct a Kerr image with optional preparation steps.
@@ -65,8 +62,10 @@ class KerrImageFile(ImageFile):
             crop_text (bool):
                 Remove the standard annotation strip. Default False.
         """
-        options = {name: kwargs.pop(name, False) for name in
-                   ("reduce_metadata", "ocr_metadata", "field_only", "asfloat", "crop_text")}
+        options = {
+            name: kwargs.pop(name, False)
+            for name in ("reduce_metadata", "ocr_metadata", "field_only", "asfloat", "crop_text")
+        }
         super().__init__(*args, **kwargs)
         if self.size:
             if options["reduce_metadata"]:

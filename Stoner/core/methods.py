@@ -328,8 +328,9 @@ def rolling_window(datafile, window=7, wrap=True, exclude_centre=False):
         starti = max(i - hw, 0)
         stopi = min(len(datafile), i + hw + 1)
         if exclude_centre:
-            selected = np.concatenate((positions[starti : max(starti, i - hc)],
-                                       positions[min(stopi, i + 1 + hc) : stopi]))
+            selected = np.concatenate(
+                (positions[starti : max(starti, i - hc)], positions[min(stopi, i + 1 + hc) : stopi])
+            )
         else:
             selected = positions[starti:stopi]
         if wrap:
@@ -666,6 +667,7 @@ def sort(datafile, *order, reverse=False):
         are retired by the owner commit; reacquire ``data`` after sorting.
     """
     from . import storage_operations
+
     return storage_operations.sort(datafile, *order, reverse=reverse)
 
 
@@ -813,12 +815,6 @@ def unique(datafile, col, return_index=False, return_inverse=False):
     return np.unique(datafile.column(col), return_index, return_inverse)
 
 
-
-
-
-
-
-
 def add_column(datafile, column_data, header=None, index=None, func_args=None, replace=False, setas=None):
     """Append a column of data or inserts a column to a datafile instance.
 
@@ -849,7 +845,10 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         the original DataFile Instance as well as returning it.
     """
     from . import storage_operations
-    return storage_operations.add_column(datafile, column_data, header=header, index=index, func_args=func_args, replace=replace, setas=setas)
+
+    return storage_operations.add_column(
+        datafile, column_data, header=header, index=index, func_args=func_args, replace=replace, setas=setas
+    )
 
 
 def columns(datafile, not_masked=False, reset=False):
@@ -906,6 +905,7 @@ def del_column(datafile, col=None, duplicates=False):
                 will be deleted
     """
     from . import storage_operations
+
     return storage_operations.del_column(datafile, col, duplicates=duplicates)
 
 
@@ -950,6 +950,7 @@ def del_rows(datafile, col=None, val=None, invert=False):
 
     """
     from . import storage_operations
+
     return storage_operations.del_rows(datafile, col, val, invert=invert)
 
 
@@ -1015,6 +1016,7 @@ def insert_rows(datafile, row, new_data):
             A copy of the modified :py:class:`DataFile` object
     """
     from . import storage_operations
+
     return storage_operations.insert_rows(datafile, row, new_data)
 
 
@@ -1056,6 +1058,7 @@ def reorder_columns(datafile, cols, headers_too=True, setas_too=True):
             A copy of the modified :py:class:`DataFile` object
     """
     from . import storage_operations
+
     return storage_operations.reorder_columns(datafile, cols, headers_too=headers_too, setas_too=setas_too)
 
 
@@ -1115,6 +1118,7 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
     """
     _reject_where(kwargs, "swap_column")
     from . import storage_operations
+
     return storage_operations.swap_column(datafile, *swp, headers_too=headers_too, **kwargs)
 
 

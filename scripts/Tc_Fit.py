@@ -7,13 +7,20 @@ import numpy as np
 from Stoner import Data
 from Stoner.analysis.fitting.models.generic import linear
 
-
-DEFAULT_FILE = Path(__file__).resolve().parents[1] / "sample-data" / (
-    "6221-Lockin-DAQ Temperature Control -30.0Deg 0.004T.txt"
+DEFAULT_FILE = (
+    Path(__file__).resolve().parents[1]
+    / "sample-data"
+    / ("6221-Lockin-DAQ Temperature Control -30.0Deg 0.004T.txt")
 )
 
 
-def fit(filename=DEFAULT_FILE, t_col=": T2", r_cols=("Nb::R", "YIG-Nb-Co::R"), iterator="iterator", threshold=0.85):
+def fit(
+    filename=DEFAULT_FILE,
+    t_col=": T2",
+    r_cols=("Nb::R", "YIG-Nb-Co::R"),
+    iterator="iterator",
+    threshold=0.85,
+):
     """Fit each ramp independently and return the critical temperatures and uncertainties.
 
     Notes:
@@ -28,21 +35,36 @@ def fit(filename=DEFAULT_FILE, t_col=": T2", r_cols=("Nb::R", "YIG-Nb-Co::R"), i
             continue
         row = [ramp.mean(iterator)]
         figure = ramp.plot.new_figure(figsize=(8, 4))
-        with ramp.plot.MultiPanel((1, len(r_cols)), figure=figure, adjust_figsize=False) as panels:
+        with ramp.plot.MultiPanel(
+            (1, len(r_cols)), figure=figure, adjust_figsize=False
+        ) as panels:
             for i, r_col in enumerate(r_cols):
                 data = ramp.clone
                 data.setas(x=t_col, y=r_col)
                 data.del_rows(np.isfinite(data.x) & np.isfinite(data.y))
                 data.normalise(base=(-1.0, 1.0), replace=True)
                 data = ~data
-                data.curve_fit(linear, bounds=lambda x, r: -threshold < x < threshold,
-                               result=True, p0=[7.0, 0.0])
+                data.curve_fit(
+                    linear,
+                    bounds=lambda x, r: -threshold < x < threshold,
+                    result=True,
+                    p0=[7.0, 0.0],
+                )
                 data.setas[-1] = "y"
-                ax = data.plot(ax=panels[i], fmt=["k.", "r-"], title=f"Ramp {row[0]}: {r_col}")
+                ax = data.plot(
+                    ax=panels[i],
+                    fmt=["k.", "r-"],
+                    title=f"Ramp {row[0]}: {r_col}",
+                )
                 data.annotate_fit(linear, ax=ax, x=0.1, y=0.1, fontsize="small")
-                row.extend([data["linear:intercept"], data["linear:intercept err"]])
+                row.extend(
+                    [data["linear:intercept"], data["linear:intercept err"]]
+                )
         result += np.array(row)
-    result.column_headers = ["Ramp", *[label for col in r_cols for label in (f"{col} Tc", f"{col} dTc")]]
+    result.column_headers = [
+        "Ramp",
+        *[label for col in r_cols for label in (f"{col} Tc", f"{col} dTc")],
+    ]
     result.setas = "x" + "ye" * len(r_cols)
     result.plot.new_figure()
     result.plot(fmt=["."] * len(r_cols))

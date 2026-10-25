@@ -72,7 +72,6 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
         if root_name:
             self._load(root_name)
 
-
         self.compression = "gzip"
         self.compression_opts = 6
 
@@ -131,10 +130,15 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
         dataset = dataset.assign_coords({energy_name: ("frame", values)})
         dataset[energy_name].attrs["units"] = headers["ScanDefinition.StackAxis.Unit"]
         dataset = dataset.rename({"intensity": name, "excluded": f"{name}__excluded"})
-        dataset[name].attrs = {"units": headers.get("ScanDefinition.Channels.Unit", ""),
-                               "excluded": f"{name}__excluded"}
-        warn("The native channel Dataset omits typed metadata; use export_storage for lossless interchange",
-             UserWarning, stacklevel=2)
+        dataset[name].attrs = {
+            "units": headers.get("ScanDefinition.Channels.Unit", ""),
+            "excluded": f"{name}__excluded",
+        }
+        warn(
+            "The native channel Dataset omits typed metadata; use export_storage for lossless interchange",
+            UserWarning,
+            stacklevel=2,
+        )
         return dataset
 
     def __clone__(self, other=None, attrs_only=False):

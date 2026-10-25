@@ -206,6 +206,7 @@ def add_core(other: Union[Data, NumericArray, MappingType], newdata: Data) -> Da
             A modified newdata
     """
     from . import storage_operations
+
     return storage_operations.append(newdata, other)
 
 
@@ -223,18 +224,21 @@ def and_core(other: Union[Data, NumericArray], newdata: Data) -> Data:
             new Data object with the columns of other concatenated as new columns at the end of the self object.
     """
     from . import storage_operations
+
     return storage_operations.concatenate_columns(newdata, other)
 
 
 def mod_core(other: Index, newdata: Data) -> Data:
     """Implement the column deletion method."""
     from . import storage_operations
+
     return storage_operations.del_column(newdata, other)
 
 
 def sub_core(other: Union[int, slice, Callable], newdata: Data) -> Data:
     """Worker for the subtraction."""
     from . import storage_operations
+
     return storage_operations.del_rows(newdata, other)
 
 

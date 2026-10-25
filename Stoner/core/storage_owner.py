@@ -34,8 +34,7 @@ class _TableState:
         package.validate()
         frame = package.values.copy(deep=False)
         frame.columns = [column.header for column in package.schema]
-        return cls(frame, package.excluded, list(package.schema), package.metadata,
-                   package.fill_value, package.dtype)
+        return cls(frame, package.excluded, list(package.schema), package.metadata, package.fill_value, package.dtype)
 
     def as_storage(self):
         """Create a validated UUID-labelled package view without exporting NumPy values.
@@ -46,8 +45,7 @@ class _TableState:
         self.validate()
         frame = self.values.copy(deep=False)
         frame.columns = [column.id for column in self.schema]
-        package = DataStorage(frame, self.excluded, list(self.schema), self.metadata,
-                              self.fill_value, self.dtype)
+        package = DataStorage(frame, self.excluded, list(self.schema), self.metadata, self.fill_value, self.dtype)
         package.validate()
         return package
 
@@ -133,12 +131,14 @@ class _Metadata(MutableMapping):
         if name in {"types", "_typehints"}:
             return getattr(self.copy(), name)
         if name in {"import_key", "import_all"}:
+
             def import_metadata(*args, **kwargs):
                 self._owner._check_writable()
                 draft = self.copy()
                 result = getattr(draft, name)(*args, **kwargs)
                 self._owner._state.metadata = draft
                 return result
+
             return import_metadata
         raise AttributeError(name)
 
@@ -202,8 +202,7 @@ class _SchemaField(MutableSequence):
         if len(current) != len(self):
             raise ValueError("Schema field edits cannot change column count")
         # Construct all immutable records before committing any change.
-        schema = [replace(column, **{self._field: item})
-                  for column, item in zip(self._owner._state.schema, current)]
+        schema = [replace(column, **{self._field: item}) for column, item in zip(self._owner._state.schema, current)]
         if self._field == "header":
             self._owner._state.values.columns = current
         self._owner._state.schema = schema
@@ -472,11 +471,9 @@ class DataOwner:
         if array.ndim != 2:
             raise ValueError("Data requires a two-dimensional array")
         if schema is None:
-            schema = list(self._state.schema[:array.shape[1]])
-            schema.extend(Column(str(uuid4()), f"Column_{i}")
-                          for i in range(len(schema), array.shape[1]))
-        candidate = DataStorage.from_numpy(array, headers=[c.header for c in schema],
-                                           roles=[c.role for c in schema])
+            schema = list(self._state.schema[: array.shape[1]])
+            schema.extend(Column(str(uuid4()), f"Column_{i}") for i in range(len(schema), array.shape[1]))
+        candidate = DataStorage.from_numpy(array, headers=[c.header for c in schema], roles=[c.role for c in schema])
         candidate.schema = list(schema)
         candidate.values.columns = [c.id for c in schema]
         candidate.validate()
@@ -501,8 +498,9 @@ class DataOwner:
     def select(self, rows=slice(None), columns=slice(None)):
         """Return independent rectangular state, including copied typed metadata."""
         array, schema = self._selection(rows, columns)
-        package = DataStorage.from_numpy(array, headers=[c.header for c in schema],
-                                         roles=[c.role for c in schema], metadata=self._state.metadata)
+        package = DataStorage.from_numpy(
+            array, headers=[c.header for c in schema], roles=[c.role for c in schema], metadata=self._state.metadata
+        )
         package.schema = schema
         package.values.columns = [c.id for c in schema]
         return DataOwner(package)
@@ -528,11 +526,19 @@ class DataOwner:
         fill = np.ma.array(np.empty(0, dtype=dtype), fill_value=state.fill_value).fill_value
         # Both buffers are newly allocated. Adopt them without exporting and
         # re-importing the whole table; no caller retains a writable reference.
-        candidate = DataStorage(pd.DataFrame(raw, columns=self.column_ids, copy=False), mask,
-                                list(state.schema), state.metadata, fill, dtype)
+        candidate = DataStorage(
+            pd.DataFrame(raw, columns=self.column_ids, copy=False),
+            mask,
+            list(state.schema),
+            state.metadata,
+            fill,
+            dtype,
+        )
         self._state = _TableState.adopt(candidate)
 
-    def insert_columns(self, index, values, headers=None, roles=None, overwrite=False, schema=None, mask_padding=False):
+    def insert_columns(
+        self, index, values, headers=None, roles=None, overwrite=False, schema=None, mask_padding=False
+    ):
         """Insert or replace columns, validating the entire result before commit."""
         self._check_writable()
         incoming = np.ma.asarray(values)
@@ -547,21 +553,28 @@ class DataOwner:
         dtype = np.result_type(current.dtype, incoming.dtype)
         self._check_integer_precision(dtype, incoming)
         height = max(current.shape[0], incoming.shape[0])
+
         def padded(array):
             result = np.ma.zeros((height, array.shape[1]), dtype=dtype)
             if mask_padding:
                 result.mask = True
-            result[:len(array)] = array
+            result[: len(array)] = array
             return result
+
         old, new = padded(current), padded(incoming)
         if schema is None:
             headers = [f"Column_{index + i}" for i in range(width)] if headers is None else list(headers)
             roles = ["."] * width if roles is None else list(roles)
             if len(headers) != width or len(roles) != width:
                 raise ValueError("Headers and roles must match inserted columns")
-            schema = [Column(self.column_ids[index+i] if overwrite and index+i < len(self.column_ids)
-                             else str(uuid4()), header, role)
-                      for i, (header, role) in enumerate(zip(headers, roles))]
+            schema = [
+                Column(
+                    self.column_ids[index + i] if overwrite and index + i < len(self.column_ids) else str(uuid4()),
+                    header,
+                    role,
+                )
+                for i, (header, role) in enumerate(zip(headers, roles))
+            ]
         stop = index + width if overwrite else index
         final_schema = list(self._state.schema[:index]) + list(schema) + list(self._state.schema[stop:])
         seen = set()

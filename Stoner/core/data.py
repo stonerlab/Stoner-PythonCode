@@ -62,7 +62,10 @@ from . import methods
 
 
 @class_modifier(
-    [methods, fitting, columns, functions, features, filtering, plotting], adaptor=None, no_long_names=True, overload=True
+    [methods, fitting, columns, functions, features, filtering, plotting],
+    adaptor=None,
+    no_long_names=True,
+    overload=True,
 )
 class Data(
     StorageBridgeMixin,
@@ -254,7 +257,7 @@ class Data(
                     if isinstance(val, self._public_attrs[k]):
                         if k == "column_headers" and self.shape != (0, 0):
                             headers = list(val)
-                            val = (headers + list(self.column_headers)[len(headers):])[:self.shape[1]]
+                            val = (headers + list(self.column_headers)[len(headers) :])[: self.shape[1]]
                         self.__setattr__(k, val)
                     else:
                         self._raise_type_error(k)
@@ -584,6 +587,7 @@ class Data(
     def _col_args(self, *args, **kwargs):
         """Create an object which has keys  based either on arguments or setas attribute."""
         from .numerical import column_arguments
+
         return column_arguments(self, *args, **kwargs)
 
     def _getattr_col(self, name):
@@ -593,12 +597,14 @@ class Data(
                 axes = int(self.setas.cols["axes"])
                 first, second, third = ("x", "y", "z") if axes < 5 else ("u", "v", "w")
                 if name == "r":
-                    square = getattr(self, first)**2 + getattr(self, second)**2
-                    return np.sqrt(square + getattr(self, third)**2) if axes in (3, 4, 6) else np.sqrt(square)
+                    square = getattr(self, first) ** 2 + getattr(self, second) ** 2
+                    return np.sqrt(square + getattr(self, third) ** 2) if axes in (3, 4, 6) else np.sqrt(square)
                 if name == "q":
                     return np.arctan2(getattr(self, first), getattr(self, second))
                 return np.arcsin(getattr(self, third))
-            field = dict(zip("xyzdefuvw", ("xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "ucol", "vcol", "wcol")))[name]
+            field = dict(zip("xyzdefuvw", ("xcol", "ycol", "zcol", "xerr", "yerr", "zerr", "ucol", "vcol", "wcol")))[
+                name
+            ]
             positions = self.setas.cols[field]
             if positions is None or isinstance(positions, list) and not positions:
                 return None

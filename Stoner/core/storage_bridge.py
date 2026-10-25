@@ -45,8 +45,6 @@ def _copy_rows(datafile, rows):
     return result
 
 
-
-
 class _ResolvedSetas(Setas):
     """Reuse assignment syntax with the migration's shared column resolver."""
 
@@ -134,7 +132,21 @@ class _BoundSetas:
     def __getattr__(self, name):
         if name in {"unset", "pop", "popitem", "setdefault"}:
             return lambda *args, **kwargs: self._mutate(name, *args, **kwargs)
-        if name in {"get", "keys", "values", "items", "set", "not_set", "ndim", "x", "y", "z", "_cols", "_size", "_unique_headers"}:
+        if name in {
+            "get",
+            "keys",
+            "values",
+            "items",
+            "set",
+            "not_set",
+            "ndim",
+            "x",
+            "y",
+            "z",
+            "_cols",
+            "_size",
+            "_unique_headers",
+        }:
             return getattr(self._snapshot(), name)
         if name in self._snapshot().cols:
             return self._snapshot().cols[name]
@@ -286,8 +298,9 @@ class StorageBridgeMixin:
             Data:
                 An independently owned frame-backed instance.
         """
-        return cls.from_storage(DataStorage.from_pandas(frame, mask=mask, setas=setas, metadata=metadata,
-                                                       dtype=dtype, index=index))
+        return cls.from_storage(
+            DataStorage.from_pandas(frame, mask=mask, setas=setas, metadata=metadata, dtype=dtype, index=index)
+        )
 
     def export_storage(self):
         """Return a detached package from the sole storage owner."""

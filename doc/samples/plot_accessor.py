@@ -4,9 +4,14 @@ import numpy as np
 
 from Stoner import Data
 
-x = np.linspace(0, 2*np.pi, 31)
-d = Data(x, np.sin(x), np.full_like(x, 0.12),
-         setas="xye", column_headers=["Phase / rad", "Signal", "Uncertainty"])
+x = np.linspace(0, 2 * np.pi, 31)
+d = Data(
+    x,
+    np.sin(x),
+    np.full_like(x, 0.12),
+    setas="xye",
+    column_headers=["Phase / rad", "Signal", "Uncertainty"],
+)
 
 figure = d.plot.new_figure(figsize=(8, 6), layout="constrained")
 axes = figure.subplots(2, 2)

@@ -36,6 +36,7 @@ def _draw_apaptor(func):
             im += coords[0][:, :, 2].astype("uint32") * 256**2
             im[im == 16777215] = 0
             from .imagefuncs import convert
+
             im = convert(im, self._img.dtype)
             self._img[im != 0] = im[im != 0]
             return self._parent
@@ -281,6 +282,7 @@ class MaskProxy:
         """Access the draw proxy object."""
         if "_image_owner" in self._imagefolder.__dict__:
             from .storage_bridge import OwnerDraw
+
             return OwnerDraw(self._imagefolder, mask=True)
         return DrawProxy(self._mask, self._imagefolder)
 
@@ -309,13 +311,16 @@ class MaskProxy:
     def __getattr__(self, name):
         """Check name against self._imagearray._funcs and constructs a method to edit the mask as an image."""
         if "_image_owner" in self._imagefolder.__dict__ and name in {"fill", "put", "sort"}:
+
             def mutate(*args, **kwargs):
                 with self._imagefolder.__dict__["_image_owner"].edit_numpy() as draft:
                     return getattr(draft.mask, name)(*args, **kwargs)
+
             return mutate
         if hasattr(self._imagearray.mask, name):
             return getattr(self._imagearray.mask, name)
         from .numerical import numerical_image
+
         working = numerical_image(self._mask.astype(float) * 1000)
         func = getattr(working, name, None)
         if func is None:
@@ -362,6 +367,7 @@ class MaskProxy:
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
         from .numerical import numerical_image
+
         fig = imshow(numerical_image(self._mask.astype(int)))
         data = StreamIO()
         fig.savefig(data, format="png")

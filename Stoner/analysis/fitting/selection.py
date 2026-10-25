@@ -22,8 +22,7 @@ def _observations(datafile, specification, raw, *, uncertainty=False):
 def curve_fit_inputs(datafile, xcol, ycol, sigma, where, bounds):
     """Resolve per-channel inputs and full-axis model/residual exclusions."""
     raw = datafile.to_numpy()
-    columns = datafile._col_args(scalar=False, xcol=xcol,
-                                 ycol=None if isinstance(ycol, np.ndarray) else ycol)
+    columns = datafile._col_args(scalar=False, xcol=xcol, ycol=None if isinstance(ycol, np.ndarray) else ycol)
     xcols = np.atleast_1d(columns.xcol).tolist()
     x = raw[:, xcols]
     x_values = x.data[:, 0] if len(xcols) == 1 else x.data
@@ -59,6 +58,16 @@ def curve_fit_inputs(datafile, xcol, ycol, sigma, where, bounds):
         channel_columns = deepcopy(columns)
         channel_columns.xcol = xcols[0] if len(xcols) == 1 else xcols
         channel_columns.ycol = yc if isinstance(yc, np.ndarray) else [yc]
-        inputs.append((x_values[included], y.data[included], uncertainty, channel_columns,
-                       x_values, y.data, model_mask, residual_mask))
+        inputs.append(
+            (
+                x_values[included],
+                y.data[included],
+                uncertainty,
+                channel_columns,
+                x_values,
+                y.data,
+                model_mask,
+                residual_mask,
+            )
+        )
     return inputs

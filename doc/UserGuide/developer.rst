@@ -92,7 +92,7 @@ the draft, not independent external writes. Direct native computations do not
 apply Stoner exclusions automatically.
 
 Core consumers use explicit masked numerical boundaries with native storage.
-``asarray()`` retains read-only annotations;
+``asarray()`` returns a read-only snapshot with descriptive annotations;
 multi-column search retains exclusions and raw hidden values. Short Boolean
 search selectors are padded with false. Two-item numeric lists retain their
 legacy interval meaning; numeric arrays select discrete targets. Equality retains
@@ -214,7 +214,9 @@ masked array; ``from_storage()``, ``export_storage()``, ``from_xarray()`` and
 ``to_xarray()`` provide explicit interchange.
 
 ``image.crop(xmin, xmax, ymin, ymax, copy=False, _=None)`` returns a shared region
-without changing the parent's extent. Pixel and mask writes, including drawing,
+without changing the parent's extent. Explicit ``_=None`` is required for a separate
+ImageFile: the default call rebinds the receiving object to the region.
+Rectangular ``image[rows, columns]`` slicing instead returns an independent image. Pixel and mask writes, including drawing,
 reach the parent. Use ``copy=True`` or ``clone`` for independence. Ordinary
 fixed-shape method commits keep regions live; whole-parent replacement invalidates
 them. Crops and rectangular slices preserve calibration. Transpose, ``T``,

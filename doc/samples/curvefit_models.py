@@ -35,7 +35,9 @@ fit = d.curve_fit(
 # Use Matplotlib's bundled font for portable mathematical annotations.
 with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
     figure = d.plot.new_figure(figsize=(7, 5))
-    with d.plot.StackVertical(2, figure=figure, height_ratios=[2, 1], adjust_figsize=False) as panels:
+    with d.plot.StackVertical(
+        2, figure=figure, height_ratios=[2, 1], adjust_figsize=False
+    ) as panels:
 
         d.plot.labels = []
         # Make nice two panel plot layout
@@ -55,6 +57,10 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         # Annotate plot with fitting parameters
         d.annotate_fit(PowerLaw, x=0.1, y=0.25, fontdict={"size": "x-small"})
         d.annotate_fit(
-            ODRModel, x=0.65, y=0.15, fontdict={"size": "x-small"}, prefix="ODRModel"
+            ODRModel,
+            x=0.65,
+            y=0.15,
+            fontdict={"size": "x-small"},
+            prefix="ODRModel",
         )
         ax.set_title("curve_fit with models")

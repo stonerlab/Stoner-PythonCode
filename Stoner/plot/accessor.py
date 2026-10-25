@@ -31,13 +31,35 @@ from .utils import errorfill as draw_errorfill
 __all__ = ["DataPlotter"]
 
 _XY_KINDS = ("line", "scatter", "errorbar", "errorfill")
-_FIELD_KINDS = ("surface", "contour", "pcolormesh", "image", "matrix", "scatter3d",
-                "vector", "vector3d", "quiver", "voxels", "waterfall")
+_FIELD_KINDS = (
+    "surface",
+    "contour",
+    "pcolormesh",
+    "image",
+    "matrix",
+    "scatter3d",
+    "vector",
+    "vector3d",
+    "quiver",
+    "voxels",
+    "waterfall",
+)
 _STAT_KINDS = ("hist", "box", "kde", "hexbin")
 _AUTO = object()
 _LEGACY_OPTIONS = {
-    "figure", "template", "plotter", "multiple", "show_plot", "save_filename",
-    "xcol", "ycol", "zcol", "ucol", "vcol", "wcol", "showfig",
+    "figure",
+    "template",
+    "plotter",
+    "multiple",
+    "show_plot",
+    "save_filename",
+    "xcol",
+    "ycol",
+    "zcol",
+    "ucol",
+    "vcol",
+    "wcol",
+    "showfig",
 }
 
 
@@ -168,7 +190,7 @@ class DataPlotter:
         """Return mutable label overrides, filling unspecified entries from headers."""
         labels = self._data.__dict__.setdefault("_labels", [])
         headers = list(self._data.column_headers)
-        labels.extend(headers[len(labels):])
+        labels.extend(headers[len(labels) :])
         return labels
 
     @labels.setter
@@ -217,8 +239,22 @@ class DataPlotter:
         """Show open Matplotlib figures, optionally overriding interactive blocking."""
         return plt.show(block=block)
 
-    def __call__(self, x=None, y=None, *, kind="auto", z=None, u=None, v=None, w=None,
-                 xerr=None, yerr=None, startx=0, no_guess=False, **kwargs):
+    def __call__(
+        self,
+        x=None,
+        y=None,
+        *,
+        kind="auto",
+        z=None,
+        u=None,
+        v=None,
+        w=None,
+        xerr=None,
+        yerr=None,
+        startx=0,
+        no_guess=False,
+        **kwargs,
+    ):
         """Choose and draw a plot using explicit columns, roles and sensible defaults.
 
         Args:
@@ -279,10 +315,12 @@ class DataPlotter:
             if kind != "hexbin":
                 if x is not None:
                     raise ValueError(f"{kind} selects sample columns with y=; X is not required.")
-                return draw_distribution(self, kind, y, startx=startx, no_guess=no_guess,
-                                         annotations=annotations, **kwargs)
-            columns = resolve_columns(self._data, x=x, y=y, z=False, u=False, v=False, w=False,
-                                      startx=startx, no_guess=no_guess)
+                return draw_distribution(
+                    self, kind, y, startx=startx, no_guess=no_guess, annotations=annotations, **kwargs
+                )
+            columns = resolve_columns(
+                self._data, x=x, y=y, z=False, u=False, v=False, w=False, startx=startx, no_guess=no_guess
+            )
             return draw_hexbin(self, columns, annotations=annotations, **kwargs)
         if kind == "matrix":
             if any(value is not None for value in (z, u, v, w, xerr, yerr)):
@@ -300,7 +338,9 @@ class DataPlotter:
             kind = columns.kind
         if kind in _FIELD_KINDS:
             if xerr is not None and xerr is not False or yerr is not None and yerr is not False:
-                raise ValueError("Field plots do not draw uncertainties; omit xerr/yerr or use an ordinary error plot.")
+                raise ValueError(
+                    "Field plots do not draw uncertainties; omit xerr/yerr or use an ordinary error plot."
+                )
             return self._field(kind, columns, **kwargs)
         if kind == "auto":
             xspec, yspecs = uncertainty_specs(columns, xerr, yerr)
@@ -510,13 +550,25 @@ class DataPlotter:
     @staticmethod
     def _stat_options(kind, kwargs):
         """Reject backend/group/layout forwarding before selecting statistical axes."""
-        removed = _LEGACY_OPTIONS | {"backend", "subplots", "layout", "secondary_y", "by", "data", "figsize",
-                                     "return_type", "fmt", "zlabel"}
+        removed = _LEGACY_OPTIONS | {
+            "backend",
+            "subplots",
+            "layout",
+            "secondary_y",
+            "by",
+            "data",
+            "figsize",
+            "return_type",
+            "fmt",
+            "zlabel",
+        }
         if kind == "box":
             removed |= {"vert", "labels", "tick_labels"}
         unsupported = removed.intersection(kwargs)
         if unsupported:
-            raise ValueError(f"Unsupported statistical options {sorted(unsupported)}; use named methods, ax= and contexts.")
+            raise ValueError(
+                f"Unsupported statistical options {sorted(unsupported)}; use named methods, ax= and contexts."
+            )
         return {key: kwargs.pop(key) for key in ("xlabel", "ylabel", "title") if key in kwargs}
 
     def _text(self, value):
@@ -555,12 +607,29 @@ class DataPlotter:
                 return current
         return plt.figure().add_subplot(projection=projection)
 
-    def _draw(self, kind, traces, *, xcolumn, ax=None, fmt=None, label=_AUTO, xlabel=_AUTO, ylabel=_AUTO,
-              title=_AUTO, xscale=None, yscale=None, legend=True, **kwargs):
+    def _draw(
+        self,
+        kind,
+        traces,
+        *,
+        xcolumn,
+        ax=None,
+        fmt=None,
+        label=_AUTO,
+        xlabel=_AUTO,
+        ylabel=_AUTO,
+        title=_AUTO,
+        xscale=None,
+        yscale=None,
+        legend=True,
+        **kwargs,
+    ):
         """Draw prepared ordinary traces without templates or pyplot render calls."""
         removed = _LEGACY_OPTIONS.intersection(kwargs)
         if removed:
-            raise ValueError(f"Legacy plotting options {sorted(removed)} are unsupported; use ax= and the named methods.")
+            raise ValueError(
+                f"Legacy plotting options {sorted(removed)} are unsupported; use ax= and the named methods."
+            )
         formats = self._per_trace(fmt, len(traces), "fmt")
         labels = self._per_trace(label, len(traces), "label")
         if kind == "scatter" and fmt is not None:
@@ -599,8 +668,7 @@ class DataPlotter:
                         options[key] = array[trace.rows]
             ax.scatter(trace.x, trace.y, **options)
         elif kind == "errorbar":
-            ax.errorbar(trace.x, trace.y, xerr=trace.xerr, yerr=trace.yerr,
-                        fmt="" if fmt is None else fmt, **options)
+            ax.errorbar(trace.x, trace.y, xerr=trace.xerr, yerr=trace.yerr, fmt="" if fmt is None else fmt, **options)
         else:
             draw_errorfill(trace.x, trace.y, xerr=trace.xerr, yerr=trace.yerr, ax=ax, fmt=fmt, **options)
 
@@ -609,14 +677,18 @@ class DataPlotter:
         if xlabel is not _AUTO or not ax.get_xlabel():
             ax.set_xlabel(self._text(self._label(xcolumn) if xlabel is _AUTO else xlabel or ""))
         if ylabel is not _AUTO or not ax.get_ylabel():
-            ax.set_ylabel(self._text(", ".join(self._label(t.column) for t in traces) if ylabel is _AUTO else ylabel or ""))
+            ax.set_ylabel(
+                self._text(", ".join(self._label(t.column) for t in traces) if ylabel is _AUTO else ylabel or "")
+            )
         if title is not _AUTO or not ax.get_title():
             ax.set_title(self._text(self._data.basename if title is _AUTO else title or ""))
 
     @staticmethod
     def _field_options(kwargs):
         """Separate annotations and reject legacy controls before creating axes."""
-        removed = (_LEGACY_OPTIONS | {"griddata", "projection", "backend", "mode", "scale_factor", "colormap"}).intersection(kwargs)
+        removed = (
+            _LEGACY_OPTIONS | {"griddata", "projection", "backend", "mode", "scale_factor", "colormap"}
+        ).intersection(kwargs)
         if removed:
             raise ValueError(f"Unsupported field options {sorted(removed)}; select a named method and use ax=.")
         annotations = {key: kwargs.pop(key) for key in ("xlabel", "ylabel", "zlabel", "title") if key in kwargs}
@@ -777,7 +849,8 @@ class DataPlotter:
                 ax, shape, method and xlim/ylim work as for image. arrows=True
                 overlays U/V arrows; quiver_kwargs supplies separate arrow styling
                 as for quiver. Remaining keywords go to Axes.imshow (alpha=0.75
-                by default). Directional RGB colours have no scalar colour bar.
+                by default), including interpolation="bilinear" or "bicubic"
+                for display smoothing. Directional RGB colours have no scalar colour bar.
 
         Returns:
             matplotlib.axes.Axes:
@@ -788,6 +861,9 @@ class DataPlotter:
             maximum, and W controls luminance across its range. Constant W uses
             neutral luminance; a zero field is finite neutral grey. Required
             coordinate/component exclusions apply to both image and arrows.
+            shape and method interpolate RGB colours rather than vector components;
+            arrows retain their original samples. Neither grid nor display
+            interpolation applies a statistical smoothing filter to measurements.
         """
         return self(x, y, u=u, v=v, w=w, kind="vector", **kwargs)
 
@@ -890,12 +966,19 @@ class DataPlotter:
                 rect=(row, column[, rows, columns]) selects a block. Explicit
                 coordinate arrays can span the whole table or only that block.
                 ax selects a 3D Axes. colorbar=True, annotation controls and other
-                Axes3D.plot_surface keywords work as for surface.
+                Axes3D.plot_surface keywords work as for surface. For an (nx, ny)
+                matrix, rcount=ny and ccount=nx render all existing samples;
+                linewidth=0 and antialiased=True improve polygon-edge rendering.
 
         Returns:
             matplotlib.axes.Axes:
                 Primary 3D Axes. The matrix's masks and values are preserved;
                 non-square tables are transposed only for Matplotlib's Y/X grid.
+
+        Notes:
+            This method does not interpolate new matrix values. Image interpolation
+            and field-gridding shape/method options are unsupported; use surface
+            on a row-wise XYZ table when numerical interpolation is required.
         """
         return self(x, y, kind="matrix", **kwargs)
 

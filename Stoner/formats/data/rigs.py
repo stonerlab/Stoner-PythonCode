@@ -280,7 +280,7 @@ def load_pinklib(new_data, *args, **kwargs):
         column_headers = f[header_line].strip("#\t ").split("\t")
         data = np.genfromtxt(f, dtype="float", delimiter="\t", invalid_raise=False, comments="#")
     new_data.data = data[:, 0:-2]  # Deal with an errant tab at the end of each line
-    new_data.column_headers = column_headers[:new_data.shape[1]]
+    new_data.column_headers = column_headers[: new_data.shape[1]]
     if np.all([h in column_headers for h in ("T (C)", "R (Ohm)")]):
         new_data.setas(x="T (C)", y="R (Ohm)")  # pylint: disable=not-callable
     return new_data

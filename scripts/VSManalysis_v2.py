@@ -29,7 +29,7 @@ import Stoner
 
 def saturated_fit(data, index, points):
     """Fit a saturated arm, excluding missing values and masked observations."""
-    window = data[max(0, index - points):min(len(data), index + points), 1:3]
+    window = data[max(0, index - points) : min(len(data), index + points), 1:3]
     window = np.ma.masked_invalid(window)
     valid = ~np.any(np.ma.getmaskarray(window), axis=1)
     return np.polyfit(window.data[valid, 0], window.data[valid, 1], 1)
@@ -54,7 +54,9 @@ def delete_corrupt_lines(data):
 
 def drift_eliminator(data, N):
     """Take off a linear drift of m with time from the data."""
-    max_harg = int(np.ma.argmax(np.ma.masked_invalid(data[: len(data) // 2, 1])))
+    max_harg = int(
+        np.ma.argmax(np.ma.masked_invalid(data[: len(data) // 2, 1]))
+    )
     final_harg = int(len(data[:, 1]) - 1)
     # linear fit to saturated data (+- N points from max field and final field)
     final_fit = saturated_fit(data, final_harg, N)
@@ -86,15 +88,21 @@ def shift(data, N):
     )  # gives the data index of maximum field (in the first half of the data
     min_harg = int(np.ma.argmin(np.ma.masked_invalid(data[:, 1])))
     # average saturated data (+- N points from max/min field)
-    high_ave = np.ma.masked_invalid(data[max(0, max_harg - N):max_harg + N, 2]).mean()
-    low_ave = np.ma.masked_invalid(data[max(0, min_harg - N):min_harg + N, 2]).mean()
+    high_ave = np.ma.masked_invalid(
+        data[max(0, max_harg - N) : max_harg + N, 2]
+    ).mean()
+    low_ave = np.ma.masked_invalid(
+        data[max(0, min_harg - N) : min_harg + N, 2]
+    ).mean()
     data[:, 2] = data[:, 2] - (high_ave + low_ave) / 2.0
     return data
 
 
 def diamag_background_rem(data, N):
     """Remove a diamagnetic background using a linear fit to the N data points surrounding the max and min field."""
-    max_harg = int(np.ma.argmax(np.ma.masked_invalid(data[: len(data) // 2, 1])))
+    max_harg = int(
+        np.ma.argmax(np.ma.masked_invalid(data[: len(data) // 2, 1]))
+    )
     min_harg = int(np.ma.argmin(np.ma.masked_invalid(data[:, 1])))
 
     # linear fit to saturated data (+- N points from max/min field)
@@ -116,11 +124,12 @@ def invert(data):
 def make_true_m(data):
     """VSM takes m from lock in X, this takes m from lock in R, useful if theta!=0."""
     vsm_calibration = (
-        data[5, data.find_col("m (emu)")]
-        / data[5, data.find_col("X (V)")]
+        data[5, data.find_col("m (emu)")] / data[5, data.find_col("X (V)")]
     )  # taken from row 5 at random
     moment = vsm_calibration * data.column("R (V)")
-    mask = np.ma.getmaskarray(data.column("m (emu)")) | np.ma.getmaskarray(moment)
+    mask = np.ma.getmaskarray(data.column("m (emu)")) | np.ma.getmaskarray(
+        moment
+    )
     data[:, "m (emu)"] = np.ma.array(moment, mask=mask)
     return data
 

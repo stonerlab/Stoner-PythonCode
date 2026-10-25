@@ -90,9 +90,14 @@ def resolve_columns(data, *, x=None, y=None, z=None, u=None, v=None, w=None, sta
         group_end = next((i for i in range(group_start + 1, len(roles)) if roles[i] == "x"), len(roles))
         xerr = next((i for i in range(group_start, group_end) if roles[i] == "d"), None)
     return PlotColumns(
-        x=positions["x"][0], y=positions["y"], z=positions["z"],
-        u=positions["u"], v=positions["v"], w=positions["w"],
-        xerr=xerr, yerr=tuple(errors.get(col) for col in positions["y"]),
+        x=positions["x"][0],
+        y=positions["y"],
+        z=positions["z"],
+        u=positions["u"],
+        v=positions["v"],
+        w=positions["w"],
+        xerr=xerr,
+        yerr=tuple(errors.get(col) for col in positions["y"]),
     )
 
 
@@ -186,11 +191,16 @@ def prepare_traces(data, columns, *, xerr=False, yerr=False):
         for error in (xerror, yerror):
             if error is not None and np.any(error.data[..., valid] < 0):
                 raise ValueError("Uncertainties must be non-negative at plotted samples.")
-        traces.append(PlotTrace(
-            column, xvalues.data[valid].copy(), yvalues.data[valid].copy(),
-            None if xerror is None else xerror.data[..., valid].copy(),
-            None if yerror is None else yerror.data[..., valid].copy(), valid,
-        ))
+        traces.append(
+            PlotTrace(
+                column,
+                xvalues.data[valid].copy(),
+                yvalues.data[valid].copy(),
+                None if xerror is None else xerror.data[..., valid].copy(),
+                None if yerror is None else yerror.data[..., valid].copy(),
+                valid,
+            )
+        )
     if not any(trace.x.size for trace in traces):
         raise ValueError("No finite, unexcluded samples remain in the selected traces.")
     return tuple(traces)

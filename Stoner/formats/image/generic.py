@@ -84,6 +84,7 @@ def load_imagefile(new_image, *args, **kwargs):
     """Read numerical pixels and publish them through the image owner."""
     filename, args, kwargs = get_filename(args, kwargs)
     from ...Image.numerical import load_pixels
+
     try:
         loaded = load_pixels(filename, **kwargs)
     except (OSError, ValueError, TypeError) as error:

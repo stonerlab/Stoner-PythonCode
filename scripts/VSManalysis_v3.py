@@ -11,15 +11,25 @@ class VSMAnalysis(Data):
 
     def _replace_signal(self, column, values):
         """Commit corrected values without clearing the column's existing exclusions."""
-        mask = np.ma.getmaskarray(self.column(column)) | np.ma.getmaskarray(values)
+        mask = np.ma.getmaskarray(self.column(column)) | np.ma.getmaskarray(
+            values
+        )
         self[:, column] = np.ma.array(values, mask=mask)
 
     def true_m(self):
         """Recalculate moment and its volume/mass normalisations from lock-in magnitude."""
-        s_vol = np.ma.masked_invalid(self.column("Mvol") / self.column("m (emu)")).mean()
-        s_mass = np.ma.masked_invalid(self.column("Mmass") / self.column("m (emu)")).mean()
-        l_ratio = np.ma.masked_invalid(self.column("m (emu)") / self.column("X")).mean()
-        moment = np.ma.sqrt(self.column("X") ** 2 + self.column("Y") ** 2) * l_ratio
+        s_vol = np.ma.masked_invalid(
+            self.column("Mvol") / self.column("m (emu)")
+        ).mean()
+        s_mass = np.ma.masked_invalid(
+            self.column("Mmass") / self.column("m (emu)")
+        ).mean()
+        l_ratio = np.ma.masked_invalid(
+            self.column("m (emu)") / self.column("X")
+        ).mean()
+        moment = (
+            np.ma.sqrt(self.column("X") ** 2 + self.column("Y") ** 2) * l_ratio
+        )
         self._replace_signal("m (emu)", moment)
         self._replace_signal("Mvol", moment * s_vol)
         self._replace_signal("Mmass", moment * s_mass)
@@ -40,7 +50,10 @@ class VSMAnalysis(Data):
         high_field = np.ma.filled(field > threshold * field.max(), False)
         for column in self.find_col(["m (emu)", "Mvol", "Mmass", "X", "Y"]):
             coeff, _ = self.curve_fit(linear, "Time", column, where=high_field)
-            self._replace_signal(column, self.column(column) - linear(self.column("Time"), *coeff))
+            self._replace_signal(
+                column,
+                self.column(column) - linear(self.column("Time"), *coeff),
+            )
         return self
 
     def remove_diamagnetism_and_offset(self, threshold=0.85):
@@ -61,18 +74,27 @@ class VSMAnalysis(Data):
             positive, _ = self.curve_fit(linear, "H_vsm", column, where=upper)
             negative, _ = self.curve_fit(linear, "H_vsm", column, where=lower)
             coeff = (positive + negative) / 2
-            self._replace_signal(column, self.column(column) - linear(self.column("H_vsm"), *coeff))
+            self._replace_signal(
+                column,
+                self.column(column) - linear(self.column("H_vsm"), *coeff),
+            )
         return self
 
     def _crossings(self, column, coordinate):
         """Find falling/rising zero crossings after the initial maximum field."""
         original_mask = self.mask.copy()
         try:
-            turning_point = int(np.ma.argmax(np.ma.masked_invalid(self.column("H_vsm"))))
+            turning_point = int(
+                np.ma.argmax(np.ma.masked_invalid(self.column("H_vsm")))
+            )
             self.mask |= ~np.isfinite(self.to_numpy(masked=False))
             self.mask[:turning_point, :] = True
-            falling = self.threshold(0.0, col=column, rising=False, falling=True, xcol=coordinate)
-            rising = self.threshold(0.0, col=column, rising=True, falling=False, xcol=coordinate)
+            falling = self.threshold(
+                0.0, col=column, rising=False, falling=True, xcol=coordinate
+            )
+            rising = self.threshold(
+                0.0, col=column, rising=True, falling=False, xcol=coordinate
+            )
             return falling, rising
         finally:
             self.mask = original_mask

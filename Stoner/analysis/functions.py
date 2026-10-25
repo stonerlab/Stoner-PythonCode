@@ -285,7 +285,9 @@ def integrate(
                 datafile.add_column(resultdata, header=header, replace=False)
             else:
                 result_name = datafile.column_headers[datafile.find_col(result)]
-                datafile.add_column(resultdata, header=header, index=None if result is True else result, replace=i == 0)
+                datafile.add_column(
+                    resultdata, header=header, index=None if result is True else result, replace=i == 0
+                )
         final.append(resultdata[-1])
     if len(final) == 1:
         final = final[0]
@@ -522,9 +524,7 @@ def stitch(
     # Curve fit for optimal A,B,C
     popt, pcov = curve_fit(_transform, set1, set2, p0=p0)  # pylint: disable=unbalanced-tuple-unpacking
     perr = np.sqrt(np.diagonal(pcov))
-    datafile[:, _.xcol], datafile[:, _.ycol] = func(
-        datafile.column(_.xcol), datafile.column(_.ycol), *popt
-    )
+    datafile[:, _.xcol], datafile[:, _.ycol] = func(datafile.column(_.xcol), datafile.column(_.ycol), *popt)
     datafile["Stitching Coefficients"] = list(popt)
     datafile["Stitching Coefficient Errors"] = list(perr)
     datafile["Stitching overlap"] = (lower, upper)

@@ -210,7 +210,6 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
         if root_name:
             _load_files(self, root_name, regrid)
 
-
         self.compression = "gzip"
         self.compression_opts = 6
 

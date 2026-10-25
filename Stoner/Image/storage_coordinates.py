@@ -56,7 +56,7 @@ def pack_coordinates(dataset, images):
             converted = raw.astype(dtype)
             if raw.dtype.kind in "iu" and not np.array_equal(raw.astype(object), converted.astype(object)):
                 raise ValueError("Physical coordinate packing would lose integer precision")
-            values[i, :raw.size] = converted
+            values[i, : raw.size] = converted
         name = f"index_{axis}" if f"physical_{axis}" in extras else f"physical_{axis}"
         dataset.coords[name] = (("frame", axis), values, attrs)
     for name in sorted(extras):
@@ -76,7 +76,7 @@ def pack_coordinates(dataset, images):
                     coord.values.astype(object), converted.astype(object)
                 ):
                     raise ValueError("Coordinate map packing would lose integer precision")
-                values[i, :coord.shape[0], :coord.shape[1]] = converted
+                values[i, : coord.shape[0], : coord.shape[1]] = converted
             dataset.coords[name] = (("frame", "y", "x"), values, attrs)
             continue
         if any(coord.dtype != coordinates[0].dtype for coord in coordinates[1:]):

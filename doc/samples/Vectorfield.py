@@ -1,4 +1,4 @@
-"""Create a 2D vector field plot."""
+"""Interpolate the coloured background while retaining the measured vector arrows."""
 
 # pylint: disable=invalid-name
 from os import path
@@ -13,6 +13,33 @@ e = (
 )
 with e.plot.style("stoner"):
     figure = e.plot.new_figure(figsize=(8, 4))
-    with e.plot.MultiPanel((1, 2), figure=figure, adjust_figsize=False) as panels:
-        e.plot.vector(x=0, y=1, u=3, v=4, w=False, ax=panels[0], title="U/V on a 2D slice")
-        e.plot.vector(x=0, y=1, u=3, v=4, w=5, ax=panels[1], title="U/V/W colour on a 2D slice")
+    with e.plot.MultiPanel(
+        (1, 2), figure=figure, adjust_figsize=False
+    ) as panels:
+        # Grid interpolation acts on RGB colours; display interpolation smooths pixels.
+        # Neither operation resamples the arrow locations or edits the measurements.
+        background = {
+            "shape": (300, 300),
+            "method": "cubic",
+            "interpolation": "bicubic",
+        }
+        e.plot.vector(
+            x=0,
+            y=1,
+            u=3,
+            v=4,
+            w=False,
+            ax=panels[0],
+            title="U/V: interpolated background",
+            **background,
+        )
+        e.plot.vector(
+            x=0,
+            y=1,
+            u=3,
+            v=4,
+            w=5,
+            ax=panels[1],
+            title="U/V/W: interpolated background",
+            **background,
+        )

@@ -11,10 +11,13 @@ d.normalise(2, scale=(0.0, 10.0))
 
 with d.plot.style("stoner"):
     figure = d.plot.new_figure(figsize=(7, 8))
-    with d.plot.StackVertical(2, figure=figure, joined=False, adjust_figsize=False) as panels:
+    with d.plot.StackVertical(
+        2, figure=figure, joined=False, adjust_figsize=False
+    ) as panels:
         d.plot.line(ax=panels[0], title="Style defaults")
         overrides = {
-            "axes.prop_cycle": cycler(color=["Blue", "Purple"]) + cycler(linestyle=["-", "--"]),
+            "axes.prop_cycle": cycler(color=["Blue", "Purple"])
+            + cycler(linestyle=["-", "--"]),
             "lines.linewidth": 2.0,
         }
         with d.plot.style([], extra=overrides):

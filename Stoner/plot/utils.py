@@ -47,7 +47,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.transforms import Bbox
 
-
 __all__ = ["errorfill"]
 
 ONE_SIXTH = 1 / 6

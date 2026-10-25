@@ -1091,7 +1091,10 @@ def polyfit(
                     + f"{ordinal(polynomial_order)} order polynomial"
                 )
             datafile.add_column(
-                np.polyval(p[i, :], x=datafile.column(_.xcol)), index=None if result is True else result, replace=replace, header=header
+                np.polyval(p[i, :], x=datafile.column(_.xcol)),
+                index=None if result is True else result,
+                replace=replace,
+                header=header,
             )
     if len(_.ycol) == 1:
         p = p[0, :]

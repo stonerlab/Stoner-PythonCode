@@ -46,7 +46,9 @@ fldr.each.setas(Current="x", Voltage="y")
 fldr.each.setas[3] = "y"
 
 
-fldr.each.plot(fmt=["+", "-"], label="Field = {y}mT", ax=fig.gca(), _serial=True)
+fldr.each.plot(
+    fmt=["+", "-"], label="Field = {y}mT", ax=fig.gca(), _serial=True
+)
 fldr[0].plot.ax.legend(ncol=2, fontsize="xx-small")
 fldr[0].plot.ax.set_title("Non-local IV Curves")
 

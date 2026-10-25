@@ -37,7 +37,9 @@ def guess_col(data, patterns, message):
 def fit(filename=False):
     """Load or copy data, fit resistance versus temperature and return the plotted Data."""
     data = Data(filename)
-    temperature = guess_col(data, [r"^[Tt][\s\(]", r"[Tt]emp"], "Temperature column: ")
+    temperature = guess_col(
+        data, [r"^[Tt][\s\(]", r"[Tt]emp"], "Temperature column: "
+    )
     resistance = guess_col(data, [r"[Rr]ho", r"[Rr]es"], "Resistance column: ")
     data.mask |= np.isnan(data.to_numpy(masked=False))
     data.del_rows()
@@ -47,7 +49,9 @@ def fit(filename=False):
     print(f"Initial guesses: {model.guess(data.y, x=data.x)}")
     data.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
     data.setas(Bloch="y", reset=False)
-    ax = data.plot(fmt=["r.", "b-"], label=["Data", "Bloch-Grüneisen fit"], markersize=1)
+    ax = data.plot(
+        fmt=["r.", "b-"], label=["Data", "Bloch-Grüneisen fit"], markersize=1
+    )
     ax.set(xlabel="Temperature (K)", ylabel=r"Resistance ($\Omega$)")
     data.annotate_fit(model, ax=ax, x=0.05, y=0.35, mode="eng")
     return data

@@ -4,8 +4,11 @@ from pathlib import Path
 
 from Stoner import ImageFile
 
-
-DEFAULT_FILE = Path(__file__).resolve().parents[1] / "sample-data" / "Sample_Image_2017-10-15_100.hdf5"
+DEFAULT_FILE = (
+    Path(__file__).resolve().parents[1]
+    / "sample-data"
+    / "Sample_Image_2017-10-15_100.hdf5"
+)
 
 
 def demonstrate(filename=DEFAULT_FILE, select=True):

@@ -26,6 +26,7 @@ def read_exclusions(group, image):
         mask = group["excluded"][...]
         if mask.dtype != np.dtype(bool) or mask.shape != image.shape:
             from ..core.exceptions import StonerLoadError
+
             raise StonerLoadError("Invalid stored image exclusion mask")
         package.dataset.excluded.data = mask
     package.fill_value = group.attrs.get("image_fill_value", package.fill_value)
@@ -33,6 +34,7 @@ def read_exclusions(group, image):
         image.__dict__["_image_owner"].replace(package)
     except (ValueError, TypeError, OverflowError) as error:
         from ..core.exceptions import StonerLoadError
+
         raise StonerLoadError("Invalid stored image fill or exclusion state") from error
     return image
 
@@ -126,8 +128,11 @@ class ScanMetadataMixin:
             return super().to_xarray()
         if format != "channels":
             raise ValueError("format must be 'stack' or 'channels'")
-        warn("The native channel Dataset omits typed metadata; use export_storage for lossless interchange",
-             UserWarning, stacklevel=2)
+        warn(
+            "The native channel Dataset omits typed metadata; use export_storage for lossless interchange",
+            UserWarning,
+            stacklevel=2,
+        )
         result = xr.Dataset()
         coordinates = None
         for index, name in enumerate(self.channels):

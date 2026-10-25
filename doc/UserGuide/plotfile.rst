@@ -4,6 +4,11 @@ Plotting Data
 
 .. currentmodule:: Stoner
 
+A *Figure* is the whole picture, while an *Axes* is one plotting area within it.
+The variable ``ax`` below refers to that plotting area: use it to change labels,
+limits and other formatting. Several plots can share an Axes, and one Figure
+can contain several Axes.
+
 The :py:attr:`~Stoner.core.data.Data.plot` property returns a callable
 :py:class:`~Stoner.plot.accessor.DataPlotter`. Use it to infer a scientific plot,
 or select a particular plot through its methods. Only the normal
@@ -107,9 +112,7 @@ Distributions and hexagonal binning
 
 ``hist``, ``box``, ``kde`` and ``hexbin`` use Matplotlib directly, with SciPy's
 ``gaussian_kde`` for density estimation. Each returns its primary Axes, respects
-``ax=`` and current styling, and does not show/save. Direct drawing keeps the
-selection/mask handling small and avoids an intermediate DataFrame or pandas
-backend. Changing pandas' global plotting backend does not affect these methods.
+``ax=`` and current styling, and does not show/save. These methods apply Stoner's masks independently of pandas plotting settings.
 
 For ``hist``, ``box`` and ``kde``, ``y`` selects sample columns rather than XY
 pairs. Omitting it selects assigned Y columns in the current ``startx`` group;
@@ -128,7 +131,7 @@ Masks in unselected X/error columns do not remove distribution samples;
 no separate X coordinate is read for alignment. Every selected series must retain
 samples, otherwise the call raises before creating axes. Integer samples are filtered without inserting
 NaNs into the measurement table. All methods leave values, exclusions, metadata,
-roles and storage ownership unchanged.
+column assignments unchanged.
 
 ``hist`` forwards native options such as ``bins``, ``range``, ``density``,
 ``cumulative``, ``histtype`` and ``stacked``. Selected series share bin edges.
@@ -164,7 +167,7 @@ stonerplots contexts for layout and axes management.
 ``hexbin`` uses one X and one Y column, with the ordinary scientific coordinate
 defaults. ``C=None`` counts jointly valid points; a column selector or source-row
 array supplies values to aggregate with ``reduce_C_function`` (mean by default).
-Only X/Y and optional C determine joint validity. Assigned uncertainties and
+A point is used only when its X, Y and optional C values are unmasked and finite. Assigned uncertainties and
 unrelated masks are ignored. Native ``gridsize``, ``mincnt``, ``extent``,
 ``bins``, ``cmap``, ``norm`` and ``xscale``/``yscale`` controls are supported,
 including logarithmic binning. ``colorbar=True`` adds a colour scale without
@@ -251,9 +254,9 @@ each axis, matching the previous grid-count policy. ``xlim``, ``ylim`` and volum
 ``zlim`` select increasing grid-centre bounds. Ungridded methods instead use limits
 as ordinary axes limits and reject gridding arguments.
 
-Complete regular lattices are reordered directly. Two-dimensional renderer arrays
-have Y rows and X columns; voxel arrays use X/Y/Z indexing. Only required columns
-contribute to joint validity. Excluded/non-finite scalar or vector samples do not
+Measurements already on a complete regular grid are used without interpolation. Two-dimensional renderer arrays
+have Y rows and X columns; voxel arrays use X/Y/Z indexing. A sample is used only when all the columns needed for that plot are unmasked
+and finite. Excluded/non-finite scalar or vector samples do not
 participate in interpolation; an excluded measured site coinciding with an output
 grid centre stays missing. Other unsampled sites can be interpolated, and
 linear/cubic values outside the convex hull remain missing. Duplicate positions
@@ -288,6 +291,19 @@ colours have no scalar colour bar; use a scalar plotting method for a numerical
 colour scale. ``arrows=False`` suppresses the overlay; ``quiver_kwargs={...}``
 supplies arrow styling separately from image options.
 
+To smooth the displayed colour background, pass ``interpolation="bilinear"``
+or ``"bicubic"`` to the underlying image renderer. For a finer colour grid,
+combine this with ``shape=(nx, ny)`` and ``method="linear"`` or ``"cubic"``::
+
+    ax = d.plot.vector(shape=(300, 300), method="cubic", interpolation="bicubic")
+
+``shape`` and ``method`` interpolate the **RGB colours**, not the vector
+components. A complete grid is otherwise used directly, so changing ``method``
+alone need not change it. ``interpolation`` controls how those colour pixels
+are displayed. Neither option is a statistical smoothing filter. The arrows
+retain the original valid sample locations and components, and the measurements
+are unchanged. Use ``interpolation="nearest"`` to show the colour-grid pixels.
+
 At duplicate positions, the vector image and its overlay use the same first
 valid vector. The ungridded ``quiver`` and ``vector3d`` methods retain every valid
 sample. ``waterfall`` intentionally applies the Joy Division helper's black
@@ -320,6 +336,16 @@ cells. ``x`` can instead be a selector or explicit vector, and ``y`` a coordinat
 row index or explicit vector. A coordinate row starts the default block below it.
 ``rect=(row, column[, rows, columns])`` crops the block, with corresponding
 coordinate slices. Coordinate vectors must be finite and unexcluded.
+
+Unlike ``vector``/``image``, ``matrix`` renders a 3D surface rather than an image.
+It does not accept image ``interpolation`` or the field-gridding ``shape`` and
+``method`` options. Its native ``rcount`` and ``ccount`` options control how many
+existing samples Matplotlib renders, rather than interpolating new values.
+Set ``rcount=ny, ccount=nx`` to draw the whole ``(nx, ny)`` matrix without
+downsampling. ``linewidth=0, antialiased=True`` removes mesh lines and antialiases
+polygon edges, but does not smooth or resample the measurements. For numerical
+interpolation, represent the data as a row-wise XYZ table and use
+``plot.surface(shape=(nx, ny), method="cubic")`` instead.
 
 .. plot:: samples/matrix_plot.py
     :include-source:
@@ -355,7 +381,7 @@ without selecting or creating a figure. Obtain the Figure from ``ax.figure``.
 Copy, deepcopy, clone, construction from another Data, and pickle round trips
 preserve label configuration while detaching live figures/axes.
 
-Drawing inherits current rcParams and existing axes styling. It does not reset
+Drawing inherits current Matplotlib settings (``rcParams``) and existing axes styling. It does not reset
 styles or apply a legacy template. Use the returned Axes for formatting::
 
     ax = d.plot(fmt="o", xlabel="Field / T", ylabel="Signal", title="Run 1")
@@ -379,8 +405,8 @@ Layouts and styles with one Stoner import
 =========================================
 
 Stoner requires stonerplots 1.9.8 or newer. Its context classes are available
-directly from ``d.plot`` and :py:mod:`Stoner.plot`. They have the upstream
-signatures and return their native handles; Stoner does not wrap their behaviour.
+directly from ``d.plot`` and :py:mod:`Stoner.plot`. They accept the same arguments as in stonerplots. Each is used in a ``with``
+block to apply its layout or style; the examples below show how to draw within it.
 
 .. list-table::
     :header-rows: 1

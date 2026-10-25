@@ -96,8 +96,13 @@ class StackOwner(ImageOwner):
             raise ValueError("Reordering requires each existing frame ID exactly once")
         order = [current.index(identity) for identity in identities]
         state = self._state
-        candidate = ImageStorage("stack", state.dataset.isel(frame=order).copy(deep=True),
-                                 state.metadata, state.fill_value, [state.frames[i] for i in order])
+        candidate = ImageStorage(
+            "stack",
+            state.dataset.isel(frame=order).copy(deep=True),
+            state.metadata,
+            state.fill_value,
+            [state.frames[i] for i in order],
+        )
         candidate.validate()
         self._state = candidate
 
@@ -112,8 +117,7 @@ class StackOwner(ImageOwner):
         height = int(dataset.valid_height.max()) if order else 0
         width = int(dataset.valid_width.max()) if order else 0
         dataset = dataset.isel(y=slice(0, height), x=slice(0, width))
-        candidate = ImageStorage("stack", dataset, state.metadata, state.fill_value,
-                                 [state.frames[i] for i in order])
+        candidate = ImageStorage("stack", dataset, state.metadata, state.fill_value, [state.frames[i] for i in order])
         candidate.validate()
         self._state = candidate
         self._retired.add(identity)
@@ -183,19 +187,29 @@ class StackOwner(ImageOwner):
         """Pack equal-sized uncalibrated frames without unpacking existing images."""
         state, incoming = self._state, package.dataset
         ds = state.dataset
-        if (not state.frames or set(ds.coords) != {"frame", "y", "x"}
-                or set(incoming.coords) != {"y", "x"}
-                or incoming.intensity.shape != ds.intensity.shape[1:]
-                or incoming.intensity.dtype != ds.intensity.dtype):
+        if (
+            not state.frames
+            or set(ds.coords) != {"frame", "y", "x"}
+            or set(incoming.coords) != {"y", "x"}
+            or incoming.intensity.shape != ds.intensity.shape[1:]
+            or incoming.intensity.dtype != ds.intensity.dtype
+        ):
             return False
         # Native attributes and non-positional axes require the general mapper.
-        if (ds.attrs or incoming.attrs or any(var.attrs for var in ds.variables.values())
-                or any(var.attrs for var in incoming.variables.values())):
+        if (
+            ds.attrs
+            or incoming.attrs
+            or any(var.attrs for var in ds.variables.values())
+            or any(var.attrs for var in incoming.variables.values())
+        ):
             return False
         height, width = incoming.intensity.shape
-        if (not np.all(ds.valid_height.values == height) or not np.all(ds.valid_width.values == width)
-                or not np.array_equal(incoming.y.values, np.arange(height))
-                or not np.array_equal(incoming.x.values, np.arange(width))):
+        if (
+            not np.all(ds.valid_height.values == height)
+            or not np.all(ds.valid_width.values == width)
+            or not np.array_equal(incoming.y.values, np.arange(height))
+            or not np.array_equal(incoming.x.values, np.arange(width))
+        ):
             return False
         package.validate()
         new_frame = Frame(str(uuid4()), name, _copy_metadata(package.metadata), package.fill_value)
@@ -205,10 +219,13 @@ class StackOwner(ImageOwner):
             key: (("frame", "y", "x"), np.insert(ds[key].values, position, incoming[key].values, axis=0))
             for key in ("intensity", "excluded")
         }
-        variables.update(valid_height=("frame", np.full(len(frames), height, dtype=int)),
-                         valid_width=("frame", np.full(len(frames), width, dtype=int)))
-        dataset = xr.Dataset(variables, coords={"frame": [frame.id for frame in frames],
-                                               "y": np.arange(height), "x": np.arange(width)})
+        variables.update(
+            valid_height=("frame", np.full(len(frames), height, dtype=int)),
+            valid_width=("frame", np.full(len(frames), width, dtype=int)),
+        )
+        dataset = xr.Dataset(
+            variables, coords={"frame": [frame.id for frame in frames], "y": np.arange(height), "x": np.arange(width)}
+        )
         candidate = ImageStorage("stack", dataset, state.metadata, state.fill_value, frames)
         candidate.validate()
         self._state = candidate
@@ -221,12 +238,14 @@ class _FrameMetadata(_Metadata):
 
     def __getattr__(self, name):
         if name in {"import_key", "import_all"}:
+
             def import_metadata(*args, **kwargs):
                 self._owner._check_writable()
                 draft = self.copy()
                 result = getattr(draft, name)(*args, **kwargs)
                 self._owner._replace_metadata(draft)
                 return result
+
             return import_metadata
         return super().__getattr__(name)
 

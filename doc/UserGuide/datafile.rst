@@ -4,22 +4,23 @@ Loading and Examining Data
 
 
 Loading a data file
-====================
+===================
 
 .. currentmodule:: Stoner
 
 The first step in using the Stoner module is to load some data from a
-measurement.::
+measurement::
 
    from Stoner import Data
    d=Data('my_data.txt')
 
 In this example we have loaded data from ``my_data.txt`` which should be in the
-current directory
+current directory.
 
-The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.core.data.Data`
-class which in turn is a superset of many of the classes in the Stoner package. This includes code to automatically
-detect the format of many of the measurement files that we use in our research.
+``Data`` combines loading, editing, analysis, fitting and plotting in one
+object. It recognises many common measurement formats automatically.
+``Stoner.Data`` and :py:class:`Stoner.core.data.Data` name the same class;
+``from Stoner import Data`` is the usual import.
 
 The native file format for the Stoner package is known as the *TDI 1.5* format - a tab delimited text file
 that stores arbitrary metadata and a single 2D data set. It closely matches the :py:class:`~Stoner.core.data.Data` class of the
@@ -32,55 +33,38 @@ that stores arbitrary metadata and a single 2D data set. It closely matches the 
 
 
 
-The various flavours of the Data class
---------------------------------------
+Choosing a file format
+----------------------
 
-To support a variety of input file formats, the Stoner package provides a registry of loader functions for the base
-:py:class:`~Stoner.core.data.Data` class. Each loader identifies and reads its corresponding file format; :class:`Stoner.core.data.Data` selects the
-appropriate loader automatically.
-
-Base Classes and Generic Formats
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-    :py:class:`~Stoner.core.data.Data`
-        Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs in the
-        CM Physics group in Leeds
-
-
-These classes can be used directly to load data from the appropriate format.::
-
-   import Stoner
-   d=Stoner.Data.load("my_data.txt")
-   v=Stoner.Data.load("my_VSM_data.fld", filetype=Stoner.formats.instruments.VSMFile)
-   c=Stoner.Data.load('data.csv',1,0,',',', filetype=Stoner.formats.generic.CSVFile)
-
-.. note::
-    The :py:meth:`~Stoner.core.data.Data.load` is a class method, meaning it creates (and returns) a new
-    instance of the :py:class:`~Stoner.core.data.Data` class. Most of the methods of :py:class:`~Stoner.core.data.Data` objects will return a copy of
-    the modified instance, allowing a several methods to be chained together into a single operation.
-
-Sometimes you won't know exactly which subclass of :py:class:`~Stoner.core.data.Data` is the one
-to use. Unfortunately, there is no sure fire way of telling, but :py:meth:`~Stoner.core.data.Data.load` will try to do
-the best it can and will try all of the subclasses in memory in turn to see if one will
-load the file without throwing an error. If this succeeds then the actual type of file that
-worked is stored in the metadata of the loaded file.
-
-.. warning::
-   The automatic loading assumes that each load routine does sufficient sanity checking that it will
-   throw and error if it gets bad data. Whilst one might wish this was always true it relies on
-   whoever writes the load method to make sure of this ! If you want to stop the automatic guessing
-   from happening use the ``auto_load=False`` keyword in the *load()* method, or provide an explicit *filetype*
-   parameter.
-
-You can also specify a *filetype* parameter to the :py:meth:`~Stoner.core.data.Data.load` method or directly to the
-:py:class:`~Stoner.core.data.Data` constructor as illustrated below to load a simple text file of un labelled numbers::
+``Data`` uses registered loader functions to recognise measurement formats.
+Normally, supplying a filename is enough. For a known format, give its registered
+name with ``filetype``::
 
     from Stoner import Data
-    d=Data("numbers.txt",filetype="JustNumbers",column_headers=["z","I","dI"],setas="xye")
 
-If *filetype* is a string, it can match either the complete name of the subclass to use to load the file, or
-part of it.
+    d = Data.load("my_data.txt")
+    v = Data.load("my_VSM_data.fld", filetype="VSMFile")
+    c = Data.load("data.csv", filetype="CSVFile", header_line=0, data_line=1,
+                  header_delim=",", data_delim=",")
+    numbers = Data("numbers.txt", filetype="JustNumbers",
+                   column_headers=["z", "I", "dI"], setas="xye")
 
+``Data.load(...)`` creates and returns a new object. Calling ``d.load(...)`` also
+returns a new object; it does not replace ``d``. In contrast, many analysis and
+editing methods change their existing object and return that same object so
+that you can chain calls. Use ``d.clone`` first when you need to keep the original.
+
+Automatic loading tries suitable registered loaders in priority order. The
+``"Loaded as"`` metadata entry records the successful loader. Recognition depends
+on each loader rejecting files it cannot interpret, so inspect the headers and
+values after loading an unfamiliar format. An explicit ``filetype`` selects that
+loader without automatic guessing; use the registered name, rather than a
+partial class name. ``auto_load=False`` without a ``filetype`` selects the
+default TDI loader.
+
+TDI 1.5 is the package's standard tab-delimited text format for a numerical table
+and metadata. Other formats may store less information. For CSV layout options
+used through initialisation files, see :doc:`curve_fitting`.
 
 Loading Data from a string or iterable object
 ---------------------------------------------
@@ -88,7 +72,7 @@ Loading Data from a string or iterable object
 In some circumstances you may have a string representation of a :py:class:`~Stoner.core.data.Data` object and want to
 transform this into a proper :py:class:`~Stoner.core.data.Data` object. This might be, for example, from transmitting
 the data over a network connection or receiving it from another program. In these situations the
-*left shift operator* ``<<`` can be used.::
+*left shift operator* ``<<`` can be used::
 
    data=Stoner.Data() << string_of_data
    data=Stoner.Data() << iterable_object
@@ -120,9 +104,10 @@ the longest data column, including when one column is entirely empty.
 Constructing Data objects from scratch
 --------------------------------------
 
-The constructor :py:class:`~Stoner.core.data.Data`, :py:meth:`~Stoner.core.data.Data.__init__` will try its best to guess what your intention
-was in constructing a new instance of a Data. First of all a constructor function is called based on the number of positional
-arguments were passed:
+You can create a Data object from arrays, column names, dictionaries or a pandas
+DataFrame. The meaning of the inputs depends on their number and type, as shown
+below. Keyword arguments such as ``column_headers`` and ``setas`` make your
+intent clearer.
 
 Single Argument Constructor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -142,9 +127,9 @@ A single argument passed to :py:meth:`~Stoner.core.data.Data.__init__` is interp
 Two Argument Constructor
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-If the second argument is a dictionary or a list or other iterables of strings, then the first argument interpreted as for
-the sibgle argument constructors above, and then the second argument is interpreted in the same way. (Internally this done by calling the
-single argument constructor function twice, once for each argument.)
+When the second argument is a dictionary or a sequence of strings, each input
+is interpreted using the rules above. For example, pass numerical columns first
+and a metadata dictionary second; the examples below show this combination.
 
 Many Argument Constructor
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -154,7 +139,7 @@ If there are more than two arguments and they are numpy arrays, then they are us
 Keyword Arguments in Constructor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After the positional arguments are dealt with, any keywords that match attriobutes of the Data are used to set the corresponding
+After the positional arguments are dealt with, any keywords that match attributes of the Data are used to set the corresponding
 attribute.
 
 Examples
@@ -182,15 +167,20 @@ Data Structure
 Data, Column headers and metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Having loaded some data, the next stage might be to take a look at it.
-Internally, raw numerical data is held in an ordinary pandas DataFrame, with
-a separate Boolean exclusion mask, column identities and roles. A dictionary keeps the metadata and
-also keeps track of the expected type of the metadata (ie the meta-metadata).
-These can be accessed like so::
+Each Data object contains a numerical table, column names and additional
+information about the measurement. This additional information is called
+*metadata*: named values such as the sample name or measurement temperature.
+Metadata retains type information to distinguish numbers, text and other
+supported values. Inspect these parts with::
 
   d.data
   d.column_headers
   d.metadata
+
+``d.data`` is a pandas DataFrame containing the raw measurements. Stoner keeps
+the mask and column assignments separately; ordinary pandas calculations do
+not automatically use them. The sections below explain masks and column
+assignments, and the final section covers using pandas and NumPy directly.
 
 .. image:: https://i.imgur.com/2wBGSYh.png
     :target: https://www.youtube.com/watch?v=D67-VZeg7gc
@@ -212,10 +202,10 @@ however, masking does have a number of practical uses.
 The data mask can be accessed via the :py:attr:`~Stoner.core.data.Data.mask` attribute of :py:class:`~Stoner.core.data.Data`::
 
    import numpy.ma as ma
-   print d.mask
+   print(d.mask)
    d.mask=False
    d.mask=ma.nomask
-   d.mask=numpy.array([[True, True, False,...False],...,[False,True,...True]])
+   d.mask = d.to_numpy(masked=False) < 0  # Mask individual negative values.
    d.mask=lambda x: x[0]<50
    d.mask=lambda x:[y<50 for y in x]
 
@@ -223,15 +213,16 @@ The first line is simply the import statement for the numpy masked arrays in ord
 symbol. The second line will simply print the current mask. The next two examples will unmask all the data
 i.e. make the values visible and usable. The next example illustrates using a numpy array of booleans to
 set the mask - every element in the mask array that evaluates as a boolean True will be masked and every
-False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on
-the data via ``d.data.mask`` but the final two examples illustrate an extension that setting the
+False value unmasked. The final two examples illustrate an extension that setting the
 :py:class:`~Stoner.core.data.Data` mask attribute allows. If you pass a callable object to the mask attribute it will
 be executed, passing each row of the data array to the user supplied function as a numpy array. The user
 supplied function can then either return a single boolean value -- in which case it will be used to mask
 the entire row -- or a list of boolean values to mask individual cells in the current row.
 
-By default when the :py:class:`~Stoner.core.data.Data` object is printed or saved, data values that have been masked are replaced
-with a "fill" value of 10^20.
+A masked measurement is hidden rather than deleted. Array exports retain its
+mask; text output may use a fill value (often ``1e20``) in place of the hidden
+measurement. Do not rely on a text save to preserve both the original value and
+its mask.
 
 .. warning::
    This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
@@ -259,17 +250,20 @@ column IDs and typed metadata. Neither method changes the source::
 
 Zero selects an empty table with the same columns. Positive counts larger than
 the table select all rows; negative counts omit rows from the opposite end.
-Counts must be integers, excluding Booleans. Returned rows receive a fresh
-positional index. Exclusions remain flags and do not remove rows from a preview.
+Counts must be integers rather than ``True`` or ``False``. Row numbering in
+the returned object starts at zero. Exclusions remain flags and do not remove rows from a preview.
 These methods accept neither ``inplace`` nor ``where``. For a pandas result use
 ``d.data.head()`` or ``d.data.tail()`` directly; those results follow pandas
-ownership rules and do not carry Stoner's separate exclusions and schema.
+copying rules and do not carry Stoner's separate mask or column assignments.
 
-With standard copying, only selected numerical rows and exclusion flags are
-copied. Metadata and ancillary instance attributes retain their usual deep-copy
-semantics, including shared references and cycles; large user metadata can still
-dominate the cost. Subclasses with custom ``clone`` or ``__deepcopy__`` hooks use
-the established full-clone-and-trim path so their transformations remain intact.
+Only the selected rows are copied, along with their masks. Metadata is copied
+independently too, so large metadata entries can still make a preview expensive.
+Subclasses with their own copying behaviour retain that behaviour.
+
+.. note::
+    ``d.data.head()`` and ``d.data.tail()`` instead return pandas results. They
+    contain raw measurements and do not carry Stoner's separate mask or column
+    assignments. Use ``d.head()`` and ``d.tail()`` to keep that information.
 
 .. _setas:
 
@@ -308,7 +302,7 @@ non-numeric character will be interpreted that many times, so::
 
 There are still more ways of setting column types with the :py:attr:`~Stoner.core.data.Data.setas` attribute::
 
-    d.seetas[3]="x"
+    d.setas[3]="x"
     d.setas["x"]=3
     d.setas("3.xy")
     d.setas(['.','.','.','x','y'])
@@ -318,14 +312,14 @@ All achieve the same effect of setting the same columns as containing x and y da
 
 Once you have identified columns for the various types, you also have access to utility attributes to access those columns::
 
-    d.setas="3.xye'
+    d.setas="3.xye"
     d.x == d.column(3)
     d.y == d.column(4)
     d.e == d.column(5)
 
 Note that if :py:attr:`~Stoner.core.data.Data.setas` is not set then attempting to use the quick access column attributes will
 result in an exception. Once the :py:attr:`~Stoner.core.data.Data.setas` attribute is set, a further set of *virtual* or *derived* column attributes
-become available.::
+become available::
 
     d.setas="xyz"
     d.r # The magnitude of the point x,y,z
@@ -334,17 +328,17 @@ become available.::
     d.setas="xyz..uvw"
     d.r # the magnitude of (u,v,w)
     d.q # The angle in the x-y plane of (u,v) relative to +x
-    d.p # The angle of (u,v,w) relatiuve to +z
+    d.p # The angle of (u,v,w) relative to +z
 
-Where fewer than 3 or 6 dimensions are specified, these virtual columns fallback to working with the appropriate
-reduced number dimensions.
+Where fewer than 3 or 6 dimensions are specified, these virtual columns fall back to working with the appropriate
+reduced number of dimensions.
 
-There are some more convenience ways to set which columns to use as x,y,z etc.::
+There are some more convenience ways to set which columns to use as x,y,z etc::
 
     d.setas={"x":0,"y":"Y Column title"}
     d.x=0
     d.y="Y Column title"
-   d.setas["Temperature"]="y"
+    d.setas["Temperature"]="y"
 
 In each of these cases, the :py:class:`~Stoner.core.data.Data` will try to work out what you intended to achieve for maximum flexibility
 and convenience when writing code. However it can be fooled if one of your columns is called 'x' or 'y' !
@@ -358,12 +352,12 @@ has been assigned as 'x', 'y' etc. by treating the :py:attr:`~Stoner.core.data.D
     d.column_headers=["One","Two","three","Four"]
     d.setas="xy.z"
 
-    print list(d.setas) #['x','y','.','z']
-    print d.setas #'xy.z'
-    print d.setas['x'] # "One"
-    print d.setas["#x"] # 0
+    print(list(d.setas)) #['x','y','.','z']
+    print(d.setas) #'xy.z'
+    print(d.setas['x']) # "One"
+    print(d.setas["#x"]) # 0
 
-Note that the :py:attr:`~Stoner.core.data.Data.setas` attribute supports reading keys that are either the single letter t get the name of the column or the letter
+Note that the :py:attr:`~Stoner.core.data.Data.setas` attribute supports reading keys that are either the single letter to get the name of the column or the letter
 preceded by a # character to get the number of the column.
 
 Alternatively, and equivalently, you can access the column indexes via attributes of :py:attr:`~Stoner.core.data.Data.setas`:
@@ -394,14 +388,14 @@ Swapping and Rotating Column Assignments
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Finally, if the :py:attr:`~Stoner.core.data.Data.setas` attribute has been set with *x*, *y* (and *z*) columns then these assignments can be
-swapped around by the **invert** operator **~**. This either swaps *x* and *y* with eir associated errorbars for 2-D datasets, or rotates
-*x* to *y*, *y* to *z* and *z* to *x* )again with their associated errors bars.::
+swapped around by the **invert** operator **~**. This either swaps *x* and *y* with their associated error bars for 2-D datasets, or rotates
+*x* to *y*, *y* to *z* and *z* to *x* (again with their associated error bars)::
 
     d.setas="xye"
-    print d.setas
+    print(d.setas)
     >>> ['x','y','e']
     e=~d
-    print e.setas
+    print(e.setas)
     >>> ['y','x','d']
 
 Printing the complete Data object
@@ -427,10 +421,10 @@ This will give something like::
                                       291.6          4.7878        7.515769
                                       291.6          4.78789       8.57829
 
-If more columns exist in the :py:class:`~Stoner.core.data.Data` then the *repr* method attempts to pick 'interesting' columns. Thealgorithm will prioritise showing columns
+If more columns exist in the :py:class:`~Stoner.core.data.Data` then the *repr* method attempts to pick 'interesting' columns. The algorithm will prioritise showing columns
 that have been assigned a meaning with the :py:attr:`~Stoner.core.data.Data.setas` attribute. If there are space for further columns, then the last column will be shown
 and other columns that follow from any that are marked in :py:attr:`~Stoner.core.data.Data.setas`. If no columns are marked as interesting, then the first n-2 columns and
-the last column will be shown.::
+the last column will be shown::
 
     ====================  =====================  =====================  ====================  ===================  =============  ==============
     TDI Format 1.5        Magnetic Field (Oe)       Moment (emu)        M. Std. Err. (emu)     Transport Action           ....          Map 16
@@ -445,11 +439,11 @@ the last column will be shown.::
 
 The table header lists the column titles, numerical indices for each column and the assignment in the :py:attr:`~Stoner.core.data.Data.setas` attribute.
 
-If the file has more than 256 rowns, then the first 128 rows and last 128 rows will be shown with a row of *...* to show the split.
+If the file has more than 256 rows, then the first 128 rows and last 128 rows will be shown with a row of *...* to show the split.
 
-Many of the methods in the Stoner package return a copy of the current :class:`Stoner.core.data.Data` object and in IPython consoles and Jupyter notebooks
+Many methods in the Stoner package return the modified :class:`Stoner.core.data.Data` object and in IPython consoles and Jupyter notebooks
 these will get printed out using the table formats above. This may be more than is required, in which case you can set options in the Stoner
-package to control the output format.::
+package to control the output format::
 
     from Stoner import Options
     Options.short_data_repr = True # or "short_repr" for short representations of all objects.
@@ -458,7 +452,7 @@ package to control the output format.::
 
 
 Working with columns of data
------------------------------
+----------------------------
 
 This is all very well, but often you want to examine a particular column of data
 or a particular row::
@@ -488,7 +482,7 @@ of the :py:class:`~Stoner.core.data.Data` object::
 
 all return the same data.
 
-Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
+Whenever the Stoner package needs to refer to a column of data, you can specify it in a number of ways:-
 
  1) As an integer where the first column on the left is index 0
  2) As a string. if the string matches a column header exactly then the index of that column is returned.
@@ -496,7 +490,7 @@ Whenever the Stoner package needs to refer to a column of data, you cn specify i
       is tried as a match. If multiple columns match then only the first is returned.
  3) As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
       expression in directly with any extra options (like case insensitivity flags) set.
- 4) As a slice object (ee.g. ``0:10:2``) this is expanded to a list of integers.
+ 4) As a slice object (e.g. ``0:10:2``) this is expanded to a list of integers.
  5) As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
       the final result would be to use a list of column indices.
 
@@ -516,31 +510,36 @@ Rows don't have labels, so are accessed directly by number::
 
 The second example uses a slice to pull out more than one row. This syntax also
 supports the full slice syntax which allows one to, for example, decimate the
-rows, or directly pull out the last fews rows in the file.
+rows, or directly pull out the last few rows in the file.
 
-Special Magic When Working with Subsets of Data
------------------------------------------------
+Reading a subset without changing the original
+----------------------------------------------
 
-Indexing ``Data`` returns ordinary NumPy masked arrays. Direct row and slice
-results may carry descriptive ``i``, ``column_headers`` and ``setas`` annotations
-prepared from the owner. These describe that result only: further NumPy slicing,
-arithmetic and copying follow NumPy semantics and do not propagate the annotations.
-Changing an annotation never changes the source schema or row identity.
+Indexing, ``column()`` and ``asarray()`` return read-only NumPy masked arrays.
+They are separate from the measurement: use them for calculations and inspection,
+and assign through ``d[row, column]`` to change the original. Use ``to_numpy()``
+when you need a writable array copy.
 
-NumPy results use integer or Boolean indexing, so replace ``row["Temperature"]``
-with ``row[d.find_col("Temperature")]``. Compute derived angles explicitly with
-NumPy, or use ``d.q`` and ``d.p`` on the Data owner. Structured records support
-``d.records[index]["header"]`` without the former ``._`` array alias. Excluded
-scalar reads return ``numpy.ma.masked``; test them with ``numpy.ma.is_masked``.
-
-Use the Data object's ``column_headers``, ``setas`` and ``column_ids`` for live
-schema access, and ``export_storage()`` for a lossless package. Numerical column
-exports are positional arrays; use ``d.column_headers[index]`` for a label::
+Some results also have descriptive attributes such as ``i`` (the selected row
+number), ``column_headers`` and ``setas``. These describe the selection when it
+was made. They do not track later edits, and further NumPy operations may lose
+them. Keep using ``d.column_headers`` and ``d.setas`` for the current labels and
+column assignments::
 
     row = d[10]
-    print(row.i)  # 10, recorded when this row was selected
+    print(row.i)  # 10
+    temperature = row[d.find_col("Temperature")]
     values = d[:, 0]
     label = d.column_headers[0]
+
+NumPy rows use numerical positions rather than column names. For named record
+access, use ``d.records[index]["header"]``. To calculate angles, use ``d.q`` and
+``d.p`` or NumPy functions. A single masked cell reads as ``numpy.ma.masked``;
+test it with ``numpy.ma.is_masked(value)``.
+
+``d.column_ids`` provides stable column identifiers, useful when displayed names
+are repeated. ``d.export_storage()`` preserves the complete state for transfer
+to another Data object.
 
 Manipulating the metadata
 -------------------------
@@ -553,11 +552,11 @@ in this case, it is assumed that you meant the metadata with key *User*.
 To get a list of possible keys in the metadata, you can do::
 
   d.dir()
-  d.dir('Option\:.*')
+  d.dir(r'Option\:.*')
 
 In the first case, all of the keys will be returned in a list. In the second,
 only keys matching the pattern will be returned -- all keys containing
-*Option:*. For compatibility with normal opython semantics: :py:meth:`~Stoner.core.data.Data.keys` is
+*Option:*. For compatibility with normal Python semantics: :py:meth:`~Stoner.core.data.Data.keys` is
 synonymous with :py:meth:`~Stoner.core.data.Data.dir`.
 
 If the string you supply to get the metadata item does not exactly match an item of
@@ -583,30 +582,30 @@ but an easier way is to use the :py:attr:`Stoner.core.base.TypeHintedDict.types`
 More on Indexing the data
 -------------------------
 
-There are a number o other forms of indexing supported for :py:class:`~Stoner.core.data.Data`
-objects.::
+There are a number of other forms of indexing supported for :py:class:`~Stoner.core.data.Data`
+objects::
 
   d[10,0]
   d[0:10,0]
   d[10,'Temp']
-  d[0:10,['Voltage','Temp']
+  d[0:10,['Voltage','Temp']]
 
 The first variant just returns the data in the 11th row, first column (remember
 indexing starts at 0). The second variant returns the first 10 values in the
 first column. The third variant demonstrates that columns can be indexed by
 string as well as number, and the last variant demonstrates indexing
-multiplerows and columns -- in this case the first 10 values of the Voltage and
+multiple rows and columns -- in this case the first 10 values of the Voltage and
 Temp columns.
 
 You might think of the data as being a list of records, where each column is a
 field in the record. Numpy supports this type of structured record view of data
 and the :py:class:`~Stoner.core.data.Data` object provides the :py:attr:`~Stoner.core.data.Data.records`
-attribute to d this. This read-only attribute is just providing an alternative
-view of the same data.::
+attribute to d this. This property returns a separate structured array. Changes to it do not update
+the measurement; duplicate headers are made unique for the record field names::
 
    d.records
 
-Finally the :py:attr:`~Stoner.core.data.Data.dict_records` atrtibute does the same thing, but presetns the data as an array of dictionaries, where the
+Finally the :py:attr:`~Stoner.core.data.Data.dict_records` attribute does the same thing, but presents the data as an array of dictionaries, where the
 keys are the column names and each dictionary represents a single row.
 
 Selecting Individual rows and columns of data
@@ -620,7 +619,7 @@ headings. If one wishes to find the numeric index of a column then the
    index=d.find_col('Temperature')
    index=d.find_col('Temp.*')
    index=d.find_col('1')
-   index=d.find_col(1:10:2)
+   index=d.find_col(slice(1, 10, 2))
    index=d.find_col(['Temperature',2,'Resistance'])
    index=d.find_col(re.compile(r"^[A-Z]"))
 
@@ -629,12 +628,12 @@ is an integer then it returns (trivially) the same integer, a string argument is
 first checked to see if it exactly matches one of the column headers in which
 case the number of the matching column heading is returned. If no exact match is
 found then a regular expression search is carried out on the column headings. In
-both cases, only the first match is returned. If the string still doesn't match, then
-the string is checked to see if it can be cast to an integer, in which case the integer value is used.
+both cases, only the first match is returned. If there is no match, a ``KeyError`` is raised. A numeric string such as
+``'1'`` selects a header or pattern; use the integer ``1`` to select by position.
 
 The final three examples given above
 both return a list of indices, firstly using a slice construct - in this case
-the result is trivially the same as the slice itself, and in the second example by
+the slice is expanded to the corresponding column positions, and in the second example by
 passing a list of column headers to look for. The final example uses a compiled
 regular expression. Unlike passing a string which contains a regular expression,
 passing a compiled regular expression will return a list of all columns that
@@ -651,23 +650,21 @@ Sometimes you may want to iterate over all of the rows or columns in a data set.
 This can be done quite easily::
 
   for row in d.rows():
-  	print row
+      print(row)
 
   for column in d.columns():
-  	print column
-  ......
+      print(column)
 
 If there is no mask set, then the first example could also have been written more compactly as::
 
   for row in d:
-  	print row
-  ......
+      print(row)
 
 .. note::
 
     :py:meth:`~Stoner.core.data.Data.rows` and :py:meth:`~Stoner.core.data.Data.columns` both take an optional parameter *not_masked*. If this is True then these iterator
-    methods will skip over any rows/columns with masked out data values. When iterating over the :py:class:`~Stoner.core.data.Data` instance directly the
-    masked rows are skipped over.
+    methods will skip over any rows/columns with masked out data values. Direct iteration includes masked rows; use ``d.rows(not_masked=True)``
+    when you want to skip rows containing masked cells.
 
 Searching, sectioning and filtering the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -676,7 +673,7 @@ Searching
 ~~~~~~~~~
 
 In many cases you do not know which rows in the data file are of interest - in
-this case you want to search the data.::
+this case you want to search the data::
 
   d.search('Temperature',4.2,accuracy=0.01)
   d.search('Temperature',4.2,['Temperature','Resistance'])
@@ -687,7 +684,7 @@ this case you want to search the data.::
 The general form is ``Data.search(<search column>,<search term>[,<listof return columns>])``
 
 The first example will return all the rows where the value of the
-*Tenperature* column is 4.2. The second example is the same, but only
+*Temperature* column is 4.2. The second example is the same, but only
 returns the values from the *Temperature*, and *Resistance*
 columns. The rules for selecting the columns are the same as for the
 Data.column method above -- strings are matched against column headers and
@@ -701,7 +698,7 @@ number and a numpy array of floating point numbers and should return either
 data file and is passed the value corresponding to the search column as the
 first parameter while the second parameter contains a list of all of the values
 in the row to be returned. If the search function returns True, then the row is
-returned, otherwise it isn't. In thr last example, the final parameter can
+returned, otherwise it isn't. In the last example, the final parameter can
 either be a list of columns or a single column. The rules for indexing columns
 are the same as used for the :py:meth:`~Stoner.core.data.Data.find_col` method.
 
@@ -732,7 +729,7 @@ Filtering
 Sometimes you may want not to get the rows of data that you are looking for as a
 separate array, but merely mark them for inclusion (or exclusion) from subsequent
 operations. This is where the masked array (see ':ref:`maskeddata`) comes into its own.
-To select which rows of data have been masked off, use the :py:meth:`~Stoner.core.data.Data.filter` method.::
+To select which rows of data have been masked off, use the :py:meth:`~Stoner.core.data.Data.filter` method::
 
  d.filter(lambda r:r[0]>5)
  d.filter(lambda r:r[0]>5,['Temp'])
@@ -746,8 +743,8 @@ of things which can be used to index a column (ie strings, integers, regular exp
 Selecting
 ~~~~~~~~~
 
-A very powerful way to get at just the dat rows you want is to make use of the :py:meth:`~Stoner.core.data.Data.select` method.
-This offers a simple way to query which rows have columns matching some criteria.::
+A very powerful way to get at just the data rows you want is to make use of the :py:meth:`~Stoner.core.data.Data.select` method.
+This offers a simple way to query which rows have columns matching some criteria::
 
  d.select(Temp=250)
  d.select(Temp__ge=150)
@@ -757,7 +754,7 @@ The general form is to provide keyword arguments that are something that can be 
 underscore, followed by an operator. Where more than one keyword argument is supplied, the results of testing each row are logically
 ORed. The result of chaining together two separate calls to select will, however, logically AND the two tests. So, in the examples above,
 the, first line will assume an implicit equality test and give only those rows with a column *Temp* equal to 250. The second line gives an
-explicit greater than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4.2 *or*
+explicit greater than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4 *or*
 column T2 less than 5 and then from those select those rows which have a column Res between 100 and 200. The full list of operators is given in
 :py:meth:`Stoner.core.data.Data.select`.
 
@@ -804,23 +801,21 @@ group. With both options the result is ``(values, first, inverse)``; either opti
 can be used independently. Column selection follows
 :py:meth:`~Stoner.core.data.Data.column`, including first-occurrence resolution of
 duplicate names. A scalar column selector gives one-dimensional input; a list
-containing one column keeps its two-dimensional shape. Multiple columns are
-flattened in row-major order for uniqueness, so this operation compares individual
-values, not complete rows. First-occurrence indices refer to that flattened
-selection; inverse indices retain the selection's shape.
+containing one column keeps its two-dimensional shape. With several columns, values are read left to right across each row and then
+compared individually. This does not find distinct complete rows. The first-occurrence positions count through that combined sequence; the
+inverse result has the same shape as the selection.
 
-Ordinary finite values are sorted, with excluded finite observations represented
-by a masked group. Excluded raw measurements are not exposed as categories or
-deleted from the source. The payload under a masked result is not a category
-value. NaNs, complex NaNs and mixed masks/NaNs retain NumPy's masked-array behaviour;
-mixed cases can produce multiple masked entries. This API does not silently
-normalise those groups or introduce a separate missingness policy. Numerical reads
-during an edit context see committed values until the draft is published.
+Ordinary finite values are sorted. Masked measurements form a masked result
+group: their hidden values are not listed as distinct observations and are not
+deleted from the original. Do not interpret the hidden number under a masked
+result as a measured category. NaNs, complex NaNs and mixed masks/NaNs retain NumPy's masked-array behaviour;
+mixed cases can produce multiple masked entries. Stoner keeps those NumPy rules rather than combining all missing values into
+one group. Inside an editing block, reads through ``d`` still see the original
+values until the block completes successfully.
 
 Pandas ``unique`` preserves encounter order, does not apply Stoner exclusions and
 does not supply this index/inverse interface. Use it directly on ``d.data`` when
-those raw pandas semantics are wanted. ``Data.unique`` retains its numerical
-backend and accepts neither ``where`` nor arbitrary pandas keywords.
+those raw pandas semantics are wanted. ``Data.unique`` accepts neither ``where`` nor arbitrary pandas keywords.
 
 Copying Data
 ^^^^^^^^^^^^
@@ -858,26 +853,27 @@ In these example, *a* is a second Data object that contains some
 data. In the first example, a new Data object is created where the contents
 of *a* are added as new rows after the data in *d*. Any metadata
 that is in *a* and not in *d* are added to the metadata as well.
-There is a requirement, however, that the column headers of *d* and
-*a* are the same -- ie that the two Data objects appear to represent
-similar data.
+Rows from another Data object are matched to the existing headers, including
+repeated headers in order. Missing source columns produce NaN values; source
+columns absent from the destination are not added automatically. Check that
+the headers and units describe the same quantities before combining measurements.
 
 In the second example, the data in *a* is added as new columns after the
-data from *d*. In this case, there is a requirement that the two Data
-objects have the same number of rows.
+data from *d*. Rows are matched by position; a shorter input is padded with missing values.
+Check row lengths and alignment before combining measurements.
 
 These operators are not limited just to Data objects, you can also add numpy
-arrays to the Data object to append additional data.::
+arrays to the Data object to append additional data::
 
   import numpy as np
   x=np.array([1,2,3])
   new_data=d+x
-  y=np.array([1,2,3],[11,12,13],[21,22,23],[31,32,33]])
+  y=np.array([[1,2,3],[11,12,13],[21,22,23],[31,32,33]])
   new_data=d+y
   z={"X":1.0,"Y":2.1,"Z":7.5}
   new_data=d+z
   new_data=d+[x,y,z]
-  column=d.column[0]
+  column=d.column(0)
   new_data=d&column
 
 In the first example above, we add a single row of data to *d*. This
@@ -885,8 +881,9 @@ assumes that the number of elements in the array matches the number of columns
 in the data file. The second example is similar but this time appends a 2
 dimensional numpy array to the data. The third example demonstrates adding data from a dictionary.
 In this case the keys of the dictionary are used to determine which column the values are added
-to. If their columns that don't match one of the dictionary keys, then a ``NaN`` is inserted. If there
-are keys that don't match columns labels, then new columns are added to the data set, filled with ``NaN``.
+to. If an existing column has no matching dictionary key, a masked missing value
+is inserted. If there
+are keys that don't match columns labels, new columns are added, with earlier rows masked as missing.
 In the fourth example, each element in the list is added in turn to *d*. A similar effect would be achieved by doing
 ``new_data=d+x+y+z``.
 
@@ -896,16 +893,17 @@ the same or fewer rows of data as *d*.
 
 
 Working with Columns of Data
------------------------------
+----------------------------
 
 Changing Individual Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``data`` property supplies the native DataFrame. Assign existing raw cells
 through ``d.data.iloc[row, column]`` without changing dtype. Reacquire the frame
-after owner mutations and use owner operations for structural changes. Assign through
+after using Stoner methods to change the object. Use those methods to add, remove
+or rearrange rows and columns. Assign through
 ``d[row, column]``, replace ``d.data`` as a whole, or use ``d.edit_numpy()`` to
-commit pixelwise changes. Assigned roles such as ``x``, ``y`` and ``z`` support
+commit changes to individual values. Assigned roles such as ``x``, ``y`` and ``z`` support
 direct column replacement on the Data object.
 Thus the following will work::
 
@@ -926,7 +924,7 @@ also works::
     d.x=np.linspace(0,300,len(d)) # And set the column to contain a linear array of values from 0 to 300.
 
 You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian coordinates.
-On the otherhand you can do an efficient conversion to polar coordinates with::
+You can convert the coordinate columns to polar coordinates with::
 
     d.setas="xyz"
     (d.x,d.y,d.z)=(d.p,d.q,d.r)
@@ -934,21 +932,19 @@ On the otherhand you can do an efficient conversion to polar coordinates with::
 Rearranging Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Sometimes it is useful to rearrange columns of data. :py:class:`~Stoner.core.data.Data` offers a couple of methods to help with this.::
+Sometimes it is useful to rearrange columns of data. :py:class:`~Stoner.core.data.Data` offers a couple of methods to help with this::
 
-   d.swap_column('Resistance','Temperature')
-   d.swap_column('Resistance','Temperature',headers_too=False,setas_too=False)
+   d.swap_column(('Resistance','Temperature'))
    d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
    d.reorder_columns([1,3,'Volt','Temp'])
-   d.reorder_columns([1,3,'Volt','Temp'],header_too=False,setas_too=False)
 
-The :py:meth:`~Stoner.core.data.Data.swap_column` method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
+The :py:meth:`~Stoner.core.data.Data.swap_column` method takes a tuple containing two column names or indices, or a list of such
 tuples and swaps the columns accordingly, whilst the :py:meth:`~Stoner.core.data.Data.reorder_columns` method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
-The ``headers_too=False`` options, as the name suggests, cause the column headers not be rearranged.
-
-.. note::
-    The addition of the setas_too keyword to swap the column assignments around as well is new in 0.5rc1
+Headers, column assignments, masks and column identities move with the data.
+The old options ``headers_too=False`` and ``setas_too=False`` are rejected:
+keeping those labels in place would give the moved measurements the wrong meaning.
+Both methods change the existing object and return it.
 
 Renaming Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -965,7 +961,7 @@ Inserting Columns of Data
 
 The append columns operator **&** will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
-you should use the :py:meth:`~Stoner.core.data.Data.add_column` method.::
+you should use the :py:meth:`~Stoner.core.data.Data.add_column` method::
 
   d.add_column(numpy.array(range(100)),header='Column Header')
   d.add_column(numpy.array(range(100)),header='Column Header',index=Index)
@@ -975,54 +971,54 @@ The first example simply adds a column of data to the end of the dataset and
 sets the new column headers. The second variant  inserts the new column before
 column *Index*. *Index* follows the same rules as for the
 :py:meth:`~Stoner.core.data.Data.column` method. In the third example, the new column data is
-generated by applying the specified function. The function is passed s dingle
+generated by applying the specified function. The function is passed a single
 row as a 1D numpy array and any of the keyword, argument pairs passed in a
 dictionary to the optional *func_args* argument.
 
-The :py:meth:`~Stoner.core.data.Data.add_column` method returns a copy of the Data object
-itself as well as modifying the object. This is to allow the method to be chained
+The :py:meth:`~Stoner.core.data.Data.add_column` method modifies the object
+and returns that same object. This is to allow the method to be chained
 up with other methods for more compact code writing.
 
 Deleting Rows of Data
 ---------------------
 
 Removing complete rows of data is achieved using the :py:meth:`~Stoner.core.data.Data.del_rows`
-method.::
+method::
 
   d.del_rows(10)
-  d.del_rows(1:100:2)
+  d.del_rows(slice(1, 100, 2))
   d.del_rows('X Col',value)
   d.del_rows('X Col',lambda x,y:x>300)
   d.del_rows('X Col',(100,200))
-  d.del_rows(;X Col',(100,200),invert=True)
+  d.del_rows('X Col',(100,200),invert=True)
 
 
 The first variant will delete row 10 from the data set (where the first row will
 be row 0). You can also supply a list or slice (as in the second example) to
 :py:meth:`~Stoner.core.data.Data.del_rows` to delete multiple rows.
 
-If you do not know in advance which row to delete, then the remiaining
+If you do not know in advance which row to delete, then the remaining
 variants provide more advanced options. The third variant searches for and
 deletes all rows in which the specified column contains *value*. The
-fourth variant selects which ros to delete by calling a user supplied function
-for each row. The user supplied function is the same in form and definitition as
+fourth variant selects which rows to delete by calling a user supplied function
+for each row. The user supplied function is the same in form and definition as
 that used for the :py:meth:`~Stoner.core.data.Data.search` method::
 
     def user_func(x_val,row_as_array):
         return True or False
 
 The final two variants above, use a tuple to select the data. The final example makes
-use of the *invert* keyword argument to reverse the sense used to selkect tows. In both cases
+use of the *invert* keyword argument to reverse the sense used to select rows. In both cases
 rows are deleted(kept for *invert* = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
 for specifying the bounds. Finally, if you call :py:meth:`~Stoner.core.data.Data.del_rows` with no arguments at all, then
-it removes all rows where at least one column of data is masked out.::
+it removes all rows where at least one column of data is masked out::
 
     d.filter(lambda r:r[0]>50) # Mask all rows where the first column is greater than 50
     d.del_rows() # Then delete them.
 
-For simple caases where the row to be deleted can be expressed as an integer or list of integers,
-the subtration operator can be used.::
+For simple cases where the row to be deleted can be expressed as an integer or list of integers,
+the subtraction operator can be used::
 
    e=d-2
    e=d-[1,2,3]
@@ -1035,13 +1031,13 @@ Deleting Columns of Data
 
 Deleting whole columns of data can be done by referring to a column by index or
 column header - the indexing rules are the same as used for the
-:py:meth:`~Stoner.core.data.Data.column` method.::
+:py:meth:`~Stoner.core.data.Data.column` method::
 
   d.del_column('Temperature')
   d.del_column(1)
 
 Again, there is an operator that can be used to achieve the same effect, in this
-case the modulus operator %.::
+case the modulus operator %::
 
   e=d%"temperature"
   e=d%1
@@ -1059,68 +1055,89 @@ the assigned x, y and z columns, or all columns if those roles are unset::
   d.sort(['Temp','Gate'])
   d.sort('Temp', 'Gate', reverse=True)
 
-Keys use raw measurements, including excluded cells. The same row permutation
-moves raw values and exclusion flags, preserving dtype, fill value, duplicate
-headers, column roles/IDs and typed metadata. Exact duplicate names select the
+Keys use raw measurements, including excluded cells. The mask moves with each row. Data types, fill value, headers, column
+assignments, column identifiers and metadata are preserved. Exact duplicate names select the
 first matching column; use positions or compiled patterns to distinguish them.
-Ascending ties retain input order, and real NaNs sort last. ``reverse=True``
-reverses the complete ascending permutation, including tied rows and NaNs;
-this differs from pandas descending stable sorting. Results receive a fresh
-positional row index. Reacquire ``d.data`` after sorting because the owner commit
-retires the previous native frame.
+Rows with equal sort keys keep their original order in an ascending sort.
+Real NaNs are placed last. ``reverse=True`` reverses that entire result, including
+the order of tied rows and the position of NaNs. Row numbering starts at zero
+after sorting. If you saved a reference to ``d.data``, obtain it again afterwards.
 
-Ordinary native-byte-order Boolean/integer and float32/float64 keys use pandas
-sorting through this adapter. Complex values, other float widths, non-native
-byte orders and the existing two-row comparator form retain their numerical
-ordering. The comparator receives raw rows and returns a negative, zero or
-positive value. Active editing contexts reject sorting before comparison or
-backend work. ``sort`` accepts neither ``where`` nor ``inplace``; make an explicit
-clone first when an independent sorted result is required.
-
+For most numerical keys the work is done by pandas. Complex values and less
+common numerical formats retain their existing ordering rules. A custom
+comparison function may take two raw rows and return a negative number, zero or
+a positive number to specify their order; see the API reference for details.
+Sorting is unavailable inside an editing block. ``sort`` accepts neither
+``where`` nor ``inplace``; use ``d.clone.sort(...)`` for an independent result.
 
 .. _save:
 
 Saving Data
 -----------
 
-Only saving data in the *TDI format* and as comma- or tab-delimited formats is supported.
+Saving chooses a registered writer from the filename suffix. Use ``as_loaded``
+to request a particular registered format::
 
-.. warning:
-   Comma- or tab-delimited files discard all metadata
-   about the measurement. You absolutely must not use this as your primary data format -- always
-   keep the *TDI format* files as well.
+    d.save()  # Use the current filename, or ask for one if it is unset.
+    d.save("processed.tdi", as_loaded="DataFile")
+    d.save("processed.csv", as_loaded="CSVFile")
+    d.save("processed.txt", as_loaded="CSVFile")
 
-For example::
+Saving updates ``d.filename`` and returns ``d``. ``as_loaded=True`` requests the
+format recorded in ``"Loaded as"``, where a suitable writer is available.
+Not every readable format has a writer. See the format reference for supported
+formats and their limitations.
 
-  d.save()
-  d.save(filename)
-  d=Stoner.CSVFile(d)
-  d.save()
-  d.save(filename,'\t')
+.. warning::
+    CSV and plain numerical text omit measurement metadata. Keep the original
+    measurement file and use TDI when you need a text file with metadata.
+    Text saving may also replace masked measurements with fill values rather
+    than preserving the hidden values and mask. Use ``export_storage()`` for a
+    lossless transfer between Stoner objects, and retain your original files.
 
-In the first case, the filename used tosave the data is determined from the
-filename attribute of the Data object. This will have been set when the
-filewas loaded from disc.
+Working with pandas and NumPy
+-----------------------------
 
-If the filename attribute has not been set eg if the Data object was
-created from scratch, then the :py:meth:`~Stoner.core.data.Data.save` method will cause a dialogue
-box to be raised so that the user can supply a filename.
+Most tasks can use Stoner's column, selection and analysis methods directly.
+If you also use pandas or NumPy, choose the representation that fits your task:
 
-In the second variant, the supplied filename is used and the filename attribute
-is changed to match this ie ``d.filename`` will always return the last
-filename used for a load or save operation.
+* ``d.data`` is the stored pandas DataFrame. It contains the raw measurements,
+  including masked values. Pandas calculations do not apply Stoner's mask.
+* ``d.to_numpy()`` returns an independent, writable NumPy masked array. Changing
+  it does not change ``d``. ``d.asarray()`` is an independent, read-only snapshot.
+* ``d.to_pandas()`` returns an independent DataFrame. It warns when information
+  such as masks or metadata is omitted. It is not a lossless backup.
+* ``d.export_storage()`` preserves values, masks, column assignments and identities,
+  fill value and typed metadata. ``Data.from_storage(...)`` restores that state.
 
-The third is similar but converts the file to ``csv`` format, while the fourth also
-specifies that the delimiter is a tab character.
+To calculate with NumPy and write the result back, use an editing context::
 
-Exporting Data to pandas
-------------------------
+    with d.edit_numpy() as values:
+        values[:, 1] *= 2
 
-The :py:meth:`~Stoner.core.data.Data.to_pandas` method can be used to convert a :py:class:`~Stoner.core.data.Data` object to
-a *pandas.DataFrame*. The numerical data will be transferred directly, with the DataFrame columns being set up
-as a two level index of column headers and column assignments. The Stoner library registers an additional
-*metadata* extension attribute for DataFrames that provides thin sub-class wrapper around the same regular expression
-based and type-hinting dictionary, :py:class:`Stoner.core.base.TypeHintedDict`, that is used to store metadata.
+The change is applied when the block finishes successfully. If the block raises
+an exception, the draft changes are discarded. ``edit_pandas()`` works similarly::
 
-The pandas.DataFrame produced by the :py:meth:`~Stoner.core.data.Data.to_pandas` method is reversibly convertible back to an identical
-:py:class:`~Stoner.core.data.Data` object by passing the DataFrame into the constructor of the :py:class:`~Stoner.core.data.Data` object.
+    with d.edit_pandas() as frame:
+        frame.iloc[:, 1] *= 2
+
+Keep the number and order of rows and columns, labels and data type unchanged
+inside these blocks. Use Stoner methods to add, remove, rename or sort columns
+and rows. Do not edit ``d`` separately while an editing block is open.
+
+For direct pandas cell edits through ``d.data``, keep the same restrictions and
+obtain ``d.data`` again after changing the object with Stoner methods. Previously
+saved references may no longer refer to its current data. Stoner detects some
+unsupported structural changes and raises ``ValueError``, but cannot detect
+every same-shaped rearrangement.
+
+``Data.from_pandas(frame)`` imports a table with string column headers and a
+standard positional row index. Use ``index="discard"`` to discard another index.
+See :doc:`developer` for the full storage interchange rules.
+
+By default, ``to_pandas()`` uses a two-level column index containing headers and
+column assignments, and replaces masked entries with NaN. Use ``format="plain"``
+for ordinary headers or ``masked="raw"`` to export hidden measurements too.
+Neither choice preserves the separate mask or typed metadata. Mixed numerical
+column types on import require an explicit common ``dtype``. A two-level
+header/assignment index can also be imported with ``Data.from_pandas``.

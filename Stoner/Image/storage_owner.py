@@ -59,8 +59,9 @@ class ImageOwner:
         self._native_dataset_id = id(ds)
         self._native_exposed = False
         self._native_geometry = ds.drop_vars(["intensity", "excluded"]).copy(deep=True)
-        self._native_variables = {name: (value.dims, value.dtype, deepcopy(value.attrs))
-                                  for name, value in ds.data_vars.items()}
+        self._native_variables = {
+            name: (value.dims, value.dtype, deepcopy(value.attrs)) for name, value in ds.data_vars.items()
+        }
 
     def validate(self):
         """Reject detectable native variable, coordinate, extent and dtype drift."""
@@ -82,8 +83,11 @@ class ImageOwner:
                 raise ValueError("Variable schema or attributes changed")
             for name, value in ds.data_vars.items():
                 dims, dtype, attrs = self._native_variables[name]
-                if (value.dims != dims or value.dtype != dtype
-                        or not xr.Dataset(attrs=value.attrs).identical(xr.Dataset(attrs=attrs))):
+                if (
+                    value.dims != dims
+                    or value.dtype != dtype
+                    or not xr.Dataset(attrs=value.attrs).identical(xr.Dataset(attrs=attrs))
+                ):
                     raise ValueError("Variable schema or attributes changed")
             if not ds.drop_vars(["intensity", "excluded"]).identical(self._native_geometry):
                 raise ValueError("Coordinates, attributes or valid extents changed")
@@ -109,12 +113,14 @@ class ImageOwner:
         original = self._state.dataset
         if not isinstance(dataset, xr.Dataset) or set(dataset.data_vars) != set(original.data_vars):
             raise ValueError("Xarray replacement cannot change the variable set")
-        if not dataset.drop_vars(["intensity", "excluded"]).identical(
-                original.drop_vars(["intensity", "excluded"])):
+        if not dataset.drop_vars(["intensity", "excluded"]).identical(original.drop_vars(["intensity", "excluded"])):
             raise ValueError("Xarray replacement cannot change coordinates, attributes or valid extents")
         for name in original.data_vars:
-            if (dataset[name].dims != original[name].dims or dataset[name].dtype != original[name].dtype
-                    or not xr.Dataset(attrs=dataset[name].attrs).identical(xr.Dataset(attrs=original[name].attrs))):
+            if (
+                dataset[name].dims != original[name].dims
+                or dataset[name].dtype != original[name].dtype
+                or not xr.Dataset(attrs=dataset[name].attrs).identical(xr.Dataset(attrs=original[name].attrs))
+            ):
                 raise ValueError("Xarray replacement cannot change dimensions, dtypes or variable attributes")
 
     @property
@@ -210,8 +216,9 @@ class ImageOwner:
     def _commit_dataset(self, dataset):
         """Commit numerical state while retaining current owner metadata objects."""
         state = self._state
-        candidate = ImageStorage(state.kind, deepcopy(dataset), state.metadata, state.fill_value,
-                                 state.frames, state.version)
+        candidate = ImageStorage(
+            state.kind, deepcopy(dataset), state.metadata, state.fill_value, state.frames, state.version
+        )
         candidate.validate()
         self._state = candidate
 
@@ -252,9 +259,11 @@ class _RegionMetadata(_Metadata):
 
     def __getattr__(self, name):
         if name in {"import_key", "import_all"}:
+
             def import_metadata(*args, **kwargs):
                 self._owner._check_writable()
                 return getattr(self._owner._root.metadata, name)(*args, **kwargs)
+
             return import_metadata
         return super().__getattr__(name)
 
@@ -281,8 +290,10 @@ class ImageRegion(ImageOwner):
                 raise ValueError("Regions require non-empty unit-step slices")
             bounds.append(slice(start, stop))
         if isinstance(parent, ImageRegion):
-            bounds = [slice(outer.start + inner.start, outer.start + inner.stop)
-                      for outer, inner in zip(parent._bounds, bounds)]
+            bounds = [
+                slice(outer.start + inner.start, outer.start + inner.stop)
+                for outer, inner in zip(parent._bounds, bounds)
+            ]
             parent = parent._root
         self._root = parent
         self._bounds = tuple(bounds)

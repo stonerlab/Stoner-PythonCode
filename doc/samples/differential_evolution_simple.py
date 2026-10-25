@@ -33,7 +33,9 @@ fit = d.differential_evolution(
 # Use Matplotlib's bundled font for portable mathematical annotations.
 with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
     figure = d.plot.new_figure(figsize=(7, 5))
-    with d.plot.StackVertical(2, figure=figure, height_ratios=[2, 1], adjust_figsize=False) as panels:
+    with d.plot.StackVertical(
+        2, figure=figure, height_ratios=[2, 1], adjust_figsize=False
+    ) as panels:
 
         d.plot.labels = []
 
@@ -50,7 +52,9 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         ax.set_xlabel("")
 
         # Annotate plot with fitting parameters
-        d.annotate_fit(func, prefix="Model", x=0.7, y=0.3, fontdict={"size": "x-small"})
+        d.annotate_fit(
+            func, prefix="Model", x=0.7, y=0.3, fontdict={"size": "x-small"}
+        )
         text = r"$y=A+Be^{-x/C}$" + "\n\n"
         ax.text(7.2, 3.9, text, fontdict={"size": "x-small"})
         ax.set_title("Differential Evolution  Fit")

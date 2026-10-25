@@ -168,7 +168,9 @@ def load_tdi_format(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
     new_data["Stoner.class"] = "Data"
     if new_data.shape[1] > 0:
         width = new_data.shape[1]
-        new_data.column_headers = (col_headers_tmp + [f"Column {i}" for i in range(len(col_headers_tmp), width)])[:width]
+        new_data.column_headers = (col_headers_tmp + [f"Column {i}" for i in range(len(col_headers_tmp), width)])[
+            :width
+        ]
     new_data.metadata = copy.deepcopy(new_data.metadata)  # This fixes some type issues TODO - work out why!
     return new_data
 

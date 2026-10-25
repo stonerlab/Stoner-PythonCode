@@ -35,4 +35,6 @@ with d.plot.style("stoner"):
     figure = d.plot.new_figure(figsize=(5, 8))
     with d.plot.StackVertical(7, figure=figure, adjust_figsize=False) as panels:
         for column, ax in zip(range(1, 14, 2), panels):
-            d.plot.errorfill(y=column, ax=ax, color="red", alpha_fill=0.2, title=None)
+            d.plot.errorfill(
+                y=column, ax=ax, color="red", alpha_fill=0.2, title=None
+            )

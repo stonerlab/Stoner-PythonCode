@@ -12,6 +12,8 @@ from Stoner import Data, __home__
 from Stoner.analysis.fitting.models.generic import Linear
 from Stoner.analysis.fitting.models.magnetism import FMR_Power, Inverse_Kittel
 from Stoner.folders import PlotFolder
+
+
 def format_axes(ax):
     """Give each axis its own engineering formatter."""
     ax.xaxis.set_major_formatter(Data().plot.TexEngFormatter(unit="T"))
@@ -125,7 +127,9 @@ if __name__ == "__main__":
         target.xaxis.set_major_formatter(result.plot.TexEngFormatter())
         target.yaxis.set_major_formatter(result.plot.TexEngFormatter())
     result.plot(ax=axes[0], fmt=["r.", "b-"])
-    result.annotate_fit(Inverse_Kittel, ax=axes[0], x=0.55, y=0.3, fontdict={"size": 8})
+    result.annotate_fit(
+        Inverse_Kittel, ax=axes[0], x=0.55, y=0.3, fontdict={"size": 8}
+    )
     axes[0].set_ylabel("$H_{res} \\mathrm{(Am^{-1})}$")
     axes[0].set_title("Inverse Kittel Fit")
 

@@ -107,8 +107,11 @@ class OwnedStackMixin:
             package.fill_value = _fill(package.fill_value, value.dtype)
             owner.replace(package)
         else:
-            if (owner._state.dataset.attrs or set(owner._state.dataset.coords) != {"frame", "y", "x"}
-                    or any(variable.attrs for variable in owner._state.dataset.variables.values())):
+            if (
+                owner._state.dataset.attrs
+                or set(owner._state.dataset.coords) != {"frame", "y", "x"}
+                or any(variable.attrs for variable in owner._state.dataset.variables.values())
+            ):
                 raise ValueError("Use a calibrated storage package for structural stack replacement")
             names = [f"Untitled-{i}" for i in range(len(value))]
             owner.replace(ImageStorage.from_images(value, names=names, metadata=owner.metadata.copy()))
@@ -198,13 +201,17 @@ class OwnedStackMixin:
     def _prepare(self, value):
         image = value if isinstance(value, ImageFile) else ImageFile(value)
         package = image.export_storage()
-        attrs = {name: deepcopy(getattr(image, name, None)) for name in image._public_attrs
-                 if name not in {"data", "image", "metadata", "_fromstack", "filename"}}
+        attrs = {
+            name: deepcopy(getattr(image, name, None))
+            for name in image._public_attrs
+            if name not in {"data", "image", "metadata", "_fromstack", "filename"}
+        }
         return package, attrs
 
     def __setter__(self, name, value, force_insert=False):
         if isinstance(value, str):
             from pathlib import Path
+
             filename = Path(value)
             if not filename.is_file():
                 filename = Path(self.directory) / filename
@@ -228,9 +235,9 @@ class OwnedStackMixin:
         for variable in ("frame", "y", "x", "valid_height", "valid_width"):
             candidate.dataset[variable].attrs = deepcopy(old.dataset[variable].attrs)
         candidate.fill_value = _fill(old.fill_value, candidate.dataset.intensity.dtype)
-        structural = (old.dataset.intensity.dtype != candidate.dataset.intensity.dtype
-                      or not old.dataset.drop_vars(["intensity", "excluded"]).identical(
-                          candidate.dataset.drop_vars(["intensity", "excluded"])))
+        structural = old.dataset.intensity.dtype != candidate.dataset.intensity.dtype or not old.dataset.drop_vars(
+            ["intensity", "excluded"]
+        ).identical(candidate.dataset.drop_vars(["intensity", "excluded"]))
         if structural:
             owner.replace(candidate)
         else:
@@ -289,6 +296,7 @@ class OwnedStackMixin:
     def convert(self, dtype, force_copy=False, uniform=False, normalise=True):
         """Convert all valid intensities, retaining calibration, masks and identities."""
         from .imagefuncs import convert
+
         package = self.export_storage()
         values = convert(package.to_numpy(), dtype, force_copy=force_copy, uniform=uniform, normalise=normalise)
         package.dataset.intensity.data = np.ma.getdata(values).copy()
@@ -331,8 +339,10 @@ class OwnedStackMixin:
         if set(state.dataset.coords) != {"frame", "y", "x"}:
             first = self[0].export_storage()
             coordinates = first.dataset.coords.to_dataset()
-            if any(not coordinates.identical(self[i].export_storage().dataset.coords.to_dataset())
-                   for i in range(1, len(self))):
+            if any(
+                not coordinates.identical(self[i].export_storage().dataset.coords.to_dataset())
+                for i in range(1, len(self))
+            ):
                 raise ValueError("Explicitly reconcile frame calibration before reducing the stack")
             first.dataset.intensity.data = np.ma.getdata(values).copy()
             first.dataset.excluded.data = np.ma.getmaskarray(values).copy()

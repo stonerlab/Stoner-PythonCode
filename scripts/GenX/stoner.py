@@ -63,7 +63,11 @@ class Plugin(Template):
                 else:
                     x = datafile.column(columns["xcol"])
                     y = datafile.column(columns["ycol"][0])
-                    error = datafile.column(columns["yerr"][0]) if columns["yerr"] else np.ones(len(datafile))
+                    error = (
+                        datafile.column(columns["yerr"][0])
+                        if columns["yerr"]
+                        else np.ones(len(datafile))
+                    )
             except Exception as e:
                 ShowWarningDialog(
                     self.parent,
@@ -76,9 +80,13 @@ class Plugin(Template):
             # changed by the transforms
             # GenX accepts ordinary arrays: remove excluded or non-finite triples together.
             values = np.ma.column_stack((x, y, error))
-            valid = ~np.any(np.ma.getmaskarray(values) | ~np.isfinite(values.data), axis=1)
+            valid = ~np.any(
+                np.ma.getmaskarray(values) | ~np.isfinite(values.data), axis=1
+            )
             dataset.x_raw = values.data[valid, 0].copy()
-            dataset.y_raw = np.where(values.data[valid, 1] == 0, 1e-8, values.data[valid, 1])
+            dataset.y_raw = np.where(
+                values.data[valid, 1] == 0, 1e-8, values.data[valid, 1]
+            )
             dataset.error_raw = values.data[valid, 2].copy()
             # Run the commands on the data - this also sets the x,y, error memebers
             # of that data item.

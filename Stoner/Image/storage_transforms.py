@@ -78,8 +78,7 @@ def permute(package, name, args=(), kwargs=None):
     if swap:
         # Simultaneous renaming avoids collisions and preserves auxiliary dimensions.
         dataset = dataset.rename({"y": "x", "x": "y"}).transpose("y", "x")
-    dataset = dataset.isel(y=slice(None, None, -1 if reverse_y else 1),
-                           x=slice(None, None, -1 if reverse_x else 1))
+    dataset = dataset.isel(y=slice(None, None, -1 if reverse_y else 1), x=slice(None, None, -1 if reverse_x else 1))
     result.dataset = dataset.copy(deep=True)
     result.validate()
     return result

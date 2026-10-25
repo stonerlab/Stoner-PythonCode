@@ -162,8 +162,6 @@ def copy_into(source: "ImageFile", dest: "ImageFile") -> "ImageFile":
     return dest
 
 
-
-
 @class_modifier(
     [
         color,
@@ -310,7 +308,6 @@ class ImageFile(metadataObject):
     def _repr_png_(self):
         return self._repr_png_private_
 
-
     @property
     def data(self):
         """Alias for image[:]. Equivalence to Stoner.data behaviour."""
@@ -325,12 +322,14 @@ class ImageFile(metadataObject):
     def draw(self):
         """Access the DrawProxy object for accessing the skimage draw sub module."""
         from .storage_bridge import owner_of, OwnerDraw
+
         return OwnerDraw(self) if owner_of(self) is not None else DrawProxy(self.imarray, self)
 
     @property
     def image(self):
         """Return native intensity/exclusions, or a borrowed view for a shared handle."""
         from .storage_bridge import owner_of
+
         owner = owner_of(self)
         return owner.dataset if owner is not None else self.__dict__["_image"]
 
@@ -338,11 +337,13 @@ class ImageFile(metadataObject):
     def imarray(self):
         """Return a detached read-only masked numerical image."""
         from .storage_bridge import owner_of, snapshot
+
         return snapshot(self) if owner_of(self) is not None else self.__dict__["_image"]
 
     @image.setter
     def image(self, value):
         from .storage_bridge import replace_image
+
         if self.__dict__.get("_image_initialising", False):
             self.__dict__["_image"] = numerical_image(value)
         else:
@@ -352,8 +353,10 @@ class ImageFile(metadataObject):
     max_box = property(lambda self: (0, self.shape[1], 0, self.shape[0]))
     aspect = property(lambda self: float(self.shape[1]) / self.shape[0])
     centre = property(lambda self: (self.shape[0] / 2, self.shape[1] / 2))
-    title = property(lambda self: self.__dict__.get("_image_attrs", {}).get("_title") or self.filename,
-                     lambda self, value: self.__dict__.setdefault("_image_attrs", {}).update(_title=value))
+    title = property(
+        lambda self: self.__dict__.get("_image_attrs", {}).get("_title") or self.filename,
+        lambda self, value: self.__dict__.setdefault("_image_attrs", {}).update(_title=value),
+    )
     flip_h = property(lambda self: self._permutation("flip_h"))
     flip_v = property(lambda self: self._permutation("flip_v"))
     CW = property(lambda self: self._permutation("CW"))
@@ -361,6 +364,7 @@ class ImageFile(metadataObject):
 
     def _permutation(self, name):
         from .storage_transforms import permute
+
         return type(self).from_storage(permute(self.export_storage(), name))
 
     @property
@@ -376,15 +380,15 @@ class ImageFile(metadataObject):
         if isinstance(value, MaskProxy):
             value = value._mask
         from .storage_bridge import owner_of
+
         owner = owner_of(self)
         if owner is not None:
             owner.mask[:] = value
         else:
             self.imarray.mask = value
+
     ###################################################################################################################
     ############################# Special methods #####################################################################
-
-
 
     def __getstate__(self):
         """Record state for pickling ImageFiles."""
@@ -397,7 +401,6 @@ class ImageFile(metadataObject):
         metadata = state.pop("metadata", {})
         self.__dict__.update(state)
         self.metadata.update(metadata)
-
 
     def __delattr__(self, name):
         """Handle the delete attribute code."""

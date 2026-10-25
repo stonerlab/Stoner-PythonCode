@@ -428,7 +428,11 @@ class Item:
                     pass
             elif _return is not None:
                 if isinstance(_return, bool) and _return:
-                    _return = func.rsplit(".", 1)[-1] if isinstance(func, str) else getattr(func, "__name__", type(func).__name__)
+                    _return = (
+                        func.rsplit(".", 1)[-1]
+                        if isinstance(func, str)
+                        else getattr(func, "__name__", type(func).__name__)
+                    )
                 new_d[_return] = ret
             name = self._folder.__names__()[ix]
             self._folder.__setter__(name, new_d)

@@ -80,8 +80,11 @@ def prepare_series(data, y=None, *, startx=0, no_guess=False, weights=None):
             valid &= ~np.ma.getmaskarray(row_weights) & np.isfinite(row_weights.data)
         if not valid.any():
             raise ValueError(f"No finite, unexcluded samples remain in column {position}.")
-        series.append(PlotSeries(position, values.data[valid].copy(),
-                                 None if row_weights is None else row_weights.data[valid].copy()))
+        series.append(
+            PlotSeries(
+                position, values.data[valid].copy(), None if row_weights is None else row_weights.data[valid].copy()
+            )
+        )
     return tuple(series)
 
 
@@ -108,7 +111,9 @@ def _density_curves(series, bw_method, ind):
                 raise ValueError("KDE bandwidth must be finite and positive.")
             if ind is None or isinstance(ind, Integral):
                 span = np.ptp(values)
-                points = np.linspace(values.min()-span/2, values.max()+span/2, 1000 if ind is None else int(ind))
+                points = np.linspace(
+                    values.min() - span / 2, values.max() + span / 2, 1000 if ind is None else int(ind)
+                )
             else:
                 points = ind.copy()
             density = estimator(points)
@@ -133,13 +138,28 @@ def _finish(plot, ax, defaults, annotations, xscale=None, yscale=None):
     return ax
 
 
-def draw_distribution(plot, kind, y=None, *, startx=0, no_guess=False, ax=None, annotations=None,
-                      weights=None, label=_AUTO, legend=None, xscale=None, yscale=None, **kwargs):
+def draw_distribution(
+    plot,
+    kind,
+    y=None,
+    *,
+    startx=0,
+    no_guess=False,
+    ax=None,
+    annotations=None,
+    weights=None,
+    label=_AUTO,
+    legend=None,
+    xscale=None,
+    yscale=None,
+    **kwargs,
+):
     """Draw independently selected distributions without a pandas plotting intermediate."""
     series = prepare_series(plot._data, y, startx=startx, no_guess=no_guess, weights=weights)
     count = len(series)
-    labels = ([plot._label(sample.column) for sample in series] if label is _AUTO
-              else plot._per_trace(label, count, "label"))
+    labels = (
+        [plot._label(sample.column) for sample in series] if label is _AUTO else plot._per_trace(label, count, "label")
+    )
     if any(value is not None and not isinstance(value, str) for value in labels):
         raise TypeError("label must contain strings or None.")
     labels = [plot._text(value) for value in labels]
@@ -151,7 +171,8 @@ def draw_distribution(plot, kind, y=None, *, startx=0, no_guess=False, ax=None, 
         raise ValueError("box does not support weights.")
     if kind == "box":
         options["orientation" if "orientation" in _BOX_PARAMETERS else "vert"] = (
-            orientation if "orientation" in _BOX_PARAMETERS else orientation == "vertical")
+            orientation if "orientation" in _BOX_PARAMETERS else orientation == "vertical"
+        )
         options["tick_labels" if "tick_labels" in _BOX_PARAMETERS else "labels"] = [value or "" for value in labels]
     if kind == "kde":
         curves = _density_curves(series, options.pop("bw_method", None), options.pop("ind", None))
@@ -160,12 +181,18 @@ def draw_distribution(plot, kind, y=None, *, startx=0, no_guess=False, ax=None, 
     if kind == "hist":
         samples = [sample.values for sample in series]
         row_weights = None if weights is None else [sample.weights for sample in series]
-        ax.hist(samples[0] if count == 1 else samples,
-                weights=None if row_weights is None else row_weights[0] if count == 1 else row_weights,
-                label=labels[0] if count == 1 else labels, orientation=orientation, **options)
+        ax.hist(
+            samples[0] if count == 1 else samples,
+            weights=None if row_weights is None else row_weights[0] if count == 1 else row_weights,
+            label=labels[0] if count == 1 else labels,
+            orientation=orientation,
+            **options,
+        )
         frequency = "Density" if options.get("density", False) else "Count" if weights is None else "Weighted count"
         if options.get("cumulative", False):
-            frequency = "Cumulative probability" if options.get("density", False) else "Cumulative " + frequency.lower()
+            frequency = (
+                "Cumulative probability" if options.get("density", False) else "Cumulative " + frequency.lower()
+            )
         defaults = (names, frequency)
     elif kind == "box":
         ax.boxplot([sample.values for sample in series], **options)

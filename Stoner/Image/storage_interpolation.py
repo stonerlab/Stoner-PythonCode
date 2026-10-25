@@ -7,7 +7,6 @@ import numpy as np
 import xarray as xr
 from scipy.ndimage import maximum_filter
 
-
 GEOMETRY = {"rotate", "resize", "rescale", "warp", "translate", "shift", "zoom", "affine_transform", "gridimage"}
 
 
@@ -53,6 +52,7 @@ def interpolate(package, function, args, kwargs, working):
     """
     if function.__name__ == "resize":
         from skimage.transform import resize
+
         function = resize
     bound = signature(function).bind(working, *args, **kwargs)
     bound.apply_defaults()
@@ -66,12 +66,20 @@ def interpolate(package, function, args, kwargs, working):
     def run(values, *, field=False):
         options = dict(parameters)
         from .numerical import numerical_image
+
         array = numerical_image(np.array(values, dtype=float, copy=True)) if field else values
         if field:
             array.metadata = working.metadata.copy()
-            overrides = {"order": 1, "mode": "constant", "cval": np.nan,
-                         "clip": False, "preserve_range": True, "anti_aliasing": False,
-                         "prefilter": False, "add_metadata": False}
+            overrides = {
+                "order": 1,
+                "mode": "constant",
+                "cval": np.nan,
+                "clip": False,
+                "preserve_range": True,
+                "anti_aliasing": False,
+                "prefilter": False,
+                "add_metadata": False,
+            }
             overrides.update(fill_value=np.nan, method="linear")
             for name, value in overrides.items():
                 if name in options:
@@ -89,9 +97,13 @@ def interpolate(package, function, args, kwargs, working):
     height, width = numerical.shape
     result = package.copy()
     dataset = xr.Dataset(
-        {"intensity": (("y", "x"), np.ma.getdata(numerical).copy(), deepcopy(source.intensity.attrs)),
-         "excluded": (("y", "x"), np.ma.getmaskarray(numerical).copy(), deepcopy(source.excluded.attrs))},
-        coords={"y": np.arange(height), "x": np.arange(width)}, attrs=deepcopy(source.attrs))
+        {
+            "intensity": (("y", "x"), np.ma.getdata(numerical).copy(), deepcopy(source.intensity.attrs)),
+            "excluded": (("y", "x"), np.ma.getmaskarray(numerical).copy(), deepcopy(source.excluded.attrs)),
+        },
+        coords={"y": np.arange(height), "x": np.arange(width)},
+        attrs=deepcopy(source.attrs),
+    )
     maps = dict(source.coords)
     for axis in ("y", "x"):
         if f"physical_{axis}" not in maps:

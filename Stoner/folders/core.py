@@ -1084,8 +1084,12 @@ class BaseFolder(MutableSequence):
                 bcumb = copy(breadcrumb)
                 bcumb.append(g)
                 tmp = val._walk_groups(
-                    walker, group=group, replace_terminal=replace_terminal, only_terminal=only_terminal,
-                    walker_args=walker_args, breadcrumb=bcumb
+                    walker,
+                    group=group,
+                    replace_terminal=replace_terminal,
+                    only_terminal=only_terminal,
+                    walker_args=walker_args,
+                    breadcrumb=bcumb,
                 )
                 if group and replace_terminal and isinstance(tmp, metadataObject):
                     removeGroups.append(g)

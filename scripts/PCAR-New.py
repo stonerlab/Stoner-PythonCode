@@ -117,7 +117,11 @@ class working(Data):
                     module = import_module(module)
                     normaliser = getattr(module, normaliser)
                 else:
-                    normaliser = quadratic if normaliser_name == "quadratic" else globals()[normaliser_name]
+                    normaliser = (
+                        quadratic
+                        if normaliser_name == "quadratic"
+                        else globals()[normaliser_name]
+                    )
                 vmax, _ = self.max(self.vcol)
                 vmin, _ = self.min(self.vcol)
                 p, pv = self.curve_fit(
@@ -136,10 +140,14 @@ class working(Data):
                 self["normalise.coeffs"] = p
                 self["normalise.coeffs_err"] = np.sqrt(np.diag(pv))
                 self["normaliser_name"] = normaliser_name
-                self[:, self.gcol] = self.column(self.gcol) / normaliser(self.column(self.vcol), *p)
+                self[:, self.gcol] = self.column(self.gcol) / normaliser(
+                    self.column(self.vcol), *p
+                )
             else:
                 if not np.isfinite(Gn) or Gn == 0:
-                    raise ValueError("Normal_conductance must be finite and non-zero")
+                    raise ValueError(
+                        "Normal_conductance must be finite and non-zero"
+                    )
                 self[:, self.gcol] = self.column(self.gcol) / Gn
         return self
 
@@ -187,7 +195,9 @@ class working(Data):
             print("Doing decomposition to symmetrize data")
             self.decompose(xcol=self.vcol, ycol=self.gcol, sym=self.gcol)
             self.setas(x=self.vcol, y=self.gcol)
-            self.del_rows(~np.any(np.isnan(self.to_numpy(masked=False)), axis=1))
+            self.del_rows(
+                ~np.any(np.isnan(self.to_numpy(masked=False)), axis=1)
+            )
         return self
 
     def plot_results(self):
@@ -258,7 +268,9 @@ class working(Data):
         if self.show_plot:
             figure = fit.plot.new_figure()
             columns = fit.setas.cols
-            with fit.plot.StackVertical(len(columns.ycol), figure=figure) as panels:
+            with fit.plot.StackVertical(
+                len(columns.ycol), figure=figure
+            ) as panels:
                 for i, ycol in enumerate(columns.ycol):
                     yerr = columns.yerr[i] if i < len(columns.yerr) else False
                     options = {"capsize": 3} if yerr is not False else {}
@@ -291,18 +303,29 @@ def down_only(data):
     for start, stop in zip(ix[:-1], ix[1:]):
         if voltage[start] > voltage[stop]:
             keep = np.zeros(len(data), dtype=bool)
-            keep[start:stop + 1] = True
+            keep[start : stop + 1] = True
             data.del_rows(keep)
             return data
-    raise ValueError("The down-sweep preprocessor requires a complete falling sweep between two turning points")
+    raise ValueError(
+        "The down-sweep preprocessor requires a complete falling sweep between two turning points"
+    )
 
 
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("filename", nargs="?", type=pathlib.Path, help="Data file; omitted opens a file dialog")
-    parser.add_argument("--config", type=pathlib.Path, default=pathlib.Path(__file__).with_suffix(".ini"))
+    parser.add_argument(
+        "filename",
+        nargs="?",
+        type=pathlib.Path,
+        help="Data file; omitted opens a file dialog",
+    )
+    parser.add_argument(
+        "--config",
+        type=pathlib.Path,
+        default=pathlib.Path(__file__).with_suffix(".ini"),
+    )
     args = parser.parse_args()
     d = working()
     d.load_config(args.config, args.filename)

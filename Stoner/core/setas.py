@@ -121,9 +121,6 @@ class Setas(MutableMapping):
     # Descriptor protocol methods
     # ==========================================================================
 
-
-
-
     def _prepare_call(self, args, kwargs):
         """Extract a value to be used to evaluate the setas attribute during a call."""
         reset = kwargs.pop("reset", True)

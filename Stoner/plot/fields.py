@@ -43,15 +43,19 @@ def prepare_samples(data, columns, dimensions, components):
     if any(array.dtype.kind not in "biuf" for array in arrays):
         raise TypeError("Field plotting requires real numerical columns.")
     valid = [~np.ma.getmaskarray(array) & np.isfinite(array.data) for array in arrays]
-    coordinate_valid = np.logical_and.reduce(valid[:len(positions)])
+    coordinate_valid = np.logical_and.reduce(valid[: len(positions)])
     complete = np.logical_and.reduce(valid)
     if not complete.any():
         raise ValueError("No finite, unexcluded field samples remain.")
     return FieldSamples(
-        np.column_stack([array.data for array in arrays[:len(positions)]]).astype(float),
-        (np.column_stack([array.data for array in arrays[len(positions):]]).astype(float)
-         if values else np.empty((len(data), 0))),
-        coordinate_valid, complete,
+        np.column_stack([array.data for array in arrays[: len(positions)]]).astype(float),
+        (
+            np.column_stack([array.data for array in arrays[len(positions) :]]).astype(float)
+            if values
+            else np.empty((len(data), 0))
+        ),
+        coordinate_valid,
+        complete,
     )
 
 
@@ -89,7 +93,7 @@ def grid_samples(samples, *, shape=None, limits=None, method="linear"):
     dimensions = samples.points.shape[1]
     if method not in ("linear", "nearest", "cubic") or method == "cubic" and dimensions != 2:
         raise ValueError("Use linear/nearest interpolation, or cubic for a 2D field.")
-    axes = _grid_axes(samples, shape, (None,)*dimensions if limits is None else limits)
+    axes = _grid_axes(samples, shape, (None,) * dimensions if limits is None else limits)
     mesh = tuple(np.meshgrid(*axes, indexing="xy" if dimensions == 2 else "ij"))
     points, indices = np.unique(samples.points[samples.valid], axis=0, return_index=True)
     values = samples.values[samples.valid][indices]
@@ -104,15 +108,23 @@ def grid_samples(samples, *, shape=None, limits=None, method="linear"):
         try:
             result = griddata(points, values, mesh, method=method)
         except QhullError as error:
-            raise ValueError("Cannot interpolate this field geometry; supply non-degenerate coordinates or method='nearest'.") from error
+            raise ValueError(
+                "Cannot interpolate this field geometry; supply non-degenerate coordinates or method='nearest'."
+            ) from error
         # Retain exclusions at measured sites even when other samples surround them.
         bad = samples.points[np.isfinite(samples.points).all(axis=1) & ~samples.valid]
         if bad.size:
             good_keys = {tuple(point) for point in points}
             bad = np.array([point for point in bad if tuple(point) not in good_keys]).reshape(-1, dimensions)
-            locations = tuple(np.minimum(np.searchsorted(axis, bad[:, i]), len(axis)-1) for i, axis in enumerate(axes))
-            matches = np.logical_and.reduce([np.isclose(axis[index], bad[:, i], rtol=1e-10, atol=1e-12)
-                                              for i, (axis, index) in enumerate(zip(axes, locations))])
+            locations = tuple(
+                np.minimum(np.searchsorted(axis, bad[:, i]), len(axis) - 1) for i, axis in enumerate(axes)
+            )
+            matches = np.logical_and.reduce(
+                [
+                    np.isclose(axis[index], bad[:, i], rtol=1e-10, atol=1e-12)
+                    for i, (axis, index) in enumerate(zip(axes, locations))
+                ]
+            )
             locations = tuple(index[matches] for index in locations)
             result[locations[::-1] if dimensions == 2 else locations] = np.nan
     result = np.ma.masked_invalid(result)
@@ -125,9 +137,9 @@ def cell_edges(centres):
     """Return cell boundaries halfway between centres, extending the outer cells."""
     centres = np.asarray(centres)
     if len(centres) == 1:
-        return np.array([centres[0]-0.5, centres[0]+0.5])
-    middle = (centres[1:] + centres[:-1])/2
-    return np.r_[centres[0]-(middle[0]-centres[0]), middle, centres[-1]+(centres[-1]-middle[-1])]
+        return np.array([centres[0] - 0.5, centres[0] + 0.5])
+    middle = (centres[1:] + centres[:-1]) / 2
+    return np.r_[centres[0] - (middle[0] - centres[0]), middle, centres[-1] + (centres[-1] - middle[-1])]
 
 
 def vector_colours(values):
@@ -135,11 +147,11 @@ def vector_colours(values):
     u, v = values[:, :2].T
     w = values[:, 2] if values.shape[1] == 3 else np.zeros(len(values))
     span = np.ptp(w)
-    luminance = (w-w.min())/span if span else np.full(len(values), 0.5)
+    luminance = (w - w.min()) / span if span else np.full(len(values), 0.5)
     magnitude = np.linalg.norm(np.column_stack((u, v, w)), axis=1)
-    saturation = magnitude/magnitude.max() if magnitude.max() else np.zeros(len(values))
-    hue = 0.5 + np.arctan2(u, v)/(2*np.pi)
-    return hsl2rgb(hue, saturation, luminance).astype(float)/255
+    saturation = magnitude / magnitude.max() if magnitude.max() else np.zeros(len(values))
+    hue = 0.5 + np.arctan2(u, v) / (2 * np.pi)
+    return hsl2rgb(hue, saturation, luminance).astype(float) / 255
 
 
 def _row_options(options, valid):
@@ -180,14 +192,33 @@ def _voxel_data(samples, shape, limits, method, visible, filled):
     return mesh, corners, values, occupied
 
 
-def draw_field(plot, kind, columns, *, ax=None, shape=None, method="linear", xlim=None, ylim=None, zlim=None,
-               colorbar=True, annotations=None, **kwargs):
+def draw_field(
+    plot,
+    kind,
+    columns,
+    *,
+    ax=None,
+    shape=None,
+    method="linear",
+    xlim=None,
+    ylim=None,
+    zlim=None,
+    colorbar=True,
+    annotations=None,
+    **kwargs,
+):
     """Validate and draw one explicit field request, returning its primary axes."""
     dimensions, components = {
-        "surface": ("xy", "z"), "contour": ("xy", "z"), "pcolormesh": ("xy", "z"),
-        "image": ("xy", "z"), "scatter3d": ("xyz", ""), "waterfall": ("xy", "z"),
-        "vector": ("xy", "uvw" if columns.w else "uv"), "quiver": ("xy", "uv"),
-        "vector3d": ("xyz", "uvw"), "voxels": ("xyz", "u"),
+        "surface": ("xy", "z"),
+        "contour": ("xy", "z"),
+        "pcolormesh": ("xy", "z"),
+        "image": ("xy", "z"),
+        "scatter3d": ("xyz", ""),
+        "waterfall": ("xy", "z"),
+        "vector": ("xy", "uvw" if columns.w else "uv"),
+        "quiver": ("xy", "uv"),
+        "vector3d": ("xyz", "uvw"),
+        "voxels": ("xyz", "u"),
     }[kind]
     samples = prepare_samples(plot._data, columns, dimensions, components)
     options = {key: plot._text(value) for key, value in kwargs.items()}
@@ -221,8 +252,9 @@ def draw_field(plot, kind, columns, *, ax=None, shape=None, method="linear", xli
     if kind in ("quiver", "vector3d", "scatter3d"):
         options = _row_options(options, samples.valid)
     if kind == "voxels":
-        _, corners, values, occupied = _voxel_data(samples, shape, (xlim, ylim, zlim), method,
-                                                  options.pop("visible", None), options.pop("filled", None))
+        _, corners, values, occupied = _voxel_data(
+            samples, shape, (xlim, ylim, zlim), method, options.pop("visible", None), options.pop("filled", None)
+        )
         cmap = colormaps.get_cmap(options.pop("cmap", None))
         norm = options.pop("norm", None)
         vmin, vmax = options.pop("vmin", None), options.pop("vmax", None)
@@ -268,8 +300,11 @@ def draw_field(plot, kind, columns, *, ax=None, shape=None, method="linear", xli
         artist = mapper
     elif kind == "waterfall":
         joy_division(*samples.points[samples.valid].T, samples.values[samples.valid, 0], ax=ax, **options)
-    if (colorbar and kind in ("surface", "contour", "pcolormesh", "image", "voxels")
-            and (kind != "surface" or artist.get_array() is not None)):
+    if (
+        colorbar
+        and kind in ("surface", "contour", "pcolormesh", "image", "voxels")
+        and (kind != "surface" or artist.get_array() is not None)
+    ):
         label = plot._label(columns.u[0] if kind == "voxels" else columns.z[0])
         ax.figure.colorbar(artist, ax=ax, label=plot._text(label))
     defaults = [plot._label(columns.x), plot._label(columns.y[0])]
@@ -319,32 +354,32 @@ def draw_matrix(plot, x=None, y=None, *, rect=None, ax=None, colorbar=True, anno
         xcolumn = positions[0]
     if isinstance(y, Integral) and not 0 <= y < len(data):
         raise ValueError("The matrix Y coordinate row must lie within the table.")
-    row = int(y)+1 if isinstance(y, Integral) else 0
-    column = xcolumn+1 if xcolumn is not None else 0
+    row = int(y) + 1 if isinstance(y, Integral) else 0
+    column = xcolumn + 1 if xcolumn is not None else 0
     if rect is None:
         rect = (row, column)
     rect = tuple(rect)
     if len(rect) not in (2, 4) or any(isinstance(n, bool) or not isinstance(n, Integral) or n < 0 for n in rect):
         raise ValueError("rect must contain non-negative (row, column[, rows, columns]) integers.")
     row, column = rect[:2]
-    rows, cols = rect[2:] if len(rect) == 4 else (len(data)-row, data.shape[1]-column)
-    if rows < 2 or cols < 2 or row+rows > len(data) or column+cols > data.shape[1]:
+    rows, cols = rect[2:] if len(rect) == 4 else (len(data) - row, data.shape[1] - column)
+    if rows < 2 or cols < 2 or row + rows > len(data) or column + cols > data.shape[1]:
         raise ValueError("The matrix block must contain at least two rows and columns within the table.")
-    matrix = np.ma.column_stack([data.column(i)[row:row+rows] for i in range(column, column+cols)])
+    matrix = np.ma.column_stack([data.column(i)[row : row + rows] for i in range(column, column + cols)])
     if matrix.dtype.kind not in "biuf":
         raise TypeError("Matrix plotting requires real numerical values.")
     matrix = matrix.astype(float)
-    xvalues = data.column(xcolumn)[row:row+rows] if xcolumn is not None else np.ma.asarray(x)
+    xvalues = data.column(xcolumn)[row : row + rows] if xcolumn is not None else np.ma.asarray(x)
     if xcolumn is None and len(xvalues) == len(data):
-        xvalues = xvalues[row:row+rows]
+        xvalues = xvalues[row : row + rows]
     if y is None:
-        yvalues = np.array([float(header) for header in data.column_headers[column:column+cols]])
+        yvalues = np.array([float(header) for header in data.column_headers[column : column + cols]])
     elif isinstance(y, Integral):
-        yvalues = np.ma.concatenate([data.column(i)[y:y+1] for i in range(column, column+cols)])
+        yvalues = np.ma.concatenate([data.column(i)[y : y + 1] for i in range(column, column + cols)])
     else:
         yvalues = np.ma.asarray(y)
         if len(yvalues) == data.shape[1]:
-            yvalues = yvalues[column:column+cols]
+            yvalues = yvalues[column : column + cols]
     for values, count in ((xvalues, rows), (yvalues, cols)):
         if values.shape != (count,) or np.ma.getmaskarray(values).any() or not np.isfinite(values).all():
             raise ValueError("Matrix coordinates must be finite unexcluded vectors matching the selected block.")
@@ -355,7 +390,9 @@ def draw_matrix(plot, x=None, y=None, *, rect=None, ax=None, colorbar=True, anno
     ax = plot._target(ax, "3d")
     if "color" not in kwargs and "facecolors" not in kwargs:
         kwargs.setdefault("cmap", rcParams["image.cmap"])
-    artist = ax.plot_surface(*mesh, matrix.T.filled(np.nan), **{key: plot._text(value) for key, value in kwargs.items()})
+    artist = ax.plot_surface(
+        *mesh, matrix.T.filled(np.nan), **{key: plot._text(value) for key, value in kwargs.items()}
+    )
     if colorbar and artist.get_array() is not None:
         ax.figure.colorbar(artist, ax=ax)
     _finish(plot, ax, [plot._label(xcolumn) if xcolumn is not None else "X", "Y", "Value"], annotations)

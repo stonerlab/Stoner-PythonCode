@@ -15,5 +15,7 @@ u = np.sin(x * y * z)
 
 p = Data(x, y, z, u, setas="xyzu", column_headers=["X", "Y", "Z"])
 
-ax = p.plot.voxels(cmap="jet", visible=lambda x, y, z: x - y + z < 2.0, title="Voxel plot")
+ax = p.plot.voxels(
+    cmap="jet", visible=lambda x, y, z: x - y + z < 2.0, title="Voxel plot"
+)
 ax.set_box_aspect((1, 1, 1.0))

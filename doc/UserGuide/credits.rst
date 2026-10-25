@@ -14,5 +14,5 @@ The lead developer is Dr Gavin Burnell <g.burnell@leeds.ac.uk>. Most of the
 development of this code has been indirectly supported by the UK Engineering
 and Physical Sciences Research Council.
 
-The code, except where otherwise noted, is Copyrigt The University of Leeds 
-2008-2016 and is released under the GNU Public License v3.
+The code, except where otherwise noted, is Copyright The University of Leeds
+2008-2016 and is released under the GNU General Public License v3.

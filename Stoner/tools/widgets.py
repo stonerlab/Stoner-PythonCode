@@ -193,7 +193,9 @@ class RangeSelect:
         fig = plt.figure()
         try:
             self.ax = self.data.plot.line(
-                self.xcol, self.ycol, ax=fig.add_subplot(),
+                self.xcol,
+                self.ycol,
+                ax=fig.add_subplot(),
                 title="Select Data and press Enter to confirm\nEsc to cancel, i to invert selection.",
             )
             if mpl_version.minor >= 5:

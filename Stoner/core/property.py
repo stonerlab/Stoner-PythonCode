@@ -51,8 +51,6 @@ class DataFilePropertyMixin:
         except TypeError:
             return ""
 
-
-
     @property
     def dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys."""
@@ -62,7 +60,6 @@ class DataFilePropertyMixin:
     def dims(self):
         """Return the dimensions inferred from the owner column roles."""
         return self.setas.cols.axes
-
 
     @property
     def filename(self):
@@ -125,8 +122,6 @@ class DataFilePropertyMixin:
         ret = tabulate(outp, tablefmt=fmt, numalign="decimal", stralign="center")
         return ret
 
-
-
     @property
     def records(self):
         """Return the data as a np structured data array.
@@ -144,7 +139,6 @@ class DataFilePropertyMixin:
             return values.copy().view(dtype=dtype).reshape(len(self))
         except TypeError as err:
             raise TypeError(f"Failed to get record view. Dtype was {dtype}") from err
-
 
     @property
     def T(self):

@@ -83,8 +83,9 @@ def del_rows(datafile, col=None, val=None, invert=False):
     else:
         column = datafile.find_col(col)
         if callable(val):
-            deleted = np.array([row[column] is not np.ma.masked and bool(val(row[column], row))
-                                for row in datafile.rows()])
+            deleted = np.array(
+                [row[column] is not np.ma.masked and bool(val(row[column], row)) for row in datafile.rows()]
+            )
         else:
             values = owner[:, column]
             if np.isscalar(val):
@@ -174,7 +175,8 @@ def append(datafile, other):
         for item in other:
             append(draft, np.asarray(item) if isinstance(item, list) else item)
         draft._require_storage_owner()._state.metadata = _copy_metadata(
-            draft._require_storage_owner()._state.metadata, {id(draft): datafile})
+            draft._require_storage_owner()._state.metadata, {id(draft): datafile}
+        )
         owner._state = draft._require_storage_owner()._state
         return datafile
     if isinstance(other, Mapping) and not hasattr(other, "export_storage"):
@@ -191,7 +193,8 @@ def append(datafile, other):
             row[position] = other[header]
         draft._require_storage_owner().insert_rows(len(draft), row)
         draft._require_storage_owner()._state.metadata = _copy_metadata(
-            draft._require_storage_owner()._state.metadata, {id(draft): datafile})
+            draft._require_storage_owner()._state.metadata, {id(draft): datafile}
+        )
         owner._state = draft._require_storage_owner()._state
         return datafile
     if hasattr(other, "export_storage"):

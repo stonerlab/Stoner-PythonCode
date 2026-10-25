@@ -138,6 +138,7 @@ def call_method(image, function, args, kwargs, *, setter=False):
         owner._check_writable()
         if (not args and "box" not in kwargs) or args == (None,):
             from .widgets import RegionSelect
+
             args = (RegionSelect()(image),)
         bounds = snapshot(image)._box(*args, **kwargs)
         region = owner.region(*bounds)
@@ -146,6 +147,7 @@ def call_method(image, function, args, kwargs, *, setter=False):
         return target
     if name in {"CW", "CCW", "flip_h", "flip_v", "transpose", "T", "swapaxes", "rot90"}:
         from .storage_transforms import permute
+
         if box is not False:
             raise ValueError("Crop explicitly before applying an exact image permutation")
         package = permute(owner.export_storage(), name, args, kwargs)
@@ -159,6 +161,7 @@ def call_method(image, function, args, kwargs, *, setter=False):
         target_owner.replace(package)
         return target
     from .storage_interpolation import GEOMETRY, interpolate, require_alignment
+
     for operand in (*args, *kwargs.values()):
         if name not in {"align", "correct_drift"} and hasattr(operand, "__dict__"):
             require_alignment(image, operand)
@@ -176,6 +179,7 @@ def call_method(image, function, args, kwargs, *, setter=False):
         return target
     if calibrated(owner) and name in {"align", "correct_drift"}:
         from scipy.ndimage import shift
+
         if box is not False:
             raise ValueError("Use the alignment box argument to select registration pixels")
         target = image.clone if force is None else image
@@ -185,8 +189,10 @@ def call_method(image, function, args, kwargs, *, setter=False):
         target_owner._check_writable()
         working = snapshot(image, writable=True)
         operands = [snapshot(arg) if hasattr(arg, "__dict__") and owner_of(arg) is not None else arg for arg in args]
-        options = {key: snapshot(arg) if hasattr(arg, "__dict__") and owner_of(arg) is not None else arg
-                   for key, arg in kwargs.items()}
+        options = {
+            key: snapshot(arg) if hasattr(arg, "__dict__") and owner_of(arg) is not None else arg
+            for key, arg in kwargs.items()
+        }
         numerical = function(working, *operands, **options)
         if name == "correct_drift" and not kwargs.get("do_shift", True):
             commit_result(target, numerical)
@@ -203,25 +209,29 @@ def call_method(image, function, args, kwargs, *, setter=False):
         if tuple(grid.sizes[axis] for axis in ("y", "x")) != numerical.shape:
             raise ValueError("Registration requires a reference grid matching the output shape")
         package.dataset = package.dataset.drop_vars(list(package.dataset.coords)).assign_coords(
-            grid.coords.to_dataset().copy(deep=True).coords)
+            grid.coords.to_dataset().copy(deep=True).coords
+        )
         target_owner.replace(package)
         return target
     working = snapshot(image, writable=True)
     if box is not False:
         from .numerical import numerical_image
+
         working = numerical_image(working[working._box(box)], metadata=working.metadata)
     args = [snapshot(arg) if hasattr(arg, "__dict__") and owner_of(arg) is not None else arg for arg in args]
-    kwargs = {key: snapshot(arg) if hasattr(arg, "__dict__") and owner_of(arg) is not None else arg
-              for key, arg in kwargs.items()}
+    kwargs = {
+        key: snapshot(arg) if hasattr(arg, "__dict__") and owner_of(arg) is not None else arg
+        for key, arg in kwargs.items()
+    }
     result = function(working, *args, **kwargs)
     if setter:
         if name == "title":
             image.__dict__["_image_attrs"]["_title"] = working._title
             return result
         replace_image(image, working)
-        image.__dict__["_image_attrs"].update({
-            key: deepcopy(getattr(working, key)) for key in image.__dict__.get("_image_attrs", {})
-        })
+        image.__dict__["_image_attrs"].update(
+            {key: deepcopy(getattr(working, key)) for key in image.__dict__.get("_image_attrs", {})}
+        )
         return result
     if result is None:
         commit_result(image, working)
@@ -251,6 +261,7 @@ class OwnerDraw:
 
     def __dir__(self):
         from .attrs import DrawProxy
+
         return dir(DrawProxy(snapshot(self._image, writable=True), self._image))
 
     def __getattr__(self, name):
@@ -261,6 +272,7 @@ class OwnerDraw:
                 proxy = DrawProxy(draft.mask if self._mask else draft.view(np.ma.MaskedArray), self._image)
                 result = getattr(proxy, name)(*args, **kwargs)
             return result
+
         return draw
 
 
@@ -285,8 +297,11 @@ def install(cls):
         array = self.__dict__["_image"]
         if array.size:
             source = owner_of(args[0]) if args and hasattr(args[0], "__dict__") else None
-            package = source.export_storage() if source is not None else ImageStorage.from_numpy(
-                array, metadata=self.metadata)
+            package = (
+                source.export_storage()
+                if source is not None
+                else ImageStorage.from_numpy(array, metadata=self.metadata)
+            )
             bind(self, ImageOwner(package), array)
             if asfloat:
                 self.asfloat()
@@ -300,8 +315,11 @@ def install(cls):
 
     def setattr_(self, name, value):
         if owner_of(self) is None:
-            if (name == "_image" and not self.__dict__.get("_image_initialising", False)
-                    and type(self).image is cls.image):
+            if (
+                name == "_image"
+                and not self.__dict__.get("_image_initialising", False)
+                and type(self).image is cls.image
+            ):
                 return replace_image(self, value)
             return initialise_attribute(self, name, value)
         if name == "_image":
@@ -496,10 +514,12 @@ def install(cls):
         @wraps(operation)
         def aligned(self, other, _operation=operation):
             from .storage_interpolation import require_alignment
+
             require_alignment(self, other)
             return _operation(self, other)
 
         setattr(cls, operator_name, aligned)
+
     def transposed(self):
         """Return an independent transpose with its calibrated coordinate axes."""
         if owner_of(self) is None:
