@@ -12,8 +12,8 @@ dependencies:
   - coverage
   - pytest
   - pytest-cov
-  - pytest-forked
-  - pytest-xdist
+  - pytest-forked >=1.6
+  - pytest-xdist >=3.8
 
   # Required runtime dependencies (keep aligned with tests/test-env.yml)
   - asteval

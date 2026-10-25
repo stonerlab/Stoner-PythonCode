@@ -1673,16 +1673,16 @@ def save_tiff(image, filename, forcetype=False):
     image.metadata["ImageArray.dtype"] = dtype  # add the dtype to the metadata for saving.
     if forcetype:  # PIL supports uint8, int32 and float32, try to find the best match
         if image.dtype == np.uint8 or image.dtype.kind == "b":  # uint8 or boolean
-            im = Image.fromarray(image, mode="L")
+            # Convert Boolean pixels explicitly; Pillow 13 rejects mode reinterpretation.
+            im = Image.fromarray(image.astype("uint8"))
         elif image.dtype.kind in ["i", "u"]:
             im = Image.fromarray(image.astype("int32"), mode="I")
         else:  # default to float32
             im = Image.fromarray(image.astype(np.float32), mode="F")
     else:
-        if (
-            image.dtype.kind == "b"
-        ):  # boolean we're not going to lose data by saving as unsigned int	            im = Image.fromarray(image)
-            im = Image.fromarray(image, mode="L")
+        if image.dtype.kind == "b":
+            # Retain the existing 0/1 storage values and Boolean dtype metadata.
+            im = Image.fromarray(image.astype("uint8"))
         else:  # try to convert everything else to float32 which can has maximum preservation of info
             try:
                 im = Image.fromarray(image)

@@ -129,6 +129,10 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   and no lost API entries. Plotting handovers record the earlier bounded checks.
 - [ ] Push the release commit and verify Linux/macOS, lower dependencies,
   installed wheel/sdist and cached documentation on that exact revision.
+  The first candidate `6b77f49e0` passed archive/documentation gates but exposed
+  Pillow 13 mode reinterpretation in TIFF saving/fixtures and solver-selected
+  pytest-xdist 2.5 on macOS. Both are addressed in a bounded compatibility fix;
+  all gates must pass on its new revision before tagging.
 - [ ] After those gates pass, publish immutable `v0.12.0a3` and verify PyPI/Conda
   deployment, release documentation and public version metadata.
 

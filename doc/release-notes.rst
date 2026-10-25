@@ -8,6 +8,11 @@ This third alpha extends the plotting accessor and requires stonerplots 1.9.8
 or newer. Python, pandas/xarray storage and the Axes return contracts are
 unchanged from the previous alpha.
 
+Boolean TIFF saving now converts pixels explicitly for Pillow 13's stricter
+mode validation, preserving 0/1 values and Boolean dtype metadata. Test
+environments require modern pytest-xdist/pytest-forked releases to avoid
+pre-collection failures with current Python/pytest combinations.
+
 ``Data.plot.style`` now accepts comma-separated style names and ``extra``
 rcParams overrides, with the same precedence and default styles as
 ``SavedFigure``. Native dictionaries, mixed style lists and ``after_reset``

@@ -45,6 +45,10 @@ Ordinary tests must run with `READTHEDOCS` absent from the environment. The runn
 handles this automatically. Setting it to `False` still enables the package's
 presence-based documentation restrictions.
 
+Both test environments require pytest-xdist >=3.8 and pytest-forked >=1.6.
+Older solver-selected xdist releases import the retired ``py.log`` package and
+can fail before collection with current pytest/Python combinations.
+
 ## Isolation and warning policy
 
 - Unexpected native file dialogs fail immediately through an autouse fixture.
