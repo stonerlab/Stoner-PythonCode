@@ -6,7 +6,6 @@ Created on Fri May 27 17:09:04 2016
 """
 
 import os
-import sys
 from os import path
 
 import numpy as np
@@ -281,7 +280,10 @@ def test_savetiff(tmp_path, forcetype):
         if im.dtype.kind == "b":
             with Image.open(testfile) as stored:
                 assert stored.mode == "L"
-                np.testing.assert_array_equal(np.asarray(stored), im.to_numpy().astype("uint8"))
+                pixels = np.array(stored)
+                # Release Pillow's TIFF memory map before this filename is reused on Windows.
+                stored.close()
+            np.testing.assert_array_equal(pixels, im.to_numpy().astype("uint8"))
         n = ImageFile(testfile)
         assert all([n["a"][i] == im["a"][i] for i in range(len(n["a"]))])
         assert n["b"] == im["b"]
