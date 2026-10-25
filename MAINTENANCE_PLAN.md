@@ -118,23 +118,40 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
-### Preparing 0.12.0a3
+### Published 0.12.0a3
 
-- [x] Reconcile stonerplots >=1.9.8 across runtime, recipe and testing/docs
-  environments; retain packaging-only build environment and existing licences,
-  project URLs and OCR resources.
-- [x] Local Windows suite: 1,395 passed, three expected issue #41 failures,
-  including all 82 rendered examples. Lower-dependency style/example checks pass
-  31 tests. Cached Sphinx HTML has 62 reviewed warnings, zero unexpected warnings
-  and no lost API entries. Plotting handovers record the earlier bounded checks.
-- [ ] Push the release commit and verify Linux/macOS, lower dependencies,
-  installed wheel/sdist and cached documentation on that exact revision.
-  The first candidate `6b77f49e0` passed archive/documentation gates but exposed
-  Pillow 13 mode reinterpretation in TIFF saving/fixtures and solver-selected
-  pytest-xdist 2.5 on macOS. Both are addressed in a bounded compatibility fix;
-  all gates must pass on its new revision before tagging.
-- [ ] After those gates pass, publish immutable `v0.12.0a3` and verify PyPI/Conda
-  deployment, release documentation and public version metadata.
+[`0.12.0a3`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a3)
+is published as a GitHub prerelease from `devel`, tagged at
+`92fd4f3baef3df5ff2f9f5144188edd94ef6de7b`. It includes OffsetPlots, both new
+double-axis contexts, the style wrapper, examples/docs and the bounded Pillow 13
+TIFF/test-runner compatibility fixes exposed by the first CI candidate.
+The required stonerplots version is 1.9.8; all dependency manifests are aligned.
+
+The exact release source passed **1,396 tests with three expected issue #41
+failures** in all Linux 3.12-3.14/macOS 3.14 matrix cells and on local Windows
+with Pillow 13. The lower dependency suite passed 1,395, with one expected skip
+and the same three expected failures. All 82 rendered examples are included.
+Evidence: [full matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40203566136),
+[lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40203566100),
+[fresh wheel/sdist installations](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40203566115)
+and [cached docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40203566150).
+[Tag-triggered matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40204595870)
+and tag package/lower-dependency jobs also passed. No gate was waived.
+
+[PyPI](https://pypi.org/project/Stoner/0.12.0a3/) publishes both wheel and sdist
+with Python >=3.12 and stonerplots >=1.9.8 metadata; the public wheel passed the
+installed-package probe outside the checkout. Conda channel repodata contains
+`noarch/stoner-0.12.0a3-py_0.conda`, with a successful installed import/version
+test and upload in the
+[release deployment](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40204597020).
+[Release documentation CI](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40204596843)
+passed. The maintainer activated the tagged Read the Docs version;
+[build 35393219](https://app.readthedocs.org/projects/stoner-pythoncode/builds/35393219/)
+passed on the exact release SHA, and the
+[published plotting guide](https://stoner-pythoncode.readthedocs.io/en/v0.12.0a3/UserGuide/plotfile.html)
+was verified in the browser. Zenodo archived the release as
+[DOI 10.5281/zenodo.23644220](https://doi.org/10.5281/zenodo.23644220).
+There are no outstanding publication gates for this alpha. The tag is immutable.
 
 ### Published 0.12.0a2
 
@@ -257,20 +274,20 @@ reviewed inference/test-utility advisories did not block the alpha.
   vector descriptions and FMR annotation coordinates. Include the previously
   skipped main-guarded FMR workflow in rendered-example tests. See the
   [post-migration handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-offsetplots-25-october-2026)
-  for validation and the local preview; included in 0.12.0a3 preparation.
+  for validation and the local preview; released in 0.12.0a3.
 
 - [x] **DoubleXAxis/DoubleXYAxis integration (25 October 2026):** expose the
   stonerplots 1.9.8 contexts alongside DoubleYAxis, with aligned dependency
   manifests, guide/API documentation, a cached example and integration tests.
   See the [plotting handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-doublexaxis-and-doublexyaxis-25-october-2026).
-  Included in 0.12.0a3 preparation with the OffsetPlots changes.
+  Released in 0.12.0a3 with the OffsetPlots changes.
 
 - [x] **Style wrapper and examples (25 October 2026):** `Data.plot.style` now
   accepts SavedFigure-style comma-separated names and `extra=` overrides,
   retaining native dictionaries, mixed lists, files and `after_reset`. Update
   eleven examples and the guide/API documentation. See the
   [plotting handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-style-names-and-overrides-25-october-2026)
-  for validation; included in 0.12.0a3 preparation.
+  for validation; released in 0.12.0a3.
 
 - [x] **Attocube frame metadata cost:** removed the numerical export when rebinding
   the metadata owner in `ScanMetadataMixin._instantiate`, shared with MAXIMUS.

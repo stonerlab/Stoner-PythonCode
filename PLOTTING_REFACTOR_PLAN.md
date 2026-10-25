@@ -3,6 +3,8 @@
 Status: stages 0-6 completed on 18 October 2026.
 Post-migration extension: OffsetPlots and the executable-example audit, 25 October 2026 (see below).
 Further extension: DoubleXAxis/DoubleXYAxis with stonerplots 1.9.8 (see below).
+These extensions and the style wrapper are published in 0.12.0a3; release and
+hosted-validation evidence is recorded in MAINTENANCE_PLAN.md.
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -844,7 +846,7 @@ tag, release or publication has been performed.
 
 Validation reports: ignored `maintenance/runs/offsetplots/`. Preview:
 `http://127.0.0.1:8795/UserGuide/plotfile.html#plotting-offsets`.
-Included in 0.12.0a3 release preparation; hosted/publication gates are tracked in
+Published in 0.12.0a3; hosted/publication evidence is tracked in
 MAINTENANCE_PLAN.md.
 
 ## Post-migration extension: DoubleXAxis and DoubleXYAxis (25 October 2026)
@@ -880,7 +882,7 @@ MAINTENANCE_PLAN.md.
 
 Reports: ignored `maintenance/runs/double-axes/`. Local preview:
 `http://127.0.0.1:8796/UserGuide/plotfile.html#plotting-double-axes`.
-Included with OffsetPlots in 0.12.0a3 release preparation; see MAINTENANCE_PLAN.md
+Published with OffsetPlots in 0.12.0a3; see MAINTENANCE_PLAN.md
 for hosted validation and publication status.
 
 ## Post-migration extension: style names and overrides (25 October 2026)
@@ -908,7 +910,7 @@ for hosted validation and publication status.
 
 Reports: ignored `maintenance/runs/style-wrapper/`. Preview:
 `http://127.0.0.1:8797/UserGuide/plotfile.html#plotting-contexts`.
-Included in 0.12.0a3 release preparation. The results above are local;
+Published in 0.12.0a3. The results above are local;
 MAINTENANCE_PLAN.md tracks exact-revision hosted and installed-distribution gates.
 
 ## External sources inspected
