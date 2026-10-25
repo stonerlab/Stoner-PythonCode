@@ -112,7 +112,7 @@ Plot Package and Modules
 .. automodapi:: Stoner.plot
     :no-inheritance-diagram:
     :headings: -~
-    :skip: SavedFigure, MultiPanel, StackVertical, DoubleYAxis, InsetPlot, CentredAxes, PlotLabeller, TexFormatter, TexEngFormatter
+    :skip: SavedFigure, MultiPanel, StackVertical, OffsetPlots, DoubleYAxis, DoubleXAxis, DoubleXYAxis, InsetPlot, CentredAxes, PlotLabeller, TexFormatter, TexEngFormatter
 
 Stonerplots exports
 -------------------
@@ -136,10 +136,27 @@ signatures, keyword arguments and returned objects are retained.
 
     Arrange stacked panels. Also ``d.plot.StackVertical``.
 
+.. py:class:: OffsetPlots
+    :module: Stoner.plot
+
+    Offset datasets on each axes after drawing. Also ``d.plot.OffsetPlots``.
+    See :ref:`plotting-offsets` for linear/logarithmic offsets and error bars.
+
 .. py:class:: DoubleYAxis
     :module: Stoner.plot
 
     Add an independent Y axis. Also ``d.plot.DoubleYAxis``.
+
+.. py:class:: DoubleXAxis
+    :module: Stoner.plot
+
+    Add an independent top X axis sharing Y. Also ``d.plot.DoubleXAxis``.
+
+.. py:class:: DoubleXYAxis
+    :module: Stoner.plot
+
+    Add independent top X and right Y axes. Also ``d.plot.DoubleXYAxis``.
+    Both new contexts yield one Matplotlib Axes; see :ref:`plotting-double-axes`.
 
 .. py:class:: InsetPlot
     :module: Stoner.plot

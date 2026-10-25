@@ -39,6 +39,12 @@ def check_plotting():
     data = Data(np.arange(4.), np.arange(4.)**2, np.full(4, 0.1), setas='xye')
     data.mask[1, 1] = True
     before = data.export_storage()
+    linewidth = plt.rcParams['lines.linewidth']
+    with data.plot.style('stoner, aps', extra={'lines.linewidth': 1.75}):
+        if plt.rcParams['lines.linewidth'] != 1.75:
+            raise RuntimeError('Style overrides did not take precedence')
+    if plt.rcParams['lines.linewidth'] != linewidth:
+        raise RuntimeError('Style context did not restore caller settings')
     with data.plot.style('stoner'):
         fig = data.plot.new_figure(figsize=(8, 4))
         with data.plot.MultiPanel((1, 2), figure=fig, adjust_figsize=False) as panels:
@@ -50,12 +56,27 @@ def check_plotting():
                 raise RuntimeError('Inset plotting lost its explicit target')
         with data.plot.DoubleYAxis(ax=ax) as right:
             data.plot.line(ax=right, title=None, legend=False)
+        for context in (data.plot.DoubleXAxis, data.plot.DoubleXYAxis):
+            parent = data.plot.new_figure().subplots()
+            data.plot.line(ax=parent, label='Primary')
+            with context(ax=parent) as secondary:
+                if data.plot.line(label='Secondary') is not secondary:
+                    raise RuntimeError('Double-axis plotting lost its current target')
+            if plt.gca() is not parent or len(parent.figure.axes) != 2:
+                raise RuntimeError('Double-axis context lost its target or added extra axes')
+            parent.figure.canvas.draw()
         with tempfile.TemporaryDirectory(prefix='stoner-installed-plot-') as directory:
             target = Path(directory) / 'measurement.png'
             with data.plot.SavedFigure(str(target), formats='png', use=fig):
                 pass
             if not target.is_file() or target.stat().st_size == 0:
                 raise RuntimeError('SavedFigure did not write the selected figure')
+
+    with data.plot.OffsetPlots(offset=2):
+        offset_ax = data.plot.new_figure().subplots()
+        data.plot.line(ax=offset_ax)
+        data.plot.line(ax=offset_ax)
+    np.testing.assert_array_equal(offset_ax.lines[1].get_ydata(), offset_ax.lines[0].get_ydata() + 2)
 
     after = data.export_storage()
     np.testing.assert_array_equal(after.to_numpy(masked=False), before.to_numpy(masked=False))

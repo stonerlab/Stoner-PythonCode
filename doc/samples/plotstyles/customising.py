@@ -17,7 +17,7 @@ with d.plot.style("stoner"):
             "axes.prop_cycle": cycler(color=["Blue", "Purple"]) + cycler(linestyle=["-", "--"]),
             "lines.linewidth": 2.0,
         }
-        with d.plot.style(overrides):
+        with d.plot.style([], extra=overrides):
             # Styles apply at creation; configure an existing axes explicitly.
             ax = panels[1]
             ax.set_prop_cycle(overrides["axes.prop_cycle"])

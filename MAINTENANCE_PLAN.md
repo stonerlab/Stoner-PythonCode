@@ -118,6 +118,20 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
+### Preparing 0.12.0a3
+
+- [x] Reconcile stonerplots >=1.9.8 across runtime, recipe and testing/docs
+  environments; retain packaging-only build environment and existing licences,
+  project URLs and OCR resources.
+- [x] Local Windows suite: 1,395 passed, three expected issue #41 failures,
+  including all 82 rendered examples. Lower-dependency style/example checks pass
+  31 tests. Cached Sphinx HTML has 62 reviewed warnings, zero unexpected warnings
+  and no lost API entries. Plotting handovers record the earlier bounded checks.
+- [ ] Push the release commit and verify Linux/macOS, lower dependencies,
+  installed wheel/sdist and cached documentation on that exact revision.
+- [ ] After those gates pass, publish immutable `v0.12.0a3` and verify PyPI/Conda
+  deployment, release documentation and public version metadata.
+
 ### Published 0.12.0a2
 
 [`0.12.0a2`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a2)
@@ -230,6 +244,29 @@ reviewed inference/test-utility advisories did not block the alpha.
   endpoint jobs and cached documentation pass. Local cached docs have 62 reviewed
   warnings and zero unexpected, with no unintended API removals. Included in
   `0.12.0a2`, with final release validation recorded above.
+
+- [x] **OffsetPlots and plotting-consumer audit (25 October 2026):** directly
+  expose the stonerplots context through the accessor/package and raise the
+  dependency floor to 1.9.7. Add guide/API documentation, a rendered example,
+  scientific-state/context integration tests and the installed-package probe.
+  Audit runnable samples/scripts and correct guide FFT/semilog calls, cookbook
+  vector descriptions and FMR annotation coordinates. Include the previously
+  skipped main-guarded FMR workflow in rendered-example tests. See the
+  [post-migration handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-offsetplots-25-october-2026)
+  for validation and the local preview; included in 0.12.0a3 preparation.
+
+- [x] **DoubleXAxis/DoubleXYAxis integration (25 October 2026):** expose the
+  stonerplots 1.9.8 contexts alongside DoubleYAxis, with aligned dependency
+  manifests, guide/API documentation, a cached example and integration tests.
+  See the [plotting handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-doublexaxis-and-doublexyaxis-25-october-2026).
+  Included in 0.12.0a3 preparation with the OffsetPlots changes.
+
+- [x] **Style wrapper and examples (25 October 2026):** `Data.plot.style` now
+  accepts SavedFigure-style comma-separated names and `extra=` overrides,
+  retaining native dictionaries, mixed lists, files and `after_reset`. Update
+  eleven examples and the guide/API documentation. See the
+  [plotting handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-style-names-and-overrides-25-october-2026)
+  for validation; included in 0.12.0a3 preparation.
 
 - [x] **Attocube frame metadata cost:** removed the numerical export when rebinding
   the metadata owner in `ScanMetadataMixin._instantiate`, shared with MAXIMUS.

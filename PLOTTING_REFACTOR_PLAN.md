@@ -1,6 +1,8 @@
 # Plotting redesign
 
 Status: stages 0-6 completed on 18 October 2026.
+Post-migration extension: OffsetPlots and the executable-example audit, 25 October 2026 (see below).
+Further extension: DoubleXAxis/DoubleXYAxis with stonerplots 1.9.8 (see below).
 This is a separate workstream from the completed native storage
 migration in [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md).
 
@@ -804,6 +806,110 @@ Validation (reports under ignored `maintenance/runs/plotting-stage6`):
 Current preview: `maintenance/runs/plotting-stage6/html` on port 8794, with
 release notes and the updated plotting guide checked in the browser. No merge,
 tag, release or publication has been performed.
+
+## Post-migration extension: OffsetPlots (25 October 2026)
+
+- Expose `OffsetPlots` directly from both `Data.plot` and `Stoner.plot`, with no
+  wrapper or copied upstream implementation. Raise the stonerplots floor to
+  1.9.7 across runtime, recipe, testing and documentation requirements. The
+  packaging-only build environment needs no runtime dependency change.
+- Document new/existing axes, linear/logarithmic offsets, pairing, complete error
+  bars and unsupported artists. Add the executable two-panel example and its
+  three cached render formats, retaining all 276 pre-existing cached files.
+- Integration regressions cover export identity, per-trace exclusions, paired
+  line/scatter artists, complete error bars (including `fmt="none"`), log factors,
+  source-state preservation, existing axes and exception/target restoration.
+  Extend the maintained installed-package plotting probe for future CI archives.
+- Audit all 96 Python samples/scripts (274 plotting calls) and the guides/runtime
+  docstrings for retired drawing calls. Retain deliberate migration comparisons
+  and valid non-plotting `xcol`/`ycol` controls. Correct the image-guide FFT keyword
+  and semilog plotting, the cookbook import/vector descriptions and FMR annotation
+  coordinates/targets. The formerly skipped main-guarded FMR workflow is now part
+  of the rendered-example collector; add image-derived table rendering coverage.
+- Both current and lower test environments satisfy all 38 Conda specifications.
+  Current versions: Python 3.14.7, Matplotlib 3.11.1, pandas 3.0.5; lower versions:
+  Python 3.12.15, Matplotlib 3.8.4, pandas 2.2.3. Both use stonerplots 1.9.7.
+  Plotting/example/script runs pass 315 tests with three expected issue #41
+  failures in each environment before adding FMR to the collector. The final
+  lower-dependency OffsetPlots/FMR/image recheck passes 14 tests.
+  The final current full suite passes **1,372 tests with three expected issue #41
+  failures**, including all 81 rendered documentation examples and the new FMR
+  and image-profile regressions (221.20 seconds with two workers).
+- Fresh cached Sphinx HTML has 62 reviewed warnings, zero new warnings and no
+  removed inventory entries; all 39 required accessor/context names are canonical.
+  Visually reviewed the new guide, illustration, API entry and linking over
+  localhost. Source package-content, CI/repository policy and targeted lint checks
+  pass. The installed-package probe was exercised from source; no installed
+  wheel/sdist or hosted CI result is claimed for these changes.
+
+Validation reports: ignored `maintenance/runs/offsetplots/`. Preview:
+`http://127.0.0.1:8795/UserGuide/plotfile.html#plotting-offsets`.
+Included in 0.12.0a3 release preparation; hosted/publication gates are tracked in
+MAINTENANCE_PLAN.md.
+
+## Post-migration extension: DoubleXAxis and DoubleXYAxis (25 October 2026)
+
+- Directly expose both upstream classes through `Data.plot` and `Stoner.plot`,
+  alongside `DoubleYAxis`. Reconcile the required stonerplots version to 1.9.8
+  across runtime, recipe and test/docs environment manifests; the packaging-only
+  build environment remains independent of runtime requirements.
+- Add API/guide/upgrade documentation and a two-panel executable comparison of
+  shared Y versus independent X/Y. Replace the obsolete `twiny()` recommendation
+  in the migration guide. Add only the new example's three cached render files.
+- Extend export identity and exception-restoration coverage to both contexts.
+  Integration tests exercise all three double-axis variants with automatic and
+  explicit targets, sharing/independent limits, colours, merged legends, source
+  values and overlaid geometry after layout/resizing. All 44 context tests pass.
+  The maintained installed-package probe also exercises the new contexts; its
+  source-level preflight passes against the Conda release of stonerplots 1.9.8.
+- Current Python 3.14/Matplotlib 3.11 and lower Python 3.12/Matplotlib 3.8
+  environments each satisfy all 38 Conda test-environment specifications.
+  Full current suite: **1,383 passed, three expected issue #41 failures**,
+  including 82 rendered examples. Lower-dependency plotting/examples: **299
+  passed**. The full run exposed an inherited constrained-layout warning in the
+  new example; it now explicitly selects manual layout. Final double-axis/context
+  example checks pass 14 tests in each environment, with layout warnings treated
+  as errors. Separate rendering with inherited constrained layout also passes in
+  both environments. The final sample-only correction was verified by these
+  focused runs rather than another full-suite repetition.
+  Cached Sphinx HTML has 62 reviewed warnings and no unexpected warnings or
+  removed API entries; all 41 required accessor/context targets are canonical.
+  Reviewed the guide, API entries, navigation and figure over localhost.
+  Targeted lint and source package-content/CI/repository policy checks pass.
+  These are local results, without hosted CI or installed-archive validation.
+
+Reports: ignored `maintenance/runs/double-axes/`. Local preview:
+`http://127.0.0.1:8796/UserGuide/plotfile.html#plotting-double-axes`.
+Included with OffsetPlots in 0.12.0a3 release preparation; see MAINTENANCE_PLAN.md
+for hosted validation and publication status.
+
+## Post-migration extension: style names and overrides (25 October 2026)
+
+- Replace the direct Matplotlib style alias with a small style-only context.
+  Comma-separated strings follow SavedFigure's whitespace/empty-entry handling;
+  lists retain order and `extra=` overrides all styles. None/omission uses
+  `stonerplots.default.style`, while an empty list/string applies no stylesheet.
+  Preserve native mappings, mixed lists, path-like files and the positional/
+  keyword `after_reset` option. Do not select/create/save/close figures.
+- Migrate eleven examples from mixed dictionaries/style lists to `extra=` or
+  comma-separated names. Existing single-style calls remain valid. Updated guide,
+  API docstrings and release notes document defaults and override precedence.
+  Appearance is unchanged, so existing plot-cache files are retained.
+- Focused current-environment checks pass 17 style tests; lower-dependency checks
+  pass 31 style/example tests. Full rcParams snapshots agree with SavedFigure for
+  names, ordered lists, defaults and overrides. Regressions cover nesting, errors,
+  invalid overrides, reset behaviour, file inputs and unchanged current targets.
+  Both environments satisfy all 38 Conda specifications; targeted lint passes.
+  The full current suite passes **1,395 tests with three expected issue #41
+  failures**, including all 82 rendered examples, in 242.82 seconds with two workers.
+- Fresh cached Sphinx HTML has 62 reviewed warnings, zero unexpected warnings
+  and no removed API entries. Reviewed the rendered guide and style method's
+  signature/documentation over localhost. No cached images were refreshed.
+
+Reports: ignored `maintenance/runs/style-wrapper/`. Preview:
+`http://127.0.0.1:8797/UserGuide/plotfile.html#plotting-contexts`.
+Included in 0.12.0a3 release preparation. The results above are local;
+MAINTENANCE_PLAN.md tracks exact-revision hosted and installed-distribution gates.
 
 ## External sources inspected
 

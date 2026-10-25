@@ -7,6 +7,20 @@ ConvertingScripts from Older Versions of the Stoner Package
 The Stoner package has gradually undergone several changes as additional functions have been added to keep the codebase
 manageable. This document summarises the main changes from previous versions.
 
+Version 0.12.0a3: additional plotting contexts
+=============================================
+
+The current accessor additionally exposes ``data.plot.OffsetPlots`` (also
+``Stoner.plot.OffsetPlots``), plus ``DoubleXAxis`` and ``DoubleXYAxis`` alongside
+``DoubleYAxis``. These direct exports now require stonerplots 1.9.8 or newer. See
+:ref:`plotting-offsets` and :ref:`plotting-double-axes` for executable examples.
+Existing drawing methods keep
+their Axes return values and scientific selection rules.
+
+``data.plot.style("stoner, aps", extra={"lines.linewidth": 2})`` now accepts
+SavedFigure-style names and overrides. Omitting the style uses
+``stonerplots.default.style``; pass an empty list for overrides alone.
+
 Version 0.12.0a2: plotting redesign
 ====================================
 

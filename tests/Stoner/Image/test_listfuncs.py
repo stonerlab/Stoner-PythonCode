@@ -150,6 +150,11 @@ def test_imagefuncs():
     plt.close("all")
     assert j.radial_profile().y.argmax() == 4
     assert j.radial_profile(angle=np.pi / 4).y.argmax() == 3
+    # Image-derived tables use the same plotting accessor as other Data objects.
+    profile_axes = j.radial_profile(angle=(-0.04, 0.04)).plot(yscale="log")
+    assert profile_axes.get_yscale() == "log"
+    profile_axes.figure.canvas.draw()
+    plt.close(profile_axes.figure)
     img_a2.imshow(title=None, figure=None)
     img_a2.imshow(title="Hello", figure=1)
     assert len(plt.get_fignums()) == 1, "Imshow with arguments didn't open one window"

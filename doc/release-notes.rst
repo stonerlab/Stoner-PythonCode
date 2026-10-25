@@ -1,8 +1,27 @@
 Release notes
 =============
 
-Unreleased
-----------
+Version 0.12.0a3 (2026-10-25)
+--------------------------------
+
+This third alpha extends the plotting accessor and requires stonerplots 1.9.8
+or newer. Python, pandas/xarray storage and the Axes return contracts are
+unchanged from the previous alpha.
+
+``Data.plot.style`` now accepts comma-separated style names and ``extra``
+rcParams overrides, with the same precedence and default styles as
+``SavedFigure``. Native dictionaries, mixed style lists and ``after_reset``
+remain supported. Settings are restored on exit without figure lifecycle actions.
+
+``Data.plot.OffsetPlots`` and ``Stoner.plot.OffsetPlots`` directly expose the
+upstream context for additive linear offsets or multiplicative logarithmic
+offsets, including complete error bars. Source measurements remain unchanged.
+See :ref:`plotting-offsets`.
+
+``Data.plot.DoubleXAxis`` and ``DoubleXYAxis`` (also exported by ``Stoner.plot``)
+complement ``DoubleYAxis``. They yield a secondary Axes with an independent top
+X scale sharing Y, or independent top X/right Y scales respectively. The
+required stonerplots version is now 1.9.8; see :ref:`plotting-double-axes`.
 
 The repository analysis scripts now use the plotting accessor, explicit
 Matplotlib axes and mask-preserving numerical edits. Standalone scripts have

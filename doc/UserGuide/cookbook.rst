@@ -179,7 +179,7 @@ by creating a random distribution of (x,y) points, evaluating the function and t
 using the :py:class:`Stoner.core.data.Data` plotting methods to generate the surface::
 
     from Stoner import Data
-    from numpy import uniform
+    from numpy.random import uniform
 
     samples=5000
 
@@ -189,7 +189,7 @@ using the :py:class:`Stoner.core.data.Data` plotting methods to generate the sur
     surf.setas="xy"
     surf&=Z(surf.x,surf.y)
     surf.setas="xyz"
-    surf.plot() # or surf.plot(cstride=1,rstride=1,linewidth=0) for finer detail.
+    surf.plot.surface() # Set cstride=1, rstride=1, linewidth=0 for finer detail.
 
 Quickly Sectioning a 3D dataset
 -------------------------------
@@ -203,6 +203,6 @@ to quickly examine the output data::
     p=Data('my_simulation.ovf')  # the OVF loader is selected automatically
     p.setas="xyzuvw"
     p=p.section(z=10.5) # Take a slice in the xy plane where z is 10.5 nm
-    p.plot() # A 3D plot with cones
+    p.plot.vector3d() # A 3D plot with arrows
     p.setas="xy.uvw"
-    p.plot() # a 2D colour wheel plot with triangular glyphs showing vector direction.
+    p.plot.vector() # A 2D colour image showing vector direction and magnitude.

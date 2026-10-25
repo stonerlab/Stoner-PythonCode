@@ -7,9 +7,12 @@ plotting through :py:class:`Stoner.plot.accessor.DataPlotter`. Numerical
 
 from stonerplots import (
     CentredAxes,
+    DoubleXAxis,
+    DoubleXYAxis,
     DoubleYAxis,
     InsetPlot,
     MultiPanel,
+    OffsetPlots,
     PlotLabeller,
     SavedFigure,
     StackVertical,
@@ -22,9 +25,12 @@ from .accessor import DataPlotter
 __all__ = [
     "CentredAxes",
     "DataPlotter",
+    "DoubleXAxis",
+    "DoubleXYAxis",
     "DoubleYAxis",
     "InsetPlot",
     "MultiPanel",
+    "OffsetPlots",
     "PlotLabeller",
     "SavedFigure",
     "StackVertical",

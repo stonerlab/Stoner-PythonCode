@@ -125,7 +125,7 @@ if __name__ == "__main__":
         target.xaxis.set_major_formatter(result.plot.TexEngFormatter())
         target.yaxis.set_major_formatter(result.plot.TexEngFormatter())
     result.plot(ax=axes[0], fmt=["r.", "b-"])
-    result.annotate_fit(Inverse_Kittel, x=7e9, y=1e5, fontdict={"size": 8})
+    result.annotate_fit(Inverse_Kittel, ax=axes[0], x=0.55, y=0.3, fontdict={"size": 8})
     axes[0].set_ylabel("$H_{res} \\mathrm{(Am^{-1})}$")
     axes[0].set_title("Inverse Kittel Fit")
 
@@ -137,4 +137,4 @@ if __name__ == "__main__":
     result.lmfit(Linear, result=True, header="Width", output="report")
     result.setas[-1] = "y"
     result.plot(ax=axes[1], fmt=["r.", "b-"])
-    result.annotate_fit(Linear, x=5.5e9, y=2.8e3, fontdict={"size": 8})
+    result.annotate_fit(Linear, ax=axes[1], x=0.1, y=0.65, fontdict={"size": 8})

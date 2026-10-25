@@ -296,7 +296,7 @@ Fast Fourier transforms are oftern used when we need to examain the frequency sp
 method provides a convenient one-stop method for generating the fft that can also take care of some of the artefacts that
 can result.::
 
-    fft=im.clone.fft(replace_dc=True, window="hamming")
+    fft=im.clone.fft(remove_dc=True, window="hamming")
 
 .. image:: figures/kermit-fft.png
 
@@ -321,7 +321,7 @@ standard deviation and number of pixels counted. The optional *angle* keyword pa
 range of angles (a tuple of two floats). This can be easily plotted since the :class:`Stoner.core.data.Data` object is created with the
 appropriate columns setup as x oand y data columns.::
 
-    fft.radial_profile(angle=(-0.04,0.04)).plot(plotter=semilogy)
+    fft.radial_profile(angle=(-0.04, 0.04)).plot(yscale="log")
 
 .. image:: figures/kermit-fft-profile.png
 

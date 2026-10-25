@@ -1,13 +1,20 @@
 """Provide explicit, callable scientific plotting for a Data instance."""
 
+from collections.abc import Mapping
+from contextlib import contextmanager
+
 import numpy as np
+import stonerplots
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from stonerplots import (
     CentredAxes,
+    DoubleXAxis,
+    DoubleXYAxis,
     DoubleYAxis,
     InsetPlot,
     MultiPanel,
+    OffsetPlots,
     PlotLabeller,
     SavedFigure,
     StackVertical,
@@ -60,8 +67,14 @@ class DataPlotter:
     MultiPanel = MultiPanel
     #: Arrange vertically stacked panels with shared X coordinates.
     StackVertical = StackVertical
+    #: Offset plotted datasets vertically without changing their source data.
+    OffsetPlots = OffsetPlots
     #: Add an independent right-hand Y axis, yielding its Matplotlib Axes.
     DoubleYAxis = DoubleYAxis
+    #: Add an independent top X axis sharing Y, yielding its Matplotlib Axes.
+    DoubleXAxis = DoubleXAxis
+    #: Add independent top X and right Y axes, yielding one Matplotlib Axes.
+    DoubleXYAxis = DoubleXYAxis
     #: Add an inset, yielding its Matplotlib Axes.
     InsetPlot = InsetPlot
     #: Place axes through a chosen origin using stonerplots.
@@ -72,8 +85,60 @@ class DataPlotter:
     TexFormatter = TexFormatter
     #: Format ticks using engineering prefixes and mathematical notation.
     TexEngFormatter = TexEngFormatter
-    #: Temporarily apply Matplotlib style names, files or rcParams dictionaries.
-    style = staticmethod(plt.style.context)
+
+    @staticmethod
+    @contextmanager
+    def style(style=None, after_reset=False, *, extra=None):
+        """Temporarily apply styles and rcParams overrides without creating figures.
+
+        Args:
+            style (str, path-like, dict, iterable or None):
+                Style name, comma-separated names, style file, rcParams mapping
+                or ordered sequence of these. Whitespace and empty entries in a
+                comma-separated string are ignored. None uses
+                ``stonerplots.default.style``, as does SavedFigure; an empty list
+                or string applies no stylesheet.
+            after_reset (bool):
+                Apply styles after resetting to Matplotlib defaults. Defaults to
+                False, retaining the caller's settings for unspecified properties.
+
+        Keyword Arguments:
+            extra (Mapping or None):
+                Additional rcParams applied after all styles, as in SavedFigure.
+                Defaults to None. These overrides take precedence over styles.
+
+        Yields:
+            None:
+                Drawing inside the block inherits the temporary configuration.
+
+        Raises:
+            TypeError:
+                If extra is not a mapping or None.
+            KeyError:
+                If an override names an unknown rcParam.
+            ValueError:
+                If Matplotlib rejects a parameter value.
+            OSError:
+                If a stylesheet cannot be found or read.
+
+        Notes:
+            Restore rcParams on exit, including exceptions and invalid overrides.
+            This context does not select, create, save or close figures. Existing
+            artists retain their properties. Lists containing dictionaries and
+            path-like stylesheet arguments retain Matplotlib's native semantics.
+
+        Example:
+            >>> with d.plot.style("stoner, aps", extra={"lines.linewidth": 2}):
+            ...     ax = d.plot()
+        """
+        if style is None:
+            style = stonerplots.default.style
+        elif isinstance(style, str):
+            style = [name.strip() for name in style.split(",") if name.strip()]
+        if extra is not None and not isinstance(extra, Mapping):
+            raise TypeError("extra must be a mapping of Matplotlib rcParams, or None.")
+        with plt.style.context(style, after_reset=after_reset), plt.rc_context(rc=extra):
+            yield
 
     def __init__(self, data):
         """Bind to the owner without reading columns or creating rendering state."""

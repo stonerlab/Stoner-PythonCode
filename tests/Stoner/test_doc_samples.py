@@ -13,12 +13,10 @@ datadir = path.join(pth, "doc", "samples")
 
 
 def get_scripts():
-    skip_scipts = ["plot_folder_demo"]
     scripts = [path.realpath(x) for x in listdir_recursive(datadir, "*.py") if not x.endswith("__init__.py")]
     scripts = {
         path.splitext(path.basename(x))[0]: x
         for x in scripts
-        if path.splitext(path.basename(x))[0].lower() not in skip_scipts
     }
     scripts = list(dict(sorted(scripts.items())).values())
     return scripts
@@ -32,7 +30,9 @@ def test_scripts(script, monkeypatch):
     plt.close("all")
     with plt.rc_context():
         try:
-            runpy.run_path(script)
+            # This full workflow creates figures only from its guarded entry point.
+            run_name = "__main__" if path.basename(script) == "plot_folder_demo.py" else None
+            runpy.run_path(script, run_name=run_name)
             figures = plt.get_fignums()
             assert figures, f"{script} Did not produce any figures !"
             for number in figures:

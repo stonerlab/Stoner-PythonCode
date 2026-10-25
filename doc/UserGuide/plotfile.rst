@@ -378,7 +378,7 @@ updates. User formatters and locators are left alone.
 Layouts and styles with one Stoner import
 =========================================
 
-Stoner requires stonerplots 1.9.6 or newer. Its context classes are available
+Stoner requires stonerplots 1.9.8 or newer. Its context classes are available
 directly from ``d.plot`` and :py:mod:`Stoner.plot`. They have the upstream
 signatures and return their native handles; Stoner does not wrap their behaviour.
 
@@ -394,8 +394,14 @@ signatures and return their native handles; Stoner does not wrap their behaviour
       - Regular or irregular panels; iterate its native sequence or index its axes.
     * - ``StackVertical``
       - Stacked panels with shared X coordinates and optional joined boundaries.
+    * - ``OffsetPlots``
+      - Separate datasets vertically on each axes, including their error bars.
     * - ``DoubleYAxis``
       - Independent right-hand Y scale with combined legend handling.
+    * - ``DoubleXAxis``
+      - Independent top X scale sharing the primary Y scale.
+    * - ``DoubleXYAxis``
+      - Independent top X and right Y scales on one overlaid Axes.
     * - ``InsetPlot``
       - Inset axes positioned within their parent.
     * - ``CentredAxes``
@@ -423,9 +429,21 @@ For an existing figure use ``SavedFigure(..., use=ax.figure)``; set
 unless ``autoclose=True``. Saving is an explicit context action; ordinary drawing
 still does not save or display anything.
 
-``d.plot.style(...)`` is Matplotlib's native style context. It accepts a style
-name, list, style file or rcParams dictionary and restores rcParams on exit,
-including when the block raises an exception. Stonerplots registers the ``stoner``
+``d.plot.style(style=None, extra=None)`` accepts the same style names and
+``extra`` rcParams overrides as ``SavedFigure``. Pass a comma-separated string
+such as ``"stoner, aps"`` or a list such as ``["stoner", "aps"]``; whitespace
+and empty comma-separated entries are ignored. Styles are applied in order,
+then ``extra`` overrides their values. Supply ``extra`` as a keyword argument::
+
+    with d.plot.style("stoner, aps", extra={"lines.linewidth": 2}):
+        ax = d.plot()
+
+Omitting ``style`` or passing ``None`` uses ``stonerplots.default.style``, just
+like ``SavedFigure``. Use ``style=[]`` or ``style=""`` for overrides alone.
+Style files, rcParams dictionaries and mixed lists of names/dictionaries remain
+supported. ``after_reset=True`` first resets to Matplotlib defaults. The context
+restores rcParams on exit, including exceptions; it does not select, create,
+save or close figures. Stonerplots registers the ``stoner``
 base style and journal modifiers such as ``aps``, ``aip`` and ``nature``. Styles
 affect artists as they are created; configure existing axes explicitly when
 changing their properties. No style is applied merely by calling ``d.plot()``.
@@ -433,7 +451,7 @@ changing their properties. No style is applied merely by calling ``d.plot()``.
 System font selection varies across platforms. The fitting examples select
 Matplotlib's bundled DejaVu Sans for portable small mathematical annotations::
 
-    with d.plot.style(["stoner", {"font.sans-serif": ["DejaVu Sans"]}]):
+    with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         ax = d.plot()
 
 ``PlotLabeller`` formats newly created axes by default. Use
@@ -455,6 +473,68 @@ They do not create an extra figure merely to perform formatting.
 .. plot:: samples/plot_contexts.py
     :include-source:
     :outname: contexts
+
+.. _plotting-double-axes:
+
+Independent X, Y and XY scales
+------------------------------
+
+``DoubleXAxis`` and ``DoubleXYAxis`` complement ``DoubleYAxis``. All three
+contexts yield one secondary Matplotlib Axes and accept ``ax``, ``legend``,
+``loc`` and ``colours``. ``DoubleXAxis`` shares Y with its parent while keeping
+X independent; ``DoubleYAxis`` shares X while keeping Y independent.
+``DoubleXYAxis`` keeps both coordinates independent, with ticks/labels on the
+top and right. Its single overlaid Axes follows its parent's plotting rectangle
+during layout and resizing.
+
+The returned Axes works with explicit ``ax=`` and is selected as the current
+target by default. Each context restores the previously selected figure/axes on
+exit, including exceptions. To keep the entry target current inside the block,
+use ``switch_to_x2=False``, ``switch_to_y2=False`` or ``switch_to_xy2=False``
+respectively, and draw with explicit ``ax=``.
+
+``legend=True`` merges legend entries onto the primary axes on exit; use
+``legend=False`` to manage legends yourself. ``colours=("black", "red")`` colours
+primary/secondary spines, ticks and labels for the independent coordinates.
+Set series colours separately in drawing calls. These contexts plot independent
+datasets; use Matplotlib's ``secondary_xaxis``/``secondary_yaxis`` for a coordinate
+conversion such as frequency to period instead.
+
+.. plot:: samples/double_axes.py
+    :include-source:
+    :outname: double_axes
+    :width: 100%
+
+.. _plotting-offsets:
+
+Offset datasets on one axes
+----------------------------
+
+``d.plot.OffsetPlots(offset=2)`` shifts dataset ``i`` by ``i * 2`` in Y data
+units on successful exit; the first dataset stays in place. On logarithmic Y
+axes, ``factor=10`` instead multiplies dataset ``i`` by ``10 ** i``. Offsets
+change the rendered artists only: source values, exclusions, roles and metadata
+remain unchanged. Each axes starts its own dataset count.
+
+Create the axes inside the block, as in the example below. To process an
+existing axes use ``include_open=True``; this includes existing artists on
+**all open axes**, so close unrelated figures first if necessary. The context
+restores the figure/axes selected at entry, including on exceptions. A failed
+block leaves its artists unshifted.
+
+By default, equal nonzero numbers of lines and scatter collections are paired
+by their order within each type and move together. Use ``pair=False`` to shift
+every dataset separately in creation order. Error-bar data lines, caps and
+segments move as one dataset, including ``fmt="none"`` plots. ``lines``,
+``scatter`` and ``errorbars`` control which artists participate. Filled bands
+(including ``errorfill``), images and reference lines in axes coordinates are
+not shifted; use ``errorbar`` when uncertainties must follow their trace.
+The upstream context handles ordinary 2D Cartesian axes with linear or log Y
+scales and recalculates limits while respecting explicit limits.
+
+.. plot:: samples/offset_plots.py
+    :include-source:
+    :outname: offset_plots
 
 Migration of ordinary calls
 ===========================
@@ -491,8 +571,8 @@ Ordinary multiple-Y plotting replaces ``multiple="common"``. Use
 ``StackVertical`` for ``multiple="panels"``, ``MultiPanel`` for
 ``multiple="subplots"``, and ``DoubleYAxis`` for ``multiple="y2"``. Replace
 ``d.inset(...)`` with ``d.plot.InsetPlot(ax=parent, ...)``. For an independent
-second X scale use the returned Axes' ``twiny()``; stonerplots 1.9.6 does not
-provide a ``DoubleXAxis`` context. Transformed units use Matplotlib's
+second X scale use ``d.plot.DoubleXAxis``; for both coordinates use
+``d.plot.DoubleXYAxis``. Transformed units use Matplotlib's
 ``secondary_xaxis``/``secondary_yaxis``.
 
 .. plot:: samples/common_y_plot.py
@@ -553,8 +633,8 @@ The top-level plotting methods, PlotMixin, template classes and broad pyplot/
 Figure/Axes proxies have been removed. Replace ``d.fig`` with ``ax.figure``,
 ``d.labels`` with ``d.plot.labels``, and formatting attributes such as ``d.title``
 with ``ax.set_title(...)``. Use the Figure's ``subplots``/``add_subplot`` methods
-or stonerplots contexts for layouts. An independent X scale uses ``ax.twiny()``;
-an independent Y scale uses ``d.plot.DoubleYAxis``. Styles now come from the
+or stonerplots contexts for layouts. Independent X, Y or both scales use
+``d.plot.DoubleXAxis``, ``DoubleYAxis`` or ``DoubleXYAxis``. Styles now come from the
 required stonerplots dependency, rather than bundled template stylesheets.
 
 Scientific ``d.griddata`` and shared image utilities remain independently callable;
