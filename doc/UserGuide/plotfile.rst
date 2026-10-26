@@ -26,6 +26,53 @@ display follows Matplotlib's normal behaviour; elsewhere use ``d.plot.show()``.
 The removed ``showfig`` setting has no replacement: returns are consistent.
 ``Options.no_figs`` does not affect accessor returns or suppress drawing.
 
+Convenient plot properties
+==========================
+
+Once a plot exists, public properties on ``d.plot`` forward to Matplotlib's
+``get_...`` and ``set_...`` methods. The accessor's most recent live Axes takes
+priority, followed by its Figure. Existing accessor attributes and methods,
+including ``labels``, ``axes`` and ``figure``, retain their usual meaning::
+
+    ax = d.plot()
+    d.plot.xlabel = "Field / T"
+    d.plot.xlim = (-1, 1)
+    d.plot.dpi = 150                 # Figure property
+    assert d.plot.xlabel == "Field / T"
+    print(d.plot.xlim)               # Readable current limits
+
+Reading a forwarded property returns a callable value proxy. Calling without
+arguments returns the ordinary getter value; calling with arguments invokes the
+setter and returns its native result. Assignment passes one value, without
+unpacking tuples or dictionaries. Calls support the full Matplotlib signatures::
+
+    label = d.plot.xlabel()          # Ordinary Python string
+    d.plot.title("Run 1", loc="left", color="red")
+    d.plot.xlim(left=-0.5, right=0.5)
+    d.plot.size_inches(7, 4, forward=False)
+
+Use explicit ``.get(...)`` and ``.set(...)`` calls when a getter needs arguments,
+or a setter needs none. Keyword arguments on the shorthand call always select
+the setter::
+
+    left_title = d.plot.title.get(loc="left")
+    d.plot.xticks.set([0.25, 0.75], labels=["Quarter", "Three quarters"], minor=True)
+    renderer = ax.figure.canvas.get_renderer()
+    bounds = d.plot.tightbbox.get(renderer)
+
+The proxy supports representation, equality, formatting, indexing, iteration and
+NumPy conversion. Use ``.get(...)`` or a no-argument call for an ordinary value
+when doing arithmetic, checking its type or taking a snapshot. A saved proxy
+continues to resolve against its owner's most recent plotting targets.
+
+Getters and setters resolve independently. Read-only or write-only Matplotlib
+properties remain usable for their supported operation, and native argument and
+validation errors propagate. Unknown names and properties without a live target
+raise ``AttributeError``. Lookup, assignment and completion never create a Figure
+or Axes, select a pyplot target or fall back to an unrelated current figure.
+After ``d.plot.new_figure()``, Figure properties work even before adding Axes.
+These conveniences belong to ``d.plot``; ``d.xlabel`` remains unsupported.
+
 .. autoattribute:: Stoner.core.data.Data.plot
 
 .. plot:: samples/single_plot.py
@@ -656,9 +703,10 @@ backend options are rejected by the accessor: select the required named method.
 The unused Mayavi installation extra has been removed.
 
 The top-level plotting methods, PlotMixin, template classes and broad pyplot/
-Figure/Axes proxies have been removed. Replace ``d.fig`` with ``ax.figure``,
+Figure/Axes proxies on Data have been removed. Replace ``d.fig`` with ``ax.figure``,
 ``d.labels`` with ``d.plot.labels``, and formatting attributes such as ``d.title``
-with ``ax.set_title(...)``. Use the Figure's ``subplots``/``add_subplot`` methods
+with ``d.plot.title`` or ``ax.set_title(...)``. The accessor provides the callable
+property forwarding described above. Use the Figure's ``subplots``/``add_subplot`` methods
 or stonerplots contexts for layouts. Independent X, Y or both scales use
 ``d.plot.DoubleXAxis``, ``DoubleYAxis`` or ``DoubleXYAxis``. Styles now come from the
 required stonerplots dependency, rather than bundled template stylesheets.

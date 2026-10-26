@@ -94,8 +94,6 @@ class Data(
             Per-value mask of the tabular data; True marks an excluded value.
         filename (str):
             Current filename, also used as the default by load and save operations.
-        title (str):
-            Legacy plot-title proxy. Use the returned Axes for ordinary plotting.
         header (str):
             Read-only formatted header for the tabular representation.
         records (ndarray):

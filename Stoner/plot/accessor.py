@@ -23,6 +23,7 @@ from stonerplots import (
 )
 
 from .fields import draw_field, draw_matrix
+from .properties import PlotProperty
 from .selection import prepare_traces, resolve_columns, uncertainty_specs
 from .state import PlotState, live_figure
 from .statistics import draw_distribution, draw_hexbin
@@ -75,6 +76,12 @@ class DataPlotter:
         lists all axes in that figure. None of these properties creates a figure.
         The labels property supplies editable column-label overrides, defaulting
         to the current column headers.
+
+        Other public properties forward to Matplotlib ``get_...``/``set_...`` methods on the
+        recent live Axes, then Figure. Assignment calls the setter; reading gives
+        a callable value proxy. Call it without arguments to get, or with arguments
+        to set. Its ``get``/``set`` methods accept the full native signatures. Existing
+        accessor attributes take precedence; unknown names raise AttributeError.
 
         Drawing returns an Axes, independently of legacy showfig/no_figs options.
         Calls inherit Matplotlib's current axes/style unless ax is supplied. They
@@ -165,6 +172,29 @@ class DataPlotter:
     def __init__(self, data):
         """Bind to the owner without reading columns or creating rendering state."""
         self._data = data
+
+    def __getattr__(self, name):
+        """Resolve a public Matplotlib property without creating rendering targets."""
+        if name.startswith("_"):
+            raise AttributeError(name)
+        return PlotProperty(name).__get__(self, type(self))
+
+    def __setattr__(self, name, value):
+        """Preserve accessor attributes and forward other public property setters."""
+        if name.startswith("_") or hasattr(type(self), name):
+            object.__setattr__(self, name, value)
+        else:
+            PlotProperty(name).__set__(self, value)
+
+    def __dir__(self):
+        """Include available Matplotlib properties in interactive completion."""
+        names = set(super().__dir__())
+        for target in (self.ax, self.figure):
+            names.update(
+                name[4:] for name in dir(target)
+                if name.startswith(("get_", "set_")) and callable(getattr(target, name))
+            )
+        return sorted(names)
 
     @property
     def figure(self):

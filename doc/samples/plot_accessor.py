@@ -19,3 +19,9 @@ d.plot(ax=axes[0, 0], fmt="o", title="Automatic: inferred error bars")
 d.plot.line(ax=axes[0, 1], title="Explicit plain line")
 d.plot.scatter(ax=axes[1, 0], marker="o", title="Explicit scatter")
 d.plot.errorfill(ax=axes[1, 1], title="Explicit shaded uncertainty")
+
+# Property forwarding uses the most recent Axes, then its Figure.
+d.plot.xlabel = "Phase / rad"
+d.plot.title("Explicit shaded uncertainty", loc="center", fontsize=10)
+assert d.plot.title.get(loc="center") == "Explicit shaded uncertainty"
+d.plot.dpi = 100
