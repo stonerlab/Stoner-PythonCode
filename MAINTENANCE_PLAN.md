@@ -118,6 +118,20 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
+### Preparing 0.12.0a4
+
+The fourth alpha includes callable plotting properties, shorter task-focused
+guides, sample/script API updates and the backwards-compatible issue #41 CSV INI
+fix. Dependency requirements are unchanged. Local Windows validation passed
+1,436 tests (three network/OCR deselections); the affected network example also
+passed separately. The cached documentation audit found no new warnings or lost
+API entries. Native GenX UI and interactive mouse/dialog behaviour were not
+manually exercised.
+
+Before publication, require the full hosted matrix, lower-dependency suite and
+fresh wheel/sdist checks on the versioned release commit. Publish the matching
+immutable tag, then verify deployment, registry metadata and documentation.
+
 ### Published 0.12.0a3
 
 [`0.12.0a3`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a3)

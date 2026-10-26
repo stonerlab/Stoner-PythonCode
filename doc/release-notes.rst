@@ -1,8 +1,26 @@
 Release notes
 =============
 
-Unreleased
-----------
+Version 0.12.0a4 (2026-10-26)
+--------------------------------
+
+This fourth alpha adds convenient Matplotlib properties to the plotting
+accessor, simplifies the User Guide and fixes CSV configuration for fitting.
+Python and dependency requirements are unchanged from 0.12.0a3.
+
+After drawing, properties such as ``data.plot.xlabel = "Field / T"`` resolve
+against the recent live Axes, then its Figure. Reading a property returns a
+callable proxy: ``data.plot.xlabel()`` retrieves its value, while
+``data.plot.title("Run", loc="left")`` supports additional setter arguments.
+Explicit ``.get(...)`` and ``.set(...)`` calls handle more complex signatures.
+Existing accessor attributes retain precedence. Property access does not create
+a figure, and the plotting methods retain their Axes return values.
+
+The data, plotting and curve-fitting guides now start with practical examples
+and link to shorter pages organised by task. Outdated embedded video tutorials
+have been removed. Documentation samples and analysis scripts use the plotting
+properties where appropriate, retaining explicit Axes for individual panels and
+artist-specific controls. Cached example figures are retained.
 
 Fitting INI files now forward CSV layout settings to the registered CSV loader,
 fixing `issue #41 <https://github.com/stonerlab/Stoner-PythonCode/issues/41>`_.
