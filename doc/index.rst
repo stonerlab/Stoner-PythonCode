@@ -12,8 +12,8 @@ Start here
 
 * :doc:`Install Stoner <UserGuide/install>` for supported Python versions,
   Conda and pip commands, and optional features such as OCR.
-* :doc:`Load and inspect measurements <UserGuide/datafile>` to work with
-  numerical data, metadata and column roles.
+* :doc:`Start working with measurements <UserGuide/datafile>` for a runnable
+  example and short guides to loading, inspecting, selecting and editing data.
 * :doc:`Plot results <UserGuide/plotfile>` and
   :doc:`fit curves <UserGuide/curve_fitting>` for common analysis workflows.
 * :doc:`Process collections <UserGuide/datafolder>` or

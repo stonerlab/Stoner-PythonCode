@@ -34,7 +34,7 @@ For an editable checkout with test dependencies, follow the
 Next steps
 ==========
 
-Continue with :doc:`loading and examining data <datafile>`,
+Continue with :doc:`working with numerical data <datafile>`,
 :doc:`plotting <plotfile>` or :doc:`curve fitting <curve_fitting>`.
 The :doc:`API reference </Stoner>` describes individual methods and parameters.
 

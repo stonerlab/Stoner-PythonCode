@@ -33,8 +33,9 @@ formatting and ``ax.figure.savefig(...)`` for saving. Display is explicit, for
 example with ``matplotlib.pyplot.show()``. Accessor contexts provide styles and
 figure layout.
 
-The :doc:`plotfile` guide includes the call-by-call migration table and current
-examples for panels, stacked plots, double axes, insets, statistics and folders.
+See :doc:`plot_migration` for the call-by-call plotting migration table and
+:doc:`plot_recipes` for translated layout/style examples. The :doc:`plotfile`
+starting page links to current guides for plots, statistics and folders.
 See :doc:`../release-notes` for removed APIs and the scan frame-access improvement.
 The pandas/xarray storage and numerical export contracts below remain in force.
 

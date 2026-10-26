@@ -7,8 +7,9 @@
 .. rubric:: C.S. Allen, M. Newman, R. Temple, S. Morely  and G. Burnell
 
 
-Start with :doc:`install`, then :doc:`datafile` for loading a measurement,
-choosing columns and working with metadata. The plotting and fitting chapters
+Start with :doc:`install`, then the short introduction in :doc:`datafile`.
+Its task guides cover loading a measurement, choosing columns and working with
+metadata. The plotting and fitting chapters
 build on those basics. Use the folder and image chapters when working with
 collections or pictures, and the cookbook for short practical recipes.
 
@@ -22,10 +23,11 @@ differently, consult :doc:`upgrade`. The :doc:`developer` chapter contains the
 implementation and contribution details; it is not needed for everyday use.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
+   :titlesonly:
 
    Introduction and Installation <install>
-   Loading and Examining Data <datafile>
+   Working with Numerical Data <datafile>
    Plotting Data <plotfile>
    Curve Fitting Data <curve_fitting>
    Analysing and Processing Data <analysisfile>
