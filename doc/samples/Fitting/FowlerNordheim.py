@@ -50,5 +50,5 @@ d.annotate_fit(
     fontdict={"size": "x-small", "color": "green"},
 )
 
-d.plot.ax.set_ylabel("Current")
-d.plot.ax.set_title("Fowler-Nordheim Model test")
+d.plot.ylabel = "Current"
+d.plot.title = "Fowler-Nordheim Model test"

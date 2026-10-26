@@ -41,7 +41,8 @@ def analyse(filename=False, sensitivity=50, critical_edge=0.8, fringe_offset=1):
     figure = data.plot.new_figure(figsize=(7, 5))
     ax = data.plot.line(ax=figure.add_subplot(), title=None)
     peaks.plot.line(ax=ax, fmt="go", label="Peak positions", title=None)
-    ax.set(xlabel=r"Reflection angle $2\theta$", yscale="log")
+    data.plot.xlabel = r"Reflection angle $2\theta$"
+    data.plot.yscale = "log"
 
     peaks.apply(
         lambda row: np.sin(np.radians(row[0] / 2.0)) ** 2,
@@ -72,7 +73,8 @@ def analyse(filename=False, sensitivity=50, critical_edge=0.8, fringe_offset=1):
             label="Peak positions",
             title=None,
         )
-        inset.set(xlabel="Fringe $m^2$", ylabel=r"$\sin^2\theta$")
+        peaks.plot.xlabel = "Fringe $m^2$"
+        peaks.plot.ylabel = r"$\sin^2\theta$"
     ax.text(
         0.05,
         0.05,

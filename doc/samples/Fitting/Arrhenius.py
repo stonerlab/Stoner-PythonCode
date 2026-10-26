@@ -55,7 +55,7 @@ d.annotate_fit(
 )
 
 
-d.plot.ax.set_title("Arrhenius Test Fit")
-d.plot.ax.set_ylabel("Rate")
-d.plot.ax.set_xlabel("Temperature (K)")
-d.plot.ax.set_yscale("log")
+d.plot.title = "Arrhenius Test Fit"
+d.plot.ylabel = "Rate"
+d.plot.xlabel = "Temperature (K)"
+d.plot.yscale = "log"

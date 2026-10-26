@@ -43,13 +43,13 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         ax = panels[1]
         d.setas = "x..y"
         d.plot(fmt="g+")
-        ax.set_title("")
+        d.plot.title = ""
 
         ax = panels[0]
         d.setas = "xyy"
         d.plot(fmt=["r.", "b-"])
         ax.tick_params(labelbottom=False)
-        ax.set_xlabel("")
+        d.plot.xlabel = ""
 
         # Annotate plot with fitting parameters
         d.annotate_fit(
@@ -57,4 +57,4 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         )
         text = r"$y=A+Be^{-x/C}$" + "\n\n"
         ax.text(7.2, 3.9, text, fontdict={"size": "x-small"})
-        ax.set_title("Differential Evolution  Fit")
+        d.plot.title = "Differential Evolution  Fit"

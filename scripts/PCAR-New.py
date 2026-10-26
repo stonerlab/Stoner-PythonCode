@@ -275,7 +275,7 @@ class working(Data):
                     yerr = columns.yerr[i] if i < len(columns.yerr) else False
                     options = {"capsize": 3} if yerr is not False else {}
                     fit.plot(y=ycol, yerr=yerr, ax=panels[i], **options)
-                panels[-1].set_yscale("log")
+                fit.plot.yscale = "log"
         if self.save_fit:
             fit.filename = None
             fit.save(False)

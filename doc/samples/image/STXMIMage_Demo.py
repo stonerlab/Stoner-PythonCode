@@ -57,7 +57,7 @@ profile = xmcd.profile_line((0, 0), (100, 100))
 figure = profile.plot.new_figure(figsize=(7, 6))
 profile_axes = figure.add_subplot(222)
 profile.plot(ax=profile_axes)
-profile_axes.set_title("XMCD Cross Section")
+profile.plot.title = "XMCD Cross Section"
 
 # Show the images as well
 structural_axes = figure.add_subplot(221)
@@ -120,4 +120,4 @@ hist.add_column(res.best_fit, header="Best Fit")
 hist.setas = "xyyy"
 histogram_axes = figure.add_subplot(224)
 hist.plot(ax=histogram_axes, fmt=["b+", "b--", "r-"])
-histogram_axes.set_title("Intensity histogram")
+hist.plot.title = "Intensity histogram"

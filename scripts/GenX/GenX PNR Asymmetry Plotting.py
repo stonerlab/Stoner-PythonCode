@@ -35,12 +35,10 @@ def plot_exports(folder=False):
     up.plot.errorbar(
         "q_down", "I_down", ax=ax, fmt="bx", yerr="dI_down", label="Down", ms=2
     )
-    ax.set(
-        xlabel=r"Momentum transfer $Q$ ($\AA^{-1}$)",
-        ylabel="Normalised intensity",
-        title="Spin up and down signals",
-        yscale="log",
-    )
+    up.plot.xlabel = r"Momentum transfer $Q$ ($\AA^{-1}$)"
+    up.plot.ylabel = "Normalised intensity"
+    up.plot.title = "Spin up and down signals"
+    up.plot.yscale = "log"
 
     up.diffsum("I_up", "I_down", header="SpinAsym_data")
     up.diffsum("Isim_up", "Isim_down", header="SpinAsym_sim")
@@ -71,21 +69,17 @@ def plot_exports(folder=False):
         fmt="r-",
         label="Calculated spin asymmetry",
     )
-    ax.set(
-        xlabel=r"Momentum transfer $Q$ ($\AA^{-1}$)",
-        ylabel="Spin asymmetry",
-        title="Spin asymmetry data and calculation",
-    )
+    up.plot.xlabel = r"Momentum transfer $Q$ ($\AA^{-1}$)"
+    up.plot.ylabel = "Spin asymmetry"
+    up.plot.title = "Spin asymmetry data and calculation"
 
     sld.add("real sld +", "real sld -", header="Structure")
     sld.subtract("real sld +", "real sld -", header="Magnetic")
     sld.plot.new_figure()
-    ax = sld.plot.line(0, ["Structure", "Magnetic"])
-    ax.set(
-        xlabel="Distance z (nm)",
-        ylabel="Scattering potential",
-        title="Magnetic and structural scattering potentials",
-    )
+    sld.plot.line(0, ["Structure", "Magnetic"])
+    sld.plot.xlabel = "Distance z (nm)"
+    sld.plot.ylabel = "Scattering potential"
+    sld.plot.title = "Magnetic and structural scattering potentials"
     return up, sld
 
 

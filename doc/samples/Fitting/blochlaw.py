@@ -60,4 +60,4 @@ d.annotate_fit(
     prefix="lmfit",
     mode="eng",
 )
-d.plot.ax.set_title("BlochLaw Fit")
+d.plot.title = "BlochLaw Fit"

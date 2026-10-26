@@ -52,4 +52,4 @@ d.annotate_fit(
     prefix="Langevin",
     mode="eng",
 )
-d.plot.ax.set_title("langevin Fit")
+d.plot.title = "langevin Fit"

@@ -33,25 +33,41 @@ The PCAR configuration controls showing plots, saving data, reporting, rescaling
 discarding high-bias data, decomposition and normalisation. `PCAR-chi^2.ini`
 fixes/steps the polarisation parameter to map the fit quality. Edit these settings
 for the measurement; default `PCAR-New.ini` requests a save dialog after fitting.
-The INI files also document the CSV loader controls: zero-based
+The INI helper forwards the CSV loader controls: zero-based
 `header_line` and `data_line`, plus independent `header_delim` and `data_delim`.
 The loader can skip preambles/intervening lines and use different header/data separators.
 `header_line: None` selects headerless input with numeric column selectors;
 `None` delimiters request automatic detection. Defaults match the bundled CSV.
-The historical names `start_line` and `separator` are described alongside their
-current replacements, and the INI files remain a reference for supported options.
-The INI-to-loader forwarding defect is deferred to
-[issue #41](https://github.com/stonerlab/Stoner-PythonCode/issues/41):
-`cfg_data_from_ini()` currently ignores those layout entries. Custom layouts work
-when passed directly to `Data.load(..., filetype="CSVFile", ...)`; the bundled
-PCAR examples use the loader defaults. Three strict expected-failure regressions
-record the deferred INI behaviour and will flag an unexpected pass when it is fixed.
+The INI files remain the reference for these supported options. For headerless
+input beginning on the first line, also set `data_line: 0`.
+
+Historical `start_line` and `separator` entries remain supported. Without
+`data_line`, `start_line` and any `header_line` use the old **one-based** row
+numbers: `header_line: 1` and `start_line: 2` mean the first and second lines.
+An explicit `data_line` wins over `start_line` and selects modern zero-based INI
+row numbering. `separator` supplies both delimiters unless either modern
+delimiter is explicitly set. Use `None` for detection, `\t` for a tab or `" "`
+for a space. Python layout keyword arguments override the corresponding
+normalised INI values and use the native loader's zero-based numbering.
+Detection recognises tabs, spaces, commas and semicolons; specify other
+delimiters such as `|` explicitly.
+Options that are omitted retain loader defaults. CSV layout entries are ignored
+for other loader types. Regression tests cover the forwarding fix for
+[issue #41](https://github.com/stonerlab/Stoner-PythonCode/issues/41), including
+legacy layouts and the bundled PCAR configurations.
 
 All standalone scripts can be imported with `runpy.run_path()` without opening
 dialogs, creating figures or writing results. Functions accepting a file or Data
 object copy that input unless they explicitly describe an in-place correction.
-Drawing uses `data.plot(...)`/named methods, formatting uses the returned Axes,
-and the entry points explicitly show their figures. Panels and insets use the
+Drawing uses `data.plot(...)`/named methods, and properties such as
+`data.plot.xlabel = "Field / T"` format that object's most recent live Axes.
+Figure properties, such as `data.plot.dpi = 150`, use the same interface.
+For setters needing extra arguments, call the property, for example
+`data.plot.yscale("symlog", linthresh=1e-5)`. Use `data.plot.xlabel()` or
+`data.plot.title.get(loc="left")` to obtain a native getter value. Properties
+need an existing plot.
+Keep explicit Matplotlib handles when formatting another panel or individual
+artists. Entry points explicitly show their figures; panels and insets use the
 stonerplots contexts exposed by `data.plot`.
 
 XMCD reduction retains the original intensity-difference definition `I+ - I-`

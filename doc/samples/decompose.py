@@ -21,5 +21,5 @@ d.plot.ax.text(
     f"Coefficients\n{str_coeffs}",
     fontdict={"size": "x-small"},
 )
-d.plot.ax.set_ylabel("Data")
-d.plot.ax.set_title("Decompose Example")
+d.plot.ylabel = "Data"
+d.plot.title = "Decompose Example"

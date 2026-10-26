@@ -15,5 +15,5 @@ data.plot(fmt="k-", label="Original Data", capsize=3)
 data.remove_duplicates(strategy="average")
 # Update the plot
 data.plot(fmt="r.", label="De-duped data", capsize=3)
-data.plot.ax.set_xlim(8.6, 10.0)  # pylint: disable=not-callable
-data.plot.ax.set_ylim(7.4, 9.3)  # pylint: disable=not-callable
+data.plot.xlim = (8.6, 10.0)
+data.plot.ylim = (7.4, 9.3)

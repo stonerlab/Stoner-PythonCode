@@ -40,7 +40,7 @@ d.annotate_fit(
     fontdict={"size": "x-small", "color": "green"},
 )
 
-d.plot.ax.set_ylabel("Current (A)")
-d.plot.ax.set_xlabel("Bias (V)")
-d.plot.ax.set_title("Simmons Model test")
-d.plot.ax.set_yscale("symlog", linthresh=1e-5)
+d.plot.ylabel = "Current (A)"
+d.plot.xlabel = "Bias (V)"
+d.plot.title = "Simmons Model test"
+d.plot.yscale("symlog", linthresh=1e-5)

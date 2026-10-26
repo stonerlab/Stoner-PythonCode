@@ -27,6 +27,6 @@ d.setas = "x..y"
 d.plot()
 d.annotate_fit(ModArrhenius, x=0.2, y=0.25, prefix="ModArrhenius", mode="eng")
 
-d.plot.ax.set_title("Modified Arrhenius Test Fit")
-d.plot.ax.set_ylabel("Rate")
-d.plot.ax.set_xlabel("Temperature (K)")
+d.plot.title = "Modified Arrhenius Test Fit"
+d.plot.ylabel = "Rate"
+d.plot.xlabel = "Temperature (K)"

@@ -137,9 +137,9 @@ def make_true_m(data):
 def plot_m_h(data):
     """Take a stoner type data source."""
     plot.clf()
-    plot.xlabel("H(T)")
-    plot.ylabel("Moment (emu)")
-    plot.plot(data.column("H"), data.column("m (emu)"), "b-")
+    data.plot.line(x="H", y="m (emu)", fmt="b-", label=None, legend=False, title=None)
+    data.plot.xlabel = "H(T)"
+    data.plot.ylabel = "Moment (emu)"
     plot.draw()
 
 

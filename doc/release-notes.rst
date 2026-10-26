@@ -1,6 +1,19 @@
 Release notes
 =============
 
+Unreleased
+----------
+
+Fitting INI files now forward CSV layout settings to the registered CSV loader,
+fixing `issue #41 <https://github.com/stonerlab/Stoner-PythonCode/issues/41>`_.
+``header_line``/``data_line`` use zero-based row numbers, while configurations
+using historical ``start_line`` without ``data_line`` retain one-based
+``header_line``/``start_line`` numbering. ``separator`` remains a fallback for
+both delimiters; explicit modern settings and Python loader keywords take
+precedence. Omitted settings retain the loader defaults. See
+:doc:`UserGuide/fitting_configuration` for headerless input, delimiter detection,
+legacy options and examples.
+
 Version 0.12.0a3 (2026-10-25)
 --------------------------------
 

@@ -37,7 +37,7 @@ y2 = d.extrapolate(extra_x, overlap=3.0, kind="quadratic")
 y1 = d.extrapolate(extra_x, overlap=1.0, kind="linear")
 
 d.plot(fmt="k.", capsize=2.0)
-d.plot.ax.set_title("Extrapolation Demo")
+d.plot.title = "Extrapolation Demo"
 
 errorfill(
     extra_x, y4[:, 0], color="orange", yerr=y4[:, 1], label="Arg. Function"

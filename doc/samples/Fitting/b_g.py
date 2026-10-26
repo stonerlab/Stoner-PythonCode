@@ -41,4 +41,4 @@ d.annotate_fit(
     fontdict={"size": "x-small"},
     prefix="BlochGrueneisen",
 )
-d.plot.ax.set_title("Bloch-Grueneisen Fit")
+d.plot.title = "Bloch-Grueneisen Fit"

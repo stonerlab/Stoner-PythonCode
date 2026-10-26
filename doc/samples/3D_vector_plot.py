@@ -19,5 +19,5 @@ d = Data(
 )
 with d.plot.style("stoner"):
     d.plot.new_figure(figsize=(5.2, 5.0))
-    ax = d.plot.vector3d(length=0.3, title="Rotating vector field")
-    ax.set_box_aspect((1, 1, 0.7))
+    d.plot.vector3d(length=0.3, title="Rotating vector field")
+    d.plot.box_aspect = (1, 1, 0.7)

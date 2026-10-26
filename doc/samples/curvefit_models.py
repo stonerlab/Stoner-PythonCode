@@ -46,13 +46,13 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         d.plot(fmt="g+", label="Fit residuals")
         d.setas = "x....y"
         d.plot(fmt="b+", label="ODRModel Residuals")
-        ax.set_title("")
+        d.plot.title = ""
 
         ax = panels[0]
         d.setas = "xyy.y"
         d.plot(fmt=["ro", "g-", "b-"])
         ax.tick_params(labelbottom=False)
-        ax.set_xlabel("")
+        d.plot.xlabel = ""
 
         # Annotate plot with fitting parameters
         d.annotate_fit(PowerLaw, x=0.1, y=0.25, fontdict={"size": "x-small"})
@@ -63,4 +63,4 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
             fontdict={"size": "x-small"},
             prefix="ODRModel",
         )
-        ax.set_title("curve_fit with models")
+        d.plot.title = "curve_fit with models"

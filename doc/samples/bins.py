@@ -21,4 +21,6 @@ for i, (binned, label) in enumerate(
     ax = axes[i]
     d.plot.line(fmt="k,", ax=ax)
     binned.plot.errorfill(label=label, color="red", ax=ax)
-    ax.set(xlim=(1, 6), ylim=(-100, 400), title="Bin demo" if i == 0 else "")
+    binned.plot.xlim = (1, 6)
+    binned.plot.ylim = (-100, 400)
+    binned.plot.title = "Bin demo" if i == 0 else ""

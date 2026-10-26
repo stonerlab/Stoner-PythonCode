@@ -27,6 +27,6 @@ d.setas = "x..y"
 d.plot(fmt="g-")
 d.annotate_fit(PowerLaw, x=0.5, y=0.05, prefix="PowerLaw")
 
-d.plot.ax.set_title("Powerlaw Test Fit")
-d.plot.ax.set_ylabel("Rate")
-d.plot.ax.set_xlabel("Temperature (K)")
+d.plot.title = "Powerlaw Test Fit"
+d.plot.ylabel = "Rate"
+d.plot.xlabel = "Temperature (K)"

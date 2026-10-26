@@ -248,13 +248,18 @@ reviewed inference/test-utility advisories did not block the alpha.
   Native GenX/wxPython and interactive mask/VSM workflows still need user-driven
   validation; host-stub and headless tests do not certify those application UIs.
 
-- [ ] **CSV layout options in fitting INI files:**
-  [issue #41](https://github.com/stonerlab/Stoner-PythonCode/issues/41) records that
-  `cfg_data_from_ini()` ignores the CSV layout entries although direct `Data.load`
-  supports them. Retain the PCAR INI files as the options guide. Fix forwarding,
-  document the historical option-name migration and validate non-default layouts
-  in a future release; three strict expected-failure script regressions retain
-  the reproductions. The bundled CSV examples continue to use loader defaults.
+- [x] **CSV layout options in fitting INI files:**
+  The [issue #41](https://github.com/stonerlab/Stoner-PythonCode/issues/41) fix
+  forwards explicit CSV layout controls while retaining omitted loader defaults.
+  Historical `start_line`/`header_line` numbering remains one-based when
+  `data_line` is absent; modern `data_line` selects zero-based INI numbering.
+  Modern delimiters override `separator` independently, and native Python layout
+  keywords override normalised INI values. The PCAR INI files and fitting guide
+  document compatibility and supported detection. The three former expected
+  failures now pass. Local py314 validation passes 58 focused tests and 1,436
+  broader regressions with network/OCR excluded; the network-loaded fitting
+  example also passes separately.
+  Historical release results above retain their original expected-failure counts.
 
 - [x] **Plotting redesign (stages 0-6 complete):** see
   [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) and the

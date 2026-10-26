@@ -16,7 +16,7 @@ s2.plot(label="Set 2")
 s2.stitch(s1)
 
 s2.plot(label="Stictched")
-s2.plot.ax.set_title("Stitching Example")
+s2.plot.title = "Stitching Example"
 
 # Tidy up the plot by adding annotation for the stitching co-efficients
 labels = ["A", "B", "C"]

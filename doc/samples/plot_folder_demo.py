@@ -30,9 +30,9 @@ def extra(_, __, d):
     """Customise each individual plot."""
     format_axes(d.plot.ax)
     d.plot.ax.axvline(x=d["cut"], ls="--")
-    d.plot.ax.set_title(rf"$\nu={d.mean('Frequency') / 1e9:.1f}\,$GHz")
-    d.plot.ax.set_xlabel(r"Field $\mu_0H\,$")
-    d.plot.ax.set_ylabel("Abs. (arb)")
+    d.plot.title = rf"$\nu={d.mean('Frequency') / 1e9:.1f}\,$GHz"
+    d.plot.xlabel = r"Field $\mu_0H\,$"
+    d.plot.ylabel = "Abs. (arb)"
     d.plot.ax.legend(loc=3)
     d.annotate_fit(FMR_Power, fontdict={"size": 8}, x=0.05, y=0.25)
 
@@ -130,8 +130,8 @@ if __name__ == "__main__":
     result.annotate_fit(
         Inverse_Kittel, ax=axes[0], x=0.55, y=0.3, fontdict={"size": 8}
     )
-    axes[0].set_ylabel("$H_{res} \\mathrm{(Am^{-1})}$")
-    axes[0].set_title("Inverse Kittel Fit")
+    result.plot.ylabel = "$H_{res} \\mathrm{(Am^{-1})}$"
+    result.plot.title = "Inverse Kittel Fit"
 
     # Get alpha
     # Draw the second fit into its explicit axes.

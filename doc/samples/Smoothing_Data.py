@@ -25,5 +25,5 @@ d.plot(0, "Smooth", lw=2, label="Smoooth", color="green")
 d2 = d.bin(bins=100, mode="lin")
 # Reuse the explicit axes for the binned measurements.
 d2.plot(ax=ax, lw=2, label="Re-binned", color="blue")
-ax.set_xlim(3.5, 6.5)
-ax.set_ylim(-200.0, 400.0)
+d2.plot.xlim = (3.5, 6.5)
+d2.plot.ylim = (-200.0, 400.0)

@@ -54,7 +54,7 @@ d = Data(
 )
 d.plot.new_figure(figsize=(5.2, 5.0))
 ax = d.plot.scatter3d(marker=".")
-ax.set_box_aspect((1, 1, 1.0))
+d.plot.box_aspect = (1, 1, 1.0)
 # curve_fit does the hard work
 popt, pcov = d.curve_fit(sphere, (0, 1, 2), zeros_like(d.x), result=True)
 

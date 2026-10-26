@@ -65,8 +65,8 @@ d.annotate_fit(
 )
 
 # Finally tidy up the plot a bit
-d.plot.ax.set_yscale("log")
-d.plot.ax.set_ylim((1e-35, 1e10))
-d.plot.ax.set_title("VFT Equation Test Fit")
-d.plot.ax.set_ylabel("Rate")
-d.plot.ax.set_xlabel("Temperature (K)")
+d.plot.yscale = "log"
+d.plot.ylim = (1e-35, 1e10)
+d.plot.title = "VFT Equation Test Fit"
+d.plot.ylabel = "Rate"
+d.plot.xlabel = "Temperature (K)"

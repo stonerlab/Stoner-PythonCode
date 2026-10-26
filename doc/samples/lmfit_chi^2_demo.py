@@ -18,4 +18,4 @@ with fit.plot.style("stoner"):
     with fit.plot.StackVertical(len(columns)) as panels:
         for column, ax in zip(columns, panels):
             fit.plot.errorbar(y=column, ax=ax, capsize=3, title=None)
-        ax.set_yscale("log")  # Adjust the final chi-squared panel.
+        fit.plot.yscale = "log"  # The most recently drawn panel is chi-squared.

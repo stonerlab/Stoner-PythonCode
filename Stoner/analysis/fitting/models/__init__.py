@@ -178,28 +178,93 @@ def make_model(model_func):
     return _ModelDecorator
 
 
+def _ini_csv_value(name, value, legacy_rows):
+    """Convert an INI CSV option to its native loader value."""
+    if name in {"header_line", "data_line"}:
+        if name == "header_line" and value.lower() == "none":
+            return None
+        try:
+            row = int(value)
+        except ValueError as err:
+            raise ValueError(f"[Data] {name} must be an integer row number.") from err
+        minimum = 1 if legacy_rows else 0
+        if row < minimum:
+            convention = "one-based" if legacy_rows else "zero-based"
+            raise ValueError(f"[Data] {name} must be at least {minimum} ({convention} row numbering).")
+        return row - minimum
+    if value.lower() == "none":
+        return None
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+        value = value[1:-1]
+    if value == r"\t":
+        value = "\t"
+    if len(value) != 1:
+        raise ValueError(f"[Data] {name} must be one character, \\t, or None.")
+    return value
+
+
+def _ini_csv_options(config, overrides):
+    """Resolve CSV layout options, preserving historical names and row numbering."""
+    legacy_rows = config.has_option("Data", "start_line") and not config.has_option("Data", "data_line")
+    aliases = {"data_line": "start_line", "header_delim": "separator", "data_delim": "separator"}
+    options = {}
+    for name in ("header_line", "data_line", "header_delim", "data_delim"):
+        if name in overrides:
+            options[name] = overrides[name]
+            continue
+        source = name
+        if not config.has_option("Data", source):
+            source = aliases.get(name, name)
+        if config.has_option("Data", source):
+            value = config.get("Data", source, raw=name.endswith("_delim"))
+            options[name] = _ini_csv_value(name, value, legacy_rows)
+    return options
+
+
 def cfg_data_from_ini(inifile, filename=None, **kwargs):
-    """Read an inifile and load and configure a DataFile from it.
+    r"""Load a measurement and assign its fitting columns from an INI file.
 
     Args:
         inifile (str or file):
-            Path to the ini file to be read.
+            Path to the INI file, or an open text stream. Seekable streams are
+            rewound before reading and remain open afterwards.
 
     Keyword Arguments:
-        filename (string,boolean or None):
-            File to load that contains the data.
-        **kwargs:
-            All other keywords are passed to the Data constructor
+        filename (str, path-like, Boolean or None):
+            Measurement to load. None uses the [Data] filename entry; if neither
+            is supplied, the existing file-selection behaviour is used.
+        **kwargs (dict):
+            For CSVFile, header_line, data_line, header_delim and data_delim
+            override INI settings using the native loader's zero-based numbering.
+            Other keywords are passed to the Data constructor.
 
     Returns:
-        An instance of :py:class:`Stoner.core.data.Data` with data loaded and columns configured.
+        Stoner.core.data.Data:
+            A new measurement with x, y and optional uncertainty roles assigned.
 
-    The inifile should contain a [Data] section that contains the following keys:
-        -  **type (str):** optional name of DataFile subclass to import.
-        -  **filename (str or boolean):** optionally used if *filename* parameter is None.
-        - **xcol (column index):** defines the x-column data for fitting.
-        - **ycol (column index):** defines the y-column data for fitting.
-        - **yerr (column index):** Optional column with uncertainty values for the data
+    Raises:
+        RuntimeError:
+            If the INI file lacks a [Data] section.
+        ValueError:
+            If an INI CSV row number or delimiter is invalid, or loading fails.
+
+    Notes:
+        The [Data] section accepts type (registered loader name), filename, x,
+        y and optional e (column headers or zero-based positions). Coordinate
+        defaults are x=0 and y=1, with no uncertainty column.
+
+        CSVFile accepts header_line (None for no header), data_line and separate
+        header_delim/data_delim entries. Row numbers are zero-based. Delimiters
+        are literal single characters; None requests detection, ``\t`` denotes a
+        tab, and quoted delimiters allow spaces. Omitted entries retain loader
+        defaults: header row 0, data row 1 and comma delimiters.
+
+        Historical separator supplies both delimiters unless each is explicitly
+        configured. When start_line is present without data_line, start_line
+        and any header_line use historical one-based numbering. data_line takes
+        precedence over start_line and selects zero-based INI row numbering.
+        Explicit loader keywords override the corresponding normalised INI
+        value. CSV layout entries are ignored for other loader types.
     """
     if SafeConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
@@ -218,6 +283,11 @@ def cfg_data_from_ini(inifile, filename=None, **kwargs):
         typ = typ[-1]
     else:
         typ = "Data"
+    csv_names = ("header_line", "data_line", "header_delim", "data_delim")
+    layout = {}
+    if typ == "CSVFile":
+        overrides = {key: kwargs.pop(key) for key in csv_names if key in kwargs}
+        layout = _ini_csv_options(config, overrides)
     data = make_Data(**kwargs)
     if filename is None:
         if not config.has_option("Data", "filename"):
@@ -226,7 +296,7 @@ def cfg_data_from_ini(inifile, filename=None, **kwargs):
             filename = config.get("Data", "filename")
             if filename in ["False", "True"]:
                 filename = bool(filename)
-    data = data.__class__.load(filename, auto_load=False, filetype=typ)
+    data = data.__class__.load(filename, auto_load=False, filetype=typ, **layout)
     cols = {"x": 0, "y": 1, "e": None}  # Defaults
 
     for c in ["x", "y", "e"]:

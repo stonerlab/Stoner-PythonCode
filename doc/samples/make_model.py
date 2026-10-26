@@ -48,5 +48,5 @@ d.lmfit(simple_model, result=True)
 # Plot the result
 d.setas = "xyy"
 d.plot(fmt=["r+", "b-"])
-d.plot.ax.set_title("Simple Model Fit")
+d.plot.title = "Simple Model Fit"
 d.annotate_fit(simple_model, x=0.05, y=0.5)

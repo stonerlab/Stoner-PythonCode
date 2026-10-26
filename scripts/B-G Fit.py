@@ -52,7 +52,8 @@ def fit(filename=False):
     ax = data.plot(
         fmt=["r.", "b-"], label=["Data", "Bloch-Grüneisen fit"], markersize=1
     )
-    ax.set(xlabel="Temperature (K)", ylabel=r"Resistance ($\Omega$)")
+    data.plot.xlabel = "Temperature (K)"
+    data.plot.ylabel = r"Resistance ($\Omega$)"
     data.annotate_fit(model, ax=ax, x=0.05, y=0.35, mode="eng")
     return data
 

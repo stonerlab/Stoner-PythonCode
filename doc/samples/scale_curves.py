@@ -31,8 +31,8 @@ d4 = d.scale(
     np_data, headers="Signal 2 scaled", xmode="affine", use_estimate=True
 )
 d4.plot(ax=d.plot.ax, label="2$^\\mathrm{nd}$ scaled signal")
-d4.plot.ax.set_ylim((-7, 9))
+d4.plot.ylim = (-7, 9)
 txt = tabulate(d4["Transform"], floatfmt=".2f", tablefmt="grid")
 d4.plot.ax.text(10, -7, f"Transform\n{txt}", fontdict={"size": "x-small"})
 
-d4.plot.ax.set_title("Scaling Example")
+d4.plot.title = "Scaling Example"

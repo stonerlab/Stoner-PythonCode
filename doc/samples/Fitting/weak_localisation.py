@@ -39,4 +39,4 @@ d.annotate_fit(
     fontdict={"size": "x-small", "color": "green"},
     prefix="WLfit",
 )
-d.plot.ax.set_title("Weak Localisation Fit")
+d.plot.title = "Weak Localisation Fit"

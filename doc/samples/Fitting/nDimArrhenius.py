@@ -29,6 +29,6 @@ d.annotate_fit(
     NDimArrhenius, x=0.25, y=0.05, prefix="NDimArrhenius", mode="eng"
 )
 
-d.plot.ax.set_title("n-D Arrhenius Test Fit")
-d.plot.ax.set_ylabel("Rate")
-d.plot.ax.set_xlabel("Temperature (K)")
+d.plot.title = "n-D Arrhenius Test Fit"
+d.plot.ylabel = "Rate"
+d.plot.xlabel = "Temperature (K)"

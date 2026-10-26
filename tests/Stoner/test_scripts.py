@@ -120,8 +120,6 @@ def test_pcar_real_data_fit_and_plot(tmp_path):
 
 
 @pytest.mark.parametrize("source", ["PCAR-New.ini", "PCAR-chi^2.ini"])
-@pytest.mark.xfail(strict=True, raises=(KeyError, ValueError, IndexError),
-                   reason="INI CSV layout forwarding is deferred: Stoner-PythonCode#41")
 def test_pcar_ini_controls_nondefault_csv_layout(tmp_path, source):
     config, filename = pcar_config(tmp_path, source)
     csvfile = tmp_path / "measurement.csv"
@@ -137,8 +135,6 @@ def test_pcar_ini_controls_nondefault_csv_layout(tmp_path, source):
     assert list(data.setas) == list("xye")
 
 
-@pytest.mark.xfail(strict=True, raises=(KeyError, ValueError, IndexError),
-                   reason="INI CSV layout forwarding is deferred: Stoner-PythonCode#41")
 def test_ini_csv_headerless_import_and_delimiter_detection(tmp_path):
     from Stoner.analysis.fitting.models import cfg_data_from_ini
 
@@ -227,6 +223,21 @@ def test_vsm_v2_edits_preserve_exclusions_and_headers(monkeypatch):
     np.testing.assert_array_equal(data.mask, original_mask)
     assert data.column_headers == headers
     assert np.all(np.isfinite(data.column(2)[2:].compressed()))
+
+
+def test_vsm_v2_plot_records_target_and_sets_properties():
+    """Keep the interactive editor's plot target and labels on its Data accessor."""
+    script = load_script("VSManalysis_v2.py")
+    data = Data(SAMPLES / "VSM-Data.fld")
+    data.mask[10, data.find_col("m (emu)")] = True
+    script["plot_m_h"](data)
+    ax = data.plot.ax
+    assert ax is not None and len(ax.lines) == 1
+    assert ax.get_xlabel() == "H(T)" and ax.get_ylabel() == "Moment (emu)"
+    assert ax.get_title() == "" and ax.get_legend() is None
+    valid = ~np.ma.getmaskarray(data.column("m (emu)"))
+    valid &= np.isfinite(data.column("H").data) & np.isfinite(data.column("m (emu)").data)
+    np.testing.assert_array_equal(ax.lines[0].get_ydata(), data.column("m (emu)")[valid])
 
 
 def test_vsm_v3_real_corrections_preserve_exclusions():
