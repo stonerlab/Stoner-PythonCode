@@ -118,19 +118,36 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
-### Preparing 0.12.0a4
+### Published 0.12.0a4
 
-The fourth alpha includes callable plotting properties, shorter task-focused
-guides, sample/script API updates and the backwards-compatible issue #41 CSV INI
-fix. Dependency requirements are unchanged. Local Windows validation passed
-1,436 tests (three network/OCR deselections); the affected network example also
-passed separately. The cached documentation audit found no new warnings or lost
-API entries. Native GenX UI and interactive mouse/dialog behaviour were not
-manually exercised.
+[`0.12.0a4`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a4)
+is published as a prerelease at `a96e4bcce70bc96ebfdd68a2efba96f976422ac0`.
+It includes callable plotting properties, shorter task-focused guides,
+sample/script API updates and the backwards-compatible issue #41 CSV INI fix.
+Runtime dependency requirements are unchanged.
 
-Before publication, require the full hosted matrix, lower-dependency suite and
-fresh wheel/sdist checks on the versioned release commit. Publish the matching
-immutable tag, then verify deployment, registry metadata and documentation.
+The exact release source passed 1,439 tests in each cell of the
+[full Linux/macOS matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40413738248).
+The first unusually slow macOS attempt was cancelled for diagnostics; a fresh
+complete matrix passed, including final reporting. No gate was waived.
+[Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40410612257)
+passed 1,438 with one expected skip;
+[fresh wheel/sdist checks](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40410612452)
+and [cached docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40410620541)
+also passed. Local Windows validation passed 1,436 tests with three network/OCR
+deselections; the affected network example passed separately. Native GenX UI and
+interactive mouse/dialog behaviour were not manually exercised.
+
+[PyPI](https://pypi.org/project/Stoner/0.12.0a4/) publishes the wheel and sdist;
+the public wheel passed the installed-package probes and plotting property
+checks. Conda publishes `noarch/stoner-0.12.0a4-py_0.conda` on `phygbu`, with
+successful installed import/version tests and upload in the
+[deployment](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40415912602).
+[Release documentation CI](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/40415912648)
+passed. Zenodo archived the tag as
+[DOI 10.5281/zenodo.23677984](https://doi.org/10.5281/zenodo.23677984).
+Read the Docs has discovered the correct tag/SHA but still needs maintainer
+activation and a successful versioned build. The published tag is immutable.
 
 ### Published 0.12.0a3
 
