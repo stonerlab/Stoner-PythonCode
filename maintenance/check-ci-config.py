@@ -56,6 +56,13 @@ def main() -> None:
         "Coverage uploads must use the coverage matrix marker, excluding Codacy on pull requests.",
     )
     require("codacy/codacy-coverage-reporter-action@" in tests, "The pinned Codacy action is missing.")
+    macos_tests = tests.partition("- name: Test on macOS")[2].partition("- name:")[0]
+    require(
+        "--timeout=300" in macos_tests
+        and "--timeout-method=thread" in macos_tests
+        and "--max-worker-restart=2" in macos_tests,
+        "macOS tests need a five-minute watchdog and bounded xdist worker recovery.",
+    )
     require(
         tests.count('--cov-config="$GITHUB_WORKSPACE/pyproject.toml"') == 1
         and 'COLLECT_COVERAGE: ${{ matrix.coverage == true }}' in tests
@@ -94,6 +101,11 @@ def main() -> None:
     require("python -m pytest -n 2" in lower, "The lower dependency job must run the full parallel suite.")
     require("contents: read" in lower, "The lower dependency job must be read-only.")
     minimum_environment = (ROOT / "tests" / "minimum-env.yml").read_text(encoding="utf-8")
+    require(
+        "pytest-timeout >=2.4" in test_environment
+        and "pytest-timeout >=2.4" in minimum_environment,
+        "Both test environments must include the macOS watchdog plugin.",
+    )
     minimum_packages = {
         re.sub(r"[-_.]+", "-", name.lower())
         for name in re.findall(r"^  - (?:[\w-]+::)?([\w.-]+)", minimum_environment, re.MULTILINE)

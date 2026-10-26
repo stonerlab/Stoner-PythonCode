@@ -13,6 +13,7 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-forked >=1.6
+  - pytest-timeout >=2.4
   - pytest-xdist >=3.8
 
   # Required runtime dependencies (keep aligned with recipe/meta.yaml)

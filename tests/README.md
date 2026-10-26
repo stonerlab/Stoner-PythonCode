@@ -45,7 +45,8 @@ Ordinary tests must run with `READTHEDOCS` absent from the environment. The runn
 handles this automatically. Setting it to `False` still enables the package's
 presence-based documentation restrictions.
 
-Both test environments require pytest-xdist >=3.8 and pytest-forked >=1.6.
+Both test environments require pytest-xdist >=3.8, pytest-forked >=1.6 and
+pytest-timeout >=2.4.
 Older solver-selected xdist releases import the retired ``py.log`` package and
 can fail before collection with current pytest/Python combinations.
 
@@ -54,6 +55,15 @@ can fail before collection with current pytest/Python combinations.
 - Unexpected native file dialogs fail immediately through an autouse fixture.
   Dialog tests explicitly replace the guarded methods with deterministic replies.
   CI logs test names, the slowest durations and stack dumps after two minutes.
+  The stack dump is diagnostic: it does not interrupt a stalled test. macOS CI
+  additionally uses a 300-second per-test watchdog, including fixture setup and
+  teardown. This allows headroom above the longest successful release test
+  (179 seconds for `plot_folder_demo.py`). The thread timeout method prints
+  stacks and terminates the affected worker; xdist identifies the test, records
+  a failure and starts a replacement worker, with at most two restarts per run.
+  The remaining tests continue, but a timeout keeps CI unsuccessful. A terminated
+  worker cannot finish its fixture cleanup, so this safeguard is confined to the
+  disposable macOS CI workers. Local runs have no timeout unless requested.
 - Use `tmp_path` for outputs and `monkeypatch.chdir` for temporary directory
   changes. Treat scientific input fixtures and `doc/plot_cache` as read-only.
 - Use fixtures to restore dialog mocks, options and plotting state. A test must

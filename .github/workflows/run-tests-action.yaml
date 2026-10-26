@@ -74,7 +74,9 @@ jobs:
       - name: Test on macOS
         if: runner.os != 'Linux'
         run: |
-           pytest -vv -n 2 -o faulthandler_timeout=120 --durations=20 --junitxml pytest.xml || PYTEST_EXIT=$?
+           # Dump stacks first, then terminate a stuck worker so xdist can replace it.
+           # The longest successful macOS test took 179 seconds in the a4 release run.
+           pytest -vv -n 2 -o faulthandler_timeout=120 --timeout=300 --timeout-method=thread --max-worker-restart=2 --durations=20 --junitxml pytest.xml || PYTEST_EXIT=$?
            exit ${PYTEST_EXIT:-0}
         env:
           QT_QPA_PLATFORM: offscreen

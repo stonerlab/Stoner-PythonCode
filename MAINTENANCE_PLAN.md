@@ -269,6 +269,18 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
+- [ ] **macOS slow-test diagnosis:** compare JUnit durations and timed-out test
+  names before changing scientific code. The a4 source passed the full macOS
+  suite; its slowest test was `plot_folder_demo.py` (179 seconds, previously
+  125), followed by image functions (99 versus 78 seconds) and the real
+  critical-temperature script (81 versus 47 seconds). The cancelled run's stack
+  dumps showed image registration and repeated row traversal during splitting
+  and fitting, rather than one established deadlock. A separate post-release
+  five-minute watchdog bounds individual macOS tests and permits xdist worker
+  replacement, retaining failure status and the test name. Local fault injection
+  verified a named JUnit error, replacement worker and completion of eight
+  healthy tests; hosted validation is still required for that CI follow-up.
+
 - [x] **Scientific script API alignment:** all eleven Python scripts now use
   current plotting/storage interfaces and import-safe entry points where
   standalone. See [the script guide](scripts/README.md). Real-data and controlled
