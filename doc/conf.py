@@ -32,10 +32,18 @@ def scope_draw_references(app, what, name, obj, options, lines):
         )
 
 
+def qualify_context_types(app, what, name, obj, options, signature, return_annotation):
+    """Keep builtin type annotations distinct from Stoner's many type properties."""
+    if what == "class" and name == "Stoner.plot.PlotLabeller" and signature:
+        return signature.replace("type[", "builtins.type["), return_annotation
+    return None
+
+
 def setup(app):
     """Support markup used by inherited third-party docstrings."""
     roles.register_generic_role("rc", nodes.literal)
     app.connect("autodoc-process-docstring", scope_draw_references, priority=400)
+    app.connect("autodoc-process-signature", qualify_context_types)
 
 my_path=path.dirname(__file__)
 on_read_the_docs = os.environ.get("READTHEDOCS", "").lower() == "true"

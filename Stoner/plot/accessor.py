@@ -88,6 +88,33 @@ class DataPlotter:
         neither show nor save figures. The context classes and tick formatters
         are direct stonerplots exports with their upstream signatures and handles.
         Field methods use Matplotlib and return their primary Axes as well.
+
+        Access the following context managers directly through ``data.plot``.
+        Follow each class link for its signature, parameters and examples:
+
+        * :py:class:`~Stoner.plot.SavedFigure`: temporarily apply styles and save figures.
+        * :py:class:`~Stoner.plot.MultiPanel`: arrange regular or irregular panels.
+        * :py:class:`~Stoner.plot.StackVertical`: arrange vertically stacked panels.
+        * :py:class:`~Stoner.plot.OffsetPlots`: offset datasets, including error bars.
+        * :py:class:`~Stoner.plot.DoubleYAxis`: add an independent right-hand Y scale.
+        * :py:class:`~Stoner.plot.DoubleXAxis`: add an independent top X scale.
+        * :py:class:`~Stoner.plot.DoubleXYAxis`: add independent top X and right Y scales.
+        * :py:class:`~Stoner.plot.InsetPlot`: position an inset inside its parent axes.
+        * :py:class:`~Stoner.plot.CentredAxes`: position axes through a chosen origin.
+        * :py:class:`~Stoner.plot.PlotLabeller`: apply tick formatters and locators.
+
+        ``data.plot.TexFormatter`` and ``data.plot.TexEngFormatter`` expose
+        :py:class:`~Stoner.plot.TexFormatter` and :py:class:`~Stoner.plot.TexEngFormatter`
+        for configuring individual Matplotlib axes. Use :py:meth:`style` for
+        temporary style changes without saving or creating figures.
+
+    See Also:
+        :py:attr:`Stoner.core.data.Data.plot`:
+            Obtain an accessor bound to a Data object.
+        :doc:`/plot-contexts`:
+            Context-manager and tick-formatter API reference.
+        :doc:`/UserGuide/plot_layouts`:
+            Worked examples of panels, styles, independent scales and offsets.
     """
 
     #: Save figures and temporarily apply styles using stonerplots.

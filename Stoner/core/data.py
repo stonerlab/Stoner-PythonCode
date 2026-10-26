@@ -456,10 +456,14 @@ class Data(
 
     @property
     def plot(self):
-        """Return a callable plotting accessor without creating a figure or reading data.
+        """Return the callable :py:class:`~Stoner.plot.accessor.DataPlotter` plotting accessor.
+
+        Accessing this property does not create a figure or read data. See the
+        accessor's API documentation for plotting methods, Matplotlib properties
+        and the available stonerplots context managers.
 
         Returns:
-            Stoner.plot.accessor.DataPlotter:
+            :py:class:`~Stoner.plot.accessor.DataPlotter`:
                 Accessor bound to this Data. Call it to infer a scientific plot,
                 or select a named method such as line, hist or surface. Drawing
                 returns a Matplotlib Axes and does not show or save the figure.

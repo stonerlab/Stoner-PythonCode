@@ -18,6 +18,12 @@
 
    {% endif %}
    {% endblock %}
+{% if fullname == 'Stoner.core.data.Data' %}
+
+   .. rubric:: Plotting accessor
+
+   .. autoattribute:: plot
+{% endif %}
 
    {% block attributes %}
    {% if attributes %}

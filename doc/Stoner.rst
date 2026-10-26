@@ -117,71 +117,14 @@ Plot Package and Modules
 Stonerplots exports
 -------------------
 
-These are direct aliases of the stonerplots classes. The
-:ref:`plotting-contexts` guide shows their use through ``d.plot``; upstream
-signatures, keyword arguments and returned objects are retained.
+The plotting accessor exposes stonerplots context managers and tick formatters.
+Their API pages include constructor signatures, parameters and upstream examples.
+The :ref:`plotting-contexts` guide demonstrates their use through ``data.plot``.
 
-.. py:class:: SavedFigure
-    :module: Stoner.plot
+.. toctree::
+   :maxdepth: 2
 
-    Save selected figures and apply temporary styles. Also ``d.plot.SavedFigure``.
-
-.. py:class:: MultiPanel
-    :module: Stoner.plot
-
-    Arrange regular or irregular panels. Also ``d.plot.MultiPanel``.
-
-.. py:class:: StackVertical
-    :module: Stoner.plot
-
-    Arrange stacked panels. Also ``d.plot.StackVertical``.
-
-.. py:class:: OffsetPlots
-    :module: Stoner.plot
-
-    Offset datasets on each axes after drawing. Also ``d.plot.OffsetPlots``.
-    See :ref:`plotting-offsets` for linear/logarithmic offsets and error bars.
-
-.. py:class:: DoubleYAxis
-    :module: Stoner.plot
-
-    Add an independent Y axis. Also ``d.plot.DoubleYAxis``.
-
-.. py:class:: DoubleXAxis
-    :module: Stoner.plot
-
-    Add an independent top X axis sharing Y. Also ``d.plot.DoubleXAxis``.
-
-.. py:class:: DoubleXYAxis
-    :module: Stoner.plot
-
-    Add independent top X and right Y axes. Also ``d.plot.DoubleXYAxis``.
-    Both new contexts yield one Matplotlib Axes; see :ref:`plotting-double-axes`.
-
-.. py:class:: InsetPlot
-    :module: Stoner.plot
-
-    Add and position an inset. Also ``d.plot.InsetPlot``.
-
-.. py:class:: CentredAxes
-    :module: Stoner.plot
-
-    Centre axes through an origin. Also ``d.plot.CentredAxes``.
-
-.. py:class:: PlotLabeller
-    :module: Stoner.plot
-
-    Apply tick formatters and locators. Also ``d.plot.PlotLabeller``.
-
-.. py:class:: TexFormatter
-    :module: Stoner.plot
-
-    Format ticks in mathematical notation. Also ``d.plot.TexFormatter``.
-
-.. py:class:: TexEngFormatter
-    :module: Stoner.plot
-
-    Format ticks with engineering prefixes. Also ``d.plot.TexEngFormatter``.
+   plot-contexts
 
 .. automodapi:: Stoner.plot.utils
     :headings: -~
