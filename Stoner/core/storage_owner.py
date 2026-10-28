@@ -9,8 +9,9 @@ from uuid import uuid4
 import numpy as np
 import pandas as pd
 
-from .storage import Column, DataStorage, resolve_columns, _copy_metadata, _validate_table
+from .storage import Column, DataStorage, _copy_metadata, _validate_table
 from .base import TypeHintedDict
+from .column_schema import ColumnSchema
 
 
 @dataclass
@@ -23,10 +24,15 @@ class _TableState:
 
     values: pd.DataFrame
     excluded: np.ndarray
-    schema: list
+    schema: ColumnSchema
     metadata: TypeHintedDict
     fill_value: object
     dtype: np.dtype
+
+    def __setstate__(self, state):
+        """Upgrade earlier pickled owner lists to the composed immutable schema."""
+        self.__dict__.update(state)
+        self.schema = ColumnSchema(self.schema)
 
     @classmethod
     def adopt(cls, package):
@@ -34,7 +40,8 @@ class _TableState:
         package.validate()
         frame = package.values.copy(deep=False)
         frame.columns = [column.header for column in package.schema]
-        return cls(frame, package.excluded, list(package.schema), package.metadata, package.fill_value, package.dtype)
+        return cls(frame, package.excluded, ColumnSchema(package.schema),
+                   package.metadata, package.fill_value, package.dtype)
 
     def as_storage(self):
         """Create a validated UUID-labelled package view without exporting NumPy values.
@@ -71,7 +78,7 @@ class _TableState:
         # held elsewhere must still be copied in full, as before clone-then-trim.
         memo.pop(id(self.values), None)
         memo.pop(id(self.excluded), None)
-        result.schema = list(self.schema)
+        result.schema = self.schema
         result.metadata = _copy_metadata(self.metadata, memo)
         result.fill_value = deepcopy(self.fill_value, memo)
         result.dtype = self.dtype
@@ -197,14 +204,9 @@ class _SchemaField(MutableSequence):
 
     def __setitem__(self, key, value):
         self._owner._check_writable()
-        current = list(self)
-        current[key] = value
-        if len(current) != len(self):
-            raise ValueError("Schema field edits cannot change column count")
-        # Construct all immutable records before committing any change.
-        schema = [replace(column, **{self._field: item}) for column, item in zip(self._owner._state.schema, current)]
+        schema = self._owner._state.schema.with_field(self._field, key, value)
         if self._field == "header":
-            self._owner._state.values.columns = current
+            self._owner._state.values.columns = schema.headers
         self._owner._state.schema = schema
 
     def __delitem__(self, key):
@@ -277,8 +279,18 @@ class DataOwner:
     def __init__(self, package):
         if not isinstance(package, DataStorage):
             raise TypeError("DataOwner requires a DataStorage package")
-        self._state = _TableState.adopt(package.copy())
+        self._publish_storage(package.copy())
         self._editing = False
+
+    def _publish_storage(self, package):
+        """Publish independently prepared buffers through the native schema boundary.
+
+        Internal callers perform transaction checks before preparing the package.
+        This also supports commits inside an already guarded editing context.
+        Package labels/record lists never become the authoritative native state.
+        """
+        state = _TableState.adopt(package)
+        self._state = state
         self._native_frame_id = None
 
     def _check_writable(self):
@@ -386,7 +398,7 @@ class DataOwner:
     def column_ids(self):
         """Return immutable column identities in positional order."""
         self.validate()
-        return tuple(column.id for column in self._state.schema)
+        return self._state.schema.ids
 
     def export_storage(self):
         """Return independent values, exclusions, schema and typed metadata."""
@@ -401,7 +413,7 @@ class DataOwner:
         if isinstance(key, tuple):
             if len(key) != 2:
                 raise IndexError("Expected row and column selectors")
-            columns = key[1] if isinstance(key[1], slice) else resolve_columns(self._state.schema, key[1])
+            columns = key[1] if isinstance(key[1], slice) else self._state.schema.resolve(key[1])
             return key[0], columns
         return key
 
@@ -457,7 +469,7 @@ class DataOwner:
         # Metadata is outside the numerical transaction. Retain the authoritative
         # dictionary, including edits to nested values while a draft was open.
         candidate.metadata = self._state.metadata
-        self._state = _TableState.adopt(candidate)
+        self._publish_storage(candidate)
 
     def replace(self, array, schema=None):
         """Atomically replace numerical state, preserving positional IDs by default.
@@ -471,28 +483,21 @@ class DataOwner:
         if array.ndim != 2:
             raise ValueError("Data requires a two-dimensional array")
         if schema is None:
-            schema = list(self._state.schema[: array.shape[1]])
-            schema.extend(Column(str(uuid4()), f"Column_{i}") for i in range(len(schema), array.shape[1]))
+            schema = self._state.schema.resized(array.shape[1])
         candidate = DataStorage.from_numpy(array, headers=[c.header for c in schema], roles=[c.role for c in schema])
         candidate.schema = list(schema)
         candidate.values.columns = [c.id for c in schema]
         candidate.validate()
         candidate.metadata = self._state.metadata
-        self._state = _TableState.adopt(candidate)
+        self._publish_storage(candidate)
 
     def _selection(self, rows, columns):
         """Select rectangular numerical state and remap repeated column IDs."""
         self.validate()
-        positions = resolve_columns(self._state.schema, columns, force_list=True)
+        positions = self._state.schema.resolve(columns, force_list=True)
         row_positions = np.atleast_1d(np.arange(self._state.values.shape[0])[rows])
         array = self.to_numpy()[np.ix_(row_positions, positions)]
-        schema, seen = [], set()
-        for index in positions:
-            column = self._state.schema[index]
-            if column.id in seen:
-                column = replace(column, id=str(uuid4()))
-            seen.add(column.id)
-            schema.append(column)
+        schema = self._state.schema.take(positions)
         return array, schema
 
     def select(self, rows=slice(None), columns=slice(None)):
@@ -501,7 +506,7 @@ class DataOwner:
         package = DataStorage.from_numpy(
             array, headers=[c.header for c in schema], roles=[c.role for c in schema], metadata=self._state.metadata
         )
-        package.schema = schema
+        package.schema = list(schema)
         package.values.columns = [c.id for c in schema]
         return DataOwner(package)
 
@@ -534,7 +539,7 @@ class DataOwner:
             fill,
             dtype,
         )
-        self._state = _TableState.adopt(candidate)
+        self._publish_storage(candidate)
 
     def insert_columns(
         self, index, values, headers=None, roles=None, overwrite=False, schema=None, mask_padding=False
@@ -576,12 +581,7 @@ class DataOwner:
                 for i, (header, role) in enumerate(zip(headers, roles))
             ]
         stop = index + width if overwrite else index
-        final_schema = list(self._state.schema[:index]) + list(schema) + list(self._state.schema[stop:])
-        seen = set()
-        for i, column in enumerate(final_schema):
-            if column.id in seen:
-                final_schema[i] = replace(column, id=str(uuid4()))
-            seen.add(final_schema[i].id)
+        final_schema = self._state.schema.insert(index, schema, overwrite=overwrite)
         array = np.ma.concatenate((old[:, :index], new, old[:, stop:]), axis=1)
         array.fill_value = current.fill_value
         self.replace(array, final_schema)

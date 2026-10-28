@@ -5,139 +5,56 @@
 __all__ = ["Setas"]
 import copy
 import re
-from collections.abc import Iterable, MutableMapping
+from collections.abc import MutableMapping
 
 import numpy as np
 
-from ..compat import _pattern_type, index_types, string_types
-from ..tools import AttributeStore, TypedList, isiterable, islistlike
+from ..compat import _pattern_type, string_types
+from ..tools import TypedList, isiterable
 from .utils import decode_string
+from .column_schema import (
+    _add_roles, _assign_roles, _parse_roles, _resolve_roles,
+    _role_groups, _subtract_roles, _update_roles,
+)
 
 
 class Setas(MutableMapping):
-    """A Class that provides a mechanism for managing the column assignments in a DataFile like object.
-
-    Implements a MutableMapping bsed on the column_headers as the keys (with a few tweaks!).
+    """Expose scientific column roles through the shared schema/role operations.
 
     Notes:
-        Iterating over setas will return the column assignments rather than the standard mapping behaviour of
-        iterating over the keys. Otherwise
-        the interface is essentially as a Mapping class.
-
-    Calling an existing setas instance and the constructor share the same signatgure:
-
-    setas("xyzuvw")
-    setas(["x"],["y"],["z"],["u"],["v"],["w"])
-    setas(x="column_1",y=3,column4="z")
-
-    Keyword Arguments:
-        _self (bool):
-            If True, make the call return a copy of the setas object, if False, return _object attribute, if None,
-            return None
-        reset (bool):
-            If False then preserve the existing set columns and simply add the new ones. Otherwise, clear all column
-            assignments before setting new ones (default).
+        Iteration yields role characters rather than mapping keys. Callable,
+        mapping, sequence and arithmetic forms retain the Setas compatibility
+        API. Detached instances own their role/header lists; Data supplies a thin
+        facade over its current immutable ColumnSchema. Derived groups are fresh
+        results, never another authoritative role store.
     """
 
+    _owner_bound = False
+
     def __init__(self, row=False, bless=None):
-        """Construct the setas instance and sets an initial value.
+        """Initialise detached role descriptions.
 
         Args:
-            ref (DataFile): Contains a reference to the owning DataFile instance
-
-        Keyword Arguments:
-            initial_val (string or list or dict): Initial values to set
+            row (bool):
+                Interpret a one-dimensional shape as a row of columns when True.
+            bless (object or None):
+                Return this object after callable assignments with _self=False.
         """
         self._row = row
-        self._cols = AttributeStore()
         self._shape = tuple()
         self._setas = []
         self._column_headers = TypedList(string_types)
         self._object = bless
-        self._col_defaults = {
-            2: {
-                "axes": 2,
-                "xcol": 0,
-                "ycol": [1],
-                "zcol": [],
-                "ucol": [],
-                "vcol": [],
-                "wcol": [],
-                "xerr": None,
-                "yerr": [],
-                "zerr": [],
-            },  # xy
-            3: {
-                "axes": 2,
-                "xcol": 0,
-                "ycol": [1],
-                "zcol": [],
-                "ucol": [],
-                "vcol": [],
-                "wcol": [],
-                "xerr": None,
-                "yerr": [2],
-                "zerr": [],
-            },  # xye
-            4: {
-                "axes": 2,
-                "xcol": 0,
-                "ycol": [2],
-                "zcol": [],
-                "ucol": [],
-                "vcol": [],
-                "wcol": [],
-                "xerr": 1,
-                "yerr": [3],
-                "zerr": [],
-            },  # xdye
-            5: {
-                "axes": 5,
-                "xcol": 0,
-                "ycol": [1],
-                "zcol": None,
-                "ucol": [2],
-                "vcol": [3],
-                "wcol": [4],
-                "xerr": None,
-                "yerr": [],
-                "zerr": [],
-            },  # xyuvw
-            6: {
-                "axes": 6,
-                "xcol": 0,
-                "ycol": [1],
-                "zcol": [2],
-                "ucol": [3],
-                "vcol": [4],
-                "wcol": [5],
-                "xerr": None,
-                "yerr": [],
-                "zerr": [],
-            },
-        }  # xyzuvw
+
+    def __setstate__(self, state):
+        """Read earlier role snapshots without reviving redundant schema/group caches."""
+        self.__dict__.update({key: value for key, value in state.items()
+                              if key not in {"_schema", "_cols", "_col_defaults"}})
 
     # ==========================================================================
-    # Descriptor protocol methods
+    # Role views and compatibility descriptors
     # ==========================================================================
 
-    def _prepare_call(self, args, kwargs):
-        """Extract a value to be used to evaluate the setas attribute during a call."""
-        reset = kwargs.pop("reset", True)
-        if not isinstance(reset, bool):
-            reset = True
-
-        if args:
-            value = args[0]
-            if isinstance(value, string_types):  # expand the number-code combos in value
-                if reset:
-                    self.setas = []
-                value = decode_string(value)
-        else:
-            value = kwargs
-            if reset:
-                self.setas = []
-        return value
 
     @property
     def _size(self):
@@ -165,19 +82,38 @@ class Setas(MutableMapping):
 
     @property
     def clone(self):
-        """Create an exact copy of the current object."""
-        cls = type(self)
+        """Detach role/header state without cloning the blessed owning object.
+
+        The owner reference is retained only for callable return conventions;
+        edits to this clone never change the owner's column descriptions.
+        """
+        cls = Setas if self._owner_bound else type(self)
         new = cls()
-        for attr, val in self.__dict__.items():
-            if not callable(val):
-                new.__dict__[attr] = copy.deepcopy(val)
+        new._row, new._object = self._row, self._object
+        new.shape = self.shape
+        new.column_headers = list(self.column_headers)
+        new._setas = self.to_list()
+        for name, value in self.__dict__.items():
+            if name not in {"_row", "_shape", "_setas", "_column_headers", "_object", "_data"} and not callable(value):
+                new.__dict__[name] = copy.deepcopy(value)
         return new
 
     @property
     def cols(self):
-        """Get the current column assignments."""
-        self._cols.update(self._get_cols())
-        return self._cols
+        """Return newly derived groups without caching mutable defaults."""
+        return self._get_cols()
+
+    @property
+    def _cols(self):
+        """Return fresh groups for legacy internal consumers without a mutable cache."""
+        return self.cols
+
+    def _commit_roles(self, roles):
+        """Replace detached roles after a complete assignment has validated."""
+        self._setas = list(roles)
+
+    def _check_writable(self):
+        """Provide the mutation guard used by the owner-bound facade."""
 
     @property
     def x(self):
@@ -303,7 +239,8 @@ class Setas(MutableMapping):
         Notes:
             Role sequences are truncated or padded to the number of columns. A period
             clears a role; a hyphen leaves that position unchanged after any preliminary
-            reset. Assignments update this object in place.
+            reset. Assignments validate completely before updating this object.
+            Errors leave both bound and detached assignments unchanged.
 
         Example:
             Assign a role string, or use named columns and numerical indices::
@@ -314,54 +251,14 @@ class Setas(MutableMapping):
                 data.setas(y=2, reset=False)
         """
         return_self = kwargs.pop("_self", False)
-        if not (args or kwargs):  # New - bare call to setas will return the current value.
+        if not (args or kwargs):
             return self.setas
-        if len(args) == 1 and isinstance(args[0], Setas):
-            args = list(args)
-            args[0] = args[0].to_list()
-        if len(args) == 1 and not (isinstance(args[0], string_types + (Setas,)) or isiterable(args[0])):
-            raise SyntaxError(
-                f"setas should be called with eother a string, iterable object or setas object, not a {type(args[0])}"
-            )
-
-        # If reset is neither in kwargs nor a False boolean, then clear the existing setas assignments
-        value = self._prepare_call(args, kwargs)
-        _ = self.setas  # Forxce setas to be the right length
-        if isinstance(value, dict):
-            for k, v in value.items():
-                if isinstance(k, string_types) and len(k) == 1 and k in "xyzuvwdef":  # of the form x:column_name
-                    for v_item in self.find_col(v, force_list=True):
-                        try:
-                            self._setas[v_item] = k
-                        except (IndexError, KeyError):
-                            pass
-                elif (
-                    isinstance(k, index_types) and isinstance(v, string_types) and len(v) == 1 and v in "xyzuvwdef"
-                ):  # of the form column_name:x
-                    k = self.find_col(k)
-                    self._setas[k] = v
-                else:
-                    raise IndexError(f"Unable to workout what do with {k}:{v} when setting the setas attribute.")
-        elif isiterable(value):
-            if len(value) > self._size:
-                value = value[: self._size]
-            elif len(value) < self._size:
-                value = list(value)  # Ensure value is now a list
-                value.extend(list("." * (self._size - len(value))))
-            value = value[: self._size]
-            for i, v in enumerate(value):
-                if v.lower() not in "xyzedfuvw.-":
-                    raise ValueError(f"Set as column element is invalid: {v}")
-                if v != "-":
-                    self.setas[i] = v.lower()
-        else:
-            raise ValueError("Set as column string ended with a number")
-        self.cols.update(self._get_cols())
-        if return_self is None:
-            return None
-        if return_self:
-            return self
-        return self._object
+        self._check_writable()
+        if args and isinstance(args[0], Setas):
+            args = (args[0].to_list(),) + args[1:]
+        roles = _parse_roles(self.column_headers, self.to_list(), args, kwargs)
+        self._commit_roles(roles)
+        return None if return_self is None else self if return_self else self._object
 
     def __contains__(self, item):
         """Use getitem to test for membership. Either column assignments or column index types are tested."""
@@ -401,9 +298,12 @@ class Setas(MutableMapping):
 
     def __getattr__(self, name):
         """Try to see if attribute name is a key in self.cols and return that instead."""
-        if name != "_cols" and name in self._cols:
-            return self._cols[name]
-        return getattr(super(), name)
+        if (name in {"axes", "xcol", "xerr", "ycol", "yerr", "zcol", "zerr", "ucol", "vcol", "wcol"}
+                or name.startswith("has_")):
+            groups = self.cols
+            if name in groups:
+                return groups[name]
+        raise AttributeError(name)
 
     def __getitem__(self, name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
@@ -424,24 +324,26 @@ class Setas(MutableMapping):
                 if len(ret) == 1:
                     ret = ret[0]
                 return ret
-            case "#x" | "y#" | "#z" | "#u" | "#v" | "#w" | "#d" | "#e" | "#f":
-                ret = []
-                name = name[1]
-                s = 0
-                while name in self._setas[s:]:
-                    s = self._setas.index(name) + 1
-                    ret.append(s - 1)
+            case str() if len(name) == 2 and ((name[0] == "#" and name[1] in "xyzdefuvw") or name == "y#"):
+                role = name[1] if name[0] == "#" else name[0]
+                ret = [i for i, current in enumerate(self.setas) if current == role]
                 if len(ret) == 1:
                     ret = ret[0]
                 return ret
             case int() | str() | _pattern_type():
-                return self.setas[self.find_col(name)]
+                positions = self.find_col(name)
+                return ([self.setas[i] for i in positions]
+                        if isinstance(positions, list) else self.setas[positions])
             case slice():
                 indices = name.indices(len(self.setas))
                 name = range(*indices)
                 return [self[x] for x in name]
             case _ if isiterable(name):
-                return [self[x] for x in name]
+                result = []
+                for item in name:
+                    selected = self[item]
+                    result.extend(selected if isinstance(selected, list) else [selected])
+                return result
             case _:
                 raise IndexError(f"{name} was not found in the setas attribute.")
 
@@ -469,22 +371,9 @@ class Setas(MutableMapping):
                 a single letter string in the set above.
             value (integer or column index): See above.
         """
-        match name:
-            case Iterable() if not isinstance(name, str):
-                if islistlike(value) and len(value) == len(name):
-                    for n, v in zip(name, value):
-                        self._setas[n] = v
-                else:
-                    for n in name:
-                        self[n] = value
-            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f" | "." | "-":
-                for c in self.find_col(value, force_list=True):
-                    self._setas[c] = name
-            case int() | str() | _pattern_type() if value in list("xyzuvwdef.-"):
-                for c in self.find_col(name, force_list=True):
-                    self.setas[c] = value
-            case _:
-                raise IndexError(f"Failed to set setas as couldn't workout what todo with setas[{name}] = {value}")
+        self._check_writable()
+        roles = _assign_roles(self.column_headers, self.to_list(), name, value)
+        self._commit_roles(roles)
 
     def __len__(self):
         """Return our own length."""
@@ -504,24 +393,14 @@ class Setas(MutableMapping):
 
     def _add_core_(self, new, other):
         """Allow the user to add a dictionary to setas to add extra columns."""
-        if not isinstance(other, dict):
-            try:
-                tmp = self.clone
-                tmp(other)
-                other = tmp.to_dict()
-            except (TypeError, SyntaxError):
-                return NotImplemented
-        for k, v in other.items():
-            if isinstance(k, string_types) and len(k) == 1 and k in "xyzuvwdef":  # of the form x:column_name
-                for v in new.find_col(v, force_list=True):
-                    new._setas[v] = k
-            elif (
-                isinstance(k, index_types) and isinstance(v, string_types) and len(v) == 1 and v in "xyzuvwdef"
-            ):  # of the form column_name:x
-                k = new.find_col(k)
-                new._setas[k] = v
-            else:
-                raise IndexError(f"Unable to workout what do with {k}:{v} when setting the setas attribute.")
+        new._check_writable()
+        if isinstance(other, Setas):
+            other = other.to_list()
+        try:
+            roles = _add_roles(new.column_headers, new.to_list(), other)
+        except SyntaxError:
+            return NotImplemented
+        new._commit_roles(roles)
         return new
 
     def __add__(self, other):
@@ -536,54 +415,15 @@ class Setas(MutableMapping):
 
     def _sub_core_(self, new, other):
         """Implement subtracting either column indices or x,y,z,d,e,f,u,v,w for the current setas."""
-        if isinstance(other, str):
-            try:
-                other = self.find_col(other)
-            except KeyError:
-                other = decode_string(other)
-        match other:
-            case "x" | "y" | "z" | "u" | "v" | "w" | "d" | "e" | "f":
-                while other in new._setas:
-                    new._setas[new._setas.index(other)] = "."
-                return new
-            case dict():
-                me = new.to_dict()
-                other = new.clone(other, _self=True).to_dict()
-                for k, v in other.items():
-                    v = [v] if not isinstance(v, list) else v
-                    if k in me:
-                        for header in v:
-                            if header in me[k]:
-                                if isinstance(me[k], list):
-                                    me[k].remove(header)
-                                else:
-                                    me[k] = ""
-                                if len(me[k]) == 0:
-                                    del me[k]
-                            else:
-                                raise ValueError(f"{header} is not set as {k}")
-                    else:
-                        raise ValueError(f"No column is set as {k}")
-                new.clear()
-                new(me)
-                return new
-            case Iterable() if all(isinstance(x, (str, int, slice, list, re.Pattern)) for x in other):
-                for o in other:
-                    if o == other:
-                        continue
-                    new = self._sub_core_(new, o)
-                    if new is NotImplemented:
-                        return NotImplemented
-                return new
-            case int() | slice() | [] | re.Pattern():
-                try:
-                    new._setas[new.find_col(other)] = "."
-                    return new
-                except KeyError:
-                    other = new.clone(other, _self=True)
-
-            case _:
-                return NotImplemented
+        new._check_writable()
+        if isinstance(other, Setas):
+            other = other.to_dict()
+        try:
+            roles = _subtract_roles(new.column_headers, new.to_list(), other)
+        except TypeError:
+            return NotImplemented
+        new._commit_roles(roles)
+        return new
 
     def __sub__(self, other):
         """Jump to the core."""
@@ -594,72 +434,36 @@ class Setas(MutableMapping):
         """Jump to the core."""
         return self._sub_core_(self, other)
 
-    def find_col(self, col, force_list=False):
-        """Indexes the column headers in order to locate a column of data.shape.
-
-        Indexing can be by supplying an integer, a string, a regular expression, a slice or a list of any of the above.
-
-        -   Integer indices are simply checked to ensure that they are in range
-        -   String indices are first checked for an exact match against a column header
-            if that fails they are then compiled to a regular expression and the first
-            match to a column header is taken.
-        -   A regular expression index is simply matched against the column headers and the
-            first match found is taken. This allows additional regular expression options
-            such as case insensitivity.
-        -   A slice index is converted to a list of integers and processed as below
-        -   A list index returns the results of feading each item in the list at :py:meth:`find_col`
-            in turn.
+    def find_col(self, col, force_list=False, *, first=False):
+        """Resolve column selectors with the shared Stoner matching rules.
 
         Args:
-            col (int, a string, a re, a slice or a list):  Which column(s) to retuirn indices for.
+            col (int, str, re.Pattern, slice or sequence):
+                Exact names, then glob or substring, then regex fallback. All
+                matches are retained; compiled patterns explicitly request regex.
 
         Keyword Arguments:
-            force_list (bool): Force the output always to be a list. Mainly for internal use only
+            force_list (bool):
+                Always return a list, including a single match.
+            first (bool):
+                Return only the first position after validating the complete selector.
 
         Returns:
-            The matching column index as an integer or a KeyError
+            int or list of int:
+                Positions, preserving ordered repeated selections. Strings with
+                one match return an integer; pattern/collection results remain lists.
+
+        Raises:
+            KeyError:
+                If no name/pattern matches or first is requested on an empty selection.
+            IndexError:
+                If a position is out of bounds.
+            TypeError:
+                If a selector has an unsupported type, including Boolean values.
+            re.error:
+                If regex fallback is required and the pattern is invalid.
         """
-        match col:
-            case int():
-                if col >= len(self.column_headers):
-                    raise IndexError(f"Attempting to index a non - existent column {col}")
-                if col < 0:
-                    col = col % len(self.column_headers)
-            case str():
-                col = str(col)
-                if col in self.column_headers:  # and it is an exact string match
-                    col = self.column_headers.index(col)
-                else:  # ok we'll try for a regular expression
-                    test = re.compile(col)
-                    possible = [x for x in self.column_headers if test.search(x)]
-                    if not possible:
-                        try:
-                            col = int(col)
-                        except ValueError as err:
-                            raise KeyError(
-                                f'Unable to find any possible column matches for "{col} in {self.column_headers}"'
-                            ) from err
-                        if col < 0 or col >= self.data.shape[1]:
-                            raise KeyError("Column index out of range")
-                    else:
-                        col = self.column_headers.index(possible[0])
-            case _pattern_type():
-                test = col
-                possible = [x for x in self.column_headers if test.search(x)]
-                if not possible:
-                    raise KeyError(f"Unable to find any possible column matches for {col.pattern}")
-                col = self.find_col(possible)
-            case slice():
-                indices = col.indices(self.shape[1])
-                col = range(*indices)
-                col = self.find_col(col)
-            case _ if isiterable(col):
-                col = [self.find_col(x) for x in col]
-            case _:
-                raise TypeError(f"Column index must be an integer, string, list or slice, not a {type(col)}")
-        if force_list and not isinstance(col, list):
-            col = [col]
-        return col
+        return _resolve_roles(self.column_headers, col, force_list=force_list, first=first)
 
     def clear(self):
         """Clear the current setas attribute.
@@ -748,33 +552,19 @@ class Setas(MutableMapping):
             self -= what
 
     def update(self, other=(), **kwds):  # pylint:  disable=arguments-differ
-        """Replace any assignments in self with assignments from other."""
+        """Replace declared role groups atomically, retaining unrelated assignments.
+
+        Multiple mapping entries targeting one role replace that group together.
+        Entries are applied in mapping order, so later writes win on overlaps.
+        """
+        self._check_writable()
         if isinstance(other, Setas):
             other = other.to_dict()
-        elif isinstance(other, tuple) and len(other) == 0:
-            other = kwds
-        else:
-            try:
-                other = dict(other)
-            except (ValueError, TypeError) as err:
-                raise TypeError(f"setas.update requires a dictionary not a {type(other)}") from err
-        vals = list(other.values())
-        keys = list(other.keys())
-        for k in "xyzuvwdef":
-            if k in other:
-                try:
-                    c = self[k]
-                    self[c] = "."
-                except (KeyError, IndexError):
-                    pass
-                self[k] = other[k]
-            elif k in vals:
-                try:
-                    c = self[k]
-                    self[c] = "."
-                except IndexError:
-                    pass
-                self[k] = keys[vals.index(k)]
+        try:
+            assignments = dict(other, **kwds)
+        except (TypeError, ValueError) as error:
+            raise TypeError(f"setas.update requires a mapping, not {type(other)}") from error
+        self._commit_roles(_update_roles(self.column_headers, self.to_list(), assignments))
         return self
 
     def to_dict(self):
@@ -826,74 +616,4 @@ class Setas(MutableMapping):
         Returns:
             A single integer, a list of integers or a dictionary of all columns.
         """
-        # Do the xcolumn and xerror first. If only one x column then special case to reset startx to get any
-        # y columns
-        if self.setas.count("x") == 1:
-            xcol = self.setas.index("x")
-            maxcol = len(self.setas) + 1
-            startx = 0
-            xerr = self.setas.index("d") if "d" in self.setas else None
-        elif self.setas.count("x") > 1:
-            xcol = self.setas[startx:].index("x") + startx
-            startx = xcol
-            try:
-                maxcol = self.setas[xcol + 1 :].index("x") + xcol + 1
-            except ValueError:
-                maxcol = len(self.setas)
-            xerr = self.setas[startx:maxcol].index("d") if "d" in self.setas[startx:maxcol] else None
-        else:
-            xcol = None
-            maxcol = len(self.setas) + 1
-            startx = 0
-            xerr = None
-
-        # No longer enforce ordering of yezf - allow them to appear in any order.
-        columns = {"y": [], "e": [], "z": [], "f": [], "u": [], "v": [], "w": []}
-        for ix, lett in enumerate(self.setas[startx:maxcol]):
-            if lett in columns:
-                columns[lett].append(ix + startx)
-
-        if xcol is None:
-            axes = 0
-        elif not columns["y"]:
-            axes = 1
-        elif not columns["z"]:
-            axes = 2
-        else:
-            axes = 3
-        if axes == 2 and len(columns["u"]) * len(columns["v"]) > 0:
-            axes = 4
-        elif axes == 3:
-            if len(columns["u"]) * len(columns["v"]) * len(columns["w"]) > 0:
-                axes = 6
-            elif len(columns["u"]) * len(columns["v"]) > 0:
-                axes = 5
-
-        ret = AttributeStore()
-        ret.update({"axes": axes, "xcol": xcol, "xerr": xerr})
-
-        for ck, rk in {
-            "y": "ycol",
-            "z": "zcol",
-            "e": "yerr",
-            "f": "zerr",
-            "u": "ucol",
-            "v": "vcol",
-            "w": "wcol",
-        }.items():
-            ret[rk] = columns[ck]
-
-        if axes == 0 and self.ndim >= 2 and self.shape[1] in self._col_defaults and not no_guess:
-            ret = self._col_defaults[self.shape[1]]
-        for n in ["xcol", "xerr", "ycol", "yerr", "zcol", "zerr", "ucol", "vcol", "wcol", "axes"]:
-            ret[f"has_{n}"] = not (ret[n] is None or (isinstance(ret[n], list) and not ret[n]))
-
-        ret["has_uvw"] = ret["has_ucol"] & ret["has_vcol"] & ret["has_wcol"]
-
-        if what in ["xcol", "xerr"]:
-            ret = ret[what]
-        elif what in ("ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"):
-            ret = ret[what][0]
-        elif what in ("ycols", "zcols", "ucols", "vcols", "wcols", "yerrs", "zerrs"):
-            ret = ret[what[0:-1]]
-        return ret
+        return _role_groups(self.setas, self.shape, row=self._row, startx=startx, no_guess=no_guess, what=what)

@@ -45,206 +45,77 @@ def _copy_rows(datafile, rows):
     return result
 
 
-class _ResolvedSetas(Setas):
-    """Reuse assignment syntax with the migration's shared column resolver."""
-
-    def find_col(self, col, force_list=False):
-        return resolve_columns(self._schema, col, force_list=force_list)
-
-    def __getitem__(self, key):
-        if isinstance(key, str) and len(key) == 2 and key[0] == "#" and key[1] in "xyzdefuvw":
-            positions = [i for i, role in enumerate(self.to_list()) if role == key[1]]
-            return positions[0] if len(positions) == 1 else positions
-        return super().__getitem__(key)
-
-    def _get_cols(self, what=None, startx=0, no_guess=False):
-        result = super()._get_cols(startx=startx, no_guess=no_guess)
-        if self.to_list().count("x") > 1 and result.xerr is not None:
-            result.xerr += result.xcol
-        if what in ("xcol", "xerr"):
-            return result[what]
-        if what in ("ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"):
-            return result[what][0]
-        if what in ("ycols", "zcols", "ucols", "vcols", "wcols", "yerrs", "zerrs"):
-            return result[what[:-1]]
-        return result
+# Earlier pickles name this private class. The alias reads them through the
+# common facade without retaining the former resolver/group correction adapter.
+_ResolvedSetas = Setas
 
 
-class _BoundSetas:
-    """Parse assignments on a detached Setas before committing complete roles."""
+class _BoundSetas(Setas):
+    """Expose the common Setas API directly over the owner's current schema."""
+
+    _row = False
+    _owner_bound = True
 
     def __init__(self, data):
         self._data = data
 
-    def _snapshot(self):
-        owner = self._data.__dict__["_storage_owner"]
-        result = _ResolvedSetas(bless=self._data)
-        result._schema = owner._state.schema
-        result.shape = owner._state.values.shape
-        result.column_headers = list(owner.headers)
-        result(list(owner.roles))
-        return result
+    @property
+    def _object(self):
+        return self._data
 
-    def __call__(self, *args, **kwargs):
-        owner = self._data.__dict__["_storage_owner"]
-        if not args and not {key for key in kwargs if key != "_self"}:
-            return list(owner.roles)
-        owner._check_writable()
-        args = tuple(arg.to_list() if isinstance(arg, _BoundSetas) else arg for arg in args)
-        draft = self._snapshot()
-        result = draft(*args, **kwargs)
-        owner.roles[:] = draft.to_list()
-        return self if result is draft else result
+    @property
+    def _schema(self):
+        return self._data._require_storage_owner()._state.schema
 
-    def __getitem__(self, key):
-        return self._snapshot()[key]
-
-    def __setitem__(self, key, value):
-        owner = self._data.__dict__["_storage_owner"]
-        owner._check_writable()
-        if key is None:
-            raise IndexError("A role assignment requires a column selector")
-        draft = self._snapshot()
-        if isinstance(key, str) and key in "xyzdefuvw.-" and len(key) == 1:
-            draft[key] = value
-        else:
-            positions = resolve_columns(owner._state.schema, key, force_list=True)
-            if isinstance(value, str) and len(value) == len(positions) and len(value) > 1:
-                value = list(value)
-            draft[positions] = value
-        owner.roles[:] = draft.to_list()
-
-    def __iter__(self):
-        return iter(self.to_list())
-
-    def __len__(self):
-        return len(self.to_list())
-
-    def _mutate(self, method, *args, **kwargs):
-        owner = self._data._require_storage_owner()
-        owner._check_writable()
-        draft = self._snapshot()
-        args = tuple(arg.clone if isinstance(arg, _BoundSetas) else arg for arg in args)
-        result = getattr(draft, method)(*args, **kwargs)
-        owner.roles[:] = draft.to_list()
-        return self if result is draft else result
-
-    def __getattr__(self, name):
-        if name in {"unset", "pop", "popitem", "setdefault"}:
-            return lambda *args, **kwargs: self._mutate(name, *args, **kwargs)
-        if name in {
-            "get",
-            "keys",
-            "values",
-            "items",
-            "set",
-            "not_set",
-            "ndim",
-            "x",
-            "y",
-            "z",
-            "_cols",
-            "_size",
-            "_unique_headers",
-        }:
-            return getattr(self._snapshot(), name)
-        if name in self._snapshot().cols:
-            return self._snapshot().cols[name]
-        raise AttributeError(name)
-
-    def __contains__(self, item):
-        return item in self._snapshot()
-
-    def __eq__(self, other):
-        return self._snapshot() == (other.to_list() if isinstance(other, _BoundSetas) else other)
-
-    def __delitem__(self, key):
-        self._mutate("__delitem__", key)
-
-    def __iadd__(self, other):
-        return self._mutate("__iadd__", other)
-
-    def __isub__(self, other):
-        return self._mutate("__isub__", other)
-
-    def __add__(self, other):
-        return self._snapshot() + other
-
-    def __sub__(self, other):
-        return self._snapshot() - other
+    @property
+    def _setas(self):
+        return self.setas
 
     @property
     def setas(self):
-        """Expose an owner-bound mutable sequence of explicit roles."""
+        """Return an owner-bound role view, including for saved references."""
         return self._data._require_storage_owner().roles
 
     @setas.setter
     def setas(self, value):
         self(value)
 
-    def to_list(self):
-        """Return independent explicit roles."""
-        return list(self._data.__dict__["_storage_owner"].roles)
-
-    def to_string(self, encode=False):
-        """Return the explicit role string."""
-        return self._snapshot().to_string(encode=encode)
-
-    def to_dict(self):
-        """Return the existing Setas dictionary representation."""
-        return self._snapshot().to_dict()
-
-    def update(self, *args, **kwargs):
-        """Commit a mapping update only after all assignments validate."""
-        owner = self._data.__dict__["_storage_owner"]
-        owner._check_writable()
-        draft = self._snapshot()
-        args = tuple(arg.clone if isinstance(arg, _BoundSetas) else arg for arg in args)
-        draft.update(*args, **kwargs)
-        owner.roles[:] = draft.to_list()
-        return self
-
-    def clear(self):
-        """Clear all explicit roles without changing column identity."""
-        self._data.__dict__["_storage_owner"].roles[:] = ["."] * len(self)
-
-    def __str__(self):
-        return self.to_string()
-
-    @property
-    def clone(self):
-        """Return a detached Setas object."""
-        return self._snapshot()
-
-    @property
-    def empty(self):
-        """Report whether every explicit role is unset."""
-        return self._snapshot().empty
-
     @property
     def shape(self):
-        """Return the current owner shape."""
         return self._data._require_storage_owner()._state.values.shape
 
     @property
-    def cols(self):
-        """Infer coordinate/error groups from a current snapshot."""
-        return self._snapshot().cols
-
-    @property
     def column_headers(self):
-        """Return the owner's fixed-width header interface."""
-        return self._data.__dict__["_storage_owner"].headers
+        return self._data._require_storage_owner().headers
 
     @column_headers.setter
     def column_headers(self, value):
-        self._data.__dict__["_storage_owner"].headers[:] = value
+        self._data._require_storage_owner().headers[:] = value
 
-    def _get_cols(self, *args, **kwargs):
-        return self._snapshot()._get_cols(*args, **kwargs)
+    def _commit_roles(self, roles):
+        """Commit one validated replacement without copying values or metadata."""
+        self._data._require_storage_owner().roles[:] = roles
 
-    def find_col(self, col, force_list=False):
-        return resolve_columns(self._data._require_storage_owner()._state.schema, col, force_list=force_list)
+    def _check_writable(self):
+        self._data._require_storage_owner()._check_writable()
+
+    def __call__(self, *args, **kwargs):
+        if not args and not {key for key in kwargs if key != "_self"}:
+            return self.to_list()
+        return super().__call__(*args, **kwargs)
+
+    def __eq__(self, other):
+        return super().__eq__(other.to_list() if isinstance(other, _BoundSetas) else other)
+
+    def to_list(self):
+        """Return detached explicit roles from the current schema."""
+        return list(self._schema.roles)
+
+    def _get_cols(self, what=None, startx=0, no_guess=False):
+        return self._schema.groups(self.shape, startx=startx, no_guess=no_guess, what=what)
+
+    def find_col(self, col, force_list=False, *, first=False):
+        return self._schema.resolve(col, force_list=force_list, first=first)
 
 
 class StorageBridgeMixin:
@@ -347,11 +218,9 @@ class StorageBridgeMixin:
         rows, columns = key if isinstance(key, tuple) else (key, slice(None))
         positions = resolve_columns(owner._state.schema, columns, force_list=True)
         isrow = isinstance(rows, (int, np.integer))
-        result = numerical_result(value.copy(), isrow=isrow)
         schema = [owner._state.schema[i] for i in positions]
-        roles = _ResolvedSetas(row=isrow)
-        roles._schema = schema
-        roles.shape = result.shape
+        roles = Setas(row=isrow)
+        roles.shape = value.shape
         roles.column_headers = [column.header for column in schema]
         roles([column.role for column in schema])
         result = numerical_result(value, setas=roles, isrow=isrow)

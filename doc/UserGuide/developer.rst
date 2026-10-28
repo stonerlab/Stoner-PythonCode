@@ -17,6 +17,40 @@ and the explicit import factories now construct frame-backed objects. Consult
 ``STORAGE_MIGRATION_PLAN.md`` and ``STORAGE_INTERCHANGE.md`` in the repository
 for the current integration gate.
 
+``Stoner.core.column_schema.ColumnSchema`` is the internal immutable, ordered
+description of owner columns. It centralises fixed-width header/role edits,
+stable identities, repeated selection, insertion and resize rules. Owner operations
+prepare replacement schemas before committing numerical values and exclusion
+masks together. Version-one ``DataStorage`` exports retain an editable list of
+``Column`` records and UUID-labelled values.
+
+Internal package publication uses ``DataOwner._publish_storage`` after the
+caller's transaction checks. This converts interchange labels and record lists
+back to native header labels and the composed schema; assigning an exported
+package directly to owner state bypasses that boundary.
+
+The owner-bound ``setas`` facade reads the current schema directly. It shares pure
+assignment parsing and coordinate/error-group derivation with detached ``Setas``
+instances. There is no persistent derived-group cache and no detached Setas
+construction for bound reads or assignments. Group positions are absolute, so
+later x groups need no bridge or plotting corrections. CS2 matching and explicit
+cardinality checks continue to use the shared resolver.
+
+Column ownership remains composed: ``_TableState.schema`` holds the sole
+authoritative collection of records, and ordinary ``DataFrame.columns``
+projects their displayed headers. Header edits update both through the owner;
+role edits replace the schema without copying numerical values or masks.
+Do not assign separate role lists or use pandas ``attrs`` as another authority.
+
+The isolated custom Index experiment was rejected for this consolidation.
+It relocated header consistency checks and required private propagation hooks;
+native transforms could lose schema or retain conflicting left-hand records.
+Its implementation remains outside the production package as executable
+decision evidence. Prototype concatenation and re-entry rules are not Data API
+contracts. Native pandas structural results do not automatically transport
+Stoner exclusions or typed metadata: use complete owner operations or
+validated ``DataStorage`` interchange for lossless changes.
+
 For example, this boundary preserves an excluded integer through a detached copy::
 
     import numpy as np

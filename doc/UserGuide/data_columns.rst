@@ -45,6 +45,19 @@ Role                    Meaning
 Many plotting and analysis methods use these assignments as their defaults.
 Vector-component uncertainties do not have assigned role letters.
 
+A saved ``setas`` reference follows the current Data object through column
+renaming, reordering and insertion. Use ``clone`` for independent role and header
+descriptions::
+
+    roles = d.setas
+    detached = roles.clone
+    detached[1] = "z"
+
+Editing ``detached`` leaves ``d`` unchanged. ``roles.cols`` returns newly derived
+coordinate/error groups; changing that dictionary does not assign roles. Change
+``roles`` itself to update the Data object. Invalid role assignments leave the
+existing assignments unchanged, including on detached objects.
+
 Setting Column Types
 --------------------
 
@@ -79,7 +92,8 @@ Once you have identified columns for the various types, you also have access to 
     d.e == d.column(5)
 
 Note that if :py:attr:`~Stoner.core.data.Data.setas` is not set then attempting to use the quick access column attributes will
-result in an exception. Once the :py:attr:`~Stoner.core.data.Data.setas` attribute is set, a further set of *virtual* or *derived* column attributes
+use the count-based defaults below where available, or raise an exception. Once the
+:py:attr:`~Stoner.core.data.Data.setas` attribute is set, a further set of *virtual* or *derived* column attributes
 become available::
 
     d.setas="xyz"
@@ -101,8 +115,9 @@ There are some more convenience ways to set which columns to use as x,y,z etc::
     d.y="Y Column title"
     d.setas["Temperature"]="y"
 
-In each of these cases, the :py:class:`~Stoner.core.data.Data` will try to work out what you intended to achieve for maximum flexibility
-and convenience when writing code. However it can be fooled if one of your columns is called 'x' or 'y' !
+Single-letter role keys such as ``'x'`` and ``'y'`` have their role-assignment
+meaning in ``setas``. If a header has the same spelling, resolve it with
+``d.find_col('y')`` and use the resulting positions as keys to assign its role.
 
 Reading Column Types
 --------------------
@@ -172,8 +187,8 @@ or a particular row::
 In the first example, the first column of numeric data will be returned. In the
 second example, the column headers will first be checked for one labelled exactly
 *Temperature* and then if no column is found, the column headers will be
-searched using *Temperature* as a regular expression. This would then
-match *Temperature (K)* or *Sample Temperature*.  The third
+searched for the literal substring *Temperature*. This selects both
+*Temperature (K)* and *Sample Temperature* if present. The third
 example results in a 2 dimensional numpy array containing two columns in the
 order that they appear in the list (ie not the order that they are in the data
 file). For completeness, the :py:meth:`~Stoner.core.data.Data.column` method also allows one to
@@ -193,9 +208,10 @@ all return the same data.
 Whenever the Stoner package needs to refer to a column of data, you can specify it in a number of ways:-
 
  1) As an integer where the first column on the left is index 0
- 2) As a string. if the string matches a column header exactly then the index of that column is returned.
-      If the string fails to match any column header it is compiled as a regular expression and then that
-      is tried as a match. If multiple columns match then only the first is returned.
+ 2) As a string: select all exact header matches first. If none exist, try case-sensitive
+      whole-header glob matching when the string contains ``*``, ``?`` or a complete
+      bracket expression; otherwise try a literal substring. If that stage finds no
+      matches, try regular-expression search. Stop at the first successful stage.
  3) As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
       expression in directly with any extra options (like case insensitivity flags) set.
  4) As a slice object (e.g. ``0:10:2``) this is expanded to a list of integers.
@@ -203,6 +219,7 @@ Whenever the Stoner package needs to refer to a column of data, you can specify 
       the final result would be to use a list of column indices.
 
 For example::
+
     import re
     col=re.compile('^temp',re.IGNORECASE)
     d.column(col)
@@ -222,28 +239,75 @@ headings. If one wishes to find the numeric index of a column then the
    index=d.find_col(['Temperature',2,'Resistance'])
    index=d.find_col(re.compile(r"^[A-Z]"))
 
-:py:meth:`~Stoner.core.data.Data.find_col` takes a number of different forms. If the argument
-is an integer then it returns (trivially) the same integer, a string argument is
-first checked to see if it exactly matches one of the column headers in which
-case the number of the matching column heading is returned. If no exact match is
-found then a regular expression search is carried out on the column headings. In
-both cases, only the first match is returned. If there is no match, a ``KeyError`` is raised. A numeric string such as
-``'1'`` selects a header or pattern; use the integer ``1`` to select by position.
+Integer selectors use positions, including ordinary negative indices. String
+selectors return all matches from the first successful stage: exact equality,
+glob or literal substring, then regex fallback. Glob matching covers the entire
+header and is case-sensitive on every platform. Compiled regular expressions
+bypass those stages and preserve flags such as ``re.IGNORECASE``.
 
-The final three examples given above
-both return a list of indices, firstly using a slice construct - in this case
-the slice is expanded to the corresponding column positions, and in the second example by
-passing a list of column headers to look for. The final example uses a compiled
-regular expression. Unlike passing a string which contains a regular expression,
-passing a compiled regular expression will return a list of all columns that
-match. This distinction allows you to use a unique partial string to match just
-one column - but if you really want all possible columns that would match the
-pattern, then you can compile the regular expression and pass that instead.
+One string match returns an integer; several return a list. Compiled patterns,
+slices and collections always return lists. Collections preserve selector order
+and repeated positions. ``force_list=True`` always returns a list. To deliberately
+choose just the first match, use::
+
+   index = d.find_col('Temperature', first=True)
+   values = d.column(index)
+   indices = d.find_col('Temperature', first=True, force_list=True)
+
+``first=True`` validates the whole selector before taking its first result. It
+raises ``KeyError`` for an empty selection. Unmatched names/patterns also raise
+``KeyError``; invalid positional indices raise ``IndexError``; invalid regex
+fallback raises ``re.error``. A numeric string such as ``'1'`` selects a header
+or pattern; use integer ``1`` to select a position. Boolean selectors are invalid.
+
+Exact names containing units or metacharacters still win: ``'Field [T]'``
+selects that literal header before interpreting brackets as glob syntax. A
+complete glob bracket expression triggers glob dispatch only when no exact
+match exists; an unmatched bracket alone remains a literal substring until
+regex fallback is needed. A failed glob goes directly to regex search.
+
+Exact duplicate names select every occurrence, without including longer headers.
+For example, ``'Signal'`` selects two headers named exactly ``Signal`` before it
+considers ``Signal error``. ``'Sig'`` selects all three by substring matching.
+To force regex interpretation rather than glob/substring precedence, pass
+``re.compile(pattern)``. An invalid regex-looking string can still succeed as an
+exact name or literal substring without being compiled.
+
+Methods requiring one coordinate, predicate column or observation reject an
+ambiguous explicit selector with ``ValueError``. Use an integer position or
+explicitly call ``find_col(..., first=True)`` to make the choice. Methods supporting
+multiple channels use every selected column; general curve fitting also supports
+several predictor columns. Native ``d.data`` retains ordinary pandas indexing.
+
+Numerical assignment uses NumPy broadcasting: a scalar fills all selected cells;
+an ``(nrows, 1)`` array broadcasts one observation vector across several selected
+columns. Role assignment broadcasts one role, or accepts a role sequence whose
+length equals the expanded selection. Repeated/overlapping assignments are
+processed in order, with later writes winning; invalid bound role edits roll back.
 
 This is the function that is used internally by :py:meth:`~Stoner.core.data.Data.column`,
 :py:meth:`~Stoner.core.data.Data.search` etc and for this reason the trivial integer and slice
 forms are implemented to allow these other functions to work with multiple
 columns.
+
+Runnable example: duplicate voltage channels
+============================================
+
+This example constructs two measurement channels with the same voltage header.
+It checks matching precedence and scalar ambiguity, follows saved role/header
+views through renaming, and repeats a masked channel while preserving column
+identity rules. The two x groups plot their own assigned uncertainties.
+The assertions run as part of the documentation-example tests.
+
+.. literalinclude:: ../samples/column_schema.py
+   :language: python
+
+Download :download:`column_schema.py <../samples/column_schema.py>` and run it
+with the package installed. It creates a Matplotlib figure; call
+``matplotlib.pyplot.show()`` in an interactive session to display it.
+
+Iterate over rows and columns
+=============================
 
 Sometimes you may want to iterate over all of the rows or columns in a data set.
 This can be done quite easily::

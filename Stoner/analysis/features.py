@@ -68,7 +68,8 @@ def peaks(datafile, **kwargs):
     sort = kwargs.pop("sort", False)
     modify = kwargs.pop("modify", False)
     full_data = kwargs.pop("full_data", True)
-    _ = datafile._col_args(scalar=False, xcol=kwargs.pop("xcol", None), ycol=kwargs.pop("ycol", None))
+    _ = datafile._col_args(scalar=False, xcol=kwargs.pop("xcol", None), ycol=kwargs.pop("ycol", None),
+                           single=("xcol", "ycol"))
     xcol, ycol = _.xcol, _.ycol
     if isiterable(ycol):
         ycol = ycol[0]
@@ -215,7 +216,8 @@ def find_peaks(datafile, **kwargs):
     bounds = kwargs.pop("bounds", lambda x, y: True)
     prefix = kwargs.pop("prefix", None)
     full_data = kwargs.pop("full_data", True)
-    _ = datafile._col_args(scalar=False, xcol=kwargs.pop("xcol", None), ycol=kwargs.pop("ycol", None))
+    _ = datafile._col_args(scalar=False, xcol=kwargs.pop("xcol", None), ycol=kwargs.pop("ycol", None),
+                           single=("xcol", "ycol"))
     xcol, ycol = _.xcol, _.ycol
     if isiterable(ycol):
         ycol = ycol[0]

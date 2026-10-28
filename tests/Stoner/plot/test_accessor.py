@@ -206,7 +206,7 @@ def test_duplicate_headers_and_compiled_selectors(measurements):
     ax = measurements.plot.line(y=re.compile("^Y$"))
     np.testing.assert_equal(ax.lines[0].get_ydata(), 2*np.arange(5))
     np.testing.assert_equal(ax.lines[1].get_ydata(), 3*np.arange(5))
-    assert resolve_columns(measurements, y="Y").y == (1,)
+    assert resolve_columns(measurements, y="Y").y == (1, 3)
 
 
 def test_retained_accessor_reads_current_values_and_roles(measurements):

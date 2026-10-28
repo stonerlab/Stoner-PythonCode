@@ -542,7 +542,7 @@ class ImageFile(metadataObject):
         data = make_Data(args[0])
         shape = kwargs.pop("shape", "unique")
 
-        _ = data._col_args(**kwargs)
+        _ = data._col_args(single=("xcol", "ycol", "zcol"), **kwargs)
         data.setas(x=_.xcol, y=_.ycol, z=_.zcol)  # pylint: disable=not-callable
         if isinstance(shape, string_types) and shape == "unique":
             shape = (len(np.unique(data.x)), len(np.unique(data.y)))

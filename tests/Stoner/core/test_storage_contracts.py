@@ -27,7 +27,7 @@ def measurement():
 @pytest.mark.parametrize(
     "selector, expected",
     [
-        ("Moment", 1), ("Moment error", 2), ("err", 2), ("Mom", 1),
+        ("Moment", [1, 3]), ("Moment error", 2), ("err", 2), ("Mom", [1, 2, 3]),
         ("2", 4), ("[", 5), (-1, 5), (0, 0),
         (slice(1, 5, 2), [1, 3]), (["Field", -1], [0, 5]),
         (re.compile("field", re.IGNORECASE), [0]),
@@ -64,9 +64,9 @@ def test_metadata_precedence_and_column_assignment(measurement):
     measurement["Moment"] = "metadata value"
     assert measurement["Moment"] == "metadata value"
     np.testing.assert_array_equal(measurement.column("Moment"), original)
-    measurement[:, "Moment"] = [30, 31, 32, 33]
+    measurement[:, "Moment"] = np.array([30, 31, 32, 33])[:, None]
     np.testing.assert_array_equal(measurement.column(1), [30, 31, 32, 33])
-    np.testing.assert_array_equal(measurement.column(3), [3, 9, 15, 21])
+    np.testing.assert_array_equal(measurement.column(3), [30, 31, 32, 33])
     assert measurement.metadata["Moment"] == "metadata value"
 
 

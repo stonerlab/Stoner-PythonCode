@@ -39,7 +39,7 @@ def _positions(data, explicit, default, name):
         return ()
     positions = tuple(data.find_col(selection, force_list=True))
     if name != "y" and len(positions) > 1:
-        raise ValueError(f"{name} must select exactly one column.")
+        raise ValueError(f"{name} must select exactly one column; {selection!r} matched {positions!r}.")
     return positions
 
 
@@ -83,12 +83,6 @@ def resolve_columns(data, *, x=None, y=None, z=None, u=None, v=None, w=None, sta
     default_errors = defaults.get("yerr") or []
     errors = dict(zip(default_y, default_errors))
     xerr = defaults.get("xerr")
-    # Setas' historical multi-X helper reports this index relative to its group.
-    roles = list(data.setas)
-    if roles.count("x") > 1:
-        group_start = defaults["xcol"]
-        group_end = next((i for i in range(group_start + 1, len(roles)) if roles[i] == "x"), len(roles))
-        xerr = next((i for i in range(group_start, group_end) if roles[i] == "d"), None)
     return PlotColumns(
         x=positions["x"][0],
         y=positions["y"],
@@ -110,7 +104,7 @@ def _uncertainty(data, specification):
     if isinstance(specification, (Integral, str, Pattern)):
         position = data.find_col(specification, force_list=True)
         if len(position) != 1:
-            raise ValueError("Each uncertainty must select exactly one column.")
+            raise ValueError(f"Each uncertainty must select exactly one column; {specification!r} matched {position!r}.")
         values = data.column(position[0])
     elif isinstance(specification, Real):
         values = np.full(len(data), specification)

@@ -466,6 +466,8 @@ def split_up_down(data, col=None, folder=None):
     if col is None:
         _ = a._col_args()
         col = _.xcol
+    from ..core.column_selection import _single_column
+    col = _single_column(a, col, "col")
     width = int(len(a) / 10)
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1
@@ -588,7 +590,7 @@ def hysteresis_correct(data, **kwargs):
     xcol = kwargs.pop("xcol", data.setas.xcol)
     ycol = kwargs.pop("ycol", data.setas.ycol)
     # Get xcol and ycols from kwargs if specified
-    _ = data._col_args(xcol=xcol, ycol=ycol)
+    _ = data._col_args(xcol=xcol, ycol=ycol, single=("xcol", "ycol"))
     data.setas(x=_.xcol, y=_.ycol, reset=False)
     # Split into two sets of data:
 

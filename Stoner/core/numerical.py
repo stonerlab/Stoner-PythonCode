@@ -4,6 +4,7 @@ import numpy as np
 
 from ..tools import AttributeStore, isiterable, isnone
 from .setas import Setas
+from .column_selection import _single_column
 
 
 def numerical_result(values, *, setas=None, column_headers=None, isrow=False, **kwargs):
@@ -49,7 +50,12 @@ def column_arguments(
     zerr=None,
     **kwargs,
 ):  # pylint: disable=unused-argument
-    """Create an object which has keys  based either on arguments or setas attribute."""
+    """Resolve explicit selectors over assigned/default scientific role groups.
+
+    Scalar mode deliberately retains the first channel. Internal callers can
+    pass ``single=("xcol", "ycol", ...)`` to validate explicit scalar inputs
+    before that conversion; omitted defaults retain their established choices.
+    """
     cols = {
         "xcol": xcol,
         "ycol": ycol,
@@ -83,7 +89,10 @@ def column_arguments(
                 continue
         if isinstance(cols[c], float):
             continue
-        cols[c] = self.setas.find_col(cols[c], force_list=force_list)
+        if c in kwargs.get("single", ()):
+            cols[c] = _single_column(self, cols[c], c)
+        else:
+            cols[c] = self.setas.find_col(cols[c], force_list=force_list)
     ret.update(cols)
     if scalar:
         for c in ret:

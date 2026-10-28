@@ -18,6 +18,7 @@ from ..tools.typing import Data, Index, Kwargs, NumericArray
 from .utils import threshold as _threshold
 from .utils import split_up_down
 from ..core.selection import _reject_where
+from ..core.column_selection import _single_column, _insertion_position
 
 
 def apply(
@@ -64,8 +65,9 @@ def apply(
     """
     _reject_where(kwargs, "apply")
     if col is None:
-        col = datafile.setas.get("y", [0])[0]
-    col = datafile.find_col(col)
+        defaults = datafile._col_args()
+        col = defaults.ycol if defaults.has_ycol else 0
+    col = _insertion_position(datafile, col)
     kwargs.update(kwargs.pop("_extra", {}))
     # Check the dimension of the output
     ret = func(next(datafile.rows()), **kwargs)
@@ -123,7 +125,7 @@ def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], colu
     if column is None:
         col = datafile.setas._get_cols("ycol")
     else:
-        col = datafile.find_col(column)
+        col = _single_column(datafile, column, "column")
     clipper = (min(clipper), max(clipper))
     return datafile.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
 
@@ -163,7 +165,7 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
         cols = datafile.setas._get_cols(startx=startx)
         xcol = cols["xcol"]
         ycol = cols["ycol"]
-    xcol = datafile.find_col(xcol)
+    xcol = _single_column(datafile, xcol, "xcol")
     ycol = datafile.find_col(ycol)
     if not isinstance(ycol, list):
         ycol = [ycol]
@@ -222,20 +224,21 @@ def integrate(
     method: str = "simpson",
     **kwargs: Kwargs,
 ) -> Data:
-    """Integrate a column of data, optionally returning the cumulative integral.
+    """Integrate selected dependent channels against one coordinate column.
 
     Args:
         datafile (Data):
             If not being used as a bound method, specifies the instance of Data to work with.
         xcol (index):
-            The X data column index (or header)
+            Select exactly one X column; None uses the assigned/default coordinate.
         ycol (index):
-            The Y data column index (or header)
+            Select one or more Y columns. Every match is integrated independently.
 
     Keyword Arguments:
         result (index or None):
             Either a column index (or header) to overwrite with the cumulative data,
-            or True to add a new column or None to not store the cumulative result.
+            or True to append one result per channel. None/False stores no columns.
+            A destination selector must identify one insertion/replacement anchor.
         result_name (str):
             The metadata name for the final result
         header (str):
@@ -260,13 +263,15 @@ def integrate(
         falls back to trapezoidal integration.
     """
     _reject_where(kwargs, "integrate")
-    _ = datafile._col_args(xcol=xcol, ycol=ycol)
+    _ = datafile._col_args(xcol=xcol, ycol=ycol, scalar=False, single=("xcol",))
 
+    anchor = None if result is None or isinstance(result, bool) else _insertion_position(datafile, result)
+    source_headers = list(datafile.column_headers)
     working = datafile.search(_.xcol, bounds)
     working = ma.mask_rowcols(working, axis=0)
     xdat = working[:, datafile.find_col(_.xcol)]
     ydat = working[:, datafile.find_col(_.ycol)]
-    ydat = np.atleast_2d(ydat).T
+    ydat = ydat.reshape(len(working), -1)
 
     if np.any(np.diff(xdat, axis=-1) <= 0) and method == "simpson":  # Must use trapezoid
         warn("X-data is not monotonically increasing, falling back to trapezoid integration")
@@ -279,14 +284,15 @@ def integrate(
         yd = ydat[:, i]
         resultdata = func(yd, x=xdat, **kwargs)
         resultdata = np.append(np.array([0]), resultdata)
-        if result is not None:
-            header = header if header is not None else f"Integral of {datafile.column_headers[_.ycol]}"
+        if result is not None and result is not False:
+            channel_header = header if header is not None else f"Integral of {source_headers[_.ycol[i]]}"
             if isinstance(result, bool) and result:
-                datafile.add_column(resultdata, header=header, replace=False)
+                datafile.add_column(resultdata, header=channel_header, replace=False)
             else:
-                result_name = datafile.column_headers[datafile.find_col(result)]
+                if result_name is None:
+                    result_name = source_headers[anchor] if anchor < len(source_headers) else channel_header
                 datafile.add_column(
-                    resultdata, header=header, index=None if result is True else result, replace=i == 0
+                    resultdata, header=channel_header, index=anchor + i, replace=i == 0
                 )
         final.append(resultdata[-1])
     if len(final) == 1:
@@ -341,18 +347,22 @@ def normalise(
         the limit are the values at the *low* and *high* fractions of the cumulative distribution function of
         the data.
     """
-    _ = datafile._col_args(scalar=True, ycol=target)
+    if base is not None and not istuple(base, float, float):
+        base = _single_column(datafile, base, "base")
+    _ = datafile._col_args(scalar=target is None, ycol=target)
 
     target = _.ycol
     if not isinstance(target, list):
         target = [datafile.find_col(target)]
+    source = datafile.to_numpy()
+    headers = list(datafile.column_headers)
+    inserted = []
     for t in target:
-        if header is None:
-            header = datafile.column_headers[datafile.find_col(t)] + "(norm)"
-        else:
-            header = str(header)
+        target_header = headers[t] + "(norm)" if header is None else str(header)
+        destination = t + sum(position <= t for position in inserted)
         if not istuple(base, float, float) and base is not None:
-            datafile.divide(t, base, header=header, replace=replace)
+            datafile.add_column(source[:, t] / source[:, base], index=destination,
+                                header=target_header, replace=replace)
         else:
             if istuple(base, float, float):
                 scale = base
@@ -360,7 +370,7 @@ def normalise(
                 scale = (-1.0, 1.0)
             if not istuple(scale, float, float):
                 raise ValueError("limit parameter is either None, or limit or base is a tuple of two floats.")
-            data = datafile.column(t).ravel()
+            data = source[:, t].ravel()
             data = np.sort(data[~np.isnan(data)])
             if limits != (0.0, 1.0):
                 low, high = limits
@@ -369,13 +379,16 @@ def normalise(
             else:
                 high = data.max()
                 low = data.min()
-            data = np.copy(datafile.column(t))
-            data = np.where(data > high, high, np.where(data < low, low, data))
+            data = np.ma.array(source[:, t], copy=True)
+            data = np.ma.where(data > high, high, np.ma.where(data < low, low, data))
             scl, sch = scale
             data = (data - low) / (high - low) * (sch - scl) + scl
             setas = datafile.setas.clone
-            datafile.add_column(data, index=t, replace=replace, header=header)
-            datafile.setas = setas
+            datafile.add_column(data, index=destination, replace=replace, header=target_header)
+            if replace:
+                datafile.setas = setas
+        if not replace:
+            inserted.append(t)
     return datafile
 
 
@@ -443,7 +456,7 @@ def stitch(
             :include-source:
             :outname:  stitch_int_overlap
     """
-    _ = datafile._col_args(xcol=xcol, ycol=ycol, scalar=True)
+    _ = datafile._col_args(xcol=xcol, ycol=ycol, scalar=True, single=("xcol", "ycol"))
     points = datafile.column([_.xcol, _.ycol])
     points = points[points[:, 0].argsort(), :]
     points[:, 0] += min_overlap
@@ -583,7 +596,7 @@ def threshold(
         positional argument list. In order to support the use of assigned columns, this has been swapped to the
         present order.
     """
-    _ = datafile._col_args(xcol=xcol, ycol=col)
+    _ = datafile._col_args(xcol=xcol, ycol=col, single=("xcol", "ycol"))
 
     col = _.ycol
     if xcol is None and _.has_xcol:

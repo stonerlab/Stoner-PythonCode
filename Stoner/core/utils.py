@@ -18,6 +18,7 @@ from numpy.typing import NDArray
 from ..compat import index_types
 from ..tools import copy_into, isiterable
 from ..tools.typing import Data, Index, NumericArray
+from .column_selection import _single_column
 
 
 @dataclass
@@ -80,7 +81,7 @@ def _assemble_col_data(col, datafile, return_data, attr):
     """Add one column to the y data."""
     match col:
         case _ if isinstance(col, index_types):
-            ydat = return_data.working[:, datafile.find_col(col)]
+            ydat = return_data.working[:, _single_column(datafile, col, attr)]
         case np.ndarray() if col.ndim == 1 and col.size == len(return_data.working):
             ydat = col
         case _:
@@ -104,9 +105,9 @@ def _assemble_sigma(sigma_n, datafile, return_data, col, ix, kwargs):
             sdat = np.ones_like(return_data.y)
             kwargs["scale_covar"] = True
         case list() if all(isinstance(s, index_types) for s in sigma_n) and len(sigma_n) == len(col):
-            sdat = return_data.working[:, datafile.find_col(sigma_n[ix])]
+            sdat = return_data.working[:, _single_column(datafile, sigma_n[ix], "sigma")]
         case _ if isinstance(sigma_n, index_types):
-            sdat = return_data.working[:, datafile.find_col(sigma_n)]
+            sdat = return_data.working[:, _single_column(datafile, sigma_n, "sigma")]
         case float():
             sdat = np.ones_like(return_data.y) * sigma_n
         case np.ndarray() if sigma_n.size == return_data.y.size:
@@ -161,7 +162,7 @@ def assemnle_data(datafile, **kwargs):
         ycol = _.ycol
 
     bounds = kwargs.pop("bounds", lambda x, y: True)
-    return_data.working = datafile.search(_.xcol, bounds)
+    return_data.working = datafile.search(datafile.find_col(_.xcol, first=True), bounds)
     return_data.working = ma.mask_rowcols(return_data.working, axis=0)
     return_data.working = return_data.working[~return_data.working.mask[:, 0]]
     # Now check for sigma_y and sigma_x and have them default to sigma (which in turn defaults to None)

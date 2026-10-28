@@ -8,6 +8,7 @@ import numpy as np
 
 from .storage import _copy_metadata
 from .base import TypeHintedDict
+from .column_selection import _single_column, _insertion_position
 
 
 def _merge_metadata(left, right):
@@ -31,8 +32,7 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         header = getattr(column_data, "column_headers", None)
     if isinstance(header, str):
         header = [header]
-    width = len(owner.column_ids)
-    index = width if index is None or index == width else datafile.find_col(index)
+    index = _insertion_position(datafile, index)
     owner.insert_columns(index, column_data, header, setas, overwrite=replace)
     return datafile
 
@@ -42,10 +42,10 @@ def del_column(datafile, col=None, duplicates=False):
     owner = datafile._require_storage_owner()
     headers = list(owner.headers)
     if duplicates:
-        target = None if col is None else headers[datafile.find_col(col)]
+        target = None if col is None else {headers[i] for i in datafile.find_col(col, force_list=True)}
         seen, deleted = set(), []
         for i, header in enumerate(headers):
-            if header in seen and (target is None or header == target):
+            if header in seen and (target is None or header in target):
                 deleted.append(i)
             seen.add(header)
     elif col is None or col is False:
@@ -81,7 +81,7 @@ def del_rows(datafile, col=None, val=None, invert=False):
             deleted = np.zeros(size, dtype=bool)
             deleted[np.arange(size)[col]] = True
     else:
-        column = datafile.find_col(col)
+        column = _single_column(datafile, col, "col")
         if callable(val):
             deleted = np.array(
                 [row[column] is not np.ma.masked and bool(val(row[column], row)) for row in datafile.rows()]
@@ -119,7 +119,7 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
     if len(swp) == 1 and isinstance(swp[0], list):
         swp = swp[0]
     for left, right in swp:
-        left, right = datafile.find_col(left), datafile.find_col(right)
+        left, right = _single_column(datafile, left, "left"), _single_column(datafile, right, "right")
         order[left], order[right] = order[right], order[left]
     return reorder_columns(datafile, order)
 
@@ -184,7 +184,7 @@ def append(datafile, other):
         order = {}
         for header in other:
             try:
-                order[header] = draft.find_col(header)
+                order[header] = draft.find_col(header, force_list=True)
             except (KeyError, re.error):
                 draft.add_column(np.ma.array(np.full(len(draft), np.nan), mask=True), header=header)
                 order[header] = draft.shape[1] - 1

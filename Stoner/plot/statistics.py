@@ -34,7 +34,7 @@ def _row_values(data, specification, name):
     if isinstance(specification, (Integral, str, Pattern)):
         positions = data.find_col(specification, force_list=True)
         if len(positions) != 1:
-            raise ValueError(f"{name} must select exactly one column.")
+            raise ValueError(f"{name} must select exactly one column; {specification!r} matched {positions!r}.")
         values = _numeric_column(data, positions[0])
     else:
         values = np.ma.asarray(specification)

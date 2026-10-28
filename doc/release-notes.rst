@@ -1,6 +1,38 @@
 Release notes
 =============
 
+Unreleased
+----------
+
+Column selectors now return all matches at the first successful matching stage:
+exact header equality, then case-sensitive whole-header glob matching when the
+string contains glob syntax, otherwise literal substring matching, and finally
+regular-expression search. Compiled patterns explicitly request regex matching
+and preserve their flags. Exact duplicate names select every occurrence.
+
+Use ``data.find_col(selector, first=True)`` to deliberately choose the first
+resolved column. Numeric strings remain names, and ``force_list=True`` retains
+list results. Methods requiring one coordinate or observation reject ambiguous
+explicit selections; general curve fitting retains multiple predictors and
+independent dependent channels. Renaming and mapping-row append apply to all
+selected columns. The native ``data.data`` DataFrame retains pandas lookup and
+alignment semantics.
+
+Column descriptions now use one immutable owner schema, with shared role parsing
+and grouping for bound and detached ``setas`` objects. Saved role/header views
+follow structural edits; cloned descriptions remain independent. Role changes
+validate before commit, and uncertainty columns in later x groups use absolute
+positions consistently. Intelligent defaults do not become stored assignments.
+Fitted results now re-enter the same owner boundary, keeping native DataFrame
+headers consistent with the column schema.
+
+Column ownership retains the composed schema and ordinary pandas columns.
+The custom Index prototype remains isolated: native pandas transforms do not
+automatically transport Stoner IDs, roles, masks or typed metadata. Use Stoner
+structural operations or lossless ``DataStorage`` interchange. The column
+selection guide now includes a runnable duplicate-channel example with
+explicit first selection, saved views and mask-preserving repetition.
+
 Version 0.12.0a4 (2026-10-26)
 --------------------------------
 

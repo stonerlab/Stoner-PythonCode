@@ -13,6 +13,7 @@ from ..tools import isiterable, islistlike, isnone, ordinal
 from .utils import GetAffineTransform, _twoD_fit
 from .utils import outlier as _outlier
 from ..core.selection import _reject_where
+from ..core.column_selection import _single_column, _insertion_position
 
 
 def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
@@ -107,7 +108,7 @@ def filter(datafile, func=None, cols=None, reset=True):  # pylint: disable=redef
         datafile: The current :py:class:`DataFile` object with the mask set
     """
     if cols is not None:
-        cols = [datafile.find_col(c) for c in cols]
+        cols = datafile.find_col(cols, force_list=True)
     if reset:
         datafile.mask = False
     for r in datafile.rows():
@@ -144,7 +145,7 @@ def del_nan(datafile, col=None, clone=False):
         col = [ix for ix, col in enumerate(datafile.setas) if col != "."]
     if not islistlike(col):  # If col isn't a list, make it one now
         col = [col]
-    col = [ret.find_col(c) for c in col]  # Normalise col to be a list of integers
+    col = ret.find_col(col, force_list=True)  # Normalise col to be a list of integers
     dels = np.zeros(len(ret)).astype(bool)
     for ix in col:
         dels = np.logical_or(
@@ -208,7 +209,7 @@ def SG_Filter(  # pylint: disable=invalid-name
     if points % 2 == 0:  # Ensure window length is odd
         points += 1
 
-    _ = datafile._col_args(scalar=False, ycol=col, xcol=xcol)
+    _ = datafile._col_args(scalar=False, ycol=col, xcol=xcol, single=("xcol",))
 
     if _.xcol is not None:
         if not isinstance(_.xcol, list):
@@ -306,21 +307,24 @@ def bin(
         User Guide section :ref:`binning_guide`
     """
     _reject_where(kwargs, "bin")
-    if None in (xcol, ycol):
-        cols = datafile.setas._get_cols()
+    cols = datafile.setas._get_cols()
+    if xcol is None or ycol is None:
         if xcol is None:
             xcol = cols["xcol"]
         if ycol is None:
             ycol = cols["ycol"]
     yerr = yerr if yerr is not None else cols.get("yerr")
 
+    xcol = _single_column(datafile, xcol, "xcol")
     bin_edges, bin_centres = datafile.make_bins(xcol, bins, mode, **kwargs)
-
-    xcol = datafile.find_col(xcol)
     ycol = datafile.find_col(ycol, force_list=True)
+    yerr = [] if yerr is None or yerr is False else datafile.find_col(yerr, force_list=True)
     if yerr:
-        yerr = datafile.find_col(yerr, force_list=True)
+        if len(yerr) not in (1, len(ycol)):
+            raise ValueError("Uncertainty columns must match the binned y channels")
         yerr = datafile.column(yerr)
+        if yerr.shape[1] == 1 and len(ycol) > 1:
+            yerr = np.ma.repeat(yerr, len(ycol), axis=1)
     else:
         yerr = None
 
@@ -439,7 +443,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
         If *kind* is callable, it should take x values in the first parameter and free fitting parameters as
         the other parameters (i.e. as with :py:meth:`~Stoner.core.data.Data.curve_fit`).
     """
-    _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False)
+    _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False, single=("xcol",))
     kinds = {
         "linear": lambda x, m, c: m * x + c,
         "quadratic": lambda x, a, b, c: a * x**2 + b * x + c,
@@ -557,6 +561,9 @@ def interpolate(datafile, newX, kind="linear", xcol=None, replace=False):
         xcol = datafile.setas._get_cols("xcol")
     elif isinstance(xcol, bool) and not xcol:
         xcol = None
+
+    if xcol is not None:
+        xcol = _single_column(datafile, xcol, "xcol")
 
     if isinstance(newX, ma.MaskedArray):
         newX = newX.compressed()
@@ -767,7 +774,7 @@ def outlier_detection(
 
     if action not in ["delete", "mask", "mask row"] and not callable(action):
         raise ValueError(f"Do'n know what to do with action={action}")
-    _ = datafile._col_args(scalar=True, ycol=column, **kwargs)
+    _ = datafile._col_args(scalar=True, ycol=column, single=("ycol",), **kwargs)
     column = _.ycol
     params = get_func_params(func)
     for p in params:
@@ -858,7 +865,7 @@ def scale(
             :include-source:
             :outname: scale
     """
-    _ = datafile._col_args(xcol=xcol, ycol=ycol)
+    _ = datafile._col_args(xcol=xcol, ycol=ycol, single=("xcol", "ycol", "yerr"))
     #
     # Sort out keyword srguments
     #
@@ -958,7 +965,8 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
         xcol(column index or None):
             Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.core.data.Data.setas`
         ycol (column index or None):
-            Data to be smoothed
+            Select all dependent channels to smooth. None uses assigned/default y
+            channels. Explicit x selectors must identify one coordinate column.
         size (int or float):
             If int, then the number of points to use in the smoothing window. If float, then the size in x-data
             to be used.
@@ -980,8 +988,9 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
         by the size and multiplying by the total lenfth. Then the data is interpolated to a new set of evenly
         space X over the same range, smoothed and then interpoalted back to the original x values.
     """
-    _ = datafile._col_args(xcol=xcol, ycol=ycol)
-    header = datafile.column_headers[_.ycol] if header is None else header
+    _ = datafile._col_args(xcol=xcol, ycol=ycol, scalar=False, single=("xcol",))
+    headers = [datafile.column_headers[yc] if header is None else header for yc in _.ycol]
+    anchor = None if result is True or result is False else _insertion_position(datafile, result)
 
     # Sort out window size
     if isinstance(size, float):
@@ -989,7 +998,7 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
         xl, xh = datafile.span(_.xcol)
         size = int(np.ceil((size / (xh - xl)) * len(datafile)))
         nx = np.linspace(xl, xh, len(datafile))
-        data = datafile.interpolate(nx, kind="linear", xcol=_.xcol, replace=False)
+        data = datafile.interpolate(nx, kind="linear", xcol=_.xcol, replace=False).copy()
         datafile["Smoothing window size"] = size
     elif isinstance(size, int_types):
         data = datafile.to_numpy()
@@ -1016,8 +1025,9 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
     # Fix return value
     if isinstance(result, bool) and not result:
         return data[:, _.ycol]
-    for yc in _.ycol:
-        datafile.add_column(data[:, yc], header=header, index=None if result is True else result, replace=replace)
+    for offset, (yc, channel_header) in enumerate(zip(_.ycol, headers)):
+        index = None if anchor is None else anchor + offset
+        datafile.add_column(data[:, yc], header=channel_header, index=index, replace=replace)
     return datafile
 
 
@@ -1072,7 +1082,9 @@ def spline(
     This is really just a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the
     extrapolate function.
     """
-    _ = datafile._col_args(xcol=xcol, ycol=ycol)
+    _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=sigma, single=("xcol", "ycol", "yerr"))
+    if sigma is not None and not isinstance(sigma, (np.ndarray, float, np.floating)):
+        sigma = 1.0 / datafile.column(_single_column(datafile, sigma, "sigma"))
     if sigma is None and (isnone(_.yerr) or _.yerr):
         if not isnone(_.yerr):
             sigma = 1.0 / (datafile // _.yerr)

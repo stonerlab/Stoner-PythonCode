@@ -181,28 +181,26 @@ class DataFileInterfacesMixin:
                 self.data[name] = value
 
     def count(self, value=None, axis=0, col=None):
-        """Count the number of un-masked elements in the :py:class:`DataFile`.
+        """Count unexcluded observations, optionally equal to a value.
 
-        Keywords:
-            valiue (float):
-                Value to count for
+        Keyword Arguments:
+            value (number or None):
+                Count only equal values; None counts all unexcluded observations.
             axis (int):
-                Which axis to count the unmasked elements along.
-            col (index, None):
-                Restrict to counting in a specific column. If left None, then the current 'y' column is used.
+                Reduction axis. Defaults to zero; None reduces all selected cells.
+            col (column selector or None):
+                Select all matching columns. None uses the first assigned/default y.
 
         Returns:
-            (int):
-                Number of unmasked elements.
+            int or numpy.ndarray:
+                Counts with NumPy reduction shapes. A scalar column selector
+                selects a vector; multiple matches select a two-dimensional array.
         """
-        _ = self._col_args(ycol=col)
-        if _.ycol is not None:
-            tmp = self.column(_.ycol)
-        else:
-            tmp = self.data
+        if col is None:
+            col = self._col_args().ycol
+        tmp = self.column(col) if col is not None else self.to_numpy()
         if value is not None:
-            args = np.argwhere(tmp == value)
-            return args.size
+            return np.ma.sum(tmp == value, axis=axis)
         return tmp.count(axis)
 
     def insert(self, index, obj):

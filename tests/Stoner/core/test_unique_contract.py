@@ -75,7 +75,7 @@ def test_finite_values_masks_and_optional_results(first, inverse, mask, expected
 
 @pytest.mark.parametrize("first,inverse", [(False, False), (True, False), (False, True), (True, True)])
 @pytest.mark.parametrize("selector,indices,mapping", [
-    ("key", [1, 0], [1, 0, 1]),
+    ("key", [1, 2, 0], [[2, 0], [1, 0], [2, 1]]),
     ([0], [1, 0], [[1], [0], [1]]),
     ([0, 1], [1, 2, 0], [[2, 0], [1, 0], [2, 1]]),
     (re.compile("^key$"), [1, 2, 0], [[2, 0], [1, 0], [2, 1]]),
@@ -85,7 +85,7 @@ def test_flattened_elements_and_shaped_inverse(first, inverse, selector, indices
     data = measurement([[3, 1], [2, 1], [3, 2]], headers=["key", "key"])
     result = data.unique(selector, return_index=first, return_inverse=inverse)
     values, found, groups = parts(result, first, inverse)
-    expected = [2, 3] if selector == "key" or selector == [0] else [1, 2, 3]
+    expected = [2, 3] if selector == [0] else [1, 2, 3]
     np.testing.assert_array_equal(values, expected)
     if first:
         np.testing.assert_array_equal(found, indices)

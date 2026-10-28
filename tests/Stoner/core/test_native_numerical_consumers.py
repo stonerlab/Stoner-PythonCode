@@ -48,7 +48,7 @@ def test_array_export_keeps_snapshot_contract_and_annotations(exposed):
 
 @pytest.mark.parametrize("columns, positions, shape", [(None, [0, 1, 2], (2, 3)),
                                                        (1, [1], (2,)), ([1], [1], (2,)),
-                                                       ("signal", [1], (2,)),
+                                                       ("signal", [1, 2], (2, 2)),
                                                        (re.compile("signal"), [1, 2], (2, 2)),
                                                        ([2, 1, 2], [2, 1, 2], (2, 3)),
                                                        (slice(1, None), [1, 2], (2, 2))])
@@ -142,10 +142,11 @@ def test_columns_preserve_masks_reset_and_iteration_lifetime(exposed):
 
 
 def test_column_extraction_keeps_duplicate_resolution_and_readonly_results(exposed):
-    """Retain Stoner's first exact match and all compiled-pattern matches."""
-    single = exposed.column("signal")
+    """Retain all duplicate matches and make first-column selection explicit."""
+    single = exposed.column(exposed.find_col("signal", first=True))
     multiple = exposed // re.compile("signal")
     assert single.shape == (5,) and multiple.shape == (5, 2)
+    np.testing.assert_array_equal(exposed.column("signal"), multiple)
     assert single.mask[1] and multiple.mask[2, 1]
     assert not single.flags.writeable and not multiple.flags.writeable
 
@@ -160,7 +161,7 @@ def test_selected_consumers_do_not_read_public_data(measurement, monkeypatch):
 
     monkeypatch.setattr(Data, "data", property(forbidden, descriptor.fset))
     assert measurement.asarray().shape == (5, 3)
-    assert measurement.column("signal").shape == (5,)
+    assert measurement.column("signal").shape == (5, 2)
     assert measurement.search("field", (0, 2), columns=[1, 2]).shape == (2, 2)
     assert len(list(measurement.columns())) == 3
     assert measurement == other

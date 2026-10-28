@@ -26,6 +26,7 @@ from .classes import (
     _prep_lmfit_p0,
 )
 from .selection import curve_fit_inputs as _curve_fit_inputs
+from ...core.column_selection import _insertion_position
 
 _lmfit = True
 
@@ -308,6 +309,7 @@ def _record_curve_fit_result(datafile, func, fit, settings):
     if settings.result is True:
         settings.result = datafile.shape[1]
     if store_result:
+        settings.result = _insertion_position(datafile, settings.result)
         datafile.add_column(new_col, index=settings.result, replace=settings.replace, header=settings.header)
     if settings.residuals and store_result:
         for residual_vals in residuals:
@@ -318,7 +320,7 @@ def _record_curve_fit_result(datafile, func, fit, settings):
                     case True:
                         residuals_idx = len(datafile.column_headers)
                     case _:
-                        residuals_idx = datafile.find_col(settings.result) + 1
+                        residuals_idx = _insertion_position(datafile, settings.result) + 1
             else:
                 residuals_idx = settings.residuals
             datafile.add_column(
@@ -616,7 +618,9 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         sigma (index):
             The index of the column with the y-error bars
         bounds (callable):
-            A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            A callable object that evaluates true if a row is to be included, of
+            the form f(x, row). For multiple predictors, x uses the first selected
+            predictor; all selected predictors remain available to the model.
         where (Boolean array, pandas.Series or None):
             Rows to include, intersected with bounds and the finite, non-excluded
             inputs required by each y channel. Labelled selectors must match the
@@ -760,7 +764,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         candidate = draft.export_storage()
         candidate.validate()
         owner._check_writable()
-        owner._state = candidate
+        owner._publish_storage(candidate)
     return retvals[0] if len(retvals) == 1 else retvals
 
 
@@ -1072,7 +1076,7 @@ def polyfit(
         This method is deprecated and may be removed in a future version in favour of the more general
             curve_fit
     """
-    _ = datafile._col_args(xcol=xcol, ycol=ycol, scalar=False)
+    _ = datafile._col_args(xcol=xcol, ycol=ycol, scalar=False, single=("xcol",))
 
     working = datafile.search(_.xcol, bounds)
     if not isiterable(_.ycol):

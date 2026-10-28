@@ -8,13 +8,13 @@ from numpy.typing import NDArray
 from ..compat import _pattern_type
 from ..tools import all_type, isiterable
 from ..tools.typing import Data, Index
+from ..core.column_selection import _single_column, _insertion_position
 
 
 def _do_error_calc(datafile: Data, col_a: Index, col_b: Index, error_type: str = "relative") -> NDArray[np.float64]:
     """Do an error calculation."""
-    col_a = datafile.find_col(col_a)
     if (
-        isinstance(col_a, (list, tuple)) and isinstance(col_b, (list, tuple)) and len(col_a) == 2 and len(col_b) == 2
+        isinstance(col_a, tuple) and isinstance(col_b, tuple) and len(col_a) == 2 and len(col_b) == 2
     ):  # Error columns on
         col_a, e1 = col_a
         col_b, e2 = col_b
@@ -69,9 +69,7 @@ def __get_math_val(datafile: Data, col: Index) -> Tuple[Data, str]:
     """
     match col:
         case int() | str() | _pattern_type():
-            col = datafile.find_col(col)
-            if isinstance(col, list):
-                col = col[0]
+            col = datafile.find_col(col, first=True)
             data = datafile.column(col)
             name = datafile.column_headers[col]
         case np.ndarray() if col.ndim == 1 and len(col) == len(datafile):
@@ -127,7 +125,7 @@ def add(
         header = f"{aname}+{bname}"
     if err_calc is not None and err_header is None:
         err_header = "Error in " + header
-    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    index = _insertion_position(datafile, index)
     if err_calc is not None:
         err_data = err_calc(adata, bdata)
     datafile.add_column((adata + bdata), header=header, index=index, replace=replace)
@@ -180,7 +178,7 @@ def diffsum(
         err_header = "Error in " + header
     if err_calc is not None:
         err_data = err_calc(adata, bdata)
-    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    index = _insertion_position(datafile, index)
     datafile.add_column((adata - bdata) / (adata + bdata), header=header, index=index, replace=replace)
     if err_calc is not None:
         datafile.add_column(err_data, header=err_header, index=index + 1, replace=False)
@@ -229,7 +227,7 @@ def divide(
         header = f"{aname}/{bname}"
     if err_calc is not None and err_header is None:
         err_header = "Error in " + header
-    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    index = _insertion_position(datafile, index)
     datafile.add_column((adata / bdata), header=header, index=index, replace=replace)
     if err_calc is not None:
         err_data = err_calc(adata, bdata) * np.abs(adata / bdata)
@@ -264,7 +262,7 @@ def max(  # pylint: disable=redefined-builtin
     if column is None:
         col = datafile.setas._get_cols("ycol")
     else:
-        col = datafile.find_col(column)
+        col = _single_column(datafile, column, "column")
     if bounds is not None:
         datafile._push_mask()
     try:
@@ -306,7 +304,7 @@ def mean(
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
     """
-    _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
+    _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma, single=("ycol", "yerr"))
 
     if bounds is not None:
         datafile._push_mask()
@@ -361,7 +359,7 @@ def min(  # pylint: disable=redefined-builtin
     if column is None:
         col = datafile.setas._get_cols("ycol")
     else:
-        col = datafile.find_col(column)
+        col = _single_column(datafile, column, "column")
     if bounds is not None:
         datafile._push_mask()
     try:
@@ -416,7 +414,7 @@ def multiply(
         header = f"{aname}*{bname}"
     if err_calc is not None and err_header is None:
         err_header = "Error in " + header
-    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    index = _insertion_position(datafile, index)
     if err_calc is not None:
         err_data = err_calc(adata, bdata) * np.abs(adata * bdata)
     datafile.add_column((adata * bdata), header=header, index=index, replace=replace)
@@ -482,7 +480,7 @@ def std(
         If column is not defined (or is None) the :py:attr:`DataFile.setas` column
         assignments are used.
     """
-    _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma)
+    _ = datafile._col_args(scalar=True, ycol=column, yerr=sigma, single=("ycol", "yerr"))
 
     if bounds is not None:
         datafile._push_mask()
@@ -554,11 +552,10 @@ def subtract(
         header = f"{aname}-{bname}"
     if err_calc is not None and err_header is None:
         err_header = "Error in " + header
-    index = datafile.shape[1] if index is None else datafile.find_col(index)
+    index = _insertion_position(datafile, index)
     if err_calc is not None:
         err_data = err_calc(adata, bdata)
     datafile.add_column((adata - bdata), header=header, index=index, replace=replace)
     if err_calc is not None:
-        col_a = datafile.find_col(col_a)
         datafile.add_column(err_data, header=err_header, index=index + 1, replace=False)
     return datafile

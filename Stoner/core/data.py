@@ -863,8 +863,11 @@ class Data(
                 value = value.T
             else:
                 raise RuntimeError("Value to be assigned to data columns is the wrong shape!")
-            for i, ix in enumerate(self.find_col(self.setas[name], force_list=True)):
-                self[:, ix] = value[:, i]
+            positions = [i for i, role in enumerate(self.setas) if role == name]
+            if value.shape[1] not in (1, len(positions)):
+                raise RuntimeError("Assigned data must match the number of role columns")
+            for i, ix in enumerate(positions):
+                self[:, ix] = value[:, 0 if value.shape[1] == 1 else i]
         elif isinstance(value, index_types):
             self._set_setas({name: value})
 

@@ -21,6 +21,7 @@ try:
     import pandas as pd
 except ImportError:
     pd = None
+from .column_selection import _single_column
 
 
 def search_index(datafile, xcol=None, value=None, accuracy=0.0, invert=False):
@@ -46,8 +47,8 @@ def search_index(datafile, xcol=None, value=None, accuracy=0.0, invert=False):
             One Boolean per row; numerical predicates retain input exclusions.
             Short Boolean selectors are padded with False before inversion.
     """
-    _ = datafile._col_args(scalar=False, xcol=xcol)
-    x = datafile.find_col(_.xcol, force_list=True)[0]  # Workaround in newer numpy
+    _ = datafile._col_args(scalar=False, xcol=xcol, single=("xcol",))
+    x = _single_column(datafile, _.xcol, "xcol")
     match value:
         case int() | float() | np.integer() | np.floating():
             ix = np.isclose(datafile.column(x), value, atol=accuracy)
@@ -118,7 +119,7 @@ def closest(datafile, value, xcol=None):
         To find which row it is that has been returned, use the explicitly prepared ``i`` annotation. It does not propagate
         through subsequent NumPy slicing or arithmetic.
     """
-    _ = datafile._col_args(xcol=xcol)
+    _ = datafile._col_args(xcol=xcol, single=("xcol",))
     xdata = np.abs(datafile // _.xcol - value)
     i = int(xdata.argmin())
     return datafile[i]
@@ -140,37 +141,44 @@ def column(datafile, col):
     return datafile._require_storage_owner()[:, col]
 
 
-def find_col(datafile, col, force_list=False):
-    """Indexes the column headers in order to locate a column of data.shape.
-
-    Indexing can be by supplying an integer, a string, a regular expression, a slice or a list of any of the above.
-
-    -   Integer indices are simply checked to ensure that they are in range
-    -   String indices are first checked for an exact match against a column header
-        if that fails they are then compiled to a regular expression and the first
-        match to a column header is taken.
-    -   A regular expression index is simply matched against the column headers and the
-        first match found is taken. This allows additional regular expression options
-        such as case insensitivity.
-    -   A slice index is converted to a list of integers and processed as below
-    -   A list index returns the results of feading each item in the list at :py:meth:`find_col`
-        in turn.
+def find_col(datafile, col, force_list=False, *, first=False):
+    """Resolve column positions using exact, glob/substring and regex matching.
 
     Args:
         datafile (Data):
-            Data object to work with if not being used as a bound method.
-        col (int, a string, a re, a slice or a list):
-            Which column(s) to retuirn indices for.
+            Instance when called without binding this function as a method.
+        col (int, str, re.Pattern, slice or sequence):
+            Selector. Exact names take precedence, followed by case-sensitive
+            whole-header glob or literal substring matching, then regex search.
+            Compiled regex selectors bypass the string stages and preserve flags.
+            Each successful stage returns all matches. Exact names containing
+            units or metacharacters take precedence over pattern interpretation.
+            Numeric strings select headers, not positional indices.
 
     Keyword Arguments:
         force_list (bool):
-            Force the output always to be a list. Mainly for internal use only
+            Always return a list. Retained as a positional argument for compatibility.
+        first (bool):
+            Return only the first match after validating the complete selector.
+            With force_list, return a singleton list. Defaults to False.
 
     Returns:
-        int, list of ints:
-            The matching column index as an integer or a KeyError
+        int or list of int:
+            All positions in column order. Integer selectors and singleton string
+            matches return integers; patterns, slices and collections return lists.
+            Selector collections retain their order and repeated positions.
+
+    Raises:
+        KeyError:
+            If a name/pattern has no matches, or first is requested on an empty selection.
+        IndexError:
+            If an integer position is out of bounds.
+        TypeError:
+            If a selector type is unsupported, including Boolean values.
+        re.error:
+            If regex fallback is required and the pattern is invalid.
     """
-    return datafile.setas.find_col(col, force_list)
+    return datafile.setas.find_col(col, force_list, first=first)
 
 
 def find_duplicates(datafile, xcol=None, delta=1e-8):
@@ -194,7 +202,7 @@ def find_duplicates(datafile, xcol=None, delta=1e-8):
         If *xcol* is not specified, then the :py:attr:`Data.setas` attribute is used. If this is also
         not set, then all columns are considered.
     """
-    _ = datafile._col_args(xcol=xcol)
+    _ = datafile._col_args(xcol=xcol, scalar=False)
     if not _.has_xcol:
         _.xcol = list(range(datafile.shape[1]))
     search_data = datafile.column(_.xcol).copy()
@@ -722,6 +730,7 @@ def split(datafile, *args, final="files"):
 
     match xcol:
         case int() | str() | _pattern_type():
+            xcol = _single_column(datafile, xcol, "xcol")
             for val in np.unique(datafile.column(xcol)):
                 newfile = datafile.clone
                 newfile.filename = f"{datafile.column_headers[datafile.find_col(xcol)]}={val} {datafile.filename}"
@@ -1021,22 +1030,30 @@ def insert_rows(datafile, row, new_data):
 
 
 def rename(datafile, old_col, new_col):
-    """Rename columns without changing the underlying data.
+    """Rename every selected column in place, preserving identities and roles.
 
     Args:
         datafile (Data):
-            Data object to work with if not being used as a bound method.
-        old_col (string, int, re):
-            Old column index or name (using standard rules)
-        new_col (string):
-            New name of column
+            Instance when called without binding this function as a method.
+        old_col (int, str, re.Pattern, slice or sequence):
+            Selector using the shared matching rules. Duplicate exact names
+            and every other match at the successful stage are renamed.
+        new_col (str):
+            Displayed header to assign to each selected column.
 
     Returns:
-        datafile:
-            A copy of the modified :py:class:`DataFile` instance
+        Data:
+            The same instance, with values, masks and metadata unchanged.
+
+    Notes:
+        Use ``find_col(old_col, first=True)`` as the selector to rename just
+        the first match. Saved header and role views follow the edit.
     """
-    old_col = datafile.find_col(old_col)
-    datafile.column_headers[old_col] = new_col
+    positions = datafile.find_col(old_col, force_list=True)
+    headers = list(datafile.column_headers)
+    for position in positions:
+        headers[position] = new_col
+    datafile.column_headers[:] = headers
     return datafile
 
 

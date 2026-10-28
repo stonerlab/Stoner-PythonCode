@@ -67,7 +67,17 @@ As a convenience, :py:class:`~Stoner.core.data.Data` also offers a useful method
    d.rename('old_name','new_name')
    d.rename(0,'new_name')
 
-Alternatively, one could just edit the column_headers attribute.
+Renaming uses all matches from the successful matching stage, including
+duplicate exact names. Use ``d.find_col(name, first=True)`` to choose one
+occurrence explicitly. Alternatively, edit ``d.column_headers`` through its
+fixed-width owner view. Both routes preserve identities, roles and masks.
+
+The ordinary pandas columns on ``d.data`` display the schema headers. Use
+Stoner operations for header or structural edits so that the schema and
+numerical state stay consistent. Assigning native ``frame.columns`` directly
+does not update Stoner's schema; detectable inconsistencies raise an error
+at the next owner boundary. See :doc:`data_interchange` for the limits of
+direct native mutation.
 
 Add columns
 ===========
@@ -107,7 +117,12 @@ list of column labels or indices and constructs a new data matrix out of those c
 Headers, column assignments, masks and column identities move with the data.
 The old options ``headers_too=False`` and ``setas_too=False`` are rejected:
 keeping those labels in place would give the moved measurements the wrong meaning.
-Both methods change the existing object and return it.
+Both methods change the existing object and return it. Repeating a column
+in ``reorder_columns`` copies its measurements, exclusions and role: its
+first occurrence retains the original ID and later occurrences receive
+fresh IDs. A saved ``d.setas`` or ``d.column_headers`` view follows these
+changes; a saved native frame may refer to retired state. For a runnable
+example, see :doc:`data_columns`.
 
 Combine measurements by rows or columns
 =======================================
@@ -239,8 +254,9 @@ the assigned x, y and z columns, or all columns if those roles are unset::
   d.sort('Temp', 'Gate', reverse=True)
 
 Keys use raw measurements, including excluded cells. The mask moves with each row. Data types, fill value, headers, column
-assignments, column identifiers and metadata are preserved. Exact duplicate names select the
-first matching column; use positions or compiled patterns to distinguish them.
+assignments, column identifiers and metadata are preserved. Exact duplicate names select all
+matching columns as ordered sort keys; use positions or ``d.find_col(name, first=True)``
+to choose one occurrence.
 Rows with equal sort keys keep their original order in an ascending sort.
 Real NaNs are placed last. ``reverse=True`` reverses that entire result, including
 the order of tied rows and the position of NaNs. Row numbering starts at zero

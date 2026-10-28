@@ -55,14 +55,15 @@ def test_construction_detaches_inputs():
     assert package.excluded[0, 0]
 
 
-@pytest.mark.parametrize("selector, expected", [("Moment", 1), (re.compile("Moment"), [1, 2]),
+@pytest.mark.parametrize("selector, expected", [("Moment", [1, 2]), (re.compile("Moment"), [1, 2]),
                                                 (-1, 2), ([2, 0, 2], [2, 0, 2]),
                                                 (slice(None, None, -1), [2, 1, 0]),
                                                 (np.array([0, 2]), [0, 2])])
 def test_resolution(package, selector, expected):
     """Resolve duplicate names and positional collections with stable shapes."""
     assert resolve_columns(package.schema, selector) == expected
-    assert resolve_columns(package.schema, "Moment", force_list=True) == [1]
+    assert resolve_columns(package.schema, "Moment", force_list=True) == [1, 2]
+    assert resolve_columns(package.schema, "Moment", first=True) == 1
 
 
 @pytest.mark.parametrize("selector, error", [("3", KeyError), (-4, IndexError), (3, IndexError),

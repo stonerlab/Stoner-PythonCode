@@ -7,6 +7,7 @@ exclusions remain separate so masked integers survive a lossless round trip.
 from collections.abc import Sequence
 from copy import deepcopy
 from dataclasses import dataclass
+from fnmatch import fnmatchcase
 import re
 from uuid import UUID, uuid4
 import warnings
@@ -46,19 +47,41 @@ class Column:
             raise ValueError("Column role must be one character from xyzdefuvw.")
 
 
-def resolve_columns(schema, selector, *, force_list=False):
+def _has_glob(pattern):
+    """Recognise wildcards and complete bracket expressions without compiling regex."""
+    if "*" in pattern or "?" in pattern:
+        return True
+    start = pattern.find("[")
+    while start >= 0:
+        end = start + 1
+        if pattern[end:end + 1] == "!":
+            end += 1
+        if pattern[end:end + 1] == "]":
+            end += 1
+        if pattern.find("]", end) >= 0:
+            return True
+        start = pattern.find("[", start + 1)
+    return False
+
+
+def resolve_columns(schema, selector, *, force_list=False, first=False):
     """Resolve a Stoner selector against an ordered column schema.
 
     Args:
         schema (sequence of Column):
             Ordered displayed headers and identities.
         selector (int, str, re.Pattern, slice or sequence):
-            Integers use ordinary negative bounds. Exact names precede patterns;
-            string patterns select the first match, compiled patterns every match.
+            Integers use ordinary negative bounds. Strings try exact equality,
+            then whole-header glob or literal substring, then regex search.
+            Each successful stage returns all matches. Compiled patterns bypass
+            the string stages and preserve their flags.
 
     Keyword Arguments:
         force_list (bool):
             Return a list even for a single positional or string result.
+        first (bool):
+            Return only the first position after validating the whole selector.
+            Empty selections raise KeyError. With force_list, return a singleton list.
 
     Returns:
         int or list of int:
@@ -85,7 +108,14 @@ def resolve_columns(schema, selector, *, force_list=False):
         result = list(range(count))[selector]
     elif isinstance(selector, str):
         matches = [i for i, column in enumerate(schema) if column.header == selector]
-        result = matches[0] if matches else resolve_columns(schema, re.compile(selector))[0]
+        if not matches:
+            if _has_glob(selector):
+                matches = [i for i, column in enumerate(schema) if fnmatchcase(column.header, selector)]
+            else:
+                matches = [i for i, column in enumerate(schema) if selector in column.header]
+        if not matches:
+            matches = resolve_columns(schema, re.compile(selector))
+        result = matches[0] if len(matches) == 1 else matches
     elif isinstance(selector, re.Pattern):
         result = [i for i, column in enumerate(schema) if selector.search(column.header)]
         if not result:
@@ -98,6 +128,10 @@ def resolve_columns(schema, selector, *, force_list=False):
             result.extend(resolve_columns(schema, item, force_list=True))
     else:
         raise TypeError(f"Unsupported column selector: {type(selector).__name__}")
+    if first and isinstance(result, list):
+        if not result:
+            raise KeyError("Selection matched no columns")
+        result = result[0]
     return [result] if force_list and isinstance(result, int) else result
 
 
@@ -133,7 +167,10 @@ def _validate_table(state, *, native=False):
     if not isinstance(state.values, pd.DataFrame):
         raise TypeError("Storage values must be a DataFrame")
     _numeric_dtype(state.dtype)
-    if not isinstance(state.schema, (list, tuple)) or any(not isinstance(col, Column) for col in state.schema):
+    from .column_schema import ColumnSchema
+
+    schema_types = (list, tuple, ColumnSchema) if native else (list, tuple)
+    if not isinstance(state.schema, schema_types) or any(not isinstance(col, Column) for col in state.schema):
         raise TypeError("Schema must be an ordered sequence of Column records")
     identities = [col.id for col in state.schema]
     labels = [col.header for col in state.schema] if native else identities

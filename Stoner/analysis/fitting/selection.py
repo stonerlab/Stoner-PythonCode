@@ -5,6 +5,7 @@ from copy import deepcopy
 import numpy as np
 
 from ...core.selection import resolve_selection
+from ...core.column_selection import _single_column
 
 
 def _observations(datafile, specification, raw, *, uncertainty=False):
@@ -16,7 +17,7 @@ def _observations(datafile, specification, raw, *, uncertainty=False):
         return values
     if uncertainty and isinstance(specification, (float, np.floating)):
         return np.ma.array(np.full(len(datafile), specification))
-    return raw[:, datafile.find_col(specification)]
+    return raw[:, _single_column(datafile, specification, "observation")]
 
 
 def curve_fit_inputs(datafile, xcol, ycol, sigma, where, bounds):
@@ -29,11 +30,13 @@ def curve_fit_inputs(datafile, xcol, ycol, sigma, where, bounds):
     model_mask = np.any(np.ma.getmaskarray(x) | ~np.isfinite(x.data), axis=1)
     selected = resolve_selection(where, datafile._storage_owner._state.values)
     if bounds is not None:
-        selected &= np.asarray(datafile.search_index(columns.xcol, bounds), dtype=bool)
+        selected &= np.asarray(datafile.search_index(xcols[0], bounds), dtype=bool)
     ycols = [ycol] if isinstance(ycol, np.ndarray) else columns.ycol
     if not ycols:
         raise ValueError("No y channels were specified for fitting")
     errors = sigma if sigma is not None else columns.yerr
+    if errors is not None and not isinstance(errors, (list, np.ndarray, float, np.floating)):
+        errors = datafile.find_col(errors, force_list=True)
     if isinstance(errors, list):
         if len(errors) == 0:
             errors = [None] * len(ycols)

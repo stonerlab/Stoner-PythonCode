@@ -7,6 +7,7 @@ from numpy import any as np_any
 from numpy import append, array
 
 from ..tools import isiterable
+from ..core.column_selection import _single_column
 
 
 def concatenate(folder, sort=None, reverse=False):
@@ -120,9 +121,9 @@ def gather(folder, xcol=None, ycol=None):
     def _gatherer(group, _, xcol=None, ycol=None, xerr=None, yerr=None, **kwargs):
         yerr = None
         xerr = None
-        cols = group[0]._col_args(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False)
+        cols = group[0]._col_args(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, scalar=False, single=("xcol", "xerr"))
         lookup = xcol is None and ycol is None
-        xcol = cols["xcol"][0]
+        xcol = _single_column(group[0], cols["xcol"], "xcol")
 
         if cols["has_xerr"]:
             xerr = cols["xerr"]

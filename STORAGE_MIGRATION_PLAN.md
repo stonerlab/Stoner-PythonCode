@@ -77,9 +77,11 @@ transition and any remaining Python 3.15 readiness work.
 - Maintain one authoritative set of values per object. NumPy representations for
   numerical algorithms are temporary conversions with explicit ownership and
   writeback rules; do not maintain competing mutable array and frame stores.
-- Keep Stoner column resolution above ordinary pandas indexes. Exact names take
-  precedence over pattern matching. Do not make a custom pandas `Index` the
-  foundation of query semantics or alter native alignment rules.
+- Keep ordinary pandas lookup and alignment semantics during consolidation.
+  The [column schema follow-on plan](#column-schema-and-setas-consolidation-2026-10-27)
+  defines revised Stoner matching and records the isolated custom `Index`
+  experiment. CS5 retains the composed schema and ordinary pandas columns;
+  custom Index adoption is rejected for this consolidation.
 - Retain the public `setas` interface. Use an ordered schema with stable column
   identities, displayed headers and roles so duplicate names, renaming and
   reordering are representable. Final schema details belong to batch 2.
@@ -106,12 +108,13 @@ Data                         ImageFile / ImageStack
 
 ### Columns and roles
 
-Preserve integer/negative indices, exact names, regex/partial matching, slices and
-collections through the shared resolver. The current implementation treats a
-string pattern as first-match selection but a compiled pattern can return several
-columns. Characterise this difference before retaining or explicitly changing it.
-Record duplicate-name behaviour, invalid patterns, no-match exceptions, numeric
-strings, return shapes and assignment semantics as well as successful lookup.
+Preserve integer/negative indices, slices and collections through the shared
+resolver. The approved follow-on direction replaces string first-match behaviour
+with all matches, adds exact/glob/substring/regex precedence, and provides explicit
+`first=True` selection. See the [column schema follow-on plan](#column-schema-and-setas-consolidation-2026-10-27)
+for return shapes, migration batches and the custom index decision gate. Matching
+and caller migration are implemented in CS2; schema consolidation and Index
+assessment remain separate work.
 
 Preserve string, mapping and callable `setas` forms; repeated y columns;
 `x/y/z`, `d/e/f` uncertainties and `u/v/w` components; multiple x groups; and
@@ -2022,3 +2025,899 @@ Peaks are traced allocations during the operation, not total process RSS.
 Construction is a narrower prototype than full legacy Data initialisation.
 Loading the real CoreTest fixture plus the conversion bridge took 34.502 ms
 versus 35.282 ms legacy; it is not a general loader-performance claim.
+
+## Column schema and setas consolidation (2026-10-27)
+
+Status: CS1-CS5 complete. Retain the composed schema; custom Index adoption
+is rejected for this consolidation. CS6 documentation and local validation are
+complete; final-revision hosted validation and overall closure remain open.
+This is a follow-on to completed Stages 1-9. Matching
+precedence, all-match defaults and explicit first selection are agreed directions.
+The [caller inventory](maintenance/column-schema-audit.md) records the implemented
+matching/cardinality contracts, composed ownership, CS4 evidence and the CS5 decision.
+
+### Outcome and ownership
+
+Consolidate column identity, headers, roles, matching and group inference behind
+one schema API. Retain public `setas`, ordinary DataFrame access through
+`Data.data`, explicit masks and typed metadata. CS5 retains CS3's composed
+ColumnSchema as the sole authority for column records, following the CS4
+comparison. Displayed DataFrame labels remain an ordinary pandas projection.
+
+Current source boundaries:
+
+- `Stoner/core/storage.py`: immutable `Column(id, header, role)`, shared
+  `resolve_columns`, validated version-one `DataStorage` interchange.
+- `Stoner/core/column_schema.py`: authoritative immutable ordered records,
+  field/structural updates and shared pure role parsing/group derivation.
+- `Stoner/core/storage_owner.py`: `_TableState` owns frame and ColumnSchema;
+  `_SchemaField` exposes durable views and synchronises the header projection.
+  `_publish_storage` converts prepared interchange packages to owner state.
+- `Stoner/core/storage_bridge.py`: `_BoundSetas` reads the current owner schema
+  directly; `_ResolvedSetas = Setas` remains only as a legacy pickle alias.
+- `Stoner/core/setas.py`: bound/detached facade over shared role operations,
+  with fresh groups instead of persistent derived-role caches.
+- `Stoner/core/column_selection.py`, plot and fitting selection modules:
+  explicit cardinality contracts using the shared resolver. Error-group
+  positions are absolute; separate bridge/plot corrections are removed.
+
+Maintain one authoritative ordered collection of Column records. Headers, roles
+and bound `setas` are views, with no competing mutable lists. Temporary drafts
+are permitted for atomic edits. Saved views reacquire current owner state after
+structural operations; detached Setas objects and numerical snapshots remain
+independent. Do not combine this work with an image-coordinate redesign, dependency
+changes or a release. Preserve version-one package interchange unless separately
+reviewed evidence requires changing it.
+
+### Matching and cardinality contract
+
+For string selectors, stop at the first stage with any matches:
+
+1. Exact equality: return every identically named column.
+2. If glob syntax is present, try whole-header case-sensitive glob matching.
+   Otherwise try case-sensitive literal substring matching.
+3. If stage 2 finds nothing, compile the original string as a regex and search
+   all headers.
+
+Compiled regex selectors bypass string stages and preserve flags. Return all
+matches from the successful stage in column order; never combine later-stage
+matches. Failed globs go directly to regex, without a substring stage. Use
+platform-independent semantics equivalent to `fnmatchcase`, including on Windows.
+Glob syntax means `*`, `?`, or a complete bracket expression accepted by the glob
+parser; unmatched brackets alone do not trigger glob dispatch. Exact matching
+always wins, including literal metacharacters. Do not add path semantics, shell
+escaping or brace expansion.
+
+| Selector | Headers | Positions and interpretation |
+| --- | --- | --- |
+| `signal` | `signal`, `signal`, `signal error` | `[0, 1]`, exact only |
+| `sig` | `signal`, `signal error`, `field` | `[0, 1]`, substring |
+| `sig*` | `signal`, `signal error`, `field` | `[0, 1]`, glob |
+| `s?g` | `sig`, `sag`, `signal` | `[0, 1]`, whole-header glob |
+| `^sig` | `signal`, `field` | `[0]`, regex fallback |
+| compiled `signal` | `signal`, `signal error` | `[0, 1]`, regex directly |
+
+Add the same keyword-only option to shared resolution and public entry points:
+`find_col(selector, force_list=False, *, first=False)`.
+
+- Internally resolve an ordered list of positions. Integer/negative selectors
+  remain positional and Boolean selectors invalid. Collections flatten in
+  selector order, preserving repeats; slices retain positional semantics.
+- Compatibility shape established in CS1: integer selectors return integers; strings
+  return an integer for one match and a list for several. Compiled patterns,
+  slices and collections retain list results, including singleton lists.
+  `force_list=True` always returns a list. Multi-match strings never discard
+  matches; avoid a separate blanket return-type change.
+- `first=True` selects the first position of the resolved result, including
+  compiled patterns and collections; return an integer, or a singleton list with
+  `force_list=True`. Validate the complete selector before truncating, so invalid
+  later collection members are not hidden.
+- Empty slices/collections return `[]` by default; `first=True` raises `KeyError`
+  with a useful no-column message. Missing names/patterns raise `KeyError`, invalid
+  positions `IndexError`, invalid fallback regex `re.error`. Numeric strings
+  remain names/patterns, without positional coercion.
+- Exactly-one consumers validate cardinality and report the selector and matched
+  positions/headers. Intentional-first consumers explicitly request `first=True`.
+  Multi-column consumers accept all matches, including assignment where supported.
+
+Glob implementations may compile regex internally. The objective is cheap exact
+and substring matching with deferred pattern work. Protect dispatch as well as
+timing: successful exact/substring paths must not compile fallback regex;
+successful glob paths must not additionally invoke fallback regex matching.
+
+This deliberately changes string selection. Regex text that matches a header as
+a literal substring stops at that stage; callers requiring regex interpretation
+pass a compiled pattern. Document this and duplicate all-match selection in
+migration notes. Do not introduce a global legacy-matching mode.
+
+### Schema and setas design
+
+Introduce internal `ColumnSchema`, initially using existing immutable Column
+records. It provides shared resolution, first/exactly-one handling, validated
+header/role replacement and structural selection/insertion/deletion/combination.
+Put stable-ID rules in that layer. Share pure assignment parsing and group
+derivation between bound and detached Setas forms; inferred defaults do not become
+explicit stored roles. Keep the schema interface independent of pandas subclassing
+so the composed implementation and prototype can share scientific logic.
+
+Retain `Setas` as the compatibility facade for callable, mapping, sequence,
+arithmetic, clone, reset/unset and encoded-string forms, including established
+iteration and return-to-Data conventions. Preserve repeated y roles, multiple x
+groups, `d/e/f` uncertainties, `u/v/w`, `startx`, `no_guess` and intelligent
+defaults. Derive absolute positions consistently; remove bridge/plot corrections
+only when regressions establish equivalent intended scientific behaviour.
+
+Prepare all replacement records before committing. Invalid parsing, role edits
+or structure changes leave values, masks, schema and metadata unchanged. Preserve
+transaction guards and draft detachment. Renaming/role changes retain IDs;
+reordering follows IDs; repeated selection retains the original ID for its first
+occurrence and creates fresh IDs for extra occurrences, as current tests require.
+
+### Work batches and gates
+
+- [x] **CS1 - Characterise and specify.** Inventory all `find_col`, legacy Setas
+  resolution, `_col_args` and direct schema consumers, including dynamic methods,
+  folders, loaders, fitting, plotting and numerical results. Classify each as
+  multi-column, exactly-one, intentional-first or structural insertion point.
+  Protect role groups, masks, IDs and return contracts with focused tests; record
+  final API shapes and exceptions above. Treat insertion positions separately
+  from selecting existing columns. Gate met: [caller inventory and contracts](maintenance/column-schema-audit.md)
+  plus `tests/Stoner/core/test_column_cardinality.py`; see the CS1 handover below.
+- [x] **CS2 - Matching and caller migration.** Implement matching and `first`
+  once; route Data and detached Setas through it. Update audited callers in the
+  same batch so all-match results never reach unchecked scalar assumptions.
+  Preserve multivariate fitting where supported instead of globally restricting
+  x to one column. Specify assignment broadcasting, overlapping/conflicting
+  assignments and per-match role assignment. Gate: resolver, assignment, fitting,
+  plotting, folder and format regressions pass; no blanket `[0]` or `first=True`
+  conversion to hide callers' cardinality requirements. Gate met locally; see the
+  CS2 handover for full/final-focused results and validation boundaries.
+- [x] **CS3 - Consolidate schema and setas.** Introduce composed ColumnSchema,
+  shared parsing/grouping and a thin owner-bound facade. Migrate structural owner
+  operations, then remove redundant snapshots/reconciliation. Cover saved views,
+  clone independence, reset/clear, rollback and multiple-x error grouping. Gate:
+  one authoritative schema, no persistent duplicate role state and equivalent
+  scientific behaviour apart from CS2's documented matching changes. Gate met:
+  1,613 full-suite passes; see the CS3 handover for ownership and compatibility proof.
+- [x] **CS4 - Prototype custom Index.** Add a runnable isolated experiment under
+  `maintenance/column_index_prototype/`, following the existing storage prototype
+  convention. Production Stoner must not import it. Compare CS3 composition with
+  an actual `pd.Index` subclass installed on `DataFrame.columns`, sharing schema
+  algorithms and fixtures. Flat index values remain displayed headers with exact
+  pandas lookup; immutable IDs/roles are owned by the index. Expose Stoner matching
+  explicitly, without fuzzy native `get_loc()` behaviour. The experimental owner
+  derives schema from `frame.columns`, retaining no second authoritative schema.
+  Gate met: isolated executable comparison on pandas 2.2.3 and 3.0.5, including
+  failures, private hooks and paired timings; see the CS4 handover below.
+- [x] **CS5 - Ownership decision.** Retain CS3 composition; reject custom Index
+  adoption for this consolidation. The criteria and CS4 evidence are recorded
+  in the CS5 decision below, including propagation/lifecycle constraints.
+  Gate met: explicit maintainer decision, ordinary pandas labels retained and
+  prototype isolated. No production Index integration batch is needed.
+- [ ] **CS6 - Documentation and validation.** Update API/guide selection and
+  setas prose, migration/release notes and runnable scientific examples. Run the
+  full supported local suite and existing hosted matrix/lower-dependency jobs
+  for the final implementation. Compare documentation warnings to the reviewed
+  baseline. Refresh plot caches only where changed examples require it. Gate:
+  documented behaviour, no unexplained regressions and separate local/hosted proof.
+  Local documentation/example, full-suite and Sphinx gates are met; the CS6
+  checklist below keeps final-revision hosted validation and closure open.
+
+CS2's shared public behaviour and audited callers land atomically. CS3 is useful
+independently of the Index decision and must not require both schema stores.
+
+### Index experiment and adoption criteria
+
+Compare both designs using identical operations and record labels, ordered IDs,
+roles, masks, metadata, result types, sharing/detachment and mutation outcomes.
+Cover construction/empty axes, exact duplicate lookup, domain matching,
+copy/deepcopy, saved bound views, rename, role changes, `iloc`/`loc` selection,
+take/reorder/repeat/drop/insert, concat on both axes, reindex/alignment, Series
+extraction and conversion back, export/import and pandas pickle round trips.
+Include ordinary pandas objects in combinations and replacement of columns by
+an ordinary Index.
+
+For native structural transformations classify schema preservation, deliberate
+loss at an export boundary or rejection when re-entering Stoner. Never reconstruct
+lost IDs/roles from duplicate header text. Ordinary column replacement must be
+detectable or explicitly unsupported; silently regenerating existing identities
+is unacceptable. Column propagation alone cannot transform the external mask;
+Stoner structural operations still commit values and masks together.
+
+Index immutability means replacing the index for role/header edits. Verify saved
+bound views remain current and native equality/hashing/alignment depends on labels,
+independently of roles/UUIDs. Role changes must not change native label alignment.
+Specify role/identity conflicts in combinations instead of relying on accidental
+left/right metadata propagation. Catalogue unsupported operations and private
+pandas hooks. Ordinary duplicate-header selection must still return all columns.
+
+Use verified supported Conda environments and record Python/pandas/NumPy versions,
+including the supported lower pandas bound and current environment. Retain commands
+and source fingerprints. Measure paired exact/substring/glob/regex lookup,
+setas reads/edits, rename, reorder, clone and repeated selection for realistic
+narrow tables and wider schemas. Report warm medians and allocations separately;
+keep raw evidence under ignored `maintenance/runs/`. Verify metadata-only edits
+do not copy numerical values.
+
+Adopt only if Index ownership removes independent schema/header synchronisation,
+preserves saved views, identities, roles, masks and native pandas contracts, and
+reduces overall complexity after propagation hooks and validation are counted.
+No silent schema loss is acceptable within supported Stoner operations. Fewer
+fields in `_TableState` or small timing gains alone are insufficient. Unsupported
+native transformations need a clear detectable boundary. Substantial reliance on
+fragile private APIs weighs against adoption and must be recorded explicitly.
+
+### Validation map and handover
+
+Start with `tests/Stoner/core/test_storage.py`, `test_storage_bridge.py`,
+`test_storage_contracts.py`, `test_storage_native_labels.py`,
+`test_storage_native_owner.py`, `test_storage_structural.py` and
+`test_native_public_storage.py`, plus Setas/column, fitting, plotting, folder and
+format tests identified in CS1. Add cases for literal metacharacters, precedence,
+glob-to-regex fallback, case sensitivity, compiled flags, invalid patterns, empty
+inputs, duplicates, overlapping collections, `first`/`force_list`, broadcasting
+and rollback. Include real instrument headers containing units and brackets.
+
+The planning batch verified devel, the remote and a clean tree before writing the
+plan. CS1 established the audit, CS2 implemented matching/caller contracts and CS3
+consolidated schema/role ownership. CS4 now supplies the isolated Index
+comparison against that composed baseline. CS5 records the decision to retain
+composition. CS6's local gates are met; next observe hosted validation of the
+final reviewed revision before overall closure. Production custom Index
+integration is outside the accepted scope.
+
+### CS1 handover (2026-10-27)
+
+The [active audit](maintenance/column-schema-audit.md) covers 130 production call
+sites in 87 enclosing functions: 75 `find_col`, 28 `_col_args`, 16 `_get_cols` and
+11 shared/plot `resolve_columns` calls. Source searches also cover dynamic method
+attachment, direct schema access, numerical annotations, folders and loader role
+assignment. Every caller is classified as multi-column, exactly-one,
+intentional-first, insertion-anchor, resolver forwarding or group/default logic.
+
+Decisions and findings for CS2:
+
+- Keep mixed return shapes as specified above; add keyword-only `first=False`
+  everywhere while retaining positional `force_list`. Validate full collections
+  before truncating; do not interpret numeric strings as positions.
+- Keep `_col_args(scalar=True)` as an explicit first conversion, rather than
+  silently redefining its established helper contract. Exactly-one consumers
+  must validate explicit input before that conversion. Default role choices can
+  still select the first assigned channel.
+- General curve fitting supports several predictor columns and independent y
+  channels/masks. Plot x/z/u/v/w and per-row weight/uncertainty selectors require
+  one column; plotting already checks this before selecting x `[0]`.
+- Fix implicit truncation in composite duplicate keys, documented multi-target
+  normalisation, multi-channel smoothing/integration and folder gathering's
+  list-shaped-x assumption. Scalar row predicates and min/max row indices need
+  exactly-one checks, not flattened numerical results.
+- Preserve the documented first arithmetic-operand convention explicitly; parse
+  value/error tuples before resolving so two matches cannot become an accidental
+  uncertainty pair. Insertion/result anchors require one position and retain the
+  separate append sentinel at width/None.
+- Renaming broadcasts the new header to all selected columns. Mapping row append
+  broadcasts a scalar to every match; unspecified columns stay masked. Role edits
+  broadcast one role or require an equal-length role list. Overlaps follow input
+  order with later writes winning; late invalid edits roll back atomically.
+- Standalone Setas currently repeats the first duplicate position for compiled
+  patterns, while bound Setas retains distinct positions. Header-to-role mapping
+  fails when resolution returns a list. Both are strict CS2 specifications, not
+  compatibility behaviour to preserve.
+
+The new contract file has 48 passing cases and 50 strict expected failures for
+unimplemented CS2 contracts, across schema, Data, bound/cloned/numerical and
+standalone Setas entry points. Pending cases specify all-match strings,
+glob/substring precedence, explicit first/full validation, standalone duplicates,
+reverse role mapping, exactly-one search, duplicate rename/mapping append and
+composite keys. Remove each strict xfail when implementing its contract; existing
+first-match characterisation tests must change in the same CS2 batch.
+
+Validation uses Miniforge `py314`, Python 3.14.7, pandas 3.0.5, NumPy 2.5.2 and
+pytest 9.1.1. All 39 Conda specifications in `tests/test-env.yml` were checked and
+satisfied; Stoner imports from this checkout. Use `conda run` so native DLL paths
+are activated, with `MPLBACKEND=Agg` and `QT_QPA_PLATFORM=offscreen`.
+
+Final focused suite: **390 passed, 50 strict xfailed, zero failures/errors**, in
+66.48 seconds. Coverage includes the new contracts; core storage, Setas and native
+numerical consumers; analysis columns, storage consumers and operation selection;
+fitting mixins; plot accessor/statistics; and folders. There were 77 warnings from
+SciPy ODR deprecation, documented lossy pandas exports and nptdms dtype assignment.
+An earlier run's folder saving fixture failed because the pytest output parent
+did not exist; creating that parent fixed the runner setup, with no source change.
+JUnit evidence: ignored `maintenance/runs/cs1-verified/pytest.xml`; the independent
+final-contract/operation-selection run is in `maintenance/runs/cs1-final/pytest.xml`.
+`git diff --check` passes. No claim is made about a full-suite run,
+lower-dependency execution or hosted CI in this CS1 batch.
+
+### CS2 handover (2026-10-27)
+
+Matching and caller migration are implemented on `devel`, preserving the existing
+CS1 planning/audit edits. There is no schema-ownership replacement or custom Index
+in production. The [active inventory](maintenance/column-schema-audit.md) retains
+the CS1 call-site snapshot and records CS2 closure for the next consolidation.
+
+Implemented behaviour:
+
+- `core/storage.py::resolve_columns` is the shared implementation for schema,
+  Data and bound/cloned/numerical/standalone Setas. Strings select all exact
+  matches, otherwise case-sensitive whole-header glob matches when glob syntax
+  exists or literal substring matches otherwise, then regex search on failure.
+  A compiled pattern bypasses string stages and preserves flags. Exact and
+  successful substring paths do not compile regex; successful glob matching
+  does not additionally compile the original string as fallback regex.
+- Public `find_col(col, force_list=False, *, first=False)` retains singleton
+  string/integer shapes and list results for patterns/slices/collections. `first`
+  validates the full selector before truncation, including invalid later members
+  and empty selections. Numeric strings stay names and Boolean selectors remain
+  invalid. There is no global legacy mode.
+- Private helpers in `core/column_selection.py` enforce exactly-one selectors
+  and insertion anchors, reporting the selector and matching positions/headers.
+  `_col_args(single=(...))` checks explicit inputs before scalar conversion;
+  `_col_args(scalar=True)` retains its established deliberate-first policy for
+  defaults and callers that request it. Existing plotting guards remain intact.
+- Audited scalar predicates, reductions, coordinate axes and result destinations
+  reject ambiguity. General curve fitting and legacy fitting assembly retain
+  multiple predictors/channels. Bounds deliberately uses the first predictor
+  without truncating the matrix supplied to the model. Arithmetic explicitly
+  retains first-operand selection; value/error tuple syntax is recognised before
+  matching so two name matches cannot become an accidental uncertainty pair.
+- Multi-column paths now flatten selectors, use all duplicate names in sorting,
+  unique/search results, deletion, renaming and mapping append, and retain source
+  order/repeats. Mapping scalars broadcast and later keys override overlaps.
+  Role mapping works in both directions; bound role sequences validate length
+  and values before commit. Role data writes use positions, avoiding repeated
+  expansion of identical headers. Encoded Setas subtraction retains its grammar
+  before header matching, including no-op dot/dash placeholders.
+- Documented multi-target normalisation, smoothing and integration use every
+  channel. Normalisation reads an independent source snapshot so reversed target
+  order and inserted result columns cannot redirect later operands; masks remain
+  intact. Binning accepts shared or per-channel errors. Folder gathering handles
+  both scalar and list-shaped x results without assuming `[0]` is available.
+
+The 50 strict CS1 expected failures have been removed: all 98 cardinality cases
+are active regressions. A further 36 matching/consumer tests protect dispatch,
+case sensitivity, units/metacharacters, ambiguity before mutation, duplicate role
+writes, overlap/rollback, mask-preserving normalisation, numerical multi-channel
+results and a real Cu resistivity fixture. Existing tests now assert all-match
+search shapes, duplicate sort keys, shaped unique inverses, assignment and plots.
+One CS1 test expectation was corrected: `Sig` and `Sig*` also match Sigma headers.
+
+Validation on Miniforge py314 (Python 3.14.7, pandas 3.0.5, NumPy 2.5.2,
+SciPy 1.18.0, pytest 9.1.1, stonerplots 1.9.8), with all 39 specifications in
+`tests/test-env.yml` satisfied:
+
+- Full suite: **1,573 passed**, zero failures/errors/skips/xfails, 270.78 seconds
+  with two xdist workers. Includes runnable documentation samples, image/folder
+  consumers and real format fixtures. Evidence: ignored
+  `maintenance/runs/cs2-full/{run.log,pytest.xml}`.
+- After making helper imports private for API documentation and final docstring
+  edits, affected core/analysis/plot/folder suites: **1,101 passed**, zero
+  failures/errors/skips/xfails, 115.94 seconds. Evidence:
+  `maintenance/runs/cs2-final/{run.log,pytest.xml}`. The full run precedes this
+  import/docstring cleanup; the final focused run validates the final affected tree.
+- Fresh cached Sphinx HTML from staged tracked documentation and its external
+  README/config/image dependencies: **62 reviewed warnings, zero unexpected**.
+  All five primary classes and dynamic Data methods are documented. The retained
+  2026-10-25 HTML includes `Data.title`, whose title control has moved to
+  `Data.plot.title` (including `data.plot.title("Run", loc="left")`). An isolated
+  import of pre-CS2 HEAD `3fb68ed6` confirms the old Data attribute was already
+  absent. This earlier plotting API migration is recorded in an ignored reviewed
+  comparison file, not added to the maintained warning baseline.
+  Evidence: `maintenance/runs/cs2-docs-clean/{final-build.log,final-warnings.log,verified-audit.json}`.
+  Initial in-place docs included old ignored API stubs; the clean staged build
+  avoids those without deleting or refreshing the existing generated pages.
+  Tracked `doc/plot_cache` files are unchanged.
+- Ruff F821 and `git -c core.whitespace=cr-at-eol diff --check` pass, retaining
+  mixed source line endings and indexed modes. The warning configuration is
+  supplied for the check only, without changing repository settings.
+
+No lower-pandas-bound, Python 3.12 or hosted-CI pass is claimed. The available
+py312 environment has pandas 3.0.5 and lacks pytest-timeout; it is not suitable
+minimum-dependency evidence. Environment snapshots are under ignored
+`maintenance/runs/cs2/{py314,py312}-environment.json`. No release, commit or push
+is part of this batch.
+
+Next bounded task: CS3. Extract ColumnSchema, pure role parsing/group derivation
+and thin owner-bound Setas views while keeping the tested CS2 matching, cardinality,
+mask, identity and mutation contracts. Retain existing multi-x uncertainty
+corrections until common absolute-position grouping tests replace them. Consider
+the custom Index only in the later isolated CS4 experiment and CS5 decision.
+
+### CS3 handover (2026-10-27)
+
+Composed schema ownership and shared Setas logic are implemented. The CS2
+matching, all-match/first/cardinality, value/mask and public return contracts remain
+covered by the same active tests. No custom pandas Index is installed.
+
+Architecture and implementation:
+
+- `core/column_schema.py::ColumnSchema` stores immutable ordered Column records,
+  with headers, roles and IDs projected from those records. Fixed-width field
+  replacement, resizing, repeated selection and insertion/collision remapping
+  prepare new schemas. `DataOwner` uses those operations instead of independent
+  record-editing and UUID-remapping loops. The owner has one authoritative schema;
+  its ordinary DataFrame still carries a displayed-header projection.
+- Bound and detached Setas use the same pure parsing, assignment, update,
+  addition/subtraction and coordinate/error derivation. Invalid late selectors or
+  roles cannot partially commit either form. Role-group updates clear a replaced
+  group once before applying all matching entries in mapping order. Encoded
+  strings, padding/truncation, reset/hyphens and `_self` return conventions remain.
+- `_BoundSetas` is a thin, durable view over current owner state. It creates no
+  detached Setas for reads or assignments, and has no independent role/header
+  store or derived cache. Saved field views follow state replacement and reordering.
+  Explicit cloning copies descriptions, retaining the blessed object only for
+  callable return semantics; it no longer deep-copies Data as a side effect.
+  Detached subclasses retain their type on cloning.
+- Group derivation returns fresh results, preserves intelligent count defaults
+  without writing inferred roles and uses absolute positions for every x group.
+  The bridge's relative-x-error adjustment and plot selection's separate scan are
+  removed. Repeated-role `#x`/`#y` lookups and expanded selector collections share
+  the facade behaviour. There are no `_cols`/`_col_defaults` instance caches.
+- Version-one `Column`/DataStorage import/export remains unchanged: exported
+  schemas are editable lists and values retain UUID package labels. Internal
+  `_TableState` uses ColumnSchema; immutable records can safely be shared by
+  deepcopy while values, masks and typed metadata remain independent. Earlier
+  list-based `_TableState` pickle state is upgraded. `_ResolvedSetas` remains only
+  as a class-name compatibility alias, with old redundant caches discarded when
+  reading detached state. This does not change the pre-existing TypeHintedDict
+  pickle coercion; no new lossless pickle format is claimed.
+
+The full suite exposed an ownership escape that the CS1 schema-field search did
+not identify: `curve_fit` published `draft.export_storage()` directly into
+`owner._state`. That package retained UUID labels and a list schema. The new
+`DataOwner._publish_storage` boundary converts prepared packages into native
+header-labelled state and ColumnSchema. Constructor, numerical/structural package
+commits and fitting publication use it after the appropriate caller transaction
+checks. No extra numerical copy is introduced by publication. Saved views and
+typed metadata continue to work after fitted results are stored or inserted.
+
+Validation on verified Miniforge py314 (Python 3.14.7, pandas 3.0.5, NumPy 2.5.2,
+SciPy 1.18.0, pytest 9.1.1, stonerplots 1.9.8):
+
+- All **39** `tests/test-env.yml` specifications satisfied; environment record:
+  ignored `maintenance/runs/cs3/environment.json`.
+- **1,613 passed**, zero failures/errors/skips/xfails, full suite with two xdist
+  workers in **177.21 seconds**. Includes real formats, folders/images, numerical
+  consumers, scientific scripts and runnable documentation examples. Final JUnit
+  and logs: `maintenance/runs/cs3-verified/{pytest.xml,run.log}`. Earlier failing
+  runs are retained under ignored run directories; their fitting-publication
+  failures are resolved, not waived.
+- **40 new ownership/facade tests** in `tests/Stoner/core/test_column_schema.py`:
+  immutable schema/ID operations, saved views, role/owner clone separation,
+  shared CS2 resolution, fresh defaults, absolute multi-x errors,
+  both facade mutation forms, update mapping groups, late-error rollback, active
+  edit guards, serialization class/state compatibility and canonical fit publication.
+  Constructor/export guards prove schema reads and assignments create no detached
+  Setas or numerical exports. Existing CS2 cardinality/matching tests remain active.
+- Fresh cached Sphinx HTML: **62 reviewed warnings, zero unexpected warnings**;
+  all primary classes and dynamic Data methods documented, **no removed API
+  entries compared with the clean CS2 build**. Evidence:
+  `maintenance/runs/cs3-docs/{final-build.log,final-warnings.log,audit.json}`.
+  Builds use staged tracked documentation, retained plot caches and the required
+  external include/image inputs. Existing generated pages and all tracked
+  `doc/plot_cache` files remain unchanged.
+- Ruff F821/F401 passes for the extracted schema/facade/owner modules and new
+  tests. CRLF-aware `git diff --check` passes without repository configuration or
+  indexed-mode changes. Three final line wraps were verified AST-identical to the
+  tested modules. No lower-dependency, separate Python 3.12 or hosted-CI result is
+  claimed; no commit, push or release is part of this batch.
+
+The [active audit](maintenance/column-schema-audit.md) now records this composed
+baseline and the discovered fitting publication path. Next bounded task: CS4.
+Build the isolated custom Index experiment against this schema/role interface,
+using the same masks, IDs, matching/cardinality and lifecycle tests. Compare total
+ownership/propagation complexity before any production Index decision in CS5.
+
+
+### CS4 handover (2026-10-27)
+
+The runnable [isolated prototype](maintenance/column_index_prototype/README.md)
+compares the actual CS3 `DataOwner` with `IndexOwner`, using the same immutable
+ColumnSchema algorithms, CS2 resolver, fixture packages and production numerical
+owner machinery. `ColumnIndex` is a real pandas Index subclass installed on
+`frame.columns`. Production Stoner has no imports or references to this package;
+no production backend, public API or dependency specification changed in CS4.
+
+Ownership and compatibility findings:
+
+- Index-owned immutable records supply IDs/roles and displayed header labels.
+  `_IndexState.schema` derives from `frame.columns`, with no stored owner schema.
+  This reduces six owner state fields to five, but header strings still occur in
+  the schema records and native label buffer. Their consistency check moves
+  inside the Index; it does not disappear. Masks and typed metadata remain
+  external and still require atomic structural publication.
+- Header/role edits replace the immutable axis, leaving numerical buffers and
+  masks untouched. Saved owner field views and the actual bound Data.setas facade
+  follow replacements, reorder and repetition. Explicit clones detach; repeated
+  IDs are remapped by the shared schema algorithm. Package interchange retains
+  the existing version-one UUID labels and editable schema lists.
+- Exact native `get_loc`, duplicate-name selection, equality, hashing and label
+  arithmetic retain pandas behaviour, independently of roles/UUIDs. Stoner's
+  explicit `ColumnIndex.find_col` delegates unchanged CS2 matching/cardinality,
+  including first=True after full validation. Both versions use object labels in
+  the prototype; ordinary pandas 3 owner labels infer its native string dtype.
+  No custom role/ID equality is injected into pandas alignment.
+- Explicit owner rename, role assignment, selection/reorder/drop/repetition,
+  insertion, deepcopy, package import/export, numerical/pandas editing and bounded
+  combination preserve the paired values, identities, roles, masks and metadata.
+  Index/frame/owner pickle round trips preserve this fixture's scientific state;
+  existing TypeHintedDict coercion is unchanged and is not claimed lossless.
+- Native copy/deepcopy, iloc/list/slice/take, duplicate loc, drop, axis naming and
+  pickle preserve records with the prototype hooks. Native rename, insertion,
+  horizontal concat, reindex and alignment can lose schema. Series extraction,
+  to_frame and plain export are deliberately lossy boundaries. Duplicate-source
+  reindex raises pandas' normal ValueError. The same boundaries were observed on
+  pandas 2.2.3 and 3.0.5; there is no all-versions propagation guarantee.
+- Native row concat can retain a valid-looking left Index when the right input
+  has conflicting roles or ordinary labels. Checking subclass/type/shape cannot
+  establish provenance. These native combinations are unsupported as lossless
+  transforms. Re-entry requires explicit expected transformation schema plus
+  external exclusions, metadata, dtype and fill value; missing/conflicting schema
+  is rejected and never reconstructed from duplicate header text. Supplying the
+  correct transported mask remains the operation's responsibility.
+- The explicit prototype combination policy requires equal dtype/fill and typed
+  metadata. Rows additionally require identical ordered IDs/roles/headers;
+  columns require equal heights, retain roles and remap colliding IDs. Ordinary
+  frames require an explicit new import. This bounded policy tests ownership; it
+  does not alter production Data concatenation or metadata merge rules.
+- Ordinary Index replacement is detected on owner validation/export. As in CS3,
+  arbitrary same-shaped permutations of values cannot prove mask provenance.
+  Replacing an entire frame with an unrelated valid experimental axis also
+  requires an explicit owner/package operation; native mutation is not a
+  general lossless structural editing API.
+
+The compatibility cost is four adapters: ColumnIndex (63 source lines),
+index-backed state (36), field view (7) and owner (53), in addition to the shared
+production schema and owner machinery. Two private pandas methods are overridden,
+`_view` and `_getitem_slice`; construction uses `_simple_new` and `_values`.
+Public copy/take/indexing and pickle reduction also need special handling.
+Unknown pandas constructors bypass __new__ and may create a subclass with no
+records; access fails closed, with ordinary-Index fallbacks for native temporary
+label computations. Inspected `_shallow_copy`, `_concat` and constructor/copy
+paths do not supply a universal propagation hook. More native support requires
+additional operation-specific adapters. Separate deepcopy/state restoration and
+pandas commit logic are needed because the composed dataclass commit writes a
+schema field. Native label equality alone must not permit a pandas draft to
+replace scientific roles. The new tests protect successful commits and rollback.
+
+Performance (local paired implementation measurements):
+
+Nine warm median samples per operation, alternating paired order, with imports
+and fixtures excluded; small operations average 50 calls per sample. Width/height
+is 8/4096 (narrow) or 512/64 (wide). Both versions were benchmarked sequentially
+after correctness runs, not against another concurrent benchmark. The table is
+Index time divided by composed time; values above 1 mean the prototype is slower.
+
+| Operation | pandas 3.0.5 narrow | pandas 3.0.5 wide | pandas 2.2.3 narrow | pandas 2.2.3 wide |
+| --- | ---: | ---: | ---: | ---: |
+| Exact Stoner match | 1.92 | 2.29 | 1.94 | 2.20 |
+| Literal substring | 1.59 | 1.55 | 1.59 | 1.57 |
+| Glob | 1.43 | 1.30 | 1.43 | 1.31 |
+| Compiled regex | 1.61 | 1.42 | 1.66 | 1.61 |
+| Role-group read | 1.25 | 1.36 | 1.29 | 1.35 |
+| Role edit | 1.71 | 1.13 | 1.70 | 1.10 |
+| Header rename | 0.67 | 1.00 | 0.99 | 1.03 |
+| Owner reorder | 0.87 | 1.05 | 1.04 | 1.13 |
+| Owner clone | 1.18 | 1.25 | 1.14 | 1.68 |
+| Repeated selection | 1.04 | 1.09 | 1.07 | 1.46 |
+
+For scale, current-version narrow exact resolution is 4.0 vs 7.7 microseconds,
+role-group read 15.1 vs 18.9 microseconds, role edit 59.9 vs 102.8 microseconds,
+and rename 131.0 vs 87.7 microseconds (composed then Index). Wide current clone
+is 2.67 vs 3.34 milliseconds. There is a useful narrow pandas-3 rename improvement,
+but no consistent structural or overall performance advantage across both versions.
+These are local implementation observations, not portable speed guarantees.
+Different Python/NumPy versions accompany the two pandas runs, so absolute
+cross-environment differences cannot be attributed to pandas alone.
+
+Allocation tracing is separate from timing, on one fresh operation. Wide exact
+resolution peaks at 1,393 vs 12,832 Python-traced bytes on pandas 3 and 1,257 vs
+10,593 on pandas 2.2. Narrow current rename improves from 10,072 to 7,025 bytes;
+wide role edits are nearly equal (114,168 vs 114,320 bytes). Structural operation
+peaks remain dominated by copied numerical/mask buffers: narrow current reorder
+is 904,382 vs 901,058 traced bytes, so this is not a material memory reduction.
+Tracemalloc is not a native allocation or RSS measurement. Independent buffer
+sharing assertions, rather than traced-byte counts, establish that header/role
+edits do not copy numerical state.
+
+The prototype's schema accessor scans labels for consistency with its records;
+the measured matching/group overhead includes that extra width-dependent check.
+Both designs deliberately reuse the CS2 resolver rather than replacing exact
+Stoner matching with the native pandas engine. Removing validation, caching
+derived state or specialising exact lookup would be further design work, with
+fresh lifecycle/performance tests; the timings do not establish an inherent
+limit on custom Index implementations.
+
+Validation and reproducibility:
+
+- **102 isolated prototype cases**, including 64 CS2 selector/cardinality
+  combinations, empty axes, actual bound Setas, saved views, numerical buffer
+  sharing, atomic errors/guards, independent copies, real CoreTest.dat transport,
+  native lookup/alignment, publication, pickle, and explicit combination policy.
+- **848 passed**, zero failures/errors/skips/xfails: prototype plus the complete
+  production core directory, Miniforge py314, Python 3.14.7, pandas 3.0.5, NumPy
+  2.5.2. Five expected existing warnings. Final JUnit/logs:
+  `maintenance/runs/cs4-release-current/{pytest.xml,run.log}`.
+- **276 passed**, zero failures/errors/skips/xfails: prototype plus production
+  column schema, matching and cardinality suites, Miniforge py312, Python 3.12.14,
+  pandas 2.2.3, NumPy 2.5.3. One existing SciPy deprecation warning. Final evidence:
+  `maintenance/runs/cs4-release-lower/{pytest.xml,run.log}`. The lower environment
+  uses an isolated ignored wheel overlay for pandas 2.2.3, pytest-timeout 2.4.0
+  and pytz 2026.5. Existing Conda environments are unchanged. A separate Conda
+  clone failed resolving a channel; no complete cloned environment is claimed.
+- Both environment reports verify all 39 declared test specifications, retain
+  underlying Conda records and effective overlay/module paths, and fingerprint
+  working production/prototype sources and inspected pandas hooks. This tests
+  the lower pandas 2.2 line, not every patch version or hosted Python matrix.
+  Each `matrix.json` records 52 native cases (26 per design) plus 24 owner cases
+  (12 per design), ordered descriptions, value/mask/typed metadata state, result
+  types, sharing, saved views and rejected/lossy boundaries.
+- Final raw `matrix.json` and `benchmark.json` are under the same current/lower
+  run directories. Earlier failing runs remain ignored diagnostics; failures
+  were resolved, including a test that incorrectly compared independently
+  allocated insertion UUIDs instead of checking their freshness/provenance.
+- Ruff F401/F821/E501 and CRLF-aware whitespace checks pass. No full-suite,
+  hosted CI or Sphinx rebuild is claimed in CS4; production/docs examples are
+  unchanged, and CS3's 1,613-pass full run remains the broader baseline. No
+  commit, push, release, permission/line-ending normalisation or plot-cache
+  regeneration is part of this experiment.
+
+CS4's executable comparison gate is met. The evidence favours retaining CS3
+composition: index ownership removes a field but adds propagation and provenance
+rules, while many native transforms still need explicit boundaries. This is the
+recommendation for **CS5**, not a production adoption/rejection decision silently
+applied by CS4. Next bounded task: record adopt/defer/reject explicitly against
+the agreed criteria, then scope CS6 validation/documentation for that decision.
+
+
+### CS5 decision (2026-10-28)
+
+**Decision: retain the composed ColumnSchema and reject custom pandas Index
+adoption for this consolidation.** The maintainer accepted this direction after
+reviewing CS4. This closes the ownership decision; it is not a pending experiment
+or an instruction to integrate the prototype later.
+
+Assessing the agreed adoption criteria against the recorded CS4 evidence:
+
+| Criterion | CS4 evidence | Decision implication |
+| --- | --- | --- |
+| Remove independent schema/header synchronisation | Index ownership removes one stored owner field, but schema records and the pandas label buffer still contain header representations and require consistency checks. | Relocates the check rather than removing it; retain the explicit composed projection. |
+| Preserve saved views, IDs, roles and scientific state | Supported prototype owner operations pass, including saved bound Setas, repeated-ID remapping and metadata-only buffer sharing. External masks/typed metadata still need atomic owner publication. | Composition already provides these guarantees; Index ownership does not remove the owner lifecycle. |
+| Retain native pandas behaviour without silent schema loss | Rename, insertion, horizontal concat, reindex, alignment and Series conversion can discard records. Row concat may retain valid-looking left metadata despite conflicting roles or ordinary right labels. | A subclass is not reliable provenance; native structural re-entry still needs explicit schema proof and side state. |
+| Reduce total complexity, including private hooks and validation | Four adapters, special copy/pickle/commit paths, `_view`/`_getitem_slice` overrides and `_simple_new`/`_values` dependencies are needed in addition to shared schema algorithms. | Extra propagation and boundary machinery outweighs one fewer owner field. |
+| Demonstrate a practical performance/allocation benefit | On both tested versions domain matching, role reads/edits and clone are slower; narrow pandas-3 rename improves. Structural timings vary and numerical/mask copies dominate allocation peaks. | No consistent benefit offsets the compatibility cost. This describes the validated prototype, not all conceivable Index designs. |
+| Check current and lower supported pandas lines | 102 prototype cases on each version; 848 current/core passes and 276 lower-line/column-contract passes; 52 native plus 24 owner matrix entries per version, with fingerprinted timing reports. | Enough evidence to decide this bounded design comparison; not a final full-suite or hosted-matrix result. |
+
+Evidence: the CS4 handover above and ignored
+`maintenance/runs/cs4-release-current/` (pandas 3.0.5) and
+`maintenance/runs/cs4-release-lower/` (pandas 2.2.3), each containing JUnit/logs,
+`matrix.json` and `benchmark.json`. CS5 re-read those reports and verified counts;
+it did not rerun scientific tests, benchmarks or documentation builds.
+
+Accepted ownership contract:
+
+- `_TableState.schema` holds the immutable ordered ColumnSchema as the sole
+  authority for column records. Ordinary `DataFrame.columns` displays headers;
+  owner field edits and `_publish_storage` maintain that projection. No second
+  mutable role/header authority or persistent derived-group cache is introduced.
+- Bound Setas and saved field views reacquire the current owner schema; detached
+  Setas/numerical descriptions remain independent. Shared CS2 matching precedence,
+  all-match defaults, explicit first=True and audited cardinality contracts stand.
+- Values, exclusions, IDs/roles, dtype/fill and typed metadata move together through
+  owner operations and validated package publication. Native pandas calculations
+  use raw values and ordinary label alignment; arbitrary native structural edits
+  do not acquire automatic Stoner mask/schema propagation.
+- Version-one DataStorage remains the lossless interchange boundary. Its values
+  use UUID labels and its schema remains an editable list of Column records;
+  public exports detach. Existing native mutation guards and their documented
+  detection limits remain in force; no new pickle format is introduced.
+- Keep `maintenance/column_index_prototype/` isolated and runnable as evidence.
+  Do not ship/import its Index, re-entry proof or bounded combination policy in
+  production. Rejection needs no wholesale port of prototype-only propagation
+  tests; equivalent public matching/ownership contracts already have production
+  tests. Future reopening would need new evidence against these criteria and a
+  separately scoped decision, rather than an outstanding task from CS5.
+
+This batch changes decision/planning records only. Production sources, tests,
+dependencies, examples and the prototype implementation are unchanged. Existing
+CS1-CS4 work and generated artefacts are preserved. No commit/push/release is
+included. The remaining work is CS6 below.
+
+### CS6 remaining documentation and validation
+
+CS6 is **locally validated; hosted gates remain open**. Earlier CS2/CS3 prose
+and tests have been reconciled with the retained design. The checked items
+below record local work; overall completion still requires hosted evidence.
+Keep the implementation, public matching behaviour and ordinary pandas Index
+unchanged unless a verified regression requires a separately reviewed repair.
+
+- [x] **Reconcile API and guide prose.** Review `doc/UserGuide/data_columns.rst`,
+  `data_editing.rst`, `developer.rst`, relevant API docstrings and
+  `doc/release-notes.rst`. Describe ordinary pandas columns plus composed schema,
+  saved views/detached clones, explicit masks and lossless package interchange.
+  Remove the developer guide's now-stale description of an Index experiment as
+  pending. Explain exact -> glob-or-substring -> regex precedence, compiled
+  patterns, duplicate/all-match results, first=True/force_list, literal unit
+  brackets/metacharacters, and scalar-input ambiguity errors. Keep `Data.plot.title`
+  current and avoid restoring legacy Data plotting pseudo-properties.
+- [x] **Review executable scientific examples.** Add or adapt a small runnable
+  `doc/samples` example with real measurement-style headers, duplicate dependent
+  channels, explicit first selection, saved Setas views and mask-preserving
+  reorder/repetition. Use the shared public APIs and show scalar ambiguity with
+  an explicit resolution. Check existing fitting/plotting examples and absolute
+  multiple-x error groups. Preserve real instrument fixtures. Retain plot caches;
+  refresh only caches whose examples deliberately change and record which ones.
+- [x] **Audit final contracts and isolation.** Review the CS1 caller inventory
+  against the final source and retain CS2/CS3 production regression cases. Verify
+  no production imports of the prototype and no alternate schema/role caches.
+  Check exact spelling/capitalisation of tracked `tests/Stoner` paths, lint and
+  CRLF-aware whitespace checks without repository-wide mode/EOL normalisation.
+- [x] **Run focused then full local regression.** Verify the chosen supported
+  Conda environment against `tests/test-env.yml`; record effective versions,
+  commands, source revision/fingerprints, JUnit/logs and warning outcomes. Start
+  with column cardinality/matching/schema, native owner/storage, fitting and plot
+  contracts, then the full suite including formats, folders/images and runnable
+  examples with suitable headless configuration. Include current and supported
+  lower pandas-line coverage; distinguish the CS4 Python-3.12 wheel overlay from
+  the full `tests/minimum-env.yml` lower-dependency environment. Neither the CS3
+  1,613-pass full baseline nor CS4's focused passes close this final-source gate.
+- [x] **Build and review documentation.** Build fresh Sphinx HTML with
+  READTHEDOCS=True consuming retained plot caches; use `maintenance/audit-docs.py`
+  and the platform's reviewed warning baseline, including API inventory comparison
+  against a recorded clean build. CS3's 62 reviewed Windows warnings/no API removals
+  are comparison evidence, not a new fixed waiver. Investigate new diagnostics;
+  do not reset the baseline to hide them. Run changed examples explicitly as
+  required, then serve only generated HTML over localhost and inspect the changed
+  guide/API pages and navigation. Record cached-build and executed-example proof
+  separately; preserve unrelated generated documentation and plot-cache files.
+- [ ] **Record hosted validation of the final revision.** When the implementation
+  is committed and published for review, observe existing
+  `.github/workflows/run-tests-action.yaml` (Python 3.12-3.14 Linux and configured
+  macOS job), `check-minimum-dependencies.yaml` (full Python-3.12 lower-line suite),
+  `build-docs.yaml` and applicable existing package/CI-consistency checks. Record
+  exact commit and run URLs/results; resolve failures rather than infer success
+  from local runs or a workflow merely starting. This planning batch does not
+  dispatch jobs, authorise a release or claim hosted success.
+- [ ] **Close and hand over.** Record final behaviour/examples, validation gaps
+  and exact-source local/hosted evidence in this plan and the maintenance checklist.
+  Keep reusable test contracts and warning baselines; retire implementation-only
+  audit notes into history/ignored run logs when safely recorded. Mark CS6 and the
+  parent consolidation item complete only when the documentation and validation
+  gates are met. Any unavailable environment or unobserved hosted result stays
+  explicitly open rather than becoming an implied pass.
+
+Next bounded task: once the changes are committed and published for review,
+observe the configured hosted matrix/lower-line, docs and package checks for
+that exact revision, then close the remaining CS6 and parent checklist items.
+
+
+### CS6 local handover (2026-10-28)
+
+Documentation and executable examples now describe the retained composed schema.
+Local validation is complete; CS6 and the parent consolidation item remain open
+solely for observed final-revision hosted checks and the closing handover. No
+custom Index integration, dependency declaration change, commit/push or release
+was performed in this batch.
+
+Changes:
+
+- Updated `data_columns.rst`, `data_editing.rst`, `developer.rst` and unreleased
+  notes for ordinary pandas labels plus authoritative ColumnSchema, durable
+  Setas/header views, independent clones, native mutation limits and version-one
+  lossless interchange. Removed the pending-Index claim. Clarified literal unit
+  brackets, glob-to-regex fallback, reserved role-letter keys and inferred
+  defaults. Corrected literal-block markup found during rendered review.
+- Reviewed resolver/Setas/storage API descriptions; expanded find_col's docstring
+  on exact metacharacters/numeric names, and corrected rename's old copy claim:
+  all selected headers change in place, preserving masks/IDs/roles. These are
+  docstring-only production edits; runtime matching/owner code is unchanged.
+- Added `doc/samples/column_schema.py`, included and downloadable from the guide.
+  It checks duplicate names, glob/substring/compiled regex, first/force_list,
+  scalar ambiguity and deliberate resolution, saved views/clones, broadcast role
+  assignment, mask/ID-preserving reorder/repetition and lossless import/export.
+  Public plot startx selects each x group; rendered error-bar widths verify that
+  the second group uses its own absolute uncertainty columns. Data.plot.title is
+  used. The sample is automatically collected by existing test_doc_samples.py;
+  no duplicate test harness or production prototype dependency is introduced.
+- Retained all 282 plot-cache files byte-for-byte. The new guide uses literalinclude
+  rather than introducing a cached plot directive; the example itself runs and
+  renders in the sample suite. An independently executed figure is retained under
+  ignored `maintenance/runs/cs6-example/figure.png` and was visually inspected.
+
+Local evidence (commands, JUnit/logs and environment/source hashes remain ignored):
+
+- **Focused: 1,074 passed**, 82 other sample scripts deselected, five existing
+  warnings. Core/analysis/plot plus the new sample; headless py314.
+  `maintenance/runs/cs6-focused/{pytest.xml,run.log}`.
+- **Current full suite: 1,614 passed**, zero failures/errors/skips/xfails,
+  272 warnings, 190.77 seconds with two workers. Miniforge py314: Python 3.14.7,
+  pandas 3.0.5, NumPy 2.5.2, Qt5 available. Includes all 83 documentation scripts,
+  fitting/scientific scripts, formats, folders/images and numerical consumers.
+  `maintenance/runs/cs6-full-current/{pytest.xml,run.log,source-environment.json}`.
+- **Final lower pandas-line full suite:** **1,613 passed**, zero failures/errors/xfails, one
+  expected skip for the pandas-3-only accessor-lifecycle test, 324 warnings,
+  210.49 seconds with two workers. Miniforge py312: Python 3.12.14, pandas
+  2.2.3, NumPy 2.5.3 and the optional Qt5 overlay. Evidence:
+  `maintenance/runs/cs6-full-lower-verified/{pytest.xml,run.log,source-environment.json}`.
+- The first lower run had 1,610 passes, two skips and two failures. Both failures
+  were file-dialog tests entering the no-Qt stub; one skip was unavailable Qt,
+  the other explicitly tests the pandas-3 accessor lifecycle. An isolated Qt6
+  overlay still failed to load QtWidgets (DLL procedure mismatch). A separate
+  optional Qt5 wheel binding then passed all four widget tests before the final
+  full rerun. Earlier failures remain in `cs6-full-lower/` and `cs6-lower-qt/`,
+  successful widget proof in `cs6-lower-qt5/`. No production code/test was changed
+  to suppress these failures or change skip policy.
+- Both effective environments satisfy all 39 `tests/test-env.yml` specifications.
+  The lower environment overlays pandas 2.2.3, pytest-timeout 2.4.0 and pytz 2026.5
+  from CS4, plus optional PyQt5 5.15.11 / Qt5 runtime 5.15.2 / sip 12.20.0 in
+  ignored `maintenance/runs/cs6-qt-overlay/`. PyQt6 wheels from the unsuccessful
+  diagnostic also remain there, but the recorded binding in use is Qt5. Existing
+  Conda environments and dependency declarations are unchanged. This is full-suite
+  coverage on the lower pandas line, **not** the full lower-dependency environment:
+  `tests/minimum-env.yml` pins other scientific packages to older minor lines.
+- Final cached Sphinx: **62 reviewed warnings**, zero unexpected warnings, no
+  missing dynamic Data methods/primary classes, and **no removed API entries**
+  against the clean CS3 inventory. Warnings retain the reviewed 32 duplicate
+  descriptions, 25 missing imported autosummary stubs and five footnote warnings;
+  the Windows baseline is unchanged. Two new short-title warnings from the first
+  build were corrected rather than waived. Evidence:
+  `maintenance/runs/cs6-docs/{build.log,warnings.log,audit.json,audit.log}`.
+  Staged current tracked docs plus the new sample and required external include
+  inputs were built with READTHEDOCS=True and actual checkout imports, leaving
+  historical/generated documentation and retained caches untouched.
+- Served only generated HTML at `http://127.0.0.1:8765/`; visually reviewed the
+  column guide/example, developer ownership prose, editing guide and find_col API.
+  Followed the contents-to-example and guide-to-API links and checked code layout,
+  scalar/first rules and native-mutation guidance. Browser review also prompted
+  the literal-block correction. Scientific figure inspected independently.
+- Ruff F401/F821 passes for schema/selection/facade/owner/bridge/methods and the
+  three production column-contract modules; the new sample also passes E501 at
+  120 characters. CI consistency passes (18 pinned actions), repository-content
+  policy passes (282 cached files retained), and CRLF-aware git diff --check passes.
+  Prototype imports remain absent from Stoner; old role caches occur only in
+  legacy state-upgrade filtering, not as live authorities. Tracked test path
+  capitalisation is tests/Stoner. The caller contracts are unchanged and remain
+  covered by the CS1-CS3 tests in both full runs.
+- Working-source/environment fingerprints accompany the tests. Only guide heading
+  underlines and a missing literal-block blank line changed after the current full
+  run; all tested Python sources and plot caches still match. Final markup and
+  runtime hashes are in `maintenance/runs/cs6-final-source/source-environment.json`;
+  the final Sphinx build uses that corrected markup. No runtime test rerun was
+  needed for those RST-only corrections.
+
+Reproduce from the repository root in the stated supported environment, creating
+the output directory first:
+
+```powershell
+$env:MPLBACKEND = 'Agg'
+$env:QT_QPA_PLATFORM = 'offscreen'
+New-Item -ItemType Directory -Force maintenance/runs/cs6-reproduce | Out-Null
+C:/ProgramData/miniforge3/Scripts/conda.exe run --no-capture-output -n py314 python -m pytest -q -n 2 --dist loadfile -o addopts= -o faulthandler_timeout=120 --basetemp=maintenance/runs/cs6-reproduce/tmp -o cache_dir=maintenance/runs/cs6-reproduce/cache --junitxml=maintenance/runs/cs6-reproduce/pytest.xml
+```
+
+For the lower-line run use py312 and set PYTHONPATH for that process to
+`D:/PythonCode/maintenance/runs/cs6-qt-overlay;D:/PythonCode/maintenance/runs/cs4-overlay;D:/PythonCode`.
+Record effective bindings and restore any previous PYTHONPATH afterwards.
+Recreate the overlays only in a disposable target, using the pinned versions
+above; they are test infrastructure, not additions to Conda specifications.
+Cached documentation build/audit commands remain in maintenance/README.md; use a
+fresh staged doc tree to avoid including historical generated outputs. Compare
+to `maintenance/runs/cs3-docs/html` and do not regenerate unrelated plot caches.
+
+Remaining hosted checks, all **unobserved for the consolidation revision**:
+
+- Existing Python 3.12-3.14 Linux/configured macOS test matrix, including coverage.
+- Python-3.12 supported lower-dependency workflow using tests/minimum-env.yml.
+- Hosted documentation and applicable package/installed-distribution checks.
+- Record the exact reviewed commit, run URLs and results after publication for
+  review; a pre-existing HEAD run cannot validate this working tree. No workflow
+  dispatch, commit or push was included here. Keep the two remaining CS6 checklist
+  items (hosted evidence and overall closure) unchecked until those gates pass.
+
+Separate numerical follow-up: while preparing the example, equal-weight y=[2,4,6]
+with sigma=[1,1,1] returned a weighted mean of 4/3 rather than 4. The same formula
+is already present at HEAD; it is not introduced by the schema changes. The
+reproduction is recorded under cs6-example/weighted-mean-observation.json and in
+MAINTENANCE_PLAN.md. Numerical correction/uncertainty review remains a separate
+task. The published schema example demonstrates scalar max rather than depending
+on the existing weighted-mean implementation.

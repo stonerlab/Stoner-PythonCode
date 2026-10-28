@@ -7,6 +7,7 @@ from ..compat import int_types
 from ..tools.tests import isanynone
 
 __all__ = ["griddata"]
+from ..core.column_selection import _single_column
 
 
 def _span_slice(datafile, col, num):
@@ -74,6 +75,10 @@ def griddata(
         ucol = cols["ucol"][0]
 
     dims = 3 if cols["axes"] == 3 and cols["has_ucol"] else 2
+    xcol = _single_column(datafile, xcol, "xcol")
+    ycol = _single_column(datafile, ycol, "ycol")
+    if dims == 3:
+        zcol = _single_column(datafile, zcol, "zcol")
     if getattr(zcol, "size", 0) != 0:
         shape = [np.unique(datafile.column(x)).size for x in [xcol, ycol]]
     else:

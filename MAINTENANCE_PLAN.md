@@ -269,6 +269,30 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 ## Known limitations and follow-ups
 
+- [ ] **Column schema and setas consolidation:** implement the staged
+  [follow-on plan](STORAGE_MIGRATION_PLAN.md#column-schema-and-setas-consolidation-2026-10-27).
+  CS1's [caller/cardinality audit](maintenance/column-schema-audit.md) and CS2's
+  all-match selection, explicit `first=True`, matching precedence and caller
+  migrations and CS3's composed schema/shared role logic are complete locally.
+  CS4's isolated Index comparison is complete on pandas 2.2.3 and 3.0.5.
+  CS5 retains the composed schema and rejects custom Index adoption for this
+  consolidation: one fewer owner field brings additional propagation and
+  provenance adapters without a consistent speed benefit. CS6 documentation,
+  executable examples and local checks are complete: 1,614 current-environment
+  passes; lower pandas-line results and overlay details are in the handover;
+  Sphinx retains 62 reviewed warnings and no API removals. Final-revision
+  hosted matrix/lower-line, docs and applicable package checks remain open.
+  Keep CS6 and this parent item open until those results are observed; the
+  prototype stays isolated as decision evidence.
+
+- [ ] **Weighted mean normalisation:** investigate the pre-existing formula in
+  `Stoner/analysis/columns.py::mean`. With x=[0,1,2], y=[2,4,6], sigma=[1,1,1]
+  and setas='xye', `data.mean(1)` returns a mean of 4/3 rather than the
+  equal-weight reference 4. HEAD already contains the same
+  `(ydata * w).mean(axis=0) / norm` expression. CS6 recorded the reproduction
+  under ignored `maintenance/runs/cs6-example/weighted-mean-observation.json`;
+  numerical correction and uncertainty-policy review are a separate task.
+
 - [ ] **macOS slow-test diagnosis:** compare JUnit durations and timed-out test
   names before changing scientific code. The a4 source passed the full macOS
   suite; its slowest test was `plot_folder_demo.py` (179 seconds, previously
