@@ -120,6 +120,21 @@ public choice enum and should not be changed merely because its name matches.
    invalid option should not partially mutate measurements as a side effect of
    introducing earlier validation.
 
+## Planned image accessor choices
+
+The image sequence is [plot](IMAGE_PLOT_ACCESSOR_PLAN.md), then
+[ROI](IMAGE_ROI_ACCESSOR_PLAN.md), then [fit](IMAGE_FIT_ACCESSOR_PLAN.md).
+Plotting establishes `CoordinateMode` (native coordinates or explicit pixel
+indices) for all three. Fitting adds `BackgroundReference` (zero or fitted-region
+mean, with a finite numeric reference as a separate accepted argument type).
+`CoordinateMode` is now implemented with native/pixel values and shared by the
+image plotting grid resolver; BackgroundReference remains planned. Reuse `FitOutput`; do not add a
+competing image-output enum or enums for extensible model registry names. Test
+string parity, wrong-domain rejection and serialised values in those batches.
+Freeze accepted domains/defaults and stored strings at the
+[release phase gates](RELEASE_0_12_PLAN.md); beta compatibility and RC full freeze
+apply to enums and selection/provenance records as well as method signatures.
+
 ## Domains to keep extensible
 
 Do not replace arbitrary strings with enums for column labels/selectors,

@@ -326,6 +326,18 @@ class ImageFile(metadataObject):
         return OwnerDraw(self) if owner_of(self) is not None else DrawProxy(self.imarray, self)
 
     @property
+    def plot(self):
+        """Return an owner-bound :py:class:`~Stoner.Image.plotting.ImagePlotter`.
+
+        Lookup reads no image values and creates no figure. Calling the accessor
+        draws an image and returns Axes; named methods, contexts and property
+        forwarding follow Data.plot. Legacy imshow retains its Figure return.
+        """
+        from .plotting import ImagePlotter
+
+        return ImagePlotter(self)
+
+    @property
     def image(self):
         """Return native intensity/exclusions, or a borrowed view for a shared handle."""
         from .storage_bridge import owner_of

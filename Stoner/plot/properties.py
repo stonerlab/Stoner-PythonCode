@@ -51,7 +51,7 @@ class PlotPropertyValue:
     Args:
         descriptor (PlotProperty):
             Property description, independent of any particular artist.
-        accessor (DataPlotter):
+        accessor (PlotAccessor):
             Accessor whose current rendering targets are used for each operation.
 
     Notes:

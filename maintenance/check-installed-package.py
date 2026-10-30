@@ -29,7 +29,30 @@ def main():
     check_data_and_resources(checkout)
     check_reviewed_wrappers()
     check_plotting()
+    check_image_plotting()
     print(f'Installed-package checks passed: {installed}')
+
+
+def check_image_plotting():
+    """Exercise the image accessor from the installed package without replacing legacy display."""
+    from Stoner.enums import CoordinateMode
+
+    image = ImageFile(np.ma.array(np.arange(12.).reshape(3, 4), mask=False))
+    image.mask[0, 0] = True
+    before = image.export_storage()
+    with image.plot.style([]):
+        figure = image.plot.new_figure()
+        with image.plot.MultiPanel((1, 2), figure=figure) as axes:
+            ax = image.plot(ax=axes[0], coordinates=CoordinateMode.PIXEL, mask_color='red')
+            assert ax is axes[0] and len(ax.images) == 2
+            assert image.plot.hist(ax=axes[1], bins=4) is axes[1]
+        image.plot.title = 'Installed image'
+        assert image.plot.title() == 'Installed image'
+        figure.canvas.draw()
+    xr.testing.assert_identical(image.image, before.dataset)
+    assert isinstance(image.imshow(), matplotlib.figure.Figure)
+    plt.close('all')
+    print('Image plotting accessor/property/context checks passed')
 
 
 def check_plotting():

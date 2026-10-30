@@ -400,7 +400,15 @@ contents of the ImageFile instead::
 
 .. image:: ../../sample-data/kermit.png
 
-Alternatively, :meth:`ImageFile.imshow` displays the image in Matplotlib.
+Use :doc:`image_plotting` for the callable ``image.plot`` accessor, shared styles
+and properties, calibrated image/contour/mesh display and intensity histograms.
+It returns Matplotlib Axes consistently with ``Data.plot``.
+The legacy :meth:`ImageFile.imshow` retains its Figure return.
+
+.. toctree::
+   :maxdepth: 1
+
+   image_plotting
 
 Using image data with NumPy
 ===========================

@@ -28,6 +28,12 @@
 
    .. autoattribute:: plot
 {% endif %}
+{% if fullname == 'Stoner.Image.core.ImageFile' %}
+
+   .. rubric:: Plotting accessor
+
+   .. autoattribute:: plot
+{% endif %}
 
    {% block attributes %}
    {% if attributes %}

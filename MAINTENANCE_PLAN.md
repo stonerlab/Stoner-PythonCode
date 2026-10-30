@@ -118,6 +118,20 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Planned API work
 
+- [ ] Follow the agreed image accessor sequence: [plot](IMAGE_PLOT_ACCESSOR_PLAN.md),
+  then [ROI](IMAGE_ROI_ACCESSOR_PLAN.md), then [fit/flattening](IMAGE_FIT_ACCESSOR_PLAN.md).
+  Reuse existing selection code through a general ROI handler; support current
+  state/set/clear separately from exclusions. Share Data's API conventions and
+  coordinate services, then fit plane/quadratic reference regions and correct the
+  whole image, with a separate alpha for each accessor.
+  Standalone ImagePlotter is now implemented and locally validated (1,801 tests,
+  network example separately, cached docs with no unexpected warnings/API removals).
+  Its handover records the remaining hosted/release gates; ROI and fitting are not
+  implemented. No version bump or image-accessor alpha has been published yet.
+- [ ] Follow [RELEASE_0_12_PLAN.md](RELEASE_0_12_PLAN.md): API lock before beta,
+  allowing only small compatible additions, then full API freeze/bug fixes only
+  for RC. Review cumulative 0.11 breakage, migration and the final version series
+  before the lock. Existing alpha tags remain immutable.
 - [ ] Follow [STRING_ENUM_PLAN.md](STRING_ENUM_PLAN.md) for public string-valued
   choice arguments. Start with fitting outputs, retain supported string calls,
   and audit unrelated domains in bounded compatibility-preserving batches.

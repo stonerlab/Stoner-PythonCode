@@ -23,7 +23,7 @@ class PlotState:
     ax: object = None
 
     def __deepcopy__(self, memo):
-        """Detach rendering targets when the owning Data is cloned."""
+        """Detach rendering targets when the scientific owner is cloned."""
         result = type(self)()
         memo[id(self)] = result
         return result

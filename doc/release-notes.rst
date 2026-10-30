@@ -1,6 +1,19 @@
 Release notes
 =============
 
+0.12.0a6 (2026-10-30)
+---------------------
+
+``ImageFile.plot`` now provides callable image display, explicit ``image``,
+``imshow``, ``pcolormesh``, ``contour`` and ``hist`` methods with Axes returns,
+shared styles/layout contexts and live property forwarding consistent with
+``Data.plot``. Native calibrated coordinates are preserved; non-uniform grids
+use meshes. Exclusions, finite-value checks and explicit Boolean/labelled
+selections affect rendering without changing scientific pixels or metadata.
+``CoordinateMode`` supplies native/pixel choices alongside supported strings.
+Legacy ``ImageFile.imshow`` retains its Figure return. ROI management and image
+fitting remain future milestones. See :doc:`UserGuide/image_plotting`.
+
 0.12.0a5 (2026-10-30)
 ---------------------
 

@@ -15,6 +15,7 @@ __all__ = [
     "kerr",
     "widgets",
     "ImageFile",
+    "ImagePlotter",
     "ImageFolder",
     "ImageStack",
     "KerrStack",
@@ -26,3 +27,4 @@ from .numerical import numerical_image
 from .folders import ImageFolder
 from .kerr import KerrImageFile, KerrStack, MaskStack
 from .stack import ImageStack
+from .plotting import ImagePlotter

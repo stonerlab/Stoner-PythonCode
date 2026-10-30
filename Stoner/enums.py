@@ -2,7 +2,16 @@
 
 from enum import Enum, StrEnum
 
-__all__ = ["FitOutput"]
+__all__ = ["CoordinateMode", "FitOutput"]
+
+
+class CoordinateMode(StrEnum):
+    """Select stored spatial coordinates or explicit local pixel indices."""
+
+    #: Use the image's stored spatial coordinate vectors and units.
+    NATIVE = "native"
+    #: Use column/row indices of the current image handle.
+    PIXEL = "pixel"
 
 
 class FitOutput(StrEnum):
