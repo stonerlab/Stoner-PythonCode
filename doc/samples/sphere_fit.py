@@ -56,7 +56,7 @@ d.plot.new_figure(figsize=(5.2, 5.0))
 ax = d.plot.scatter3d(marker=".")
 d.plot.box_aspect = (1, 1, 1.0)
 # curve_fit does the hard work
-popt, pcov = d.curve_fit(sphere, (0, 1, 2), zeros_like(d.x), result=True)
+popt, pcov = d.fit.curve_fit(sphere, (0, 1, 2), zeros_like(d.x), result=True)
 
 # This manually constructs the best fit sphere
 a, b, c, r = popt
@@ -73,4 +73,4 @@ ax.plot_surface(
     x, y, z, rstride=1, cstride=1, color=(1.0, 0.0, 0.0, 0.25), linewidth=0
 )
 plt.draw()
-d.annotate_fit(sphere, prefix="sphere", x=-4.5, y=-4, z=3)
+d.plot.annotate_fit(sphere, prefix="sphere", x=-4.5, y=-4, z=3)

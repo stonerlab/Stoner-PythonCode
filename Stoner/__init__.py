@@ -9,6 +9,7 @@ __all__ = [
     "core",
     "analysis",
     "formats",
+    "enums",
     "plot",
     "tools",
     "Image",
@@ -24,7 +25,7 @@ __all__ = [
 
 import pathlib
 
-from . import Image, analysis, core, formats, plot, tools
+from . import Image, analysis, core, enums, formats, plot, tools
 from .core.data import Data
 from .folders import DataFolder
 from .Image import ImageFile, ImageFolder, ImageStack

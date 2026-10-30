@@ -37,12 +37,18 @@ Migration of ordinary calls
       - ``d.plot.errorfill(...)``
     * - ``d.plot(plotter=pyplot.semilogy, ...)``
       - ``d.plot(yscale="log", ...)``
+    * - ``d.annotate_fit(model, ...)``
+      - ``d.plot.annotate_fit(model, ...)``
     * - conditional Figure/Data/None return
       - always the primary Axes; use ``ax.figure`` or retain ``d`` explicitly
 
 The ordinary accessor rejects ``figure``, ``template``, ``plotter``, ``multiple``,
 ``show_plot``, ``save_filename`` and old ``*col`` keywords. The former top-level
 plotting methods have been removed.
+
+Fit annotations return the same ``Data`` object after drawing. Use
+``d.plot.annotate_fit(model, text_only=True)`` for formatted text without drawing;
+other annotation calls require a recent live plot or an explicit ``ax=`` target.
 
 Removed helpers and field migration
 ===================================

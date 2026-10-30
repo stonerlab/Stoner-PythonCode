@@ -9,13 +9,15 @@ __all__ = [
     "superconductivity",
     "_get_model_",
     "make_model",
+    "model_registry",
+    "register_model",
     "cfg_data_from_ini",
     "cfg_model_from_ini",
 ]
 
 from collections.abc import Mapping
 from configparser import ConfigParser as SafeConfigParser
-from functools import wraps
+from functools import partial, wraps
 from importlib import import_module
 from io import IOBase
 
@@ -25,6 +27,7 @@ from lmfit.models import update_param_vals
 
 from ....compat import string_types
 from ....tools import make_Data
+from ..registry import model_registry, register_model
 from . import e_transport, generic, magnetism, superconductivity, thermal, tunnelling
 
 
@@ -64,12 +67,29 @@ def _get_model_(model):
     return model
 
 
-def make_model(model_func):
-    """A decorator that turns a function into an lmfit model.
+def make_model(model_func=None, *, name=None, replace=False):
+    """Turn a function into an lmfit model and register its generated class.
 
     Args:
-        model_func (function):
-            The function to be wrapped in an lmfit.Model object
+        model_func (callable or None):
+            Function to wrap. None returns a decorator for the named form.
+
+    Keyword Arguments:
+        name (str or None):
+            Explicit snake_case registry key. None derives it from the function name.
+        replace (bool):
+            Explicitly replace a different registration under the same name.
+
+    Returns:
+        type or callable:
+            Registered Model subclass, or a decorator when model_func is None.
+
+    Raises:
+        TypeError:
+            If model_func is not callable.
+        ValueError:
+            If the registry name is invalid, reserved or already used by a
+            different object without replace=True.
 
     Notes:
         The function being wrapped into the model should have the form::
@@ -79,25 +99,34 @@ def make_model(model_func):
 
         (i.e. similar to what :py:func:`scipy.optimize.curve_fit` expects). The resulting
         class is a sub-class of :py:class:`lmfit.Model` but also adds a class method
-        :py:meth:`_ModelDecorator.guesser` which can be used as a decorator to convert another function into
+        ``guesser`` which can be used as a decorator to convert another function into
         a :py:meth:`lmfit.Model.guess` method. If using this decorator, the function that does the guessing should
         take the form::
 
             def guesser_function(y_data, x=x_data, **kwargs):
                 return (param_1, param_2, ..., param_n)
 
-        Similarly, the class provides a :py:meth:`_ModelDecorator.hinter` decorator which can be used to mark a
+        Similarly, the class provides a ``hinter`` decorator which can be used to mark a
         function as something that can generate parameter hints for the model. In this case the function should
         take the form::
 
             def hinter(**kwargs):
                 return {"param_1":{"max":max_val,"min":min_value,"value":start_value},"param_2":{.....}}
 
-        Finally the new model_func class can be instantiated or just passed to :py:meth:`Data.lmfit` etc. directly.
+        The generated class can be instantiated or passed to
+        :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit` through ``data.fit``.
+        Registration stores the class without instantiating it. Later guesser
+        and hinter decorators modify that same registered class. Its existing
+        internal class name and fitting metadata prefix remain unchanged.
     """
+    if model_func is None:
+        return partial(make_model, name=name, replace=replace)
+    if not callable(model_func):
+        raise TypeError("make_model requires a callable model function")
 
     class _ModelDecorator(Model):  # pylint: disable=abstract-method
         __doc__ = model_func.__doc__
+        _model_function = staticmethod(model_func)
 
         def __init__(self, *args, **kwargs):
             super().__init__(model_func, *args, **kwargs)
@@ -175,7 +204,7 @@ def make_model(model_func):
             cls.guess = guess_proxy
             return guess_proxy
 
-    return _ModelDecorator
+    return register_model(_ModelDecorator, name=name, replace=replace)
 
 
 def _ini_csv_value(name, value, legacy_rows):
@@ -413,3 +442,39 @@ def cfg_model_from_ini(inifile, model=None, data=None):
     msh = [m.ravel() for m in msh]  # tidy it up and combine into one 2D array
     msh = np.column_stack(msh)
     return model, msh
+
+
+# Explicit catalogue: exclude raw functions, imported lmfit bases and helpers.
+# Physics names may differ from legacy Python names; preserve those imports.
+_BUILTIN_MODELS = {
+    "linear": generic.Linear,
+    "quadratic": generic.Quadratic,
+    "power_law": generic.PowerLaw,
+    "stretched_exp": generic.StretchedExp,
+    "lorentzian_diff": generic.Lorentzian_diff,
+    "arrhenius": thermal.Arrhenius,
+    "n_dim_arrhenius": thermal.NDimArrhenius,
+    "mod_arrhenius": thermal.ModArrhenius,
+    "vft_equation": thermal.VFTEquation,
+    "bloch_law": magnetism.BlochLaw,
+    "bloch_law_thin": magnetism.BlochLawThin,
+    "langevin": magnetism.Langevin,
+    "kittel_equation": magnetism.KittelEquation,
+    "inverse_kittel": magnetism.Inverse_Kittel,
+    "fmr_power": magnetism.FMR_Power,
+    "simmons": tunnelling.Simmons,
+    "bdr": tunnelling.BDR,
+    "fowler_nordheim": tunnelling.FowlerNordheim,
+    "tersoff_hammann": tunnelling.TersoffHammann,
+    "wl_fit": e_transport.WLfit,
+    "fuchs_sondheimer": e_transport.FluchsSondheimer,
+    "bloch_grueneisen": e_transport.BlochGrueneisen,
+    "strijkers": superconductivity.Strijkers,
+    "woods_diffusive": superconductivity.Woods_Diffusive,
+    "woods_ballistic": superconductivity.Woods_Ballistic,
+    "rsj_noiseless": superconductivity.RSJ_Noiseless,
+    "rsj_simple": superconductivity.RSJ_Simple,
+    "ic_b_airy": superconductivity.Ic_B_Airy,
+}
+for _name, _model in _BUILTIN_MODELS.items():
+    register_model(_model, name=_name)

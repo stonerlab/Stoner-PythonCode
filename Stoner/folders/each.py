@@ -1,27 +1,50 @@
 """Classes and support functions for the :py:attr:`~Stoner.folders.core.BaseFolder.each`.magic attribute."""
 
-__all__ = ["Item"]
+__all__ = ["FitProxy", "Item"]
 from collections.abc import MutableSequence
 from functools import partial, wraps
+from inspect import signature
+from types import MappingProxyType
 from traceback import format_exc
 
+from multiprocess.pool import Pool as ProcessPool
+from multiprocess.reduction import ForkingPickler
 import numpy as np
 
+from ..analysis.fitting.accessor import DataFitter, _ModelFit
+from ..analysis.fitting.registry import model_registry
 from ..compat import string_types
 from ..plot.accessor import _FIELD_KINDS, _STAT_KINDS, _XY_KINDS
 from ..tools import isiterable
 from .utils import get_pool
+
+_FIT_ALGORITHMS = ("lmfit", "curve_fit", "odr", "differential_evolution", "polyfit")
+
+
+def _is_fit_call(func):
+    """Validate a fitting path and distinguish it from other bulk operations."""
+    if not isinstance(func, str) or (func != "fit" and not func.startswith("fit.")):
+        return False
+    if func != "fit" and func[4:] not in (*_FIT_ALGORITHMS, *model_registry):
+        raise AttributeError(f"Unsupported bulk fitting method {func!r}.")
+    return True
 
 
 def _worker(d, **kwargs):
     """Support function to run an arbitrary function over a :py:class:`~Stoner.core.data.Data` object."""
     byname = kwargs.get("byname", False)
     func = kwargs.get("func", lambda x: x)
+    source_name = func
+    registration = kwargs.get("fit_registration")
     plotting = byname and isinstance(func, str) and (func == "plot" or func.startswith("plot."))
     args = kwargs.get("args", ())
     kwargs = kwargs.get("kwargs", {})
     try:
-        if byname:
+        if byname and registration is not None:
+            # Resolve the owner accessor in the worker, without installing custom
+            # registrations in a process/thread's global catalogue.
+            func = _ModelFit(d.fit, registration.name, registration=registration)
+        elif byname:
             resolved = d
             for part in func.split("."):
                 resolved = getattr(resolved, part)
@@ -31,7 +54,11 @@ def _worker(d, **kwargs):
                 d["setas"] = list(d.setas)
             d["args"] = args
             d["kwargs"] = kwargs
-            d["func"] = getattr(func, "__name__", type(func).__name__)
+            d["func"] = (
+                source_name.rsplit(".", 1)[-1]
+                if byname and registration is None and _is_fit_call(source_name)
+                else getattr(func, "__name__", type(func).__name__)
+            )
         if byname:  # Ut's an instance bound moethod
             ret = func(*args, **kwargs)
         else:  # It's an arbitrary function
@@ -40,6 +67,102 @@ def _worker(d, **kwargs):
     except Exception as e:  # noqa: BLE001  # pylint: disable=broad-exception-caught
         ret = e, format_exc()
     return (d, ret)
+
+
+class _FitCall:
+    """Retain a bulk fitting path, resolving the registration at invocation."""
+
+    __slots__ = ("_proxy", "_name")
+
+    def __init__(self, proxy, name):
+        self._proxy = proxy
+        self._name = name
+
+    @property
+    def __name__(self):
+        return self._name
+
+    @property
+    def __signature__(self):
+        method = getattr(DataFitter, self._name) if self._name in _FIT_ALGORITHMS else _ModelFit.__call__
+        sig = signature(method)
+        return sig.replace(parameters=list(sig.parameters.values())[1:])
+
+    @property
+    def __doc__(self):
+        detail = (
+            getattr(DataFitter, self._name).__doc__
+            if self._name in _FIT_ALGORITHMS else _ModelFit(None, self._name).__doc__
+        )
+        return f"Fit folder members in order; _serial and _return follow each.iter.\n\n{detail}"
+
+    def __call__(self, *args, **kwargs):
+        return self._proxy._folder.each(f"fit.{self._name}", *args, **kwargs)
+
+
+class FitProxy:
+    """Fit folder members using explicit algorithms or registered-model shortcuts.
+
+    Args:
+        folder (DataFolder):
+            Folder owning the member measurements.
+
+    Notes:
+        Calling the proxy defaults to lmfit. The models property is a live,
+        read-only catalogue. Lookup and completion do not load folder members.
+        Coordinate selectors use x/y, as on Data.fit. Calls return results in
+        folder order and honour existing _serial and _return controls.
+
+        Each shortcut invocation snapshots the selected registration for that
+        bulk operation. Workers receive its definition and create member-bound
+        accessors locally; they do not change their global model registry.
+    """
+
+    __slots__ = ("_folder",)
+
+    def __init__(self, folder):
+        """Retain the folder without loading measurements."""
+        self._folder = folder
+
+    @property
+    def models(self):
+        """Return a live read-only view of registered model definitions."""
+        return MappingProxyType(model_registry)
+
+    def __call__(self, model, x=None, y=None, p0=None, sigma=None, **kwargs):
+        """Fit every member with lmfit, using the Data.fit calling convention.
+
+        Args:
+            model (lmfit.Model, type or callable):
+                Model accepted by Data.fit.lmfit.
+            x, y (column selector or None):
+                Member coordinate/response columns, defaulting to each member's roles.
+            p0 (iterable, lmfit.Parameters, callable or None):
+                Initial parameter specification.
+            sigma (column selector, array or None):
+                Y uncertainty specification passed to each member.
+
+        Keyword Arguments:
+            **kwargs (dict):
+                Fitting options and existing _serial/_return bulk controls.
+
+        Returns:
+            list:
+                Member results, or existing (exception, traceback) failure tuples,
+                in folder order. Updated measurements are retained in the folder.
+        """
+        return self._folder.each("fit", model, x, y, p0, sigma, **kwargs)
+
+    def __getattr__(self, name):
+        """Return an explicit algorithm call or a registered-model bulk shortcut."""
+        if name.startswith("_"):
+            raise AttributeError(name)
+        _is_fit_call(f"fit.{name}")
+        return _FitCall(self, name)
+
+    def __dir__(self):
+        """Include fitting algorithms and registered models without loading members."""
+        return sorted(set(super().__dir__()) | set(_FIT_ALGORITHMS) | set(model_registry))
 
 
 class PlotProxy:
@@ -161,6 +284,11 @@ class Item:
         self._folder = folder
 
     @property
+    def fit(self):
+        """Return member fitting calls with algorithm and registered-model shortcuts."""
+        return FitProxy(self._folder)
+
+    @property
     def plot(self):
         """Return serial automatic/named member plotting calls, without reading data."""
         return PlotProxy(self._folder)
@@ -200,6 +328,8 @@ class Item:
             string. then return result is stored in the corresponding name.
         """
         # Just call the iter generator but assemble into a list.
+        if _is_fit_call(func):
+            kwargs["_byname"] = True
         if isinstance(func, str) and (func == "plot" or func.startswith("plot.")):
             if func != "plot" and func[5:] not in (*_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
                 raise AttributeError(f"Unsupported bulk plotting method {func!r}.")
@@ -400,6 +530,9 @@ class Item:
             :py:class:`Stoner.core.base.metadataObject`'s metadata under the name of the function. If *_result* is a
             string. then return result is stored in the corresponding name.
         """
+        fitting = _is_fit_call(func)
+        if fitting:
+            kwargs["_byname"] = True
         if isinstance(func, str) and (func == "plot" or func.startswith("plot.")):
             if func != "plot" and func[5:] not in (*_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
                 raise AttributeError(f"Unsupported bulk plotting method {func!r}.")
@@ -412,11 +545,38 @@ class Item:
             _serial = True
         else:
             self._folder.fetch()  # Preserve generic bulk prefetching; plots load on the rendering thread.
+        registration = (
+            model_registry.registration(func[4:])
+            if fitting and func.startswith("fit.") and func[4:] not in _FIT_ALGORITHMS else None
+        )
         p, imap = get_pool(_serial)
-        items = (item.clone for item in self._folder) if "_stack_owner" in self._folder.__dict__ else self._folder
-        for ix, (new_d, ret) in enumerate(
-            imap(partial(_worker, func=func, args=args, kwargs=kwargs, byname=_byname), items)
-        ):
+        worker = partial(_worker, func=func, args=args, kwargs=kwargs, byname=_byname,
+                         fit_registration=registration)
+        complete = False
+        try:
+            if fitting and isinstance(p, ProcessPool):
+                try:
+                    ForkingPickler.dumps(worker)
+                # User model definitions can fail arbitrary serializer hooks.
+                except Exception as err:  # noqa: BLE001
+                    raise TypeError(
+                        f"Cannot transfer bulk fitting call {func!r} to workers; "
+                        "use _serial=True or provide a serialisable model/factory definition"
+                    ) from err
+            items = (item.clone for item in self._folder) if "_stack_owner" in self._folder.__dict__ else self._folder
+            yield from self._collect(imap(worker, items), func, _return)
+            complete = True
+        finally:
+            if p is not None:
+                if complete:
+                    p.close()
+                else:
+                    p.terminate()
+                p.join()
+
+    def _collect(self, results, func, _return):
+        """Publish member updates and retain the existing bulk-return conventions."""
+        for ix, (new_d, ret) in enumerate(results):
             if self._folder.debug:
                 print(ix, type(ret))
             if isinstance(ret, self._folder._type) and _return is None:
@@ -437,6 +597,3 @@ class Item:
             name = self._folder.__names__()[ix]
             self._folder.__setter__(name, new_d)
             yield ret
-        if p is not None:
-            p.close()
-            p.join()

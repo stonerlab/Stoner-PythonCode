@@ -28,7 +28,7 @@ d = Data(
 d.column_headers = ["X", "Y", "Z"]
 ax = d.plot.scatter3d(title=None, color="k")
 
-popt, pcov = d.curve_fit(plane, [0, 1], 2, result=True)
+popt, pcov = d.fit.curve_fit(plane, [0, 1], 2, result=True)
 col = linspace(-10, 10, 128)
 X, Y = meshgrid(col, col)
 Z = plane(array([X, Y]).T, *popt)

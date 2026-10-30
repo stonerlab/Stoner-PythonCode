@@ -335,7 +335,7 @@ def _h_sat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
         def _bounds(_, r):
             return np.abs(r.y) < np.abs(Ms) * h_sat_fraction
 
-    popt, pcov = d.lmfit(Linear, bounds=_bounds)
+    popt, pcov = d.fit.lmfit(Linear, bounds=_bounds)
     perr = np.sqrt(np.diag(pcov))
     popt = popt[:2]
     pferr = perr / popt
@@ -601,7 +601,7 @@ def hysteresis_correct(data, **kwargs):
     low = mid - span * (1 - saturation_f) / 2
     high = mid + span * (1 - saturation_f) / 2
 
-    popt, pcov = data.curve_fit(_step, bounds=lambda x, r: not low < x < high)
+    popt, pcov = data.fit.curve_fit(_step, bounds=lambda x, r: not low < x < high)
 
     perr = np.sqrt(np.diag(pcov))
 

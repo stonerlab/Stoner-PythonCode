@@ -140,7 +140,12 @@ In the same vein, the class provides a decorator to use a function to generate h
     def model_parameter_hints():
         return {"param1":{"max":10.0, "min":1.0},"param2":{"max":0.0}}
 
-the newly created **model_func** class can then be used immediately to fit data. The following example illustrates the concept.
+The newly created ``model_func`` class is registered automatically. Fit through
+``d.fit.model_func(...)`` or pass the class explicitly to
+``d.fit.lmfit(model_func, ...)``. The guesser and hinter remain attached to the
+same registered class. See :doc:`fitting_registry` for explicit names, collision
+handling and read-only model discovery. The following runnable example uses the
+shortcut created by ``@make_model``.
 
 .. plot:: samples/make_model.py
     :include-source:

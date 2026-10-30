@@ -4,6 +4,50 @@ Release notes
 Unreleased
 ----------
 
+``folder.each.fit`` now supports the callable lmfit default, explicit algorithms
+and registered-model shortcuts. Calls preserve member order, result collection,
+metadata storage and existing serial/thread/process controls. Custom shortcut
+definitions are transferred to workers without changing their global registries.
+Unsupported definition transfer has an explicit diagnostic and cleans up the
+operation's pool. See :doc:`UserGuide/fitting_folders`.
+
+Internal extrapolation and hysteresis helpers now use ``Data.fit``. Shared
+fitting preparation also accepts ordinary integer Y-column selectors instead
+of treating them as array containers.
+
+``Data.fit`` now provides owner-bound fitting with ``x`` and ``y`` column
+selectors. ``d.fit(model, ...)`` defaults to lmfit; registered-model shortcuts
+such as ``d.fit.linear(...)`` use the same algorithm. Explicit ``lmfit``,
+``curve_fit``, ``odr``, ``differential_evolution`` and ``polyfit`` methods preserve
+their existing options and returns. Direct fitting methods remain available.
+
+Documentation, runnable examples and analysis scripts now use ``Data.fit`` and
+``folder.each.fit``. Fitting coordinate keywords on these accessors are ``x``
+and ``y``. Model/decorator examples also demonstrate registered shortcuts.
+
+The accessor provides model-name completion, a live read-only ``models`` view,
+and fresh model state for each fit. Saved shortcuts resolve the current
+registration. See :doc:`UserGuide/fitting_registry` and :doc:`fit-shortcuts`.
+
+Differential evolution now resolves explicitly selected coordinate columns before
+calculating fit statistics, fixing a failure for named X-column selectors.
+
+Fitting models now have a process-local registry with snake_case keys. The
+existing ``make_model`` decorator registers generated classes and supports named
+registration and explicit replacement; ``register_model`` supports handwritten
+model subclasses and named factories. Existing model imports and fitting
+metadata prefixes are retained. The registry supplies the ``Data.fit`` shortcuts.
+
+``Stoner.enums.FitOutput`` provides string-valued choices for the six common
+fitting outputs. Existing strings, defaults and algorithm-specific returns
+remain supported. See :doc:`UserGuide/fitting_registry`.
+
+Fit annotations now belong to the plotting accessor: replace
+``data.annotate_fit(model, ...)`` with ``data.plot.annotate_fit(model, ...)``.
+The method still returns the same ``Data`` object after drawing and returns
+formatted parameter text with ``text_only=True``. It uses the accessor's recent
+live axes or an explicit ``ax=`` target and never creates a figure.
+
 Column selectors now return all matches at the first successful matching stage:
 exact header equality, then case-sensitive whole-header glob matching when the
 string contains glob syntax, otherwise literal substring matching, and finally

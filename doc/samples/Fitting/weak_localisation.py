@@ -21,18 +21,18 @@ d = Data(
     column_headers=["Field $\\mu_0H (T)$", "Conductance", "dConductance"],
 )
 
-d.curve_fit(wlfit, p0=copy(params), result=True, header="curve_fit")
+d.fit.curve_fit(wlfit, p0=copy(params), result=True, header="curve_fit")
 
 d.setas = "xye"
-d.lmfit(WLfit, result=True, header="lmfit")
+d.fit.lmfit(WLfit, result=True, header="lmfit")
 
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(
+d.plot.annotate_fit(
     wlfit, x=0.05, y=0.75, fontdict={"size": "x-small", "color": "blue"}
 )
-d.annotate_fit(
+d.plot.annotate_fit(
     WLfit,
     x=0.05,
     y=0.5,

@@ -1,4 +1,4 @@
-"""Demo of new Stoner.Data.lmfit."""
+"""Demonstrate the Data.fit accessor."""
 
 # pylint: disable=invalid-name
 import io
@@ -19,9 +19,9 @@ with urllib.request.urlopen(
 d = cfg_data_from_ini(config, datafile)
 model, p0 = cfg_model_from_ini(config, data=d)
 
-fit = d.lmfit(model, result=True, header="lmfit", output="report")
+fit = d.fit.lmfit(model, result=True, header="lmfit", output="report")
 
 d.plot.line(0, [2, 1], fmt=["r-", "bo"], title="PCAR Co Data")  # plot the data
-d.annotate_fit(model, x=0.05, y=0.75, fontdict={"size": "x-small"})
+d.plot.annotate_fit(model, x=0.05, y=0.75, fontdict={"size": "x-small"})
 
 print(fit.fit_report())

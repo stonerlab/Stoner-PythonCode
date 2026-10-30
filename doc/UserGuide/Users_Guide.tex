@@ -847,10 +847,10 @@ polarisation value.
 \subsubsection{Simple polynomial Fits}
 
 Simple least squares fitting of polynomial functions is handled by the
-\textbf{AnalyseFile.polyfit} method:
+\textbf{Data.fit.polyfit} method:
 
 \begin{lstlisting}
-   a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
+   a.fit.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
 \end{lstlisting}
 
 This is a simple pass through to the numpy routine of the same name. The x and y
@@ -867,19 +867,19 @@ If \textit{result} is specified then a new column with the header given by the r
 
 \subsubsection{Simple function fitting}
 
-For more general curve fitting operations the \textbf{AnalyseFile.cruve\_fit}
+For more general curve fitting operations the \textbf{Data.fit.curve\_fit}
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.
 
 \begin{lstlisting}
-   a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,bounds=lambda x, y: True, result=True,replace=False,header="New Column" )
+   a.fit.curve_fit(func, x=x_column, y=y_column, p0=None, sigma=None,bounds=lambda x, y: True, result=True,replace=False,header="New Column" )
 \end{lstlisting}
 
 The first parameter is the fitting function. This should have prototype
 \\\verb:y=func(x,p[0],p[1],p[2]...): where p is a list of fitting parameters.
 The \textit{p0} parameter contains the initial guesses at the fitting
-parameters, the default value is 1. \textit{xcol} and \textit{ycol} are the x
-and y columns to fit. This method cannot handle multiple y columns.
+parameters, the default value is 1. \textit{x} and \textit{y} select the coordinate
+and response columns. Omitted selectors use the assigned column roles.
 \textit{sigma}, if present, provides the weightings for each datapoint and so
 should also be an array of the same length as the x and y data. Finally, the
 bounds function can be used to restrict the fitting to only a subset of the rows

@@ -52,8 +52,14 @@ matrix. Request ``output="report"`` when you want the fitting library's result
 object, for example to call an lmfit result's ``fit_report()`` method. See the
 individual method reference for the precise contents of ``output="full"``.
 
-The utility method of :py:class:`Stoner.core.data.Data`, :py:meth:`Stoner.core.data.Data.annotate_fit`, is useful
-for adding appropriately formatted details of the fit to the plot (in this case for the case of :doc:`fitting_simple`).
+Use :py:class:`~Stoner.enums.FitOutput` for named choices such as
+``output=FitOutput.REPORT``; the corresponding strings remain supported.
+See :doc:`fitting_registry` for enum choices and model registration.
+
+The plotting accessor method :py:meth:`~Stoner.plot.accessor.DataPlotter.annotate_fit` is useful
+for adding formatted fit details to a plot with ``data.plot.annotate_fit(model)``
+(as in :doc:`fitting_simple`). It returns the same ``Data`` object for chaining.
+Use ``text_only=True`` to obtain formatted text without drawing or creating a figure.
 
 .. plot:: samples/curve_fit_line.py
     :include-source:
@@ -68,7 +74,7 @@ True if the row is to be included in the fit and False if not. e.g::
         y = row[a.find_col("Y")]
         return 100 < x < 200 and 5 < y < 20
 
-    parameters, covariance = a.curve_fit(func, bounds=bounds_func)
+    parameters, covariance = a.fit.curve_fit(func, bounds=bounds_func)
 
 What the fitting wrappers share
 ===============================
@@ -85,7 +91,7 @@ standalone fitting functions:
         also provide a common way to select a subset of data to use for fitting through the *bounds* keyword argument.
     #.  They provide a consistent way to add the best-fit data as one or more columns to the :py:class:`~Stoner.core.data.Data` object and to store the best-fit
         parameters in the metadata for later retrieval. The package can therefore use
-        :py:meth:`~Stoner.core.data.Data.annotate_fit` to display the fitting parameters on a plot of the data.
+        :py:meth:`~Stoner.plot.accessor.DataPlotter.annotate_fit` to display the fitting parameters on a plot of the data.
 
 Next steps
 ==========

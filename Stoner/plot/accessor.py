@@ -292,6 +292,136 @@ class DataPlotter:
         self._record(figure)
         return figure
 
+    def annotate_fit(self, model, x=None, y=None, z=None, text_only=False, mode="float", **kwargs):
+        """Annotate a fit or return its formatted parameter text.
+
+        Args:
+            model (callable or lmfit.Model or scipy.odr.Model):
+                Function, lmfit model or ODR model describing the recorded fit.
+
+        Keyword Arguments:
+            x (float):
+                Horizontal annotation coordinate. Defaults to 0.75.
+            y (float):
+                Vertical annotation coordinate. Defaults to 0.5.
+            z (float):
+                Third coordinate for 3D text; None uses the midpoint of the Z limits.
+            text_only (bool):
+                Return text without drawing when True. Defaults to False.
+            ax (matplotlib.axes.Axes or None):
+                Explicit annotation target. None uses the plotting accessor's recent
+                live axes. An explicit target does not change the accessor's target.
+            prefix (str):
+                Override the metadata prefix inferred from the model and recorded fit.
+            mode (str):
+                Number-formatting mode passed to Data.format. Defaults to float.
+            **kwargs (dict):
+                Text properties or annotation options, including arrowprops.
+
+        Returns:
+            Data or str:
+                The same Data object after drawing, or formatted text when text_only=True.
+
+        Raises:
+            ValueError:
+                If drawing is requested without an existing plot or explicit axes.
+
+        Notes:
+            Ordinary 2D text uses axes-fraction coordinates; annotation calls with
+            arrowprops retain Matplotlib's coordinate options. 3D text uses data
+            coordinates. Parameter labels/units may be recorded in metadata for
+            formatting, including when text_only is True. Drawing creates no figure.
+        """
+        from inspect import isclass
+
+        from lmfit.model import Model
+        from scipy.odr import Model as odrModel
+
+        datafile = self._data
+        if isclass(model) and (issubclass(model, Model) or issubclass(model, odrModel)):
+            model = model()  # Instantiate a bare class first
+
+        if isinstance(model, odrModel):  # Get predix from odrModel
+            model_prefix = model.meta.get("__name__", type(model).__name__)
+            prefix = kwargs.pop("prefix", datafile.get("odr.prefix", model_prefix))
+            param_names = model.meta.get("param_names", [])
+            display_names = model.meta.get("display_names", param_names)
+            units = model.meta.get("units", [""] * len(param_names))
+        elif isinstance(model, Model):  # Get prefix from lmfit
+            prefix = kwargs.pop("prefix", datafile.get("lmfit.prefix", type(model).__name__))
+            param_names = model.param_names
+            display_names = getattr(model, "display_names", model.param_names)
+            units = getattr(model, "units", [""] * len(param_names))
+        elif callable(model):  # Get prefix from callable name
+            prefix = kwargs.pop("prefix", model.__name__)
+            model = Model(model)
+            param_names = model.param_names
+            display_names = getattr(model, "display_names", model.param_names)
+            units = getattr(model, "units", [""] * len(param_names))
+        else:
+            raise RuntimeError(f"model should be either an lmfit_mod.Model or a callable function, not a {type(model)}")
+
+        if prefix is not None:
+            if isinstance(prefix, (list, tuple)):
+                prefix = prefix[0]
+
+            prefix = prefix.strip(" :")
+            prefix = "" if prefix == "" else prefix + ":"
+
+        else:
+            if isinstance(prefix, (list, tuple)):
+                prefix = prefix[0]
+
+            if model.prefix == "":
+                prefix = ""
+            else:
+                prefix = model.prefix + ":"
+
+        x = 0.75 if x is None else x
+        y = 0.5 if y is None else y
+
+        try:  # if the model has an attribute display params then use these as the parameter names
+            for k, display_name, unit in zip(param_names, display_names, units):
+                if prefix:
+                    datafile[f"{prefix}{k} label"] = display_name
+                    datafile[f"{prefix}{k} units"] = unit
+
+                else:
+                    datafile[f"{k} label"] = display_name
+                    datafile[f"{k} units"] = unit
+        except (AttributeError, KeyError):
+            pass
+
+        text = "\n".join([datafile.format(f"{prefix}{k}", fmt="latex", mode=mode) for k in model.param_names])
+        try:
+            datafile[f"{prefix}chi^2 label"] = r"\chi^2_{red}"
+            text += "\n" + datafile.format(f"{prefix}chi^2", fmt="latex", mode="eng")
+        except KeyError:
+            pass
+
+        if not text_only:
+            ax = kwargs.pop("ax", None)
+            if ax is None:
+                ax = self.ax
+            if ax is None:
+                raise ValueError("Plot data first or supply ax= to plot.annotate_fit.")
+            if "zlim" in ax.properties():
+                # 3D plot then
+                if z is None:
+                    zb, zt = ax.properties()["zlim"]
+                    z = 0.5 * (zt - zb) + zb
+                ax.text3D(x, y, z, text)
+            elif "arrowprops" in kwargs:
+                ax.annotate(text, xy=(x, y), **kwargs)
+            else:
+                kwargs.pop("xycoords", None)
+                kwargs["transform"] = ax.transAxes
+                ax.text(x, y, text, **kwargs)
+            ret = datafile
+        else:
+            ret = text
+        return ret
+
     def show(self, *, block=None):
         """Show open Matplotlib figures, optionally overriding interactive blocking."""
         return plt.show(block=block)

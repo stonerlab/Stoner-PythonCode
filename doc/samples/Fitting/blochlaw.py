@@ -19,7 +19,7 @@ d = Data(
     T, M, dM, column_headers=["Temperature", "Magnetization", "dM"], setas="xye"
 )
 
-d.curve_fit(
+d.fit.curve_fit(
     blochLaw,
     p0=[1500, 1500],
     result=True,
@@ -30,7 +30,7 @@ d.curve_fit(
 
 model = BlochLaw()
 
-fit = d.lmfit(
+fit = d.fit.lmfit(
     model,
     result=True,
     header="lmfit",
@@ -44,7 +44,7 @@ fit = d.lmfit(
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(
+d.plot.annotate_fit(
     blochLaw,
     x=0.1,
     y=0.5,
@@ -52,7 +52,7 @@ d.annotate_fit(
     mode="eng",
     prefix="curve_fit",
 )
-d.annotate_fit(
+d.plot.annotate_fit(
     BlochLaw,
     x=0.1,
     y=0.25,

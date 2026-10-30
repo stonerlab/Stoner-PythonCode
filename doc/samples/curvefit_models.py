@@ -15,7 +15,7 @@ y = PowerLaw().func(x, 1e-1, 1.64) * random.normal(
 d = Data(x, y, column_headers=["Time", "Signal"], setas="xy")
 
 # Do the fitting and plot the result
-fit = d.curve_fit(
+fit = d.fit.curve_fit(
     PowerLaw,
     result=True,
     header="LM-Model Fit",
@@ -24,7 +24,7 @@ fit = d.curve_fit(
 )
 
 ODRModel = ODR_Model(PowerLaw, p0=(1, 1))
-fit = d.curve_fit(
+fit = d.fit.curve_fit(
     ODRModel,
     result=True,
     header="ODR-Fit",
@@ -55,8 +55,8 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         d.plot.xlabel = ""
 
         # Annotate plot with fitting parameters
-        d.annotate_fit(PowerLaw, x=0.1, y=0.25, fontdict={"size": "x-small"})
-        d.annotate_fit(
+        d.plot.annotate_fit(PowerLaw, x=0.1, y=0.25, fontdict={"size": "x-small"})
+        d.plot.annotate_fit(
             ODRModel,
             x=0.65,
             y=0.15,

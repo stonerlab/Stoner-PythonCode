@@ -97,8 +97,8 @@ Fitting Tricks
 Fitting 3D Data
 ---------------
 
-:py:meth:`~Stoner.core.data.Data.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
-variables. In order to do this, the *xcol* parameter needs to be an iterable (e.g. list or tuple or array), and
+:py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+variables. In order to do this, the *x* parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.
 
@@ -109,11 +109,11 @@ illustrates this by fitting a plane to a collection of points in 3D space.
 Fitting to Minimise a Function
 ------------------------------
 
-If *ycol* is a numpy array of the same length as the data then the values of ycol are
+If *y* is a numpy array of the same length as the data then its values are
 assumed to be the points to fit rather than index of a column. This is useful if
 the function you want to fit can be written as :math:`f(x_1,x_2,\cdots ,x_n)=0`.
-In this case, pass *xcol* a list or tuple of columns that make up :math:`x_1,x_2,\cdots ,x_n`
-and make your function take a tuple of 1D-arrays and pass *ycol* as an array of zeros.
+In this case, pass *x* a list or tuple of columns that make up :math:`x_1,x_2,\cdots ,x_n`
+and make your function take a tuple of 1D-arrays and pass *y* as an array of zeros.
 For example:
 
 .. plot:: samples/sphere_fit.py

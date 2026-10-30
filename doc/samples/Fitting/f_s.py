@@ -22,21 +22,21 @@ d = Data(
     column_headers=["Thickness (nm)", "Conductance", "dConductance"],
 )
 
-d.curve_fit(fluchsSondheimer, p0=params, result=True, header="curve_fit")
+d.fit.curve_fit(fluchsSondheimer, p0=params, result=True, header="curve_fit")
 
 d.setas = "xye"
-d.lmfit(FluchsSondheimer, result=True, header="lmfit")
+d.fit.fuchs_sondheimer(result=True, header="lmfit")
 
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(
+d.plot.annotate_fit(
     fluchsSondheimer,
     x=0.2,
     y=0.6,
     fontdict={"size": "x-small", "color": "blue"},
 )
-d.annotate_fit(
+d.plot.annotate_fit(
     FluchsSondheimer,
     x=0.2,
     y=0.4,

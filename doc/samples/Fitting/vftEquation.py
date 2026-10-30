@@ -22,24 +22,24 @@ d.plot(fmt="r.", label="Data Points")
 d.setas[2] = "e"
 
 # Curve_fit on its own
-d.curve_fit(vftEquation, p0=params, result=True, header="curve_fit")
+d.fit.curve_fit(vftEquation, p0=params, result=True, header="curve_fit")
 
 # lmfit uses some guesses
 p0 = params
-d.lmfit(VFTEquation, result=True, header="lmfit")
+d.fit.lmfit(VFTEquation, result=True, header="lmfit")
 
 # Plot these results too
 d.setas = "x..yy"
 d.plot(fmt=["b-", "g-"])
 # Annotate the graph
-d.annotate_fit(
+d.plot.annotate_fit(
     vftEquation,
     x=0.25,
     y=0.35,
     fontdict={"size": "x-small", "color": "blue"},
     mode="eng",
 )
-d.annotate_fit(
+d.plot.annotate_fit(
     VFTEquation,
     x=0.5,
     y=0.35,
@@ -51,12 +51,12 @@ d.annotate_fit(
 # reset the columns for the fit
 d.setas = "xye.."
 # Now do the odr fit (will overwrite lmfit's metadata)
-d.odr(VFTEquation, result=True)
+d.fit.odr(VFTEquation, result=True)
 d.setas = "x4.y"
 
 # And plot and annotate
 d.plot(fmt="m-", label="Orthogonal distance")
-d.annotate_fit(
+d.plot.annotate_fit(
     VFTEquation,
     x=0.75,
     y=0.35,

@@ -116,6 +116,24 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 - Record release evidence in the release or pull request. Remove completed items
   from the active checklist below rather than retaining another phase report.
 
+## Planned API work
+
+- [ ] Follow [STRING_ENUM_PLAN.md](STRING_ENUM_PLAN.md) for public string-valued
+  choice arguments. Start with fitting outputs, retain supported string calls,
+  and audit unrelated domains in bounded compatibility-preserving batches.
+- [ ] Follow [DATA_ACCESSOR_PLAN.md](DATA_ACCESSOR_PLAN.md) for the reviewed
+  candidate accessor groups and their ownership boundaries. Fitting is the first
+  implemented group; the other groups remain future-work proposals.
+- [ ] Implement [FIT_ACCESSOR_PLAN.md](FIT_ACCESSOR_PLAN.md) in bounded batches:
+  snake_case model registry, registration through the existing `make_model`
+  decorator, `Data.fit`, consumer/folder migration, documentation and validation.
+  Settle the explicitly proposed compatibility/default choices before coding them.
+  The registry/decorator, `FitOutput`, `DataFitter` and `Data.fit` are implemented
+  and locally validated, including folder fitting and internal consumers. The
+  documentation/sample/script migration is complete; compatibility warning timing
+  and removal policy remain undecided. See the plan handover
+  for evidence and the remaining migration decisions.
+
 ## Current release follow-up
 
 ### Published 0.12.0a4

@@ -7,6 +7,23 @@ Converting Scripts from Older Versions of the Stoner Package
 The Stoner package has gradually undergone several changes as additional functions have been added to keep the codebase
 manageable. This document summarises the main changes from previous versions.
 
+Fitting accessor
+================
+
+Fitting now belongs to ``data.fit``. For example,
+``data.lmfit(Linear, xcol="Field", ycol="Signal")`` becomes
+``data.fit.lmfit(Linear, x="Field", y="Signal")`` or
+``data.fit.linear(x="Field", y="Signal")``. Calling ``data.fit(Linear, ...)``
+defaults to lmfit. The shortcuts select registered models; choose another
+algorithm explicitly through ``data.fit.curve_fit``, ``odr`` or
+``differential_evolution``. Polynomial fitting is ``data.fit.polyfit``.
+
+Bulk fitting follows the same pattern: ``folder.each.fit.linear(...)`` or
+``folder.each.fit.curve_fit(Linear, ...)``. Existing fit options and returns
+are retained. Direct fitting methods remain available without new deprecation
+warnings; a removal release has not been selected. See :doc:`fitting_registry`
+and :doc:`fitting_folders` for registration, outputs and bulk execution.
+
 Version 0.12.0a3: additional plotting contexts
 ==============================================
 
@@ -91,7 +108,7 @@ arrays consistently select discrete targets; this fixes NumPy-version-dependent
 interval dispatch. Use a tuple for an interval. Two-item numeric lists retain
 their legacy interval meaning.
 
-Operation selections through ``where`` are supported by ``Data.curve_fit``,
+Operation selections through ``where`` are supported by ``Data.fit.curve_fit``,
 ``ImageFile.mean`` and ``ImageStack.average``. Unsupported numerical transforms
 now reject this keyword before work or mutation, including methods whose legacy
 keyword dictionaries silently ignored it. For a row callback requiring its own
@@ -235,7 +252,7 @@ called. To remove this problem, and to make it a little more explicit when acces
 now becomes::
 
     fldr=DataFolder(".", pattern="*.txt", setas="xy")
-    fldr.each.curve_fit(Linear)
+    fldr.each.fit.curve_fit(Linear)
 
 One of the frequently required operations is to loop through all the files in a folder and extract some of their metadata
 and build that into a new table. This used to be done something like::

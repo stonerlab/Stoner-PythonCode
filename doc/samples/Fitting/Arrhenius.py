@@ -15,10 +15,10 @@ E = 10 ** ceil(log10(np_abs(R - arrhenius(T, 1e6, 0.5))))
 d = Data(T, R, E, setas="xye", column_headers=["T", "Rate"])
 
 # Curve_fit on its own
-d.curve_fit(arrhenius, p0=(1e6, 0.5), result=True, header="curve_fit")
+d.fit.curve_fit(arrhenius, p0=(1e6, 0.5), result=True, header="curve_fit")
 d.setas = "xyey"
 d.plot(fmt=["r.", "b-"])
-d.annotate_fit(
+d.plot.annotate_fit(
     arrhenius,
     x=0.5,
     y=0.5,
@@ -29,10 +29,10 @@ d.annotate_fit(
 # lmfit using lmfit guesses
 fit = Arrhenius()
 d.setas = "xye"
-d.lmfit(fit, result=True, header="lmfit")
+d.fit.lmfit(fit, result=True, header="lmfit")
 d.setas = "x...y"
 d.plot(fmt="g-")
-d.annotate_fit(
+d.plot.annotate_fit(
     Arrhenius,
     x=0.5,
     y=0.35,
@@ -42,10 +42,10 @@ d.annotate_fit(
 )
 
 d.setas = "xye"
-res = d.odr(Arrhenius, result=True, header="odr", prefix="ODR")
+res = d.fit.odr(Arrhenius, result=True, header="odr", prefix="ODR")
 d.setas = "x....y"
 d.plot(fmt="m-")
-d.annotate_fit(
+d.plot.annotate_fit(
     Arrhenius,
     x=0.5,
     y=0.2,

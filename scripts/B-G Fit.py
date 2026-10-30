@@ -47,14 +47,14 @@ def fit(filename=False):
     model = BlochGrueneisen()
     model.set_param_hint("n", vary=False, value=5)
     print(f"Initial guesses: {model.guess(data.y, x=data.x)}")
-    data.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
+    data.fit.lmfit(model, absolute_sigma=False, result=True, header="Bloch")
     data.setas(Bloch="y", reset=False)
     ax = data.plot(
         fmt=["r.", "b-"], label=["Data", "Bloch-Grüneisen fit"], markersize=1
     )
     data.plot.xlabel = "Temperature (K)"
     data.plot.ylabel = r"Resistance ($\Omega$)"
-    data.annotate_fit(model, ax=ax, x=0.05, y=0.35, mode="eng")
+    data.plot.annotate_fit(model, ax=ax, x=0.05, y=0.35, mode="eng")
     return data
 
 

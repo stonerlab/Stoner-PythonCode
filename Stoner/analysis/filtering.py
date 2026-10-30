@@ -441,7 +441,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
         of the data centred about the point and overlap points long will be used to interpolate a value.
 
         If *kind* is callable, it should take x values in the first parameter and free fitting parameters as
-        the other parameters (i.e. as with :py:meth:`~Stoner.core.data.Data.curve_fit`).
+        the other parameters (i.e. as with :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit`).
     """
     _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False, single=("xcol",))
     kinds = {
@@ -505,7 +505,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
                 raise TypeError(f"Overlap should be an integer or floating point number not a {type(overlap)}")
         pointdata = work.select(**bounds)
         pointdata[:, _.xcol] = pointdata.column(_.xcol) - mid_x
-        ret = pointdata.curve_fit(kindf, _.xcol, _.ycol, sigma=_.yerr, absolute_sigma=True)
+        ret = pointdata.fit.curve_fit(kindf, x=_.xcol, y=_.ycol, sigma=_.yerr, absolute_sigma=True)
         if isinstance(ret, tuple):
             ret = [ret]
         for iy, rt in enumerate(ret):

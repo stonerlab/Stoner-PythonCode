@@ -13,19 +13,19 @@ R = nDimArrhenius(T + normal(size=len(T), scale=5.0, loc=1.0), 1e6, 0.5, 2)
 d = Data(T, R, setas="xy", column_headers=["T", "Rate"])
 
 # Curve_fit on its own
-d.curve_fit(nDimArrhenius, p0=[1e6, 0.5, 2], result=True, header="curve_fit")
+d.fit.curve_fit(nDimArrhenius, p0=[1e6, 0.5, 2], result=True, header="curve_fit")
 d.setas = "xyy"
 d.plot(fmt=["r.", "b-"])
-d.annotate_fit(nDimArrhenius, x=0.25, y=0.3, mode="eng")
+d.plot.annotate_fit(nDimArrhenius, x=0.25, y=0.3, mode="eng")
 
 # lmfit using lmfit guesses
 fit = NDimArrhenius()
 p0 = fit.guess(R, x=T)
 d.setas = "xy"
-d.lmfit(fit, result=True, header="lmfit")
+d.fit.lmfit(fit, result=True, header="lmfit")
 d.setas = "x..y"
 d.plot(fmt="g-")
-d.annotate_fit(
+d.plot.annotate_fit(
     NDimArrhenius, x=0.25, y=0.05, prefix="NDimArrhenius", mode="eng"
 )
 

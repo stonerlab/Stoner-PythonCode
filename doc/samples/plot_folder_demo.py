@@ -34,14 +34,14 @@ def extra(_, __, d):
     d.plot.xlabel = r"Field $\mu_0H\,$"
     d.plot.ylabel = "Abs. (arb)"
     d.plot.ax.legend(loc=3)
-    d.annotate_fit(FMR_Power, fontdict={"size": 8}, x=0.05, y=0.25)
+    d.plot.annotate_fit(FMR_Power, fontdict={"size": 8}, x=0.05, y=0.25)
 
 
 def do_fit(f):
     """Fit just one set of data."""
     f["cut"] = f.threshold(1.75e5, rising=False, falling=True)
     f["Frequency"] = (f // "Frequency").mean()
-    f.lmfit(
+    f.fit.lmfit(
         FMR_Power, result=True, header="Fit", bounds=lambda x, r: x < f["cut"]
     )
     return f
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     # Doing the Kittel fit with an orthogonal distance regression as we have x errors not y errors
     p0 = [2, 200e3, 10e3]  # Some sensible guesses
-    result.lmfit(
+    result.fit.lmfit(
         Inverse_Kittel, p0=p0, result=True, header="Kittel Fit", output="report"
     )
     result.setas[-1] = "y"
@@ -127,7 +127,7 @@ if __name__ == "__main__":
         target.xaxis.set_major_formatter(result.plot.TexEngFormatter())
         target.yaxis.set_major_formatter(result.plot.TexEngFormatter())
     result.plot(ax=axes[0], fmt=["r.", "b-"])
-    result.annotate_fit(
+    result.plot.annotate_fit(
         Inverse_Kittel, ax=axes[0], x=0.55, y=0.3, fontdict={"size": 8}
     )
     result.plot.ylabel = "$H_{res} \\mathrm{(Am^{-1})}$"
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     result.setas(y="Delta_H", e="Delta_H err", x="Freq")
     result.y = result.y / mu_0
     result.e = result.e / mu_0
-    result.lmfit(Linear, result=True, header="Width", output="report")
+    result.fit.lmfit(Linear, result=True, header="Width", output="report")
     result.setas[-1] = "y"
     result.plot(ax=axes[1], fmt=["r.", "b-"])
-    result.annotate_fit(Linear, ax=axes[1], x=0.1, y=0.65, fontdict={"size": 8})
+    result.plot.annotate_fit(Linear, ax=axes[1], x=0.1, y=0.65, fontdict={"size": 8})

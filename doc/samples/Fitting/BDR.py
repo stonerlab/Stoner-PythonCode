@@ -15,10 +15,10 @@ dI = ones_like(V) * 1.0e-3
 # Curve fit
 d = Data(V, I, dI, setas="xye", column_headers=["Bias", "Current", "Noise"])
 
-d.curve_fit(bdr, p0=[2.5, 3.2, 0.3, 15.0, 1.0], result=True, header="curve_fit")
+d.fit.curve_fit(bdr, p0=[2.5, 3.2, 0.3, 15.0, 1.0], result=True, header="curve_fit")
 d.setas = "xyey"
 d.plot(fmt=["r.", "b-"])
-d.annotate_fit(
+d.plot.annotate_fit(
     bdr,
     x=0.6,
     y=0.05,
@@ -38,10 +38,10 @@ for p, v, mi, mx in zip(
 ):
     p0[p].value = v
     p0[p].bounds = [mi, mx]
-d.lmfit(fit, p0=p0, result=True, header="lmfit")
+d.fit.lmfit(fit, p0=p0, result=True, header="lmfit")
 d.setas = "x...y"
 d.plot(fmt="g-")
-d.annotate_fit(
+d.plot.annotate_fit(
     fit,
     x=0.2,
     y=0.05,

@@ -53,7 +53,7 @@ def alt_norm(f, _, **kwargs):
     ec = 0
 
     md = f.find_col(signal)
-    parameters, _ = f.curve_fit(
+    parameters, _ = f.fit.curve_fit(
         linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1]
     )
     coeffs = parameters[::-1]
@@ -84,7 +84,7 @@ def norm_group(pos, _, **kwargs):
     posfile.add_column(lambda r: np.mean(r[1:]), "mean drain")
     ec = posfile.find_col("Energy")
     md = posfile.find_col("mean drain")
-    parameters, _ = posfile.curve_fit(
+    parameters, _ = posfile.fit.curve_fit(
         linear, ec, md, bounds=lambda x, row: lfit[0] <= x <= lfit[1]
     )
     linearfit = np.poly1d(parameters[::-1])

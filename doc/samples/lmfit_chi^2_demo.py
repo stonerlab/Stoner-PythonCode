@@ -1,4 +1,4 @@
-"""Demo of new Stoner.Data.lmfit."""
+"""Demonstrate the Data.fit accessor."""
 
 # pylint: disable=invalid-name
 from os.path import join
@@ -12,7 +12,7 @@ datafile = join(__home__, "..", "sample-data", "PCAR Co Data.csv")
 d = cfg_data_from_ini(config, datafile)
 model, p0 = cfg_model_from_ini(config, data=d)
 
-fit = d.lmfit(model, p0=p0, result=True, header="Fit", output="data")
+fit = d.fit.lmfit(model, p0=p0, result=True, header="Fit", output="data")
 with fit.plot.style("stoner"):
     columns = fit.setas._get_cols().ycol
     with fit.plot.StackVertical(len(columns)) as panels:

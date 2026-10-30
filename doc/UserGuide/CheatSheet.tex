@@ -222,8 +222,8 @@ Split the data into a DataFolder object according to the value in a certain colu
 \end{verbatim} 
 Fit the data:
 \begin{verbatim}
-  >>> a.polyfit(xcol,ycol,order, result="New Column")
-  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
+  >>> a.fit.polyfit(xcol,ycol,order, result="New Column")
+  >>> a.fit.curve_fit(func, x=x_column, y=y_column, p0=None, sigma=None,
         bounds=lambda x, y: True, result="New column")
   >>> (Stoner.PlotFile(a)).plot_xy(xcol, "New Col")
 \end{verbatim}

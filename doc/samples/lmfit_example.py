@@ -9,12 +9,12 @@ d = Data("lmfit_data.txt", setas="xy")
 d.y = d.y
 
 # Do the fit
-d.lmfit(StretchedExp, result=True, header="Fit", residuals=True)
+d.fit.lmfit(StretchedExp, result=True, header="Fit", residuals=True)
 # plot
 d.setas = "xyy"
 
 d.plot(fmt=["+", "-"])
 # Make apretty label using Stoner.Util methods
 text = r"$y=A e^{-\left(\frac{x}{x_0}\right)^\beta}$" + "\n"
-text += d.annotate_fit(StretchedExp, text_only=True)
+text += d.plot.annotate_fit(StretchedExp, text_only=True)
 d.plot.ax.text(4, 6e4, text, fontsize="x-small")

@@ -15,7 +15,7 @@ of one coordinate.
 Fit more than one coordinate
 ============================
 
-:py:meth:`~Stoner.core.data.Data.curve_fit` can also be used to fit more complex problems. In the example below, a set of
+:py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` can also be used to fit more complex problems. In the example below, a set of
 points in x,y,z space are fitted to a plane.
 
 .. plot:: samples/curve_fit_plane.py

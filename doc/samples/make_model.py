@@ -28,7 +28,7 @@ def guess_vals(y, x=None):
     return [m, c]
 
 
-# Add a function to sry vonstraints on parameters (optional)
+# Add a function to set constraints on parameters (optional)
 @simple_model.hinter
 def hint_parameters():
     """Provide bounds for the straight-line parameters."""
@@ -43,10 +43,10 @@ y = 4.5 * x - 2.3 + normal(scale=0.4, size=len(x))
 d = Data(x, y, setas="xy", column_headers=["X", "Y"])
 
 # Do the fit
-d.lmfit(simple_model, result=True)
+d.fit.simple_model(result=True)
 
 # Plot the result
 d.setas = "xyy"
 d.plot(fmt=["r+", "b-"])
 d.plot.title = "Simple Model Fit"
-d.annotate_fit(simple_model, x=0.05, y=0.5)
+d.plot.annotate_fit(simple_model, x=0.05, y=0.5)

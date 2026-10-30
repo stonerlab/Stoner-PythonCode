@@ -22,7 +22,7 @@ result = Data()
 # Loop over the files in the DataFolder
 for d in fldr:
     # Fit, returning results as a dictionary
-    row = d.lmfit(Quadratic, output="dict")
+    row = d.fit.lmfit(Quadratic, output="dict")
     # Add Extra information from metadata
     row["Magnetic Field $\\mu_0 H (T)$"] = d["y"]
     # Add the new row of data to the result.
@@ -40,7 +40,7 @@ with result.plot.PlotLabeller():
 
 # Run the fitt for each file in the fldr. Set the output to "data" to
 # Have the amended results replace the existing data files
-fldr.each.odr(Quadratic, output="data", result=True, header="fit", _serial=True)
+fldr.each.fit.odr(Quadratic, output="data", result=True, header="fit", _serial=True)
 fig = figure()
 fldr.each.setas(Current="x", Voltage="y")
 fldr.each.setas[3] = "y"

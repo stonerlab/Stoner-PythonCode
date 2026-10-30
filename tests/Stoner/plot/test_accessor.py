@@ -267,7 +267,7 @@ def test_explicit_show_and_fit_annotation(measurements, monkeypatch):
     assert calls == [{"block": False}]
     measurements.lmfit(Linear, result=False)
     ax = measurements.plot.line(y=1)
-    assert measurements.annotate_fit(Linear) is measurements
+    assert measurements.plot.annotate_fit(Linear) is measurements
     assert ax.texts
 
 
@@ -276,10 +276,61 @@ def test_annotation_explicit_target_and_missing_plot(measurements):
 
     measurements.lmfit(Linear, result=False)
     with pytest.raises(ValueError, match="Plot data first"):
-        measurements.annotate_fit(Linear)
+        measurements.plot.annotate_fit(Linear)
     _, target = plt.subplots()
-    assert measurements.annotate_fit(Linear, ax=target) is measurements
+    assert measurements.plot.annotate_fit(Linear, ax=target) is measurements
     assert target.texts and measurements.plot.ax is None
+
+
+def test_fit_annotation_belongs_to_accessor_and_text_creates_no_figure(measurements):
+    from Stoner.analysis.fitting.models.generic import Linear
+
+    assert not hasattr(Data, "annotate_fit")
+    assert not hasattr(measurements, "annotate_fit")
+    measurements.lmfit(Linear, result=False)
+    text = measurements.plot.annotate_fit(Linear, text_only=True)
+    assert isinstance(text, str) and text
+    assert plt.get_fignums() == []
+    assert measurements.plot.ax is None
+
+
+def test_fit_annotation_preserves_target_and_text_options(measurements):
+    from Stoner.analysis.fitting.models.generic import Linear
+
+    measurements.lmfit(Linear, result=False)
+    recent = measurements.plot.line(y=1)
+    _, target = plt.subplots()
+    expected = measurements.plot.annotate_fit(Linear, text_only=True)
+    assert measurements.plot.annotate_fit(Linear, 0.2, 0.3, ax=target, color="red") is measurements
+    text = target.texts[-1]
+    assert text.get_text() == expected
+    assert text.get_position() == (0.2, 0.3)
+    assert text.get_color() == "red" and text.get_transform() is target.transAxes
+    assert measurements.plot.ax is recent and not recent.texts
+    measurements.plot.annotate_fit(Linear, ax=target, arrowprops={"arrowstyle": "->"}, xycoords="axes fraction")
+    assert target.texts[-1].arrow_patch is not None
+
+
+def test_fit_annotation_closed_target_does_not_create_figure(measurements):
+    from Stoner.analysis.fitting.models.generic import Linear
+
+    measurements.lmfit(Linear, result=False)
+    ax = measurements.plot.line(y=1)
+    plt.close(ax.figure)
+    with pytest.raises(ValueError, match="Plot data first"):
+        measurements.plot.annotate_fit(Linear)
+    assert plt.get_fignums() == []
+
+
+@pytest.mark.parametrize("z, expected", [(None, 4), (3, 3)])
+def test_fit_annotation_3d_coordinates(measurements, z, expected):
+    from Stoner.analysis.fitting.models.generic import Linear
+
+    measurements.lmfit(Linear, result=False)
+    ax = plt.figure().add_subplot(projection="3d")
+    ax.set_zlim(2, 6)
+    assert measurements.plot.annotate_fit(Linear, x=1, y=2, z=z, ax=ax) is measurements
+    assert ax.texts[-1].get_position_3d() == (1, 2, expected)
 
 
 def test_raw_double_y_context_uses_current_target(measurements):

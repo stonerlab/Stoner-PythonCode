@@ -455,6 +455,23 @@ class Data(
         self.__dict__.update(state)
 
     @property
+    def fit(self):
+        """Return an owner-bound :py:class:`~Stoner.analysis.fitting.accessor.DataFitter`.
+
+        Lookup performs no fitting or data reads. Call ``data.fit(model, ...)``
+        for lmfit, choose an explicit algorithm, or use a registered-model
+        shortcut such as ``data.fit.linear(...)``. Coordinates use x/y column
+        selectors consistently with plotting. Returns follow the chosen algorithm.
+
+        Returns:
+            Stoner.analysis.fitting.accessor.DataFitter:
+                A fresh lightweight accessor using this measurement's live state.
+        """
+        from ..analysis.fitting.accessor import DataFitter
+
+        return DataFitter(self)
+
+    @property
     def plot(self):
         """Return the callable :py:class:`~Stoner.plot.accessor.DataPlotter` plotting accessor.
 

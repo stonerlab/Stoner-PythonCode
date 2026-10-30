@@ -15,7 +15,7 @@ For example, this fits a straight line ``slope * x + offset`` to five points::
     x = np.array([0.0, 1.0, 2.0, 3.0, 4.0])
     signal = np.array([1.0, 3.1, 4.9, 7.1, 8.9])
     d = Data(x, signal, column_headers=["X", "Signal"], setas="xy")
-    parameters, covariance = d.curve_fit(
+    parameters, covariance = d.fit.curve_fit(
         line, p0=[1.0, 0.0], result=True, header="Fit"
     )
     slope, offset = parameters
@@ -41,8 +41,18 @@ and residuals before drawing scientific conclusions.
 Choose your next task
 =====================
 
+For a built-in model, the fitting accessor also offers named shortcuts such as
+``d.fit.linear()``. Calling ``d.fit(model, ...)`` uses lmfit by default;
+``d.fit.curve_fit(...)`` selects SciPy's algorithm explicitly. Coordinate
+keywords are ``x`` and ``y``, matching ``d.plot``, and select measurement columns.
+When omitted, the assigned ``setas`` roles supply those columns. See
+:doc:`fitting_registry` for shortcuts, registration and migration examples.
+
 .. toctree::
    :maxdepth: 1
+
+   fitting_registry
+   Fit collections of measurements <fitting_folders>
 
    Polynomial and function fits <fitting_simple>
    Fit outputs, metadata and observation selection <fitting_options>

@@ -17,7 +17,7 @@ s = y * 0.05
 d = Data(x, y, s, setas="xye", column_headers=["X", "Y"])
 d.plot(fmt="r.")
 
-d.polyfit(result=True, header="Polyfit")
+d.fit.polyfit(result=True, header="Polyfit")
 d.setas = "x..y"
 d.plot(fmt="m-", label="Polyfit")
 d.plot.ax.text(
@@ -28,10 +28,10 @@ d.plot.ax.text(
 )
 
 d.setas = "xy"
-d.curve_fit(quadratic, result=True, header="Curve-fit")
+d.fit.curve_fit(quadratic, result=True, header="Curve-fit")
 d.setas = "x...y"
 d.plot(fmt="b-", label="curve-fit")
-d.annotate_fit(
+d.plot.annotate_fit(
     quadratic,
     prefix="quadratic",
     x=0.2,
@@ -42,11 +42,11 @@ d.annotate_fit(
 d.setas = "xy"
 fit = Quadratic()
 p0 = fit.guess(y, x=x)
-d.lmfit(Quadratic, p0=p0, result=True, header="lmfit")
+d.fit.lmfit(Quadratic, p0=p0, result=True, header="lmfit")
 
 d.setas = "x...y"
 d.plot(fmt="g-", label="lmfit")
-d.annotate_fit(
+d.plot.annotate_fit(
     Quadratic,
     prefix="Quadratic",
     x=0.65,

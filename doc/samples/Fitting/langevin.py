@@ -23,7 +23,7 @@ d = Data(
 
 func = lambda H, M_s, m: langevin(H, M_s, m, 250)
 
-d.curve_fit(func, p0=copy(params)[0:2], result=True, header="curve_fit")
+d.fit.curve_fit(func, p0=copy(params)[0:2], result=True, header="curve_fit")
 
 d.setas = "xye"
 fit = Langevin()
@@ -31,20 +31,20 @@ fit.params = fit.guess(G, x=B)
 fit.params["T"].value = 250
 fit.params["T"].vary = False
 
-d.lmfit(fit, p0=fit.params, result=True, header="lmfit")
+d.fit.lmfit(fit, p0=fit.params, result=True, header="lmfit")
 
 
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(
+d.plot.annotate_fit(
     func,
     x=0.1,
     y=0.5,
     fontdict={"size": "x-small", "color": "blue"},
     mode="eng",
 )
-d.annotate_fit(
+d.plot.annotate_fit(
     Langevin,
     x=0.1,
     y=0.25,

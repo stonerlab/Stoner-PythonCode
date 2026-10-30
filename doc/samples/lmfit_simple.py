@@ -19,7 +19,7 @@ def func(x, A, B, C):
     return A + B * exp(-x / C)
 
 
-fit = d.lmfit(
+fit = d.fit.lmfit(
     func,
     result=True,
     header="Fit",
@@ -52,7 +52,7 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         d.plot.xlabel = ""
 
         # Annotate plot with fitting parameters
-        d.annotate_fit(
+        d.plot.annotate_fit(
             func, prefix="Model", x=0.7, y=0.3, fontdict={"size": "x-small"}
         )
         text = r"$y=A+Be^{-x/C}$" + "\n\n"

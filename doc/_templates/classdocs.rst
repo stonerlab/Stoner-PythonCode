@@ -20,6 +20,10 @@
    {% endblock %}
 {% if fullname == 'Stoner.core.data.Data' %}
 
+   .. rubric:: Fitting accessor
+
+   .. autoattribute:: fit
+
    .. rubric:: Plotting accessor
 
    .. autoattribute:: plot

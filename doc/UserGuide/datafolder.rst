@@ -489,10 +489,10 @@ or, if *values_only* is True, a list of values. The *output* parameter can chang
 
 **root.metadata.slice("Model:*")** will return all metadata items in all files in the DataFolder that start with 'Model:'. Since one of the
 common uses of DataFolder is to fit a series of data files with a model, :py:meth:`~Stoner.folders.metadata.MetadataProxy.slice` also accepts an
-``lmfit.Model`` and uses it to pull out the fitting parameters after using ``fldr.each.curve_fit`` or a similar method::
+``lmfit.Model`` and uses it to pull out fitting parameters after a bulk fitting call::
 
-    from Stoner.analysis.fitting.models.generic import Gaussian
-    fldr.each.lmfit(Gaussian,result=True)
+    from lmfit.models import GaussianModel as Gaussian
+    fldr.each.fit.lmfit(Gaussian, result=True)
     summary=fldr.metadata.slice(Gaussian,output="data")
 
 Since :py:class:`Stoner.folders.metadata.MetadataProxy` implements :py:class:`collections.abc.MutableMapping`, it supplies the standard dictionary-like
@@ -506,7 +506,7 @@ Using *output="Data"* is particularly powerful as it can gather the results of c
 single :py:class:`Stoner.core.data.Data` object ready for plotting or further analysis::
 
     fldr=DataFolder(".",pattern="*.txt",setas="xy")
-    fldr.each.curve_fit(PowerLaw)
+    fldr.each.fit.curve_fit(PowerLaw)
     result=fldr.metadata.slice(["Temperature:T1","PowerLaw:A","PowerLaw:A error"],output="Data")
     result.setas="xye"
     result.plot(fmt="k.")

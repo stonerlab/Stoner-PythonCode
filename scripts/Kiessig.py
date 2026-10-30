@@ -15,7 +15,7 @@ from Stoner.analysis.utils import format_error
 def analyse(filename=False, sensitivity=50, critical_edge=0.8, fringe_offset=1):
     """Fit the fringe order and return the scan, peak table and thickness in angstroms."""
     data = Data(filename, setas="xy")
-    data.lmfit(ExponentialModel, result=True, replace=False, header="Envelope")
+    data.fit.lmfit(ExponentialModel, result=True, replace=False, header="Envelope")
     data.subtract("Counts", "Envelope", replace=False, header="peaks")
     data.setas = "xy"
     positions = data.peaks(
@@ -53,7 +53,7 @@ def analyse(filename=False, sensitivity=50, critical_edge=0.8, fringe_offset=1):
         (np.arange(len(peaks)) + fringe_offset) ** 2, header="$m^2$"
     )
     peaks.setas(x="$m^2$", y=r"$\sin^2\theta$")
-    fit = peaks.lmfit(
+    fit = peaks.fit.lmfit(
         Linear, result=True, replace=False, header="Fit", output="report"
     )
     slope = fit.params["slope"].value

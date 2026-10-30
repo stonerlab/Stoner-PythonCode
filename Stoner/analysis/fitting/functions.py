@@ -15,6 +15,7 @@ from scipy.optimize import curve_fit as _curve_fit
 from scipy.optimize import differential_evolution as _differential_evolution
 
 from ...compat import string_types
+from ...enums import FitOutput as _FitOutput, _normalise_fit_output
 from ...core.utils import assemnle_data as _assemnle_data_to_fit
 from ...tools import isiterable, islistlike, ordinal
 from .classes import (
@@ -26,7 +27,7 @@ from .classes import (
     _prep_lmfit_p0,
 )
 from .selection import curve_fit_inputs as _curve_fit_inputs
-from ...core.column_selection import _insertion_position
+from ...core.column_selection import _insertion_position, _single_column
 
 _lmfit = True
 
@@ -178,12 +179,12 @@ def __lmfit_one(
         res_dict["nfev"] = fit.nfev
 
         retval = {
-            "fit": (row[::2], fit.covar),
-            "report": fit,
-            "row": row,
-            "full": (fit, row),
-            "data": datafile,
-            "dict": res_dict,
+            _FitOutput.FIT: (row[::2], fit.covar),
+            _FitOutput.REPORT: fit,
+            _FitOutput.ROW: row,
+            _FitOutput.FULL: (fit, row),
+            _FitOutput.DATA: datafile,
+            _FitOutput.DICT: res_dict,
         }
         if settings.output not in retval:
             raise RuntimeError(f"Failed to recognise output format:{settings.output}")
@@ -276,7 +277,8 @@ def _normalise_fit_result(datafile, settings, fit, result_obj):
             perr = fit.perr
             nfev = fit.nfev
             nfree = len(datafile) - len(popt)
-            fit_data = func(datafile // settings.columns.xcol, *popt)
+            xcol = _single_column(datafile, settings.columns.xcol, "xcol")
+            fit_data = func(datafile.column(xcol), *popt)
             chisq = np.sum((datafile.to_numpy()[:, settings.columns.ycol] - fit_data) ** 2) / nfree
         case _:
             raise RuntimeError("Unable to understand {type(fit)} as a fitting result")
@@ -423,12 +425,12 @@ def _odr_one(
     row = np.array(row)
 
     retval = {
-        "fit": (row[::2], fit_result.cov_beta),
-        "report": fit_result,
-        "row": row,
-        "full": (fit_result, row),
-        "data": datafile,
-        "dict": ret_dict,
+        _FitOutput.FIT: (row[::2], fit_result.cov_beta),
+        _FitOutput.REPORT: fit_result,
+        _FitOutput.ROW: row,
+        _FitOutput.FULL: (fit_result, row),
+        _FitOutput.DATA: datafile,
+        _FitOutput.DICT: ret_dict,
     }
     if settings.output not in retval:
         raise RuntimeError(f"Failed to recognise output format:{settings.output}")
@@ -462,136 +464,6 @@ def _chi2_fit_to_data(datafile, ret_val, model):
     ret.setas[plots] = "y"
     ret.setas[errors] = "e"
     ret.setas[fixed] = "x"
-    return ret
-
-
-def annotate_fit(datafile, model, x=None, y=None, z=None, text_only=False, mode="float", **kwargs):
-    """Annotate a fit or return its formatted parameter text.
-
-    Args:
-        datafile (Data):
-            Measurement object if this function is not used as a bound method.
-        model (callable or lmfit_mod.Model):
-            Function, lmfit model or ODR model describing the recorded fit.
-
-    Keyword Arguments:
-        x (float):
-            Horizontal annotation coordinate. Defaults to 0.75.
-        y (float):
-            Vertical annotation coordinate. Defaults to 0.5.
-        z (float):
-            Third coordinate for 3D text; None uses the midpoint of the Z limits.
-        text_only (bool):
-            Return text without drawing when True. Defaults to False.
-        ax (matplotlib.axes.Axes or None):
-            Explicit annotation target. None uses the plotting accessor's recent
-            axes, falling back to an existing legacy field plot during migration.
-        prefix (str):
-            Override the metadata prefix inferred from the model and recorded fit.
-        mode (str):
-            Number-formatting mode passed to Data.format. Defaults to float.
-        **kwargs (dict):
-            Text properties or annotation options, including arrowprops.
-
-    Returns:
-        Data or str:
-            The same Data object after drawing, or formatted text when text_only=True.
-
-    Raises:
-        ValueError:
-            If drawing is requested without an existing plot or explicit axes.
-
-    Notes:
-        Ordinary 2D text uses axes-fraction coordinates; annotation calls with
-        arrowprops retain Matplotlib's coordinate options. 3D text uses data
-        coordinates. Parameter labels/units may be recorded in metadata for
-        formatting, including when text_only is True. Drawing creates no figure.
-    """
-    if isclass(model) and ((_lmfit and issubclass(model, Model)) or issubclass(model, odrModel)):
-        model = model()  # Instantiate a bare class first
-
-    if isinstance(model, odrModel):  # Get predix from odrModel
-        model_prefix = model.meta.get("__name__", type(model).__name__)
-        prefix = kwargs.pop("prefix", datafile.get("odr.prefix", model_prefix))
-        param_names = model.meta.get("param_names", [])
-        display_names = model.meta.get("display_names", param_names)
-        units = model.meta.get("units", [""] * len(param_names))
-    elif _lmfit and isinstance(model, Model):  # Get prefix from lmfit
-        prefix = kwargs.pop("prefix", datafile.get("lmfit.prefix", type(model).__name__))
-        param_names = model.param_names
-        display_names = getattr(model, "display_names", model.param_names)
-        units = getattr(model, "units", [""] * len(param_names))
-    elif callable(model):  # Get prefix from callable name
-        prefix = kwargs.pop("prefix", model.__name__)
-        model = Model(model)
-        param_names = model.param_names
-        display_names = getattr(model, "display_names", model.param_names)
-        units = getattr(model, "units", [""] * len(param_names))
-    else:
-        raise RuntimeError(f"model should be either an lmfit_mod.Model or a callable function, not a {type(model)}")
-
-    if prefix is not None:
-        if isinstance(prefix, (list, tuple)):
-            prefix = prefix[0]
-
-        prefix = prefix.strip(" :")
-        prefix = "" if prefix == "" else prefix + ":"
-
-    else:
-        if isinstance(prefix, (list, tuple)):
-            prefix = prefix[0]
-
-        if model.prefix == "":
-            prefix = ""
-        else:
-            prefix = model.prefix + ":"
-
-    x = 0.75 if x is None else x
-    y = 0.5 if y is None else y
-
-    try:  # if the model has an attribute display params then use these as the parameter names
-        for k, display_name, unit in zip(param_names, display_names, units):
-            if prefix:
-                datafile[f"{prefix}{k} label"] = display_name
-                datafile[f"{prefix}{k} units"] = unit
-
-            else:
-                datafile[f"{k} label"] = display_name
-                datafile[f"{k} units"] = unit
-    except (AttributeError, KeyError):
-        pass
-
-    text = "\n".join([datafile.format(f"{prefix}{k}", fmt="latex", mode=mode) for k in model.param_names])
-    try:
-        datafile[f"{prefix}chi^2 label"] = r"\chi^2_{red}"
-        text += "\n" + datafile.format(f"{prefix}chi^2", fmt="latex", mode="eng")
-    except KeyError:
-        pass
-
-    if not text_only:
-        ax = kwargs.pop("ax", None)
-        if ax is None:
-            ax = datafile.plot.ax
-        if ax is None:
-            figure = datafile.__dict__.get("_figure")
-            if figure is None or not figure.axes:
-                raise ValueError("Plot data first or supply ax= to annotate_fit.")
-            ax = figure.gca()
-        if "zlim" in ax.properties():
-            # 3D plot then
-            if z is None:
-                zb, zt = ax.properties()["zlim"]
-                z = 0.5 * (zt - zb) + zb
-            ax.text3D(x, y, z, text)
-        elif "arrowprops" in kwargs:
-            ax.annotate(text, xy=(x, y), **kwargs)
-        else:
-            kwargs.pop("xycoords", None)
-            kwargs["transform"] = ax.transAxes
-            ax.text(x, y, text, **kwargs)
-        ret = datafile
-    else:
-        ret = text
     return ret
 
 
@@ -686,9 +558,9 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
 
 
     See Also:
-        *   :py:meth:`~Stoner.core.data.Data.lmfit`
-        *   :py:meth:`~Stoner.core.data.Data.odr`
-        *   :py:meth:`~Stoner.core.data.Data.differential_evolution`
+        *   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit`
+        *   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.odr`
+        *   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.differential_evolution`
         *   User guide section :ref:`curve_fit_guide`
     """
     settings = _Curve_Fit_Output()
@@ -702,7 +574,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     # If neither are specified, then if sigma is not given, absolute sigma will be False.
 
     # Support both asrow and output, the latter wins if both supplied
-    settings.output = kwargs.pop("output", "row" if kwargs.pop("asrow", False) else "fit")
+    settings.output = _normalise_fit_output(kwargs.pop("output", "row" if kwargs.pop("asrow", False) else "fit"))
     kwargs["full_output"] = True
 
     inputs = _curve_fit_inputs(datafile, xcol, ycol, sigma, kwargs.pop("where", None), kwargs.pop("bounds", None))
@@ -786,7 +658,7 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     Keyword Arguments:
         p0 (list, tuple, array or callable):
             A vector of initial parameter values to try.
-            See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
+            See the notes in :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` for
             more details.
         sigma (index):
             The index of the column with the y-error bars
@@ -827,9 +699,9 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     vector to a call to :py:func:`scipy.optimize.curve_fit` to calculate the covariance matrix.
 
     See Also:
-        -   :py:meth:`~Stoner.core.data.Data.curve_fit`
-        -   :py:meth:`~Stoner.core.data.Data.lmfit`
-        -   :py:meth:`~Stoner.core.data.Data.odr`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.odr`
         -   User guide section :ref:`curve_fit_guide`
 
     Example:
@@ -845,7 +717,7 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     settings.header = kwargs.pop("header", None)
     # Support both asrow and output, the latter wins if both supplied
     settings.asrow = kwargs.pop("asrow", False)
-    settings.output = kwargs.pop("output", "row" if settings.asrow else "fit")
+    settings.output = _normalise_fit_output(kwargs.pop("output", "row" if settings.asrow else "fit"))
 
     data, kwargs, settings.columns = _assemnle_data_to_fit(
         datafile, xcol=xcol, ycol=ycol, sigma=sigma, bounds=bounds, **kwargs
@@ -909,12 +781,12 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     fit.dict = ret_dict
 
     retval = {
-        "fit": (row[::2], fit.covar),
-        "report": fit,
-        "row": row,
-        "full": (fit, row),
-        "data": datafile,
-        "dict": fit.dict,
+        _FitOutput.FIT: (row[::2], fit.covar),
+        _FitOutput.REPORT: fit,
+        _FitOutput.ROW: row,
+        _FitOutput.FULL: (fit, row),
+        _FitOutput.DATA: datafile,
+        _FitOutput.DICT: fit.dict,
     }
     if settings.output not in retval:
         raise RuntimeError(f"Failed to recognise output format:{settings.output}")
@@ -939,7 +811,7 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
     Keyword Arguments:
         p0 (list, tuple, array or callable):
             A vector of initial parameter values to try.
-            See the notes in :py:meth:`~Stoner.core.data.Data.curve_fit` for
+            See the notes in :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` for
             more details.
         sigma (index):
             The index of the column with the y-error bars
@@ -973,9 +845,9 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
                             emtadata and optionally as a column of data.
 
     See Also:
-        -   :py:meth:`~Stoner.core.data.Data.curve_fit`
-        -   :py:meth:`~Stoner.core.data.Data.odr`
-        -   :py:meth:`~Stoner.core.data.Data.differential_evolution`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.odr`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.differential_evolution`
         -   User guide section :ref:`fitting_with_limits`
 
     .. note::
@@ -998,7 +870,7 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
     settings.header = kwargs.pop("header", None)
     # Support both asrow and output, the latter wins if both supplied
     settings.asrow = kwargs.pop("asrow", False)
-    settings.output = kwargs.pop("output", "row" if settings.asrow else "fit")
+    settings.output = _normalise_fit_output(kwargs.pop("output", "row" if settings.asrow else "fit"))
 
     data, kwargs, settings.columns = _assemnle_data_to_fit(datafile, xcol=xcol, ycol=ycol, yerr=sigma, **kwargs)
     model, settings.prefix = _prep_lmfit_model(model, kwargs)
@@ -1030,7 +902,7 @@ def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
             p0,
             settings,
         )
-    if output == "data":  # Create a data object and seet column headers etc correctly
+    if output == _FitOutput.DATA:  # Create a data object and seet column headers etc correctly
         return _chi2_fit_to_data(datafile, ret_val, model)
     return ret_val
 
@@ -1124,7 +996,7 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     Keyword Arguments:
         p0 (list, tuple, array or callable):
             A vector of initial parameter values to try.
-            See the notes to :py:meth:`~Stoner.core.data.Data.curve_fit` for
+            See the notes to :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` for
             more details.
         sigma_x (index):
             The index of the column with the x-error bars
@@ -1166,13 +1038,13 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
             -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the
                 scip.odr standard f(beta,x)
 
-        This function is designed to be as compatible as possible with :py:meth:`~Stoner.core.data.Data.curve_fit` and
-        :py:meth:`~Stoner.core.data.Data.lmfit` to facilitate switching between them.
+        This function is designed to be as compatible as possible with :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` and
+        :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit` to facilitate switching between them.
 
     See Also:
-        -   :py:meth:`~Stoner.core.data.Data.curve_fit`
-        -   :py:meth:`~Stoner.core.data.Data.lmfit`
-        -   :py:meth:`~Stoner.core.data.Data.differential_evolution`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit`
+        -   :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.differential_evolution`
         -   User guide section :ref:`fitting_with_limits`
 
     Example:
@@ -1189,7 +1061,7 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
     settings.header = kwargs.pop("header", None)
     # Support both asrow and output, the latter wins if both supplied
     settings.asrow = kwargs.pop("asrow", False)
-    settings.output = kwargs.pop("output", "row" if settings.asrow else "fit")
+    settings.output = _normalise_fit_output(kwargs.pop("output", "row" if settings.asrow else "fit"))
     sigma = kwargs.pop("sigma", None)
     sigma_x = kwargs.pop("sigma_x", None)
     bounds = kwargs.pop("bounds", lambda x, r: True)

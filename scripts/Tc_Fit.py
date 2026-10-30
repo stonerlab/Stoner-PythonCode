@@ -44,7 +44,7 @@ def fit(
                 data.del_rows(np.isfinite(data.x) & np.isfinite(data.y))
                 data.normalise(base=(-1.0, 1.0), replace=True)
                 data = ~data
-                data.curve_fit(
+                data.fit.curve_fit(
                     linear,
                     bounds=lambda x, r: -threshold < x < threshold,
                     result=True,
@@ -56,7 +56,7 @@ def fit(
                     fmt=["k.", "r-"],
                     title=f"Ramp {row[0]}: {r_col}",
                 )
-                data.annotate_fit(linear, ax=ax, x=0.1, y=0.1, fontsize="small")
+                data.plot.annotate_fit(linear, ax=ax, x=0.1, y=0.1, fontsize="small")
                 row.extend(
                     [data["linear:intercept"], data["linear:intercept err"]]
                 )

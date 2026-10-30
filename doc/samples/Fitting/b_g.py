@@ -1,4 +1,4 @@
-"""Test Weak-localisation fitting."""
+"""Demonstrate Bloch-Grueneisen resistivity fitting with a registered shortcut."""
 
 # pylint: disable=invalid-name
 from copy import deepcopy
@@ -25,16 +25,16 @@ d = Data(
     column_headers=["Temperature (K)", "Resistivity", "dR"],
 )
 
-d.curve_fit(blochGrueneisen, p0=params, result=True, header="curve_fit")
+d.fit.curve_fit(blochGrueneisen, p0=params, result=True, header="curve_fit")
 
 d.setas = "xy"
-d.lmfit(BlochGrueneisen, result=True, header="lmfit")
+d.fit.bloch_grueneisen(result=True, header="lmfit")
 
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(blochGrueneisen, x=0.65, y=0.35, fontdict={"size": "x-small"})
-d.annotate_fit(
+d.plot.annotate_fit(blochGrueneisen, x=0.65, y=0.35, fontdict={"size": "x-small"})
+d.plot.annotate_fit(
     BlochGrueneisen,
     x=0.65,
     y=0.05,

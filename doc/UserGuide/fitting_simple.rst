@@ -22,9 +22,9 @@ Fit a polynomial
 ================
 
 Simple least squares fitting of polynomial functions is handled by the
-:py:meth:`~Stoner.core.data.Data.polyfit` method::
+:py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.polyfit` method::
 
-   a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
+   a.fit.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
 
 This is a simple pass through to the numpy routine of the same name. The x and y
 columns are specified in the first two arguments using the usual index rules for
@@ -42,11 +42,11 @@ created and the fitted polynomial evaluated at each point.
 Fit a Python function
 =====================
 
-For more general curve fitting operations the :py:meth:`~Stoner.core.data.Data.curve_fit`
+For more general curve fitting operations the :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit`
 method wraps SciPy's curve-fitting routine. For example::
 
-   parameters, covariance = a.curve_fit(
-       func, xcol="X", ycol="Y", p0=[1.0, 0.0],
+   parameters, covariance = a.fit.curve_fit(
+       func, x="X", y="Y", p0=[1.0, 0.0],
        sigma="dY", absolute_sigma=True, result=True, header="Fit",
    )
 
@@ -61,8 +61,8 @@ background regions and evaluate the model over the complete measurement::
 
     x = a.to_numpy(masked=False)[:, a.find_col("field")]
     region = (x < -5) | (x > 5)
-    parameters, covariance = a.curve_fit(
-        background, xcol="field", ycol="signal", sigma="uncertainty",
+    parameters, covariance = a.fit.curve_fit(
+        background, x="field", y="signal", sigma="uncertainty",
         where=region, result=None,
     )
     corrected = a.to_numpy(masked=False)[:, a.find_col("signal")] - background(x, *parameters)
@@ -88,12 +88,12 @@ The first parameter is the fitting function. This should have prototype
 ``y=func(x,p[0],p[1],p[2]...)``: where *p* is a list of fitting parameters.
 
 Alternatively a subclass of, or instance of, a :py:class:`lmfit.model.Model` can also be passed and it's function will be used to provide information to
-:py:meth:`~Stoner.core.data.Data.curve_fit`.
+:py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit`.
 
 The *p0* parameter supplies initial guesses for the fitting parameters. When
 it is omitted, a bare callable uses initial values of one; an lmfit model can
 provide parameter hints or a guess from the data.
-*xcol* and *ycol* are the x and y columns to fit. If *xcol* and *ycol* are not given, then the :py:attr:`~Stoner.core.data.Data.setas` attribute is used to determine
+*x* and *y* are the x and y columns to fit. If *x* and *y* are not given, then the :py:attr:`~Stoner.core.data.Data.setas` attribute is used to determine
 which columns to fit.
 
 *sigma*, *absolute_sigma* and *scale_covar* determine how the fitting process takes account of uncertainties in the *y* data.

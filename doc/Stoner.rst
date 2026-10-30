@@ -78,8 +78,28 @@ Analysis Package
     :headings: -~
 
 .. automodapi:: Stoner.analysis.fitting
+    :skip: DataFitter
     :no-inheritance-diagram:
     :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.accessor
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.enums
+    :no-inheritance-diagram:
+    :no-inherited-members:
+    :headings: -~
+
+.. automodapi:: Stoner.analysis.fitting.registry
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. toctree::
+    :maxdepth: 1
+
+    fit-shortcuts
+    fitting-algorithms
 
 .. automodapi:: Stoner.analysis.utils
     :no-inheritance-diagram:

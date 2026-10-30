@@ -16,7 +16,7 @@ d.smooth(
     result=True,
 )
 d.setas = "x.y"
-d.lmfit(Linear, residuals=True, result=True)
+d.fit.linear(residuals=True, result=True)
 d.setas = "x...y"
 d.data = d.to_numpy()[4:-4]
 d.plot()

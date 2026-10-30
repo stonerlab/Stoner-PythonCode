@@ -18,7 +18,7 @@ Configure the measurement and model
 ===================================
 
 For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate initialisation file so that users do not have to
-edit the source code. :py:meth:`~Stoner.core.data.Data.lmfit` and :py:meth:`~Stoner.core.data.Data.odr` combined with :py:mod:`Stoner.analysis.fitting` provide some mechanisms to enable this.
+edit the source code. :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit` and :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.odr` combined with :py:mod:`Stoner.analysis.fitting` provide some mechanisms to enable this.
 
 Firstly, the initialisation file should take the form like so.
 
@@ -96,11 +96,11 @@ Configure and run the model
 
 The initialisation file can then be passed to :py:func:`Stoner.analysis.fitting.models.cfg_model_from_ini` which will use the configuration file to
 setup the model and parameter hints. The configuration file should have one section for each parameter in the model. This function
-returns the configured model and also a 2D array of values to feed as the starting values to :py:meth:`~Stoner.core.data.Data.lmfit`. Depending
+returns the configured model and also a 2D array of values to feed as the starting values to :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit`. Depending
 on the presence and values of the *vary* and *step* keys, the code will either perform a single fitting attempt, or do a mapping of the
 :math:`\\chi^2` goodness of fit.
 
-Since both the :py:meth:`~Stoner.core.data.Data.odr` and :py:meth:`~Stoner.core.data.Data.differential_evolution` supports the same interface, either can be used as a
+Since both the :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.odr` and :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.differential_evolution` supports the same interface, either can be used as a
 drop-in replacement as well. (Although it is interesting to note that in this example, they give quite different results - a matter of interest
 for the physics!)
 

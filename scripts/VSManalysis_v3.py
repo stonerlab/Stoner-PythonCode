@@ -49,7 +49,7 @@ class VSMAnalysis(Data):
         field = np.ma.masked_invalid(self.column("H_vsm"))
         high_field = np.ma.filled(field > threshold * field.max(), False)
         for column in self.find_col(["m (emu)", "Mvol", "Mmass", "X", "Y"]):
-            coeff, _ = self.curve_fit(linear, "Time", column, where=high_field)
+            coeff, _ = self.fit.curve_fit(linear, "Time", column, where=high_field)
             self._replace_signal(
                 column,
                 self.column(column) - linear(self.column("Time"), *coeff),
@@ -71,8 +71,8 @@ class VSMAnalysis(Data):
         upper = np.ma.filled(field > field.max() * threshold, False)
         lower = np.ma.filled(field < field.min() * threshold, False)
         for column in self.find_col(["m (emu)", "Mvol", "Mmass", "X", "Y"]):
-            positive, _ = self.curve_fit(linear, "H_vsm", column, where=upper)
-            negative, _ = self.curve_fit(linear, "H_vsm", column, where=lower)
+            positive, _ = self.fit.curve_fit(linear, "H_vsm", column, where=upper)
+            negative, _ = self.fit.curve_fit(linear, "H_vsm", column, where=lower)
             coeff = (positive + negative) / 2
             self._replace_signal(
                 column,

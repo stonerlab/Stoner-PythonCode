@@ -124,7 +124,7 @@ class working(Data):
                     )
                 vmax, _ = self.max(self.vcol)
                 vmin, _ = self.min(self.vcol)
-                p, pv = self.curve_fit(
+                p, pv = self.fit.curve_fit(
                     normaliser,
                     bounds=lambda x, y: (x > fraction * vmax)
                     or (x < fraction * vmin),
@@ -211,7 +211,7 @@ class working(Data):
         )
         bbox_props = dict(boxstyle="square,pad=0.3", fc="white", ec="b", lw=2)
         if self.fancyresults:
-            self.annotate_fit(
+            self.plot.annotate_fit(
                 self.model,
                 ax=ax,
                 x=0.05,
@@ -261,7 +261,7 @@ class working(Data):
                 print(fit.fit_report())
             return fit
         d = Data(self)
-        fit = d.lmfit(
+        fit = d.fit.lmfit(
             self.model, p0=self.p0, result=True, header="Fit", output="data"
         )
 

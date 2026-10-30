@@ -152,7 +152,8 @@ def assemnle_data(datafile, **kwargs):
     kwargs.setdefault("xerr", kwargs.get("sigma_x"))
     kwargs.setdefault("yerr", kwargs.get("sigma"))
     kwargs.setdefault("zerr", kwargs.get("sigma_z"))
-    if ycol is not None and isinstance(ycol[0], np.ndarray) and len(ycol[0]) == len(datafile):
+    column_arrays = isinstance(ycol, (list, tuple)) or (isinstance(ycol, np.ndarray) and ycol.ndim > 0)
+    if column_arrays and len(ycol) and isinstance(ycol[0], np.ndarray) and len(ycol[0]) == len(datafile):
         return_data.y = ycol[0]
         kwargs["ycol"] = None
         _ = datafile._col_args(scalar=False, **kwargs)

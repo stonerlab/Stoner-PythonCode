@@ -25,24 +25,24 @@ d = Data(
     column_headers=["Field $Oe$", r"$\nu (Hz)$", r"\delta $\nu (Hz)$"],
 )
 
-d.curve_fit(kittelEquation, p0=copy(params), result=True, header="curve_fit")
+d.fit.curve_fit(kittelEquation, p0=copy(params), result=True, header="curve_fit")
 
 fit = KittelEquation()
 p0 = fit.guess(G, x=B)
 
-d.lmfit(fit, p0=p0, result=True, header="lmfit")
+d.fit.lmfit(fit, p0=p0, result=True, header="lmfit")
 
 d.setas = "xyeyy"
 d.plot(fmt=["r.", "b-", "g-"])
 
-d.annotate_fit(
+d.plot.annotate_fit(
     kittelEquation,
     x=0.5,
     y=0.25,
     fontdict={"size": "x-small", "color": "blue"},
     mode="eng",
 )
-d.annotate_fit(
+d.plot.annotate_fit(
     KittelEquation,
     x=0.5,
     y=0.05,

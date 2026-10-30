@@ -18,7 +18,7 @@ mutation rules. Stage 8c/8d now expose actual ordinary backend objects at
 `Data.data`, `ImageFile.image` (also `.data`) and `ImageStack.stack`. Numerical
 snapshots remain explicit through `asarray()`, `imarray` and `to_numpy()`;
 editing contexts remain detached and atomic. Stage 8b implements `where`
-for `Data.curve_fit`, `ImageFile.mean` and `ImageStack.average`. The batch notes
+for `Data.fit.curve_fit`, `ImageFile.mean` and `ImageStack.average`. The batch notes
 immediately below record intermediate snapshot states; the implemented
 native-access decisions supersede them. Stage 8f validation is recorded in the plan.
 

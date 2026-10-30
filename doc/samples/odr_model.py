@@ -22,7 +22,7 @@ model = odrModel(
     estimate=[1, 1, 1],
 )
 # Do the fitting and plot the result
-fit = d.odr(
+fit = d.fit.odr(
     model,
     result=True,
     header="Fit",
@@ -60,7 +60,7 @@ with d.plot.style("stoner", extra={"font.sans-serif": ["DejaVu Sans"]}):
         d.plot.xlabel = ""
 
         # Annotate plot with fitting parameters
-        d.annotate_fit(
+        d.plot.annotate_fit(
             model, prefix="Model", x=0.7, y=0.3, fontdict={"size": "x-small"}
         )
         text = r"$y=A+Be^{-x/C}$" + "\n\n"

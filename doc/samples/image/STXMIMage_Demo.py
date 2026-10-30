@@ -112,7 +112,7 @@ double_peak.guess = MethodType(guess, double_peak)
 
 # Set the initial values with sensible starting points guessed from the data
 # Fit the intensity values and add to thedata file
-res = hist.lmfit(double_peak, output="report")
+res = hist.fit.lmfit(double_peak, output="report")
 hist.add_column(res.init_fit, header="Initial Fit")
 hist.add_column(res.best_fit, header="Best Fit")
 

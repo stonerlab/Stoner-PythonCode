@@ -317,7 +317,7 @@ class BaseFolder(MutableSequence):
 
     @property
     def each(self):
-        """Return a :py:class:`Stoner.folders.each.item` proxy object.
+        """Return a :py:class:`~Stoner.folders.each.Item` member-operation proxy.
 
         This is for calling attributes of the member type of the folder.
         """
