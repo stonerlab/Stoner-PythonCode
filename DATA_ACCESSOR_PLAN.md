@@ -18,7 +18,7 @@ ImageFile has companion plans for a matching accessor experience, implemented
 in this agreed order: [image plotting](IMAGE_PLOT_ACCESSOR_PLAN.md),
 [current ROI management and reusable selections](IMAGE_ROI_ACCESSOR_PLAN.md),
 then [image fitting and background flattening](IMAGE_FIT_ACCESSOR_PLAN.md).
-Standalone image plotting is now implemented and locally validated; ROI and
+Standalone image plotting is published in 0.12.0a6; ROI and
 image fitting remain planned extensions. Their callable defaults,
 explicit methods, model shortcuts, result choices and plotting targets should
 follow the Data accessors while preserving image coordinate, exclusion and

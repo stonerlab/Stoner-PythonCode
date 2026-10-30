@@ -124,10 +124,9 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   state/set/clear separately from exclusions. Share Data's API conventions and
   coordinate services, then fit plane/quadratic reference regions and correct the
   whole image, with a separate alpha for each accessor.
-  Standalone ImagePlotter is now implemented and locally validated (1,801 tests,
-  network example separately, cached docs with no unexpected warnings/API removals).
-  Its handover records the remaining hosted/release gates; ROI and fitting are not
-  implemented. No version bump or image-accessor alpha has been published yet.
+  Standalone ImagePlotter is published in 0.12.0a6, with exact-source hosted and
+  publication evidence recorded below. Its handover and the next ROI R1 batch
+  are in the plotting/ROI plans; ROI and image fitting are not implemented.
 - [ ] Follow [RELEASE_0_12_PLAN.md](RELEASE_0_12_PLAN.md): API lock before beta,
   allowing only small compatible additions, then full API freeze/bug fixes only
   for RC. Review cumulative 0.11 breakage, migration and the final version series
@@ -149,6 +148,40 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   for evidence and the remaining migration decisions.
 
 ## Current release follow-up
+
+### Published 0.12.0a6
+
+[`0.12.0a6`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a6)
+is published as a prerelease at `3d72b7047994af54307d2234c5e77e79e837fb23`.
+It is the ImageFile.plot milestone: Axes-return image/mesh/contour/histogram
+drawing, shared Data-style properties/contexts, native/pixel coordinates and
+exclusion-aware rendering. Legacy imshow retains its Figure return. Runtime
+dependencies are unchanged; ROI and image fitting remain the next milestones.
+
+Every Linux Python 3.12-3.14/macOS Python 3.14 cell passed 1,804 tests in the
+[exact-source matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41128446321).
+[Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41128446256)
+passed 1,803 with one expected skip;
+[installed wheel/sdist checks](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41128446205)
+and [cached docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41128445576)
+also passed before tagging. Coverage checks passed; no gate was waived.
+
+[PyPI](https://pypi.org/project/Stoner/0.12.0a6/) publishes wheel and sdist. The
+public wheel passed the installed-package numerical/resource/plotting probes,
+including ImagePlotter/property/context checks, outside the checkout. The
+[deployment](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41130394817)
+passed both registry jobs and the Conda installed import/version test.
+`noarch/stoner-0.12.0a6-py_0.conda` is present in the public `phygbu` main-channel
+index. [Release docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41130395020)
+passed. Published Python/dependency/GPLv3/repository metadata were checked.
+Zenodo archived the immutable tag as
+[DOI 10.5281/zenodo.23820651](https://doi.org/10.5281/zenodo.23820651).
+
+- [ ] Activate/build `v0.12.0a6` on Read the Docs, then verify its public pages.
+  Its API identifies the correct release SHA but reports `active=false`,
+  `built=false`. [Version settings](https://app.readthedocs.org/dashboard/stoner-pythoncode/version/v0.12.0a6/edit/)
+  require a maintainer session. Manual live GUI/clipboard and physical instrument
+  compatibility were not newly validated. The published tag must not move.
 
 ### Published 0.12.0a5
 

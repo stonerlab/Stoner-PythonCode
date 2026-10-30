@@ -1,7 +1,7 @@
 # ImageFile.plot implementation and testing plan
 
 Date: 2026-10-30. Target checkout: `devel`.
-Status: standalone ImagePlotter implemented and locally validated; not yet released.
+Status: standalone ImagePlotter published in 0.12.0a6; ROI/fit integration remains future work.
 
 This is the first image milestone, followed by [ImageFile.roi](IMAGE_ROI_ACCESSOR_PLAN.md)
 and then [ImageFile.fit](IMAGE_FIT_ACCESSOR_PLAN.md). Follow the shared API and
@@ -354,10 +354,17 @@ added; existing cache files were unchanged. Logs are under ignored
 `maintenance/runs/image-plot/`. Stale generated ImageFile pages were preserved
 there and regenerated from the maintained template.
 
-Next bounded step: review this standalone accessor for its plotting alpha and
-run exact-commit hosted gates when committed/pushed; do not publish or bump a
-version without authorisation. Then start ImageROI R1 and its shared selection
-state/resolver. The plotting/ROI/fitting alpha order and beta/RC phase policy
-remain unchanged. OCR, hosted CI, installed archives and manual live GUI/clipboard
-behaviour have not been validated by this local batch. No compatibility wrappers
-were removed or new deprecation warnings added.
+The authorised plotting alpha is now published as
+[0.12.0a6](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a6)
+at `3d72b7047994af54307d2234c5e77e79e837fb23`. All exact-source matrix cells passed
+1,804 tests; lower dependencies passed 1,803 with one expected skip. Fresh
+wheel/sdist and documentation gates passed. PyPI/Conda publication, the public
+wheel's installed image plotting probes, Conda import/version and citation/DOI
+were verified; evidence and the remaining Read the Docs activation follow-up are
+in [MAINTENANCE_PLAN.md](MAINTENANCE_PLAN.md). This hosted evidence supersedes the
+local-only validation boundary above for automated tests and installed archives.
+
+Next bounded step: ImageROI R1 and its shared selection state/resolver. The
+plotting/ROI/fitting alpha order and beta/RC phase policy remain unchanged.
+Manual live GUI/clipboard behaviour and physical instrument compatibility remain
+unverified. No compatibility wrappers were removed or new deprecation warnings added.

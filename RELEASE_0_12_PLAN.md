@@ -1,9 +1,9 @@
 # Next stable release: image accessors and API stability plan
 
 Date: 2026-10-30. Working release series: 0.12.
-Status: agreed feature sequence and release-phase policy. Standalone ImagePlotter
-is implemented and locally validated; its alpha release and the ROI/fit milestones
-remain future work. This plan does not authorise publication by itself.
+Status: agreed feature sequence and release-phase policy. The standalone
+ImagePlotter alpha is published as 0.12.0a6; the ROI/fit milestones remain future
+work. This plan does not authorise subsequent publication by itself.
 
 See [maintenance guidance](MAINTENANCE_PLAN.md), the
 [accessor roadmap](DATA_ACCESSOR_PLAN.md), and the detailed
@@ -46,11 +46,11 @@ No larger version is selected here. Existing published alphas, including
 | Release candidate | Bug fixes and verification; documentation corrections supporting existing contracts | Full API freeze: no API additions or breaking changes |
 | Stable | Publish the validated frozen candidate | Must satisfy the RC contracts and exact-source release gates |
 
-Suggested next alpha milestones, subject to actual release preparation:
+Published and planned alpha milestones, with future versions subject to release preparation:
 
 | Milestone | Candidate version | Required evidence |
 | --- | --- | --- |
-| Plot accessor alpha | 0.12.0a6 | Useful standalone ImagePlotter, shared Data conventions and legacy Figure-return compatibility |
+| Plot accessor alpha | Published 0.12.0a6 | Standalone ImagePlotter; exact-source CI and publication evidence in MAINTENANCE_PLAN.md |
 | ROI accessor alpha | 0.12.0a7 | Current state/set/clear, reusable selectors, geometry and reviewed plotting/reduction integration |
 | Fit accessor alpha | 0.12.0a8 | Plane/quadratic reference-region fitting, reports and full-grid floating-point correction |
 | API-lock review | Before the first beta | End-to-end workflows, compatibility inventory and unresolved contract decisions closed |
@@ -150,6 +150,7 @@ beta/RC evidence in commits, releases/PRs and CI links rather than accumulating
 separate historical phase reports. A green suite alone does not establish a
 frozen or compatible API; the contract/migration review is a separate gate.
 
-Next work: ImagePlotter contract/caller audit and shared coordinate foundation,
-then its first implementation batches. This planning change does not bump the
-package version, create tags or publish a release.
+Next work: ImageROI R1 inventory/contract review, then the shared descriptions,
+current-selection state and resolver, reusing the released plotting/coordinate
+foundation. A subsequent alpha publication requires its own authorisation and
+exact-source gates; this plan does not automatically create future tags.
