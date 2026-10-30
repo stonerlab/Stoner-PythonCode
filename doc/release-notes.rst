@@ -1,8 +1,8 @@
 Release notes
 =============
 
-Unreleased
-----------
+0.12.0a5 (2026-10-30)
+---------------------
 
 ``folder.each.fit`` now supports the callable lmfit default, explicit algorithms
 and registered-model shortcuts. Calls preserve member order, result collection,
