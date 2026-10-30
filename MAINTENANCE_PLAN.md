@@ -163,11 +163,17 @@ index. [Release docs](https://github.com/stonerlab/Stoner-PythonCode/actions/run
 passed; coverage checks on the release source passed. Zenodo archived the tag as
 [DOI 10.5281/zenodo.23817189](https://doi.org/10.5281/zenodo.23817189).
 
-- [ ] Activate and build `v0.12.0a5` on Read the Docs. Its public API identifies
-  the correct tagged SHA but reports `active=false`, `built=false`. The
-  [version settings](https://app.readthedocs.org/dashboard/stoner-pythoncode/version/v0.12.0a5/edit/)
-  require a signed-in maintainer session, unavailable during publication. The
-  release tag is immutable. Physical instrument compatibility was not newly tested.
+The maintainer activated Read the Docs; [build 35532428](https://app.readthedocs.org/projects/stoner-pythoncode/builds/35532428/)
+passed on the exact release SHA. The version API now reports `active=true` and
+`built=true`. The [published documentation](https://stoner-pythoncode.readthedocs.io/en/v0.12.0a5/)
+passed checks of 12 pages, 113 fitting links/fragments, six images and 17 fitting
+inventory targets. Rendered registration/folder guides were inspected, and the
+fitting example's PNG/hires PNG/PDF match the retained release cache byte-for-byte.
+Sphinx reported 37 non-fatal warnings, including duplicate API descriptions and
+third-party footnotes; two duplicate-object counts exceed the stored Linux baseline.
+No checked fitting link or image was broken. There are no remaining publication
+gates for this alpha. The tag is immutable; physical instrument compatibility
+was not newly tested.
 
 ### Published 0.12.0a4
 
