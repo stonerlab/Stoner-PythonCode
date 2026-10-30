@@ -136,6 +136,39 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
+### Published 0.12.0a5
+
+[`0.12.0a5`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a5)
+is published as a prerelease at `4faff759a4d856bb038ed3ff7cae097da5776935`.
+It includes fitting accessors and bulk shortcuts, the model registry/decorators,
+`FitOutput`, plotting-owned fit annotations, consumer migrations and the column
+schema/all-match consolidation. Runtime dependencies are unchanged from a4.
+
+The exact release source passed 1,762 tests in every Linux Python 3.12-3.14/macOS
+Python 3.14 cell of the [test matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41114563912).
+[Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41114564000)
+passed 1,761 tests with one expected skip.
+[Fresh wheel/sdist checks](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41114563983)
+and [cached docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41114562835)
+also passed before publication. No gate was waived.
+
+[PyPI](https://pypi.org/project/Stoner/0.12.0a5/) publishes wheel and sdist.
+The public wheel passed installed-package resource/numerical/plotting checks and
+new fitting accessor, enum, folder-shortcut and decorated-model probes from a
+temporary installation outside the checkout. The
+[deployment](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41115966505)
+passed both registry jobs, including Conda's installed import/version test.
+`noarch/stoner-0.12.0a5-py_0.conda` is present in the public `phygbu` main-channel
+index. [Release docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41115966448)
+passed; coverage checks on the release source passed. Zenodo archived the tag as
+[DOI 10.5281/zenodo.23817189](https://doi.org/10.5281/zenodo.23817189).
+
+- [ ] Activate and build `v0.12.0a5` on Read the Docs. Its public API identifies
+  the correct tagged SHA but reports `active=false`, `built=false`. The
+  [version settings](https://app.readthedocs.org/dashboard/stoner-pythoncode/version/v0.12.0a5/edit/)
+  require a signed-in maintainer session, unavailable during publication. The
+  release tag is immutable. Physical instrument compatibility was not newly tested.
+
 ### Published 0.12.0a4
 
 [`0.12.0a4`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a4)
