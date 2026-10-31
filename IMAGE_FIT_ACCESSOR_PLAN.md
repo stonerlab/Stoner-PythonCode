@@ -1,8 +1,9 @@
 # ImageFile.fit implementation and testing plan
 
 Date: 2026-10-31. Target checkout: `devel`.
-Status: mandatory batches 1-5 implemented and locally validated for 0.12.0a8;
-hosted exact-source release gates remain pending.
+Status: mandatory batches 1-5 published in 0.12.0a8 after exact-source hosted
+release gates. Public packages and versioned documentation are verified; see
+MAINTENANCE_PLAN.md for publication evidence.
 
 ## Alpha implementation decisions (2026-10-31)
 

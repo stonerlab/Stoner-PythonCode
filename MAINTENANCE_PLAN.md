@@ -118,16 +118,6 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Planned API work
 
-- [ ] Follow the agreed image accessor sequence: [plot](IMAGE_PLOT_ACCESSOR_PLAN.md),
-  then [ROI](IMAGE_ROI_ACCESSOR_PLAN.md), then [fit/flattening](IMAGE_FIT_ACCESSOR_PLAN.md).
-  Reuse existing selection code through a general ROI handler; support current
-  state/set/clear separately from exclusions. Share Data's API conventions and
-  coordinate services, then fit plane/quadratic reference regions and correct the
-  whole image, with a separate alpha for each accessor.
-  Standalone ImagePlotter is published in 0.12.0a6, with exact-source hosted and
-  publication evidence recorded below. The ROI milestone is published as
-  0.12.0a7; image fitting is implemented for the final planned feature alpha,
-  0.12.0a8. API lock and cumulative migration review remain separate before beta.
 - [ ] Follow [RELEASE_0_12_PLAN.md](RELEASE_0_12_PLAN.md): API lock before beta,
   allowing only small compatible additions, then full API freeze/bug fixes only
   for RC. Review cumulative 0.11 breakage, migration and the final version series
@@ -150,7 +140,7 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
-### 0.12.0a8 preparation
+### Published 0.12.0a8
 
 ImageFitter and ImageFile.fit provide joint plane/quadratic background fitting,
 captured full-grid evaluation and independent float64 flattening. Shared ROI,
@@ -167,13 +157,40 @@ also passed on QtAgg/offscreen, including near-singular and legacy-Figure checks
 New-code Ruff passes. Cached Sphinx passed with 62 baseline warnings and
 no unexpected warnings, missing dynamic Data methods or removed API objects.
 The fitting figure, rendered API guide and accessor link were inspected over
-localhost. The new installed-package fitting probe passed from source; hosted
-wheel/sdist jobs must exercise it against built archives.
+localhost. The new installed-package fitting probe passed from source and in
+hosted wheel/sdist jobs against built archives.
 
-Before tagging require the exact pushed commit's full matrix, lower-dependency,
-installed wheel/sdist and cached documentation gates. After publication verify
-public PyPI/Conda, the installed public wheel, Conda version test, versioned docs
-and DOI. No physical calibration/instrument or manual GUI certification is claimed.
+[`0.12.0a8`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a8)
+is published as a prerelease at `d57e45599f2fa4c2c9d740824de872fe39b8c2f8`.
+Every Linux Python 3.12-3.14/macOS Python 3.14 cell passed 1,940 tests in the
+[exact-source matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41240467985).
+[Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41240468042)
+passed 1,939 with one expected skip. [Fresh installed wheel/sdist](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41240467966)
+and [cached docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41240467125)
+passed before tagging. Coverage reporting passed; no gate was waived.
+
+[PyPI](https://pypi.org/project/Stoner/0.12.0a8/) wheel/sdist and the public
+`phygbu` noarch Conda index were verified. The downloaded public wheel passed
+installed-package numerical/resource/plotting/ROI/fitting probes outside the
+checkout, including surface covariance, report replay and correction.
+[Deployment](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41241081629)
+passed both registries and Conda's installed import/version test.
+[Release docs CI](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41241081671)
+passed. Published Python/dependency/GPLv3/repository metadata were checked.
+Zenodo archived the immutable tag as
+[DOI 10.5281/zenodo.23845234](https://doi.org/10.5281/zenodo.23845234).
+
+Read the Docs version activation and [build 35550200](https://app.readthedocs.org/projects/stoner-pythoncode/builds/35550200/)
+completed successfully on the exact release SHA. The version is active/built;
+the [published guide](https://stoner-pythoncode.readthedocs.io/en/v0.12.0a8/UserGuide/image_fitting.html),
+API anchor, version badge and figure were checked. The published PNG has the
+same decoded pixels as the retained cache (RGB encoding and stripped metadata
+change its file checksum). The hosted build completed with 40 warnings.
+
+Next: the separate API-lock and cumulative 0.11 migration/compatibility review,
+including the final stable version series. No automatic beta publication or
+in-place/folder fitting work is authorised by this handover. No physical
+calibration/instrument or manual GUI certification is claimed.
 
 ### Published 0.12.0a7
 

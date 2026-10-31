@@ -3,8 +3,9 @@
 Date: 2026-10-31. Working release series: 0.12.
 Status: agreed feature sequence and release-phase policy. The standalone
 ImagePlotter and ImageROI alphas are published as 0.12.0a6 and 0.12.0a7.
-ImageFitter is implemented for the final planned feature alpha, 0.12.0a8, and
-its release validation is in progress. API lock/migration review remains separate.
+ImageFitter is published in the final planned feature alpha, 0.12.0a8. All three
+image feature milestones have passed their release gates. API lock/migration
+review remains separate.
 
 See [maintenance guidance](MAINTENANCE_PLAN.md), the
 [accessor roadmap](DATA_ACCESSOR_PLAN.md), and the detailed
@@ -53,7 +54,7 @@ Published and planned alpha milestones, with future versions subject to release 
 | --- | --- | --- |
 | Plot accessor alpha | Published 0.12.0a6 | Standalone ImagePlotter; exact-source CI and publication evidence in MAINTENANCE_PLAN.md |
 | ROI accessor alpha | Published 0.12.0a7 | Current state/set/clear, reusable selectors, geometry and reviewed plotting/reduction integration; publication evidence in MAINTENANCE_PLAN.md |
-| Fit accessor alpha | 0.12.0a8 | Plane/quadratic reference-region fitting, reports and full-grid floating-point correction |
+| Fit accessor alpha | Published 0.12.0a8 | Plane/quadratic reference-region fitting, reports and full-grid floating-point correction |
 | API-lock review | Before the first beta | End-to-end workflows, compatibility inventory and unresolved contract decisions closed |
 | Beta series | b1 onwards in the selected series | Only compatible small additions and fixes; test each new convenience against the locked baseline |
 | Full API-freeze review | Before rc1 | Beta rough edges addressed; public/API/schema inventories frozen |
@@ -151,8 +152,7 @@ beta/RC evidence in commits, releases/PRs and CI links rather than accumulating
 separate historical phase reports. A green suite alone does not establish a
 frozen or compatible API; the contract/migration review is a separate gate.
 
-The plotting/ROI alphas are published; the final planned ImageFitter alpha is
-implemented and being validated for 0.12.0a8. After publication, review the
+The plotting/ROI/fitting alphas are published through 0.12.0a8. Next, review the
 cumulative migration/compatibility inventory and settle API lock before beta.
 Do not infer that feature completion itself locks the API, selects a larger stable
 version or authorises beta publication.
